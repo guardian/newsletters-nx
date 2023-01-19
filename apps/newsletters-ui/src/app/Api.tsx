@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 
 export function Api() {
-  const [response, setResponse] = useState<Response | undefined>(undefined);
+  const [response, setResponse] = useState<any | undefined>(undefined);
 
   useEffect(() => {
     async function fetchData() {
-      const fetchResponse = (await fetch("/api/health"))
-      setResponse(await fetchResponse.json())
+      const fetchResponse = await fetch('/api/health');
+
+      setResponse(await fetchResponse.json());
     }
     fetchData();
   }, []);
-  return (
-    <p>{response ? 'We\'ve had a response' : 'We haven`t yet had a response'}</p>
-  )
-
+  return <pre>{JSON.stringify(response, null, 2)}</pre>;
 }

@@ -24,7 +24,8 @@
       "executor": "@nrwl/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "newsletters-ui:build"
+        "buildTarget": "newsletters-ui:build",
+        "proxyConfig": "./apps/newsletters-ui/proxy.conf.json"
       },
       "configurations": {
         "development": {
