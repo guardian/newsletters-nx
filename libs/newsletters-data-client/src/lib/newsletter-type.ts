@@ -42,3 +42,7 @@ export const newsletterSchema = z.object({
 });
 
 export type Newsletter = z.infer<typeof newsletterSchema>;
+
+export function isNewsletter(subject:unknown): subject is Newsletter {
+  return newsletterSchema.safeParse(subject).success
+}
