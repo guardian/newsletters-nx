@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export function Api() {
   const [response, setResponse] = useState<any | undefined>(undefined);
@@ -11,5 +11,10 @@ export function Api() {
     }
     fetchData();
   }, []);
-  return <pre>{JSON.stringify(response, null, 2)}</pre>;
+  return (
+    <div style={{ background: 'skyblue' }}>
+      <p>Json from API request:</p>
+      <pre>{JSON.stringify(response, null, 2)}</pre>
+    </div>
+  );
 }
