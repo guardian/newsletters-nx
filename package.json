@@ -1,0 +1,15 @@
+{
+  "name": "newsletters-nx",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@nrwl/nx-cloud": "latest",
+    "@nrwl/workspace": "15.5.2",
+    "nx": "15.5.2",
+    "prettier": "^2.6.2",
+    "typescript": "~4.8.2"
+  }
+}
