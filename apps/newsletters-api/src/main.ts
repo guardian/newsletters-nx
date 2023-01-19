@@ -1,10 +1,19 @@
 import fastify from 'fastify';
-import { newslettersDataClient } from '@newsletters-nx/newsletters-data-client';
+import {
+  newslettersDataClient,
+  isNewsletter,
+} from '@newsletters-nx/newsletters-data-client';
+import liveNewslettersData from '../static/newsletters.live.json';
 
 const app = fastify();
 
 app.get('/api/health', async (req, res) => {
   return { message: 'Hello API', stringFromLib: newslettersDataClient() };
+});
+
+app.get('/v1/newsletters', async (req, res) => {
+  const parsedLive = liveNewslettersData.filter(isNewsletter);
+  return parsedLive;
 });
 
 const start = async () => {
