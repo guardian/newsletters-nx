@@ -2,7 +2,7 @@ import fastify from 'fastify';
 
 const app = fastify();
 
-app.get('/', async (req, res) => {
+app.get('/health', async (req, res) => {
   return { message: 'Hello API' };
 });
 

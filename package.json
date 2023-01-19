@@ -2,7 +2,9 @@
   "name": "newsletters-nx",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "dev": "nx run-many --target=serve --projects=newsletters-api,newsletters-ui"
+  },
   "private": true,
   "dependencies": {
     "@emotion/react": "11.10.5",
