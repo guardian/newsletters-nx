@@ -1,22 +1,25 @@
 import { z } from 'zod';
 
-export const illustrationSchema = z.object({
+const nonEmptyString = () =>
+  z.string().min(1, { message: 'Must not be empty' });
+
+const illustrationSchema = z.object({
   circle: z.string(),
 });
 
-export const emailEmbedSchema = z.object({
+const emailEmbedSchema = z.object({
   name: z.string(),
   title: z.string(),
-  description: z.string(),
+  description: z.string().optional(),
   successHeadline: z.string(),
   successDescription: z.string(),
   hexCode: z.string(),
   imageUrl: z.string().optional(),
 });
 
-export const newsletterSchema = z.object({
-  identityName: z.string().min(1),
-  name: z.string().min(1),
+const baseNewsletterSchema = z.object({
+  identityName: nonEmptyString(),
+  name: nonEmptyString(),
   cancelled: z.boolean(),
   restricted: z.boolean(),
   paused: z.boolean(),
@@ -24,8 +27,8 @@ export const newsletterSchema = z.object({
   brazeNewsletterName: z.string().optional(),
   brazeSubscribeAttributeName: z.string().optional(),
   brazeSubscribeEventNamePrefix: z.string().optional(),
-  theme: z.string().min(1),
-  group: z.string().min(1),
+  theme: nonEmptyString(),
+  group: nonEmptyString(),
   description: z.string().optional(),
   regionFocus: z.string().optional(),
   frequency: z.string().optional(),
@@ -40,8 +43,29 @@ export const newsletterSchema = z.object({
   illustration: illustrationSchema.optional(),
 });
 
+export const newsletterSchema = baseNewsletterSchema.extend({
+  description: nonEmptyString(),
+  frequency: nonEmptyString(),
+  brazeSubscribeAttributeName: nonEmptyString(),
+  brazeSubscribeEventNamePrefix: nonEmptyString(),
+  brazeNewsletterName: nonEmptyString(),
+  emailEmbed: emailEmbedSchema.extend({
+    description: z.string(),
+  }),
+});
+
 export type Newsletter = z.infer<typeof newsletterSchema>;
 
 export function isNewsletter(subject: unknown): subject is Newsletter {
   return newsletterSchema.safeParse(subject).success;
+}
+
+export const cancelledNewsletterSchema = baseNewsletterSchema.extend({
+  cancelled: z.literal(true),
+})
+
+export type CancelledNewsletter = z.infer<typeof cancelledNewsletterSchema>;
+
+export function isCancelledNewsletter(subject: unknown): subject is CancelledNewsletter {
+  return cancelledNewsletterSchema.safeParse(subject).success;
 }
