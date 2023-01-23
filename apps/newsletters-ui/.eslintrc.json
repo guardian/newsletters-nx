@@ -1,18 +1,21 @@
 {
-  "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    }
-  ]
+	"extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
+	"ignorePatterns": ["!**/*"],
+	"overrides": [
+		{
+			"files": ["*.ts", "*.tsx"],
+			"parserOptions": {
+				"project": ["apps/newsletters-ui/tsconfig.*?.json"]
+			},
+			"rules": {}
+		},
+		{
+			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+			"rules": {}
+		},
+		{
+			"files": ["*.js", "*.jsx"],
+			"rules": {}
+		}
+	]
 }
