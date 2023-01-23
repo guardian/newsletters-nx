@@ -614,6 +614,23 @@
   dependencies:
     fast-json-stringify "^5.0.0"
 
+"@guardian/source-foundations@^7.0.1":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@guardian/source-foundations/-/source-foundations-7.0.3.tgz#2d30d8a76ac1a5382774bbaaaa39a84551d4709d"
+  integrity sha512-XDShUQ1MvQlTaa1Va+QbLSjHA2hg/lBhfoP31wQAFd0mqpGeCjGnwI6snSX31EdpkniLqJH4Y7gGcOsZ1SqtQg==
+  dependencies:
+    mini-svg-data-uri "1.4.4"
+
+"@guardian/source-react-components-development-kitchen@8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@guardian/source-react-components-development-kitchen/-/source-react-components-development-kitchen-8.2.0.tgz#b7c9ff6b494f55d42e39acdde897193780dd1e76"
+  integrity sha512-1oDFsjgfEUStb7zTOo7NutBSt1L5OvaNPC9VUR8qvEqkQ31PfYmvBeIo5OEm9uHfvageUBcVS862jz9jn2PDvg==
+
+"@guardian/source-react-components@^9.1.0":
+  version "9.1.2"
+  resolved "https://registry.yarnpkg.com/@guardian/source-react-components/-/source-react-components-9.1.2.tgz#2afe6b660773449ffbedbaa74f2fc1a79cb7c3f8"
+  integrity sha512-cBw9vj9K8UrHrqAARI11fv81hnHQB4fIVVsCUhuzl/J2nvoUCicA4mo4mBl23TtlMRo+mmD+N9dn9HiZYiW95Q==
+
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.9.5.tgz#2cbaf9a89460da24b5ca6531b8bbfc23e1df50c7"
@@ -5830,6 +5847,11 @@ mini-css-extract-plugin@~2.4.7:
   integrity sha512-euWmddf0sk9Nv1O0gfeeUAvAkoSlWncNLF77C0TP2+WoPvy8mAHKOzMajcCz2dzvyt3CNgxb1obIEVFIRxaipg==
   dependencies:
     schema-utils "^4.0.0"
+
+mini-svg-data-uri@1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/mini-svg-data-uri/-/mini-svg-data-uri-1.4.4.tgz#8ab0aabcdf8c29ad5693ca595af19dd2ead09939"
+  integrity sha512-r9deDe9p5FJUPZAk3A59wGH7Ii9YrjjWw0jmw/liSbHl2CHiyXj6FcDXDu2K3TjVAXqiJdaw3xxwlZZr9E6nHg==
 
 minimalistic-assert@^1.0.0:
   version "1.0.1"
