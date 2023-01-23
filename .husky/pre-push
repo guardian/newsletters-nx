@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx nx affected --target=lint --parallel=3
+npx nx affected --target=test --parallel=3
+npx nx affected --target=build --parallel=3
