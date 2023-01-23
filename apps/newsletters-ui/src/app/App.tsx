@@ -4,7 +4,7 @@ import { DataClientTest } from './DataClientTest';
 import { EmotionTest } from './components/EmotionTest';
 
 const StyledApp = styled.div`
-  // Your style here
+	// Your style here
 `;
 
 export function App() {
@@ -18,5 +18,3 @@ export function App() {
     </StyledApp>
   );
 }
-
-export default App;

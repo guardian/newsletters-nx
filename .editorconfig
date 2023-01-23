@@ -3,11 +3,25 @@ root = true
 
 [*]
 charset = utf-8
-indent_style = space
+# For [accessibility reasons](https://alexandersandberg.com/tabs-for-accessibility/)
+indent_style = tab
 indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+[package.json]
+# `npm` autoformats `package.json` every time you install a new dependency.
+indent_size = 2
+
+# Because `yml`
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
 [*.md]
+# Using tabs to indent pre-formatted code in markdown makes the spacing too extreme
+# when rendered on GitHub, so we revert back to spaces here.
+indent_style = space
+indent_size = 4
 max_line_length = off
 trim_trailing_whitespace = false
