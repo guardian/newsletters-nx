@@ -1,10 +1,11 @@
-import {
-  Newsletter,
-  isNewsletter,
-  isCancelledNewsletter,
-  CancelledNewsletter,
-} from './newsletter-type';
 import { VALID_TECHSCAPE } from '../fixtures/newsletter-fixtures';
+import type {
+  CancelledNewsletter,
+  Newsletter} from './newsletter-type';
+import {
+  isCancelledNewsletter,
+  isNewsletter
+} from './newsletter-type';
 
 describe('isNewsletter', () => {
   it('Will return true for a valid newsletter', () => {

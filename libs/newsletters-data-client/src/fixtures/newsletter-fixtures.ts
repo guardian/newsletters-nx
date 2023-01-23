@@ -1,4 +1,4 @@
-import { Newsletter } from '..';
+import type { Newsletter } from '..';
 
 export const VALID_TECHSCAPE: Newsletter = {
   identityName: 'tech-scape',

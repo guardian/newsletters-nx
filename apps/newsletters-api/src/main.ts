@@ -1,11 +1,11 @@
-import fastify from 'fastify';
+import Fastify from 'fastify';
 import {
-  newslettersDataClient,
   isNewsletter,
+  newslettersDataClient,
 } from '@newsletters-nx/newsletters-data-client';
 import liveNewslettersData from '../static/newsletters.live.json';
 
-const app = fastify();
+const app = Fastify();
 
 app.get('/api/health', async () => {
 	return Promise.resolve({
