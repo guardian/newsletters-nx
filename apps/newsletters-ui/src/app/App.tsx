@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Api } from './Api';
-import { DataClientTest } from './DataClientTest';
 import { EmotionTest } from './components/EmotionTest';
+import { DataClientTest } from './DataClientTest';
 
 const StyledApp = styled.div`
 	// Your style here

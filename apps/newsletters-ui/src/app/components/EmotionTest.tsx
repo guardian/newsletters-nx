@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import {
-  neutral,
   brand,
+  neutral,
   news,
   textSansObjectStyles,
 } from '@guardian/source-foundations';
