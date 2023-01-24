@@ -30,10 +30,15 @@ app.get('/v1/newsletters/detail/:id', async (req, res) => {
 		typeof params.id === 'string' &&
 		params.id.length > 0
 	) {
-		return {
-			test: 1234,
-			id: params.id,
-		};
+
+		const parsedLive = liveNewslettersData.filter(isNewsletter);
+		const match = parsedLive.find(newsletter => newsletter.identityName === params.id)
+
+		if (!match) {
+			return res.status(404).send({ ok: false, message: `no match for id ${params.id}` })
+		}
+
+		return match;
 	}
 
 	return res.status(400).send({ ok: false, message: 'no id!' });
