@@ -14,6 +14,7 @@ export const homeRoute: RouteObject = {
 			<Link to={`/dark`}>dark theme</Link>
 			<Link to={`/light`}>light theme</Link>
 			<Link to={`/api`}>api</Link>
+			<Link to={`/newsletters/`}>newsleters-list</Link>
 		</Layout>
 	),
 	errorElement: <ErrorPage />,
