@@ -48,6 +48,49 @@ paths:
                     type: number
                     example: 200
 
+  /newsletters/detail/{identityName}:
+    get:
+      summary: Get a newsletter by identityName
+      parameters:
+        - in: path
+          name: identityName
+          schema:
+            type: string
+          required: true
+          description: The unique identityName of the newsletter to get
+      responses:
+        '404':
+          description: A JSON object describing a 'not found' error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: A JSON object describing a 'bad request' error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '200':
+          description: A JSON object with the newsletter
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - newsletter
+                  - ok
+                  - code
+                properties:
+                  newsletter:
+                    $ref: '#/components/schemas/Newsletter'
+                  ok:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 200
+
 components:
   schemas:
     Newsletter:
@@ -171,3 +214,15 @@ components:
           example: '#DCDCDC'
         imageUrl:
           type: string
+    ErrorResponse:
+      type: object
+      required:
+        - ok
+        - code
+      properties:
+        ok:
+          type: boolean
+          example: false
+        code:
+          type: integer
+          example: 404
