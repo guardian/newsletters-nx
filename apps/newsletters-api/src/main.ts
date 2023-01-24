@@ -3,7 +3,7 @@ import { newslettersDataClient } from '@newsletters-nx/newsletters-data-client';
 
 const app = fastify();
 
-app.get('/api/health', async () => {
+app.get('/health', async () => {
 	return Promise.resolve({
 		message: 'Hello API',
 		stringFromLib: newslettersDataClient(),

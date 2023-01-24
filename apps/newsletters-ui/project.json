@@ -1,58 +1,57 @@
 {
-  "name": "newsletters-ui",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/newsletters-ui/src",
-  "projectType": "application",
-  "targets": {
-    "build": {
-      "executor": "@nrwl/vite:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/newsletters-ui"
-      },
-      "configurations": {
-        "development": {
-          "mode": "development"
-        },
-        "production": {
-          "mode": "production"
-        }
-      }
-    },
-    "serve": {
-      "executor": "@nrwl/vite:dev-server",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "newsletters-ui:build",
-        "proxyConfig": "./apps/newsletters-ui/proxy.conf.json"
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "newsletters-ui:build:development",
-          "hmr": true
-        },
-        "production": {
-          "buildTarget": "newsletters-ui:build:production",
-          "hmr": false
-        }
-      }
-    },
-    "test": {
-      "executor": "@nrwl/vite:test",
-      "outputs": ["coverage/apps/newsletters-ui"],
-      "options": {
-        "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/apps/newsletters-ui"
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/newsletters-ui/**/*.{ts,tsx,js,jsx}"]
-      }
-    }
-  },
-  "tags": []
+	"name": "newsletters-ui",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "apps/newsletters-ui/src",
+	"projectType": "application",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/vite:build",
+			"outputs": ["{options.outputPath}"],
+			"defaultConfiguration": "production",
+			"options": {
+				"outputPath": "dist/apps/newsletters-ui"
+			},
+			"configurations": {
+				"development": {
+					"mode": "development"
+				},
+				"production": {
+					"mode": "production"
+				}
+			}
+		},
+		"serve": {
+			"executor": "@nrwl/vite:dev-server",
+			"defaultConfiguration": "development",
+			"options": {
+				"buildTarget": "newsletters-ui:build"
+			},
+			"configurations": {
+				"development": {
+					"buildTarget": "newsletters-ui:build:development",
+					"hmr": true
+				},
+				"production": {
+					"buildTarget": "newsletters-ui:build:production",
+					"hmr": false
+				}
+			}
+		},
+		"test": {
+			"executor": "@nrwl/vite:test",
+			"outputs": ["coverage/apps/newsletters-ui"],
+			"options": {
+				"passWithNoTests": true,
+				"reportsDirectory": "../../coverage/apps/newsletters-ui"
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["apps/newsletters-ui/**/*.{ts,tsx,js,jsx}"]
+			}
+		}
+	},
+	"tags": []
 }
