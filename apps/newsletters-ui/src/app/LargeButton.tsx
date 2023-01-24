@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-const ButtonStyle = styled.div`
+const ButtonStyle = styled.button`
 	border: 1px;
 	border-style: solid;
 	padding: 20px 20px;
@@ -12,8 +12,9 @@ const ButtonStyle = styled.div`
 
 interface LargeButtonProps {
 	children: React.ReactNode;
+	onClick: () => void;
 }
 
-export function LargeButton({children}: LargeButtonProps) {
-	return <ButtonStyle>{children}</ButtonStyle>
+export function LargeButton({children, onClick}: LargeButtonProps) {
+	return <ButtonStyle onClick={onClick}>{children}</ButtonStyle>
 }
