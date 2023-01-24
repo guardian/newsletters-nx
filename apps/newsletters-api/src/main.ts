@@ -7,7 +7,7 @@ import liveNewslettersData from '../static/newsletters.live.json';
 
 const app = Fastify();
 
-app.get('/api/health', async () => {
+app.get('/health', async () => {
 	return Promise.resolve({
 		message: 'Hello API',
 		stringFromLib: newslettersDataClient(),
