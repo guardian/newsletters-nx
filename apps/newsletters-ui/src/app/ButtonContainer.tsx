@@ -6,6 +6,9 @@ const ContainerStyle = styled.div`
 	grid-template-columns: auto auto auto;
 	column-gap: 40px;
 	margin: 50px;
+	@media (max-width: 375px) {
+		grid-template-columns: auto;
+	}
 `;
 
 export function ButtonContainer() {
