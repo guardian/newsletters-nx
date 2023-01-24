@@ -26,7 +26,7 @@ export const HealthCheck: React.FC = () => {
 	return isLoading ? (
 		<p>Loading...</p>
 	) : (
-		<div style={{ background: 'skyblue' }}>
+		<div>
 			<p>Json from API request:</p>
 			<pre>{JSON.stringify(response)}</pre>
 		</div>

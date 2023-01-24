@@ -1,17 +1,15 @@
-import styled from '@emotion/styled';
 import { Api } from './Api';
 import { DataClientTest } from './DataClientTest';
-
-const StyledApp = styled.div`
-	// Your style here
-`;
+import { EmotionTest } from './EmotionTest';
 
 export function App() {
 	return (
-		<StyledApp>
+		<main>
 			<p>Newsletters is running</p>
 			<Api />
 			<DataClientTest />
-		</StyledApp>
+			<EmotionTest theme="dark" />
+			<EmotionTest theme="light" />
+		</main>
 	);
 }
