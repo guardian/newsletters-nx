@@ -19,6 +19,26 @@ app.get('/v1/newsletters', async (req, res) => {
 	return parsedLive;
 });
 
+app.get('/v1/newsletters/detail/:id', async (req, res) => {
+	//to Check Fastify docs for how best to parse req.params
+	const params = req.params as Record<string, unknown> | undefined;
+	console.log(params);
+
+	if (
+		params &&
+		'id' in params &&
+		typeof params.id === 'string' &&
+		params.id.length > 0
+	) {
+		return {
+			test: 1234,
+			id: params.id,
+		};
+	}
+
+	return res.status(400).send({ ok: false, message: 'no id!' });
+});
+
 const start = async () => {
 	try {
 		console.log('Starting newsletters-api server on http://localhost:3000');
