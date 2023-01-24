@@ -7,7 +7,7 @@ info:
     email: newsletters-dev@guardian.co.uk
 
 paths:
-  /newsletters:
+  /v1/newsletters:
     get:
       summary: Returns a list of newsletters.
       description: Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
