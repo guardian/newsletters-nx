@@ -15,34 +15,33 @@ app.get('/health', async () => {
 });
 
 app.get('/v1/newsletters', async (req, res) => {
+	// TO DO - why is eslint not happy here?
 	const parsedLive = liveNewslettersData.filter(isNewsletter);
 	return parsedLive;
 });
 
-app.get('/v1/newsletters/detail/:id', async (req, res) => {
-	//to Check Fastify docs for how best to parse req.params
-	const params = req.params as Record<string, unknown> | undefined;
-	console.log(params);
-
-	if (
-		params &&
-		'id' in params &&
-		typeof params.id === 'string' &&
-		params.id.length > 0
-	) {
+app.get<{ Params: { identityName: string } }>(
+	'/v1/newsletters/detail/:identityName',
+	async (req, res) => {
+		const { identityName } = req.params;
+		if (identityName.length === 0) {
+			return res.status(400).send({ ok: false, message: 'no id!' });
+		}
 
 		const parsedLive = liveNewslettersData.filter(isNewsletter);
-		const match = parsedLive.find(newsletter => newsletter.identityName === params.id)
+		const match = parsedLive.find(
+			(newsletter) => newsletter.identityName === identityName,
+		);
 
 		if (!match) {
-			return res.status(404).send({ ok: false, message: `no match for id ${params.id}` })
+			return res
+				.status(404)
+				.send({ ok: false, message: `no match for id ${identityName}` });
 		}
 
 		return match;
-	}
-
-	return res.status(400).send({ ok: false, message: 'no id!' });
-});
+	},
+);
 
 const start = async () => {
 	try {
