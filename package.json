@@ -11,6 +11,7 @@
 	},
 	"private": true,
 	"dependencies": {
+		"@emotion/css": "^11.10.5",
 		"@emotion/react": "11.10.5",
 		"@emotion/styled": "11.10.5",
 		"@guardian/source-foundations": "^8.0.0",
@@ -18,7 +19,8 @@
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"react-router-dom": "6.4.3",
-		"tslib": "^2.3.0"
+		"tslib": "^2.3.0",
+		"zod": "^3.20.2"
 	},
 	"devDependencies": {
 		"@emotion/babel-plugin": "11.10.5",
