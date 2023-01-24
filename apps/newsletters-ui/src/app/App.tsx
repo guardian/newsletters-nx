@@ -1,4 +1,5 @@
 import { Api } from './Api';
+import { ButtonContainer } from './components/ButtonContainer';
 import { DataClientTest } from './DataClientTest';
 import { EmotionTest } from './EmotionTest';
 
@@ -10,6 +11,7 @@ export function App() {
 			<DataClientTest />
 			<EmotionTest theme="dark" />
 			<EmotionTest theme="light" />
+			<ButtonContainer />
 		</main>
 	);
 }
