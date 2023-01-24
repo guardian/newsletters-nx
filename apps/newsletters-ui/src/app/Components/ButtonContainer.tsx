@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { LargeButton } from './LargeButton';
+import { Button } from '@guardian/source-react-components';
 
 const ContainerStyle = styled.div`
 	display: grid;
 	grid-template-columns: auto auto auto;
 	column-gap: 40px;
-	margin: 50px;
+	row-gap: 25px;
 	@media (max-width: 375px) {
 		grid-template-columns: auto;
 	}
@@ -14,67 +14,67 @@ const ContainerStyle = styled.div`
 export function ButtonContainer() {
 	return (
 		<ContainerStyle>
-			<LargeButton
+			<Button
 				onClick={() =>
 					alert('View current newsletters has not yet been implemented')
 				}
 			>
 				View current newsletters
-			</LargeButton>
-			<LargeButton
+			</Button>
+			<Button
 				onClick={() =>
 					alert('Create new newsletter has not yet been implemented')
 				}
 			>
 				Create new newsletter
-			</LargeButton>
-			<LargeButton
+			</Button>
+			<Button
 				onClick={() => alert('Update newsletter has not yet been implemented')}
 			>
 				Update newsletter
-			</LargeButton>
-			<LargeButton
+			</Button>
+			<Button
 				onClick={() =>
 					alert('Create email template has not yet been implemented')
 				}
 			>
 				Create email template
-			</LargeButton>
-			<LargeButton
+			</Button>
+			<Button
 				onClick={() =>
 					alert('Create single thrasher has not yet been implemented')
 				}
 			>
 				Create single thrasher
-			</LargeButton>
-			<LargeButton
+			</Button>
+			<Button
 				onClick={() =>
 					alert('Create multi thrasher has not yet been implemented')
 				}
 			>
 				Create multi thrasher
-			</LargeButton>
-			<LargeButton
+			</Button>
+			<Button
 				onClick={() =>
 					alert('Update email template has not yet been implemented')
 				}
 			>
 				Update email template
-			</LargeButton>
-			<LargeButton
+			</Button>
+			<Button
 				onClick={() =>
 					alert('Update single thrasher has not yet been implemented')
 				}
 			>
 				Update single thrasher
-			</LargeButton>
-			<LargeButton
+			</Button>
+			<Button
 				onClick={() =>
 					alert('Update multi thrasher has not yet been implemented')
 				}
 			>
 				Update multi thrasher
-			</LargeButton>
+			</Button>
 		</ContainerStyle>
 	);
 }
