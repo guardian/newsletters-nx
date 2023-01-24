@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { Api } from './Api';
+import { ButtonContainer } from './ButtonContainer';
 import { DataClientTest } from './DataClientTest';
 
 const StyledApp = styled.div`
@@ -12,6 +13,7 @@ export function App() {
 			<p>Newsletters is running</p>
 			<Api />
 			<DataClientTest />
+			<ButtonContainer />
 		</StyledApp>
 	);
 }
