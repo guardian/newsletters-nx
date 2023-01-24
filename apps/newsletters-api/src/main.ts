@@ -4,6 +4,7 @@ import {
 	newslettersDataClient,
 } from '@newsletters-nx/newsletters-data-client';
 import liveNewslettersData from '../static/newsletters.live.json';
+import { makeError, makeSuccess } from './app/responses';
 
 const app = Fastify();
 
@@ -25,21 +26,19 @@ app.get<{ Params: { identityName: string } }>(
 	async (req, res) => {
 		const { identityName } = req.params;
 		if (identityName.length === 0) {
-			return res.status(400).send({ ok: false, message: 'no id!' });
+			return res.status(400).send(makeError('no identity name', 400));
 		}
 
 		const parsedLive = liveNewslettersData.filter(isNewsletter);
-		const match = parsedLive.find(
+		const newsletter = parsedLive.find(
 			(newsletter) => newsletter.identityName === identityName,
 		);
 
-		if (!match) {
-			return res
-				.status(404)
-				.send({ ok: false, message: `no match for id ${identityName}` });
+		if (!newsletter) {
+			return res.status(404).send(makeError(`no match for id ${identityName}`, 404));
 		}
 
-		return match;
+		return makeSuccess({ newsletter });
 	},
 );
 
