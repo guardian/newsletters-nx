@@ -21,6 +21,33 @@ paths:
                 items:
                   $ref: '#/components/schemas/Newsletter'
 
+  /v1/newsletters/all:
+    get:
+      summary: Returns a list of newsletters.
+      description: Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
+      responses:
+        '200':
+          description: A JSON object containing array of newsletter entities
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - newsletters
+                  - ok
+                  - status
+                properties:
+                  newsletters:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Newsletter'
+                  ok:
+                    type: boolean
+                    example: true
+                  code:
+                    type: number
+                    example: 200
+
 components:
   schemas:
     Newsletter:
