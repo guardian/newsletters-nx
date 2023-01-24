@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 const ButtonStyle = styled.button`
 	border: 1px;
@@ -9,13 +9,13 @@ const ButtonStyle = styled.button`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-`
+`;
 
 interface LargeButtonProps {
 	children: React.ReactNode;
 	onClick: () => void;
 }
 
-export function LargeButton({children, onClick}: LargeButtonProps) {
-	return <ButtonStyle onClick={onClick}>{children}</ButtonStyle>
+export function LargeButton({ children, onClick }: LargeButtonProps) {
+	return <ButtonStyle onClick={onClick}>{children}</ButtonStyle>;
 }
