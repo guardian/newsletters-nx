@@ -4,7 +4,7 @@ import { LargeButton } from './LargeButton';
 const ContainerStyle = styled.div`
 	display: grid;
 	grid-template-columns: auto auto auto;
-	column-gap: 50px;
+	column-gap: 40px;
 	margin: 50px;
 `;
 

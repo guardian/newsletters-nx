@@ -3,11 +3,12 @@ import styled from "@emotion/styled";
 const ButtonStyle = styled.button`
 	border: 1px;
 	border-style: solid;
-	padding: 20px 20px;
+	border-radius: 10px;
+	padding: 20px 15px;
 	margin: 20px;
 	display: flex;
 	justify-content: center;
-	text-align: center;
+	align-items: center;
 `
 
 interface LargeButtonProps {
