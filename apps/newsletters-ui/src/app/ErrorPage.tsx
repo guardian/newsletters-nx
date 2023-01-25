@@ -1,16 +1,19 @@
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
 
+const parseError = (error: unknown): { status: number; statusText: string } => {
+	if (isRouteErrorResponse(error)) {
+		return error;
+	}
+
+	return {
+		status: 500,
+		statusText: 'Unknown Error',
+	};
+};
+
 export const ErrorPage = () => {
 	const error = useRouteError();
-	console.log({ rawError: error });
-
-	let status = 500;
-	let statusText = 'Error';
-
-	if (isRouteErrorResponse(error)) {
-		status = error.status;
-		statusText = error.statusText;
-	}
+	const { status, statusText } = parseError(error);
 
 	return (
 		<div id="error-page">
