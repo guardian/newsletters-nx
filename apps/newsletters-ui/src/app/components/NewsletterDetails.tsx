@@ -86,6 +86,10 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 							<td>{listId}</td>
 						</tr>
 						<tr>
+							<th>theme</th>
+							<td>{theme}</td>
+						</tr>
+						<tr>
 							<th>description</th>
 							<td>{description}</td>
 						</tr>

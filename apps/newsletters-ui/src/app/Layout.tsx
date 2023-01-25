@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { space } from '@guardian/source-foundations';
 import type { ReactNode } from 'react';
-import { Outlet, useLoaderData } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
 interface Props {
 	children?: ReactNode;
@@ -14,12 +14,19 @@ const headerStyle = css`
 `;
 
 export function Layout({ children }: Props) {
-	const data = useLoaderData() as {ids: string[]} | undefined;
 	return (
 		<>
 			<header css={headerStyle}>
 				<h1>Newsletters UI</h1>
-				<nav>{children}</nav>
+
+				<nav>
+					<Link to={`/`}>home</Link>
+					<Link to={`/dark`}>dark theme</Link>
+					<Link to={`/light`}>light theme</Link>
+					<Link to={`/api`}>api</Link>
+					<Link to={`/newsletters/`}>newsleters-list</Link>
+				</nav>
+				{children && <nav>{children}</nav>}
 				<hr></hr>
 			</header>
 			<main>

@@ -1,4 +1,3 @@
-
 import type { LoaderFunction, RouteObject } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
@@ -33,11 +32,7 @@ export const detailLoader: LoaderFunction = async ({
 
 export const newsletterRoute: RouteObject = {
 	path: '/newsletters/',
-	element: (
-		<Layout>
-			<Link to={`/`}>home</Link>
-		</Layout>
-	),
+	element: <Layout />,
 	errorElement: <ErrorPage />,
 	children: [
 		{
