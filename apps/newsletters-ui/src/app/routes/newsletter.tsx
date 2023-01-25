@@ -1,35 +1,33 @@
+
 import type { LoaderFunction, RouteObject } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { NewsletterDetail } from '../components/NewsletterDetail';
+import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import { NewsletterDetailView } from '../components/NewsletterDetailView';
+import { NewsletterListView } from '../components/NewslettersListView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 
-export type Item = {
-	id: string;
-	name: string;
-};
-
-export async function getNames(): Promise<Item[]> {
-	await new Promise((resolve) => setTimeout(resolve, 200));
-	return [
-		{ id: 'mail-1', name: 'The Mail' },
-		{ id: 'newsletter-number-six', name: 'News at six' },
-		{ id: 'the-news', name: 'More news now' },
-	];
+export async function getNewsletters(): Promise<Newsletter[]> {
+	try {
+		const response = await fetch('api/v1/newsletters');
+		const data = await response.json();
+		return data as Newsletter[];
+	} catch (err) {
+		console.error(err);
+		return [];
+	}
 }
 
-export const listLoader: LoaderFunction = async (): Promise<{
-	ids: string[];
-}> => {
-	const list = await getNames();
-	return { ids: list.map((item) => item.id) };
+export const listLoader: LoaderFunction = async (): Promise<Newsletter[]> => {
+	const list = await getNewsletters();
+	return list;
 };
 
 export const detailLoader: LoaderFunction = async ({
 	params,
-}): Promise<Item | undefined> => {
-	const items = await getNames();
-	const match = items.find((item) => item.id === params.id);
+}): Promise<Newsletter | undefined> => {
+	const items = await getNewsletters();
+	const match = items.find((item) => item.identityName === params.id);
 	return match;
 };
 
@@ -41,15 +39,15 @@ export const newsletterRoute: RouteObject = {
 		</Layout>
 	),
 	errorElement: <ErrorPage />,
-	loader: listLoader,
 	children: [
 		{
 			path: '/newsletters/',
-			element: <p>This is newsletters page</p>,
+			element: <NewsletterListView />,
+			loader: listLoader,
 		},
 		{
 			path: '/newsletters/:id',
-			element: <NewsletterDetail />,
+			element: <NewsletterDetailView />,
 			loader: detailLoader,
 		},
 	],

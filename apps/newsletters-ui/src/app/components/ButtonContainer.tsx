@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { Button } from '@guardian/source-react-components';
+import { useNavigate } from 'react-router';
 
 const ContainerStyle = styled.div`
 	display: grid;
@@ -12,11 +13,14 @@ const ContainerStyle = styled.div`
 `;
 
 export function ButtonContainer() {
+
+	const navigate = useNavigate()
+
 	return (
 		<ContainerStyle>
 			<Button
 				onClick={() =>
-					alert('View current newsletters has not yet been implemented')
+					navigate("/newsletters/")
 				}
 			>
 				View current newsletters

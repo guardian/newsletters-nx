@@ -2,7 +2,6 @@ import { css } from '@emotion/react';
 import { space } from '@guardian/source-foundations';
 import type { ReactNode } from 'react';
 import { Outlet, useLoaderData } from 'react-router-dom';
-import { NewsletterList } from './components/NewslettersList';
 
 interface Props {
 	children?: ReactNode;
@@ -21,9 +20,6 @@ export function Layout({ children }: Props) {
 			<header css={headerStyle}>
 				<h1>Newsletters UI</h1>
 				<nav>{children}</nav>
-				<nav>
-					<NewsletterList list={data?.ids} />
-				</nav>
 				<hr></hr>
 			</header>
 			<main>
