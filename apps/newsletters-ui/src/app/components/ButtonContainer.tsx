@@ -13,16 +13,11 @@ const ContainerStyle = styled.div`
 `;
 
 export function ButtonContainer() {
-
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	return (
 		<ContainerStyle>
-			<Button
-				onClick={() =>
-					navigate("/newsletters/")
-				}
-			>
+			<Button onClick={() => navigate('/newsletters/')}>
 				View current newsletters
 			</Button>
 			<Button

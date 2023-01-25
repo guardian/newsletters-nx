@@ -7,14 +7,16 @@ export const NewsletterListView = () => {
 		return <nav>NO LIST</nav>;
 	}
 
-	const newsLetters = list as Newsletter[]
+	const newsLetters = list as Newsletter[];
 
 	return (
 		<nav>
 			<ul>
 				{newsLetters.map((newsletter, index) => (
 					<li key={index}>
-						<Link to={`/newsletters/${newsletter.identityName}`}>{newsletter.name}</Link>
+						<Link to={`/newsletters/${newsletter.identityName}`}>
+							{newsletter.name}
+						</Link>
 					</li>
 				))}
 			</ul>

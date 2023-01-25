@@ -1,5 +1,4 @@
 import type { LoaderFunction, RouteObject } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 import { NewsletterDetailView } from '../components/NewsletterDetailView';
 import { NewsletterListView } from '../components/NewslettersListView';
@@ -9,6 +8,7 @@ import { Layout } from '../Layout';
 export async function getNewsletters(): Promise<Newsletter[]> {
 	try {
 		const response = await fetch('api/v1/newsletters');
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- internal api call
 		const data = await response.json();
 		return data as Newsletter[];
 	} catch (err) {

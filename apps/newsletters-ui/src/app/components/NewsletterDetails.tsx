@@ -49,7 +49,6 @@ const flagStyles = (palette: SourcePalette) => css`
 `;
 
 export const NewsletterDetail = ({ newsletter }: Props) => {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- zod type
 	const {
 		name,
 		identityName,
@@ -99,7 +98,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 						</tr>
 						<tr>
 							<th>regionFocus</th>
-							<td>{regionFocus || '[UNDEFINED]'}</td>
+							<td>{regionFocus ?? '[UNDEFINED]'}</td>
 						</tr>
 					</tbody>
 				</table>

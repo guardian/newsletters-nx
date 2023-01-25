@@ -8,7 +8,6 @@ export const NewsletterDetailView = () => {
 		return <article>NOT FOUND!</article>;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- zod
 	if (!isNewsletter(matchedItem)) {
 		return <article>NOT VALID!</article>;
 	}
