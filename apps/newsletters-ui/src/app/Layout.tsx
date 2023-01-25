@@ -21,10 +21,8 @@ export function Layout({ children }: Props) {
 
 				<nav>
 					<Link to={`/`}>home</Link>
-					<Link to={`/dark`}>dark theme</Link>
-					<Link to={`/light`}>light theme</Link>
-					<Link to={`/api`}>api</Link>
-					<Link to={`/newsletters/`}>newsleters-list</Link>
+					<Link to={`/api`}>api test page</Link>
+					<Link to={`/newsletters/`}>View Current Newsletters</Link>
 				</nav>
 				{children && <nav>{children}</nav>}
 				<hr></hr>
