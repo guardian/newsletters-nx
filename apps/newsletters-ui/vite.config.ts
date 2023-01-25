@@ -8,6 +8,14 @@ export default defineConfig({
 	server: {
 		port: 4200,
 		host: 'localhost',
+		proxy: {
+			'/api': {
+				/** @TODO - Read target from env var / param instead of hardcoding */
+				target: 'http://localhost:3000',
+				secure: false,
+				rewrite: (path) => path.replace(/^\/api/, ''),
+			},
+		},
 	},
 
 	plugins: [

@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Api } from '../components/Api';
+import { ButtonContainer } from '../components/ButtonContainer';
 import { EmotionTest } from '../components/EmotionTest';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
@@ -21,7 +22,7 @@ export const homeRoute: RouteObject = {
 	children: [
 		{
 			path: '/',
-			element: <p>Index route</p>,
+			element: <ButtonContainer />,
 		},
 		{
 			path: 'dark/',

@@ -1,0 +1,146 @@
+openapi: 3.0.3
+info:
+  title: Newsletters API
+  description: The source of truth for newsletters at The Guardian.
+  version: '0.1'
+  contact:
+    email: newsletters-dev@guardian.co.uk
+
+paths:
+  /v1/newsletters:
+    get:
+      summary: Returns a list of newsletters.
+      description: Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
+      responses:
+        '200':
+          description: A JSON array of newsletter entities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Newsletter'
+
+components:
+  schemas:
+    Newsletter:
+      type: object
+      required:
+        - name
+        - identityName
+        - cancelled
+        - theme
+        - group
+        - listId
+        - listIdV1
+        - emailEmbed
+        - restricted
+        - paused
+        - emailConfirmation
+      properties:
+        identityName:
+          type: string
+          example: morning-briefing
+        name:
+          type: string
+          example: First Edition
+        cancelled:
+          type: boolean
+          example: false
+        restricted:
+          type: boolean
+          example: false
+        paused:
+          type: boolean
+          example: false
+        emailConfirmation:
+          type: boolean
+          example: false
+        brazeNewsletterName:
+          type: string
+          example: Editorial_MorningBriefingUK
+        brazeSubscribeAttributeName:
+          type: string
+          example: MorningBriefingUk_Subscribe_Email
+        brazeSubscribeEventNamePrefix:
+          type: string
+          example: morning_briefing_uk
+        theme:
+          type: string
+          example: News
+        group:
+          type: string
+          example: News in brief
+        description:
+          type: string
+          example: Archie Bland and Nimo Omer take you through the top stories and what they mean, free every weekday morning
+        regionFocus:
+          type: string
+          example: UK
+        frequency:
+          type: string
+          example: Every weekday
+        listIdV1:
+          type: integer
+          example: 3640
+        listId:
+          type: integer
+          example: 4156
+        exampleUrl:
+          type: string
+          example: https://www.theguardian.com/world/series/guardian-morning-briefing/latest/email
+        signupPage:
+          type: string
+          example: https://www.theguardian.com/global/2022/sep/20/sign-up-for-the-first-edition-newsletter-our-free-news-email
+        illustration:
+          $ref: '#/components/schemas/NewsletterIllustration'
+        emailEmbed:
+          $ref: '#/components/schemas/EmailEmbed'
+        campaignName:
+          type: string
+          example: MorningBriefingUK
+        campaignCode:
+          type: string
+          example: morningbriefinguk_email
+        brazeSubscribeAttributeNameAlternative:
+          type: array
+          items:
+            type: string
+            example: email_subscribe_morning_briefing_uk
+    NewsletterIllustration:
+      type: object
+      required:
+        - circle
+      properties:
+        circle:
+          type: string
+          example:
+    EmailEmbed:
+      type: object
+      required:
+        - name
+        - title
+        - successHeadline
+        - successDescription
+        - hexCode
+      properties:
+        name:
+          type: string
+          example: First Edition
+        title:
+          type: string
+          example: Sign up for First Edition
+        description:
+          type: string
+          example: Our morning email breaks down the key stories of the day, telling you what’s happening and why it matters
+        successHeadline:
+          type: string
+          example: Subscription confirmed
+        successDescription:
+          type: string
+          example: We'll send you First Edition every weekday
+        hexCode:
+          type: string
+          example: '#DCDCDC'
+        imageUrl:
+          type: string

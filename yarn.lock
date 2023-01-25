@@ -640,22 +640,17 @@
   resolved "https://registry.yarnpkg.com/@guardian/prettier/-/prettier-2.1.5.tgz#715fff5b110006408f92a3fe2a803ad0e4c79e06"
   integrity sha512-4fehERf5HHS9Nkaw+4u5EZ1OrFEHL4lYhLUWkpwEx4VmHI+RgcMezfDfosb3TD8cPFCKakrpdQEJUwNP283SJw==
 
-"@guardian/source-foundations@^7.0.1":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@guardian/source-foundations/-/source-foundations-7.0.3.tgz#2d30d8a76ac1a5382774bbaaaa39a84551d4709d"
-  integrity sha512-XDShUQ1MvQlTaa1Va+QbLSjHA2hg/lBhfoP31wQAFd0mqpGeCjGnwI6snSX31EdpkniLqJH4Y7gGcOsZ1SqtQg==
+"@guardian/source-foundations@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@guardian/source-foundations/-/source-foundations-8.0.0.tgz#7820f19475a85046ab844f4351443fbf9be56d32"
+  integrity sha512-VjWCLB9nsI+yp4jE2dysGLaUFpj1vwifa6eswwMvsazYQLfnOffRI1Gl3SvV2OJ/T4OSeLE6nSgZxfZP4sRSOw==
   dependencies:
     mini-svg-data-uri "1.4.4"
 
-"@guardian/source-react-components-development-kitchen@8.2.0":
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/@guardian/source-react-components-development-kitchen/-/source-react-components-development-kitchen-8.2.0.tgz#b7c9ff6b494f55d42e39acdde897193780dd1e76"
-  integrity sha512-1oDFsjgfEUStb7zTOo7NutBSt1L5OvaNPC9VUR8qvEqkQ31PfYmvBeIo5OEm9uHfvageUBcVS862jz9jn2PDvg==
-
-"@guardian/source-react-components@^9.1.0":
-  version "9.1.2"
-  resolved "https://registry.yarnpkg.com/@guardian/source-react-components/-/source-react-components-9.1.2.tgz#2afe6b660773449ffbedbaa74f2fc1a79cb7c3f8"
-  integrity sha512-cBw9vj9K8UrHrqAARI11fv81hnHQB4fIVVsCUhuzl/J2nvoUCicA4mo4mBl23TtlMRo+mmD+N9dn9HiZYiW95Q==
+"@guardian/source-react-components@^10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@guardian/source-react-components/-/source-react-components-10.0.2.tgz#905431f83227a5ba94ebc925e2a263121a42a4e5"
+  integrity sha512-711q02wtE8xBH5wjmMi3vgCGCU/fES91UQadZuI0uA5eSUtQdui1PoKo84XS5ENBYcDX4Afa077t+l0V94UMGQ==
 
 "@guardian/tsconfig@^0.2.0":
   version "0.2.0"
@@ -8682,3 +8677,8 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zod@^3.20.2:
+  version "3.20.2"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.20.2.tgz#068606642c8f51b3333981f91c0a8ab37dfc2807"
+  integrity sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==
