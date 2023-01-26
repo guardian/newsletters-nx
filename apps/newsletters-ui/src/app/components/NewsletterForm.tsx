@@ -1,4 +1,4 @@
-import { Inline } from '@guardian/source-react-components';
+import { Inline, InlineError } from '@guardian/source-react-components';
 import { useState } from 'react';
 import type { ZodError } from 'zod';
 import { newsletterSchema } from '@newsletters-nx/newsletters-data-client';
@@ -54,13 +54,15 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		...VALID_TECHSCAPE,
 	});
 
-	const [errors, setErrors] = useState<ZodError<Newsletter> | undefined>(
+	const [zodError, setZodError] = useState<ZodError<Newsletter> | undefined>(
 		undefined,
 	);
+	const [warning, setWarning] = useState<string | undefined>(undefined);
 
 	const manageChange = (value: FieldValue, key: FieldDef) => {
 		const mod = getModification(value, key);
-		setErrors(undefined);
+		setZodError(undefined);
+		setWarning(undefined);
 
 		const revisedData = {
 			...newsletter,
@@ -69,10 +71,17 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 
 		const parseResult = newsletterSchema.safeParse(revisedData);
 
+		if (typeof mod['identityName'] === 'string') {
+			const newIdName = mod['identityName'];
+			if (existingIds.includes(newIdName)) {
+				setWarning(`There is an existing newsletters with identityName "${newIdName}"`)
+			}
+		}
+
 		if (parseResult.success) {
 			setNewsletter(parseResult.data);
 		} else {
-			setErrors(parseResult.error);
+			setZodError(parseResult.error);
 		}
 	};
 
@@ -100,9 +109,12 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 					}}
 				/>
 
-				{errors?.issues.map((issue, index) => (
-					<ZodIssueReport issue={issue} key={index} />
-				))}
+				<div>
+					{zodError?.issues.map((issue, index) => (
+						<ZodIssueReport issue={issue} key={index} />
+					))}
+					{warning && <InlineError>{warning}</InlineError>}
+				</div>
 			</Inline>
 
 			<NewsletterDetail newsletter={newsletter} />

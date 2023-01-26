@@ -14,7 +14,7 @@ export const ZodIssueReport = ({ issue }: Props) => {
 
 	return (
 		<InlineError>
-			<b>{fieldKey}</b>
+			<b>Validation error for {fieldKey}: </b>
 			<span> "{message}"</span>
 		</InlineError>
 	);
