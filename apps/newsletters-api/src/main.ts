@@ -31,10 +31,6 @@ app.get<{ Params: { newsletterId: string } }>(
 	'/v1/newsletters/:newsletterId',
 	async (req, res) => {
 		const { newsletterId } = req.params;
-		if (newsletterId.length === 0) {
-			return res.status(400).send(makeError('no identity name', 400));
-		}
-
 		const parsedLive = liveNewslettersData.filter(isNewsletter);
 		const newsletter = parsedLive.find(
 			(newsletter) => newsletter.identityName === newsletterId,
