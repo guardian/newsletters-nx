@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 import { Table } from './Table';
@@ -17,7 +18,7 @@ export const NewslettersTable = ({newsletters}: Props) => {
       {
         Header: 'Newsletter ID',
         accessor: 'identityName',
-				
+				Cell: ({ cell: { value } }) => <Link to={`/newsletters/${value as string}`}>{value}</Link>
       },
       {
         Header: 'Newsletter Name',
