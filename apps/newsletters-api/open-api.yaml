@@ -7,7 +7,7 @@ info:
     email: newsletters-dev@guardian.co.uk
 
 paths:
-  /v1/newsletters:
+  /newsletters:
     get:
       summary: Returns a list of newsletters.
       description: Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
@@ -21,7 +21,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Newsletter'
 
-  /v1/newsletters/all:
+  /v1/newsletters:
     get:
       summary: Returns a list of newsletters.
       description: Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
@@ -48,7 +48,7 @@ paths:
                     type: number
                     example: 200
 
-  /newsletters/detail/{identityName}:
+  /newsletters/{identityName}:
     get:
       summary: Get a newsletter by identityName
       parameters:
