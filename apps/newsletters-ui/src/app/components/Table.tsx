@@ -1,6 +1,6 @@
+import { Link } from 'react-router-dom';
 import { useTable } from 'react-table';
 import type { Cell, Column } from 'react-table';
-import { Link } from 'react-router-dom';
 
 interface Props {
 	data: object[];

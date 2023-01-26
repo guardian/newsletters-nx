@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 import { NewslettersTable } from './NewslettersTable';
 
@@ -9,19 +9,5 @@ export const NewsletterListView = () => {
 	}
 
 	const newsLetters = list as Newsletter[];
-
-	// return (
-	// 	<nav>
-	// 		<ul>
-	// 			{newsLetters.map((newsletter, index) => (
-	// 				<li key={index}>
-	// 					<Link to={`/newsletters/${newsletter.identityName}`}>
-	// 						{newsletter.name}
-	// 					</Link>
-	// 				</li>
-	// 			))}
-	// 		</ul>
-	// 	</nav>
-	// );
 	return <NewslettersTable newsletters={newsLetters} />
 };
