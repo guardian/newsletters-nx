@@ -15,8 +15,13 @@ export const NewslettersTable = ({newsletters}: Props) => {
   const columns = useMemo<Column[]>(
     () => [
       {
-        Header: 'Identity Name',
+        Header: 'Newsletter ID',
         accessor: 'identityName',
+				
+      },
+      {
+        Header: 'Newsletter Name',
+        accessor: 'name',
       },
     ],
     [],
