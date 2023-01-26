@@ -9,5 +9,5 @@ export const NewsletterListView = () => {
 	}
 
 	const newsLetters = list as Newsletter[];
-	return <NewslettersTable newsletters={newsLetters} />
+	return <NewslettersTable newsletters={newsLetters} />;
 };
