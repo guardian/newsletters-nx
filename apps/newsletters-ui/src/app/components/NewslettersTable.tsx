@@ -2,17 +2,12 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import { formatCellBoolean } from './Cell';
 import { Table } from './Table';
 
 interface Props {
 	newsletters: Newsletter[];
 }
-
-type Cell<T> = { cell: { value: T } };
-
-const formatCellBoolean = ({ cell: { value } }: Cell<boolean>) => (
-	<span>{value ? '✅ Yes' : '❌ No'}</span>
-);
 
 export const NewslettersTable = ({ newsletters }: Props) => {
 	const data = useMemo<object[]>(() => newsletters, [newsletters]);
