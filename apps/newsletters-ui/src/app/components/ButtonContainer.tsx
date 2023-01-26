@@ -20,11 +20,7 @@ export function ButtonContainer() {
 			<Button onClick={() => navigate('/newsletters/')}>
 				View current newsletters
 			</Button>
-			<Button
-				onClick={() =>
-					alert('Create new newsletter has not yet been implemented')
-				}
-			>
+			<Button onClick={() => navigate('/create/')}>
 				Create new newsletter
 			</Button>
 			<Button
