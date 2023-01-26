@@ -23,6 +23,5 @@ export const NewsletterListView = () => {
 	// 		</ul>
 	// 	</nav>
 	// );
-	// return <NewslettersTable newsletters={newsLetters} />
-	return <NewslettersTable />
+	return <NewslettersTable newsletters={newsLetters} />
 };
