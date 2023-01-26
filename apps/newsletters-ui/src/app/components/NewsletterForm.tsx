@@ -1,9 +1,12 @@
+import { Inline } from '@guardian/source-react-components';
 import { useState } from 'react';
+import type { ZodError } from 'zod';
 import { newsletterSchema } from '@newsletters-nx/newsletters-data-client';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 import { NewsletterDetail } from './NewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
+import { ZodIssueReport } from './ZodIssueReport';
 
 interface Props {
 	existingIds: string[];
@@ -51,8 +54,13 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		...VALID_TECHSCAPE,
 	});
 
+	const [errors, setErrors] = useState<ZodError<Newsletter> | undefined>(
+		undefined,
+	);
+
 	const manageChange = (value: FieldValue, key: FieldDef) => {
 		const mod = getModification(value, key);
+		setErrors(undefined);
 
 		const revisedData = {
 			...newsletter,
@@ -64,7 +72,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		if (parseResult.success) {
 			setNewsletter(parseResult.data);
 		} else {
-			console.log('BAD', mod, parseResult.error);
+			setErrors(parseResult.error);
 		}
 	};
 
@@ -73,13 +81,29 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 			<h2>Create newsletter form</h2>
 			<p>EXISTING IDS: {existingIds.length}</p>
 
-			<SchemaForm
-				schema={newsletterSchema}
-				data={newsletter}
-				changeValue={manageChange}
-				showUnsupported
-				options={{ regionFocus: ['UK', 'AUS', 'US'] }}
-			/>
+			<Inline>
+				<SchemaForm
+					schema={newsletterSchema}
+					data={newsletter}
+					changeValue={manageChange}
+					showUnsupported
+					options={{
+						regionFocus: ['UK', 'AUS', 'US'],
+						theme: [
+							'sport',
+							'lifestyle',
+							'opinion',
+							'culture',
+							'news',
+							'features',
+						],
+					}}
+				/>
+
+				{errors?.issues.map((issue, index) => (
+					<ZodIssueReport issue={issue} key={index} />
+				))}
+			</Inline>
 
 			<NewsletterDetail newsletter={newsletter} />
 		</div>
