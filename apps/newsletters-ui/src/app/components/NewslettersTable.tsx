@@ -24,6 +24,11 @@ export const NewslettersTable = ({newsletters}: Props) => {
         Header: 'Newsletter Name',
         accessor: 'name',
       },
+      {
+        Header: 'Paused',
+        accessor: 'paused',
+				Cell: ({ cell: { value } }) => <>{value ? '✅ Yes' : '❌ No'}</>
+      },
     ],
     [],
   );
