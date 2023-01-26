@@ -17,34 +17,33 @@ app.get('/health', async () => {
 
 // not using the makeSuccess function on this route as
 // we are emulating the response of the legacy API
-app.get('/v1/newsletters', async (req, res) => {
-	// TO DO - why is eslint not happy here?
+app.get('/newsletters', async (req, res) => {
 	const newsletters = liveNewslettersData.filter(isNewsletter);
 	return newsletters;
 });
 
-app.get('/v1/newsletters/all', async (req, res) => {
+app.get('/v1/newsletters', async (req, res) => {
 	const newsletters = liveNewslettersData.filter(isNewsletter);
 	return makeSuccess({ newsletters });
 });
 
-app.get<{ Params: { identityName: string } }>(
-	'/v1/newsletters/detail/:identityName',
+app.get<{ Params: { newsletterId: string } }>(
+	'/v1/newsletters/:newsletterId',
 	async (req, res) => {
-		const { identityName } = req.params;
-		if (identityName.length === 0) {
+		const { newsletterId } = req.params;
+		if (newsletterId.length === 0) {
 			return res.status(400).send(makeError('no identity name', 400));
 		}
 
 		const parsedLive = liveNewslettersData.filter(isNewsletter);
 		const newsletter = parsedLive.find(
-			(newsletter) => newsletter.identityName === identityName,
+			(newsletter) => newsletter.identityName === newsletterId,
 		);
 
 		if (!newsletter) {
 			return res
 				.status(404)
-				.send(makeError(`no match for id ${identityName}`, 404));
+				.send(makeError(`no match for id ${newsletterId}`, 404));
 		}
 
 		return makeSuccess({ newsletter });
