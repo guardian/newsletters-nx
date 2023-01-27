@@ -48,7 +48,9 @@ export function SchemaForm<T extends z.ZodRawShape>({
 		}
 
 		const enumOptions =
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
 			zod._def.typeName === 'ZodEnum'
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
 				? (zod._def.values as unknown as string[])
 				: undefined;
 
