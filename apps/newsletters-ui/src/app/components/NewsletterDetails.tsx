@@ -100,6 +100,14 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 							<th>regionFocus</th>
 							<td>{regionFocus ?? '[UNDEFINED]'}</td>
 						</tr>
+						<tr>
+							<th>emailEmbed</th>
+							<td>{JSON.stringify(newsletter.emailEmbed,undefined,1)}</td>
+						</tr>
+						<tr>
+							<th>Illustration.circle</th>
+							<td>{newsletter.illustration?.circle ?? '[UNDEFINED]'}</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

@@ -3,11 +3,11 @@ import { z } from 'zod';
 const nonEmptyString = () =>
 	z.string().min(1, { message: 'Must not be empty' });
 
-const illustrationSchema = z.object({
+export const illustrationSchema = z.object({
 	circle: z.string(),
 });
 
-const emailEmbedSchema = z.object({
+export const emailEmbedSchema = z.object({
 	name: z.string(),
 	title: z.string(),
 	description: z.string().optional(),
