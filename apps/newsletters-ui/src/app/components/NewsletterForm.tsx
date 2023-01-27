@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { neutral, space } from '@guardian/source-foundations';
-import { Inline, InlineError } from '@guardian/source-react-components';
+import { Inline } from '@guardian/source-react-components';
 import { useState } from 'react';
 import type { ZodError } from 'zod';
 import {
@@ -66,7 +66,10 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 	const [zodError, setZodError] = useState<ZodError<Newsletter> | undefined>(
 		undefined,
 	);
-	const [warning, setWarning] = useState<string | undefined>(undefined);
+
+	const [warnings, setWarnings] = useState<
+		Partial<Record<keyof Newsletter, string>>
+	>({});
 
 	const manageChange = (value: FieldValue, key: FieldDef) => {
 		const mod = getModification(value, key);
@@ -78,9 +81,9 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		if (typeof mod['identityName'] === 'string') {
 			const newIdName = mod['identityName'];
 			if (existingIds.includes(newIdName)) {
-				setWarning(
-					`There is an existing newsletters with identityName "${newIdName}"`,
-				);
+				setWarnings({
+					identityName: `There is an existing newsletters with identityName "${newIdName}"`,
+				});
 			}
 		}
 
@@ -114,7 +117,6 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		revisedData: Partial<Record<keyof Newsletter, unknown>>,
 	) => {
 		setZodError(undefined);
-		setWarning(undefined);
 		const parseResult = newsletterSchema.safeParse(revisedData);
 
 		if (parseResult.success) {
@@ -139,13 +141,13 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 						regionFocus: ['UK', 'AUS', 'US'],
 					}}
 					excludedKeys={['emailEmbed', 'illustration']}
+					validationWarnings={warnings}
 				/>
 
 				<div>
 					{zodError?.issues.map((issue, index) => (
 						<ZodIssueReport issue={issue} key={index} />
 					))}
-					{warning && <InlineError>{warning}</InlineError>}
 				</div>
 			</Inline>
 
@@ -161,6 +163,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 					data={newsletter.emailEmbed}
 					changeValue={manageEmailEmbedChange}
 					showUnsupported
+					validationWarnings={{}}
 				/>
 			</div>
 
@@ -179,6 +182,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 							data={newsletter.illustration}
 							changeValue={manageIllustrationChange}
 							showUnsupported
+							validationWarnings={{}}
 						/>
 					</div>
 				</>

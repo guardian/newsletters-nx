@@ -16,6 +16,7 @@ interface SchemaFieldProps<T> {
 	stringInputType?: string;
 	showUnsupported?: boolean;
 	numberInputSettings?: NumberInputSettings;
+	validationWarning?: string;
 }
 
 const fieldValueAsSting = (field: FieldDef): string => {
@@ -41,6 +42,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	stringInputType,
 	showUnsupported = false,
 	numberInputSettings = {},
+	validationWarning,
 }: SchemaFieldProps<T>) {
 	const { key, type, value } = field;
 
@@ -61,6 +63,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					change(eventToString(event), field);
 				}}
 				required={!field.optional}
+				error={validationWarning}
 			/>
 		);
 	}

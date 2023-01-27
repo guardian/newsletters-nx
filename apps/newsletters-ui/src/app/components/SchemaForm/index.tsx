@@ -12,6 +12,7 @@ interface Props<T extends z.ZodRawShape> {
 	numberConfig?: Partial<Record<keyof T, NumberInputSettings>>;
 	showUnsupported?: boolean;
 	excludedKeys?: string[];
+	validationWarnings: Partial<Record<keyof T, string>>;
 }
 
 /**
@@ -26,6 +27,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	numberConfig = {},
 	showUnsupported = false,
 	excludedKeys = [],
+	validationWarnings
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
@@ -74,6 +76,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 					field={field}
 					showUnsupported={showUnsupported}
 					stringInputType={field.key === 'text' ? 'textArea' : undefined}
+					validationWarning={validationWarnings[field.key]}
 				/>
 			))}
 		</article>
