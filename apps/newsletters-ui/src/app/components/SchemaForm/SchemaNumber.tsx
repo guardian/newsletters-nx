@@ -14,26 +14,22 @@ export const SchemaNumber = ({
 	numberInputSettings = {},
 }: Props) => {
 	return field.optional ? (
-		<div>
-			<OptionalNumberInput
-				label={field.key}
-				{...numberInputSettings}
-				value={numberValue}
-				inputHandler={(value) => {
-					change(value, field);
-				}}
-			/>
-		</div>
+		<OptionalNumberInput
+			label={field.key}
+			{...numberInputSettings}
+			value={numberValue}
+			inputHandler={(value) => {
+				change(value, field);
+			}}
+		/>
 	) : (
-		<div>
-			<NumberInput
-				label={field.key}
-				{...numberInputSettings}
-				value={numberValue ?? 0}
-				inputHandler={(value) => {
-					change(value, field);
-				}}
-			/>
-		</div>
+		<NumberInput
+			label={field.key}
+			{...numberInputSettings}
+			value={numberValue ?? 0}
+			inputHandler={(value) => {
+				change(value, field);
+			}}
+		/>
 	);
 };

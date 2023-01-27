@@ -1,28 +1,37 @@
-import {  useRef } from 'react';
-import type { FormEventHandler, FunctionComponent, ReactNode} from 'react';
+import { css } from '@emotion/react';
+import { space, textSansObjectStyles } from '@guardian/source-foundations';
+import { useRef } from 'react';
+import type { FormEventHandler, FunctionComponent, ReactNode } from 'react';
 import { eventToNumber } from './util';
 
+const fieldStyle = css`
+	padding: ${space[1]}px 0;
+
+	label {
+		display: block;
+		${textSansObjectStyles.medium({ fontWeight: 'bold' })}
+	}
+
+	input {
+		margin-top: ${space[1]}px;
+		padding: ${space[1]} ${space[2]}px;
+		${textSansObjectStyles.medium({ fontWeight: 'regular' })}
+	}
+`;
+
 type FieldProps = {
-	block?: boolean;
-	className?: string;
 	label?: string;
 };
 const FieldWrapper: FunctionComponent<
 	FieldProps & { children?: ReactNode }
-> = ({ children, block, className, label }) => {
-	return block ? (
-		<div className={className}>
+> = ({ children, label }) => {
+	return (
+		<div css={fieldStyle}>
 			{label && <label>{label}</label>}
 			{children}
 		</div>
-	) : (
-		<>
-			{label && <label>{label}</label>}
-			{children}
-		</>
 	);
 };
-
 
 export const NumberInput: FunctionComponent<
 	FieldProps & {
@@ -35,7 +44,6 @@ export const NumberInput: FunctionComponent<
 	}
 > = (props) => {
 	const { type = 'number' } = props;
-	const width = type === 'range' ? '5rem' : '3rem';
 
 	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
 		props.inputHandler(eventToNumber(event));
@@ -45,7 +53,6 @@ export const NumberInput: FunctionComponent<
 		<FieldWrapper {...props}>
 			<input
 				type={type}
-				style={{ width }}
 				value={props.value}
 				max={props.max}
 				min={props.min}
@@ -88,7 +95,6 @@ export const OptionalNumberInput: FunctionComponent<
 			<input
 				type="number"
 				disabled={typeof props.value === 'undefined'}
-				style={{ width: '3rem' }}
 				value={props.value}
 				max={props.max}
 				min={props.min}
