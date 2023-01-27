@@ -1,7 +1,7 @@
 import { Checkbox, TextInput } from '@guardian/source-react-components';
 import type { ReactNode } from 'react';
 import type { z } from 'zod';
-import { NumberInput, OptionalNumberInput } from './formControls';
+import { SchemaNumber } from './SchemaNumber';
 import { SchemaSelect } from './SchemaSelect';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 import { eventToBoolean, eventToString } from './util';
@@ -82,23 +82,12 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 		if (type === 'ZodNumber') {
 			if (typeof value === 'number' || typeof value === 'undefined') {
-				return field.optional ? (
-					<OptionalNumberInput
-						label={key}
-						{...numberInputSettings}
-						value={value}
-						inputHandler={(value) => {
-							change(value, field);
-						}}
-					/>
-				) : (
-					<NumberInput
-						label={key}
-						{...numberInputSettings}
-						value={value ?? 0}
-						inputHandler={(value) => {
-							change(value, field);
-						}}
+				return (
+					<SchemaNumber
+						numberValue={value}
+						field={field}
+						change={change}
+						numberInputSettings={numberInputSettings}
 					/>
 				);
 			}
