@@ -1,42 +1,38 @@
 import { css } from '@emotion/react';
 import { neutral, space } from '@guardian/source-foundations';
-import { Inline } from '@guardian/source-react-components';
-import { useState } from 'react';
-import type { ZodError } from 'zod';
+import { useEffect, useState } from 'react';
 import {
 	emailEmbedSchema,
 	illustrationSchema,
 	newsletterSchema,
+	newsletterSchemaAllowingEmptyStrings,
 } from '@newsletters-nx/newsletters-data-client';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 import { NewsletterDetail } from './NewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
-import { ZodIssueReport } from './ZodIssueReport';
 
 interface Props {
 	existingIds: string[];
 }
 
-const VALID_TECHSCAPE: Newsletter = {
-	identityName: 'tech-scape',
-	name: 'TechScape',
+const BLANK_FORM: Newsletter = {
+	identityName: '',
+	name: '',
 	cancelled: false,
 	restricted: false,
 	paused: false,
 	emailConfirmation: false,
-	brazeNewsletterName: 'Editorial_TechScape',
-	brazeSubscribeAttributeName: 'TechScape_Subscribe_Email',
-	brazeSubscribeEventNamePrefix: 'tech_scape',
+	brazeNewsletterName: '',
+	brazeSubscribeAttributeName: '',
+	brazeSubscribeEventNamePrefix: '',
 	theme: 'news',
 	group: 'News in depth',
-	description:
-		"Alex Hern's weekly dive in to how technology is shaping our lives",
+	description: '',
 	frequency: 'Weekly',
 	listIdV1: -1,
 	listId: 6013,
-	signupPage:
-		'/info/2022/sep/20/sign-up-for-the-techscape-newsletter-our-free-technology-email',
+	signupPage: '',
 	emailEmbed: {
 		name: 'TechScape',
 		title: 'Sign up for TechScape',
@@ -46,13 +42,9 @@ const VALID_TECHSCAPE: Newsletter = {
 		successDescription: "We'll send you TechScape every week",
 		hexCode: '#DCDCDC',
 	},
-	campaignName: 'TechScape',
-	campaignCode: 'techscape_email',
-	brazeSubscribeAttributeNameAlternate: [
-		'email_subscribe_tech_scape',
-		'TechTonic_Subscribe_Email',
-		'email_subscribe_tech_tonic',
-	],
+	campaignName: '',
+	campaignCode: '',
+	brazeSubscribeAttributeNameAlternate: [],
 	illustration: {
 		circle: '',
 	},
@@ -60,12 +52,8 @@ const VALID_TECHSCAPE: Newsletter = {
 
 export const NewsletterForm = ({ existingIds }: Props) => {
 	const [newsletter, setNewsletter] = useState<Newsletter>({
-		...VALID_TECHSCAPE,
+		...BLANK_FORM,
 	});
-
-	const [zodError, setZodError] = useState<ZodError<Newsletter> | undefined>(
-		undefined,
-	);
 
 	const [warnings, setWarnings] = useState<
 		Partial<Record<keyof Newsletter, string>>
@@ -87,7 +75,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 			}
 		}
 
-		reviseIfValid(revisedData);
+		updateDataAndWarnings(revisedData);
 	};
 
 	const manageEmailEmbedChange = (value: FieldValue, key: FieldDef) => {
@@ -99,7 +87,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 				...mod,
 			},
 		};
-		reviseIfValid(revisedData);
+		updateDataAndWarnings(revisedData);
 	};
 	const manageIllustrationChange = (value: FieldValue, key: FieldDef) => {
 		const mod = getModification(value, key);
@@ -110,46 +98,59 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 				...mod,
 			},
 		};
-		reviseIfValid(revisedData);
+		updateDataAndWarnings(revisedData);
 	};
 
-	const reviseIfValid = (
+	const updateDataAndWarnings = (
 		revisedData: Partial<Record<keyof Newsletter, unknown>>,
 	) => {
-		setZodError(undefined);
+		setWarnings({});
 		const parseResult = newsletterSchema.safeParse(revisedData);
+		const issueMap: Partial<Record<keyof Newsletter, string>> = {};
+		if (existingIds.includes(revisedData.identityName as string)) {
+			issueMap.identityName =
+				'There is an existing newsletters with this identityName';
+		}
 
 		if (parseResult.success) {
 			setNewsletter(parseResult.data);
 		} else {
-			setZodError(parseResult.error);
+			parseResult.error.issues.forEach((issue) => {
+				const { message, path, code } = issue;
+				const key =
+					typeof path[0] === 'string'
+						? (path[0] as keyof Newsletter)
+						: undefined;
+
+				if (key) {
+					issueMap[key] = message || code;
+				}
+			});
+
+			const parseResultAllowingEmptyStrings =
+				newsletterSchemaAllowingEmptyStrings.safeParse(revisedData);
+			if (parseResultAllowingEmptyStrings.success) {
+				setNewsletter(parseResultAllowingEmptyStrings.data);
+			}
 		}
+		setWarnings(issueMap);
 	};
 
 	return (
 		<div>
 			<h2>Create newsletter form</h2>
-			<p>EXISTING IDS: {existingIds.length}</p>
 
-			<Inline>
-				<SchemaForm
-					schema={newsletterSchema}
-					data={newsletter}
-					changeValue={manageChange}
-					showUnsupported
-					options={{
-						regionFocus: ['UK', 'AUS', 'US'],
-					}}
-					excludedKeys={['emailEmbed', 'illustration']}
-					validationWarnings={warnings}
-				/>
-
-				<div>
-					{zodError?.issues.map((issue, index) => (
-						<ZodIssueReport issue={issue} key={index} />
-					))}
-				</div>
-			</Inline>
+			<SchemaForm
+				schema={newsletterSchema}
+				data={newsletter}
+				changeValue={manageChange}
+				showUnsupported
+				options={{
+					regionFocus: ['UK', 'AUS', 'US'],
+				}}
+				excludedKeys={['emailEmbed', 'illustration']}
+				validationWarnings={warnings}
+			/>
 
 			<h3>emailEmbed</h3>
 			<div
