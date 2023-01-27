@@ -9,8 +9,6 @@ interface Props<T extends z.ZodRawShape> {
 	data: Record<string, unknown>;
 	changeValue: { (value: FieldValue, field: FieldDef): void };
 	options?: Partial<Record<keyof T, string[]>>;
-	optionDescriptions?: Partial<Record<keyof T, string[]>>;
-	suggestions?: Partial<Record<keyof T, string[]>>;
 	numberConfig?: Partial<Record<keyof T, NumberInputSettings>>;
 	showUnsupported?: boolean;
 }
@@ -25,9 +23,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	data,
 	changeValue,
 	options = {},
-	optionDescriptions = {},
 	numberConfig = {},
-	suggestions = {},
 	showUnsupported = false,
 }: Props<T>) {
 	const fields: FieldDef[] = [];
@@ -66,10 +62,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			{fields.map((field) => (
 				<SchemaField
 					key={field.key}
-					noTriState
 					options={options[field.key]}
-					optionDescriptions={optionDescriptions[field.key]}
-					suggestions={suggestions[field.key]}
 					numberInputSettings={numberConfig[field.key]}
 					change={changeValue}
 					field={field}

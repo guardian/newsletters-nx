@@ -1,21 +1,15 @@
-import {
-	Checkbox,
-	TextInput,
-} from '@guardian/source-react-components';
+import { Checkbox, TextInput } from '@guardian/source-react-components';
 import type { ReactNode } from 'react';
 import type { z } from 'zod';
-import { NumberInput, OptionalNumberInput, StringInput } from './formControls';
+import { NumberInput, OptionalNumberInput } from './formControls';
 import { SchemaSelect } from './SchemaSelect';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 import { eventToBoolean, eventToString } from './util';
 
 interface SchemaFieldProps<T> {
 	field: FieldDef;
-	noTriState?: boolean;
 	change: { (value: FieldValue, field: FieldDef): void };
 	options?: string[];
-	optionDescriptions?: string[];
-	suggestions?: string[];
 	stringInputType?: string;
 	showUnsupported?: boolean;
 	numberInputSettings?: NumberInputSettings;
@@ -24,10 +18,7 @@ interface SchemaFieldProps<T> {
 export function SchemaField<T extends z.ZodRawShape>({
 	field,
 	change,
-	noTriState,
 	options,
-	optionDescriptions,
-	suggestions,
 	stringInputType,
 	showUnsupported = false,
 	numberInputSettings = {},
@@ -61,17 +52,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				return <SchemaSelect field={field} change={change} options={options} />;
 			}
 
-			return suggestions ? (
-				<StringInput
-					label={key}
-					value={value ?? ''}
-					type={stringInputType}
-					suggestions={suggestions}
-					inputHandler={(value) => {
-						change(value, field);
-					}}
-				/>
-			) : (
+			return (
 				<TextInput
 					label={key}
 					value={value}
