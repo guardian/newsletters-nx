@@ -13,14 +13,14 @@ jobs:
     with:
       number-of-agents: 3
       init-commands: |
-        npm nx-cloud start-ci-run --stop-agents-after="build" --agent-count=3
+        npx nx-cloud start-ci-run --stop-agents-after="build" --agent-count=3
       parallel-commands: |
-        npm nx-cloud record -- npm nx workspace-lint
-        npm nx-cloud record -- npm nx format:check
+        npx nx-cloud record -- npx nx workspace-lint
+        npx nx-cloud record -- npx nx format:check
       parallel-commands-on-agents: |
-        npm nx affected --target=lint --parallel=3
-        npm nx affected --target=test --parallel=3 --ci --code-coverage
-        npm nx affected --target=build --parallel=3
+        npx nx affected --target=lint --parallel=3
+        npx nx affected --target=test --parallel=3 --ci --code-coverage
+        npx nx affected --target=build --parallel=3
 
   agents:
     name: Nx Cloud - Agents
