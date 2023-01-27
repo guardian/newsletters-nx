@@ -1,20 +1,8 @@
 import type { z } from 'zod';
 import { SchemaField } from './SchemaField';
+import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 
-export interface FieldDef {
-	key: string;
-	optional: boolean;
-	type: string;
-	value: unknown;
-	enumOptions?: string[];
-}
-export type FieldValue = string | number | boolean | undefined;
-
-export type NumberInputSettings = {
-	min?: number;
-	max?: number;
-	step?: number;
-};
+export * from './util'
 
 interface Props<T extends z.ZodRawShape> {
 	schema: z.ZodObject<T>;
@@ -27,35 +15,6 @@ interface Props<T extends z.ZodRawShape> {
 	showUnsupported?: boolean;
 }
 
-function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
-	if (field.type === 'ZodEnum') {
-		return field.enumOptions?.includes(value as string) ?? false;
-	}
-	switch (typeof value) {
-		case 'undefined':
-			return field.optional;
-		case 'string':
-			return field.type === 'ZodString';
-		case 'number':
-			return field.type === 'ZodNumber';
-		case 'boolean':
-			return field.type === 'ZodBoolean';
-		default:
-			return false;
-	}
-}
-
-export function getModification(
-	value: FieldValue,
-	field: FieldDef,
-): Record<string, FieldValue> {
-	if (fieldValueIsRightType(value, field)) {
-		const mod: Record<string, FieldValue> = {};
-		mod[field.key] = value;
-		return mod;
-	}
-	return {};
-}
 
 /**
  * Creates a form for the schema, Supports only primitives, optional primitives
@@ -87,7 +46,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			type = zod._def.typeName as unknown as string;
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
+
 		const enumOptions =
 			zod._def.typeName === 'ZodEnum'
 				? (zod._def.values as unknown as string[])
