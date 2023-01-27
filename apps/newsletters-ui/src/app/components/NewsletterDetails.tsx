@@ -44,7 +44,7 @@ const flagStyles = (palette: SourcePalette) => css`
 	margin-bottom: ${space[3]}px;
 	border-radius: ${space[3]}px;
 	padding: ${space[2]}px ${space[4]}px;
-	background-color: ${palette[600]};
+	background-color: ${palette[500]};
 	color: ${palette[100]};
 `;
 
