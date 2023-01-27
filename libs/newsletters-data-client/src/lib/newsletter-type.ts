@@ -17,7 +17,7 @@ const emailEmbedSchema = z.object({
 	imageUrl: z.string().optional(),
 });
 
-const themeEnumSchema = z.enum(['news', 'opinion', 'culture', 'sport', 'lifestyle', 'features'])
+const themeEnumSchema = z.enum(['news', 'opinion', 'culture', 'sport', 'lifestyle', 'features', 'cancelled', 'work', 'from the papers'])
 export type Theme = z.infer<typeof themeEnumSchema>
 
 export const baseNewsletterSchema = z.object({
