@@ -1,16 +1,11 @@
 import {
 	Checkbox,
-	Option,
-	Select,
 	TextInput,
 } from '@guardian/source-react-components';
 import type { ReactNode } from 'react';
 import type { z } from 'zod';
-import {
-	NumberInput,
-	OptionalNumberInput,
-	StringInput,
-} from './formControls';
+import { NumberInput, OptionalNumberInput, StringInput } from './formControls';
+import { SchemaSelect } from './SchemaSelect';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 import { eventToBoolean, eventToString } from './util';
 
@@ -63,35 +58,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			(typeof value === 'string' || typeof value === 'undefined')
 		) {
 			if (options) {
-				return (
-					<Select
-						label={key}
-						optional={field.optional}
-						value={typeof field.value === 'string' ? field.value : undefined}
-						onChange={(event) => {
-							// using empty string as the value for the default option
-							// since '' is falsy, the vaue passed the change function will
-							// be undefined.
-							change(event.target.value || undefined, field);
-						}}
-					>
-						<>
-							{field.optional && (
-								// picking the default option should result in the field being set to undefined
-								// but if the option value is undefined, the target.value the change event will
-								// use the text content of the option as a fall back.
-								<Option key={-1} value={''}>
-									{`select ${key}`}
-								</Option>
-							)}
-							{options.map((option) => (
-								<Option key={option} value={option}>
-									{option}
-								</Option>
-							))}
-						</>
-					</Select>
-				);
+				return <SchemaSelect field={field} change={change} options={options} />;
 			}
 
 			return suggestions ? (
@@ -159,36 +126,11 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (type === 'ZodEnum' && field.enumOptions) {
 			if (typeof value === 'string') {
 				return (
-
-					<Select
-					label={key}
-					optional={field.optional}
-					value={typeof field.value === 'string' ? field.value : undefined}
-					onChange={(event) => {
-						// using empty string as the value for the default option
-						// since '' is falsy, the vaue passed the change function will
-						// be undefined.
-						change(event.target.value || undefined, field);
-					}}
-				>
-					<>
-						{field.optional && (
-							// picking the default option should result in the field being set to undefined
-							// but if the option value is undefined, the target.value the change event will
-							// use the text content of the option as a fall back.
-							<Option key={-1} value={''}>
-								{`select ${key}`}
-							</Option>
-						)}
-						{field.enumOptions.map((option) => (
-							<Option key={option} value={option}>
-								{option}
-							</Option>
-						))}
-					</>
-				</Select>
-
-
+					<SchemaSelect
+						field={field}
+						change={change}
+						options={field.enumOptions}
+					/>
 				);
 			}
 		}
