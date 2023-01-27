@@ -1,78 +1,62 @@
+import { Button, Tooltip } from '@chakra-ui/react';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router';
+import { space, until } from '@guardian/source-foundations';
+import { Link } from 'react-router-dom';
 
 const ContainerStyle = styled.div`
 	display: grid;
 	grid-template-columns: auto auto auto;
-	column-gap: 40px;
-	row-gap: 25px;
-	@media (max-width: 375px) {
+	column-gap: ${space[6]}px;
+	row-gap: ${space[2]}px;
+	${until.tablet} {
+		grid-template-columns: auto auto;
+	}
+	${until.mobileLandscape} {
 		grid-template-columns: auto;
 	}
 `;
 
-export function ButtonContainer() {
-	const navigate = useNavigate();
+type DisabledButtonProps = { children: string; tooltipLabel?: string };
+const DisabledButton = ({
+	children,
+	tooltipLabel = 'Not implemented yet',
+}: DisabledButtonProps) => (
+	<Tooltip label={tooltipLabel}>
+		<Button
+			style={{
+				cursor: 'not-allowed',
+				color: 'grey',
+				background: 'none',
+			}}
+			variant="ghost"
+		>
+			{children}
+		</Button>
+	</Tooltip>
+);
 
+export function ButtonContainer() {
 	return (
 		<ContainerStyle>
-			<button onClick={() => navigate('/newsletters/')}>
-				View current newsletters
-			</button>
-			<button
-				onClick={() =>
-					alert('Create new newsletter has not yet been implemented')
-				}
-			>
-				Create new newsletter
-			</button>
-			<button
-				onClick={() => alert('Update newsletter has not yet been implemented')}
-			>
-				Update newsletter
-			</button>
-			<button
-				onClick={() =>
-					alert('Create email template has not yet been implemented')
-				}
-			>
-				Create email template
-			</button>
-			<button
-				onClick={() =>
-					alert('Create single thrasher has not yet been implemented')
-				}
-			>
-				Create single thrasher
-			</button>
-			<button
-				onClick={() =>
-					alert('Create multi thrasher has not yet been implemented')
-				}
-			>
-				Create multi thrasher
-			</button>
-			<button
-				onClick={() =>
-					alert('Update email template has not yet been implemented')
-				}
-			>
-				Update email template
-			</button>
-			<button
-				onClick={() =>
-					alert('Update single thrasher has not yet been implemented')
-				}
-			>
-				Update single thrasher
-			</button>
-			<button
-				onClick={() =>
-					alert('Update multi thrasher has not yet been implemented')
-				}
-			>
-				Update multi thrasher
-			</button>
+			<Button>
+				<Link to="/newsletters">View current newsletters</Link>
+			</Button>
+
+			<DisabledButton>Create newsletter</DisabledButton>
+
+			<DisabledButton>Update newsletter</DisabledButton>
+
+			<DisabledButton>View email templates</DisabledButton>
+
+			<DisabledButton>Create email template</DisabledButton>
+
+			<DisabledButton>Update email template</DisabledButton>
+
+			<DisabledButton>View all thrashers</DisabledButton>
+
+			<DisabledButton>Create single thrasher</DisabledButton>
+
+			<DisabledButton>Create multi thrasher</DisabledButton>
 		</ContainerStyle>
 	);
 }
