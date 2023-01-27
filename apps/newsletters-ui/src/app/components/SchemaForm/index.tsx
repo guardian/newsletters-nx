@@ -2,7 +2,7 @@ import type { z } from 'zod';
 import { SchemaField } from './SchemaField';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 
-export * from './util'
+export * from './util';
 
 interface Props<T extends z.ZodRawShape> {
 	schema: z.ZodObject<T>;
@@ -11,8 +11,8 @@ interface Props<T extends z.ZodRawShape> {
 	options?: Partial<Record<keyof T, string[]>>;
 	numberConfig?: Partial<Record<keyof T, NumberInputSettings>>;
 	showUnsupported?: boolean;
+	excludedKeys?: string[];
 }
-
 
 /**
  * Creates a form for the schema, Supports only primitives, optional primitives
@@ -25,12 +25,17 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	options = {},
 	numberConfig = {},
 	showUnsupported = false,
+	excludedKeys = [],
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
 		const zod = schema.shape[key];
 		if (!zod) {
 			return null;
+		}
+
+		if (excludedKeys.includes(key)) {
+			continue;
 		}
 
 		let type: string;
@@ -41,7 +46,6 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
 			type = zod._def.typeName as unknown as string;
 		}
-
 
 		const enumOptions =
 			zod._def.typeName === 'ZodEnum'

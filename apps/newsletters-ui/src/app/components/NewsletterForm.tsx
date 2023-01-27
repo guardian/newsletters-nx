@@ -99,6 +99,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 					options={{
 						regionFocus: ['UK', 'AUS', 'US'],
 					}}
+					excludedKeys={['emailEmbed','illustration']}
 				/>
 
 				<div>
