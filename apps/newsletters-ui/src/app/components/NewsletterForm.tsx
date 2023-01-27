@@ -98,14 +98,6 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 					showUnsupported
 					options={{
 						regionFocus: ['UK', 'AUS', 'US'],
-						theme: [
-							'sport',
-							'lifestyle',
-							'opinion',
-							'culture',
-							'news',
-							'features',
-						],
 					}}
 				/>
 

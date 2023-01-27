@@ -4,6 +4,7 @@ import {
 	lifestyle,
 	news,
 	opinion,
+	specialReport,
 	sport,
 } from '@guardian/source-foundations';
 
@@ -13,7 +14,8 @@ export type SourcePalette =
 	| typeof news
 	| typeof opinion
 	| typeof sport
-	| typeof brand;
+	| typeof brand
+	| typeof specialReport;
 
 export const getPalette = (theme: string): SourcePalette => {
 	switch (theme) {
@@ -28,6 +30,7 @@ export const getPalette = (theme: string): SourcePalette => {
 		case 'news':
 			return news;
 		case 'features':
+			return specialReport;
 		default:
 			return brand;
 	}

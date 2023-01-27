@@ -9,7 +9,6 @@ import type { z } from 'zod';
 import {
 	NumberInput,
 	OptionalNumberInput,
-	SelectInput,
 	StringInput,
 } from './formControls';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
@@ -38,7 +37,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	showUnsupported = false,
 	numberInputSettings = {},
 }: SchemaFieldProps<T>) {
-	const { key, optional, type, value } = field;
+	const { key, type, value } = field;
 	const isSupported = [
 		'ZodString',
 		'ZodBoolean',
@@ -157,15 +156,39 @@ export function SchemaField<T extends z.ZodRawShape>({
 			}
 		}
 
-		if (type === 'ZodEnum' && !optional && field.enumOptions) {
+		if (type === 'ZodEnum' && field.enumOptions) {
 			if (typeof value === 'string') {
 				return (
-					<SelectInput
-						label={key}
-						value={value}
-						onSelect={(value) => change(value, field)}
-						items={field.enumOptions}
-					/>
+
+					<Select
+					label={key}
+					optional={field.optional}
+					value={typeof field.value === 'string' ? field.value : undefined}
+					onChange={(event) => {
+						// using empty string as the value for the default option
+						// since '' is falsy, the vaue passed the change function will
+						// be undefined.
+						change(event.target.value || undefined, field);
+					}}
+				>
+					<>
+						{field.optional && (
+							// picking the default option should result in the field being set to undefined
+							// but if the option value is undefined, the target.value the change event will
+							// use the text content of the option as a fall back.
+							<Option key={-1} value={''}>
+								{`select ${key}`}
+							</Option>
+						)}
+						{field.enumOptions.map((option) => (
+							<Option key={option} value={option}>
+								{option}
+							</Option>
+						))}
+					</>
+				</Select>
+
+
 				);
 			}
 		}

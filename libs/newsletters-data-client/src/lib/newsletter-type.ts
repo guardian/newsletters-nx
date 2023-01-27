@@ -17,7 +17,10 @@ const emailEmbedSchema = z.object({
 	imageUrl: z.string().optional(),
 });
 
-const baseNewsletterSchema = z.object({
+const themeEnumSchema = z.enum(['news', 'opinion', 'culture', 'sport', 'lifestyle', 'features'])
+export type Theme = z.infer<typeof themeEnumSchema>
+
+export const baseNewsletterSchema = z.object({
 	identityName: nonEmptyString(),
 	name: nonEmptyString(),
 	cancelled: z.boolean(),
@@ -27,7 +30,7 @@ const baseNewsletterSchema = z.object({
 	brazeNewsletterName: z.string().optional(),
 	brazeSubscribeAttributeName: z.string().optional(),
 	brazeSubscribeEventNamePrefix: z.string().optional(),
-	theme: nonEmptyString(),
+	theme: themeEnumSchema,
 	group: nonEmptyString(),
 	description: z.string().optional(),
 	regionFocus: z.string().optional(),
