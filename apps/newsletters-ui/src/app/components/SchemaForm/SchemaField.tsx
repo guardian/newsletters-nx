@@ -1,14 +1,19 @@
+import {
+	Checkbox,
+	Option,
+	Select,
+	TextInput,
+} from '@guardian/source-react-components';
 import type { ReactNode } from 'react';
 import type { z } from 'zod';
 import {
-	CheckBoxInput,
 	NumberInput,
 	OptionalNumberInput,
 	SelectInput,
 	StringInput,
-	TriStateInput,
 } from './formControls';
-import type { FieldDef, FieldValue, NumberInputSettings } from '.';
+import type { FieldDef, FieldValue, NumberInputSettings } from './util';
+import { eventToBoolean, eventToString } from './util';
 
 interface SchemaFieldProps<T> {
 	field: FieldDef;
@@ -60,19 +65,37 @@ export function SchemaField<T extends z.ZodRawShape>({
 		) {
 			if (options) {
 				return (
-					<SelectInput
+					<Select
 						label={key}
-						value={value ?? ''}
-						onSelect={(value) => change(value, field)}
-						items={options}
-						descriptions={optionDescriptions}
-						haveEmptyOption={optional}
-						emptyOptionLabel={`[no ${key}]`}
-					/>
+						optional={field.optional}
+						value={typeof field.value === 'string' ? field.value : undefined}
+						onChange={(event) => {
+							// using empty string as the value for the default option
+							// since '' is falsy, the vaue passed the change function will
+							// be undefined.
+							change(event.target.value || undefined, field);
+						}}
+					>
+						<>
+							{field.optional && (
+								// picking the default option should result in the field being set to undefined
+								// but if the option value is undefined, the target.value the change event will
+								// use the text content of the option as a fall back.
+								<Option key={-1} value={''}>
+									{`select ${key}`}
+								</Option>
+							)}
+							{options.map((option) => (
+								<Option key={option} value={option}>
+									{option}
+								</Option>
+							))}
+						</>
+					</Select>
 				);
 			}
 
-			return (
+			return suggestions ? (
 				<StringInput
 					label={key}
 					value={value ?? ''}
@@ -82,6 +105,16 @@ export function SchemaField<T extends z.ZodRawShape>({
 						change(value, field);
 					}}
 				/>
+			) : (
+				<TextInput
+					label={key}
+					value={value}
+					type={stringInputType}
+					onChange={(event) => {
+						change(eventToString(event), field);
+					}}
+					required={!field.optional}
+				/>
 			);
 		}
 
@@ -89,23 +122,12 @@ export function SchemaField<T extends z.ZodRawShape>({
 			type === 'ZodBoolean' &&
 			(typeof value === 'boolean' || typeof value === 'undefined')
 		) {
-			if (noTriState || !optional) {
-				return (
-					<CheckBoxInput
-						label={key}
-						value={value}
-						inputHandler={(value): void => {
-							change(value, field);
-						}}
-					/>
-				);
-			}
 			return (
-				<TriStateInput
+				<Checkbox
 					label={key}
-					value={value}
-					inputHandler={(value): void => {
-						change(value, field);
+					checked={!!value}
+					onChange={(event) => {
+						change(eventToBoolean(event), field);
 					}}
 				/>
 			);
@@ -161,10 +183,5 @@ export function SchemaField<T extends z.ZodRawShape>({
 		return null;
 	}
 
-	return (
-		<div>
-			{buildInput()}
-			<span>{field.optional ? '(opt)' : '(req)'}</span>
-		</div>
-	);
+	return buildInput();
 }
