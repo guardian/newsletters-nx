@@ -1,7 +1,9 @@
 import { css } from '@emotion/react';
 import { neutral, space } from '@guardian/source-foundations';
-import { useEffect, useState } from 'react';
+import { Button } from '@guardian/source-react-components';
+import { useState } from 'react';
 import {
+	deriveNewsletterFieldsFromName,
 	emailEmbedSchema,
 	illustrationSchema,
 	newsletterSchema,
@@ -34,12 +36,12 @@ const BLANK_FORM: Newsletter = {
 	listId: 6013,
 	signupPage: '',
 	emailEmbed: {
-		name: 'TechScape',
-		title: 'Sign up for TechScape',
+		name: '',
+		title: '',
 		description:
-			"Alex Hern's weekly dive in to how technology is shaping our lives",
+			"",
 		successHeadline: 'Subscription confirmed',
-		successDescription: "We'll send you TechScape every week",
+		successDescription: "",
 		hexCode: '#DCDCDC',
 	},
 	campaignName: '',
@@ -101,6 +103,17 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		updateDataAndWarnings(revisedData);
 	};
 
+	const deriveValuesFromName = () => {
+		const { name } = newsletter;
+		if (name === '') return;
+
+		const revisedData = {
+			...newsletter,
+			...deriveNewsletterFieldsFromName(name),
+		};
+		updateDataAndWarnings(revisedData);
+	};
+
 	const updateDataAndWarnings = (
 		revisedData: Partial<Record<keyof Newsletter, unknown>>,
 	) => {
@@ -139,6 +152,10 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 	return (
 		<div>
 			<h2>Create newsletter form</h2>
+
+			<Button priority='tertiary' onClick={deriveValuesFromName} disabled={newsletter.name === ''}>
+				Derive values from name
+			</Button>
 
 			<SchemaForm
 				schema={newsletterSchema}

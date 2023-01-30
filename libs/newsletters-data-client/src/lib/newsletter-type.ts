@@ -21,8 +21,8 @@ const themeEnumSchema = z.enum(['news', 'opinion', 'culture', 'sport', 'lifestyl
 export type Theme = z.infer<typeof themeEnumSchema>
 
 export const baseNewsletterSchema = z.object({
-	identityName: nonEmptyString(),
 	name: nonEmptyString(),
+	identityName: nonEmptyString(),
 	cancelled: z.boolean(),
 	restricted: z.boolean(),
 	paused: z.boolean(),
@@ -58,8 +58,8 @@ export const newsletterSchema = baseNewsletterSchema.extend({
 });
 
 export const newsletterSchemaAllowingEmptyStrings = baseNewsletterSchema.extend({
-	identityName: z.string(),
 	name: z.string(),
+	identityName: z.string(),
 	group: z.string(),
 	description: z.string(),
 	frequency: z.string(),
