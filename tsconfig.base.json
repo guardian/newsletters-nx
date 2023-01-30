@@ -23,5 +23,5 @@
 		"strictNullChecks": true,
 		"incremental": false
 	},
-	"exclude": ["node_modules", "tmp"]
+	"exclude": ["node_modules", "tmp", "cdk"]
 }
