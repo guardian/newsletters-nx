@@ -1,6 +1,3 @@
-import {
-	Container,
-} from '@guardian/source-react-components';
 import { useLoaderData } from 'react-router';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 import { NewsletterForm } from './NewsletterForm';
@@ -14,8 +11,8 @@ export const NewsletterCreateView = () => {
 	);
 
 	return (
-		<Container>
+		<main>
 			<NewsletterForm existingIds={existingIds} />
-		</Container>
+		</main>
 	);
 };

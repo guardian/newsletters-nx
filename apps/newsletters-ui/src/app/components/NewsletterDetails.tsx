@@ -5,7 +5,6 @@ import {
 	space,
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
-import { Container, Inline } from '@guardian/source-react-components';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 import { getPalette, type SourcePalette } from '../util';
 
@@ -65,15 +64,19 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 	const palette = getPalette(theme);
 
 	return (
-		<Container>
+		<main>
 			<div css={detailStyles(palette)}>
 				<h2>{name}</h2>
-				<Inline>
+				<div
+					css={css`
+						display: flex;
+					`}
+				>
 					{cancelled && <div css={flagStyles(palette)}>CANCELLED</div>}
 					{paused && <div css={flagStyles(palette)}>PAUSED</div>}
 					{restricted && <div css={flagStyles(palette)}>restricted</div>}
 					{!paused && !cancelled && <div css={flagStyles(palette)}>LIVE</div>}
-				</Inline>
+				</div>
 				<table>
 					<tbody>
 						<tr>
@@ -102,7 +105,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 						</tr>
 						<tr>
 							<th>emailEmbed</th>
-							<td>{JSON.stringify(newsletter.emailEmbed,undefined,1)}</td>
+							<td>{JSON.stringify(newsletter.emailEmbed, undefined, 1)}</td>
 						</tr>
 						<tr>
 							<th>Illustration.circle</th>
@@ -111,6 +114,6 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 					</tbody>
 				</table>
 			</div>
-		</Container>
+		</main>
 	);
 };

@@ -1,6 +1,3 @@
-import { css } from '@emotion/react';
-import { neutral } from '@guardian/source-foundations';
-import { Button } from '@guardian/source-react-components';
 import { useState } from 'react';
 import {
 	deriveNewsletterFieldsFromName,
@@ -166,13 +163,9 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 	return (
 		<div>
 			<h2>Create newsletter form</h2>
-			<Button
-				priority="tertiary"
-				onClick={deriveValuesFromName}
-				disabled={newsletter.name === ''}
-			>
+			<button onClick={deriveValuesFromName} disabled={newsletter.name === ''}>
 				Derive values from name
-			</Button>
+			</button>
 
 			<SchemaForm
 				schema={newsletterSchema}
@@ -224,19 +217,12 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 				</fieldset>
 			)}
 
-			<Button
+			<button
 				onClick={handleSubmit}
 				disabled={hasWarnings}
-				cssOverrides={
-					hasWarnings
-						? css`
-								background-color: ${neutral[46]};
-						  `
-						: []
-				}
 			>
 				Create Newsletter
-			</Button>
+			</button>
 
 			<NewsletterDetail newsletter={newsletter} />
 		</div>
