@@ -1,17 +1,24 @@
-import { Option, Select } from "@guardian/source-react-components";
-import type { FieldDef, FieldValue } from "./util";
+import { Option, Select } from '@guardian/source-react-components';
+import type { FieldDef, FieldValue } from './util';
 
 interface SchemaSelectProps {
 	field: FieldDef;
 	change: { (value: FieldValue, field: FieldDef): void };
 	options: string[];
+	validationWarning?: string;
 }
-export const SchemaSelect = ({ field, change, options }: SchemaSelectProps) => {
+export const SchemaSelect = ({
+	field,
+	change,
+	options,
+	validationWarning,
+}: SchemaSelectProps) => {
 	return (
 		<Select
 			label={field.key}
 			optional={field.optional}
 			value={typeof field.value === 'string' ? field.value : undefined}
+			error={validationWarning}
 			onChange={(event) => {
 				// using empty string as the value for the default option
 				// since '' is falsy, the vaue passed the change function will

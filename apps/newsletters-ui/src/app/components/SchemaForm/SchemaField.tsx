@@ -51,7 +51,14 @@ export function SchemaField<T extends z.ZodRawShape>({
 		(typeof value === 'string' || typeof value === 'undefined')
 	) {
 		if (options) {
-			return <SchemaSelect field={field} change={change} options={options} />;
+			return (
+				<SchemaSelect
+					field={field}
+					change={change}
+					options={options}
+					validationWarning={validationWarning}
+				/>
+			);
 		}
 
 		return (
@@ -103,6 +110,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					field={field}
 					change={change}
 					options={field.enumOptions}
+					validationWarning={validationWarning}
 				/>
 			);
 		}
