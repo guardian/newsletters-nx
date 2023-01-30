@@ -1,19 +1,32 @@
 import type { LoaderFunction, RouteObject } from 'react-router-dom';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type {
+	ApiResponse,
+	Newsletter,
+} from '@newsletters-nx/newsletters-data-client';
 import { NewsletterDetailView } from '../components/NewsletterDetailView';
 import { NewsletterListView } from '../components/NewslettersListView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 
-export async function getNewsletters(): Promise<Newsletter[]> {
+async function getNewsletters(): Promise<Newsletter[]> {
 	try {
 		const response = await fetch('api/v1/newsletters');
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- internal api call
-		const data = await response.json();
-		return data as Newsletter[];
+		const data = (await response.json()) as ApiResponse<Newsletter[]>;
+		return data.results;
 	} catch (err) {
 		console.error(err);
 		return [];
+	}
+}
+
+async function getNewsletter(id: string): Promise<Newsletter | undefined> {
+	try {
+		const response = await fetch(`api/v1/newsletters/${id}`);
+		const data = (await response.json()) as ApiResponse<Newsletter>;
+		return data.results;
+	} catch (err) {
+		console.error(err);
+		return undefined;
 	}
 }
 
@@ -25,9 +38,10 @@ export const listLoader: LoaderFunction = async (): Promise<Newsletter[]> => {
 export const detailLoader: LoaderFunction = async ({
 	params,
 }): Promise<Newsletter | undefined> => {
-	const items = await getNewsletters();
-	const match = items.find((item) => item.identityName === params.id);
-	return match;
+	if (!params.id) {
+		return undefined;
+	}
+	return await getNewsletter(params.id);
 };
 
 export const newsletterRoute: RouteObject = {

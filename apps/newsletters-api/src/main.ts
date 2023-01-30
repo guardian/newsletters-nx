@@ -4,7 +4,7 @@ import {
 	newslettersDataClient,
 } from '@newsletters-nx/newsletters-data-client';
 import prodNewslettersData from '../static/newsletters.prod.json';
-import { makeError, makeSuccess } from './app/responses';
+import { makeErrorResponse, makeSuccessResponse } from './app/responses';
 
 const app = Fastify();
 
@@ -24,7 +24,7 @@ app.get('/newsletters', async (req, res) => {
 
 app.get('/v1/newsletters', async (req, res) => {
 	const newsletters = prodNewslettersData.filter(isNewsletter);
-	return makeSuccess({ newsletters });
+	return makeSuccessResponse(newsletters);
 });
 
 app.get<{ Params: { newsletterId: string } }>(
@@ -37,12 +37,10 @@ app.get<{ Params: { newsletterId: string } }>(
 		);
 
 		if (!newsletter) {
-			return res
-				.status(404)
-				.send(makeError(`no match for id ${newsletterId}`, 404));
+			return res.status(404).send(makeErrorResponse(`no match for id ${newsletterId}`));
 		}
 
-		return makeSuccess({ newsletter });
+		return makeSuccessResponse(newsletter);
 	},
 );
 

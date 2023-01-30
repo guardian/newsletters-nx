@@ -1,15 +1,15 @@
-export const makeError = (message: string, code = 500) => ({
+import type { ApiResponse } from '@newsletters-nx/newsletters-data-client';
+
+export const makeErrorResponse = (message: string): ApiResponse<unknown> => ({
 	ok: false,
 	message,
-	code,
+	results: undefined,
 });
 
-export function makeSuccess<T extends object>(
-	content: T,
-): T & { ok: true; code: 200 } {
+export function makeSuccessResponse<T extends object>(data: T): ApiResponse<T> {
 	return {
-		...content,
 		ok: true,
-		code: 200,
+		total: Array.isArray(data) ? data.length : undefined,
+		results: data,
 	};
 }
