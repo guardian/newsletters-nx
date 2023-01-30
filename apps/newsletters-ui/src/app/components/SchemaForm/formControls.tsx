@@ -9,16 +9,15 @@ import type { FormEventHandler, FunctionComponent, ReactNode } from 'react';
 import { eventToBoolean, eventToNumber, eventToString } from './util';
 
 const fieldStyle = css`
-	padding: ${space[1]}px 0;
+	padding-bottom: ${space[1]}px;
 
 	label {
-		${textSansObjectStyles.medium({ fontWeight: 'bold' })}
+		${textSansObjectStyles.xsmall({ fontWeight: 'bold' })}
 	}
 
 	input {
-		margin-top: ${space[1]}px;
-		padding: ${space[1]} ${space[2]}px;
-		${textSansObjectStyles.medium({ fontWeight: 'regular' })}
+		padding: 0 ${space[2]}px;
+		${textSansObjectStyles.small({ fontWeight: 'regular' })}
 	}
 `;
 
