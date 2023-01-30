@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { neutral, space } from '@guardian/source-foundations';
+import { neutral } from '@guardian/source-foundations';
 import { Button } from '@guardian/source-react-components';
 import { useState } from 'react';
 import {
@@ -60,6 +60,8 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 	const [warnings, setWarnings] = useState<
 		Partial<Record<keyof Newsletter, string>>
 	>({});
+
+	const hasWarnings = Object.values(warnings).some((warning) => !!warning);
 
 	const manageChange = (value: FieldValue, key: FieldDef) => {
 		const mod = getModification(value, key);
@@ -157,10 +159,13 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		setWarnings(issueMap);
 	};
 
+	const handleSubmit = () => {
+		alert('not implemented');
+	};
+
 	return (
 		<div>
 			<h2>Create newsletter form</h2>
-
 			<Button
 				priority="tertiary"
 				onClick={deriveValuesFromName}
@@ -218,6 +223,20 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 					/>
 				</fieldset>
 			)}
+
+			<Button
+				onClick={handleSubmit}
+				disabled={hasWarnings}
+				cssOverrides={
+					hasWarnings
+						? css`
+								background-color: ${neutral[46]};
+						  `
+						: []
+				}
+			>
+				Create Newsletter
+			</Button>
 
 			<NewsletterDetail newsletter={newsletter} />
 		</div>
