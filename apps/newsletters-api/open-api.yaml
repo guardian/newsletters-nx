@@ -48,16 +48,16 @@ paths:
                     type: number
                     example: 200
 
-  /newsletters/{identityName}:
+  /newsletters/{newsletterId}:
     get:
-      summary: Get a newsletter by identityName
+      summary: Get a newsletter by newsletterId
       parameters:
         - in: path
-          name: identityName
+          name: newsletterId
           schema:
             type: string
           required: true
-          description: The unique identityName of the newsletter to get
+          description: The unique newsletterId of the newsletter to get
       responses:
         '404':
           description: A JSON object describing a 'not found' error
