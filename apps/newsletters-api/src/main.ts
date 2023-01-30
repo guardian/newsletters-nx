@@ -3,7 +3,7 @@ import {
 	isNewsletter,
 	newslettersDataClient,
 } from '@newsletters-nx/newsletters-data-client';
-import liveNewslettersData from '../static/newsletters.live.json';
+import prodNewslettersData from '../static/newsletters.prod.json';
 import { makeError, makeSuccess } from './app/responses';
 
 const app = Fastify();
@@ -18,12 +18,12 @@ app.get('/health', async () => {
 // not using the makeSuccess function on this route as
 // we are emulating the response of the legacy API
 app.get('/newsletters', async (req, res) => {
-	const newsletters = liveNewslettersData.filter(isNewsletter);
+	const newsletters = prodNewslettersData.filter(isNewsletter);
 	return newsletters;
 });
 
 app.get('/v1/newsletters', async (req, res) => {
-	const newsletters = liveNewslettersData.filter(isNewsletter);
+	const newsletters = prodNewslettersData.filter(isNewsletter);
 	return makeSuccess({ newsletters });
 });
 
@@ -31,7 +31,7 @@ app.get<{ Params: { newsletterId: string } }>(
 	'/v1/newsletters/:newsletterId',
 	async (req, res) => {
 		const { newsletterId } = req.params;
-		const parsedLive = liveNewslettersData.filter(isNewsletter);
+		const parsedLive = prodNewslettersData.filter(isNewsletter);
 		const newsletter = parsedLive.find(
 			(newsletter) => newsletter.identityName === newsletterId,
 		);
