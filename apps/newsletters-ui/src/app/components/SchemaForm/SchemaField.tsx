@@ -98,6 +98,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					field={field}
 					change={change}
 					numberInputSettings={numberInputSettings}
+					validationWarning={validationWarning}
 				/>
 			);
 		}

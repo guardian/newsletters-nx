@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { space, textSansObjectStyles } from '@guardian/source-foundations';
+import { InlineError } from '@guardian/source-react-components';
 import { useRef } from 'react';
 import type { FormEventHandler, FunctionComponent, ReactNode } from 'react';
 import { eventToNumber } from './util';
@@ -21,13 +22,15 @@ const fieldStyle = css`
 
 type FieldProps = {
 	label?: string;
+	error?:string;
 };
 const FieldWrapper: FunctionComponent<
 	FieldProps & { children?: ReactNode }
-> = ({ children, label }) => {
+> = ({ children, label, error }) => {
 	return (
 		<div css={fieldStyle}>
 			{label && <label>{label}</label>}
+			{error && <InlineError>{error}</InlineError>}
 			{children}
 		</div>
 	);

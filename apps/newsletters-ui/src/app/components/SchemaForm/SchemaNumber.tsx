@@ -6,12 +6,14 @@ interface Props {
 	field: FieldDef;
 	change: { (value: FieldValue, field: FieldDef): void };
 	numberInputSettings?: NumberInputSettings;
+	validationWarning?: string;
 }
 export const SchemaNumber = ({
 	numberValue,
 	field,
 	change,
 	numberInputSettings = {},
+	validationWarning,
 }: Props) => {
 	return field.optional ? (
 		<OptionalNumberInput
@@ -21,6 +23,7 @@ export const SchemaNumber = ({
 			inputHandler={(value) => {
 				change(value, field);
 			}}
+			error={validationWarning}
 		/>
 	) : (
 		<NumberInput
@@ -30,6 +33,7 @@ export const SchemaNumber = ({
 			inputHandler={(value) => {
 				change(value, field);
 			}}
+			error={validationWarning}
 		/>
 	);
 };
