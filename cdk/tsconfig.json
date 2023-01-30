@@ -28,9 +28,5 @@
     "outDir": "dist"
   },
   "include": ["lib/**/*", "bin/**/*"],
-  "exclude": [
-    "node_modules",
-    "cdk.out",
-    "lib/**/__snapshots__/**"
-  ]
+  "exclude": ["node_modules", "cdk.out", "lib/**/__snapshots__/**"]
 }

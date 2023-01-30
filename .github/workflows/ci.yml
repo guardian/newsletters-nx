@@ -27,3 +27,35 @@ jobs:
     uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.8
     with:
       number-of-agents: 3
+
+  CI:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
+          aws-region: eu-west-1
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - working-directory: ./cdk
+        run: |
+          npm ci
+          npm run lint
+          npm run test
+          npm run synth
+
+      - uses: guardian/actions-riff-raff@v2
+        with:
+          app: newsletters-api
+          configPath: riff-raff.yaml
+          contentDirectories: |
+            cloudformation:
+              - cdk/cdk.out/NewslettersAPI-DEV.template.json
