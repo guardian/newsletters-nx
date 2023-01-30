@@ -37,7 +37,9 @@ app.get<{ Params: { newsletterId: string } }>(
 		);
 
 		if (!newsletter) {
-			return res.status(404).send(makeErrorResponse(`no match for id ${newsletterId}`));
+			return res
+				.status(404)
+				.send(makeErrorResponse(`no match for id ${newsletterId}`));
 		}
 
 		return makeSuccessResponse(newsletter);
