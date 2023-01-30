@@ -10,6 +10,7 @@ import {
 	newsletterSchemaAllowingEmptyStrings,
 } from '@newsletters-nx/newsletters-data-client';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import { ArrayInput } from './ArrayInput';
 import { NewsletterDetail } from './NewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
@@ -38,15 +39,14 @@ const BLANK_FORM: Newsletter = {
 	emailEmbed: {
 		name: '',
 		title: '',
-		description:
-			"",
+		description: '',
 		successHeadline: 'Subscription confirmed',
-		successDescription: "",
+		successDescription: '',
 		hexCode: '#DCDCDC',
 	},
 	campaignName: '',
 	campaignCode: '',
-	brazeSubscribeAttributeNameAlternate: [],
+	brazeSubscribeAttributeNameAlternate: ['TEST VALUE 1', 'OTHER TEST VALUE'],
 	illustration: {
 		circle: '',
 	},
@@ -77,6 +77,14 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 			}
 		}
 
+		updateDataAndWarnings(revisedData);
+	};
+
+	const manageArrayChange = (data: string[], field: keyof Newsletter) => {
+		const revisedData: Partial<Record<keyof Newsletter, unknown>> = {
+			...newsletter,
+		};
+		revisedData[field] = data;
 		updateDataAndWarnings(revisedData);
 	};
 
@@ -153,7 +161,11 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		<div>
 			<h2>Create newsletter form</h2>
 
-			<Button priority='tertiary' onClick={deriveValuesFromName} disabled={newsletter.name === ''}>
+			<Button
+				priority="tertiary"
+				onClick={deriveValuesFromName}
+				disabled={newsletter.name === ''}
+			>
 				Derive values from name
 			</Button>
 
@@ -165,17 +177,25 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 				options={{
 					regionFocus: ['UK', 'AUS', 'US'],
 				}}
-				excludedKeys={['emailEmbed', 'illustration']}
+				excludedKeys={[
+					'emailEmbed',
+					'illustration',
+					'brazeSubscribeAttributeNameAlternate',
+				]}
 				validationWarnings={warnings}
 			/>
 
-			<h3>emailEmbed</h3>
-			<div
-				css={css`
-					padding-left: ${space[6]}px;
-					border-left: 1px dashed ${neutral[20]};
-				`}
-			>
+			<ArrayInput
+				label="brazeSubscribeAttributeNameAlternate"
+				validationWarning={warnings.brazeSubscribeAttributeNameAlternate}
+				data={newsletter.brazeSubscribeAttributeNameAlternate ?? []}
+				change={(data) => {
+					manageArrayChange(data, 'brazeSubscribeAttributeNameAlternate');
+				}}
+			/>
+
+			<fieldset>
+				<legend>emailEmbed</legend>
 				<SchemaForm
 					schema={emailEmbedSchema}
 					data={newsletter.emailEmbed}
@@ -183,27 +203,20 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 					showUnsupported
 					validationWarnings={{}}
 				/>
-			</div>
+			</fieldset>
 
 			{/* TO DO - controll to add the illustration field to the newsletter if undefined */}
 			{newsletter.illustration && (
-				<>
-					<h3>illustration</h3>
-					<div
-						css={css`
-							padding-left: ${space[6]}px;
-							border-left: 1px dashed ${neutral[20]};
-						`}
-					>
-						<SchemaForm
-							schema={illustrationSchema}
-							data={newsletter.illustration}
-							changeValue={manageIllustrationChange}
-							showUnsupported
-							validationWarnings={{}}
-						/>
-					</div>
-				</>
+				<fieldset>
+					<legend>emailEmbed</legend>
+					<SchemaForm
+						schema={illustrationSchema}
+						data={newsletter.illustration}
+						changeValue={manageIllustrationChange}
+						showUnsupported
+						validationWarnings={{}}
+					/>
+				</fieldset>
 			)}
 
 			<NewsletterDetail newsletter={newsletter} />
