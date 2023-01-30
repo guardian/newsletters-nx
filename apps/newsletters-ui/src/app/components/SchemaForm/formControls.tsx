@@ -6,7 +6,7 @@ import {
 } from '@guardian/source-foundations';
 import { useRef } from 'react';
 import type { FormEventHandler, FunctionComponent, ReactNode } from 'react';
-import { eventToNumber } from './util';
+import { eventToNumber, eventToString } from './util';
 
 const fieldStyle = css`
 	padding: ${space[1]}px 0;
@@ -30,13 +30,18 @@ const errorStyle = css`
 type FieldProps = {
 	label?: string;
 	error?: string;
+	optional?: boolean;
 };
 const FieldWrapper: FunctionComponent<
 	FieldProps & { children?: ReactNode }
-> = ({ children, label, error }) => {
+> = ({ children, label, error, optional }) => {
 	return (
 		<div css={fieldStyle}>
-			{label && <label>{label}</label>}
+			{label && (
+				<label>
+					{label} {optional && '(optional)'}
+				</label>
+			)}
 			{children}
 			{error && <strong css={errorStyle}>! {error}</strong>}
 		</div>
@@ -135,7 +140,6 @@ export const SelectInput: FunctionComponent<
 	const { value, optional, options, inputHandler, label = 'value' } = props;
 
 	const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-		console.log(event);
 		return inputHandler(event.target.value || undefined);
 	};
 
@@ -146,9 +150,7 @@ export const SelectInput: FunctionComponent<
 					// picking the default option should result in the field being set to undefined
 					// but if the option value is undefined, the target.value the change event will
 					// use the text content of the option as a fall back.
-					<option key={-1} value={''}>
-						{`select ${label}`}
-					</option>
+					<option value={''}>{`select ${label}`}</option>
 				)}
 				{options.map((option) => (
 					<option key={option} value={option}>
@@ -156,6 +158,26 @@ export const SelectInput: FunctionComponent<
 					</option>
 				))}
 			</select>
+		</FieldWrapper>
+	);
+};
+
+export const StringInput: FunctionComponent<
+	FieldProps & {
+		value: string;
+		inputHandler: { (value: string): void };
+		type?: HTMLInputElement['type'];
+	}
+> = (props) => {
+	const { type = 'text' } = props;
+
+	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
+		props.inputHandler(eventToString(event));
+	};
+
+	return (
+		<FieldWrapper {...props}>
+			<input type={type} value={props.value} onInput={sendValue} />
 		</FieldWrapper>
 	);
 };

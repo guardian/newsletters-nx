@@ -1,13 +1,9 @@
-import {
-	Checkbox,
-	InlineError,
-	TextInput,
-} from '@guardian/source-react-components';
+import { Checkbox } from '@guardian/source-react-components';
 import type { z } from 'zod';
-import { SelectInput } from './formControls';
+import { SelectInput, StringInput } from './formControls';
 import { SchemaNumber } from './SchemaNumber';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
-import { eventToBoolean, eventToString } from './util';
+import { eventToBoolean } from './util';
 
 interface SchemaFieldProps<T> {
 	field: FieldDef;
@@ -57,7 +53,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					value={value}
 					optional={field.optional}
 					inputHandler={(newValue) => {
-						change(newValue, field)
+						change(newValue, field);
 					}}
 					error={validationWarning}
 					options={options}
@@ -66,14 +62,14 @@ export function SchemaField<T extends z.ZodRawShape>({
 		}
 
 		return (
-			<TextInput
+			<StringInput
 				label={key}
-				value={value}
+				value={value ?? ''}
 				type={stringInputType}
-				onChange={(event) => {
-					change(eventToString(event), field);
+				optional={field.optional}
+				inputHandler={(newValue) => {
+					change(newValue, field);
 				}}
-				required={!field.optional}
 				error={validationWarning}
 			/>
 		);
@@ -116,7 +112,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					value={value}
 					optional={field.optional}
 					inputHandler={(newValue) => {
-						change(newValue, field)
+						change(newValue, field);
 					}}
 					error={validationWarning}
 					options={field.enumOptions}
@@ -127,11 +123,11 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 	if (showUnsupported) {
 		return (
-			<InlineError>
+			<div>
 				<b>UNSUPPORTED FIELD TYPE [{type}] : </b>
 				{key}
 				<b>{fieldValueAsSting(field)}</b>
-			</InlineError>
+			</div>
 		);
 	}
 
