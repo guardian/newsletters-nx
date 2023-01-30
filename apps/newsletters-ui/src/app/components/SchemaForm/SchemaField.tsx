@@ -4,8 +4,8 @@ import {
 	TextInput,
 } from '@guardian/source-react-components';
 import type { z } from 'zod';
+import { SelectInput } from './formControls';
 import { SchemaNumber } from './SchemaNumber';
-import { SchemaSelect } from './SchemaSelect';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 import { eventToBoolean, eventToString } from './util';
 
@@ -52,11 +52,15 @@ export function SchemaField<T extends z.ZodRawShape>({
 	) {
 		if (options) {
 			return (
-				<SchemaSelect
-					field={field}
-					change={change}
+				<SelectInput
+					label={field.key}
+					value={value}
+					optional={field.optional}
+					inputHandler={(newValue) => {
+						change(newValue, field)
+					}}
+					error={validationWarning}
 					options={options}
-					validationWarning={validationWarning}
 				/>
 			);
 		}
@@ -107,11 +111,15 @@ export function SchemaField<T extends z.ZodRawShape>({
 	if (type === 'ZodEnum' && field.enumOptions) {
 		if (typeof value === 'string') {
 			return (
-				<SchemaSelect
-					field={field}
-					change={change}
+				<SelectInput
+					label={field.key}
+					value={value}
+					optional={field.optional}
+					inputHandler={(newValue) => {
+						change(newValue, field)
+					}}
+					error={validationWarning}
 					options={field.enumOptions}
-					validationWarning={validationWarning}
 				/>
 			);
 		}
