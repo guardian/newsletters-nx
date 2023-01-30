@@ -6,13 +6,12 @@ import {
 } from '@guardian/source-foundations';
 import { useRef } from 'react';
 import type { FormEventHandler, FunctionComponent, ReactNode } from 'react';
-import { eventToNumber, eventToString } from './util';
+import { eventToBoolean, eventToNumber, eventToString } from './util';
 
 const fieldStyle = css`
 	padding: ${space[1]}px 0;
 
 	label {
-		display: block;
 		${textSansObjectStyles.medium({ fontWeight: 'bold' })}
 	}
 
@@ -178,6 +177,23 @@ export const StringInput: FunctionComponent<
 	return (
 		<FieldWrapper {...props}>
 			<input type={type} value={props.value} onInput={sendValue} />
+		</FieldWrapper>
+	);
+};
+
+export const BooleanInput: FunctionComponent<
+	FieldProps & {
+		value: boolean;
+		inputHandler: { (value: boolean): void };
+	}
+> = (props) => {
+	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
+		props.inputHandler(eventToBoolean(event));
+	};
+
+	return (
+		<FieldWrapper {...props}>
+			<input type={'checkbox'} checked={props.value} onChange={sendValue} />
 		</FieldWrapper>
 	);
 };

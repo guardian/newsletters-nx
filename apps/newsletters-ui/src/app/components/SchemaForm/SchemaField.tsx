@@ -1,9 +1,7 @@
-import { Checkbox } from '@guardian/source-react-components';
 import type { z } from 'zod';
-import { SelectInput, StringInput } from './formControls';
+import { BooleanInput, SelectInput, StringInput } from './formControls';
 import { SchemaNumber } from './SchemaNumber';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
-import { eventToBoolean } from './util';
 
 interface SchemaFieldProps<T> {
 	field: FieldDef;
@@ -15,7 +13,7 @@ interface SchemaFieldProps<T> {
 	validationWarning?: string;
 }
 
-const fieldValueAsSting = (field: FieldDef): string => {
+const fieldValueAsDisplayString = (field: FieldDef): string => {
 	switch (typeof field.value) {
 		case 'string':
 		case 'boolean':
@@ -27,7 +25,7 @@ const fieldValueAsSting = (field: FieldDef): string => {
 			}
 			return field.value ? field.value.toString() : 'NULL';
 		default:
-			return '';
+			return 'VALUE OF UNKNOWN TYPE';
 	}
 };
 
@@ -80,12 +78,14 @@ export function SchemaField<T extends z.ZodRawShape>({
 		(typeof value === 'boolean' || typeof value === 'undefined')
 	) {
 		return (
-			<Checkbox
+			<BooleanInput
 				label={key}
-				checked={!!value}
-				onChange={(event) => {
-					change(eventToBoolean(event), field);
+				value={value ?? false}
+				optional={field.optional}
+				inputHandler={(newValue) => {
+					change(newValue, field);
 				}}
+				error={validationWarning}
 			/>
 		);
 	}
@@ -126,7 +126,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			<div>
 				<b>UNSUPPORTED FIELD TYPE [{type}] : </b>
 				{key}
-				<b>{fieldValueAsSting(field)}</b>
+				<b>{fieldValueAsDisplayString(field)}</b>
 			</div>
 		);
 	}
