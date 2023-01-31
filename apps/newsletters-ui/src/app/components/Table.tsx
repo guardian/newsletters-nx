@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
-import { useTable } from 'react-table';
 import type { Cell, Column } from 'react-table';
+import { useSortBy, useTable } from 'react-table';
 
 interface Props {
 	data: object[];
@@ -8,9 +8,9 @@ interface Props {
 }
 
 export const Table = ({ data, columns }: Props) => {
-	const tableInstance = useTable({ columns, data });
 	const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-		tableInstance;
+		useTable({ columns, data }, useSortBy);
+
 	const tableStyle = css`
 		border-collapse: collapse;
 		th,
@@ -24,9 +24,14 @@ export const Table = ({ data, columns }: Props) => {
 		<table {...getTableProps()} css={tableStyle}>
 			<thead>
 				{headerGroups.map((headerGroup) => (
-					<tr {...headerGroup.getFooterGroupProps()}>
+					<tr {...headerGroup.getHeaderGroupProps()}>
 						{headerGroup.headers.map((column) => (
-							<th {...column.getHeaderProps()}>{column.render('Header')}</th>
+							<th {...column.getHeaderProps(column.getSortByToggleProps())}>
+								{column.render('Header')}
+								<span>
+									{column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+								</span>
+							</th>
 						))}
 					</tr>
 				))}
@@ -44,5 +49,6 @@ export const Table = ({ data, columns }: Props) => {
 				})}
 			</tbody>
 		</table>
+
 	);
 };
