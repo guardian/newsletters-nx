@@ -9,17 +9,17 @@ exports[`The Newsletters API stack matches the snapshot 1`] = `
     "gu:cdk:version": "TEST",
   },
   "Parameters": {
-    "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/TEST/newsletters/newsletters-api/s3BucketName",
+    "SsmParameterValueTESTnewslettersnewslettersdatas3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/TEST/newsletters/newsletters-data/s3BucketName",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
   "Resources": {
-    "DataBucketNewslettersapi96EED09B": {
+    "DataBucketNewslettersdata573FDBE4": {
       "DeletionPolicy": "Retain",
       "Properties": {
         "BucketName": {
-          "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Ref": "SsmParameterValueTESTnewslettersnewslettersdatas3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
         },
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": true,
@@ -30,7 +30,7 @@ exports[`The Newsletters API stack matches the snapshot 1`] = `
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-api",
+            "Value": "newsletters-data",
           },
           {
             "Key": "gu:cdk:version",

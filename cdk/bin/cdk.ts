@@ -1,6 +1,6 @@
 import 'source-map-support/register';
 import { App } from 'aws-cdk-lib';
-import { NewslettersApi } from '../lib/newsletters-api';
+import { NewslettersData } from '../lib/newsletters-data';
 
 const app = new App();
 
@@ -12,7 +12,7 @@ export const newslettersProps = {
 	}
 }
 
-new NewslettersApi(app, 'NewslettersApi-DEV', {
+new NewslettersData(app, 'NewslettersData-DEV', {
 	...newslettersProps,
 	stage: 'DEV',
 });
