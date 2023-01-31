@@ -3,7 +3,7 @@ stacks: [newsletters]
 regions: [eu-west-1]
 allowedStages: [DEV] # TODO: Add CODE, PROD stages
 deployments:
-  newsletters-data-cfn:
+  cloudformation:
     type: cloud-formation
     app: newsletters-data
     parameters:

@@ -28,7 +28,8 @@ jobs:
     with:
       number-of-agents: 3
 
-  CI:
+  deploy:
+    name: Upload artifacts to riffraff
     runs-on: ubuntu-latest
     permissions:
       id-token: write
