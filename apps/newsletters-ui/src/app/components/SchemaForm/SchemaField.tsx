@@ -1,7 +1,19 @@
 import type { z } from 'zod';
-import { BooleanInput, SelectInput, StringInput } from './formControls';
-import { SchemaNumber } from './SchemaNumber';
-import type { FieldDef, FieldValue, NumberInputSettings } from './util';
+import {
+	BooleanInput,
+	NumberInput,
+	OptionalNumberInput,
+	SelectInput,
+	StringInput,
+} from './formControls';
+import type {
+	FieldDef,
+	FieldValue,
+	NumberInputSettings} from './util';
+import {
+	fieldValueAsDisplayString,
+} from './util';
+
 
 interface SchemaFieldProps<T> {
 	field: FieldDef;
@@ -12,22 +24,6 @@ interface SchemaFieldProps<T> {
 	numberInputSettings?: NumberInputSettings;
 	validationWarning?: string;
 }
-
-const fieldValueAsDisplayString = (field: FieldDef): string => {
-	switch (typeof field.value) {
-		case 'string':
-		case 'boolean':
-		case 'number':
-			return field.value.toString();
-		case 'object':
-			if (Array.isArray(field.value)) {
-				return 'ARRAY';
-			}
-			return field.value ? field.value.toString() : 'NULL';
-		default:
-			return 'VALUE OF UNKNOWN TYPE';
-	}
-};
 
 const WrongTypeMessage = (props: { field: FieldDef }) => (
 	<div>
@@ -101,13 +97,30 @@ export function SchemaField<T extends z.ZodRawShape>({
 			if (typeof value !== 'number' && typeof value !== 'undefined') {
 				return <WrongTypeMessage field={field} />;
 			}
+
+			if (field.optional) {
+				return (
+					<OptionalNumberInput
+						label={field.key}
+						{...numberInputSettings}
+						value={value}
+						inputHandler={(value) => {
+							change(value, field);
+						}}
+						error={validationWarning}
+					/>
+				);
+			}
+
 			return (
-				<SchemaNumber
-					numberValue={value}
-					field={field}
-					change={change}
-					numberInputSettings={numberInputSettings}
-					validationWarning={validationWarning}
+				<NumberInput
+					label={field.key}
+					{...numberInputSettings}
+					value={value ?? 0}
+					inputHandler={(value) => {
+						change(value, field);
+					}}
+					error={validationWarning}
 				/>
 			);
 

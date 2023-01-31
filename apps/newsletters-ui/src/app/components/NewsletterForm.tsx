@@ -114,10 +114,13 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		const { name } = newsletter;
 		if (name === '') return;
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- zod?
 		const revisedData = {
 			...newsletter,
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- zod?
 			...deriveNewsletterFieldsFromName(name),
 		};
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- zod?
 		updateDataAndWarnings(revisedData);
 	};
 

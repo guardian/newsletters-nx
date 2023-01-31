@@ -59,3 +59,19 @@ export function getModification(
 	}
 	return {};
 }
+
+export const fieldValueAsDisplayString = (field: FieldDef): string => {
+	switch (typeof field.value) {
+		case 'string':
+		case 'boolean':
+		case 'number':
+			return field.value.toString();
+		case 'object':
+			if (Array.isArray(field.value)) {
+				return 'ARRAY';
+			}
+			return field.value ? field.value.toString() : 'NULL';
+		default:
+			return 'VALUE OF UNKNOWN TYPE';
+	}
+};
