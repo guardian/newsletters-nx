@@ -27,6 +27,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 			{
 				Header: 'Paused',
 				accessor: 'paused',
+				sortType: 'basic',
 				Cell: formatCellBoolean,
 			},
 		],
