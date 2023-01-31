@@ -3,12 +3,11 @@ stacks: [newsletters]
 regions: [eu-west-1]
 allowedStages: [DEV] # TODO: Add CODE, PROD stages
 deployments:
-  cloudformation:
+  newsletters-api-cfn:
     type: cloud-formation
-    app: newsletters-api
     parameters:
       cloudFormationStackName: newsletters
       cloudFormationStackByTags: false
       templateStagePaths:
-        DEV: NewslettersAPI-DEV.template.json
+        DEV: NewslettersApi-DEV.template.json
   # TODO: Add deployments for each app

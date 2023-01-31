@@ -1,9 +1,18 @@
 import 'source-map-support/register';
 import { App } from 'aws-cdk-lib';
-import { NewslettersAPI } from '../lib/newsletters-api';
+import { NewslettersApi } from '../lib/newsletters-api';
 
 const app = new App();
-new NewslettersAPI(app, 'NewslettersAPI-DEV', {
+
+export const newslettersProps = {
 	stack: 'newsletters',
+	env: {
+		account: 'frontend',
+		region: 'eu-west-1'
+	}
+}
+
+new NewslettersApi(app, 'NewslettersApi-DEV', {
+	...newslettersProps,
 	stage: 'DEV',
 });
