@@ -5,11 +5,15 @@ import { useSortBy, useTable } from 'react-table';
 interface Props {
 	data: object[];
 	columns: Column[];
+	defaultSortId?: string;
 }
 
-export const Table = ({ data, columns }: Props) => {
+export const Table = ({ data, columns, defaultSortId }: Props) => {
+	const initialState = defaultSortId
+		? { sortBy: [{ id: defaultSortId, desc: false }] }
+		: {};
 	const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-		useTable({ columns, data }, useSortBy);
+		useTable({ columns, data, initialState }, useSortBy);
 
 	const tableStyle = css`
 		border-collapse: collapse;
@@ -49,6 +53,5 @@ export const Table = ({ data, columns }: Props) => {
 				})}
 			</tbody>
 		</table>
-
 	);
 };

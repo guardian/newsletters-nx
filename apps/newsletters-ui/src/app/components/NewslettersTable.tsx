@@ -32,5 +32,5 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 		],
 		[],
 	);
-	return <Table data={data} columns={columns} />;
+	return <Table data={data} columns={columns} defaultSortId='identityName' />;
 };
