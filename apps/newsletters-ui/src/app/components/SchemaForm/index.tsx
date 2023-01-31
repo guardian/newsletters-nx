@@ -12,6 +12,7 @@ interface Props<T extends z.ZodRawShape> {
 	numberConfig?: Partial<Record<keyof T, NumberInputSettings>>;
 	showUnsupported?: boolean;
 	excludedKeys?: string[];
+	readOnlyKeys?: string[];
 	validationWarnings: Partial<Record<keyof T, string>>;
 }
 
@@ -27,6 +28,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	numberConfig = {},
 	showUnsupported = false,
 	excludedKeys = [],
+	readOnlyKeys = [],
 	validationWarnings
 }: Props<T>) {
 	const fields: FieldDef[] = [];
@@ -62,6 +64,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			type,
 			value: data[key],
 			enumOptions,
+			readOnly: readOnlyKeys.includes(key)
 		});
 	}
 

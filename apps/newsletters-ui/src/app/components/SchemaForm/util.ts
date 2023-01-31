@@ -6,6 +6,7 @@ export interface FieldDef {
 	type: string;
 	value: unknown;
 	enumOptions?: string[];
+	readOnly?: boolean;
 }
 export type FieldValue = string | number | boolean | undefined;
 

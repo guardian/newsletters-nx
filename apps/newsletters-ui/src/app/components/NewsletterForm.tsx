@@ -183,6 +183,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 					'illustration',
 					'brazeSubscribeAttributeNameAlternate',
 				]}
+				readOnlyKeys={['listId']}
 				validationWarnings={warnings}
 			/>
 
@@ -220,10 +221,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 				</fieldset>
 			)}
 
-			<button
-				onClick={handleSubmit}
-				disabled={hasWarnings}
-			>
+			<button onClick={handleSubmit} disabled={hasWarnings}>
 				Create Newsletter
 			</button>
 

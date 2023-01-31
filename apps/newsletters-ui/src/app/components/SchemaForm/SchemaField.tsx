@@ -6,14 +6,8 @@ import {
 	SelectInput,
 	StringInput,
 } from './formControls';
-import type {
-	FieldDef,
-	FieldValue,
-	NumberInputSettings} from './util';
-import {
-	fieldValueAsDisplayString,
-} from './util';
-
+import type { FieldDef, FieldValue, NumberInputSettings } from './util';
+import { fieldValueAsDisplayString } from './util';
 
 interface SchemaFieldProps<T> {
 	field: FieldDef;
@@ -43,6 +37,21 @@ export function SchemaField<T extends z.ZodRawShape>({
 }: SchemaFieldProps<T>) {
 	const { key, type, value } = field;
 
+	const inputHandler = (newValue: FieldValue) => {
+		if (field.readOnly) {
+			return;
+		}
+		change(newValue, field);
+	};
+
+	const standardProps = {
+		label: field.key,
+		inputHandler,
+		readOnly: !!field.readOnly,
+		optional: !!field.optional,
+		error: validationWarning,
+	};
+
 	switch (type) {
 		case 'ZodString':
 			if (typeof value !== 'string' && typeof value !== 'undefined') {
@@ -51,29 +60,15 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 			if (options) {
 				return (
-					<SelectInput
-						label={field.key}
-						value={value}
-						optional={field.optional}
-						inputHandler={(newValue) => {
-							change(newValue, field);
-						}}
-						error={validationWarning}
-						options={options}
-					/>
+					<SelectInput {...standardProps} value={value} options={options} />
 				);
 			}
 
 			return (
 				<StringInput
-					label={key}
+					{...standardProps}
 					value={value ?? ''}
 					type={stringInputType}
-					optional={field.optional}
-					inputHandler={(newValue) => {
-						change(newValue, field);
-					}}
-					error={validationWarning}
 				/>
 			);
 
@@ -81,17 +76,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			if (typeof value !== 'boolean' && typeof value !== 'undefined') {
 				return <WrongTypeMessage field={field} />;
 			}
-			return (
-				<BooleanInput
-					label={key}
-					value={value ?? false}
-					optional={field.optional}
-					inputHandler={(newValue) => {
-						change(newValue, field);
-					}}
-					error={validationWarning}
-				/>
-			);
+			return <BooleanInput {...standardProps} value={value ?? false} />;
 
 		case 'ZodNumber':
 			if (typeof value !== 'number' && typeof value !== 'undefined') {
@@ -101,26 +86,18 @@ export function SchemaField<T extends z.ZodRawShape>({
 			if (field.optional) {
 				return (
 					<OptionalNumberInput
-						label={field.key}
+						{...standardProps}
 						{...numberInputSettings}
 						value={value}
-						inputHandler={(value) => {
-							change(value, field);
-						}}
-						error={validationWarning}
 					/>
 				);
 			}
 
 			return (
 				<NumberInput
-					label={field.key}
+					{...standardProps}
 					{...numberInputSettings}
 					value={value ?? 0}
-					inputHandler={(value) => {
-						change(value, field);
-					}}
-					error={validationWarning}
 				/>
 			);
 
@@ -130,13 +107,8 @@ export function SchemaField<T extends z.ZodRawShape>({
 			}
 			return (
 				<SelectInput
-					label={field.key}
+					{...standardProps}
 					value={value}
-					optional={field.optional}
-					inputHandler={(newValue) => {
-						change(newValue, field);
-					}}
-					error={validationWarning}
 					options={field.enumOptions ?? []}
 				/>
 			);
