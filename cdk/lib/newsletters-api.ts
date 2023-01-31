@@ -3,6 +3,7 @@ import { GuStack } from '@guardian/cdk/lib/constructs/core';
 import { GuS3Bucket } from "@guardian/cdk/lib/constructs/s3";
 import type { App } from 'aws-cdk-lib';
 import * as ssm from "aws-cdk-lib/aws-ssm"
+
 export class NewslettersApi extends GuStack {
 	constructor(scope: App, id: string, props: GuStackProps) {
 		super(scope, id, props);
