@@ -41,7 +41,7 @@ export const ArrayInput = ({
 			{data.map((item, index) => (
 				<div key={index}>
 					<input value={item} onChange={(event) => handleInput(event, index)} />
-					<button
+					<button title={`delete entry "${item}"`}
 						onClick={() => {
 							handleDelete(index);
 						}}
@@ -52,7 +52,7 @@ export const ArrayInput = ({
 			))}
 
 			<div>
-				<button
+				<button title={`add new entry to ${label} list`}
 					onClick={() => {
 						handleAdd();
 					}}
