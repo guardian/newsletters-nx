@@ -2,7 +2,7 @@ import type { GuStackProps } from '@guardian/cdk/lib/constructs/core';
 import { GuStack } from '@guardian/cdk/lib/constructs/core';
 import { GuS3Bucket } from "@guardian/cdk/lib/constructs/s3";
 import type { App } from 'aws-cdk-lib';
-import * as ssm from "aws-cdk-lib/aws-ssm"
+import { StringParameter } from "aws-cdk-lib/aws-ssm"
 
 export class NewslettersApi extends GuStack {
 	constructor(scope: App, id: string, props: GuStackProps) {
@@ -10,7 +10,7 @@ export class NewslettersApi extends GuStack {
 
 		const app = 'newsletters-api'
 		const bucketParameterName = `/${this.stage}/${this.stack}/${app}/s3BucketName`
-		const bucketName = ssm.StringParameter.valueForStringParameter(this, bucketParameterName)
+		const bucketName = StringParameter.valueForStringParameter(this, bucketParameterName)
 
 		new GuS3Bucket(this, "DataBucket", {
       bucketName,
