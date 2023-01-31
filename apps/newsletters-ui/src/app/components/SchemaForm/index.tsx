@@ -29,7 +29,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	showUnsupported = false,
 	excludedKeys = [],
 	readOnlyKeys = [],
-	validationWarnings
+	validationWarnings,
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
@@ -54,8 +54,8 @@ export function SchemaForm<T extends z.ZodRawShape>({
 		const enumOptions =
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
 			zod._def.typeName === 'ZodEnum'
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-				? (zod._def.values as unknown as string[])
+				? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
+				  (zod._def.values as unknown as string[])
 				: undefined;
 
 		fields.push({
@@ -64,7 +64,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			type,
 			value: data[key],
 			enumOptions,
-			readOnly: readOnlyKeys.includes(key)
+			readOnly: readOnlyKeys.includes(key),
 		});
 	}
 

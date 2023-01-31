@@ -5,8 +5,6 @@ import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { detailLoader, listLoader } from './loaders';
 
-
-
 export const newsletterRoute: RouteObject = {
 	path: '/newsletters/',
 	element: <Layout />,

@@ -1,5 +1,5 @@
-import type { LoaderFunction } from "react-router";
-import type { Newsletter } from "@newsletters-nx/newsletters-data-client";
+import type { LoaderFunction } from 'react-router';
+import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 
 async function getNewsletters(): Promise<Newsletter[]> {
 	try {

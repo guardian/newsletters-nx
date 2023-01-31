@@ -17,8 +17,18 @@ export const emailEmbedSchema = z.object({
 	imageUrl: z.string().optional(),
 });
 
-const themeEnumSchema = z.enum(['news', 'opinion', 'culture', 'sport', 'lifestyle', 'features', 'cancelled', 'work', 'from the papers'])
-export type Theme = z.infer<typeof themeEnumSchema>
+const themeEnumSchema = z.enum([
+	'news',
+	'opinion',
+	'culture',
+	'sport',
+	'lifestyle',
+	'features',
+	'cancelled',
+	'work',
+	'from the papers',
+]);
+export type Theme = z.infer<typeof themeEnumSchema>;
 
 export const baseNewsletterSchema = z.object({
 	name: nonEmptyString(),
@@ -57,20 +67,21 @@ export const newsletterSchema = baseNewsletterSchema.extend({
 	}),
 });
 
-export const newsletterSchemaAllowingEmptyStrings = baseNewsletterSchema.extend({
-	name: z.string(),
-	identityName: z.string(),
-	group: z.string(),
-	description: z.string(),
-	frequency: z.string(),
-	brazeSubscribeAttributeName: z.string(),
-	brazeSubscribeEventNamePrefix: z.string(),
-	brazeNewsletterName: z.string(),
-	emailEmbed: emailEmbedSchema.extend({
+export const newsletterSchemaAllowingEmptyStrings = baseNewsletterSchema.extend(
+	{
+		name: z.string(),
+		identityName: z.string(),
+		group: z.string(),
 		description: z.string(),
-	}),
-})
-
+		frequency: z.string(),
+		brazeSubscribeAttributeName: z.string(),
+		brazeSubscribeEventNamePrefix: z.string(),
+		brazeNewsletterName: z.string(),
+		emailEmbed: emailEmbedSchema.extend({
+			description: z.string(),
+		}),
+	},
+);
 
 export type Newsletter = z.infer<typeof newsletterSchema>;
 
