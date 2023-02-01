@@ -8,23 +8,20 @@ export function createSearchStringFromObject<SearchStringObjectType>(
 	objectValue: SearchStringObjectType,
 	resultString = '',
 ): string | undefined {
-	if (objectValue === null) {
+	if (objectValue === null || objectValue === undefined) {
 		return resultString;
 	}
-	if (objectValue === undefined) {
-		return resultString;
-	}
-	if (typeof objectValue === 'string') {
-		return objectValue;
-	}
-	if (typeof objectValue === 'number' || typeof objectValue === 'boolean') {
-		return JSON.stringify(objectValue);
-	}
-	if (typeof objectValue === 'object') {
-		for (const value of Object.values(objectValue)) {
-			resultString += createSearchStringFromObject(value);
-		}
-		return resultString;
+	switch (typeof objectValue) {
+		case 'string':
+			return objectValue;
+		case 'number':
+		case 'boolean':
+			return JSON.stringify(objectValue);
+		case 'object':
+			for (const value of Object.values(objectValue)) {
+				resultString += createSearchStringFromObject(value);
+			}
+			return resultString;
 	}
 	throw new Error('type of object value is not unsupported');
 }
