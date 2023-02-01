@@ -7,7 +7,7 @@
 export function createSearchStringFromObject<SearchStringObjectType>(
 	objectValue: SearchStringObjectType,
 	resultString = '',
-): string | undefined {
+): string {
 	if (objectValue === null || objectValue === undefined) {
 		return resultString;
 	}

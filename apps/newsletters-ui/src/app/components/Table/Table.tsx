@@ -2,25 +2,25 @@ import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import type { Cell, Column } from 'react-table';
 import { useSortBy, useTable } from 'react-table';
+import { createSearchStringFromObject } from './CreateSearchStringFromObject';
 
-interface TableData extends Object {
-	name: string;
-}
 interface Props {
-	data: TableData[];
+	data: object[];
 	columns: Column[];
 	defaultSortId?: string;
 }
 
 export const Table = ({ data, columns, defaultSortId }: Props) => {
 	const [filterText, setFilterText] = useState('');
-	const [filteredData, setFilteredData] = useState<TableData[]>([]);
+	const [filteredData, setFilteredData] = useState<object[]>([]);
 	useEffect(() => {
 		setFilteredData(
-			data.filter((d: { name: string }) =>
-				d.name.toLowerCase().includes(filterText.toLowerCase())
+			data.filter((d) =>
+				createSearchStringFromObject(d)
+					.toLowerCase()
+					.includes(filterText.toLowerCase()),
 			),
-		)
+		);
 	}, [data, filterText]);
 	const initialState = defaultSortId
 		? { sortBy: [{ id: defaultSortId, desc: false }] }
