@@ -6,7 +6,7 @@
 
 export function createSearchStringFromObject<SearchStringObjectType>(
 	objectValue: SearchStringObjectType,
-	resultString: string = '',
+	resultString = '',
 ): string | undefined {
 	if (objectValue === null) {
 		return resultString;
