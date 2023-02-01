@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const NewslettersTable = ({ newsletters }: Props) => {
-	const data = useMemo<object[]>(() => newsletters, [newsletters]);
+	const data = newsletters;
 	const columns = useMemo<Column[]>(
 		() => [
 			{
