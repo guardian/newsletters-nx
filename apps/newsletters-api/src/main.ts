@@ -31,9 +31,9 @@ app.get<{ Params: { newsletterId: string } }>(
 	'/v1/newsletters/:newsletterId',
 	async (req, res) => {
 		const { newsletterId } = req.params;
-		const newsletter = newslettersData.filter(isNewsletter).find(
-			(newsletter) => newsletter.identityName === newsletterId,
-		);
+		const newsletter = newslettersData
+			.filter(isNewsletter)
+			.find((newsletter) => newsletter.identityName === newsletterId);
 
 		if (!newsletter) {
 			return res
