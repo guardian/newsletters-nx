@@ -41,7 +41,7 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 		<>
 			<input
 				type="text"
-				placeholder="Filter data by name"
+				placeholder="Filter data"
 				value={filterText}
 				onChange={(e) => setFilterText(e.target.value)}
 			/>
