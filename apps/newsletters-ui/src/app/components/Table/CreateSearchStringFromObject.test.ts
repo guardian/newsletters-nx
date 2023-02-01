@@ -1,4 +1,4 @@
-import { createSearchStringFromObject } from './CreateSearchStringFromObject';
+import { createSearchStringFromObject } from './createSearchStringFromObject';
 
 describe('createSearchStringFromObject', () => {
 	it('Works with an integer', () => {
@@ -22,7 +22,10 @@ describe('createSearchStringFromObject', () => {
 		expect(createSearchStringFromObject(testValue)).toEqual('test');
 	});
 	it('Works with a nested object', () => {
-		const testValue = { test1: 'test1', nested: { test2: 'test2', test3: 'test3'} };
+		const testValue = {
+			test1: 'test1',
+			nested: { test2: 'test2', test3: 'test3' },
+		};
 		expect(createSearchStringFromObject(testValue)).toEqual('test1test2test3');
 	});
 	it('Works with an empty object', () => {

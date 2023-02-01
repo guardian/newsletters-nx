@@ -2,7 +2,8 @@ import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import type { Cell, Column } from 'react-table';
 import { useSortBy, useTable } from 'react-table';
-import { createSearchStringFromObject } from './CreateSearchStringFromObject';
+import { createColumnVisbilityObject } from './createColumnVisibilityObject';
+import { createSearchStringFromObject } from './createSearchStringFromObject';
 
 interface Props {
 	data: object[];
@@ -22,6 +23,15 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 			),
 		);
 	}, [data, filterText]);
+
+	const [columnsVisibility, setColumnsVisibility] = useState<Record<string, boolean>>(createColumnVisbilityObject(data));
+	const handleToggleColumn = (columnName: string) => {
+		setColumnsVisibility({
+			...columnsVisibility,
+			[columnName]: !columnsVisibility[columnName],
+		});
+	};
+
 	const initialState = defaultSortId
 		? { sortBy: [{ id: defaultSortId, desc: false }] }
 		: {};
@@ -52,6 +62,11 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 							{headerGroup.headers.map((column) => (
 								<th {...column.getHeaderProps(column.getSortByToggleProps())}>
 									{column.render('Header')}
+									<input
+										type="checkbox"
+										checked={columnsVisibility[column.id]}
+										onChange={() => handleToggleColumn(column.id)}
+									/>
 									<span>
 										{column.isSorted
 											? column.isSortedDesc
@@ -70,6 +85,9 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 						return (
 							<tr {...row.getRowProps()}>
 								{row.cells.map((cell: Cell, index) => {
+									if (!columnsVisibility[cell.column.id]) {
+										return null;
+									}
 									return (
 										<td {...cell.getCellProps()}>{cell.render('Cell')}</td>
 									);
