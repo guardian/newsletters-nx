@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { Button } from '@guardian/source-react-components';
 import { useNavigate } from 'react-router';
 
 const ContainerStyle = styled.div`
@@ -17,63 +16,63 @@ export function ButtonContainer() {
 
 	return (
 		<ContainerStyle>
-			<Button onClick={() => navigate('/newsletters/')}>
+			<button onClick={() => navigate('/newsletters/')}>
 				View current newsletters
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() =>
 					alert('Create new newsletter has not yet been implemented')
 				}
 			>
 				Create new newsletter
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() => alert('Update newsletter has not yet been implemented')}
 			>
 				Update newsletter
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() =>
 					alert('Create email template has not yet been implemented')
 				}
 			>
 				Create email template
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() =>
 					alert('Create single thrasher has not yet been implemented')
 				}
 			>
 				Create single thrasher
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() =>
 					alert('Create multi thrasher has not yet been implemented')
 				}
 			>
 				Create multi thrasher
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() =>
 					alert('Update email template has not yet been implemented')
 				}
 			>
 				Update email template
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() =>
 					alert('Update single thrasher has not yet been implemented')
 				}
 			>
 				Update single thrasher
-			</Button>
-			<Button
+			</button>
+			<button
 				onClick={() =>
 					alert('Update multi thrasher has not yet been implemented')
 				}
 			>
 				Update multi thrasher
-			</Button>
+			</button>
 		</ContainerStyle>
 	);
 }
