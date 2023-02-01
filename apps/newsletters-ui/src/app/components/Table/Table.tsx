@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import type { Cell, Column, TableOptions } from 'react-table';
+import type { Cell, Column } from 'react-table';
 import { useSortBy, useTable } from 'react-table';
 
 interface TableData extends Object {
