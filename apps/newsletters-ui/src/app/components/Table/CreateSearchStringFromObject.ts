@@ -22,11 +22,7 @@ export function createSearchStringFromObject<SearchStringObjectType>(
 	}
 	if (typeof objectValue === 'object') {
 		for (const value of Object.values(objectValue)) {
-			if (typeof value === 'object') {
-				resultString += createSearchStringFromObject(value);
-			} else {
-				resultString += JSON.stringify(value);
-			}
+			resultString += createSearchStringFromObject(value);
 		}
 		return resultString;
 	}

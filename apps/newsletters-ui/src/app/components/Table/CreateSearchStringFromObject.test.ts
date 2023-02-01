@@ -14,7 +14,7 @@ describe('createSearchStringFromObject', () => {
     expect(createSearchStringFromObject(testValue)).toEqual('true');
   })
   it('Works with an object', () => {
-    const testValue = {test: 'test'};
-    expect(createSearchStringFromObject(testValue)).toEqual('test');
-  }
+		const testValue = { test: 'test' };
+		expect(createSearchStringFromObject(testValue)).toEqual('test');
+	});
 });
