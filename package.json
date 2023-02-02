@@ -3,11 +3,16 @@
 	"version": "0.0.0",
 	"license": "MIT",
 	"scripts": {
+		"preinstall": "./scripts/preinstall.sh",
 		"dev": "nx run-many --target=serve --all",
 		"lint": "nx run-many --target=lint --all",
 		"build": "nx run-many --target=build --all",
 		"test": "nx run-many --target=test --all",
 		"prepare": "husky install"
+	},
+	"engines": {
+		"node": ">=16.19.0",
+		"npm": ">=8.19.3"
 	},
 	"private": true,
 	"dependencies": {
@@ -15,7 +20,6 @@
 		"@emotion/react": "11.10.5",
 		"@emotion/styled": "11.10.5",
 		"@guardian/source-foundations": "^8.0.0",
-		"@guardian/source-react-components": "^10.0.2",
 		"@types/react-table": "^7.7.14",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",

@@ -17,7 +17,7 @@ export const HealthCheck: React.FC = () => {
 				setResponse(data);
 				setIsLoading(false);
 			})
-			.catch((error) => {
+			.catch((error: unknown /* FIXME! */) => {
 				console.error('Error fetching health data:', error);
 				setIsLoading(false);
 			});

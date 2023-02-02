@@ -6,7 +6,8 @@ import {
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
-import { getPalette, type SourcePalette } from '../util';
+import { getPalette } from '../util';
+import type { SourcePalette } from '../util';
 
 interface Props {
 	newsletter: Newsletter;

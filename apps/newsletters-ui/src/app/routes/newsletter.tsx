@@ -6,12 +6,12 @@ import { Layout } from '../Layout';
 import { detailLoader, listLoader } from './loaders';
 
 export const newsletterRoute: RouteObject = {
-	path: '/newsletters/',
+	path: '/newsletters',
 	element: <Layout />,
 	errorElement: <ErrorPage />,
 	children: [
 		{
-			path: '/newsletters/',
+			path: '/newsletters',
 			element: <NewsletterListView />,
 			loader: listLoader,
 		},

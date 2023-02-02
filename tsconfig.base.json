@@ -21,7 +21,7 @@
 			]
 		},
 		"strictNullChecks": true,
-		"incremental": false // Gu default is true but this seems to clash with NX
+		"incremental": false
 	},
 	"exclude": ["node_modules", "tmp"]
 }

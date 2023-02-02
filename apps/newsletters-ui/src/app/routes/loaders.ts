@@ -1,12 +1,14 @@
 import type { LoaderFunction } from 'react-router';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type {
+	ApiResponse,
+	Newsletter,
+} from '@newsletters-nx/newsletters-data-client';
 
 async function getNewsletters(): Promise<Newsletter[]> {
 	try {
 		const response = await fetch('api/v1/newsletters');
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- internal api call
-		const data = await response.json();
-		return data as Newsletter[];
+		const data = (await response.json()) as ApiResponse<Newsletter[]>;
+		return data.ok ? data.data : [];
 	} catch (err) {
 		console.error(err);
 		return [];
