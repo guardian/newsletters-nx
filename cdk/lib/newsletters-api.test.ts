@@ -1,12 +1,12 @@
 import { App } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { newslettersProps } from '../bin/cdk';
-import { NewslettersData } from './newsletters-data';
+import { NewslettersApi } from './newsletters-api';
 
-describe('The Newsletters Data stack', () => {
+describe('The NewslettersApi stack', () => {
 	it('matches the snapshot', () => {
 		const app = new App();
-		const stack = new NewslettersData(app, 'NewslettersData-TEST', {
+		const stack = new NewslettersApi(app, 'NewslettersApi-TEST', {
 			...newslettersProps,
 			stage: 'TEST',
 		});

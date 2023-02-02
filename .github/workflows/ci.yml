@@ -55,8 +55,8 @@ jobs:
 
       - uses: guardian/actions-riff-raff@v2
         with:
-          app: newsletters-data
+          app: newsletters-api
           configPath: riff-raff.yaml
           contentDirectories: |
             cloudformation:
-              - cdk/cdk.out/NewslettersData-DEV.template.json
+              - cdk/cdk.out/NewslettersApi-DEV.template.json

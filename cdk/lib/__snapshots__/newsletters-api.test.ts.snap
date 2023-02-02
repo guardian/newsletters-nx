@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`The Newsletters Data stack matches the snapshot 1`] = `
+exports[`The NewslettersApi stack matches the snapshot 1`] = `
 {
   "Metadata": {
     "gu:cdk:constructs": [
@@ -9,17 +9,17 @@ exports[`The Newsletters Data stack matches the snapshot 1`] = `
     "gu:cdk:version": "TEST",
   },
   "Parameters": {
-    "SsmParameterValueTESTnewslettersnewslettersdatas3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/TEST/newsletters/newsletters-data/s3BucketName",
+    "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/TEST/newsletters/newsletters-api/s3BucketName",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
   "Resources": {
-    "DataBucketNewslettersdata573FDBE4": {
+    "DataBucketNewslettersapi96EED09B": {
       "DeletionPolicy": "Retain",
       "Properties": {
         "BucketName": {
-          "Ref": "SsmParameterValueTESTnewslettersnewslettersdatas3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
         },
         "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": true,
@@ -30,7 +30,7 @@ exports[`The Newsletters Data stack matches the snapshot 1`] = `
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-data",
+            "Value": "newsletters-api",
           },
           {
             "Key": "gu:cdk:version",
