@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import type { Cell, Column } from 'react-table';
 import { useSortBy, useTable } from 'react-table';
+import { ColumnsDropdown, getAvailableColumns } from '../ColumnsDropdown';
 import { createColumnVisbilityObject } from './createColumnVisibilityObject';
 import { createSearchStringFromObject } from './createSearchStringFromObject';
 
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export const Table = ({ data, columns, defaultSortId }: Props) => {
+	const availableColumns = getAvailableColumns(columns);
+
 	const [filterText, setFilterText] = useState('');
 	const [filteredData, setFilteredData] = useState<object[]>([]);
 	useEffect(() => {
@@ -24,7 +27,11 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 		);
 	}, [data, filterText]);
 
-	const [columnsVisibility, setColumnsVisibility] = useState<Record<string, boolean>>(createColumnVisbilityObject(data));
+
+
+	const [columnsVisibility, setColumnsVisibility] = useState<
+		Record<string, boolean>
+	>(createColumnVisbilityObject(data));
 	const handleToggleColumn = (columnName: string) => {
 		setColumnsVisibility({
 			...columnsVisibility,
@@ -49,6 +56,10 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 	`;
 	return (
 		<>
+			<span>
+				Select columns to display:{' '}
+				<ColumnsDropdown columns={availableColumns} />
+			</span>
 			<input
 				type="text"
 				placeholder="Filter data"

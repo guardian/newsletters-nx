@@ -6,9 +6,11 @@ export function createColumnVisbilityObject<TableData>(
 		return columnVisibility;
 	}
 	for (const key in tableData) {
-		if (Object.prototype.hasOwnProperty.call(tableData, "key")) {
+		if (Object.prototype.hasOwnProperty.call(tableData, 'key')) {
 			columnVisibility[key] = true;
 		}
 	}
 	return columnVisibility;
 }
+
+
