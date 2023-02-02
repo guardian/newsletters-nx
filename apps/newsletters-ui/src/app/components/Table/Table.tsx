@@ -10,11 +10,7 @@ interface Props {
 	defaultSortId?: string;
 }
 
-export const Table = ({
-	data,
-	columns,
-	defaultSortId,
-}: Props) => {
+export const Table = ({ data, columns, defaultSortId }: Props) => {
 	const [filterText, setFilterText] = useState('');
 	const [filteredData, setFilteredData] = useState<object[]>([]);
 	useEffect(() => {
@@ -27,11 +23,17 @@ export const Table = ({
 		);
 	}, [data, filterText]);
 
-		const initialState = defaultSortId
+	const initialState = defaultSortId
 		? { sortBy: [{ id: defaultSortId, desc: false }] }
 		: {};
-	const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-		useTable({ columns, data: filteredData, initialState }, useSortBy);
+	const {
+		getTableProps,
+		getTableBodyProps,
+		headerGroups,
+		rows,
+		prepareRow,
+		allColumns,
+	} = useTable({ columns, data: filteredData, initialState }, useSortBy);
 
 	const tableStyle = css`
 		border-collapse: collapse;
@@ -44,6 +46,19 @@ export const Table = ({
 	`;
 	return (
 		<>
+			<div>
+				Hide/Show Columns
+			</div>
+			<div>
+				{allColumns.map(column => (
+					<div key={column.id}>
+						<label>
+							<input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
+							{column.Header as string}
+						</label>
+					</div>
+				))}
+			</div>
 			<input
 				type="text"
 				placeholder="Filter data"
