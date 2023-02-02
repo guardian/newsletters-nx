@@ -2,19 +2,38 @@ import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import type { Cell, Column } from 'react-table';
 import { useSortBy, useTable } from 'react-table';
-import { ColumnsDropdown, getAvailableColumns } from '../ColumnsDropdown';
+import { ColumnsDropdown, convertColumnsForDropdown } from '../ColumnsDropdown';
 import { createColumnVisbilityObject } from './createColumnVisibilityObject';
-import { createSearchStringFromObject } from './createSearchStringFromObject';
+import { createSearchStringFromObject } from './CreateSearchStringFromObject';
 
 interface Props {
 	data: object[];
 	columns: Column[];
+	defaultColumnVisibility: Record<string, boolean>;
 	defaultSortId?: string;
 }
 
-export const Table = ({ data, columns, defaultSortId }: Props) => {
-	const availableColumns = getAvailableColumns(columns);
+function createColumnVisibilityMap(
+	columns: Column[],
+	availableColumns: Column[],
+) {
+	const columnVisibilityMap = new Map<string, boolean>();
+	columns.forEach((column) => {
+		const columnName = column.Header as string;
+		const columnIsAvailable = availableColumns.some(
+			(availableColumn) => availableColumn.Header === columnName,
+		);
+		columnVisibilityMap.set(columnName, columnIsAvailable);
+	});
+	return columnVisibilityMap;
+}
 
+export const Table = ({
+	data,
+	columns,
+	defaultColumnVisibility,
+	defaultSortId,
+}: Props) => {
 	const [filterText, setFilterText] = useState('');
 	const [filteredData, setFilteredData] = useState<object[]>([]);
 	useEffect(() => {
@@ -27,17 +46,9 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 		);
 	}, [data, filterText]);
 
-
-
 	const [columnsVisibility, setColumnsVisibility] = useState<
 		Record<string, boolean>
-	>(createColumnVisbilityObject(data));
-	const handleToggleColumn = (columnName: string) => {
-		setColumnsVisibility({
-			...columnsVisibility,
-			[columnName]: !columnsVisibility[columnName],
-		});
-	};
+	>(defaultColumnVisibility);
 
 	const initialState = defaultSortId
 		? { sortBy: [{ id: defaultSortId, desc: false }] }
@@ -58,7 +69,10 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 		<>
 			<span>
 				Select columns to display:{' '}
-				<ColumnsDropdown columns={availableColumns} />
+				<ColumnsDropdown
+					columns={columns}
+					onChange={(visibleColumns) => setColumnsVisibility(visibleColumns)}
+				/>
 			</span>
 			<input
 				type="text"
@@ -73,11 +87,6 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 							{headerGroup.headers.map((column) => (
 								<th {...column.getHeaderProps(column.getSortByToggleProps())}>
 									{column.render('Header')}
-									<input
-										type="checkbox"
-										checked={columnsVisibility[column.id]}
-										onChange={() => handleToggleColumn(column.id)}
-									/>
 									<span>
 										{column.isSorted
 											? column.isSortedDesc

@@ -4,7 +4,7 @@ import type { ActionMeta, MultiValue } from 'react-select';
 import type { Column } from 'react-table';
 
 interface Props {
-	columns: ColumnToSelect[];
+	columns: Column[];
 }
 
 type ColumnToSelect = {
@@ -12,7 +12,7 @@ type ColumnToSelect = {
 	value: string;
 };
 
-export function getAvailableColumns(columns: Column[]): ColumnToSelect[] {
+function convertColumnsForDropdown(columns: Column[]): ColumnToSelect[] {
 	return columns
 		.filter((column) => column.Header)
 		.map((column) => {
@@ -22,21 +22,41 @@ export function getAvailableColumns(columns: Column[]): ColumnToSelect[] {
 		});
 }
 
+function convertSelectedColumnsToColumnVisibility(
+	selectedColumns: ColumnToSelect[],
+	allColumns: Column[],
+): Record<string, boolean> {
+	return allColumns.reduce((acc: Record<string, boolean>, column) => {
+		const name = column.id;
+		if (name) {
+			acc[name] = selectedColumns.some(
+				(selectedColumn) => selectedColumn.value === name,
+			);
+		}
+
+		return acc;
+	}, {});
+}
+
 export const ColumnsDropdown = ({ columns }: Props) => {
-	const [selectedColumns, setSelectedColumns] = useState<ColumnToSelect[]>([]);
+	const [selectedColumns, setSelectedColumns] = useState<
+		Record<string, boolean>
+	>({});
 
 	const handleChange = (
-		selectedOptions: MultiValue<ColumnToSelect>,
+		selectedOptions: ColumnToSelect[],
 		actionMeta: ActionMeta<ColumnToSelect>,
 	) => {
-		setSelectedColumns(selectedOptions as ColumnToSelect[]);
+		setSelectedColumns(
+			convertSelectedColumnsToColumnVisibility(selectedOptions, columns),
+		);
 	};
 
 	return (
 		<Select
-			options={columns}
+			options={convertColumnsForDropdown(columns)}
 			isMulti
-			value={selectedColumns}
+			value={convertColumnsForDropdown(selectedColumns)}
 			onChange={handleChange}
 		/>
 	);
