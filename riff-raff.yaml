@@ -1,0 +1,14 @@
+$schema: 'https://raw.githubusercontent.com/guardian/riff-raff/master/contrib/riff-raff-yaml-schema.json'
+stacks: [newsletters]
+regions: [eu-west-1]
+allowedStages: [DEV] # TODO: Add CODE, PROD stages
+deployments:
+  cloudformation:
+    type: cloud-formation
+    app: newsletters-api
+    parameters:
+      cloudFormationStackName: newsletters-api
+      cloudFormationStackByTags: false
+      templateStagePaths:
+        DEV: NewslettersApi-DEV.template.json
+  # TODO: Add deployments for each app
