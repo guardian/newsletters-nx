@@ -4,15 +4,23 @@ import type {
 	Newsletter,
 } from '@newsletters-nx/newsletters-data-client';
 
-async function getNewsletters(): Promise<Newsletter[]> {
+async function fetchApiData<T>(path: string): Promise<T | undefined> {
 	try {
-		const response = await fetch('api/v1/newsletters');
-		const data = (await response.json()) as ApiResponse<Newsletter[]>;
-		return data.ok ? data.data : [];
+		const response = await fetch(path);
+		const data = (await response.json()) as ApiResponse<T>;
+		return data.ok ? data.data : undefined;
 	} catch (err) {
 		console.error(err);
-		return [];
+		return undefined;
 	}
+}
+
+async function getNewsletters(): Promise<Newsletter[]> {
+	return (await fetchApiData<Newsletter[]>(`api/v1/newsletters`)) ?? [];
+}
+
+async function getNewsletter(id: string): Promise<Newsletter | undefined> {
+	return await fetchApiData<Newsletter>(`api/v1/newsletters/${id}`);
 }
 
 export const listLoader: LoaderFunction = async (): Promise<Newsletter[]> => {
@@ -20,11 +28,12 @@ export const listLoader: LoaderFunction = async (): Promise<Newsletter[]> => {
 	return list;
 };
 
-// TO DO - use the /newsletter/:id api route when available
 export const detailLoader: LoaderFunction = async ({
 	params,
 }): Promise<Newsletter | undefined> => {
-	const items = await getNewsletters();
-	const match = items.find((item) => item.identityName === params.id);
-	return match;
+	const { id } = params;
+	if (!id) {
+		return undefined;
+	}
+	return getNewsletter(id);
 };
