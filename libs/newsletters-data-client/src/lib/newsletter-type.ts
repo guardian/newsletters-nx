@@ -57,7 +57,10 @@ export const newsletterSchema = baseNewsletterSchema.extend({
 export type Newsletter = z.infer<typeof newsletterSchema>;
 
 export function isNewsletter(subject: unknown): subject is Newsletter {
-	return newsletterSchema.safeParse(subject).success;
+	return (
+		newsletterSchema.safeParse(subject).success ||
+		cancelledNewsletterSchema.safeParse(subject).success
+	);
 }
 
 export const cancelledNewsletterSchema = baseNewsletterSchema.extend({
