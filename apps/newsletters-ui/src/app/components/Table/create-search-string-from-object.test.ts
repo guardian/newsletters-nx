@@ -1,4 +1,4 @@
-import { createSearchStringFromObject } from './createSearchStringFromObject';
+import { createSearchStringFromObject } from './create-search-string-from-object';
 
 describe('createSearchStringFromObject', () => {
 	it('Works with an integer', () => {

@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import type { Cell, Column } from 'react-table';
 import { useSortBy, useTable } from 'react-table';
-import { createSearchStringFromObject } from './createSearchStringFromObject';
+import { createSearchStringFromObject } from './create-search-string-from-object';
 
 interface Props {
 	data: object[];
