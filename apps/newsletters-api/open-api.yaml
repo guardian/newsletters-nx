@@ -7,10 +7,10 @@ info:
     email: newsletters-dev@guardian.co.uk
 
 paths:
-  /v1/newsletters:
+  /newsletters:
     get:
       summary: Returns a list of newsletters.
-      description: Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
+      description: Provides the legacy API format, consisting only of the array of newsletters. Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
       responses:
         '200':
           description: A JSON array of newsletter entities
@@ -20,6 +20,71 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Newsletter'
+
+  /v1/newsletters:
+    get:
+      summary: Returns a response object with a list of newsletters as the result field.
+      description: Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
+      responses:
+        '200':
+          description: A JSON object containing array of newsletter entities
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ok
+                  - total
+                  - data
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  total:
+                    type: number
+                    example: 1
+                    description: the number of newsletters in the results
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Newsletter'
+
+  /v1/newsletters/{newsletterId}:
+    get:
+      summary: Get a newsletter by newsletterId
+      parameters:
+        - in: path
+          name: newsletterId
+          schema:
+            type: string
+          required: true
+          description: The unique newsletterId of the newsletter to get
+      responses:
+        '404':
+          description: A JSON object describing a 'not found' error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '200':
+          description: Returns a response object with the matching newsletter as the data field.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ok
+                  - total
+                  - data
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  total:
+                    type: number
+                    example: 1
+                  data:
+                    $ref: '#/components/schemas/Newsletter'
 
 components:
   schemas:
@@ -144,3 +209,14 @@ components:
           example: '#DCDCDC'
         imageUrl:
           type: string
+    ErrorResponse:
+      type: object
+      required:
+        - ok
+      properties:
+        ok:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: No newsletter with id fake-newsletter-id

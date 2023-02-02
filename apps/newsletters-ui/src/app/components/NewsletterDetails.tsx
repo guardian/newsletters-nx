@@ -5,9 +5,9 @@ import {
 	space,
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
-import { Container, Inline } from '@guardian/source-react-components';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
-import { getPalette, type SourcePalette } from '../util';
+import { getPalette } from '../util';
+import type { SourcePalette } from '../util';
 
 interface Props {
 	newsletter: Newsletter;
@@ -65,15 +65,15 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 	const palette = getPalette(theme);
 
 	return (
-		<Container>
+		<div>
 			<div css={detailStyles(palette)}>
 				<h2>{name}</h2>
-				<Inline>
+				<div>
 					{cancelled && <div css={flagStyles(palette)}>CANCELLED</div>}
 					{paused && <div css={flagStyles(palette)}>PAUSED</div>}
 					{restricted && <div css={flagStyles(palette)}>restricted</div>}
 					{!paused && !cancelled && <div css={flagStyles(palette)}>LIVE</div>}
-				</Inline>
+				</div>
 				<table>
 					<tbody>
 						<tr>
@@ -103,6 +103,6 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 					</tbody>
 				</table>
 			</div>
-		</Container>
+		</div>
 	);
 };
