@@ -1,6 +1,12 @@
-export type ApiResponse<T> = {
-	ok: boolean;
+type ApiErrorResponse = {
+	ok: false;
 	message?: string;
-	total?: number;
-	results: T;
 };
+
+type ApiSuccessResponse<T> = {
+	ok: true;
+	total: number;
+	data: T;
+};
+
+export type ApiResponse<T = unknown> = ApiSuccessResponse<T> | ApiErrorResponse;

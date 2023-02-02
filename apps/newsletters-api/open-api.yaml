@@ -35,7 +35,7 @@ paths:
                 required:
                   - ok
                   - total
-                  - results
+                  - data
                 properties:
                   ok:
                     type: boolean
@@ -44,12 +44,12 @@ paths:
                     type: number
                     example: 1
                     description: the number of newsletters in the results
-                  results:
+                  data:
                     type: array
                     items:
                       $ref: '#/components/schemas/Newsletter'
 
-  /newsletters/{newsletterId}:
+  /v1/newsletters/{newsletterId}:
     get:
       summary: Get a newsletter by newsletterId
       parameters:
@@ -67,19 +67,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '200':
-          description: Returns a response object with the matching newsletters as the result field.
+          description: Returns a response object with the matching newsletter as the data field.
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - results
                   - ok
+                  - total
+                  - data
                 properties:
                   ok:
                     type: boolean
                     example: true
-                  results:
+                  total:
+                    type: number
+                    example: 1
+                  data:
                     $ref: '#/components/schemas/Newsletter'
 
 components:
