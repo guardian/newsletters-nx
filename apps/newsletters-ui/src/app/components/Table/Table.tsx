@@ -46,11 +46,9 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 	`;
 	return (
 		<>
+			<div>Hide/Show Columns</div>
 			<div>
-				Hide/Show Columns
-			</div>
-			<div>
-				{allColumns.map(column => (
+				{allColumns.map((column) => (
 					<div key={column.id}>
 						<label>
 							<input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
