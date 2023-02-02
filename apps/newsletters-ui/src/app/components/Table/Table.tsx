@@ -2,36 +2,17 @@ import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import type { Cell, Column } from 'react-table';
 import { useSortBy, useTable } from 'react-table';
-import { ColumnsDropdown, convertColumnsForDropdown } from '../ColumnsDropdown';
-import { createColumnVisbilityObject } from './createColumnVisibilityObject';
-import { createSearchStringFromObject } from './CreateSearchStringFromObject';
+import { createSearchStringFromObject } from './createSearchStringFromObject';
 
 interface Props {
 	data: object[];
 	columns: Column[];
-	defaultColumnVisibility: Record<string, boolean>;
 	defaultSortId?: string;
-}
-
-function createColumnVisibilityMap(
-	columns: Column[],
-	availableColumns: Column[],
-) {
-	const columnVisibilityMap = new Map<string, boolean>();
-	columns.forEach((column) => {
-		const columnName = column.Header as string;
-		const columnIsAvailable = availableColumns.some(
-			(availableColumn) => availableColumn.Header === columnName,
-		);
-		columnVisibilityMap.set(columnName, columnIsAvailable);
-	});
-	return columnVisibilityMap;
 }
 
 export const Table = ({
 	data,
 	columns,
-	defaultColumnVisibility,
 	defaultSortId,
 }: Props) => {
 	const [filterText, setFilterText] = useState('');
@@ -46,11 +27,7 @@ export const Table = ({
 		);
 	}, [data, filterText]);
 
-	const [columnsVisibility, setColumnsVisibility] = useState<
-		Record<string, boolean>
-	>(defaultColumnVisibility);
-
-	const initialState = defaultSortId
+		const initialState = defaultSortId
 		? { sortBy: [{ id: defaultSortId, desc: false }] }
 		: {};
 	const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -67,13 +44,6 @@ export const Table = ({
 	`;
 	return (
 		<>
-			<span>
-				Select columns to display:{' '}
-				<ColumnsDropdown
-					columns={columns}
-					onChange={(visibleColumns) => setColumnsVisibility(visibleColumns)}
-				/>
-			</span>
 			<input
 				type="text"
 				placeholder="Filter data"
@@ -105,9 +75,6 @@ export const Table = ({
 						return (
 							<tr {...row.getRowProps()}>
 								{row.cells.map((cell: Cell, index) => {
-									if (!columnsVisibility[cell.column.id]) {
-										return null;
-									}
 									return (
 										<td {...cell.getCellProps()}>{cell.render('Cell')}</td>
 									);
