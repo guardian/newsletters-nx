@@ -10,7 +10,7 @@ deployments:
       cloudFormationStackName: newsletters-api
       cloudFormationStackByTags: false
       templateStagePaths:
-        DEV: NewslettersApi-DEV.template.json
+        CODE: NewslettersApi-DEV.template.json
       amiParameter: AMINewslettersNode
       amiTags:
         Recipe: newsletters-node
