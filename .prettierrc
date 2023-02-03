@@ -1,6 +1,1 @@
-{
-	"extends": "@guardian/prettier",
-	"importOrder": ["^components/(.*)$", "^[./]"],
-	"importOrderSeparation": true,
-	"importOrderSortSpecifiers": true
-}
+"@guardian/prettier"
