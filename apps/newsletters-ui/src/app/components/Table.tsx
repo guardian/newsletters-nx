@@ -46,9 +46,7 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 					</div>
 				))}
 			</div>
-			<GlobalFilter
-				setGlobalFilter={setGlobalFilter}
-			/>
+			<GlobalFilter setGlobalFilter={setGlobalFilter} />
 			<table {...getTableProps()} css={tableStyle}>
 				<thead>
 					{headerGroups.map((headerGroup) => (
