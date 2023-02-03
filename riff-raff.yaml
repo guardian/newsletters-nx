@@ -11,7 +11,7 @@ deployments:
       cloudFormationStackByTags: false
       templateStagePaths:
         CODE: NewslettersApi-DEV.template.json
-      amiParameter: AMINewslettersNode
+      amiParameter: AMINewslettersapi
       amiTags:
         Recipe: newsletters-node
         AmigoStage: PROD
