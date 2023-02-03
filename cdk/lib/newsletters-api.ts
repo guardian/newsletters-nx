@@ -1,11 +1,13 @@
 import { GuNodeApp } from '@guardian/cdk';
 import { AccessScope } from '@guardian/cdk/lib/constants';
-import type { GuStackProps } from '@guardian/cdk/lib/constructs/core';
-import { GuDistributionBucketParameter } from '@guardian/cdk/lib/constructs/core';
+import {
+	GuDistributionBucketParameter,
+	type GuStackProps,
+} from '@guardian/cdk/lib/constructs/core';
 import { GuStack } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
 import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
-import { App, Duration } from 'aws-cdk-lib';
+import { type App, Duration } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 

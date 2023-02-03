@@ -46,11 +46,13 @@ jobs:
         with:
           node-version: 18
 
-      - run: |
+      - name: Bundle newsletters-api
+        run: |
           npm ci
           npm run bundle-api
 
-      - working-directory: ./cdk
+      - name: Build and synth CDK
+        working-directory: ./cdk
         run: |
           npm ci
           npm run lint
