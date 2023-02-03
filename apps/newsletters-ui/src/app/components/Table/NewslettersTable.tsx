@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
-import { formatCellBoolean } from './Cell';
+import { formatCellBoolean } from './cellValueTransformers';
 import { Table } from './Table';
 
 interface Props {

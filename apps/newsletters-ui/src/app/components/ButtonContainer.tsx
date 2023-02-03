@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 const ContainerStyle = styled.div`
 	display: grid;
@@ -11,68 +12,72 @@ const ContainerStyle = styled.div`
 	}
 `;
 
-export function ButtonContainer() {
-	const navigate = useNavigate();
+const Button = styled.button`
+	/* pointer-events: not-allowed; */
+	:disabled {
+		cursor: not-allowed;
+	}
+`;
 
+export function ButtonContainer() {
 	return (
 		<ContainerStyle>
-			<button onClick={() => navigate('/newsletters/')}>
-				View current newsletters
-			</button>
-			<button
-				onClick={() =>
-					alert('Create new newsletter has not yet been implemented')
-				}
+			<Button title="View current newsletters">
+				<Link to="/newsletters">View current newsletters</Link>
+			</Button>
+
+			<Button
+				disabled
+				title="Create new newsletter has not yet been implemented"
 			>
 				Create new newsletter
-			</button>
-			<button
-				onClick={() => alert('Update newsletter has not yet been implemented')}
-			>
+			</Button>
+
+			<Button disabled title="Update newsletter has not yet been implemented">
 				Update newsletter
-			</button>
-			<button
-				onClick={() =>
-					alert('Create email template has not yet been implemented')
-				}
+			</Button>
+
+			<Button
+				disabled
+				title="Create email template has not yet been implemented"
 			>
 				Create email template
-			</button>
-			<button
-				onClick={() =>
-					alert('Create single thrasher has not yet been implemented')
-				}
+			</Button>
+
+			<Button
+				disabled
+				title="Create single thrasher has not yet been implemented"
 			>
 				Create single thrasher
-			</button>
-			<button
-				onClick={() =>
-					alert('Create multi thrasher has not yet been implemented')
-				}
+			</Button>
+
+			<Button
+				disabled
+				title="Create multi thrasher has not yet been implemented"
 			>
 				Create multi thrasher
-			</button>
-			<button
-				onClick={() =>
-					alert('Update email template has not yet been implemented')
-				}
+			</Button>
+
+			<Button
+				disabled
+				title="Update email template has not yet been implemented"
 			>
 				Update email template
-			</button>
-			<button
-				onClick={() =>
-					alert('Update single thrasher has not yet been implemented')
-				}
+			</Button>
+
+			<Button
+				disabled
+				title="Update single thrasher has not yet been implemented"
 			>
 				Update single thrasher
-			</button>
-			<button
-				onClick={() =>
-					alert('Update multi thrasher has not yet been implemented')
-				}
+			</Button>
+
+			<Button
+				disabled
+				title="Update multi thrasher has not yet been implemented"
 			>
 				Update multi thrasher
-			</button>
+			</Button>
 		</ContainerStyle>
 	);
 }

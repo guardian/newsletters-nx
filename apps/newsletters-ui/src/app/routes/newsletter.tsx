@@ -1,49 +1,8 @@
-import type { LoaderFunction, RouteObject } from 'react-router-dom';
-import type {
-	ApiResponse,
-	Newsletter,
-} from '@newsletters-nx/newsletters-data-client';
+import type { RouteObject } from 'react-router-dom';
+import { getNewsletter, getNewsletters } from '../api/newsletters';
 import { NewsletterDetailView } from '../components/NewsletterDetailView';
 import { NewsletterListView } from '../components/NewslettersListView';
-import { ErrorPage } from '../ErrorPage';
-import { Layout } from '../Layout';
-
-async function getNewsletters(): Promise<Newsletter[]> {
-	try {
-		const response = await fetch('api/v1/newsletters');
-		const data = (await response.json()) as ApiResponse<Newsletter[]>;
-
-		return data.ok ? data.data : []; // TODO: handle non 2xx responses
-	} catch (err) {
-		console.error(err);
-		return [];
-	}
-}
-
-async function getNewsletter(id: string): Promise<Newsletter | undefined> {
-	try {
-		const response = await fetch(`api/v1/newsletters/${id}`);
-		const data = (await response.json()) as ApiResponse<Newsletter>;
-		return data.ok ? data.data : undefined; // TODO: handle non 2xx responses
-	} catch (err) {
-		console.error(err);
-		return undefined;
-	}
-}
-
-export const listLoader: LoaderFunction = async (): Promise<Newsletter[]> => {
-	const list = await getNewsletters();
-	return list;
-};
-
-export const detailLoader: LoaderFunction = async ({
-	params,
-}): Promise<Newsletter | undefined> => {
-	if (!params.id) {
-		return undefined;
-	}
-	return await getNewsletter(params.id);
-};
+import { ErrorPage, Layout } from '../pages';
 
 export const newsletterRoute: RouteObject = {
 	path: '/newsletters',
@@ -53,12 +12,13 @@ export const newsletterRoute: RouteObject = {
 		{
 			path: '/newsletters',
 			element: <NewsletterListView />,
-			loader: listLoader,
+			loader: async () => getNewsletters(),
 		},
 		{
 			path: '/newsletters/:id',
 			element: <NewsletterDetailView />,
-			loader: detailLoader,
+			loader: async ({ params: { id } }) =>
+				id ? getNewsletter(id) : undefined,
 		},
 	],
 };
