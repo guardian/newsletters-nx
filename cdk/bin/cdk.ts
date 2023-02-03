@@ -7,7 +7,6 @@ const app = new App();
 export const newslettersProps = {
 	stack: 'newsletters',
 	env: {
-		account: 'frontend',
 		region: 'eu-west-1'
 	}
 }
