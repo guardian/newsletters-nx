@@ -9,7 +9,7 @@
 		"build": "nx run-many --target=build --all",
 		"test": "nx run-many --target=test --all",
 		"prepare": "husky install",
-		"bundle-api": "nx build newsletters-api --outputFileName=index.js"
+		"bundle-api": "npx nx build newsletters-api --outputFileName=index.js"
 	},
 	"engines": {
 		"node": ">=16.19.0",
