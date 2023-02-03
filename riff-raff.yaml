@@ -19,5 +19,3 @@ deployments:
     type: autoscaling
     actions: [deploy]
     dependencies: [cloudformation]
-    parameters:
-      ssmBucketLookup: true
