@@ -21,7 +21,6 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 		rows,
 		prepareRow,
 		allColumns,
-		preGlobalFilteredRows,
 		setGlobalFilter,
 	} = useTable({ columns, data, initialState }, useGlobalFilter, useSortBy);
 
@@ -48,7 +47,6 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 				))}
 			</div>
 			<GlobalFilter
-				preGlobalFilteredRows={preGlobalFilteredRows}
 				setGlobalFilter={setGlobalFilter}
 			/>
 			<table {...getTableProps()} css={tableStyle}>
