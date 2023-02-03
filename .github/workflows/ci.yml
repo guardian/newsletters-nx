@@ -65,4 +65,4 @@ jobs:
           configPath: riff-raff.yaml
           contentDirectories: |
             cloudformation:
-              - cdk/cdk.out/NewslettersApi-DEV.template.json
+              - cdk/cdk.out/NewslettersApi-CODE.template.json

@@ -11,16 +11,10 @@ export const newslettersProps = {
 	},
 };
 
-// TODO: delete me
-new NewslettersApi(app, 'NewslettersApi-DEV', {
+new NewslettersApi(app, 'NewslettersApi-CODE', {
 	...newslettersProps,
 	stage: 'CODE',
 });
-
-// new NewslettersApi(app, 'NewslettersApi-CODE', {
-// 	...newslettersProps,
-// 	stage: 'CODE',
-// });
 
 // new NewslettersApi(app, 'NewslettersApi-PROD', {
 // 	...newslettersProps,
