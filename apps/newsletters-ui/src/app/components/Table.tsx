@@ -1,8 +1,7 @@
 import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
 import type { Cell, Column } from 'react-table';
-import { useSortBy, useTable } from 'react-table';
-import { createSearchStringFromObject } from './create-search-string-from-object';
+import { useGlobalFilter, useSortBy, useTable } from 'react-table';
+import { GlobalFilter } from './GlobalFilter';
 
 interface Props {
 	data: object[];
@@ -11,21 +10,10 @@ interface Props {
 }
 
 export const Table = ({ data, columns, defaultSortId }: Props) => {
-	const [filterText, setFilterText] = useState('');
-	const [filteredData, setFilteredData] = useState<object[]>([]);
-	useEffect(() => {
-		setFilteredData(
-			data.filter((d) =>
-				createSearchStringFromObject(d)
-					.toLowerCase()
-					.includes(filterText.toLowerCase()),
-			),
-		);
-	}, [data, filterText]);
-
 	const initialState = defaultSortId
 		? { sortBy: [{ id: defaultSortId, desc: false }] }
 		: {};
+
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -33,7 +21,8 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 		rows,
 		prepareRow,
 		allColumns,
-	} = useTable({ columns, data: filteredData, initialState }, useSortBy);
+		setGlobalFilter,
+	} = useTable({ columns, data, initialState }, useGlobalFilter, useSortBy);
 
 	const tableStyle = css`
 		border-collapse: collapse;
@@ -57,12 +46,7 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 					</div>
 				))}
 			</div>
-			<input
-				type="text"
-				placeholder="Filter data"
-				value={filterText}
-				onChange={(e) => setFilterText(e.target.value)}
-			/>
+			<GlobalFilter setGlobalFilter={setGlobalFilter} />
 			<table {...getTableProps()} css={tableStyle}>
 				<thead>
 					{headerGroups.map((headerGroup) => (
