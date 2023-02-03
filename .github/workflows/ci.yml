@@ -46,6 +46,8 @@ jobs:
         with:
           node-version: 18
 
+      - run: npm run bundle-api
+
       - working-directory: ./cdk
         run: |
           npm ci
