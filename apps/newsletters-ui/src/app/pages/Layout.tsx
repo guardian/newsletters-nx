@@ -1,7 +1,7 @@
-import { css } from "@emotion/react";
-import { brand, neutral, space } from "@guardian/source-foundations";
-import type { ReactNode } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { css } from '@emotion/react';
+import { brand, neutral, space } from '@guardian/source-foundations';
+import type { ReactNode } from 'react';
+import { Link, Outlet } from 'react-router-dom';
 
 interface Props {
 	children?: ReactNode;
@@ -47,8 +47,8 @@ export function Layout({ children }: Props) {
 				<hr />
 				<em>
 					Get in touch with the Newsletters Experience P&E team on Google Chat
-					at <b>P&E/Newsletters</b> or{" "}
-					<a href="mailto:newsletters.dev@guardian.co.uk">by email</a>{" "}
+					at <b>P&E/Newsletters</b> or{' '}
+					<a href="mailto:newsletters.dev@guardian.co.uk">by email</a>{' '}
 				</em>
 			</footer>
 		</>
