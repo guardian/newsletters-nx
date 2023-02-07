@@ -1,15 +1,18 @@
-import { css } from '@emotion/react';
 import type { Cell, Column } from 'react-table';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
+import { tableStyle } from '../styles';
+import { ColumnData } from './ColumnData';
+import { ColumnHeader } from './ColumnHeader';
+import { ColumnVisibility } from './ColumnVisibility';
 import { GlobalFilter } from './GlobalFilter';
 
-interface Props {
+interface TableProps {
 	data: object[];
 	columns: Column[];
 	defaultSortId?: string;
 }
 
-export const Table = ({ data, columns, defaultSortId }: Props) => {
+export const Table = ({ data, columns, defaultSortId }: TableProps) => {
 	const initialState = defaultSortId
 		? { sortBy: [{ id: defaultSortId, desc: false }] }
 		: {};
@@ -24,26 +27,12 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 		setGlobalFilter,
 	} = useTable({ columns, data, initialState }, useGlobalFilter, useSortBy);
 
-	const tableStyle = css`
-		border-collapse: collapse;
-		th,
-		td {
-			border: 1px solid #dddddd;
-			padding: 8px;
-			text-align: left;
-		}
-	`;
 	return (
 		<>
 			<div>Hide/Show Columns</div>
 			<div>
 				{allColumns.map((column) => (
-					<div key={column.id}>
-						<label>
-							<input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
-							{column.Header as string}
-						</label>
-					</div>
+					<ColumnVisibility column={column} key={`visibility ${column.id}`} />
 				))}
 			</div>
 			<GlobalFilter setGlobalFilter={setGlobalFilter} />
@@ -52,16 +41,7 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 					{headerGroups.map((headerGroup) => (
 						<tr {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column) => (
-								<th {...column.getHeaderProps(column.getSortByToggleProps())}>
-									{column.render('Header')}
-									<span>
-										{column.isSorted
-											? column.isSortedDesc
-												? ' 🔽'
-												: ' 🔼'
-											: ''}
-									</span>
-								</th>
+								<ColumnHeader column={column} key={`header ${column.id}`} />
 							))}
 						</tr>
 					))}
@@ -71,11 +51,9 @@ export const Table = ({ data, columns, defaultSortId }: Props) => {
 						prepareRow(row);
 						return (
 							<tr {...row.getRowProps()}>
-								{row.cells.map((cell: Cell, index) => {
-									return (
-										<td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-									);
-								})}
+								{row.cells.map((cell: Cell, index) => (
+									<ColumnData cell={cell} key={`data ${cell.column.id}`} />
+								))}
 							</tr>
 						);
 					})}
