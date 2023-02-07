@@ -66,3 +66,5 @@ jobs:
           contentDirectories: |
             cloudformation:
               - cdk/cdk.out/NewslettersApi-CODE.template.json
+            newsletters-api:
+              - dist/apps/newsletters-api/index.cjs
