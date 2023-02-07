@@ -1,7 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
 import { Api } from '../components/Api';
 import { ButtonContainer } from '../components/ButtonContainer';
-import { MarkdownView } from '../components/MarkdownView';
 import { Wizard } from '../components/Wizard';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
@@ -28,9 +27,20 @@ export const homeRoute: RouteObject = {
 
 here is some random text
 			`}
+					stepName="test step"
 					wizardButtons={[
-						{ label: 'Cancel', onClick: () => { console.log('cancel button')} },
-						{ label: 'Proceed', onClick: () => { console.log('proceed button')} },
+						{
+							label: 'Cancel',
+							onClick: () => {
+								console.log('cancel button');
+							},
+						},
+						{
+							label: 'Proceed',
+							onClick: () => {
+								console.log('proceed button');
+							},
+						},
 					]}
 				/>
 			),

@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { DefaultStyles } from './app/components/DefaultStyles';
 import { homeRoute } from './app/routes/home';
 import { newsletterRoute } from './app/routes/newsletter';
 
@@ -11,6 +12,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
 	<StrictMode>
-		<RouterProvider router={router} />
+		<DefaultStyles>
+			<RouterProvider router={router} />
+		</DefaultStyles>
 	</StrictMode>,
 );
