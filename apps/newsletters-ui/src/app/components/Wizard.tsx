@@ -7,15 +7,25 @@ export interface WizardButtonProps {
 
 export interface WizardProps {
 	markdown: string;
+	stepName: string;
 	wizardButtons: WizardButtonProps[];
 }
 
-export const Wizard: React.FC<WizardProps> = ({ markdown, wizardButtons }) => {
+export const Wizard: React.FC<WizardProps> = ({
+	markdown,
+	stepName,
+	wizardButtons,
+}) => {
 	return (
 		<div className="markdown-block">
 			<ReactMarkdown>{markdown}</ReactMarkdown>
-			{wizardButtons.map((wizardButton, index) => (
-				<button onClick={wizardButton.onClick} key={index}>{wizardButton.label}</button>
+			{wizardButtons.map((wizardButton) => (
+				<button
+					onClick={wizardButton.onClick}
+					key={stepName + wizardButton.label}
+				>
+					{wizardButton.label}
+				</button>
 			))}
 		</div>
 	);
