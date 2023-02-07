@@ -6,6 +6,7 @@ import {
 	type GuStackProps,
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
+import { GuAllowPolicy } from '@guardian/cdk/lib/constructs/iam';
 import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
 import { type App, Duration } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
@@ -40,13 +41,12 @@ export class NewslettersApi extends GuStack {
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName },
 			roleConfiguration: {
-				// ==> Commented out deliberately since copied from an example - might need later?
-				// additionalPolicies: [
-				// 	new GuAllowPolicy(this, "GetDistBucket", {
-				// 		actions: ["s3:GetObject"],
-				// 		resources: [`arn:aws:s3:::frontend-dist/*`],
-				// 	}),
-				// ],
+				additionalPolicies: [
+					new GuAllowPolicy(this, 'GetDistBucket', {
+						actions: ['s3:GetObject'],
+						resources: [`arn:aws:s3:::${distributionBucketParameter}/*`],
+					}),
+				],
 			},
 			monitoringConfiguration: { noMonitoring: true },
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),

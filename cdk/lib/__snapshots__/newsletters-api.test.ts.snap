@@ -6,6 +6,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
     "gu:cdk:constructs": [
       "GuS3Bucket",
       "GuDistributionBucketParameter",
+      "GuAllowPolicy",
       "GuVpcParameter",
       "GuSubnetListParameter",
       "GuSubnetListParameter",
@@ -289,6 +290,27 @@ su ubuntu -c 'node /tmp/index.cjs'",
           "Version": "2012-10-17",
         },
         "PolicyName": "describe-ec2-policy",
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewslettersapi01755604",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GetDistBucket3C6030F0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3:::NewslettersApi-TEST/DistributionBucketName/*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GetDistBucket3C6030F0",
         "Roles": [
           {
             "Ref": "InstanceRoleNewslettersapi01755604",
