@@ -6,6 +6,7 @@ import {
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import { newsletterSchema } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import type { SourcePalette } from '../util';
 
@@ -51,18 +52,21 @@ const flagStyles = (palette: SourcePalette) => css`
 export const NewsletterDetail = ({ newsletter }: Props) => {
 	const {
 		name,
-		identityName,
-		description,
 		theme,
-		frequency,
-		regionFocus,
 		cancelled,
 		paused,
 		restricted,
-		listId,
 	} = newsletter;
 
 	const palette = getPalette(theme);
+
+	const FieldRow = (property: keyof Newsletter, defaultDisplayValue?:string) => (
+		<tr>
+			<th>{property}</th>
+			<td>{newsletter[property]?.toString() ?? defaultDisplayValue}</td>
+			<td>{newsletterSchema.shape[property].description}</td>
+		</tr>
+	);
 
 	return (
 		<div>
@@ -76,30 +80,15 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 				</div>
 				<table>
 					<tbody>
-						<tr>
-							<th>identityName</th>
-							<td>{identityName}</td>
-						</tr>
-						<tr>
-							<th>listId</th>
-							<td>{listId}</td>
-						</tr>
-						<tr>
-							<th>theme</th>
-							<td>{theme}</td>
-						</tr>
-						<tr>
-							<th>description</th>
-							<td>{description}</td>
-						</tr>
-						<tr>
-							<th>frequency</th>
-							<td>{frequency}</td>
-						</tr>
-						<tr>
-							<th>regionFocus</th>
-							<td>{regionFocus ?? '[UNDEFINED]'}</td>
-						</tr>
+						{FieldRow('name')}
+						{FieldRow('identityName')}
+						{FieldRow('listId')}
+						{FieldRow('theme')}
+						{FieldRow('description')}
+						{FieldRow('frequency')}
+						{FieldRow('regionFocus', '[NONE]')}
+
+
 					</tbody>
 				</table>
 			</div>

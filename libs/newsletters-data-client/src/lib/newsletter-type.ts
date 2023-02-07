@@ -18,8 +18,8 @@ const emailEmbedSchema = z.object({
 });
 
 const baseNewsletterSchema = z.object({
-	identityName: nonEmptyString(),
-	name: nonEmptyString(),
+	identityName: nonEmptyString().describe('The unique id for the newsletter'),
+	name: nonEmptyString().describe('The public name of the newsletter'),
 	cancelled: z.boolean(),
 	restricted: z.boolean(),
 	paused: z.boolean(),
@@ -31,8 +31,11 @@ const baseNewsletterSchema = z.object({
 	group: nonEmptyString(),
 	description: z.string().optional(),
 	regionFocus: z.string().optional(),
-	frequency: z.string().optional(),
-	listId: z.number(),
+	frequency: z
+		.string()
+		.optional()
+		.describe('How often the newsletter is sent. Value is displayed to users.'),
+	listId: z.number().describe('a unique reference number for the newsletter'),
 	listIdV1: z.number(),
 	emailEmbed: emailEmbedSchema.optional(),
 	campaignName: z.string().optional(),
@@ -43,12 +46,22 @@ const baseNewsletterSchema = z.object({
 	illustration: illustrationSchema.optional(),
 });
 
+type Base = z.infer<typeof baseNewsletterSchema>;
+const getBaseDescription = (key: keyof Base): string =>
+	baseNewsletterSchema.shape[key].description ?? '';
+
 export const newsletterSchema = baseNewsletterSchema.extend({
-	description: nonEmptyString(),
-	frequency: nonEmptyString(),
-	brazeSubscribeAttributeName: nonEmptyString(),
-	brazeSubscribeEventNamePrefix: nonEmptyString(),
-	brazeNewsletterName: nonEmptyString(),
+	description: nonEmptyString().describe(getBaseDescription('description')),
+	frequency: nonEmptyString().describe(getBaseDescription('frequency')),
+	brazeSubscribeAttributeName: nonEmptyString().describe(
+		getBaseDescription('brazeSubscribeAttributeName'),
+	),
+	brazeSubscribeEventNamePrefix: nonEmptyString().describe(
+		getBaseDescription('brazeSubscribeEventNamePrefix'),
+	),
+	brazeNewsletterName: nonEmptyString().describe(
+		getBaseDescription('brazeNewsletterName'),
+	),
 	emailEmbed: emailEmbedSchema.extend({
 		description: z.string(),
 	}),
