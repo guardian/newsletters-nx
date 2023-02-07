@@ -20,9 +20,21 @@ const emailEmbedSchema = z.object({
 const baseNewsletterSchema = z.object({
 	identityName: nonEmptyString().describe('the unique id for the newsletter'),
 	name: nonEmptyString().describe('the public name of the newsletter'),
-	cancelled: z.boolean().describe('if true, the newsletter has been permanently discontinued, but must be retained on the list for data analysis and historical reports'),
-	restricted: z.boolean().describe('🤷 not being used. We think the idea was to use this for newsletters that you have to pay for or can\'t sign up for freely.'),
-	paused: z.boolean().describe('🤔 we don\'t know what this should mean, but paused newsletters don\'t appear on the all newsletters page.'),
+	cancelled: z
+		.boolean()
+		.describe(
+			'if true, the newsletter has been permanently discontinued, but must be retained on the list for data analysis and historical reports',
+		),
+	restricted: z
+		.boolean()
+		.describe(
+			"🤷 not being used. We think the idea was to use this for newsletters that you have to pay for or can't sign up for freely.",
+		),
+	paused: z
+		.boolean()
+		.describe(
+			"🤔 we don't know what this should mean, but paused newsletters don't appear on the all newsletters page.",
+		),
 	emailConfirmation: z
 		.boolean()
 		.describe(
