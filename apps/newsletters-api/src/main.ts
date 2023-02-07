@@ -5,8 +5,8 @@ import { makeErrorResponse, makeSuccessResponse } from './app/responses';
 
 const app = Fastify();
 
-/** Health check endpoint at root */
-app.get('/', async () => {
+/** Health check endpoint */
+app.get('/healthcheck', async () => {
 	return Promise.resolve({
 		message: 'Newsletters API running',
 	});
