@@ -9,6 +9,7 @@ deployments:
     parameters:
       cloudFormationStackName: newsletters-api
       cloudFormationStackByTags: false
+      prependStackToCloudFormationStackName: false
       templateStagePaths:
         CODE: NewslettersApi-CODE.template.json
       amiParameter: AMINewslettersapi
