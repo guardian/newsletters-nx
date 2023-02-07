@@ -32,3 +32,8 @@ export const getPalette = (theme: string): SourcePalette => {
 			return brand;
 	}
 };
+
+export const getGuardianUrl = (relativeUrl: string): string =>
+	`https://www.theguardian.com${
+		relativeUrl.startsWith('/') ? '' : '/'
+	}${relativeUrl}`;
