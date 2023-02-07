@@ -25,20 +25,22 @@ export const homeRoute: RouteObject = {
 					markdown={`
 # hello world
 
-here is some random text
+here is some random markdown text
 			`}
 					stepName="test step"
 					wizardButtons={[
 						{
-							label: 'Cancel',
+							label: 'Proceed',
+							buttonType: 'green',
 							onClick: () => {
-								console.log('cancel button');
+								console.log('proceed button');
 							},
 						},
 						{
-							label: 'Proceed',
+							label: 'Danger',
+							buttonType: 'red',
 							onClick: () => {
-								console.log('proceed button');
+								console.log('danger button');
 							},
 						},
 					]}

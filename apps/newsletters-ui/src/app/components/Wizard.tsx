@@ -1,7 +1,10 @@
 import ReactMarkdown from 'react-markdown';
+import { Button } from './Button';
+import type { ButtonType } from './Button';
 
 export interface WizardButtonProps {
 	label: string;
+	buttonType: ButtonType;
 	onClick: () => void;
 }
 
@@ -20,12 +23,12 @@ export const Wizard: React.FC<WizardProps> = ({
 		<div className="markdown-block">
 			<ReactMarkdown>{markdown}</ReactMarkdown>
 			{wizardButtons.map((wizardButton) => (
-				<button
+				<Button
+					label={wizardButton.label}
+					buttonType = {wizardButton.buttonType}
 					onClick={wizardButton.onClick}
 					key={stepName + wizardButton.label}
-				>
-					{wizardButton.label}
-				</button>
+				/>
 			))}
 		</div>
 	);
