@@ -14,8 +14,8 @@ export const Wizard: React.FC<WizardProps> = ({ markdown, wizardButtons }) => {
 	return (
 		<div className="markdown-block">
 			<ReactMarkdown>{markdown}</ReactMarkdown>
-			{wizardButtons.map((wizardButton) => (
-				<button onClick={wizardButton.onClick}>{wizardButton.label}</button>
+			{wizardButtons.map((wizardButton, index) => (
+				<button onClick={wizardButton.onClick} key={index}>{wizardButton.label}</button>
 			))}
 		</div>
 	);
