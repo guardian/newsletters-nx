@@ -1,10 +1,10 @@
 import ReactMarkdown from 'react-markdown';
 import { Button } from './Button';
-import type { ButtonType } from './Button';
+import type { BUTTON_TYPES } from './Button';
 
 export interface WizardButtonProps {
 	label: string;
-	buttonType: ButtonType;
+	buttonType: keyof typeof BUTTON_TYPES;
 	onClick: () => void;
 }
 

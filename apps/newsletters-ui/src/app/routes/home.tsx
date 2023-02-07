@@ -31,14 +31,14 @@ here is some random markdown text
 					wizardButtons={[
 						{
 							label: 'Proceed',
-							buttonType: 'green',
+							buttonType: 'GREEN',
 							onClick: () => {
 								console.log('proceed button');
 							},
 						},
 						{
 							label: 'Danger',
-							buttonType: 'red',
+							buttonType: 'RED',
 							onClick: () => {
 								console.log('danger button');
 							},

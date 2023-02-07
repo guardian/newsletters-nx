@@ -1,35 +1,26 @@
-import styled from '@emotion/styled';
+import { StyledButton } from './StyledButton';
 
-export type ButtonType = 'red' | 'green';
+export const BUTTON_TYPES = {
+	RED: {
+		background: '#ff7676',
+		border: '#ff0000',
+	},
+	GREEN: {
+		background: '#a6e9a6',
+		border: '#66da66',
+	},
+};
 
 interface ButtonProps {
 	label: string;
-	buttonType: ButtonType;
+	buttonType: keyof typeof BUTTON_TYPES;
 	onClick: () => void;
 }
 
-interface StyledButtonProps {
-	light: string;
-	dark: string;
-}
-
-const StyledButton = styled.button<StyledButtonProps>`
-	margin: 1em;
-	padding: 0.5em;
-	border-radius: 5px;
-	background-color: ${(props) => props.light};
-	border: 1px solid;
-	border-color: ${(props) => props.dark};
-`;
-
 export function Button({ label, buttonType, onClick }: ButtonProps) {
-	const colorLookup = {
-		red: { light: '#ff7676', dark: '#ff0000' },
-		green: { light: '#a6e9a6', dark: '#66da66' },
-	};
-	const colors = colorLookup[buttonType];
+	const { background, border } = BUTTON_TYPES[buttonType];
 	return (
-		<StyledButton light={colors.light} dark={colors.dark} onClick={onClick}>
+		<StyledButton background={background} border={border} onClick={onClick}>
 			{label}
 		</StyledButton>
 	);
