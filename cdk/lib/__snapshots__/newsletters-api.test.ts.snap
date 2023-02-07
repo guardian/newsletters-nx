@@ -180,15 +180,13 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
               "",
               [
                 "#!/bin/bash
-set -e
-set +x
-aws s3 cp s3://",
+mkdir -p $(dirname '/newsletters-api/index.cjs')
+aws s3 cp 's3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-api/index.cjs /tmp
-chown ubuntu /tmp/index.cjs
-su ubuntu -c 'node /tmp/index.cjs'",
+                "/newsletters/TEST/newsletters-api/index.cjs' '/newsletters-api/index.cjs'
+node /newsletters-api/index.cjs",
               ],
             ],
           },

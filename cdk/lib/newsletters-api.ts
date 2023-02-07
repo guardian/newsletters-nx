@@ -31,8 +31,8 @@ export class NewslettersApi extends GuStack {
 
 		const domainName =
 			this.stage === 'PROD'
-				? 'newsletters-api.gutools.co.uk'
-				: 'newsletters-api.code.dev-gutools.co.uk';
+				? `${app}.gutools.co.uk`
+				: `${app}.code.dev-gutools.co.uk`;
 
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
@@ -56,14 +56,12 @@ export class NewslettersApi extends GuStack {
 				minimumInstances: 1,
 				maximumInstances: 2,
 			},
-			userData: [
-				'#!/bin/bash',
-				'set -e',
-				'set +x',
-				`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/index.cjs /tmp`,
-				'chown ubuntu /tmp/index.cjs', // change ownership of the file
-				"su ubuntu -c 'node /tmp/index.cjs'", // run the file as ubuntu user
-			].join('\n'),
+			userData: {
+				distributable: {
+					fileName: 'index.cjs',
+					executionStatement: `node /${app}/index.cjs`,
+				},
+			},
 			app,
 		});
 
