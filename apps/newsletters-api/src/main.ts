@@ -1,17 +1,14 @@
 import Fastify from 'fastify';
-import {
-	isNewsletter,
-	newslettersDataClient,
-} from '@newsletters-nx/newsletters-data-client';
+import { isNewsletter } from '@newsletters-nx/newsletters-data-client';
 import newslettersData from '../static/newsletters.prod.json';
 import { makeErrorResponse, makeSuccessResponse } from './app/responses';
 
 const app = Fastify();
 
-app.get('/health', async () => {
+/** Health check endpoint at root */
+app.get('/', async () => {
 	return Promise.resolve({
-		message: 'Hello API',
-		stringFromLib: newslettersDataClient(),
+		message: 'Newsletters API running',
 	});
 });
 
