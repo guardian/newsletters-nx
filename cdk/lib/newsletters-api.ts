@@ -44,7 +44,9 @@ export class NewslettersApi extends GuStack {
 				additionalPolicies: [
 					new GuAllowPolicy(this, 'GetDistBucket', {
 						actions: ['s3:GetObject'],
-						resources: [`arn:aws:s3:::${distributionBucketParameter}/*`],
+						resources: [
+							`arn:aws:s3:::${distributionBucketParameter.valueAsString}/*`,
+						],
 					}),
 				],
 			},
