@@ -12,13 +12,13 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { getGuardianUrl, getPalette } from '../util';
 import type { SourcePalette } from '../util';
+import { Illustration } from './Illustration';
 
 interface Props {
 	newsletter: Newsletter;
 }
 
 const tableStyles = (palette: SourcePalette) => css`
-
 	caption {
 		${textSansObjectStyles.large()};
 		padding-top: ${space[4]}px;
@@ -114,14 +114,15 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 
 	return (
 		<div>
-			<div css={tableStyles(palette)}>
-				<div css={headingRowStyles(palette)}>
+			<div css={headingRowStyles(palette)}>
 				<h2>{name}</h2>
-					{cancelled && <div>CANCELLED</div>}
-					{paused && <div>PAUSED</div>}
-					{restricted && <div>restricted</div>}
-					{!paused && !cancelled && <div>LIVE</div>}
-				</div>
+				{cancelled && <div>CANCELLED</div>}
+				{paused && <div>PAUSED</div>}
+				{restricted && <div>restricted</div>}
+				{!paused && !cancelled && <div>LIVE</div>}
+			</div>
+			<Illustration newsletter={newsletter} />
+			<div css={tableStyles(palette)}>
 				<table>
 					<caption>Reference Properties</caption>
 					<tbody>
