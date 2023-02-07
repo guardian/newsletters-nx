@@ -28,5 +28,9 @@ export function Button({ label, buttonType, onClick }: ButtonProps) {
 		green: { light: '#a6e9a6', dark: '#66da66' },
 	};
 	const colors = colorLookup[buttonType];
-	return <StyledButton light={colors.light} dark={colors.dark} onClick={onClick}>{label}</StyledButton>;
+	return (
+		<StyledButton light={colors.light} dark={colors.dark} onClick={onClick}>
+			{label}
+		</StyledButton>
+	);
 }

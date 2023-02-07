@@ -10,5 +10,5 @@ interface DefaultStylesProps {
 }
 
 export function DefaultStyles({ children }: DefaultStylesProps) {
-	return <Styles>{children}</Styles>
+	return <Styles>{children}</Styles>;
 }

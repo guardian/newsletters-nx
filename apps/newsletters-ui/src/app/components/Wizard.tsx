@@ -25,7 +25,7 @@ export const Wizard: React.FC<WizardProps> = ({
 			{wizardButtons.map((wizardButton) => (
 				<Button
 					label={wizardButton.label}
-					buttonType = {wizardButton.buttonType}
+					buttonType={wizardButton.buttonType}
 					onClick={wizardButton.onClick}
 					key={stepName + wizardButton.label}
 				/>
