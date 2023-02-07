@@ -6,7 +6,9 @@ import {
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
-import { newsletterSchema } from '@newsletters-nx/newsletters-data-client';
+import {
+	getPropertyDescription,
+} from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import type { SourcePalette } from '../util';
 
@@ -50,21 +52,18 @@ const flagStyles = (palette: SourcePalette) => css`
 `;
 
 export const NewsletterDetail = ({ newsletter }: Props) => {
-	const {
-		name,
-		theme,
-		cancelled,
-		paused,
-		restricted,
-	} = newsletter;
+	const { name, theme, cancelled, paused, restricted } = newsletter;
 
 	const palette = getPalette(theme);
 
-	const FieldRow = (property: keyof Newsletter, defaultDisplayValue?:string) => (
+	const FieldRow = (
+		property: keyof Newsletter,
+		defaultDisplayValue?: string,
+	) => (
 		<tr>
 			<th>{property}</th>
 			<td>{newsletter[property]?.toString() ?? defaultDisplayValue}</td>
-			<td>{newsletterSchema.shape[property].description}</td>
+			<td>{getPropertyDescription(property)}</td>
 		</tr>
 	);
 
@@ -87,8 +86,6 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 						{FieldRow('description')}
 						{FieldRow('frequency')}
 						{FieldRow('regionFocus', '[NONE]')}
-
-
 					</tbody>
 				</table>
 			</div>

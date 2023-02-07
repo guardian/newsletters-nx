@@ -47,20 +47,20 @@ const baseNewsletterSchema = z.object({
 });
 
 type Base = z.infer<typeof baseNewsletterSchema>;
-const getBaseDescription = (key: keyof Base): string =>
+export const getPropertyDescription = (key: keyof Base): string =>
 	baseNewsletterSchema.shape[key].description ?? '';
 
 export const newsletterSchema = baseNewsletterSchema.extend({
-	description: nonEmptyString().describe(getBaseDescription('description')),
-	frequency: nonEmptyString().describe(getBaseDescription('frequency')),
+	description: nonEmptyString().describe(getPropertyDescription('description')),
+	frequency: nonEmptyString().describe(getPropertyDescription('frequency')),
 	brazeSubscribeAttributeName: nonEmptyString().describe(
-		getBaseDescription('brazeSubscribeAttributeName'),
+		getPropertyDescription('brazeSubscribeAttributeName'),
 	),
 	brazeSubscribeEventNamePrefix: nonEmptyString().describe(
-		getBaseDescription('brazeSubscribeEventNamePrefix'),
+		getPropertyDescription('brazeSubscribeEventNamePrefix'),
 	),
 	brazeNewsletterName: nonEmptyString().describe(
-		getBaseDescription('brazeNewsletterName'),
+		getPropertyDescription('brazeNewsletterName'),
 	),
 	emailEmbed: emailEmbedSchema.extend({
 		description: z.string(),
@@ -87,3 +87,4 @@ export function isCancelledNewsletter(
 ): subject is CancelledNewsletter {
 	return cancelledNewsletterSchema.safeParse(subject).success;
 }
+
