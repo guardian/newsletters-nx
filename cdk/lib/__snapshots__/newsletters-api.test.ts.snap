@@ -185,9 +185,9 @@ aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-api/index.js /tmp
-chown ubuntu /tmp/index.js
-su ubuntu -c 'node /tmp/index.js'",
+                "/newsletters/TEST/newsletters-api/index.cjs /tmp
+chown ubuntu /tmp/index.cjs
+su ubuntu -c 'node /tmp/index.cjs'",
               ],
             ],
           },
