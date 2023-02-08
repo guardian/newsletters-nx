@@ -47,8 +47,8 @@ export const Wizard: React.FC<WizardProps> = ({
 			.then((data: CurrentStepRouteResponse) => {
 				setResponse(data as unknown as CurrentStepRouteResponse);
 			})
-			.catch((error) => {
-				console.error('Error:', error);
+			.catch((error: unknown /* FIXME! */) => {
+				console.error('Error invoking next step of wizard:', error);
 			});
 	};
 	if (response === undefined) {

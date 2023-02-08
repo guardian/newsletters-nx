@@ -12,7 +12,6 @@ export function WizardButton({
 		<StyledWizardButton
 			background={background}
 			border={border}
-			onClick={onClick}
 		>
 			{label}
 		</StyledWizardButton>
