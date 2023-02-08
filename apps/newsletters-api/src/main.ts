@@ -6,10 +6,10 @@ import { makeErrorResponse, makeSuccessResponse } from './app/responses';
 const app = Fastify();
 
 /** Health check endpoint */
-app.get('/healthcheck', async () => {
-	return Promise.resolve({
+app.get('/healthcheck', () => {
+	return {
 		message: 'Newsletters API running',
-	});
+	};
 });
 
 // not using the makeSuccess function on this route as
