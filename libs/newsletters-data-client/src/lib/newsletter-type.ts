@@ -28,12 +28,12 @@ const baseNewsletterSchema = z.object({
 	restricted: z
 		.boolean()
 		.describe(
-			"🤷 not being used. We think the idea was to use this for newsletters that you have to pay for or can't sign up for freely.",
+			"The exact semantic meaning is not defined - believed to indicate the newsletter required payment or otherwise cannot be freely subscribed to by all users. Restricted newsletters don't appear on the all newsletters page and in-article promotions for them will not be rendered.",
 		),
 	paused: z
 		.boolean()
 		.describe(
-			"🤔 we don't know what this should mean, but paused newsletters don't appear on the all newsletters page.",
+			"Indicates the newsletter is not being sent currently, but may be (re)started in future. Paused newsletters don't appear on the all newsletters page and in-article promotions for them will not be rendered.",
 		),
 	emailConfirmation: z
 		.boolean()
