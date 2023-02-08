@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-interface StyledButtonProps {
+interface StyledWizardButtonProps {
 	background: string;
 	border: string;
 }
 
-export const StyledButton = styled.button<StyledButtonProps>`
+export const StyledWizardButton = styled.button<StyledWizardButtonProps>`
 	margin: 1em;
 	padding: 0.5em;
 	border-radius: 5px;

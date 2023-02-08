@@ -23,23 +23,11 @@ export const homeRoute: RouteObject = {
 			element: (
 				<Wizard
 					markdown={`
-# hello world
-
-here is some random markdown text
+# Wizard
+This is the start of the wizard
 			`}
-					stepName="test step"
-					wizardButtons={[
-						{
-							id: 'proceed',
-							label: 'Proceed',
-							buttonType: 'GREEN',
-						},
-						{
-							id: 'danger',
-							label: 'Danger',
-							buttonType: 'RED',
-						},
-					]}
+					stepName="start"
+					wizardButtons={[{ label: 'Start', buttonType: 'GREEN', id: 'start' }]}
 				/>
 			),
 		},
