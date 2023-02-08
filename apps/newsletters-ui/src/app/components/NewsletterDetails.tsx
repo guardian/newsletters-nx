@@ -10,7 +10,7 @@ import {
 	getPropertyDescription,
 	isPropertyOptional,
 } from '@newsletters-nx/newsletters-data-client';
-import { getGuardianUrl, getPalette } from '../util';
+import { getGuardianUrl, getPalette, renderYesNo } from '../util';
 import type { SourcePalette } from '../util';
 import { Illustration } from './Illustration';
 
@@ -78,12 +78,12 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 		defaultDisplayValue?: string;
 		displayValueAs?: 'guardianLink' | 'text';
 	}) => {
-		const valueString =
-			newsletter[property]?.toString() ?? defaultDisplayValue ?? '';
+		const value = newsletter[property];
+		const valueString = value?.toString() ?? defaultDisplayValue ?? '';
 
 		const getValueCellContents = () => {
-			if (typeof newsletter[property] === 'boolean') {
-				return <span>{newsletter[property] ? '✅ Yes' : '❌ No'}</span>;
+			if (typeof value === 'boolean') {
+				return <span>{renderYesNo(value)}</span>;
 			}
 
 			if (displayValueAs === 'guardianLink') {
@@ -132,7 +132,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 					</tbody>
 				</table>
 				<table>
-					<caption>Status flags and settings</caption>
+					<caption>Status Flags and Settings</caption>
 					<tbody>
 						<FieldRow property="cancelled" />
 						<FieldRow property="paused" />
@@ -141,7 +141,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 					</tbody>
 				</table>
 				<table>
-					<caption>Display and information Properties</caption>
+					<caption>Display and Information Properties</caption>
 					<tbody>
 						<FieldRow property="name" />
 						<FieldRow property="theme" />
@@ -155,7 +155,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 				</table>
 
 				<table>
-					<caption>tracking values</caption>
+					<caption>Tracking Values</caption>
 					<tbody>
 						<FieldRow property="brazeNewsletterName" />
 						<FieldRow property="brazeSubscribeAttributeName" />
