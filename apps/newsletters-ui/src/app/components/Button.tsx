@@ -11,7 +11,9 @@ export const BUTTON_TYPES = {
 	},
 };
 
-interface ButtonProps {
+// @TODO - MAKE THIS ACCESSIBLE TO API
+export interface ButtonProps {
+	id: string;
 	label: string;
 	buttonType: keyof typeof BUTTON_TYPES;
 	onClick: () => void;

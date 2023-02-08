@@ -30,18 +30,14 @@ here is some random markdown text
 					stepName="test step"
 					wizardButtons={[
 						{
+							id: 'proceed',
 							label: 'Proceed',
 							buttonType: 'GREEN',
-							onClick: () => {
-								console.log('proceed button');
-							},
 						},
 						{
+							id: 'danger',
 							label: 'Danger',
 							buttonType: 'RED',
-							onClick: () => {
-								console.log('danger button');
-							},
 						},
 					]}
 				/>
