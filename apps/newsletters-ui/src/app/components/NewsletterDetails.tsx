@@ -3,44 +3,16 @@ import {
 	headlineObjectStyles,
 	neutral,
 	space,
-	textSansObjectStyles,
 } from '@guardian/source-foundations';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
-import {
-	getPropertyDescription,
-	isPropertyOptional,
-} from '@newsletters-nx/newsletters-data-client';
-import { getGuardianUrl, getPalette, renderYesNo } from '../util';
+import { getPalette } from '../util';
 import type { SourcePalette } from '../util';
 import { Illustration } from './Illustration';
+import { NewsletterPropertyTable } from './NewsletterPropertyTable';
 
 interface Props {
 	newsletter: Newsletter;
 }
-
-const tableStyles = (palette: SourcePalette) => css`
-	caption {
-		${textSansObjectStyles.large()};
-		padding-top: ${space[4]}px;
-	}
-
-	th,
-	td {
-		text-align: left;
-		padding: ${space[1]}px;
-		${textSansObjectStyles.medium()};
-	}
-
-	th {
-		background-color: ${palette[400]};
-		color: ${neutral[97]};
-		min-width: 10rem;
-	}
-	td {
-		background-color: ${palette[800]};
-		color: ${neutral[7]};
-	}
-`;
 
 const headingRowStyles = (palette: SourcePalette) => css`
 	display: flex;
@@ -69,49 +41,6 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 
 	const palette = getPalette(theme);
 
-	const FieldRow = ({
-		property,
-		defaultDisplayValue,
-		displayValueAs = 'text',
-	}: {
-		property: keyof Newsletter;
-		defaultDisplayValue?: string;
-		displayValueAs?: 'guardianLink' | 'text';
-	}) => {
-		const value = newsletter[property];
-		const valueString = value?.toString() ?? defaultDisplayValue ?? '';
-
-		const getValueCellContents = () => {
-			if (typeof value === 'boolean') {
-				return <span>{renderYesNo(value)}</span>;
-			}
-
-			if (displayValueAs === 'guardianLink') {
-				return (
-					<a
-						href={getGuardianUrl(valueString)}
-						rel="noreferrer"
-						target="_blank"
-					>
-						{valueString}
-					</a>
-				);
-			}
-
-			return <span>{valueString}</span>;
-		};
-
-		return (
-			<tr>
-				<th>
-					{property} {isPropertyOptional(property) && <b>[OPTIONAL]</b>}
-				</th>
-				<td>{getValueCellContents()}</td>
-				<td>{getPropertyDescription(property)}</td>
-			</tr>
-		);
-	};
-
 	return (
 		<div>
 			<div css={headingRowStyles(palette)}>
@@ -122,50 +51,52 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 				{!paused && !cancelled && <div>LIVE</div>}
 			</div>
 			<Illustration newsletter={newsletter} />
-			<div css={tableStyles(palette)}>
-				<table>
-					<caption>Reference Properties</caption>
-					<tbody>
-						<FieldRow property="identityName" />
-						<FieldRow property="listId" />
-						<FieldRow property="listIdV1" />
-					</tbody>
-				</table>
-				<table>
-					<caption>Status Flags and Settings</caption>
-					<tbody>
-						<FieldRow property="cancelled" />
-						<FieldRow property="paused" />
-						<FieldRow property="restricted" />
-						<FieldRow property="emailConfirmation" />
-					</tbody>
-				</table>
-				<table>
-					<caption>Display and Information Properties</caption>
-					<tbody>
-						<FieldRow property="name" />
-						<FieldRow property="theme" />
-						<FieldRow property="description" />
-						<FieldRow property="frequency" />
-						<FieldRow property="regionFocus" defaultDisplayValue="[NONE]" />
-						<FieldRow property="group" />
-						<FieldRow property="signupPage" displayValueAs="guardianLink" />
-						<FieldRow property="exampleUrl" displayValueAs="guardianLink" />
-					</tbody>
-				</table>
 
-				<table>
-					<caption>Tracking Values</caption>
-					<tbody>
-						<FieldRow property="brazeNewsletterName" />
-						<FieldRow property="brazeSubscribeAttributeName" />
-						<FieldRow property="brazeSubscribeEventNamePrefix" />
-						<FieldRow property="campaignName" />
-						<FieldRow property="campaignCode" />
-						<FieldRow property="brazeSubscribeAttributeNameAlternate" />
-					</tbody>
-				</table>
-			</div>
+			<NewsletterPropertyTable
+				newsletter={newsletter}
+				caption="Reference Properties"
+				fields={[
+					{ property: 'identityName' },
+					{ property: 'listId' },
+					{ property: 'listIdV1' },
+				]}
+			/>
+			<NewsletterPropertyTable
+				newsletter={newsletter}
+				caption="Status Flags and Settings"
+				fields={[
+					{ property: 'cancelled' },
+					{ property: 'paused' },
+					{ property: 'paused' },
+					{ property: 'restricted' },
+				]}
+			/>
+			<NewsletterPropertyTable
+				newsletter={newsletter}
+				caption="Display and Information Properties"
+				fields={[
+					{ property: 'name' },
+					{ property: 'theme' },
+					{ property: 'description' },
+					{ property: 'frequency' },
+					{ property: 'regionFocus', defaultDisplayValue: '[NONE]' },
+					{ property: 'group' },
+					{ property: 'signupPage', displayValueAs: 'guardianLink' },
+					{ property: 'exampleUrl', displayValueAs: 'guardianLink' },
+				]}
+			/>
+			<NewsletterPropertyTable
+				newsletter={newsletter}
+				caption="Tracking Values"
+				fields={[
+					{ property: 'brazeNewsletterName' },
+					{ property: 'brazeSubscribeAttributeName' },
+					{ property: 'brazeSubscribeEventNamePrefix' },
+					{ property: 'campaignName' },
+					{ property: 'campaignCode' },
+					{ property: 'brazeSubscribeAttributeNameAlternate' },
+				]}
+			/>
 		</div>
 	);
 };
