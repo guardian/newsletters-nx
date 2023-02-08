@@ -7,7 +7,7 @@ const app = Fastify();
 
 registerHealthRoute(app);
 registerNewsletterRoutes(app);
-registerCurrentStepRoute(app)
+registerCurrentStepRoute(app);
 
 const start = async () => {
 	try {
