@@ -65,8 +65,8 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 				newsletter={newsletter}
 				caption="Status Flags and Settings"
 				fields={[
+					{ property: 'emailConfirmation' },
 					{ property: 'cancelled' },
-					{ property: 'paused' },
 					{ property: 'paused' },
 					{ property: 'restricted' },
 				]}
