@@ -156,7 +156,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
         "ImageId": {
           "Ref": "AMINewslettersapi",
         },
-        "InstanceType": "t4g.micro",
+        "InstanceType": "t4g.small",
         "MetadataOptions": {
           "HttpTokens": "required",
         },

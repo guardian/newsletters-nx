@@ -51,7 +51,7 @@ export class NewslettersApi extends GuStack {
 				],
 			},
 			monitoringConfiguration: { noMonitoring: true },
-			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
+			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			scaling: {
 				minimumInstances: 1,
 				maximumInstances: 2,
