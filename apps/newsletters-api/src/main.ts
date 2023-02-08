@@ -6,11 +6,9 @@ import { makeErrorResponse, makeSuccessResponse } from './app/responses';
 const app = Fastify();
 
 /** Health check endpoint */
-app.get('/healthcheck', () => {
-	return {
-		message: 'Newsletters API running',
-	};
-});
+app.get('/healthcheck', () => ({
+	message: 'Newsletters API running',
+}));
 
 // not using the makeSuccess function on this route as
 // we are emulating the response of the legacy API
@@ -41,7 +39,6 @@ app.get<{ Params: { newsletterId: string } }>(
 		return makeSuccessResponse(newsletter);
 	},
 );
-
 const start = async () => {
 	try {
 		console.log('Starting newsletters-api server on http://localhost:3000');
@@ -53,7 +50,5 @@ const start = async () => {
 	}
 };
 
-// This is just to please eslint for now. We should think about a more concrete solution!
-start()
-	.then(() => console.log('Running'))
-	.catch((err) => console.error(err));
+/* eslint-disable-next-line -- intentionally asynchronous */
+start();
