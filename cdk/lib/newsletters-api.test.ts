@@ -9,6 +9,7 @@ describe('The NewslettersApi stack', () => {
 		const stack = new NewslettersApi(app, 'NewslettersApi-TEST', {
 			...newslettersProps,
 			stage: 'TEST',
+			domainName: 'newsletters-api.test.dev-gutools.co.uk',
 		});
 		const template = Template.fromStack(stack);
 		expect(template.toJSON()).toMatchSnapshot();

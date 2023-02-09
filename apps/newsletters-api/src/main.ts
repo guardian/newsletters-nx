@@ -6,9 +6,12 @@ import { makeErrorResponse, makeSuccessResponse } from './app/responses';
 const app = Fastify();
 
 /** Health check endpoint */
-app.get('/healthcheck', () => ({
-	message: 'Newsletters API running',
-}));
+app.get('/healthcheck', () => {
+	console.log('====> Health check endpoint called');
+	return {
+		message: 'Newsletters API running',
+	};
+});
 
 // not using the makeSuccess function on this route as
 // we are emulating the response of the legacy API

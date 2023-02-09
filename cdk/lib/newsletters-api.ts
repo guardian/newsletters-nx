@@ -12,11 +12,18 @@ import { type App, Duration } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
+export type NewslettersApiProps = GuStackProps & {
+	domainName: string;
+};
+
 export class NewslettersApi extends GuStack {
-	constructor(scope: App, id: string, props: GuStackProps) {
+	constructor(scope: App, id: string, props: NewslettersApiProps) {
 		super(scope, id, props);
 
 		const app = 'newsletters-api';
+
+		const { domainName } = props;
+
 		// const bucketParameterName = `/${this.stage}/${this.stack}/${app}/s3BucketName`;
 		// const bucketName = StringParameter.valueForStringParameter(
 		// 	this,
@@ -29,27 +36,9 @@ export class NewslettersApi extends GuStack {
 		// 	versioned: true,
 		// });
 
-		const domainName =
-			this.stage === 'PROD'
-				? `playground-${app}.gutools.co.uk`
-				: `playground-${app}.code.dev-gutools.co.uk`;
-
-		const distributionBucketParameter =
-			GuDistributionBucketParameter.getInstance(this);
-
 		const ec2App = new GuNodeApp(this, {
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName },
-			roleConfiguration: {
-				additionalPolicies: [
-					new GuAllowPolicy(this, 'GetDistBucket', {
-						actions: ['s3:GetObject'],
-						resources: [
-							`arn:aws:s3:::${distributionBucketParameter.valueAsString}/*`,
-						],
-					}),
-				],
-			},
 			monitoringConfiguration: { noMonitoring: true },
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			scaling: {
