@@ -65,7 +65,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
 	const handleButtonClick = (id: string) => () => {
 		setWizardStep(undefined);
-		fetch(`/api/v1/currentStep`)
+		fetch(`/api/v1/currentstep`)
 			.then((response) => response.json())
 			.then((data: CurrentStepRouteResponse) => {
 				setWizardStep(data as unknown as CurrentStepRouteResponse);

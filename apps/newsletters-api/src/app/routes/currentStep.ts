@@ -15,7 +15,7 @@ interface CurrentStepRouteParams {
  * @param app - Fastify instance to add the route to
  */
 export function registerCurrentStepRoute(app: FastifyInstance) {
-	app.get<{ Params: CurrentStepRouteParams }>('/v1/currentStep', (req, res) => {
+	app.get<{ Params: CurrentStepRouteParams }>('/v1/currentstep', (req, res) => {
 		const backButton: Omit<WizardButtonProps, 'onClick'> = {
 			label: 'Back',
 			buttonType: 'RED',
