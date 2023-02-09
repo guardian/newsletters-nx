@@ -4,7 +4,7 @@ import { StyledWizardButton } from './StyledWizardButton';
 
 /**
  * WizardButton is a simple button specifically for the wizard component.
- * 
+ *
  * @param {WizardButtonProps} props - The properties for the component
  * @returns {JSX.Element} A button used in the wizard component
  */
