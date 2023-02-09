@@ -24,7 +24,7 @@ const deriveBooleansFromStatus = (
  *
  * NOTE - the NewsletterData is a placeholder type.
  */
-export const transformNewToOld = (
+export const transformDataToLegacyNewsletter = (
 	newsletterData: NewsletterData,
 ): Newsletter => {
 	if (!isNewsletterData(newsletterData)) {

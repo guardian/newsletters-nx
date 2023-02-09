@@ -3,11 +3,11 @@ import {
 	VALID_TECHSCAPE,
 } from '../fixtures/newsletter-fixtures';
 import type { NewsletterData } from './newsletter-data-type';
-import { TRANSFORM_ERROR_MESSAGE, transformNewToOld } from './transform';
+import { TRANSFORM_ERROR_MESSAGE, transformDataToLegacyNewsletter } from './transform';
 
 describe('transformNewToOld', () => {
 	it('will transform new data to the legacy api format', () => {
-		const output = transformNewToOld(TECHSCAPE_IN_NEW_FORMAT);
+		const output = transformDataToLegacyNewsletter(TECHSCAPE_IN_NEW_FORMAT);
 		expect(output).toEqual(VALID_TECHSCAPE);
 	});
 
@@ -18,7 +18,7 @@ describe('transformNewToOld', () => {
 		};
 
 		const attemptToTransformInvalidData = () => {
-			transformNewToOld(dataWithEmptyName);
+			transformDataToLegacyNewsletter(dataWithEmptyName);
 		};
 
 		expect(attemptToTransformInvalidData).toThrowError(
@@ -36,11 +36,11 @@ describe('transformNewToOld', () => {
 			status: 'paused',
 		};
 
-		const cancelledNewsletter = transformNewToOld(cancelledTechscape);
+		const cancelledNewsletter = transformDataToLegacyNewsletter(cancelledTechscape);
 		expect(cancelledNewsletter.cancelled).toBe(true);
 		expect(cancelledNewsletter.paused).toBe(false);
 
-		const pausedNewsletter = transformNewToOld(pausedTechscape);
+		const pausedNewsletter = transformDataToLegacyNewsletter(pausedTechscape);
 		expect(pausedNewsletter.cancelled).toBe(false);
 		expect(pausedNewsletter.paused).toBe(true);
 	});
