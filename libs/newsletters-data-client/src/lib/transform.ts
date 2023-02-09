@@ -6,6 +6,7 @@ import { isNewsletter } from './newsletter-type';
 export const TRANSFORM_ERROR_MESSAGE = {
 	input: 'invalid input passed to transformNewToOld',
 	output: 'invalid output produced by transformNewToOld',
+	transform: 'transformNewToOld failed to derive',
 } as const;
 
 const deriveBooleansFromStatus = (
@@ -15,6 +16,30 @@ const deriveBooleansFromStatus = (
 		cancelled: status === 'cancelled',
 		paused: status === 'paused',
 	};
+};
+
+/**
+ * The operation is currently 'safe' but is wrapped in a try
+ * block transforming to as the final data model might require
+ * casting looking up external references.
+ */
+const deriveNewsletter = (
+	newsletterData: NewsletterData,
+): Newsletter | undefined => {
+	try {
+		const merged: Newsletter & Partial<NewsletterData> = {
+			...newsletterData,
+			...deriveBooleansFromStatus(newsletterData.status),
+		};
+
+		delete merged.creationTimeStamp;
+		delete merged.status;
+
+		return merged;
+	} catch (err) {
+		console.error(err);
+		return undefined;
+	}
 };
 
 /**
@@ -31,16 +56,13 @@ export const transformDataToLegacyNewsletter = (
 		throw new Error(TRANSFORM_ERROR_MESSAGE.input);
 	}
 
-	const merged: Newsletter & Partial<NewsletterData> = {
-		...newsletterData,
-		...deriveBooleansFromStatus(newsletterData.status),
-	};
+	const output = deriveNewsletter(newsletterData);
+	if (!output) {
+		throw new Error(TRANSFORM_ERROR_MESSAGE.transform);
+	}
 
-	delete merged.creationTimeStamp;
-	delete merged.status;
-
-	if (!isNewsletter(merged)) {
+	if (!isNewsletter(output)) {
 		throw new Error(TRANSFORM_ERROR_MESSAGE.output);
 	}
-	return merged;
+	return output;
 };
