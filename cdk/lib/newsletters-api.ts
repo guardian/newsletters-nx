@@ -36,6 +36,9 @@ export class NewslettersApi extends GuStack {
 		// 	versioned: true,
 		// });
 
+		const distributionBucketParameter =
+			GuDistributionBucketParameter.getInstance(this);
+
 		const ec2App = new GuNodeApp(this, {
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName },
@@ -45,12 +48,14 @@ export class NewslettersApi extends GuStack {
 				minimumInstances: 1,
 				maximumInstances: 2,
 			},
-			userData: {
-				distributable: {
-					fileName: 'index.cjs',
-					executionStatement: `node /${app}/index.cjs`,
-				},
-			},
+			userData: [
+				'#!/bin/bash',
+				'set -e',
+				'set +x',
+				`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/index.cjs /tmp`,
+				'chown ubuntu /tmp/index.cjs', // change ownership of the file
+				"su ubuntu -c 'pm2 /tmp/index.cjs'", // run the file as ubuntu user
+			].join('\n'),
 			app,
 		});
 

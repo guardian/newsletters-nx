@@ -4,6 +4,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
 {
   "Metadata": {
     "gu:cdk:constructs": [
+      "GuDistributionBucketParameter",
       "GuVpcParameter",
       "GuSubnetListParameter",
       "GuSubnetListParameter",
@@ -13,7 +14,6 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
       "GuDescribeEC2Policy",
       "GuLoggingStreamNameParameter",
       "GuLogShippingPolicy",
-      "GuDistributionBucketParameter",
       "GuGetDistributablePolicy",
       "GuParameterStoreReadPolicy",
       "GuAmiParameter",
@@ -174,13 +174,15 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
               "",
               [
                 "#!/bin/bash
-mkdir -p $(dirname '/newsletters-api/index.cjs')
-aws s3 cp 's3://",
+set -e
+set +x
+aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/playground/TEST/newsletters-api/index.cjs' '/newsletters-api/index.cjs'
-node /newsletters-api/index.cjs",
+                "/playground/TEST/newsletters-api/index.cjs /tmp
+chown ubuntu /tmp/index.cjs
+su ubuntu -c 'pm2 /tmp/index.cjs'",
               ],
             ],
           },

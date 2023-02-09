@@ -14,7 +14,7 @@ deployments:
         CODE: NewslettersApi-CODE.template.json
       amiParameter: AMINewslettersapi
       amiTags:
-        Recipe: newsletters-node
+        Recipe: investigations-node
         AmigoStage: PROD
   newsletters-api:
     type: autoscaling

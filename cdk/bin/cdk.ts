@@ -14,7 +14,7 @@ export const newslettersProps = {
 new NewslettersApi(app, 'NewslettersApi-CODE', {
 	...newslettersProps,
 	stage: 'CODE',
-	domainName: 'newsletters-api.code.dev-gutools.co.uk',
+	domainName: 'playground-newsletters-api.code.dev-gutools.co.uk',
 });
 
 // new NewslettersApi(app, 'NewslettersApi-PROD', {
