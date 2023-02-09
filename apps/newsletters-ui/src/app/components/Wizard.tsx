@@ -59,29 +59,29 @@ export const Wizard: React.FC<WizardProps> = ({
 		currentStepId: stepName,
 		markdownToDisplay: markdown,
 	};
-	const [response, setResponse] = useState<
+	const [wizardStep, setWizardStep] = useState<
 		CurrentStepRouteResponse | undefined
 	>(firstPage);
 
 	const handleButtonClick = (id: string) => () => {
-		setResponse(undefined);
+		setWizardStep(undefined);
 		fetch(`/api/v1/currentStep`)
 			.then((response) => response.json())
 			.then((data: CurrentStepRouteResponse) => {
-				setResponse(data as unknown as CurrentStepRouteResponse);
+				setWizardStep(data as unknown as CurrentStepRouteResponse);
 			})
 			.catch((error: unknown /* FIXME! */) => {
 				console.error('Error invoking next step of wizard:', error);
 			});
 	};
 
-	if (response === undefined) {
+	if (wizardStep === undefined) {
 		return <p>'loading'</p>;
 	}
 	return (
 		<div className="markdown-block">
-			<ReactMarkdown>{response.markdownToDisplay}</ReactMarkdown>
-			{response.buttons.map((button) => (
+			<ReactMarkdown>{wizardStep.markdownToDisplay}</ReactMarkdown>
+			{wizardStep.buttons.map((button) => (
 				<WizardButton
 					id={button.id}
 					label={button.label}
