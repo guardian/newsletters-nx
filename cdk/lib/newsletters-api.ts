@@ -51,10 +51,14 @@ export class NewslettersApi extends GuStack {
 			userData: [
 				'#!/bin/bash',
 				'set -e',
-				'set +x',
-				`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/index.cjs /tmp`,
-				'chown ubuntu /tmp/index.cjs', // change ownership of the file
-				`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /tmp/index.cjs'`, // run the file as ubuntu user
+				'groupadd newsletters',
+				'useradd -r -m -s /usr/bin/nologin -g newsletters newsletters',
+				'mkdir -p /usr/share/newsletters',
+				'mkdir -p /usr/share/newsletters/logs',
+				`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/index.cjs /usr/share/newsletters/index.cjs`,
+				'chown -R newsletters:newsletters /usr/share/newsletters',
+				'export PM2_HOME="/usr/share/newsletters"',
+				'/usr/local/node/pm2 start --name newsletters --uid newsletters --gid newsletters /usr/share/newsletters/index.cjs',
 			].join('\n'),
 			app,
 		});

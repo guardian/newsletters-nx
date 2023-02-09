@@ -175,14 +175,18 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
               [
                 "#!/bin/bash
 set -e
-set +x
+groupadd newsletters
+useradd -r -m -s /usr/bin/nologin -g newsletters newsletters
+mkdir -p /usr/share/newsletters
+mkdir -p /usr/share/newsletters/logs
 aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/playground/TEST/newsletters-api/index.cjs /tmp
-chown ubuntu /tmp/index.cjs
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
+                "/playground/TEST/newsletters-api/index.cjs /usr/share/newsletters/index.cjs
+chown -R newsletters:newsletters /usr/share/newsletters
+export PM2_HOME="/usr/share/newsletters"
+/usr/local/node/pm2 start --name newsletters --uid newsletters --gid newsletters /usr/share/newsletters/index.cjs",
               ],
             ],
           },
