@@ -54,7 +54,7 @@ export class NewslettersApi extends GuStack {
 				'set +x',
 				`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/index.cjs /tmp`,
 				'chown ubuntu /tmp/index.cjs', // change ownership of the file
-				"su ubuntu -c 'pm2 /tmp/index.cjs'", // run the file as ubuntu user
+				`su ubuntu -c '/usr/local/node/pm2 start --name ${app} --uid ${app} /tmp/index.cjs'`, // run the file as ubuntu user
 			].join('\n'),
 			app,
 		});

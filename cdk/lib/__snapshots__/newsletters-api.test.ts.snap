@@ -182,7 +182,7 @@ aws s3 cp s3://",
                 },
                 "/playground/TEST/newsletters-api/index.cjs /tmp
 chown ubuntu /tmp/index.cjs
-su ubuntu -c 'pm2 /tmp/index.cjs'",
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api --uid newsletters-api /tmp/index.cjs'",
               ],
             ],
           },
