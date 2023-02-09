@@ -5,7 +5,7 @@ import { NewslettersApi } from '../lib/newsletters-api';
 const app = new App();
 
 export const newslettersProps = {
-	stack: 'newsletters',
+	stack: 'playground',
 	env: {
 		region: 'eu-west-1',
 	},

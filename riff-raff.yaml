@@ -1,5 +1,5 @@
 $schema: 'https://raw.githubusercontent.com/guardian/riff-raff/master/contrib/riff-raff-yaml-schema.json'
-stacks: [newsletters]
+stacks: [playground]
 regions: [eu-west-1]
 allowedStages: [CODE] # TODO: add PROD stage
 deployments:

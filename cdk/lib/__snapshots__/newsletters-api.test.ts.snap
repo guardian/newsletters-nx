@@ -4,7 +4,6 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
 {
   "Metadata": {
     "gu:cdk:constructs": [
-      "GuS3Bucket",
       "GuDistributionBucketParameter",
       "GuAllowPolicy",
       "GuVpcParameter",
@@ -53,10 +52,6 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
     "LoggingStreamName": {
       "Default": "/account/services/logging.stream.name",
       "Description": "SSM parameter containing the Name (not ARN) on the kinesis stream",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-    "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/TEST/newsletters/newsletters-api/s3BucketName",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "VpcId": {
@@ -116,7 +111,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
           {
             "Key": "Stack",
             "PropagateAtLaunch": true,
-            "Value": "newsletters",
+            "Value": "playground",
           },
           {
             "Key": "Stage",
@@ -185,7 +180,7 @@ aws s3 cp 's3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-api/index.cjs' '/newsletters-api/index.cjs'
+                "/playground/TEST/newsletters-api/index.cjs' '/newsletters-api/index.cjs'
 node /newsletters-api/index.cjs",
               ],
             ],
@@ -197,7 +192,7 @@ node /newsletters-api/index.cjs",
     "CertificateNewslettersapi7A81CAC3": {
       "DeletionPolicy": "Retain",
       "Properties": {
-        "DomainName": "newsletters-api.code.dev-gutools.co.uk",
+        "DomainName": "playground-newsletters-api.code.dev-gutools.co.uk",
         "Tags": [
           {
             "Key": "App",
@@ -217,7 +212,7 @@ node /newsletters-api/index.cjs",
           },
           {
             "Key": "Stack",
-            "Value": "newsletters",
+            "Value": "playground",
           },
           {
             "Key": "Stage",
@@ -227,47 +222,6 @@ node /newsletters-api/index.cjs",
         "ValidationMethod": "DNS",
       },
       "Type": "AWS::CertificateManager::Certificate",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "DataBucketNewslettersapi96EED09B": {
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "BucketName": {
-          "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
-        },
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
-        },
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "newsletters-api",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/newsletters-nx",
-          },
-          {
-            "Key": "Stack",
-            "Value": "newsletters",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "VersioningConfiguration": {
-          "Status": "Enabled",
-        },
-      },
-      "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
     "DescribeEC2PolicyFF5F9295": {
@@ -343,7 +297,7 @@ node /newsletters-api/index.cjs",
                     {
                       "Ref": "DistributionBucketName",
                     },
-                    "/newsletters/TEST/newsletters-api/*",
+                    "/playground/TEST/newsletters-api/*",
                   ],
                 ],
               },
@@ -387,7 +341,7 @@ node /newsletters-api/index.cjs",
           },
           {
             "Key": "Stack",
-            "Value": "newsletters",
+            "Value": "playground",
           },
           {
             "Key": "Stage",
@@ -503,7 +457,7 @@ node /newsletters-api/index.cjs",
           },
           {
             "Key": "Stack",
-            "Value": "newsletters",
+            "Value": "playground",
           },
           {
             "Key": "Stage",
@@ -573,7 +527,7 @@ node /newsletters-api/index.cjs",
           },
           {
             "Key": "Stack",
-            "Value": "newsletters",
+            "Value": "playground",
           },
           {
             "Key": "Stage",
@@ -611,7 +565,7 @@ node /newsletters-api/index.cjs",
           },
           {
             "Key": "Stack",
-            "Value": "newsletters",
+            "Value": "playground",
           },
           {
             "Key": "Stage",
@@ -647,7 +601,7 @@ node /newsletters-api/index.cjs",
     },
     "NewslettersAPICname": {
       "Properties": {
-        "Name": "newsletters-api.code.dev-gutools.co.uk",
+        "Name": "playground-newsletters-api.code.dev-gutools.co.uk",
         "RecordType": "CNAME",
         "ResourceRecords": [
           {
@@ -677,7 +631,7 @@ node /newsletters-api/index.cjs",
                     {
                       "Ref": "AWS::AccountId",
                     },
-                    ":parameter/TEST/newsletters/newsletters-api",
+                    ":parameter/TEST/playground/newsletters-api",
                   ],
                 ],
               },
@@ -696,7 +650,7 @@ node /newsletters-api/index.cjs",
                     {
                       "Ref": "AWS::AccountId",
                     },
-                    ":parameter/TEST/newsletters/newsletters-api/*",
+                    ":parameter/TEST/playground/newsletters-api/*",
                   ],
                 ],
               },
@@ -737,7 +691,7 @@ node /newsletters-api/index.cjs",
           },
           {
             "Key": "Stack",
-            "Value": "newsletters",
+            "Value": "playground",
           },
           {
             "Key": "Stage",
@@ -792,7 +746,7 @@ node /newsletters-api/index.cjs",
           },
           {
             "Key": "Stack",
-            "Value": "newsletters",
+            "Value": "playground",
           },
           {
             "Key": "Stage",

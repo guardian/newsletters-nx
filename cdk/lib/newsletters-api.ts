@@ -17,22 +17,22 @@ export class NewslettersApi extends GuStack {
 		super(scope, id, props);
 
 		const app = 'newsletters-api';
-		const bucketParameterName = `/${this.stage}/${this.stack}/${app}/s3BucketName`;
-		const bucketName = StringParameter.valueForStringParameter(
-			this,
-			bucketParameterName,
-		);
+		// const bucketParameterName = `/${this.stage}/${this.stack}/${app}/s3BucketName`;
+		// const bucketName = StringParameter.valueForStringParameter(
+		// 	this,
+		// 	bucketParameterName,
+		// );
 
-		new GuS3Bucket(this, 'DataBucket', {
-			bucketName,
-			app,
-			versioned: true,
-		});
+		// new GuS3Bucket(this, 'DataBucket', {
+		// 	bucketName,
+		// 	app,
+		// 	versioned: true,
+		// });
 
 		const domainName =
 			this.stage === 'PROD'
-				? `${app}.gutools.co.uk`
-				: `${app}.code.dev-gutools.co.uk`;
+				? `playground-${app}.gutools.co.uk`
+				: `playground-${app}.code.dev-gutools.co.uk`;
 
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
