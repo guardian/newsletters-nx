@@ -9,7 +9,7 @@ export function WizardButton({
 }: WizardButtonProps) {
 	const { background, border } = WIZARD_BUTTON_TYPES[buttonType];
 	return (
-		<StyledWizardButton background={background} border={border}>
+		<StyledWizardButton background={background} border={border} onClick={onClick}>
 			{label}
 		</StyledWizardButton>
 	);

@@ -16,17 +16,15 @@ interface CurrentStepRouteParams {
 /* Why is this return xml instead of json? */
 export function registerCurrentStepRoute(app: FastifyInstance) {
 	app.get<{ Params: CurrentStepRouteParams }>('/v1/currentStep', (req, res) => {
-		const backButton: WizardButtonProps = {
+		const backButton: Omit<WizardButtonProps, 'onClick'> = {
 			label: 'Back',
 			buttonType: 'RED',
 			id: 'back',
-			onClick: () => alert('Back button has been clicked'),
 		};
-		const nextButton: WizardButtonProps = {
+		const nextButton: Omit<WizardButtonProps, 'onClick'> = {
 			label: 'Next',
 			buttonType: 'GREEN',
 			id: 'next',
-			onClick: () => alert('Next button has been clicked'),
 		};
 		return {
 			markdownToDisplay: '# From the API\n\nThis is the markdown from the API',
