@@ -25,4 +25,23 @@ describe('transformNewToOld', () => {
 			TRANSFORM_ERROR_MESSAGE.input,
 		);
 	});
+
+	it('will convert status correctly', () => {
+		const cancelledTechscape: NewsletterData = {
+			...TECHSCAPE_IN_NEW_FORMAT,
+			status: 'cancelled',
+		};
+		const pausedTechscape: NewsletterData = {
+			...TECHSCAPE_IN_NEW_FORMAT,
+			status: 'paused',
+		};
+
+		const cancelledNewsletter = transformNewToOld(cancelledTechscape);
+		expect(cancelledNewsletter.cancelled).toBe(true);
+		expect(cancelledNewsletter.paused).toBe(false);
+
+		const pausedNewsletter = transformNewToOld(pausedTechscape);
+		expect(pausedNewsletter.cancelled).toBe(false);
+		expect(pausedNewsletter.paused).toBe(true);
+	});
 });
