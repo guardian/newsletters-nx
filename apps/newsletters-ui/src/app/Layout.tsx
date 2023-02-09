@@ -1,37 +1,45 @@
 import { css } from '@emotion/react';
-import { space } from '@guardian/source-foundations';
-import type { ReactNode } from 'react';
-import { Link, Outlet } from 'react-router-dom';
-
-interface Props {
-	children?: ReactNode;
-}
+import {
+	brand,
+	space,
+	textSansObjectStyles,
+} from '@guardian/source-foundations';
+import { Outlet, useLocation } from 'react-router-dom';
+import { MainNav } from './components/MainNav';
 
 const headerStyle = css`
-	nav a {
-		margin-right: ${space[2]}px;
+	margin-bottom: ${space[6]}px;
+	padding: ${space[1]}px;
+	border-bottom: 2px solid ${brand[300]};
+	background-color: ${brand[800]};
+
+	h1 {
+		${textSansObjectStyles.xlarge({ fontStyle: 'italic' })};
+		margin: 0;
+		color: ${brand[300]};
 	}
 `;
 
-export function Layout({ children }: Props) {
+const footerStyle = css`
+	margin-top: ${space[3]}px;
+	padding: ${space[1]}px;
+	border-top: 2px solid ${brand[300]};
+	background-color: ${brand[800]};
+`;
+
+export function Layout() {
+	const location = useLocation();
+
 	return (
 		<>
 			<header css={headerStyle}>
 				<h1>Newsletters UI</h1>
-
-				<nav>
-					<Link to={`/`}>home</Link>
-					<Link to={`/api`}>api test page</Link>
-					<Link to={`/newsletters/`}>View Current Newsletters</Link>
-				</nav>
-				{children && <nav>{children}</nav>}
-				<hr></hr>
+				<MainNav pathname={location.pathname} />
 			</header>
 			<main>
 				<Outlet />
 			</main>
-			<footer>
-				<hr></hr>
+			<footer css={footerStyle}>
 				<b>Footer</b>
 			</footer>
 		</>
