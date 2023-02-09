@@ -19,7 +19,10 @@ const deriveBooleansFromStatus = (
 
 /**
  * Attempts to transform a NewsletterData to Newsletter.
- * Throws an error if the input or output fail validation
+ *
+ * Throws an error if the input or output fail validation.
+ *
+ * NOTE - the NewsletterData is a placeholder type.
  */
 export const transformNewToOld = (
 	newsletterData: NewsletterData,

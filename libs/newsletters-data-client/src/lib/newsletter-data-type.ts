@@ -3,7 +3,8 @@ import { emailEmbedSchema, nonEmptyString } from './schema-helpers';
 
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
- * Edits to this schema woudl need to be reflected in the transform function.
+ * Edits to this schema would need to be reflected in the transform function.
+ * The actual data model is TBC.
  */
 export const newsletterDataSchema = z.object({
 	identityName: nonEmptyString(),
