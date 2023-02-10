@@ -1,48 +1,64 @@
-import { css } from '@emotion/react';
-import { useTable } from 'react-table';
 import type { Cell, Column } from 'react-table';
+import { useGlobalFilter, useSortBy, useTable } from 'react-table';
+import { tableStyle } from '../styles';
+import { ColumnData } from './ColumnData';
+import { ColumnHeader } from './ColumnHeader';
+import { ColumnVisibility } from './ColumnVisibility';
+import { GlobalFilter } from './GlobalFilter';
 
-interface Props {
+interface TableProps {
 	data: object[];
 	columns: Column[];
+	defaultSortId?: string;
 }
 
-export const Table = ({ data, columns }: Props) => {
-	const tableInstance = useTable({ columns, data });
-	const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-		tableInstance;
-	const tableStyle = css`
-		border-collapse: collapse;
-		th,
-		td {
-			border: 1px solid #dddddd;
-			padding: 8px;
-			text-align: left;
-		}
-	`;
+export const Table = ({ data, columns, defaultSortId }: TableProps) => {
+	const initialState = defaultSortId
+		? { sortBy: [{ id: defaultSortId, desc: false }] }
+		: {};
+
+	const {
+		getTableProps,
+		getTableBodyProps,
+		headerGroups,
+		rows,
+		prepareRow,
+		allColumns,
+		setGlobalFilter,
+	} = useTable({ columns, data, initialState }, useGlobalFilter, useSortBy);
+
 	return (
-		<table {...getTableProps()} css={tableStyle}>
-			<thead>
-				{headerGroups.map((headerGroup) => (
-					<tr {...headerGroup.getFooterGroupProps()}>
-						{headerGroup.headers.map((column) => (
-							<th {...column.getHeaderProps()}>{column.render('Header')}</th>
-						))}
-					</tr>
+		<>
+			<div>Hide/Show Columns</div>
+			<div>
+				{allColumns.map((column) => (
+					<ColumnVisibility column={column} key={`visibility ${column.id}`} />
 				))}
-			</thead>
-			<tbody {...getTableBodyProps()}>
-				{rows.map((row) => {
-					prepareRow(row);
-					return (
-						<tr {...row.getRowProps()}>
-							{row.cells.map((cell: Cell, index) => {
-								return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-							})}
+			</div>
+			<GlobalFilter setGlobalFilter={setGlobalFilter} />
+			<table {...getTableProps()} css={tableStyle}>
+				<thead>
+					{headerGroups.map((headerGroup) => (
+						<tr {...headerGroup.getHeaderGroupProps()}>
+							{headerGroup.headers.map((column) => (
+								<ColumnHeader column={column} key={`header ${column.id}`} />
+							))}
 						</tr>
-					);
-				})}
-			</tbody>
-		</table>
+					))}
+				</thead>
+				<tbody {...getTableBodyProps()}>
+					{rows.map((row) => {
+						prepareRow(row);
+						return (
+							<tr {...row.getRowProps()}>
+								{row.cells.map((cell: Cell, index) => (
+									<ColumnData cell={cell} key={`data ${cell.column.id}`} />
+								))}
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</>
 	);
 };
