@@ -4,6 +4,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
 {
   "Metadata": {
     "gu:cdk:constructs": [
+      "GuS3Bucket",
       "GuDistributionBucketParameter",
       "GuVpcParameter",
       "GuSubnetListParameter",
@@ -51,6 +52,10 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
     "LoggingStreamName": {
       "Default": "/account/services/logging.stream.name",
       "Description": "SSM parameter containing the Name (not ARN) on the kinesis stream",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/TEST/newsletters/newsletters-api/s3BucketName",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "VpcId": {
@@ -110,7 +115,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
           {
             "Key": "Stack",
             "PropagateAtLaunch": true,
-            "Value": "playground",
+            "Value": "newsletters",
           },
           {
             "Key": "Stage",
@@ -180,7 +185,7 @@ aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/playground/TEST/newsletters-api/index.cjs /tmp
+                "/newsletters/TEST/newsletters-api/index.cjs /tmp
 chown ubuntu /tmp/index.cjs
 su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
               ],
@@ -213,7 +218,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           },
           {
             "Key": "Stack",
-            "Value": "playground",
+            "Value": "newsletters",
           },
           {
             "Key": "Stage",
@@ -223,6 +228,47 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "ValidationMethod": "DNS",
       },
       "Type": "AWS::CertificateManager::Certificate",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "DataBucketNewslettersapi96EED09B": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketName": {
+          "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "newsletters-api",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "Stack",
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
     "DescribeEC2PolicyFF5F9295": {
@@ -266,7 +312,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
                     {
                       "Ref": "DistributionBucketName",
                     },
-                    "/playground/TEST/newsletters-api/*",
+                    "/newsletters/TEST/newsletters-api/*",
                   ],
                 ],
               },
@@ -310,7 +356,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           },
           {
             "Key": "Stack",
-            "Value": "playground",
+            "Value": "newsletters",
           },
           {
             "Key": "Stage",
@@ -426,7 +472,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           },
           {
             "Key": "Stack",
-            "Value": "playground",
+            "Value": "newsletters",
           },
           {
             "Key": "Stage",
@@ -496,7 +542,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           },
           {
             "Key": "Stack",
-            "Value": "playground",
+            "Value": "newsletters",
           },
           {
             "Key": "Stage",
@@ -534,7 +580,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           },
           {
             "Key": "Stack",
-            "Value": "playground",
+            "Value": "newsletters",
           },
           {
             "Key": "Stage",
@@ -600,7 +646,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
                     {
                       "Ref": "AWS::AccountId",
                     },
-                    ":parameter/TEST/playground/newsletters-api",
+                    ":parameter/TEST/newsletters/newsletters-api",
                   ],
                 ],
               },
@@ -619,7 +665,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
                     {
                       "Ref": "AWS::AccountId",
                     },
-                    ":parameter/TEST/playground/newsletters-api/*",
+                    ":parameter/TEST/newsletters/newsletters-api/*",
                   ],
                 ],
               },
@@ -660,7 +706,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           },
           {
             "Key": "Stack",
-            "Value": "playground",
+            "Value": "newsletters",
           },
           {
             "Key": "Stage",
@@ -715,7 +761,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           },
           {
             "Key": "Stack",
-            "Value": "playground",
+            "Value": "newsletters",
           },
           {
             "Key": "Stage",

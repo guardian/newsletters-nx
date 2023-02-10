@@ -1,8 +1,9 @@
 $schema: 'https://raw.githubusercontent.com/guardian/riff-raff/master/contrib/riff-raff-yaml-schema.json'
-stacks: [playground]
+stacks: [newsletters]
 regions: [eu-west-1]
 allowedStages: [CODE] # TODO: add PROD stage
 deployments:
+  # Newsletters API cloudformation deployment
   cloudformation:
     type: cloud-formation
     app: newsletters-api
@@ -11,11 +12,12 @@ deployments:
       cloudFormationStackByTags: false
       prependStackToCloudFormationStackName: false
       templateStagePaths:
-        CODE: NewslettersApi-CODE.template.json
+        CODE: NewslettersApi-CODE.template.json # TODO: add PROD stage path
       amiParameter: AMINewslettersapi
       amiTags:
-        Recipe: investigations-node
+        Recipe: newsletters-node
         AmigoStage: PROD
+  # Newsletters API autoscaling deployment
   newsletters-api:
     type: autoscaling
     dependencies: [cloudformation]
