@@ -8,9 +8,7 @@ const app = Fastify();
 /** Health check endpoint */
 app.get('/healthcheck', () => {
 	console.log('====> Health check endpoint called');
-	return {
-		message: 'Newsletters API running',
-	};
+	return "ok";
 });
 
 // not using the makeSuccess function on this route as
