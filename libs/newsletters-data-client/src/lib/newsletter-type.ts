@@ -30,7 +30,6 @@ const themeEnumSchema = z.enum([
 ]);
 export type Theme = z.infer<typeof themeEnumSchema>;
 
-
 const baseNewsletterSchema = z.object({
 	identityName: nonEmptyString().describe('the unique id for the newsletter'),
 	name: nonEmptyString().describe('the public name of the newsletter'),
