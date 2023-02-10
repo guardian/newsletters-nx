@@ -3,9 +3,7 @@
 
 # Check workspace before pushing
 npx nx format:check
-npx nx affected --target=lint --parallel=3
-npx nx affected --target=test --parallel=3
-npx nx affected --target=build --parallel=3
+npx nx affected --target=lint,test,build --parallel=3
 
 # Check CDK setup before pushing
 alias cdk="npm --prefix cdk"
