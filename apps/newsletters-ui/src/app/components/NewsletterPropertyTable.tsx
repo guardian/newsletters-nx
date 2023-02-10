@@ -102,7 +102,7 @@ export const NewsletterPropertyTable = ({
 				<caption>{caption}</caption>
 				<tbody>
 					{fields.map((field) => (
-						<FieldRow {...field} />
+						<FieldRow {...field} key={field.property} />
 					))}
 				</tbody>
 			</table>

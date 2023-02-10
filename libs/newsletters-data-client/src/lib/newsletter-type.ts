@@ -57,7 +57,7 @@ const baseNewsletterSchema = z.object({
 	brazeNewsletterName: z.string().optional(),
 	brazeSubscribeAttributeName: z.string().optional(),
 	brazeSubscribeEventNamePrefix: z.string().optional(),
-	theme: nonEmptyString(),
+	theme: themeEnumSchema,
 	group: nonEmptyString().describe(
 		'the name of the section of the newsletters page the newsletter will be listed under',
 	),

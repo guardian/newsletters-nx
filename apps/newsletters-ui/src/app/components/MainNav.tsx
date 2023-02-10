@@ -54,7 +54,7 @@ export function MainNav({ pathname }: Props) {
 	return (
 		<nav css={navStyle}>
 			{navLinks.map((link) => (
-				<Link to={link.path} className={getLinkClass(link.path)}>
+				<Link key={link.path} to={link.path} className={getLinkClass(link.path)}>
 					{link.label}
 				</Link>
 			))}
