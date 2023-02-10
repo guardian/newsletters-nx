@@ -4,15 +4,26 @@ import { NewslettersApi } from '../lib/newsletters-api';
 
 const app = new App();
 
-export const newslettersProps = {
+// Shared props for all CDK apps
+export const sharedProps = {
 	stack: 'newsletters',
 	env: {
-		account: 'frontend',
-		region: 'eu-west-1'
-	}
-}
+		region: 'eu-west-1',
+	},
+};
 
-new NewslettersApi(app, 'NewslettersApi-DEV', {
-	...newslettersProps,
-	stage: 'DEV',
+const newslettersApiAppName = 'newsletters-api';
+
+new NewslettersApi(app, 'NewslettersApi-CODE', {
+	...sharedProps,
+	stage: 'CODE',
+	app: newslettersApiAppName,
+	domainName: `${newslettersApiAppName}.code.dev-gutools.co.uk`,
 });
+
+// new NewslettersApi(app, 'NewslettersApi-PROD', {
+// 	...sharedProps,
+// 	stage: 'PROD',
+// 	app: newslettersApiAppName,
+// 	domainName: `${newslettersApiAppName}.gutools.co.uk`,
+// });
