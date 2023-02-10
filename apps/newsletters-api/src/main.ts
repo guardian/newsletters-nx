@@ -6,7 +6,7 @@ import { makeErrorResponse, makeSuccessResponse } from './app/responses';
 const app = Fastify();
 
 /** Health check endpoint */
-app.get('/healthcheck', () => {
+app.get('/help', () => {
 	console.log('====> Health check endpoint called');
 	return "ok";
 });

@@ -643,7 +643,7 @@ export PM2_HOME="/usr/share/newsletters"
     "TargetGroupNewslettersapiDF74F995": {
       "Properties": {
         "HealthCheckIntervalSeconds": 10,
-        "HealthCheckPath": "/healthcheck",
+        "HealthCheckPath": "/help",
         "HealthCheckProtocol": "HTTP",
         "HealthCheckTimeoutSeconds": 5,
         "HealthyThresholdCount": 5,

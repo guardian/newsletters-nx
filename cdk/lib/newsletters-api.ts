@@ -1,16 +1,9 @@
-import { GuNodeApp } from '@guardian/cdk';
-import { AccessScope } from '@guardian/cdk/lib/constants';
-import {
-	GuDistributionBucketParameter,
-	GuStack,
-	type GuStackProps,
-} from '@guardian/cdk/lib/constructs/core';
-import { GuCname } from '@guardian/cdk/lib/constructs/dns';
-import { GuAllowPolicy } from '@guardian/cdk/lib/constructs/iam';
-import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
-import { type App, Duration } from 'aws-cdk-lib';
-import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import {GuNodeApp} from '@guardian/cdk';
+import {AccessScope} from '@guardian/cdk/lib/constants';
+import {GuDistributionBucketParameter, GuStack, type GuStackProps,} from '@guardian/cdk/lib/constructs/core';
+import {GuCname} from '@guardian/cdk/lib/constructs/dns';
+import {type App, Duration} from 'aws-cdk-lib';
+import {InstanceClass, InstanceSize, InstanceType} from 'aws-cdk-lib/aws-ec2';
 
 export type NewslettersApiProps = GuStackProps & {
 	domainName: string;
@@ -39,7 +32,7 @@ export class NewslettersApi extends GuStack {
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
 
-		const ec2App = new GuNodeApp(this, {
+		const {loadBalancer, targetGroup} = new GuNodeApp(this, {
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName },
 			monitoringConfiguration: { noMonitoring: true },
@@ -63,11 +56,16 @@ export class NewslettersApi extends GuStack {
 			app,
 		});
 
+		targetGroup.configureHealthCheck({
+			...targetGroup.healthCheck,
+			path: '/help',
+		})
+
 		new GuCname(this, 'NewslettersAPICname', {
 			app,
 			domainName,
 			ttl: Duration.hours(1),
-			resourceRecord: ec2App.loadBalancer.loadBalancerDnsName,
+			resourceRecord: loadBalancer.loadBalancerDnsName,
 		});
 	}
 }
