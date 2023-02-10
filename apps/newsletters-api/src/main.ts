@@ -1,9 +1,9 @@
-import Fastify from 'fastify';
+import fastify from 'fastify';
 import { isNewsletter } from '@newsletters-nx/newsletters-data-client';
 import newslettersData from '../static/newsletters.prod.json';
 import { makeErrorResponse, makeSuccessResponse } from './app/responses';
 
-const app = Fastify();
+const app = fastify({ keepAliveTimeout: 0 });
 
 /** Health check endpoint */
 app.get('/help', () => {
@@ -43,7 +43,7 @@ app.get<{ Params: { newsletterId: string } }>(
 const start = async () => {
 	try {
 		console.log('Starting newsletters-api server on http://localhost:3000');
-		await app.listen({ port: 3000 });
+		await app.listen({ port: 3000, host: "0.0.0.0" });
 	} catch (err) {
 		// Errors are logged here
 		console.error(err);
