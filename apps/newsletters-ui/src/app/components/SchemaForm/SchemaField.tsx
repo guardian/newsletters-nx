@@ -4,8 +4,8 @@ import {
 	NumberInput,
 	OptionalNumberInput,
 	SelectInput,
-	StringInput,
 } from './formControls';
+import { StringInput } from "./StringInput";
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 import { fieldValueAsDisplayString } from './util';
 

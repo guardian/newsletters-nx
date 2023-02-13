@@ -7,7 +7,7 @@ import {
 } from '@guardian/source-foundations';
 import { useRef } from 'react';
 import type { FormEventHandler, FunctionComponent, ReactNode } from 'react';
-import { eventToBoolean, eventToNumber, eventToString } from './util';
+import { eventToBoolean, eventToNumber } from './util';
 
 const fieldStyle = (readOnly?: boolean) => css`
 	padding-bottom: ${space[1]}px;
@@ -31,13 +31,13 @@ const errorStyle = css`
 	color: ${error[400]};
 `;
 
-type FieldProps = {
+export type FieldProps = {
 	label?: string;
 	error?: string;
 	optional?: boolean;
 	readOnly?: boolean;
 };
-const FieldWrapper: FunctionComponent<
+export const FieldWrapper: FunctionComponent<
 	FieldProps & { children?: ReactNode }
 > = ({ children, label, error, optional, readOnly }) => {
 	return (
@@ -161,26 +161,6 @@ export const SelectInput: FunctionComponent<
 					</option>
 				))}
 			</select>
-		</FieldWrapper>
-	);
-};
-
-export const StringInput: FunctionComponent<
-	FieldProps & {
-		value: string;
-		inputHandler: { (value: string): void };
-		type?: HTMLInputElement['type'];
-	}
-> = (props) => {
-	const { type = 'text' } = props;
-
-	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
-		props.inputHandler(eventToString(event));
-	};
-
-	return (
-		<FieldWrapper {...props}>
-			<input type={type} value={props.value} onInput={sendValue} />
 		</FieldWrapper>
 	);
 };
