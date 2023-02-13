@@ -3,3 +3,4 @@ export * from './lib/newsletter-type';
 export * from './lib/deriveNewsletterFields';
 export * from './lib/api-response-type';
 export * from './lib/wizard-button-type';
+export * from './lib/testQuestionaireSchema';

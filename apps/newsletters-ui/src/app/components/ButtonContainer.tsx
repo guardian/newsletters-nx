@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router';
+import { QuestionaireForm } from './Questionaire';
 
 const ContainerStyle = styled.div`
 	display: grid;
@@ -69,6 +70,16 @@ export function ButtonContainer() {
 			>
 				Update multi thrasher
 			</button>
+
+			<div>
+				<QuestionaireForm
+					title="Please fill this out"
+					initalData={{ name: 'bob', age: 3 }}
+					submit={(data) => {
+						console.table(data);
+					}}
+				/>
+			</div>
 		</ContainerStyle>
 	);
 }
