@@ -1,5 +1,9 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router';
+import {
+	biscuitSchema,
+	personSchema,
+} from '@newsletters-nx/newsletters-data-client';
 import { QuestionaireForm } from './Questionaire';
 
 const ContainerStyle = styled.div`
@@ -73,8 +77,19 @@ export function ButtonContainer() {
 
 			<div>
 				<QuestionaireForm
+					schema={personSchema}
 					title="Please fill this out"
-					initalData={{ name: 'bob', age: 3 }}
+					initalData={{ name: 'bob', age: 1, favouriteColor: 'red' }}
+					submit={(data) => {
+						console.table(data);
+					}}
+				/>
+			</div>
+			<div>
+				<QuestionaireForm
+					schema={biscuitSchema}
+					title="Describe your biscuit"
+					initalData={{ name: 'Jammy Dodger', shape: 'round', filling: 'jam' }}
 					submit={(data) => {
 						console.table(data);
 					}}
