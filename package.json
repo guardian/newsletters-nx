@@ -32,6 +32,7 @@
 	},
 	"devDependencies": {
 		"@emotion/babel-plugin": "11.10.5",
+		"@faker-js/faker": "^7.6.0",
 		"@guardian/eslint-config": "^2.0.3",
 		"@guardian/eslint-config-typescript": "^3.0.0",
 		"@guardian/prettier": "^2.1.5",

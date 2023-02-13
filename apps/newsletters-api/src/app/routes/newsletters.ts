@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { isNewsletter } from '@newsletters-nx/newsletters-data-client';
-import newslettersData from '../../../static/newsletters.prod.json';
+import newslettersData from '../../../static/newsletters.code.json';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 export function registerNewsletterRoutes(app: FastifyInstance) {
