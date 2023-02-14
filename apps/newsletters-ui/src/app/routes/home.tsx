@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import { Api } from '../components/Api';
 import { ButtonContainer } from '../components/ButtonContainer';
+import { FormDemoView } from '../components/FormDemoView';
 import { NewsletterCreateView } from '../components/NewsletterCreateView';
 import { Wizard } from '../components/Wizard';
 import { ErrorPage } from '../ErrorPage';
@@ -24,6 +25,10 @@ export const homeRoute: RouteObject = {
 			path: '/create',
 			element: <NewsletterCreateView />,
 			loader: listLoader,
+		},
+		{
+			path: '/test-forms',
+			element: <FormDemoView />,
 		},
 		{
 			path: 'markdowntest/',

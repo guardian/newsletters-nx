@@ -19,6 +19,7 @@ const navLinks: NavLink[] = [
 	{ path: '/', label: 'home' },
 	{ path: '/api', label: 'api test page' },
 	{ path: '/newsletters/', label: 'View Current Newsletters' },
+	{ path: '/test-forms/', label: 'test forms' },
 ];
 
 const navStyle = css`
