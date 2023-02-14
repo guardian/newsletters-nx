@@ -28,6 +28,7 @@ export const NewsletterCreateView = () => {
 				<SimpleForm
 					schema={biscuitSchema}
 					title="Describe your biscuit"
+					submitButtonText='Biscuit data ready'
 					initalData={{
 						name: 'Jammy Dodger',
 						shape: 'round',

@@ -13,6 +13,7 @@ type SchemaObjectType<T extends z.ZodRawShape> = {
 
 interface Props<T extends z.ZodRawShape> {
 	title: string;
+	submitButtonText?: string;
 	schema: z.ZodObject<T>;
 	initalData: SchemaObjectType<T>;
 	submit: { (data: SchemaObjectType<T>): void };
@@ -27,10 +28,11 @@ interface Props<T extends z.ZodRawShape> {
  * Nested object within the schema are not supported.
  */
 export function SimpleForm<T extends z.ZodRawShape>({
+	title,
+	submitButtonText = 'SUBMIT FORM',
+	schema,
 	initalData,
 	submit,
-	title,
-	schema,
 }: Props<T>) {
 	const [parseInitialDataResult, setParseInitialDataResult] = useState<
 		z.SafeParseReturnType<typeof schema, SchemaObjectType<T>> | undefined
@@ -112,7 +114,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				changeValue={manageChange}
 				validationWarnings={warnings}
 			/>
-			<button onClick={handleSubmit}>SUBMIT</button>
+			<button onClick={handleSubmit}>{submitButtonText}</button>
 		</fieldset>
 	);
 }
