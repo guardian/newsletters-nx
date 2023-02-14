@@ -1,6 +1,6 @@
 import type { FormEventHandler, FunctionComponent } from 'react';
-import type { FieldProps } from './formControls';
-import { FieldWrapper } from './formControls';
+import type { FieldProps } from './FieldWrapper';
+import { FieldWrapper } from './FieldWrapper';
 import { eventToString } from './util';
 
 
