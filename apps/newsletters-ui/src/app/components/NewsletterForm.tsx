@@ -7,6 +7,7 @@ import {
 	newsletterSchemaAllowingEmptyStrings,
 } from '@newsletters-nx/newsletters-data-client';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import { makeBlankNewsletter } from '../blanks';
 import { ArrayInput } from './ArrayInput';
 import { NewsletterDetail } from './NewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';
@@ -16,43 +17,10 @@ interface Props {
 	existingIds: string[];
 }
 
-const BLANK_FORM: Newsletter = {
-	identityName: '',
-	name: '',
-	cancelled: false,
-	restricted: false,
-	paused: false,
-	emailConfirmation: false,
-	brazeNewsletterName: '',
-	brazeSubscribeAttributeName: '',
-	brazeSubscribeEventNamePrefix: '',
-	theme: 'news',
-	group: 'News in depth',
-	description: '',
-	frequency: 'Weekly',
-	listIdV1: -1,
-	listId: 6013,
-	signupPage: '',
-	emailEmbed: {
-		name: '',
-		title: '',
-		description: '',
-		successHeadline: 'Subscription confirmed',
-		successDescription: '',
-		hexCode: '#DCDCDC',
-	},
-	campaignName: '',
-	campaignCode: '',
-	brazeSubscribeAttributeNameAlternate: ['TEST VALUE 1', 'OTHER TEST VALUE'],
-	illustration: {
-		circle: '',
-	},
-};
-
 export const NewsletterForm = ({ existingIds }: Props) => {
-	const [newsletter, setNewsletter] = useState<Newsletter>({
-		...BLANK_FORM,
-	});
+	const [newsletter, setNewsletter] = useState<Newsletter>(
+		makeBlankNewsletter(),
+	);
 
 	const [warnings, setWarnings] = useState<
 		Partial<Record<keyof Newsletter, string>>
