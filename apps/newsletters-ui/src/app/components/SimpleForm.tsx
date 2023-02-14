@@ -18,6 +18,14 @@ interface Props<T extends z.ZodRawShape> {
 	submit: { (data: SchemaObjectType<T>): void };
 }
 
+/**
+ * Component for rendering a controlled form based
+ * on a ZodObject schema.
+ *
+ * If will only render all the fields correctly if they
+ * are supported by the SchemaForm.
+ * Nested object within the schema are not supported.
+ */
 export function SimpleForm<T extends z.ZodRawShape>({
 	initalData,
 	submit,
@@ -45,7 +53,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	}
 
 	if (!data) {
-		return <>INITIAL DATA WAS NOT SET</>;
+		return null;
 	}
 
 	const manageChange = (value: FieldValue, key: FieldDef) => {

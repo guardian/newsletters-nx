@@ -82,6 +82,7 @@ export function ButtonContainer() {
 					initalData={{ name: 'bob', age: 1 }}
 					submit={(data) => {
 						console.table(data);
+						alert(`${data.name} is ${data.age} years old.`)
 					}}
 				/>
 
@@ -96,6 +97,7 @@ export function ButtonContainer() {
 					}}
 					submit={(data) => {
 						console.table(data);
+						alert (`A ${data.name} is a kind of biscuit with a ${data.shape} shape ${data.sugarOnTop ? 'and sugar on top': ''}.`)
 					}}
 				/>
 			</div>
