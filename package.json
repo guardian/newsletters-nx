@@ -8,7 +8,9 @@
 		"lint": "nx run-many --target=lint --all",
 		"build": "nx run-many --target=build --all",
 		"test": "nx run-many --target=test --all",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"postinstall": "npm install --prefix cdk",
+		"bundle-api": "npx nx build newsletters-api --configuration=production --outputFileName=index.js"
 	},
 	"engines": {
 		"node": ">=16.19.0",
@@ -23,6 +25,7 @@
 		"@types/react-table": "^7.7.14",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
+		"react-markdown": "^8.0.5",
 		"react-router-dom": "6.4.3",
 		"react-table": "^7.8.0",
 		"tslib": "^2.3.0",

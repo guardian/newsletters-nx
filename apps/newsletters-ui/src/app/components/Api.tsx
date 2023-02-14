@@ -11,7 +11,7 @@ export const HealthCheck: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		fetch('/api/health')
+		fetch('/api')
 			.then((response: Response) => response.json())
 			.then((data: HealthData) => {
 				setResponse(data);
