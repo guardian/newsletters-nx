@@ -32,10 +32,10 @@ const deriveNewsletter = (
 			...deriveBooleansFromStatus(newsletterData.status),
 		};
 
-		delete merged.creationTimeStamp;
-		delete merged.status;
-
-		return merged;
+		// Destructure out fields not present on Newsletter before returning the rest
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Destructure
+		const { creationTimeStamp, status, ...rest } = merged;
+		return rest;
 	} catch (err) {
 		console.error(err);
 		return undefined;
