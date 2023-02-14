@@ -3,7 +3,6 @@ import type { FieldProps } from './FieldWrapper';
 import { FieldWrapper } from './FieldWrapper';
 import { eventToString } from './util';
 
-
 export const StringInput: FunctionComponent<
 	FieldProps & {
 		value: string;

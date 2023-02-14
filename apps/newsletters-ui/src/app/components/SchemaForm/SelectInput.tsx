@@ -1,7 +1,6 @@
 import type { FunctionComponent } from 'react';
-import type { FieldProps} from './FieldWrapper';
+import type { FieldProps } from './FieldWrapper';
 import { FieldWrapper } from './FieldWrapper';
-
 
 export const SelectInput: FunctionComponent<
 	FieldProps & {

@@ -1,8 +1,7 @@
 import type { FormEventHandler, FunctionComponent } from 'react';
-import type { FieldProps} from './FieldWrapper';
+import type { FieldProps } from './FieldWrapper';
 import { FieldWrapper } from './FieldWrapper';
 import { eventToBoolean } from './util';
-
 
 export const BooleanInput: FunctionComponent<
 	FieldProps & {

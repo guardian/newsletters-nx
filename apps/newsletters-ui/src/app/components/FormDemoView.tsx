@@ -1,8 +1,10 @@
-import { biscuitSchema, personSchema } from '@newsletters-nx/newsletters-data-client';
+import {
+	biscuitSchema,
+	personSchema,
+} from '@newsletters-nx/newsletters-data-client';
 import { SimpleForm } from './SimpleForm';
 
 export const FormDemoView = () => {
-
 	return (
 		<main>
 			<div>
@@ -19,7 +21,7 @@ export const FormDemoView = () => {
 				<SimpleForm
 					schema={biscuitSchema}
 					title="Describe your biscuit"
-					submitButtonText='Biscuit data ready'
+					submitButtonText="Biscuit data ready"
 					initalData={{
 						name: 'Jammy Dodger',
 						shape: 'round',
@@ -36,7 +38,6 @@ export const FormDemoView = () => {
 					}}
 				/>
 			</div>
-
 		</main>
 	);
 };

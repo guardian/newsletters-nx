@@ -34,4 +34,3 @@ const BLANK_NEWSLETTER: Newsletter = {
 };
 
 export const makeBlankNewsletter = (): Newsletter => ({ ...BLANK_NEWSLETTER });
-
