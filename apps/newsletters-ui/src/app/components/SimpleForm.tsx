@@ -3,17 +3,19 @@ import type { z } from 'zod';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
 
+type SchemaObjectType<T extends z.ZodRawShape> = {
+	[k in keyof z.objectUtil.addQuestionMarks<{
+		[k in keyof T]: T[k]['_output'];
+	}>]: z.objectUtil.addQuestionMarks<{
+		[k in keyof T]: T[k]['_output'];
+	}>[k];
+};
+
 interface Props<T extends z.ZodRawShape> {
 	title: string;
 	schema: z.ZodObject<T>;
-	initalData: {
-		[k in keyof z.objectUtil.addQuestionMarks<{
-			[k in keyof T]: T[k]['_output'];
-		}>]: z.objectUtil.addQuestionMarks<{
-			[k in keyof T]: T[k]['_output'];
-		}>[k];
-	};
-	submit: { (data: T): void };
+	initalData: SchemaObjectType<T>;
+	submit: { (data: SchemaObjectType<T>): void };
 }
 
 export function SimpleForm<T extends z.ZodRawShape>({
@@ -89,7 +91,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				onClick={() => {
 					const result = schema.safeParse(data);
 					if (result.success) {
-						return submit(result.data as T);
+						return submit(result.data);
 					}
 					console.warn(result.error);
 				}}
