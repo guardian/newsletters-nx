@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { emailEmbedSchema, nonEmptyString } from './schema-helpers';
+import { emailEmbedSchema } from "./emailEmbedSchema";
+import { nonEmptyString } from './schema-helpers';
 
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
