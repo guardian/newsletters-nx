@@ -13,7 +13,10 @@ export function WizardButton({
 	buttonType,
 	onClick,
 }: WizardButtonProps) {
-	const { background, border } = WIZARD_BUTTON_TYPES[buttonType];
+	const { background, border } = WIZARD_BUTTON_TYPES[buttonType] ?? {
+		background: 'purple',
+		border: 'orange',
+	};
 	return (
 		<StyledWizardButton
 			background={background}
