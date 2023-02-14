@@ -12,6 +12,7 @@ export const biscuitSchema = z.object({
 	name: z.string(),
 	shape: z.enum(['round', 'finger', 'star', 'rectangle']),
 	filling: z.enum(['none', 'jam', 'chocolate']),
+	sugarOnTop: z.boolean(),
 });
 
 export type Biscuit = z.infer<typeof biscuitSchema>;

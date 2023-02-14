@@ -79,17 +79,21 @@ export function ButtonContainer() {
 				<SimpleForm
 					schema={personSchema}
 					title="Please fill this out"
-					initalData={{ name: 'bob', age: 1, favouriteColor: 'red' }}
+					initalData={{ name: 'bob', age: 1 }}
 					submit={(data) => {
 						console.table(data);
 					}}
 				/>
-			</div>
-			<div>
+
 				<SimpleForm
 					schema={biscuitSchema}
 					title="Describe your biscuit"
-					initalData={{ name: 'Jammy Dodger', shape: 'round', filling: 'jam' }}
+					initalData={{
+						name: 'Jammy Dodger',
+						shape: 'round',
+						filling: 'jam',
+						sugarOnTop: true,
+					}}
 					submit={(data) => {
 						console.table(data);
 					}}

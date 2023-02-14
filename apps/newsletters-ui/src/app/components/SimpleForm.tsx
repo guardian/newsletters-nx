@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { z } from 'zod';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
@@ -24,27 +24,33 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	title,
 	schema,
 }: Props<T>) {
-	type SchemaContents = Props<T>['initalData'];
-
-	const parseInitialDataResult = schema.safeParse(initalData);
-
-	const parsedInitial = parseInitialDataResult.success
-		? parseInitialDataResult.data
-		: undefined;
-
-	const [data, setData] = useState<SchemaContents | undefined>(parsedInitial);
+	const [parseInitialDataResult, setParseInitialDataResult] = useState<
+		z.SafeParseReturnType<typeof schema, SchemaObjectType<T>> | undefined
+	>(undefined);
+	const [data, setData] = useState<SchemaObjectType<T>>();
 	const [warnings, setWarnings] = useState<Partial<Record<keyof T, string>>>(
 		{},
 	);
 
-	if (!data) {
-		console.warn(parseInitialDataResult);
+	useEffect(() => {
+		setParseInitialDataResult(schema.safeParse(initalData));
+		if (parseInitialDataResult?.success) {
+			setData(initalData);
+		}
+	}, [initalData, parseInitialDataResult?.success, schema]);
+
+	if (parseInitialDataResult && !parseInitialDataResult.success) {
+		console.warn(parseInitialDataResult.error);
 		return <>INITIAL DATA WAS INVALID</>;
+	}
+
+	if (!data) {
+		return <>INITIAL DATA WAS NOT SET</>;
 	}
 
 	const manageChange = (value: FieldValue, key: FieldDef) => {
 		const mod = getModification(value, key);
-		const revisedData: SchemaContents = {
+		const revisedData: SchemaObjectType<T> = {
 			...data,
 			...mod,
 		};
@@ -52,7 +58,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 		updateDataAndWarnings(revisedData);
 	};
 
-	const updateDataAndWarnings = (revisedData: SchemaContents) => {
+	const updateDataAndWarnings = (revisedData: SchemaObjectType<T>) => {
 		setWarnings({});
 		const parseResult = schema.safeParse(revisedData);
 		const issueMap: Partial<Record<keyof T, string>> = {};
@@ -73,31 +79,32 @@ export function SimpleForm<T extends z.ZodRawShape>({
 		setWarnings(issueMap);
 	};
 
-	const reset = () => {
-		updateDataAndWarnings(parsedInitial as SchemaContents);
+	const handleReset = () => {
+		if (!parseInitialDataResult) {
+			return;
+		}
+		updateDataAndWarnings(parseInitialDataResult.data);
+	};
+
+	const handleSubmit = () => {
+		const result = schema.safeParse(data);
+		if (result.success) {
+			return submit(result.data);
+		}
+		console.warn(result.error);
 	};
 
 	return (
 		<fieldset>
 			<legend>{title}</legend>
-			<button onClick={reset}>RESET</button>
+			<button onClick={handleReset}>RESET</button>
 			<SchemaForm
 				schema={schema}
 				data={data}
 				changeValue={manageChange}
 				validationWarnings={warnings}
 			/>
-			<button
-				onClick={() => {
-					const result = schema.safeParse(data);
-					if (result.success) {
-						return submit(result.data);
-					}
-					console.warn(result.error);
-				}}
-			>
-				SUBMIT
-			</button>
+			<button onClick={handleSubmit}>SUBMIT</button>
 		</fieldset>
 	);
 }
