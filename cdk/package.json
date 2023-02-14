@@ -7,7 +7,7 @@
     "test": "jest",
     "test-update": "jest -u",
     "format": "prettier --write \"{lib,bin}/**/*.ts\"",
-    "lint": "eslint lib/** bin/** --ext .ts --no-error-on-unmatched-pattern",
+    "lint": "eslint",
     "synth": "cdk synth --path-metadata false --version-reporting false",
     "diff": "cdk diff --path-metadata false --version-reporting false"
   },
@@ -17,6 +17,8 @@
     "@guardian/prettier": "1.0.0",
     "@types/jest": "^29.2.5",
     "@types/node": "18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.52.0",
+    "@typescript-eslint/parser": "^5.52.0",
     "aws-cdk": "2.59.0",
     "aws-cdk-lib": "2.59.0",
     "constructs": "10.1.215",
