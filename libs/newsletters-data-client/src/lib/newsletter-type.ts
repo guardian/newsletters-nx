@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { emailEmbedSchema } from "./emailEmbedSchema";
+import { emailEmbedSchema } from './emailEmbedSchema';
 import { nonEmptyString } from './schema-helpers';
 
 const illustrationSchema = z.object({
