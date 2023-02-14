@@ -11,7 +11,7 @@ export default defineConfig({
 		proxy: {
 			'/api': {
 				/** @TODO - Read target from env var / param instead of hardcoding */
-				target: 'http://localhost:3000',
+				target: 'http://0.0.0.0:3000',
 				secure: false,
 				rewrite: (path) => path.replace(/^\/api/, ''),
 			},
