@@ -76,8 +76,8 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	return (
-		<div>
-			<p>{title}</p>
+		<fieldset>
+			<legend>{title}</legend>
 			<button onClick={reset}>RESET</button>
 			<SchemaForm
 				schema={schema}
@@ -96,6 +96,6 @@ export function SimpleForm<T extends z.ZodRawShape>({
 			>
 				SUBMIT
 			</button>
-		</div>
+		</fieldset>
 	);
 }
