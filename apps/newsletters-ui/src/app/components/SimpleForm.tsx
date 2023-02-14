@@ -16,7 +16,7 @@ interface Props<T extends z.ZodRawShape> {
 	submit: { (data: T): void };
 }
 
-export function QuestionaireForm<T extends z.ZodRawShape>({
+export function SimpleForm<T extends z.ZodRawShape>({
 	initalData,
 	submit,
 	title,

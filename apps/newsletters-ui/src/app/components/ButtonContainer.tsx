@@ -4,7 +4,7 @@ import {
 	biscuitSchema,
 	personSchema,
 } from '@newsletters-nx/newsletters-data-client';
-import { QuestionaireForm } from './Questionaire';
+import { SimpleForm } from './SimpleForm';
 
 const ContainerStyle = styled.div`
 	display: grid;
@@ -76,7 +76,7 @@ export function ButtonContainer() {
 			</button>
 
 			<div>
-				<QuestionaireForm
+				<SimpleForm
 					schema={personSchema}
 					title="Please fill this out"
 					initalData={{ name: 'bob', age: 1, favouriteColor: 'red' }}
@@ -86,7 +86,7 @@ export function ButtonContainer() {
 				/>
 			</div>
 			<div>
-				<QuestionaireForm
+				<SimpleForm
 					schema={biscuitSchema}
 					title="Describe your biscuit"
 					initalData={{ name: 'Jammy Dodger', shape: 'round', filling: 'jam' }}
