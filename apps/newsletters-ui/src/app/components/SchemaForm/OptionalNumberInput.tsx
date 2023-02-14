@@ -1,9 +1,8 @@
 import type { FormEventHandler, FunctionComponent } from 'react';
-import { useRef  } from 'react';
-import type { FieldProps} from './FieldWrapper';
+import { useRef } from 'react';
+import type { FieldProps } from './FieldWrapper';
 import { FieldWrapper } from './FieldWrapper';
 import { eventToNumber } from './util';
-
 
 export const OptionalNumberInput: FunctionComponent<
 	FieldProps & {
@@ -42,13 +41,15 @@ export const OptionalNumberInput: FunctionComponent<
 				min={props.min}
 				step={props.step}
 				onInput={sendNumberValue}
-				ref={numberFieldRef} />
+				ref={numberFieldRef}
+			/>
 			<span>
 				<label>undef:</label>
 				<input
 					type="checkbox"
 					checked={typeof props.value === 'undefined'}
-					onChange={toggleUndefined} />
+					onChange={toggleUndefined}
+				/>
 			</span>
 		</FieldWrapper>
 	);
