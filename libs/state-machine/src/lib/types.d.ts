@@ -1,6 +1,6 @@
 import type { WIZARD_BUTTON_TYPES } from '@newsletters-nx/newsletters-data-client';
 
-interface WizardStep {
+interface WizardStepData {
 	formData?: Record<string, string>;
 	currentStepId: string;
 	errorMessage?: string;
@@ -14,14 +14,14 @@ interface WizardStepLayout {
 			label: string;
 			stepToMoveTo: string;
 			onAfterStepStartValidate?: (
-				step: WizardStep,
+				stepData: WizardStepData,
 			) => Promise<string | undefined>;
 			executeStep?: (
-				step: WizardStep,
+				stepData: WizardStepData,
 				stepLayout: WizardStepLayout,
 			) => Promise<string | undefined>;
 			onBeforeStepChangeValidate?: (
-				step: WizardStep,
+				stepData: WizardStepData,
 				stepLayout: WizardStepLayout,
 			) => Promise<string | undefined>;
 		}

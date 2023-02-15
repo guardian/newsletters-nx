@@ -1,13 +1,13 @@
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
-import type { WizardLayout, WizardStep } from './types';
+import type { WizardLayout, WizardStepData } from './types';
 
-const initialStep: WizardStep = {
+const initialStep: WizardStepData = {
 	currentStepId: 'step1',
 	errorMessage: '',
 };
-let mockStep: WizardStep;
+let mockStepData: WizardStepData;
 beforeEach(() => {
-	mockStep = Object.assign({}, initialStep);
+	mockStepData = Object.assign({}, initialStep);
 });
 
 const mockWizardLayout: WizardLayout = {
@@ -62,7 +62,7 @@ const mockWizardLayout: WizardLayout = {
 describe('stateMachineButtonPressed', () => {
 	it('should throw if buttonPressed is invalid', async () => {
 		await expect(
-			stateMachineButtonPressed('poop', mockStep, mockWizardLayout),
+			stateMachineButtonPressed('poop', mockStepData, mockWizardLayout),
 		).rejects.toThrowError('Button poop not found in step step1');
 	});
 });
@@ -75,11 +75,11 @@ it('should execute step and move to next step if next button is pressed', async 
 		nextButton.executeStep = executeStepMock;
 		const newState = await stateMachineButtonPressed(
 			'next',
-			mockStep,
+			mockStepData,
 			mockWizardLayout,
 		);
 		expect(executeStepMock).toHaveBeenCalledWith(
-			mockStep,
+			mockStepData,
 			mockWizardLayout['step1'],
 		);
 		expect(newState.currentStepId).toEqual('step2');
@@ -96,11 +96,11 @@ it('should validate before step change and return error message if there is vali
 		nextButton.onBeforeStepChangeValidate = onBeforeStepChangeValidateMock;
 		const result = await stateMachineButtonPressed(
 			'next',
-			mockStep,
+			mockStepData,
 			mockWizardLayout,
 		);
 		expect(onBeforeStepChangeValidateMock).toHaveBeenCalledWith(
-			mockStep,
+			mockStepData,
 			mockWizardLayout['step1'],
 		);
 		expect(result.currentStepId).toEqual('step1');
@@ -118,10 +118,10 @@ it('should validate after step start and return error message if there is valida
 		nextButton.onAfterStepStartValidate = onAfterStepStartValidateMock;
 		const result = await stateMachineButtonPressed(
 			'next',
-			mockStep,
+			mockStepData,
 			mockWizardLayout,
 		);
-		expect(onAfterStepStartValidateMock).toHaveBeenCalledWith(mockStep);
+		expect(onAfterStepStartValidateMock).toHaveBeenCalledWith(mockStepData);
 		expect(result.currentStepId).toEqual('step1');
 		expect(result.errorMessage).toEqual('Validation error');
 	}
@@ -135,7 +135,7 @@ it('should fail to execute step and return error message if there is validation 
 		nextButton.executeStep = executeStepMock;
 		const result = await stateMachineButtonPressed(
 			'next',
-			mockStep,
+			mockStepData,
 			mockWizardLayout,
 		);
 		expect(executeStepMock).toHaveBeenCalled;
@@ -152,11 +152,11 @@ it('should move to previous step if prev button is pressed', async () => {
 		backButton.executeStep = executeStepMock;
 		const newState = await stateMachineButtonPressed(
 			'back',
-			mockStep,
+			mockStepData,
 			mockWizardLayout,
 		);
 		expect(executeStepMock).toHaveBeenCalledWith(
-			mockStep,
+			mockStepData,
 			mockWizardLayout['step1'],
 		);
 		expect(newState.currentStepId).toEqual('exit');

@@ -1,51 +1,51 @@
-import type { WizardLayout, WizardStep } from './types';
+import type { WizardLayout, WizardStepData } from './types';
 
 export async function stateMachineButtonPressed(
 	buttonPressed: string,
-	step: WizardStep,
+	stepData: WizardStepData,
 	stepLayout: WizardLayout,
-): Promise<WizardStep> {
-	const wizardStepLayout = stepLayout[step.currentStepId];
+): Promise<WizardStepData> {
+	const wizardStepLayout = stepLayout[stepData.currentStepId];
 	const buttonPressedDetails = wizardStepLayout?.buttons[buttonPressed];
 
 	if (!buttonPressedDetails) {
 		throw new Error(
-			`Button ${buttonPressed} not found in step ${step.currentStepId}`,
+			`Button ${buttonPressed} not found in step ${stepData.currentStepId}`,
 		);
 	}
 
 	if (buttonPressedDetails.onAfterStepStartValidate) {
 		const validationResult =
-			await buttonPressedDetails.onAfterStepStartValidate(step);
+			await buttonPressedDetails.onAfterStepStartValidate(stepData);
 		if (validationResult !== undefined) {
-			step.errorMessage = validationResult;
-			return step;
+			stepData.errorMessage = validationResult;
+			return stepData;
 		}
 	}
 
 	if (buttonPressedDetails.executeStep) {
 		const validationResult = await buttonPressedDetails.executeStep(
-			step,
+			stepData,
 			wizardStepLayout,
 		);
 		if (validationResult !== undefined) {
-			step.errorMessage = validationResult;
-			return step;
+			stepData.errorMessage = validationResult;
+			return stepData;
 		}
 	}
 
 	if (buttonPressedDetails.onBeforeStepChangeValidate) {
 		const validationResult =
 			await buttonPressedDetails.onBeforeStepChangeValidate(
-				step,
+				stepData,
 				wizardStepLayout,
 			);
 		if (validationResult !== undefined) {
-			step.errorMessage = validationResult;
-			return step;
+			stepData.errorMessage = validationResult;
+			return stepData;
 		}
 	}
 
-	step.currentStepId = buttonPressedDetails.stepToMoveTo;
-	return step;
+	stepData.currentStepId = buttonPressedDetails.stepToMoveTo;
+	return stepData;
 }
