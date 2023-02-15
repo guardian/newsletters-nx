@@ -1,12 +1,12 @@
-import type { WizardStatic, WizardStep } from './types';
+import type { WizardLayout, WizardStep } from './types';
 
 export async function stateMachineButtonPressed(
 	buttonPressed: string,
 	step: WizardStep,
-	staticState: WizardStatic,
+	stepLayout: WizardLayout,
 ): Promise<WizardStep> {
-	const staticStep = staticState[step.currentStepId];
-	const buttonPressedDetails = staticStep?.buttons[buttonPressed];
+	const wizardStepLayout = stepLayout[step.currentStepId];
+	const buttonPressedDetails = wizardStepLayout?.buttons[buttonPressed];
 
 	if (!buttonPressedDetails) {
 		throw new Error(
@@ -26,7 +26,7 @@ export async function stateMachineButtonPressed(
 	if (buttonPressedDetails.executeStep) {
 		const validationResult = await buttonPressedDetails.executeStep(
 			step,
-			staticStep,
+			wizardStepLayout,
 		);
 		if (validationResult !== undefined) {
 			step.errorMessage = validationResult;
@@ -36,7 +36,10 @@ export async function stateMachineButtonPressed(
 
 	if (buttonPressedDetails.onBeforeStepChangeValidate) {
 		const validationResult =
-			await buttonPressedDetails.onBeforeStepChangeValidate(step, staticStep);
+			await buttonPressedDetails.onBeforeStepChangeValidate(
+				step,
+				wizardStepLayout,
+			);
 		if (validationResult !== undefined) {
 			step.errorMessage = validationResult;
 			return step;

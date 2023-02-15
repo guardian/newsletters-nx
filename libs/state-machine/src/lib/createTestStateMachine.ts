@@ -1,10 +1,10 @@
-import type { WizardStatic } from './types';
+import type { WizardLayout } from './types';
 
-export function createTestStateMachine(): WizardStatic {
+export function createTestStateMachine(): WizardLayout {
 	return {
 		createNewsletter: {
 			markdownToDisplay: `# Create a new newsletter
-    
+
 This is the first step of the wizard. You can use markdown here.
 On the first step you can ask the user to enter the name of the newsletter.`,
 			buttons: {
@@ -19,7 +19,7 @@ On the first step you can ask the user to enter the name of the newsletter.`,
 					stepToMoveTo: 'newsletterName',
 					executeStep: async (
 						state,
-						staticState,
+						stepLayout,
 					): Promise<string | undefined> => {
 						return Promise.resolve('An error occurred');
 					},

@@ -5,7 +5,7 @@ interface WizardStep {
 	currentStepId: string;
 	errorMessage?: string;
 }
-interface WizardStaticStep {
+interface WizardStepLayout {
 	markdownToDisplay: string;
 	buttons: Record<
 		string,
@@ -18,14 +18,14 @@ interface WizardStaticStep {
 			) => Promise<string | undefined>;
 			executeStep?: (
 				step: WizardStep,
-				staticState: WizardStaticStep,
+				stepLayout: WizardStepLayout,
 			) => Promise<string | undefined>;
 			onBeforeStepChangeValidate?: (
 				step: WizardStep,
-				staticState: WizardStaticStep,
+				stepLayout: WizardStepLayout,
 			) => Promise<string | undefined>;
 		}
 	>;
 }
 
-type WizardStatic = Record<string, WizardStaticStep>;
+type WizardLayout = Record<string, WizardStepLayout>;
