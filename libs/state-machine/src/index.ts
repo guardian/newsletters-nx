@@ -1,1 +1,2 @@
-export * from './lib/state-machine';
+export * from './lib/createTestStateMachine';
+export * from './lib/stateMachineButtonPressed';
