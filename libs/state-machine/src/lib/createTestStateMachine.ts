@@ -1,3 +1,4 @@
+import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
 import type { WizardLayout } from './types';
 
 export function createTestStateMachine(): WizardLayout {
@@ -35,7 +36,7 @@ This newsletter was cancelled.`,
 		newsletterName: {
 			markdownToDisplay: `# Newsletter name
 
-The newsletter name will be displayed on the newsletter page.
+${getPropertyDescription('name')}
 
 // Embed an image showing the rendered text.
 ![Newsletter name](https://unsplash.com/photos/5Zg8ZQZJ9qM/download?force=true&w=640)
