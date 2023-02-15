@@ -5,9 +5,6 @@ interface WizardStep {
 	currentStepId: string;
 	errorMessage?: string;
 }
-
-type WizardStatic = Record<string, WizardStaticStep>;
-
 interface WizardStaticStep {
 	markdownToDisplay: string;
 	buttons: Record<
@@ -16,17 +13,19 @@ interface WizardStaticStep {
 			buttonType: keyof typeof WIZARD_BUTTON_TYPES;
 			label: string;
 			stepToMoveTo: string;
+			onAfterStepStartValidate?: (
+				step: WizardStep,
+			) => Promise<string | undefined>;
 			executeStep?: (
-				state: WizardStep,
+				step: WizardStep,
 				staticState: WizardStaticStep,
 			) => Promise<string | undefined>;
-			onAfterStepStartValidate?: (
-				state: WizardStep,
-			) => Promise<string | undefined>;
 			onBeforeStepChangeValidate?: (
-				state: WizardStep,
+				step: WizardStep,
 				staticState: WizardStaticStep,
 			) => Promise<string | undefined>;
 		}
 	>;
 }
+
+type WizardStatic = Record<string, WizardStaticStep>;

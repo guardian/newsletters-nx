@@ -1,7 +1,7 @@
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
 import type { WizardStatic, WizardStep } from './types';
 
-const mockState: WizardStep = {
+const mockStep: WizardStep = {
 	currentStepId: 'step1',
 	errorMessage: '',
 };
@@ -54,12 +54,28 @@ const mockStatic: WizardStatic = {
 describe('stateMachineButtonPressed', () => {
 	it('should throw if buttonPressed is invalid', async () => {
 		await expect(
-			stateMachineButtonPressed('poop', mockState, mockStatic),
+			stateMachineButtonPressed('poop', mockStep, mockStatic),
 		).rejects.toThrowError('Button poop not found in step step1');
 	});
 });
 
 // it('should execute step and move to next step if next button is pressed', async () => {
+// 	const executeStepMock = jest.fn().mockResolvedValue(undefined);
+// 	let executeStep = mockStatic['step1']?.buttons['next']?.executeStep;
+// 	if (executeStep) {
+// 		executeStep = executeStepMock;
+// 		const newState = await stateMachineButtonPressed(
+// 			'next',
+// 			mockStep,
+// 			mockStatic,
+// 		);
+// 		expect(executeStepMock).toHaveBeenCalledWith(
+// 			mockStep,
+// 			mockStatic['step1']?.buttons['next'],
+// 		);
+// 		expect(newState.currentStepId).toEqual('step2');
+// 	}
+
 // const nextButton = mockStatic.step1.buttons.next;
 // nextButton.executeStep.mockReturnValue(undefined);
 // const result = await stateMachineButtonPressed(mockState, 'next', mockStatic);
