@@ -1,5 +1,11 @@
 import type { FastifyInstance } from 'fastify';
-import type { WizardStepData } from '@newsletters-nx/state-machine';
+import type {
+	CurrentStepRouteResponse,
+	WizardButton,
+	WizardStepData,
+	WizardStepLayout,
+	WizardStepLayoutButton,
+} from '@newsletters-nx/state-machine';
 import {
 	setupInitialState,
 	stateMachineButtonPressed,
@@ -16,8 +22,31 @@ interface CurrentStepRouteParams {
 
 // TODO: This is a dummy for the S3 bucket.
 // Make the current step id optional
-let stepData: WizardStepData = {
+const stepData: WizardStepData = {
 	currentStepId: 'createNewsletter',
+};
+
+const convertWizardStepLayoutButtonsToWizardButtons = (
+	layoutButtons: WizardStepLayout['buttons'],
+): CurrentStepRouteResponse['buttons'] => {
+	const convertButton = (
+		index: string,
+		input: WizardStepLayoutButton,
+	): WizardButton => {
+		return {
+			id: index,
+			label: input.label,
+			buttonType: input.buttonType,
+		};
+	};
+
+	const outputRecord: CurrentStepRouteResponse['buttons'] = {};
+
+	Object.entries(layoutButtons).forEach(([index, layoutButton]) => {
+		outputRecord[index] = convertButton(index, layoutButton);
+	});
+
+	return outputRecord;
 };
 
 /**
@@ -28,7 +57,7 @@ let stepData: WizardStepData = {
 export function registerCurrentStepRoute(app: FastifyInstance) {
 	app.post<{ Body: CurrentStepRouteParams }>(
 		'/v1/currentstep',
-		async (req, res) => {
+		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteParams = req.body;
 
 			if (body.newsletterId === undefined) {
@@ -45,17 +74,19 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					  )
 					: setupInitialState();
 
-			// TODO: This is ugly, we would be better with a better response.
-			if (typeof result === 'string') {
-				return res.status(400).send({ message: result });
+			const nextWizardStepLayout =
+				newslettersWorkflowStepLayout[result.currentStepId];
+
+			if (!nextWizardStepLayout) {
+				throw 'no next step found.';
 			}
-			stepData = result;
 
 			return {
-				markdownToDisplay:
-					'# From the API\n\nThis is the markdown from the API',
-				currentStepId: stepData.currentStepId,
-				buttons: newslettersWorkflowStepLayout[stepData.currentStepId]?.buttons,
+				markdownToDisplay: nextWizardStepLayout.markdownToDisplay,
+				currentStepId: result.currentStepId,
+				buttons: convertWizardStepLayoutButtonsToWizardButtons(
+					nextWizardStepLayout.buttons,
+				),
 			};
 		},
 	);

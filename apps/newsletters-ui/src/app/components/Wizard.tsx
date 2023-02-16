@@ -1,21 +1,7 @@
-import { news } from '@guardian/source-foundations';
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import type { WIZARD_BUTTON_TYPES } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
 import { WizardButton } from './WizardButton';
-
-/**
- * Interface for a button displayed in the wizard.
- */
-export interface WizardButton {
-	/** Unique identifier for the button. */
-	id: string;
-	/** Label displayed on the button. */
-	label: string;
-	/** Type of the button, mapped to a specific background and border color. */
-	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
-}
 
 /**
  * Interface for the props passed to the `Wizard` component.

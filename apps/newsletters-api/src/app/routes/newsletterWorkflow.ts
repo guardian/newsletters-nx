@@ -7,8 +7,7 @@ import type {
 const createNewsletterLayout: WizardStepLayout = {
 	markdownToDisplay: `# Create a new newsletter
 
-This is the first step of the wizard. You can use markdown here.
-On the first step you can ask the user to enter the name of the newsletter.`,
+This wizard will guide you through the process of creating and launching a new newsletter using email-rendering`,
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
@@ -17,7 +16,7 @@ On the first step you can ask the user to enter the name of the newsletter.`,
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Select Template',
+			label: 'Start',
 			stepToMoveTo: 'newsletterName',
 			executeStep: async (
 				stepData,

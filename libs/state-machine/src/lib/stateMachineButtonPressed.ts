@@ -12,7 +12,6 @@ export async function stateMachineButtonPressed(
 	stepLayout: WizardLayout,
 ): Promise<WizardStepData> {
 	const wizardStepLayout = stepLayout[stepData.currentStepId];
-
 	const buttonPressedDetails = wizardStepLayout?.buttons[buttonPressed];
 
 	if (!buttonPressedDetails) {

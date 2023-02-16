@@ -19,7 +19,7 @@ On the first step you can ask the user to enter the name of the newsletter.`,
 					label: 'Select Template',
 					stepToMoveTo: 'newsletterName',
 					executeStep: async (
-						state,
+						stepData,
 						stepLayout,
 					): Promise<string | undefined> => {
 						return Promise.resolve('An error occurred');
