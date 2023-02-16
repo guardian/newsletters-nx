@@ -18,26 +18,23 @@ export interface WizardStepData {
 	errorMessage?: string;
 }
 
+type AsyncValidator = (
+	stepData: WizardStepData,
+	stepLayout?: WizardStepLayout,
+) => Promise<string | undefined>;
+
+type Validator = (
+	stepData: WizardStepData,
+	stepLayout?: WizardStepLayout,
+) => string | undefined;
+
 export interface WizardStepLayoutButton {
 	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
 	label: string;
 	stepToMoveTo: string;
-	onAfterStepStartValidate?: (
-		stepData: WizardStepData,
-	) => Promise<string | undefined>;
-	executeStep?:
-		| ((
-				stepData: WizardStepData,
-				stepLayout: WizardStepLayout,
-		  ) => Promise<string | undefined>)
-		| ((
-				stepData: WizardStepData,
-				stepLayout: WizardStepLayout,
-		  ) => string | undefined);
-	onBeforeStepChangeValidate?: (
-		stepData: WizardStepData,
-		stepLayout: WizardStepLayout,
-	) => Promise<string | undefined>;
+	onAfterStepStartValidate?: AsyncValidator | Validator;
+	executeStep?: AsyncValidator | Validator;
+	onBeforeStepChangeValidate?: AsyncValidator | Validator;
 }
 export interface WizardStepLayout {
 	markdownToDisplay: string;
