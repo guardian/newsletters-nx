@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { emailEmbedSchema } from './emailEmbedSchema';
+import { themeEnumSchema } from './newsletter-type';
 import { nonEmptyString } from './schema-helpers';
 
 /**
@@ -16,7 +17,7 @@ export const newsletterDataSchema = z.object({
 	brazeSubscribeAttributeName: nonEmptyString(),
 	brazeSubscribeEventNamePrefix: nonEmptyString(),
 	brazeNewsletterName: nonEmptyString(),
-	theme: nonEmptyString(),
+	theme: themeEnumSchema,
 	group: nonEmptyString(),
 	description: nonEmptyString(),
 	regionFocus: z.string().optional(),

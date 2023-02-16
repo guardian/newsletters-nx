@@ -19,6 +19,7 @@ const navLinks: NavLink[] = [
 	{ path: '/', label: 'home' },
 	{ path: '/api', label: 'api test page' },
 	{ path: '/newsletters/', label: 'View Current Newsletters' },
+	{ path: '/test-forms/', label: 'test forms' },
 ];
 
 const navStyle = css`
@@ -54,7 +55,11 @@ export function MainNav({ pathname }: Props) {
 	return (
 		<nav css={navStyle}>
 			{navLinks.map((link) => (
-				<Link to={link.path} className={getLinkClass(link.path)}>
+				<Link
+					key={link.path}
+					to={link.path}
+					className={getLinkClass(link.path)}
+				>
 					{link.label}
 				</Link>
 			))}

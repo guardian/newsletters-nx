@@ -2,9 +2,22 @@ import { z } from 'zod';
 import { emailEmbedSchema } from './emailEmbedSchema';
 import { nonEmptyString } from './schema-helpers';
 
-const illustrationSchema = z.object({
+export const illustrationSchema = z.object({
 	circle: z.string(),
 });
+
+export const themeEnumSchema = z.enum([
+	'news',
+	'opinion',
+	'culture',
+	'sport',
+	'lifestyle',
+	'features',
+	'cancelled',
+	'work',
+	'from the papers',
+]);
+export type Theme = z.infer<typeof themeEnumSchema>;
 
 const baseNewsletterSchema = z.object({
 	identityName: nonEmptyString().describe('the unique id for the newsletter'),
@@ -32,7 +45,7 @@ const baseNewsletterSchema = z.object({
 	brazeNewsletterName: z.string().optional(),
 	brazeSubscribeAttributeName: z.string().optional(),
 	brazeSubscribeEventNamePrefix: z.string().optional(),
-	theme: nonEmptyString(),
+	theme: themeEnumSchema,
 	group: nonEmptyString().describe(
 		'the name of the section of the newsletters page the newsletter will be listed under',
 	),
@@ -91,6 +104,22 @@ export const newsletterSchema = baseNewsletterSchema.extend({
 		description: z.string(),
 	}),
 });
+
+export const newsletterSchemaAllowingEmptyStrings = baseNewsletterSchema.extend(
+	{
+		name: z.string(),
+		identityName: z.string(),
+		group: z.string(),
+		description: z.string(),
+		frequency: z.string(),
+		brazeSubscribeAttributeName: z.string(),
+		brazeSubscribeEventNamePrefix: z.string(),
+		brazeNewsletterName: z.string(),
+		emailEmbed: emailEmbedSchema.extend({
+			description: z.string(),
+		}),
+	},
+);
 
 export type Newsletter = z.infer<typeof newsletterSchema>;
 
