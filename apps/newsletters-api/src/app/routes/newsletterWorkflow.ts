@@ -12,7 +12,7 @@ This wizard will guide you through the process of creating and launching a new n
 		cancel: {
 			buttonType: 'RED',
 			label: 'Cancel',
-			stepToMoveTo: 'exit',
+			stepToMoveTo: 'cancel',
 		},
 		next: {
 			buttonType: 'GREEN',
@@ -25,10 +25,17 @@ This wizard will guide you through the process of creating and launching a new n
 	},
 };
 
-const exitLayout: WizardStepLayout = {
+const cancelLayout: WizardStepLayout = {
 	markdownToDisplay: `# Cancelled
 
 Creation of the newsletter was cancelled.`,
+	buttons: {},
+};
+
+const finishLayout: WizardStepLayout = {
+	markdownToDisplay: `# Finished
+
+You have reached the end of the wizard.`,
 	buttons: {},
 };
 
@@ -43,19 +50,20 @@ ${getPropertyDescription('name')}
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
-			label: 'Cancel',
-			stepToMoveTo: 'exit',
+			label: 'Back',
+			stepToMoveTo: 'createNewsletter',
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Select Template',
-			stepToMoveTo: 'selectTemplate',
+			label: 'Finish',
+			stepToMoveTo: 'finish',
 		},
 	},
 };
 
 export const newslettersWorkflowStepLayout: WizardLayout = {
 	createNewsletter: createNewsletterLayout,
-	exit: exitLayout,
+	cancel: cancelLayout,
 	newsletterName: newsletterNameLayout,
+	finish: finishLayout,
 };
