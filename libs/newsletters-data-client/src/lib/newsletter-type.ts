@@ -1,21 +1,11 @@
 import { z } from 'zod';
-
-const nonEmptyString = () =>
-	z.string().min(1, { message: 'Must not be empty' });
+import { emailEmbedSchema } from './emailEmbedSchema';
+import { nonEmptyString } from './schema-helpers';
 
 export const illustrationSchema = z.object({
 	circle: z.string(),
 });
 
-export const emailEmbedSchema = z.object({
-	name: z.string(),
-	title: z.string(),
-	description: z.string().optional(),
-	successHeadline: z.string(),
-	successDescription: z.string(),
-	hexCode: z.string(),
-	imageUrl: z.string().optional(),
-});
 
 const themeEnumSchema = z.enum([
 	'news',
