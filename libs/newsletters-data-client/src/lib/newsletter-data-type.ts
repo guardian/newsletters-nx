@@ -3,7 +3,6 @@ import { emailEmbedSchema } from './emailEmbedSchema';
 import { themeEnumSchema } from './newsletter-type';
 import { nonEmptyString } from './schema-helpers';
 
-
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
  * Edits to this schema would need to be reflected in the transform function.
