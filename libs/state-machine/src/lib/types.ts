@@ -25,10 +25,15 @@ export interface WizardStepLayoutButton {
 	onAfterStepStartValidate?: (
 		stepData: WizardStepData,
 	) => Promise<string | undefined>;
-	executeStep?: (
-		stepData: WizardStepData,
-		stepLayout: WizardStepLayout,
-	) => Promise<string | undefined>;
+	executeStep?:
+		| ((
+				stepData: WizardStepData,
+				stepLayout: WizardStepLayout,
+		  ) => Promise<string | undefined>)
+		| ((
+				stepData: WizardStepData,
+				stepLayout: WizardStepLayout,
+		  ) => string | undefined);
 	onBeforeStepChangeValidate?: (
 		stepData: WizardStepData,
 		stepLayout: WizardStepLayout,

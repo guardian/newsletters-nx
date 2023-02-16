@@ -58,7 +58,9 @@ export const Wizard: React.FC<WizardProps> = () => {
 					id={button.id}
 					label={button.label}
 					buttonType={button.buttonType}
-					onClick={handleButtonClick(button.id)}
+					onClick={() => {
+						handleButtonClick(button.id)();
+					}}
 					key={key + button.label}
 				/>
 			))}

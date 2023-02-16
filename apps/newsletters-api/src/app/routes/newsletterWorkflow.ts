@@ -18,11 +18,8 @@ This wizard will guide you through the process of creating and launching a new n
 			buttonType: 'GREEN',
 			label: 'Start',
 			stepToMoveTo: 'newsletterName',
-			executeStep: async (
-				stepData,
-				stepLayout,
-			): Promise<string | undefined> => {
-				return Promise.resolve('An error occurred');
+			executeStep: (stepData, stepLayout): string | undefined => {
+				return undefined;
 			},
 		},
 	},

@@ -17,7 +17,7 @@ interface CurrentStepRouteParams {
 	 * an existing one */
 	newsletterId?: string;
 	/** ID of the button that was pressed to get to the current step */
-	buttonPressed?: string;
+	buttonId?: string;
 }
 
 // TODO: This is a dummy for the S3 bucket.
@@ -66,14 +66,15 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					.send({ message: 'newsletter id is required', body: body });
 			}
 			const result =
-				body.buttonPressed !== undefined
+				body.buttonId !== undefined
 					? await stateMachineButtonPressed(
-							body.buttonPressed,
+							body.buttonId,
 							stepData,
 							newslettersWorkflowStepLayout,
 					  )
 					: setupInitialState();
 
+			// TODO - error handling if stateMachineButtonPressed returns error message
 			const nextWizardStepLayout =
 				newslettersWorkflowStepLayout[result.currentStepId];
 
