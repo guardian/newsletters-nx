@@ -51,6 +51,7 @@ export async function stateMachineButtonPressed(
 			return stepData;
 		}
 	}
+
 	const returnValue = {
 		...stepData,
 		currentStepId: buttonPressedDetails.stepToMoveTo,

@@ -65,21 +65,30 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					.status(400)
 					.send({ message: 'newsletter id is required', body: body });
 			}
-			const result =
-				body.buttonId !== undefined
-					? await stateMachineButtonPressed(
-							body.buttonId,
-							stepData,
-							newslettersWorkflowStepLayout,
-					  )
-					: setupInitialState();
 
-			// TODO - error handling if stateMachineButtonPressed returns error message
+			let result: WizardStepData = { currentStepId: '' };
+			try {
+				result =
+					body.buttonId !== undefined
+						? await stateMachineButtonPressed(
+								body.buttonId,
+								stepData,
+								newslettersWorkflowStepLayout,
+						  )
+						: setupInitialState();
+			} catch (error) {
+				if (error instanceof Error) {
+					return res.status(400).send({ message: error.message, body: body });
+				}
+			}
+
 			const nextWizardStepLayout =
 				newslettersWorkflowStepLayout[result.currentStepId];
 
 			if (!nextWizardStepLayout) {
-				throw 'no next step found.';
+				return res
+					.status(400)
+					.send({ message: 'No next step found', body: body });
 			}
 
 			return {
