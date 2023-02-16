@@ -20,6 +20,7 @@ const navLinks: NavLink[] = [
 	{ path: '/api', label: 'api test page' },
 	{ path: '/newsletters/', label: 'View Current Newsletters' },
 	{ path: '/test-forms/', label: 'test forms' },
+	{ path: '/markdowntest/', label: 'wizard test' },
 ];
 
 const navStyle = css`

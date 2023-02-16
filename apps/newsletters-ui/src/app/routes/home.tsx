@@ -32,16 +32,7 @@ export const homeRoute: RouteObject = {
 		},
 		{
 			path: 'markdowntest/',
-			element: (
-				<Wizard
-					markdown={`
-# Wizard
-This is the start of the wizard
-			`}
-					stepName="start"
-					wizardButtons={[{ label: 'Start', buttonType: 'GREEN', id: 'start' }]}
-				/>
-			),
+			element: <Wizard newsletterId="" />,
 		},
 	],
 };

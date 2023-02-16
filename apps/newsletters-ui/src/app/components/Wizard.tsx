@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { news } from '@guardian/source-foundations';
+import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { WIZARD_BUTTON_TYPES } from '@newsletters-nx/newsletters-data-client';
+import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
 import { WizardButton } from './WizardButton';
 
 /**
@@ -16,56 +18,28 @@ export interface WizardButton {
 }
 
 /**
- * Interface for the response received from the server for a single step in the wizard.
- */
-interface CurrentStepRouteResponse {
-	/** Markdown content to display for the current step. */
-	markdownToDisplay: string;
-	/** Unique identifier for the current step. */
-	currentStepId: string;
-	/** Buttons to display for the current step. */
-	buttons: Array<{
-		/** Label displayed on the button. */
-		label: string;
-		/** Type of the button, mapped to a specific background and border color. */
-		buttonType: keyof typeof WIZARD_BUTTON_TYPES;
-		/** Unique identifier for the button. */
-		id: string;
-	}>;
-}
-
-/**
  * Interface for the props passed to the `Wizard` component.
  */
 export interface WizardProps {
-	/** Markdown content to display for the current step. */
-	markdown: string;
-	/** Unique identifier for the current step. */
-	stepName: string;
-	/** Buttons to display for the current step. */
-	wizardButtons: WizardButton[];
+	newsletterId?: string;
 }
 
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
  */
-export const Wizard: React.FC<WizardProps> = ({
-	markdown,
-	stepName,
-	wizardButtons,
-}) => {
-	const firstPage: CurrentStepRouteResponse = {
-		buttons: wizardButtons,
-		currentStepId: stepName,
-		markdownToDisplay: markdown,
-	};
+export const Wizard: React.FC<WizardProps> = () => {
 	const [wizardStep, setWizardStep] = useState<
 		CurrentStepRouteResponse | undefined
-	>(firstPage);
+	>(undefined);
 
-	const handleButtonClick = (id: string) => () => {
-		setWizardStep(undefined);
-		fetch(`/api/v1/currentstep`)
+	const fetchStep = (body: Record<string, string>) => {
+		return fetch(`/api/v1/currentstep`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(body),
+		})
 			.then((response) => response.json())
 			.then((data: CurrentStepRouteResponse) => {
 				setWizardStep(data as unknown as CurrentStepRouteResponse);
@@ -74,20 +48,32 @@ export const Wizard: React.FC<WizardProps> = ({
 				console.error('Error invoking next step of wizard:', error);
 			});
 	};
+	useEffect(() => {
+		void fetchStep({
+			newsletterId: 'test',
+		});
+	}, []);
+
+	const handleButtonClick = (id: string) => () => {
+		void fetchStep({
+			newsletterId: 'test',
+			buttonId: id,
+		});
+	};
 
 	if (wizardStep === undefined) {
 		return <p>'loading'</p>;
 	}
 	return (
 		<div className="markdown-block">
-			<ReactMarkdown>{wizardStep.markdownToDisplay}</ReactMarkdown>
-			{wizardStep.buttons.map((button) => (
+			<ReactMarkdown>{wizardStep.markdownToDisplay ?? ''}</ReactMarkdown>
+			{Object.entries(wizardStep.buttons ?? {}).map(([key, button]) => (
 				<WizardButton
 					id={button.id}
 					label={button.label}
 					buttonType={button.buttonType}
 					onClick={handleButtonClick(button.id)}
-					key={stepName + button.label}
+					key={key + button.label}
 				/>
 			))}
 		</div>

@@ -1,11 +1,18 @@
 import type { WizardLayout, WizardStepData } from './types';
 
+export function setupInitialState(): WizardStepData {
+	return {
+		currentStepId: 'createNewsletter',
+	};
+}
+
 export async function stateMachineButtonPressed(
 	buttonPressed: string,
 	stepData: WizardStepData,
 	stepLayout: WizardLayout,
 ): Promise<WizardStepData> {
 	const wizardStepLayout = stepLayout[stepData.currentStepId];
+
 	const buttonPressedDetails = wizardStepLayout?.buttons[buttonPressed];
 
 	if (!buttonPressedDetails) {
