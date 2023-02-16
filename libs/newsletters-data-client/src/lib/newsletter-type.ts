@@ -6,8 +6,7 @@ export const illustrationSchema = z.object({
 	circle: z.string(),
 });
 
-
-const themeEnumSchema = z.enum([
+export const themeEnumSchema = z.enum([
 	'news',
 	'opinion',
 	'culture',
