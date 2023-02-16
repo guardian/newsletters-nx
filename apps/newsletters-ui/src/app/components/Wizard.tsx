@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
+import { MarkdownView } from './MarkdownView';
 import { WizardButton } from './WizardButton';
 
 /**
@@ -51,8 +51,8 @@ export const Wizard: React.FC<WizardProps> = () => {
 		return <p>'loading'</p>;
 	}
 	return (
-		<div className="markdown-block">
-			<ReactMarkdown>{wizardStep.markdownToDisplay ?? ''}</ReactMarkdown>
+		<>
+			<MarkdownView markdown={wizardStep.markdownToDisplay ?? ''} />
 			{Object.entries(wizardStep.buttons ?? {}).map(([key, button]) => (
 				<WizardButton
 					id={button.id}
@@ -64,6 +64,6 @@ export const Wizard: React.FC<WizardProps> = () => {
 					key={key + button.label}
 				/>
 			))}
-		</div>
+		</>
 	);
 };
