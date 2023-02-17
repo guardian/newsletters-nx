@@ -1,16 +1,17 @@
+import { css, TextField } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
 import type { FieldProps } from './FieldWrapper';
-import { FieldWrapper } from './FieldWrapper';
 import { eventToNumber } from './util';
+
 
 export const NumberInput: FunctionComponent<
 	FieldProps & {
 		value: number;
 		inputHandler: { (value: number): void };
-		max?: number;
-		min?: number;
-		step?: number;
-		type?: 'number' | 'range';
+		max?: number; // NOT SUPPORTED
+		min?: number; // NOT SUPPORTED
+		step?: number; // NOT SUPPORTED
+		type?: 'number' | 'range'; // WILL NEED A SEPARATE COMPONENT USING Slider COMPONENT
 	}
 > = (props) => {
 	const { type = 'number' } = props;
@@ -20,15 +21,24 @@ export const NumberInput: FunctionComponent<
 	};
 
 	return (
-		<FieldWrapper {...props}>
-			<input
+		<div
+			css={css`
+				margin-bottom: 1rem;
+				max-width: 24rem;
+			`}
+		>
+			<TextField
+				fullWidth
+				variant="filled"
+				label={props.label}
 				type={type}
 				value={props.value}
-				max={props.max}
-				min={props.min}
-				step={props.step}
 				onInput={sendValue}
+				helperText={props.error}
+				error={!!props.error}
+				required={!props.optional}
+				disabled={props.readOnly}
 			/>
-		</FieldWrapper>
+		</div>
 	);
 };
