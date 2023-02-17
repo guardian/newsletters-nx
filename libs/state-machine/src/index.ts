@@ -1,4 +1,3 @@
-export * from './lib/createTestStateMachine';
 export * from './lib/stateMachineButtonPressed';
 
 // exports types from libs/state-machine/src/lib/types.ts
