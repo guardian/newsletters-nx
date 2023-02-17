@@ -14,7 +14,7 @@ This wizard will guide you through the process of creating and launching a new n
 			label: 'Cancel',
 			stepToMoveTo: 'cancel',
 		},
-		next: {
+		start: {
 			buttonType: 'GREEN',
 			label: 'Start',
 			stepToMoveTo: 'newsletterName',
@@ -48,12 +48,12 @@ ${getPropertyDescription('name')}
 ![Newsletter name](https://unsplash.com/photos/5Zg8ZQZJ9qM/download?force=true&w=640)
 `,
 	buttons: {
-		cancel: {
+		back: {
 			buttonType: 'RED',
 			label: 'Back',
 			stepToMoveTo: 'createNewsletter',
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
 			label: 'Finish',
 			stepToMoveTo: 'finish',
