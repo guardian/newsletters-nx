@@ -619,12 +619,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "Name": "newsletters-api.test.dev-gutools.co.uk",
         "RecordType": "CNAME",
         "ResourceRecords": [
-          {
-            "Fn::GetAtt": [
-              "LoadBalancerNewslettersapi605B1E8A",
-              "DNSName",
-            ],
-          },
+          "dualstack.guardian.map.fastly.net.",
         ],
         "Stage": "TEST",
         "TTL": 3600,

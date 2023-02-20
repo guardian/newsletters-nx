@@ -61,7 +61,7 @@ export class NewslettersApi extends GuStack {
 			app,
 			domainName,
 			ttl: Duration.hours(1),
-			resourceRecord: ec2App.loadBalancer.loadBalancerDnsName,
+			resourceRecord: 'dualstack.guardian.map.fastly.net.',
 		});
 	}
 }
