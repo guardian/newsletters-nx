@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflows';
 import type {
 	CurrentStepRouteResponse,
 	WizardButton,
@@ -10,7 +11,6 @@ import {
 	setupInitialState,
 	stateMachineButtonPressed,
 } from '@newsletters-nx/state-machine';
-import { newslettersWorkflowStepLayout } from './newsletterWorkflow';
 
 interface CurrentStepRouteParams {
 	/** If the newletterId is undefined then this is a new newsletter otherwise
