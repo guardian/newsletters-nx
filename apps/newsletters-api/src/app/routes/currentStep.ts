@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflows';
+import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
 import type {
 	CurrentStepRouteResponse,
 	WizardButton,

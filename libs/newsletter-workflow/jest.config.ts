@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-	displayName: 'newsletter-workflows',
+	displayName: 'newsletter-workflow',
 	preset: '../../jest.preset.js',
 	globals: {
 		'ts-jest': {
@@ -9,8 +9,8 @@ export default {
 	},
 	testEnvironment: 'node',
 	transform: {
-		'^.+\\.[tj]s$': 'ts-jest',
+		'^.+\\.[tj]sx?$': 'ts-jest',
 	},
-	moduleFileExtensions: ['ts', 'js', 'html'],
-	coverageDirectory: '../../coverage/libs/newsletter-workflows',
+	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+	coverageDirectory: '../../coverage/libs/newsletter-workflow',
 };
