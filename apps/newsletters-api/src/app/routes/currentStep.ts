@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
 import type {
+	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 	WizardButton,
 	WizardStepData,
@@ -12,19 +13,7 @@ import {
 	stateMachineButtonPressed,
 } from '@newsletters-nx/state-machine';
 
-interface CurrentStepRouteParams {
-	/** If the newletterId is undefined then this is a new newsletter otherwise
-	 * an existing one */
-	newsletterId?: string;
-	/** ID of the button that was pressed to get to the current step */
-	buttonId?: string;
-}
 
-// TODO: This is a dummy for the S3 bucket.
-// Make the current step id optional
-const stepData: WizardStepData = {
-	currentStepId: 'createNewsletter',
-};
 
 const convertWizardStepLayoutButtonsToWizardButtons = (
 	layoutButtons: WizardStepLayout['buttons'],
@@ -55,10 +44,10 @@ const convertWizardStepLayoutButtonsToWizardButtons = (
  * @param app - Fastify instance to add the route to
  */
 export function registerCurrentStepRoute(app: FastifyInstance) {
-	app.post<{ Body: CurrentStepRouteParams }>(
+	app.post<{ Body: CurrentStepRouteRequest }>(
 		'/v1/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
-			const body: CurrentStepRouteParams = req.body;
+			const body: CurrentStepRouteRequest = req.body;
 
 			if (body.newsletterId === undefined) {
 				return res
@@ -72,7 +61,11 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					body.buttonId !== undefined
 						? await stateMachineButtonPressed(
 								body.buttonId,
-								stepData,
+								{
+									currentStepId: body.stepId,
+									formData : undefined,
+									errorMessage: undefined,
+								},
 								newslettersWorkflowStepLayout,
 						  )
 						: setupInitialState();

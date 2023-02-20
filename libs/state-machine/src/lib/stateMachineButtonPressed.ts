@@ -8,52 +8,53 @@ export function setupInitialState(): WizardStepData {
 
 export async function stateMachineButtonPressed(
 	buttonPressed: string,
-	stepData: WizardStepData,
-	stepLayout: WizardLayout,
+	incomingStepData: WizardStepData,
+	wizardLayout: WizardLayout,
 ): Promise<WizardStepData> {
-	const wizardStepLayout = stepLayout[stepData.currentStepId];
-	const buttonPressedDetails = wizardStepLayout?.buttons[buttonPressed];
+	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
+	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
 
 	if (!buttonPressedDetails) {
 		throw new Error(
-			`Button ${buttonPressed} not found in step ${stepData.currentStepId}`,
+			`Button ${buttonPressed} not found in step ${incomingStepData.currentStepId}`,
 		);
 	}
 
+	// TO DO - stop mutating the input!
 	if (buttonPressedDetails.onAfterStepStartValidate) {
 		const validationResult =
-			await buttonPressedDetails.onAfterStepStartValidate(stepData);
+			await buttonPressedDetails.onAfterStepStartValidate(incomingStepData);
 		if (validationResult !== undefined) {
-			stepData.errorMessage = validationResult;
-			return stepData;
+			incomingStepData.errorMessage = validationResult;
+			return incomingStepData;
 		}
 	}
 
 	if (buttonPressedDetails.executeStep) {
 		const validationResult = await buttonPressedDetails.executeStep(
-			stepData,
-			wizardStepLayout,
+			incomingStepData,
+			currentStepLayout,
 		);
 		if (validationResult !== undefined) {
-			stepData.errorMessage = validationResult;
-			return stepData;
+			incomingStepData.errorMessage = validationResult;
+			return incomingStepData;
 		}
 	}
 
 	if (buttonPressedDetails.onBeforeStepChangeValidate) {
 		const validationResult =
 			await buttonPressedDetails.onBeforeStepChangeValidate(
-				stepData,
-				wizardStepLayout,
+				incomingStepData,
+				currentStepLayout,
 			);
 		if (validationResult !== undefined) {
-			stepData.errorMessage = validationResult;
-			return stepData;
+			incomingStepData.errorMessage = validationResult;
+			return incomingStepData;
 		}
 	}
 
 	const returnValue = {
-		...stepData,
+		...incomingStepData,
 		currentStepId: buttonPressedDetails.stepToMoveTo,
 	};
 	return returnValue;

@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
+import type {
+	CurrentStepRouteRequest,
+	CurrentStepRouteResponse,
+} from '@newsletters-nx/state-machine';
 import { MarkdownView } from './MarkdownView';
 import { WizardButton } from './WizardButton';
 
@@ -18,7 +21,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 		CurrentStepRouteResponse | undefined
 	>(undefined);
 
-	const fetchStep = (body: Record<string, string>) => {
+	const fetchStep = (body: CurrentStepRouteRequest) => {
 		return fetch(`/api/v1/currentstep`, {
 			method: 'POST',
 			headers: {
@@ -34,22 +37,26 @@ export const Wizard: React.FC<WizardProps> = () => {
 				console.error('Error invoking next step of wizard:', error);
 			});
 	};
+
 	useEffect(() => {
 		void fetchStep({
 			newsletterId: 'test',
+			stepId: '',
 		});
 	}, []);
+
+	if (wizardStep === undefined) {
+		return <p>'loading'</p>;
+	}
 
 	const handleButtonClick = (id: string) => () => {
 		void fetchStep({
 			newsletterId: 'test',
 			buttonId: id,
+			stepId: wizardStep.currentStepId || '',
 		});
 	};
 
-	if (wizardStep === undefined) {
-		return <p>'loading'</p>;
-	}
 	return (
 		<>
 			<MarkdownView markdown={wizardStep.markdownToDisplay ?? ''} />
@@ -61,7 +68,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 					onClick={() => {
 						handleButtonClick(button.id)();
 					}}
-					key={key + button.label}
+					key={`${key}${button.label}`}
 				/>
 			))}
 		</>
