@@ -1,5 +1,5 @@
-import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 
 const markdownToDisplay = `
 # Newsletter name
