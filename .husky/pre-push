@@ -4,7 +4,3 @@
 # Check workspace before pushing
 npx nx affected --target=format:check,lint,test,build --parallel=3
 
-# Check CDK setup before pushing
-alias cdk="npm --prefix cdk"
-cdk run lint
-cdk run test
