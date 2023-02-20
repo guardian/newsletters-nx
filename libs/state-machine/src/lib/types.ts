@@ -68,4 +68,6 @@ export interface CurrentStepRouteResponse {
 	currentStepId: string;
 	/** Buttons to display for the current step. */
 	buttons?: Record<string, WizardButton>;
+
+	errorMessage?: string;
 }

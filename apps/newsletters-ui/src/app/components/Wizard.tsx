@@ -20,6 +20,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 	const [wizardStep, setWizardStep] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
+	const [errorMesssage, setErrorMessage] = useState<string | undefined>();
 
 	const fetchStep = (body: CurrentStepRouteRequest) => {
 		return fetch(`/api/v1/currentstep`, {
@@ -31,9 +32,16 @@ export const Wizard: React.FC<WizardProps> = () => {
 		})
 			.then((response) => response.json())
 			.then((data: CurrentStepRouteResponse) => {
+				if (data.errorMessage) {
+					console.warn(data.errorMessage)
+					setErrorMessage(data.errorMessage)
+					return
+				}
+
 				setWizardStep(data as unknown as CurrentStepRouteResponse);
 			})
 			.catch((error: unknown /* FIXME! */) => {
+				setErrorMessage('Wizard failed')
 				console.error('Error invoking next step of wizard:', error);
 			});
 	};
@@ -47,6 +55,15 @@ export const Wizard: React.FC<WizardProps> = () => {
 
 	if (wizardStep === undefined) {
 		return <p>'loading'</p>;
+	}
+
+	if (errorMesssage) {
+		return (
+			<p>
+				<b>ERROR:</b>
+				<span>{errorMesssage}</span>
+			</p>
+		);
 	}
 
 	const handleButtonClick = (id: string) => () => {

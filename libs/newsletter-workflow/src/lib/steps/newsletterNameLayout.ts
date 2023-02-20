@@ -1,5 +1,8 @@
 import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
-import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import type {
+	WizardStepData,
+	WizardStepLayout,
+} from '@newsletters-nx/state-machine';
 
 const markdownToDisplay = `
 # Newsletter name
@@ -23,6 +26,16 @@ export const newsletterNameLayout: WizardStepLayout = {
 			buttonType: 'GREEN',
 			label: 'Finish',
 			stepToMoveTo: 'finish',
+			onBeforeStepChangeValidate: (
+				stepData: WizardStepData,
+				stepLayout?: WizardStepLayout,
+			) => {
+				if (!stepData.formData?.name) {
+					return 'NO NAME PROVIDED';
+				}
+
+				return undefined;
+			},
 		},
 	},
 };

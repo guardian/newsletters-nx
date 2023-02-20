@@ -13,8 +13,6 @@ import {
 	stateMachineButtonPressed,
 } from '@newsletters-nx/state-machine';
 
-
-
 const convertWizardStepLayoutButtonsToWizardButtons = (
 	layoutButtons: WizardStepLayout['buttons'],
 ): CurrentStepRouteResponse['buttons'] => {
@@ -63,14 +61,20 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 								body.buttonId,
 								{
 									currentStepId: body.stepId,
-									formData : body.formData,
+									formData: body.formData,
 								},
 								newslettersWorkflowStepLayout,
 						  )
 						: setupInitialState();
 			} catch (error) {
 				if (error instanceof Error) {
-					return res.status(400).send({ message: error.message, body: body });
+					const errorResponse: CurrentStepRouteResponse = {
+						errorMessage: error.message,
+						currentStepId: body.stepId,
+					};
+					return res
+						.status(400)
+						.send(errorResponse);
 				}
 			}
 
@@ -86,6 +90,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 			return {
 				markdownToDisplay: nextWizardStepLayout.markdownToDisplay,
 				currentStepId: result.currentStepId,
+				errorMessage: result.errorMessage,
 				buttons: convertWizardStepLayoutButtonsToWizardButtons(
 					nextWizardStepLayout.buttons,
 				),
