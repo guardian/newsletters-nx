@@ -63,8 +63,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 								body.buttonId,
 								{
 									currentStepId: body.stepId,
-									formData : undefined,
-									errorMessage: undefined,
+									formData : body.formData,
 								},
 								newslettersWorkflowStepLayout,
 						  )
