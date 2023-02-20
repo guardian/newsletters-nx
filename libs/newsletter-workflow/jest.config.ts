@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable -- We want default export for config files */
 export default {
 	displayName: 'newsletter-workflow',
 	preset: '../../jest.preset.js',
