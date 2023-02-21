@@ -1,6 +1,4 @@
-import type {
-	WizardLayout,
-} from '@newsletters-nx/state-machine';
+import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { cancelLayout } from './steps/cancelLayout';
 import { createNewsletterLayout } from './steps/createNewsletterLayout';
 import { finishLayout } from './steps/finishLayout';

@@ -72,9 +72,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 						errorMessage: error.message,
 						currentStepId: body.stepId,
 					};
-					return res
-						.status(400)
-						.send(errorResponse);
+					return res.status(400).send(errorResponse);
 				}
 			}
 

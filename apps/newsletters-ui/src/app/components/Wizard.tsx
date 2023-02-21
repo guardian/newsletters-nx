@@ -20,7 +20,9 @@ export const Wizard: React.FC<WizardProps> = () => {
 	const [wizardStep, setWizardStep] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
-	const [serverErrorMesssage, setServerErrorMessage] = useState<string | undefined>();
+	const [serverErrorMesssage, setServerErrorMessage] = useState<
+		string | undefined
+	>();
 
 	const fetchStep = (body: CurrentStepRouteRequest) => {
 		return fetch(`/api/v1/currentstep`, {
@@ -71,7 +73,9 @@ export const Wizard: React.FC<WizardProps> = () => {
 	return (
 		<>
 			<MarkdownView markdown={wizardStep.markdownToDisplay ?? ''} />
-			{wizardStep.errorMessage && <p>Please try again: {wizardStep.errorMessage}</p>}
+			{wizardStep.errorMessage && (
+				<p>Please try again: {wizardStep.errorMessage}</p>
+			)}
 			{Object.entries(wizardStep.buttons ?? {}).map(([key, button]) => (
 				<WizardButton
 					id={button.id}
