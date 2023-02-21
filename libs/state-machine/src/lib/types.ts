@@ -58,6 +58,8 @@ export interface CurrentStepRouteRequest {
 	formData?: Record<string, string>;
 }
 
+// TO DO - define type in library for form data
+
 /**
  * Interface for the response received from the server for a single step in the wizard.
  */
@@ -68,6 +70,5 @@ export interface CurrentStepRouteResponse {
 	currentStepId: string;
 	/** Buttons to display for the current step. */
 	buttons?: Record<string, WizardButton>;
-
 	errorMessage?: string;
 }
