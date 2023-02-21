@@ -6,15 +6,12 @@ import type {
 const markdownToDisplay = `
 # Select a Pillar
 
-Newsletters 
-
 Now we choose the pillar that the newletter will appear under.
 
 For example:
 news, opinion, sport, culture, lifestyle
 
-
-![Pillars](pillarScreenshot.png)
+![Pillars](wizard-screenshots/pillarScreenshot.png){:height=”50%” width=”50%”}
 
 `.trim();
 

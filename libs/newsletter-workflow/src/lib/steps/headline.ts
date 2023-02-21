@@ -6,15 +6,9 @@ import type {
 const markdownToDisplay = `
 # Specify the Sign Up Page Headline
 
-Newsletters 
+This will appear on the sign up page e.g.
 
-Now we choose the pillar that the newletter will appear under.
-
-For example:
-news, opinion, sport, culture, lifestyle
-
-
-![Pillars](pillarScreenshot.png)
+![Sign Up Headline](wizard-screenshots/signUpHeadlineScreenshot.png){: width="50%"}
 
 `.trim();
 
