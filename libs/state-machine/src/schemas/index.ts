@@ -48,9 +48,9 @@ export const getFormBlankData = (stepId: string): FormData | undefined => {
 
 		if (zod instanceof ZodString) {
 			mod[key] = '';
-		} else if (zod instanceof ZodEnum<[string, ...string[]]>) {
-			const [firstOption] = zod.options;
-			mod[key] = firstOption as string;
+		} else if (zod instanceof ZodEnum) {
+			const [firstOption] = zod.options as string[];
+			mod[key] = firstOption;
 		} else if (zod instanceof ZodNumber) {
 			mod[key] = 0;
 		} else if (zod instanceof ZodBoolean) {
