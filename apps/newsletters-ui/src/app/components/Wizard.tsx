@@ -94,15 +94,15 @@ export const Wizard: React.FC<WizardProps> = () => {
 			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
 
 			{formSchema && formData && (
-				<div>
-					<p>FORM: {formSchema.description}</p>
+				<fieldset>
+					<legend>{formSchema.description}</legend>
 					<SchemaForm
 						schema={formSchema}
 						data={formData}
 						validationWarnings={{}}
 						changeValue={changeFormData}
 					/>
-				</div>
+				</fieldset>
 			)}
 
 			{serverData.errorMessage && (
