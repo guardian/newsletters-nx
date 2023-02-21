@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-	getFormBlankData,
-	getFormSchema} from '@newsletters-nx/state-machine';
+import { getFormBlankData, getFormSchema } from '@newsletters-nx/state-machine';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
