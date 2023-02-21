@@ -23,8 +23,9 @@ export async function stateMachineButtonPressed(
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
 
-	console.log('form data')
-	console.table(incomingStepData.formData)
+	console.log('form data');
+	console.table(incomingStepData.formData);
+
 
 	if (!buttonPressedDetails) {
 		throw new Error(

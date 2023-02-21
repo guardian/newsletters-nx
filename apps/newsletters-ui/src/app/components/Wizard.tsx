@@ -3,13 +3,12 @@ import { z } from 'zod';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
+	FormData,
 } from '@newsletters-nx/state-machine';
 import { MarkdownView } from './MarkdownView';
-import { FieldDef, FieldValue, getModification } from './SchemaForm';
-import { SchemaForm } from './SchemaForm';
+import type { FieldDef, FieldValue} from './SchemaForm';
+import { getModification , SchemaForm } from './SchemaForm';
 import { WizardButton } from './WizardButton';
-
-// TO DO - define type in library for form data
 
 /**
  * Interface for the props passed to the `Wizard` component.
@@ -36,7 +35,7 @@ const getFormSchema = (
 // TO DO - generate the blank data using the schema
 const getFormBlankData = (
 	stepId: string,
-): Record<string, string> | undefined => {
+): FormData | undefined => {
 	if (stepId === 'createNewsletter') {
 		return {
 			name: '',
@@ -53,7 +52,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 	const [serverData, setServerData] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
-	const [formData, setFormData] = useState<Record<string, string> | undefined>(
+	const [formData, setFormData] = useState<FormData | undefined>(
 		undefined,
 	);
 	const [serverErrorMesssage, setServerErrorMessage] = useState<
@@ -70,11 +69,8 @@ export const Wizard: React.FC<WizardProps> = () => {
 		})
 			.then((response) => response.json())
 			.then((data: CurrentStepRouteResponse) => {
-				setServerData(data as unknown as CurrentStepRouteResponse);
-
-				setFormData({
-					name: '',
-				});
+				setServerData(data);
+				setFormData(getFormBlankData(data.currentStepId));
 			})
 			.catch((error: unknown /* FIXME! */) => {
 				setServerErrorMessage('Wizard failed');
@@ -120,7 +116,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 			...mod,
 		};
 
-		setFormData(revisedData as Record<string, string>);
+		setFormData(revisedData);
 	};
 
 	return (

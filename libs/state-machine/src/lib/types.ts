@@ -1,5 +1,7 @@
 import type { WIZARD_BUTTON_TYPES } from '@newsletters-nx/newsletters-data-client';
 
+export type FormData = Record<string, string | number | boolean | undefined>;
+
 /**
  * Interface for a button displayed in the wizard.
  */
@@ -13,7 +15,7 @@ export interface WizardButton {
 }
 
 export interface WizardStepData {
-	formData?: Record<string, string>;
+	formData?: FormData;
 	currentStepId: string;
 	errorMessage?: string;
 }
@@ -55,10 +57,8 @@ export interface CurrentStepRouteRequest {
 	/**ID of the step the use was on when thye pressed the button */
 	stepId: string;
 	/** arbitrary data entered by the user into a form before pressing the button */
-	formData?: Record<string, string>;
+	formData?: FormData;
 }
-
-// TO DO - define type in library for form data
 
 /**
  * Interface for the response received from the server for a single step in the wizard.
