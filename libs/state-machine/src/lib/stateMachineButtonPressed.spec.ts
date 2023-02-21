@@ -1,4 +1,4 @@
-import { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
 import type { StorageInterface, WizardLayout, WizardStepData } from './types';
 
