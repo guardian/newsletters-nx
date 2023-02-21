@@ -11,7 +11,8 @@ Now we choose the pillar that the newletter will appear under.
 For example:
 news, opinion, sport, culture, lifestyle
 
-![Pillars](wizard-screenshots/pillarScreenshot.png){:height=”50%” width=”50%”}
+[comment]: <> (TODO - use URL Image Signer to resize the image)
+![Pillars](https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)
 
 `.trim();
 
@@ -25,8 +26,8 @@ export const pillarLayout: WizardStepLayout = {
 		},
 		finish: {
 			buttonType: 'GREEN',
-			label: 'Headline',
-			stepToMoveTo: 'signUpHeadline',
+			label: 'Next',
+			stepToMoveTo: 'description',
 			onBeforeStepChangeValidate: (
 				stepData: WizardStepData,
 				stepLayout?: WizardStepLayout,

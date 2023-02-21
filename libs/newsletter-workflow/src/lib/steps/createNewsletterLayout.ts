@@ -3,9 +3,9 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 export const createNewsletterLayout: WizardStepLayout = {
 	markdownToDisplay: `# Create a newsletter
 
-This wizard will guide you through the process of creating and launching a new newsletter using email-rendering. 
+This wizard will guide you through the process of creating and launching a new newsletter using email-rendering.
 
-The first step is to choose a name for your newsletter. 
+The first step is to choose a name for your newsletter.
 
 For example:
   "Down to Earth"
@@ -20,7 +20,7 @@ For example:
 		},
 		start: {
 			buttonType: 'GREEN',
-			label: 'Start',
+			label: 'Next',
 			stepToMoveTo: 'pillar',
 			executeStep: (stepData, stepLayout): string | undefined => {
 				return undefined;

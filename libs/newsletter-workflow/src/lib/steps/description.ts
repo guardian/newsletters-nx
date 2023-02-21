@@ -4,16 +4,16 @@ import type {
 } from '@newsletters-nx/state-machine';
 
 const markdownToDisplay = `
-# Enter the Sign Up Page Headline
-
-Newsletters 
+# Specify the Description
 
 This will appear on the sign up page e.g.
-https://www.theguardian.com/global/2022/sep/20/sign-up-for-the-first-edition-newsletter-our-free-news-email
+
+[comment]: <> (TODO - use URL Image Signer to resize the image)
+![Sign Up Page Headline](https://uploads.guim.co.uk/2023/02/21/signUpHeadlineScreenshot.png)
 
 `.trim();
 
-export const signUpHeadlineLayout: WizardStepLayout = {
+export const descriptionLayout: WizardStepLayout = {
 	markdownToDisplay,
 	buttons: {
 		back: {
@@ -29,8 +29,8 @@ export const signUpHeadlineLayout: WizardStepLayout = {
 				stepData: WizardStepData,
 				stepLayout?: WizardStepLayout,
 			) => {
-				if (!stepData.formData?.theme) {
-					return 'NO THEME PROVIDED';
+				if (!stepData.formData?.description) {
+					return 'NO DESCRIPTION PROVIDED';
 				}
 
 				return undefined;
