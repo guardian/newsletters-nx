@@ -1,5 +1,5 @@
 import { getFormSchema } from '../schemas';
-import type { WizardLayout, WizardStepData } from './types';
+import type { StorageInterface, WizardLayout, WizardStepData } from './types';
 
 export function setupInitialState(): WizardStepData {
 	return {
@@ -20,6 +20,7 @@ export async function stateMachineButtonPressed(
 	buttonPressed: string,
 	incomingStepData: WizardStepData,
 	wizardLayout: WizardLayout,
+	storageInstance: StorageInterface,
 ): Promise<WizardStepData> {
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
@@ -70,6 +71,7 @@ export async function stateMachineButtonPressed(
 		const validationResult = await buttonPressedDetails.executeStep(
 			incomingStepData,
 			currentStepLayout,
+			storageInstance,
 		);
 		if (validationResult !== undefined) {
 			return {

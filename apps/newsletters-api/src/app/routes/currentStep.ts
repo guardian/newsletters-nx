@@ -12,6 +12,7 @@ import {
 	setupInitialState,
 	stateMachineButtonPressed,
 } from '@newsletters-nx/state-machine';
+import { storageInstance } from '../../services/storageInstance';
 
 const convertWizardStepLayoutButtonsToWizardButtons = (
 	layoutButtons: WizardStepLayout['buttons'],
@@ -64,6 +65,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 									formData: body.formData,
 								},
 								newslettersWorkflowStepLayout,
+								storageInstance,
 						  )
 						: setupInitialState();
 			} catch (error) {
