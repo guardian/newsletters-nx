@@ -1,26 +1,30 @@
-import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
 import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 
 const markdownToDisplay = `
-# Newsletter name
+# Specify the Sign Up Page Headline
 
-${getPropertyDescription('name')}
+Newsletters 
 
-// Embed an image showing the rendered text.
-![Newsletter name](https://unsplash.com/photos/5Zg8ZQZJ9qM/download?force=true&w=640)
+Now we choose the pillar that the newletter will appear under.
+
+For example:
+news, opinion, sport, culture, lifestyle
+
+
+![Pillars](pillarScreenshot.png)
 
 `.trim();
 
-export const newsletterNameLayout: WizardStepLayout = {
+export const headlineLayout: WizardStepLayout = {
 	markdownToDisplay,
 	buttons: {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'createNewsletter',
+			stepToMoveTo: 'pillar',
 		},
 		finish: {
 			buttonType: 'GREEN',
@@ -30,8 +34,8 @@ export const newsletterNameLayout: WizardStepLayout = {
 				stepData: WizardStepData,
 				stepLayout?: WizardStepLayout,
 			) => {
-				if (!stepData.formData?.name) {
-					return 'NO NAME PROVIDED';
+				if (!stepData.formData?.headline) {
+					return 'NO HEADLINE PROVIDED';
 				}
 
 				return undefined;

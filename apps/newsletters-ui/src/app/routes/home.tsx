@@ -32,7 +32,7 @@ export const homeRoute: RouteObject = {
 			element: <FormDemoView />,
 		},
 		{
-			path: 'markdowntest/',
+			path: 'wizardtest/',
 			element: (
 				<Container>
 					<Wizard newsletterId="" />
