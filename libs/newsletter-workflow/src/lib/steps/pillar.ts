@@ -33,9 +33,9 @@ export const pillarLayout: WizardStepLayout = {
 				stepData: WizardStepData,
 				stepLayout?: WizardStepLayout,
 			) => {
-				// if (!stepData.formData?.theme) {
-				// 	return 'NO PILLAR PROVIDED';
-				// }
+				if (!stepData.formData?.theme || stepData.formData.theme === '') {
+					return 'NO THEME SELECTED';
+				}
 
 				return undefined;
 			},
