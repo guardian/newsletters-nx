@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { z } from 'zod';
+import {
+	getFormBlankData,
+	getFormSchema} from '@newsletters-nx/state-machine';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 	FormData,
 } from '@newsletters-nx/state-machine';
 import { MarkdownView } from './MarkdownView';
-import type { FieldDef, FieldValue} from './SchemaForm';
-import { getModification , SchemaForm } from './SchemaForm';
+import type { FieldDef, FieldValue } from './SchemaForm';
+import { getModification, SchemaForm } from './SchemaForm';
 import { WizardButton } from './WizardButton';
 
 /**
@@ -17,34 +19,6 @@ export interface WizardProps {
 	newsletterId?: string;
 }
 
-// TO DO - define the schemas in the library
-const getFormSchema = (
-	stepId: string,
-): z.ZodObject<z.ZodRawShape> | undefined => {
-	if (stepId === 'createNewsletter') {
-		return z
-			.object({
-				name: z.string(),
-			})
-			.describe('I am a schema');
-	}
-
-	return undefined;
-};
-
-// TO DO - generate the blank data using the schema
-const getFormBlankData = (
-	stepId: string,
-): FormData | undefined => {
-	if (stepId === 'createNewsletter') {
-		return {
-			name: '',
-		};
-	}
-
-	return undefined;
-};
-
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
  */
@@ -52,9 +26,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 	const [serverData, setServerData] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
-	const [formData, setFormData] = useState<FormData | undefined>(
-		undefined,
-	);
+	const [formData, setFormData] = useState<FormData | undefined>(undefined);
 	const [serverErrorMesssage, setServerErrorMessage] = useState<
 		string | undefined
 	>();

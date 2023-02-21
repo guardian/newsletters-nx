@@ -1,3 +1,4 @@
+import { getFormSchema } from '../schemas';
 import type { WizardLayout, WizardStepData } from './types';
 
 export function setupInitialState(): WizardStepData {
@@ -23,14 +24,35 @@ export async function stateMachineButtonPressed(
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
 
-	console.log('form data');
+	const formSchemaForIncomingStep = getFormSchema(
+		incomingStepData.currentStepId,
+	);
+	console.log('form data should be:', formSchemaForIncomingStep?.description);
 	console.table(incomingStepData.formData);
-
 
 	if (!buttonPressedDetails) {
 		throw new Error(
 			`Button ${buttonPressed} not found in step ${incomingStepData.currentStepId}`,
 		);
+	}
+
+	if (formSchemaForIncomingStep) {
+		if (!incomingStepData.formData) {
+			return {
+				...incomingStepData,
+				errorMessage: 'MISSING FORM DATA',
+			};
+		}
+
+		const parseResult = formSchemaForIncomingStep.safeParse(
+			incomingStepData.formData,
+		);
+		if (!parseResult.success) {
+			return {
+				...incomingStepData,
+				errorMessage: 'INVALID FORM DATA',
+			};
+		}
 	}
 
 	if (buttonPressedDetails.onAfterStepStartValidate) {
