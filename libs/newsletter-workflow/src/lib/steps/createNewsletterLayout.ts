@@ -10,7 +10,6 @@ The first step is to choose a name for your newsletter.
 For example:
   "Down to Earth"
 
-<String Form Element here>
 `,
 	buttons: {
 		cancel: {

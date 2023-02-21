@@ -12,7 +12,8 @@ For example:
 news, opinion, sport, culture, lifestyle
 
 [comment]: <> (TODO - use URL Image Signer to resize the image)
-![Pillars](https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)
+[comment]: <> (https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)
+![Pillars](wizard-screenshots/pillarScreenshotSmall.png)
 
 `.trim();
 

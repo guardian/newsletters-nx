@@ -9,7 +9,8 @@ const markdownToDisplay = `
 This will appear on the sign up page e.g.
 
 [comment]: <> (TODO - use URL Image Signer to resize the image)
-![Sign Up Page Headline](https://uploads.guim.co.uk/2023/02/21/signUpHeadlineScreenshot.png)
+[comment]: <> (https://uploads.guim.co.uk/2023/02/21/descriptionScreenshot.png)
+![Description](wizard-screenshots/descriptionScreenshotSmall.png)
 
 `.trim();
 
