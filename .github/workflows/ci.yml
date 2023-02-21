@@ -28,46 +28,50 @@ jobs:
     with:
       number-of-agents: 3
 
-  deploy:
-    name: Upload artifacts to riffraff
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v3
+  # DEPLOY HAS BEEN REMOVED TEMPORARILY
+  # This is because we are not in a position to use the new API yet
+  # Please remember to run a "dangerous" riff-raff deployment when re-deploying
+  #
+  # deploy:
+  #   name: Upload artifacts to riffraff
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
-          aws-region: eu-west-1
+  #     - uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
+  #         aws-region: eu-west-1
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
 
-        # Build production-ready bundled file
-      - name: Bundle newsletters-api
-        run: |
-          npm ci
-          npm run bundle-api
+  #       # Build production-ready bundled file
+  #     - name: Bundle newsletters-api
+  #       run: |
+  #         npm ci
+  #         npm run bundle-api
 
-        # Build Cloudformation definition from CDK
-      - name: Build and synth CDK
-        working-directory: ./cdk
-        run: |
-          npm ci
-          npm run lint
-          npm run test
-          npm run synth
+  #       # Build Cloudformation definition from CDK
+  #     - name: Build and synth CDK
+  #       working-directory: ./cdk
+  #       run: |
+  #         npm ci
+  #         npm run lint
+  #         npm run test
+  #         npm run synth
 
-        # Upload artifacts (Cloudformation and bundled apps) for riff-raff deployment
-      - uses: guardian/actions-riff-raff@v2
-        with:
-          app: newsletters-api
-          configPath: riff-raff.yaml
-          contentDirectories: |
-            cloudformation:
-              - cdk/cdk.out/NewslettersApi-CODE.template.json
-            newsletters-api:
-              - dist/apps/newsletters-api/index.cjs
+  #       # Upload artifacts (Cloudformation and bundled apps) for riff-raff deployment
+  #     - uses: guardian/actions-riff-raff@v2
+  #       with:
+  #         app: newsletters-api
+  #         configPath: riff-raff.yaml
+  #         contentDirectories: |
+  #           cloudformation:
+  #             - cdk/cdk.out/NewslettersApi-CODE.template.json
+  #           newsletters-api:
+  #             - dist/apps/newsletters-api/index.cjs
