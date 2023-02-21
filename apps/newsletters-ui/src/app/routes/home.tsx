@@ -1,3 +1,4 @@
+import { Container } from '@mui/material';
 import type { RouteObject } from 'react-router-dom';
 import { Api } from '../components/Api';
 import { ButtonContainer } from '../components/ButtonContainer';
@@ -32,7 +33,11 @@ export const homeRoute: RouteObject = {
 		},
 		{
 			path: 'markdowntest/',
-			element: <Wizard newsletterId="" />,
+			element: (
+				<Container>
+					<Wizard newsletterId="" />
+				</Container>
+			),
 		},
 	],
 };
