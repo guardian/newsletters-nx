@@ -10,7 +10,7 @@ This will appear on the sign up page e.g.
 
 [comment]: <> (TODO - use URL Image Signer to resize the image)
 [comment]: <> (https://uploads.guim.co.uk/2023/02/21/descriptionScreenshot.png)
-![Description](wizard-screenshots/descriptionScreenshotSmall.png)
+![Description](wizard-screenshots/descriptionScreenshotSmallBorder.png)
 
 `.trim();
 
