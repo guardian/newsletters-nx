@@ -8,13 +8,19 @@ export const formSchemas = {
 		.object({
 			name: z.string(),
 		})
-		.describe('Input the name for createNewsletter'),
+		.describe('Input the name for the new newsletter'),
 
 	pillar: z
 		.object({
 			theme: themeEnumSchema,
 		})
 		.describe('Choose a theme'),
+
+	description: z
+		.object({
+			description: z.string(),
+		})
+		.describe('Input a short description to display to users'),
 };
 
 // TO DO - define the schemas in the library
@@ -26,6 +32,9 @@ export const getFormSchema = (
 	}
 	if (stepId === 'pillar') {
 		return formSchemas.pillar;
+	}
+	if (stepId === 'description') {
+		return formSchemas.description;
 	}
 
 	return undefined;
