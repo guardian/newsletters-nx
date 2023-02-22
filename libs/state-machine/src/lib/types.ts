@@ -75,5 +75,7 @@ export interface CurrentStepRouteResponse {
 	currentStepId: string;
 	/** Buttons to display for the current step. */
 	buttons?: Record<string, WizardButton>;
+	/** arbitrary data entered by the user into a form before pressing the button */
+	formData?: FormData;
 	errorMessage?: string;
 }

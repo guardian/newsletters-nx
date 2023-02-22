@@ -49,20 +49,21 @@ For example:
 						'createNewsletter step has updated storage.',
 						storageInstance,
 					);
+					if (stepData.formData) {
+						stepData.formData['listId'] = storageResponse.data.listId;
+					}
 					return undefined;
 				}
 
-				return storageResponse.message ?? 'UNKNOWN ERROR';
+				return storageResponse.message;
 			},
 			onBeforeStepChangeValidate: (
 				stepData,
 				stepLayout,
 				storageInstance,
 			): string | undefined => {
-				if (!stepData.formData?.name) {
-					return 'NO NAME PROVIDED';
-				}
-				return undefined;
+				const name = stepData.formData ? stepData.formData['name'] : undefined;
+				return name ? undefined : 'NO NAME PROVIDED';
 			},
 		},
 	},
