@@ -57,11 +57,7 @@ For example:
 
 				return storageResponse.message;
 			},
-			onBeforeStepChangeValidate: (
-				stepData,
-				stepLayout,
-				storageInstance,
-			): string | undefined => {
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const name = stepData.formData ? stepData.formData['name'] : undefined;
 				return name ? undefined : 'NO NAME PROVIDED';
 			},

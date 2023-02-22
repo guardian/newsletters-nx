@@ -29,11 +29,11 @@ export const pillarLayout: WizardStepLayout = {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'description',
-			onBeforeStepChangeValidate: (
-				stepData: WizardStepData,
-				stepLayout?: WizardStepLayout,
-			) => {
-				if (!stepData.formData?.theme || stepData.formData.theme === '') {
+			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
+				const theme = stepData.formData
+					? stepData.formData['theme']
+					: undefined;
+				if (!theme || theme === '') {
 					return 'NO THEME SELECTED';
 				}
 
