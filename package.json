@@ -8,6 +8,7 @@
 		"lint": "nx run-many --target=lint --all",
 		"build": "nx run-many --target=build --all",
 		"test": "nx run-many --target=test --all",
+		"generate:lib": "npx nx generate @nrwl/workspace:library --setParserOptionsProject --standaloneConfig --testEnvironment=node --",
 		"prepare": "husky install",
 		"postinstall": "npm install --prefix cdk",
 		"bundle-api": "npx nx build newsletters-api --configuration=production --outputFileName=index.js"
@@ -22,6 +23,7 @@
 		"@emotion/react": "11.10.5",
 		"@emotion/styled": "11.10.5",
 		"@guardian/source-foundations": "^8.0.0",
+		"@mui/material": "^5.11.10",
 		"@types/react-table": "^7.7.14",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
