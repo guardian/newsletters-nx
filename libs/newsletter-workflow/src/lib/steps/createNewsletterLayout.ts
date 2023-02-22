@@ -18,7 +18,7 @@ For example:
 			label: 'Cancel',
 			stepToMoveTo: 'cancel',
 		},
-		start: {
+		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'pillar',
@@ -53,6 +53,16 @@ For example:
 				}
 
 				return storageResponse.message ?? 'UNKNOWN ERROR';
+			},
+			onBeforeStepChangeValidate: (
+				stepData,
+				stepLayout,
+				storageInstance,
+			): string | undefined => {
+				if (!stepData.formData?.name) {
+					return 'NO NAME PROVIDED';
+				}
+				return undefined;
 			},
 		},
 	},
