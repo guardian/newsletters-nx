@@ -1,21 +1,9 @@
 import type {
-	ApiResponse,
-	Newsletter,
+	DraftStorage,
 	WIZARD_BUTTON_TYPES,
 } from '@newsletters-nx/newsletters-data-client';
 
 export type FormData = Record<string, string | number | boolean | undefined>;
-
-// Interface partially duplicating the Abstract DraftStorage class
-// TO DO - move the classes to data-client(?) lib
-// so it can be used as a type here
-export type StorageInterface = {
-	createDraftNewsletter: {
-		(draft: Partial<Newsletter> & { listId: undefined }): Promise<
-			ApiResponse<Partial<Newsletter> & { listId: number }>
-		>;
-	};
-};
 
 /**
  * Interface for a button displayed in the wizard.
@@ -38,13 +26,13 @@ export interface WizardStepData {
 type AsyncValidator = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
-	storageInstance?: StorageInterface,
+	storageInstance?: DraftStorage,
 ) => Promise<string | undefined>;
 
 type Validator = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
-	storageInstance?: StorageInterface,
+	storageInstance?: DraftStorage,
 ) => string | undefined;
 
 export interface WizardStepLayoutButton {

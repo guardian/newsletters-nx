@@ -1,6 +1,7 @@
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
-import type { StorageInterface, WizardLayout, WizardStepData } from './types';
+import type { WizardLayout, WizardStepData } from './types';
 
 const initialStep: WizardStepData = {
 	currentStepId: 'step1',
@@ -60,14 +61,7 @@ const mockWizardLayout: WizardLayout = {
 	},
 };
 
-const mockCreateDraftNewsletter = jest
-	.fn()
-	.mockImplementation((draft: Partial<Newsletter> & { listId: undefined }) => {
-		return Promise.resolve({ data: { ...draft, listId: 123 } });
-	});
-const mockStorageInterface: StorageInterface = {
-	createDraftNewsletter: mockCreateDraftNewsletter,
-};
+const mockStorage: DraftStorage = new InMemoryDraftStorage();
 
 describe('stateMachineButtonPressed', () => {
 	it('should throw if buttonPressed is invalid', async () => {
@@ -76,7 +70,7 @@ describe('stateMachineButtonPressed', () => {
 				'poop',
 				mockStepData,
 				mockWizardLayout,
-				mockStorageInterface,
+				mockStorage,
 			),
 		).rejects.toThrowError('Button poop not found in step step1');
 	});
@@ -92,12 +86,12 @@ it('should execute step and move to next step if next button is pressed', async 
 			'next',
 			mockStepData,
 			mockWizardLayout,
-			mockStorageInterface,
+			mockStorage,
 		);
 		expect(executeStepMock).toHaveBeenCalledWith(
 			mockStepData,
 			mockWizardLayout['step1'],
-			mockStorageInterface,
+			mockStorage,
 		);
 		expect(newState.currentStepId).toEqual('step2');
 	}
@@ -115,7 +109,7 @@ it('should validate before step change and return error message if there is vali
 			'next',
 			mockStepData,
 			mockWizardLayout,
-			mockStorageInterface,
+			mockStorage,
 		);
 		expect(onBeforeStepChangeValidateMock).toHaveBeenCalledWith(
 			mockStepData,
@@ -138,7 +132,7 @@ it('should validate after step start and return error message if there is valida
 			'next',
 			mockStepData,
 			mockWizardLayout,
-			mockStorageInterface,
+			mockStorage,
 		);
 		expect(onAfterStepStartValidateMock).toHaveBeenCalledWith(mockStepData);
 		expect(result.currentStepId).toEqual('step1');
@@ -156,7 +150,7 @@ it('should fail to execute step and return error message if there is validation 
 			'next',
 			mockStepData,
 			mockWizardLayout,
-			mockStorageInterface,
+			mockStorage,
 		);
 		expect(executeStepMock).toHaveBeenCalled;
 		expect(result.currentStepId).toEqual('step1');
@@ -174,12 +168,12 @@ it('should move to previous step if prev button is pressed', async () => {
 			'back',
 			mockStepData,
 			mockWizardLayout,
-			mockStorageInterface,
+			mockStorage,
 		);
 		expect(executeStepMock).toHaveBeenCalledWith(
 			mockStepData,
 			mockWizardLayout['step1'],
-			mockStorageInterface,
+			mockStorage,
 		);
 		expect(newState.currentStepId).toEqual('exit');
 	}
