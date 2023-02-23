@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import type { z } from 'zod';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
+import { Button, Paper } from '@mui/material';
+import { defaultFieldStyle, defaultFormStyle } from './SchemaForm/styling';
 
 type SchemaObjectType<T extends z.ZodRawShape> = {
 	[k in keyof z.objectUtil.addQuestionMarks<{
@@ -105,16 +107,26 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	return (
-		<fieldset>
+		<Paper css={defaultFormStyle} elevation={3}>
 			<legend>{title}</legend>
-			<button onClick={handleReset}>RESET</button>
+
+			<div css={defaultFieldStyle}>
+				<Button variant="outlined" onClick={handleReset}>
+					Reset
+				</Button>
+			</div>
+
 			<SchemaForm
 				schema={schema}
 				data={data}
 				changeValue={manageChange}
 				validationWarnings={warnings}
 			/>
-			<button onClick={handleSubmit}>{submitButtonText}</button>
-		</fieldset>
+			<div css={defaultFieldStyle}>
+				<Button variant="contained" onClick={handleSubmit}>
+					{submitButtonText}
+				</Button>
+			</div>
+		</Paper>
 	);
 }
