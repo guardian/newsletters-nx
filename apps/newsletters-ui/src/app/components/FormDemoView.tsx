@@ -33,7 +33,11 @@ export const FormDemoView = () => {
 						alert(
 							`A ${data.name} is a kind of biscuit with a ${data.shape} shape ${
 								data.sugarOnTop ? 'and sugar on top' : ''
-							}.`,
+							}. ${
+								typeof data.calories === 'number'
+									? `It has ${data.calories} calories!`
+									: "We don't know a how many calories it has"
+							}`,
 						);
 					}}
 				/>
