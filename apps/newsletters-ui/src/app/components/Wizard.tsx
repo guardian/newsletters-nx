@@ -25,6 +25,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 		CurrentStepRouteResponse | undefined
 	>(undefined);
 	const [formData, setFormData] = useState<FormData | undefined>(undefined);
+	const [listId, setListId] = useState<number | undefined>(undefined);
 	const [serverErrorMesssage, setServerErrorMessage] = useState<
 		string | undefined
 	>();
@@ -39,6 +40,12 @@ export const Wizard: React.FC<WizardProps> = () => {
 		})
 			.then((response) => response.json())
 			.then((data: CurrentStepRouteResponse) => {
+				console.table(data);
+				const listIdOnData = data.formData?.listId;
+				if (typeof listIdOnData === 'number') {
+					setListId(listIdOnData);
+				}
+
 				setServerData(data);
 				setFormData(getFormBlankData(data.currentStepId));
 			})
@@ -73,7 +80,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 			newsletterId: 'test',
 			buttonId: id,
 			stepId: serverData.currentStepId || '',
-			formData: formData,
+			formData: { ...formData, listId }, // will work for the create+modify workflow, but might break other workflows
 		});
 	};
 

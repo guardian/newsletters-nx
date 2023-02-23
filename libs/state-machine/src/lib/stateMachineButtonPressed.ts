@@ -82,22 +82,30 @@ export async function stateMachineButtonPressed(
 		}
 	}
 
-	if (buttonPressedDetails.executeStep) {
-		const validationResult = await buttonPressedDetails.executeStep(
-			incomingStepData,
-			currentStepLayout,
-			storageInstance,
-		);
-		if (typeof validationResult === 'string') {
-			return {
-				...incomingStepData,
-				errorMessage: validationResult,
-			};
-		}
+	if (!buttonPressedDetails.executeStep) {
+		return {
+			currentStepId: buttonPressedDetails.stepToMoveTo,
+			formData: incomingStepData.formData,
+		};
 	}
+
+	const executionResult = await buttonPressedDetails.executeStep(
+		incomingStepData,
+		currentStepLayout,
+		storageInstance,
+	);
+	if (typeof executionResult === 'string') {
+		return {
+			...incomingStepData,
+			errorMessage: executionResult,
+		};
+	}
+
+	console.log('executionResult');
+	console.table(executionResult);
 
 	return {
 		currentStepId: buttonPressedDetails.stepToMoveTo,
-		formData: incomingStepData.formData,
+		formData: executionResult,
 	};
 }

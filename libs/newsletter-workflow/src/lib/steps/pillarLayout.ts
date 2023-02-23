@@ -2,6 +2,7 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
+import { executeModify } from '../executeModify';
 
 const markdownToDisplay = `
 # Select a Pillar
@@ -30,7 +31,7 @@ export const pillarLayout: WizardStepLayout = {
 			label: 'Next',
 			stepToMoveTo: 'description',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const theme = stepData.formData
+				const theme: string | number | boolean | undefined = stepData.formData
 					? stepData.formData['theme']
 					: undefined;
 				if (!theme || theme === '') {
@@ -39,6 +40,7 @@ export const pillarLayout: WizardStepLayout = {
 
 				return undefined;
 			},
+			executeStep: executeModify,
 		},
 	},
 };

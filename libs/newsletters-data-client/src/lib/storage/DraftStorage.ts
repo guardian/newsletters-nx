@@ -1,6 +1,4 @@
-import type { Newsletter } from '../newsletter-type';
-
-export type Draft = Partial<Newsletter>;
+export type Draft = Record<string, string | number | boolean | undefined>;
 export type DraftWithoutId = Draft & { listId: undefined };
 export type DraftWithId = Draft & { listId: number };
 

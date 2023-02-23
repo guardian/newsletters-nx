@@ -53,13 +53,7 @@ For example:
 						'createNewsletter step has updated storage.',
 						storageInstance,
 					);
-					if (stepData.formData) {
-						stepData.formData['listId'] = storageResponse.data.listId;
-						return stepData.formData;
-					}
-					return `Error saving form data for schema: ${
-						schema.description ?? '[no description]'
-					}`;
+					return storageResponse.data;
 				}
 
 				return storageResponse.message;

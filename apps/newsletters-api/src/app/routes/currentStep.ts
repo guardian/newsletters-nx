@@ -78,6 +78,9 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				}
 			}
 
+			console.log('checking formdata in currentstep');
+			console.table(result.formData);
+
 			const nextWizardStepLayout =
 				newslettersWorkflowStepLayout[result.currentStepId];
 
