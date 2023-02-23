@@ -1,26 +1,29 @@
-import fs from 'fs';
-import { faker } from '@faker-js/faker';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import { faker } from 'https://cdn.skypack.dev/@faker-js/faker@v7.6.0';
 
 /** Capitalises the first character and lowercases the rest */
-const initCap = (text: string): string =>
+const initCap = (text) =>
 	text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 
 /** Converts slug (or kebab-case) into camelCase or PascalCase ID */
-const slugConverter =
-	(resultCase: 'pascal' | 'camel' | 'snake') =>
-	(text: string): string =>
-		resultCase === 'snake'
-			? text.replace('-', '_')
+const slugConverter = (text, resultCase) => {
+	if (!['snake', 'pascal', 'camel', 'kebab'].includes(resultCase)) {
+		return text;
+	} else {
+		return resultCase === 'snake'
+			? text.replaceAll('-', '_')
 			: text
 					.split('-')
 					.map((t, i) =>
-						resultCase === 'camel' && i === 0 ? t.toLowerCase() : initCap,
+						resultCase === 'camel' && i === 0 ? t.toLowerCase() : initCap(t),
 					)
 					.join('');
+	}
+};
 
-const generateNewsletter = (): Newsletter => {
-	const name = `${faker.random.word()} ${faker.random.word()}`;
+const generateNewsletter = () => {
+	const name = `${initCap(faker.random.word())} ${initCap(
+		faker.random.word(),
+	)}`;
 
 	const frequency = faker.helpers.arrayElement([
 		'Weekly',
@@ -35,7 +38,7 @@ const generateNewsletter = (): Newsletter => {
 		? `${newsletterId}-${regionFocus}`
 		: newsletterId;
 
-	const newsletter: Newsletter = {
+	const newsletter = {
 		identityName: newsletterId,
 		name,
 		description: faker.lorem.text(),
@@ -44,11 +47,12 @@ const generateNewsletter = (): Newsletter => {
 		cancelled: faker.datatype.boolean(),
 		restricted: false,
 		emailConfirmation: false,
-		brazeNewsletterName: `Editorial_${slugConverter('pascal')(idWithRegion)}`,
-		brazeSubscribeAttributeName: `${slugConverter('pascal')(
+		brazeNewsletterName: `Editorial_${slugConverter(idWithRegion, 'pascal')}`,
+		brazeSubscribeAttributeName: `${slugConverter(
 			idWithRegion,
+			'pascal',
 		)}_Subscribe_Email`,
-		brazeSubscribeEventNamePrefix: slugConverter('snake')(idWithRegion),
+		brazeSubscribeEventNamePrefix: slugConverter(idWithRegion, 'snake'),
 		theme: faker.helpers.arrayElement([
 			'news',
 			'opinion',
@@ -80,23 +84,26 @@ const generateNewsletter = (): Newsletter => {
 			title: `Sign up for ${name}`,
 			description: faker.lorem.text(),
 			successHeadline: 'Subscription confirmed',
-			successDescription: `We'll send you ${name} every ${frequency.toLowerCase()}`,
+			successDescription: `We'll send you ${name} ${frequency.toLowerCase()}`,
 			hexCode: '#DCDCDC',
 		},
-		campaignName: slugConverter('pascal')(idWithRegion),
-		campaignCode: `${idWithRegion.replace('-', '')}_email`,
+		campaignName: slugConverter(idWithRegion, 'pascal'),
+		campaignCode: `${idWithRegion.replaceAll('-', '')}_email`,
 		brazeSubscribeAttributeNameAlternate: [
-			`email_subscribe_${slugConverter('snake')(idWithRegion)}`,
+			`email_subscribe_${slugConverter(idWithRegion, 'snake')}`,
 		],
 	};
 	return newsletter;
 };
 
-export const generateNewsletterData = (env: 'LOCAL' | 'CODE' | 'PROD') => {
-	const data = new Array(5).map(() => generateNewsletter()); // generate 5 newsletters
-	const filepath = `./apps/newsletters-api/static/newsletters.${env.toLowerCase()}.json`;
-
-	fs.writeFile(filepath, JSON.stringify(data), () =>
-		console.log(`Saved file to ${filepath}`),
-	);
-};
+const numNewsletters = prompt(
+	'How many newsletters do you want to generate?',
+	5,
+);
+const data = new Array(parseInt(numNewsletters)).fill(generateNewsletter());
+const filename = prompt(
+	'What should the filename be called?',
+	'newsletters.local.json',
+);
+const filepath = `./apps/newsletters-api/static/${filename}`;
+Deno.writeTextFile(filepath, JSON.stringify(data));
