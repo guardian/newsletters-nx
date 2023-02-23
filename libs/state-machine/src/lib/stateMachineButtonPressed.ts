@@ -1,5 +1,6 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { getFormSchema } from '../schemas';
-import type { StorageInterface, WizardLayout, WizardStepData } from './types';
+import type { WizardLayout, WizardStepData } from './types';
 
 export function setupInitialState(): WizardStepData {
 	return {
@@ -20,7 +21,7 @@ export async function stateMachineButtonPressed(
 	buttonPressed: string,
 	incomingStepData: WizardStepData,
 	wizardLayout: WizardLayout,
-	storageInstance: StorageInterface,
+	storageInstance: DraftStorage,
 ): Promise<WizardStepData> {
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
@@ -67,20 +68,6 @@ export async function stateMachineButtonPressed(
 		}
 	}
 
-	if (buttonPressedDetails.executeStep) {
-		const validationResult = await buttonPressedDetails.executeStep(
-			incomingStepData,
-			currentStepLayout,
-			storageInstance,
-		);
-		if (validationResult !== undefined) {
-			return {
-				...incomingStepData,
-				errorMessage: validationResult,
-			};
-		}
-	}
-
 	if (buttonPressedDetails.onBeforeStepChangeValidate) {
 		const validationResult =
 			await buttonPressedDetails.onBeforeStepChangeValidate(
@@ -95,8 +82,30 @@ export async function stateMachineButtonPressed(
 		}
 	}
 
+	if (!buttonPressedDetails.executeStep) {
+		return {
+			currentStepId: buttonPressedDetails.stepToMoveTo,
+			formData: incomingStepData.formData,
+		};
+	}
+
+	const executionResult = await buttonPressedDetails.executeStep(
+		incomingStepData,
+		currentStepLayout,
+		storageInstance,
+	);
+	if (typeof executionResult === 'string') {
+		return {
+			...incomingStepData,
+			errorMessage: executionResult,
+		};
+	}
+
+	console.log('executionResult');
+	console.table(executionResult);
+
 	return {
 		currentStepId: buttonPressedDetails.stepToMoveTo,
-		formData: incomingStepData.formData,
+		formData: executionResult,
 	};
 }
