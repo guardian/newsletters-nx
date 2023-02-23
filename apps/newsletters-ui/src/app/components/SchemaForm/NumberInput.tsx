@@ -8,15 +8,22 @@ export const NumberInput: FunctionComponent<
 	FieldProps & {
 		value: number;
 		inputHandler: { (value: number): void };
-		max?: number; // NOT SUPPORTED
-		min?: number; // NOT SUPPORTED
+		max?: number;
+		min?: number;
 		step?: number; // NOT SUPPORTED
 		type?: 'number' | 'range'; // WILL NEED A SEPARATE COMPONENT USING Slider COMPONENT
 	}
 > = (props) => {
-	const { type = 'number' } = props;
+	const { type = 'number', max, min } = props;
 
 	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
+		const newValue = eventToNumber(event);
+		if (typeof min === 'number' && newValue < min) {
+			return;
+		}
+		if (typeof max === 'number' && newValue > max) {
+			return;
+		}
 		props.inputHandler(eventToNumber(event));
 	};
 
