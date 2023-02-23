@@ -49,7 +49,14 @@ export const Wizard: React.FC<WizardProps> = () => {
 				}
 
 				setServerData(data);
-				setFormData(getFormBlankData(data.currentStepId));
+
+				const blank = getFormBlankData(data.currentStepId);
+				const populatedForm = {
+					...blank,
+					...data.formData,
+				};
+
+				setFormData(populatedForm as WizardFormData);
 			})
 			.catch((error: unknown /* FIXME! */) => {
 				setServerErrorMessage('Wizard failed');
