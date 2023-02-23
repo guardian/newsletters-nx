@@ -18,6 +18,6 @@ export const defaultFormStyle = css`
 		display: block;
 		${headlineObjectStyles.xxsmall({ fontWeight: 'bold' })};
 		border-bottom: 1px solid ${neutral[20]};
-		margin: .25rem 0;
+		margin: 0.25rem 0;
 	}
 `;
