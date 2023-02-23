@@ -38,7 +38,7 @@ type Validator = (
 	storageInstance?: DraftStorage,
 ) => string | undefined;
 
-type AsyncExecution = (
+export type AsyncExecution = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	storageInstance?: DraftStorage,

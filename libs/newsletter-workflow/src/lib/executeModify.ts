@@ -3,13 +3,13 @@ import type {
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
 import type {
+	AsyncExecution,
 	WizardFormData,
 	WizardStepData,
 	WizardStepLayout,
-	WizardStepLayoutButton,
 } from '@newsletters-nx/state-machine';
 
-export const executeModify: WizardStepLayoutButton['executeStep'] = async (
+export const executeModify: AsyncExecution = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	storageInstance?: DraftStorage,
