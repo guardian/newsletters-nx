@@ -7,6 +7,7 @@ export const illustrationSchema = z.object({
 });
 
 export const themeEnumSchema = z.enum([
+	'',
 	'news',
 	'opinion',
 	'culture',

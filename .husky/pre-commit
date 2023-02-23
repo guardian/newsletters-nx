@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Check CDK setup before committing
+if [[ $(git diff --name-status --staged | xargs echo | grep cdk/ ) ]];
+	then echo "Detected changes in CDK dir. Checking status..."
+	npm --prefix cdk run lint && npm --prefix cdk run test
+fi

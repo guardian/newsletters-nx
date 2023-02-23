@@ -1,7 +1,17 @@
 /**
+ * Properties for a wizard button type
+ */
+export interface WizardButtonTypesProps {
+	/** Background color */
+	background: string;
+	/** Border color */
+	border: string;
+}
+
+/**
  * Object containing possible button types for a wizard button
  */
-export const WIZARD_BUTTON_TYPES = {
+export const WIZARD_BUTTON_TYPES: Record<string, WizardButtonTypesProps> = {
 	RED: {
 		background: '#ff7676',
 		border: '#ff0000',
