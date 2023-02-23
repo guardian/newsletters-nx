@@ -68,12 +68,12 @@ export async function stateMachineButtonPressed(
 		}
 	}
 
-	if (buttonPressedDetails.executeStep) {
-		const validationResult = await buttonPressedDetails.executeStep(
-			incomingStepData,
-			currentStepLayout,
-			storageInstance,
-		);
+	if (buttonPressedDetails.onBeforeStepChangeValidate) {
+		const validationResult =
+			await buttonPressedDetails.onBeforeStepChangeValidate(
+				incomingStepData,
+				currentStepLayout,
+			);
 		if (validationResult !== undefined) {
 			return {
 				...incomingStepData,
@@ -82,12 +82,12 @@ export async function stateMachineButtonPressed(
 		}
 	}
 
-	if (buttonPressedDetails.onBeforeStepChangeValidate) {
-		const validationResult =
-			await buttonPressedDetails.onBeforeStepChangeValidate(
-				incomingStepData,
-				currentStepLayout,
-			);
+	if (buttonPressedDetails.executeStep) {
+		const validationResult = await buttonPressedDetails.executeStep(
+			incomingStepData,
+			currentStepLayout,
+			storageInstance,
+		);
 		if (validationResult !== undefined) {
 			return {
 				...incomingStepData,

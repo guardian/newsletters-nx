@@ -22,6 +22,10 @@ For example:
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'pillar',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const name = stepData.formData ? stepData.formData['name'] : undefined;
+				return name ? undefined : 'NO NAME PROVIDED';
+			},
 			executeStep: async (
 				stepData,
 				stepLayout,
@@ -56,10 +60,6 @@ For example:
 				}
 
 				return storageResponse.message;
-			},
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const name = stepData.formData ? stepData.formData['name'] : undefined;
-				return name ? undefined : 'NO NAME PROVIDED';
 			},
 		},
 	},

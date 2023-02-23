@@ -40,8 +40,8 @@ export interface WizardStepLayoutButton {
 	label: string;
 	stepToMoveTo: string;
 	onAfterStepStartValidate?: AsyncValidator | Validator;
-	executeStep?: AsyncValidator | Validator;
 	onBeforeStepChangeValidate?: AsyncValidator | Validator;
+	executeStep?: AsyncValidator | Validator;
 }
 export interface WizardStepLayout {
 	markdownToDisplay: string;
