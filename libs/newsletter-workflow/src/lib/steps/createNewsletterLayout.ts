@@ -1,4 +1,7 @@
-import type { FormData, WizardStepLayout } from '@newsletters-nx/state-machine';
+import type {
+	WizardFormData,
+	WizardStepLayout,
+} from '@newsletters-nx/state-machine';
 import { formSchemas } from '@newsletters-nx/state-machine';
 
 export const createNewsletterLayout: WizardStepLayout = {
@@ -30,7 +33,7 @@ For example:
 				stepData,
 				stepLayout,
 				storageInstance,
-			): Promise<FormData | string> => {
+			): Promise<WizardFormData | string> => {
 				const schema = formSchemas['createNewsletter'];
 				if (!storageInstance) {
 					throw new Error('no storageInstance');

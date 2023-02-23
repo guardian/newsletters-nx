@@ -3,7 +3,10 @@ import type {
 	WIZARD_BUTTON_TYPES,
 } from '@newsletters-nx/newsletters-data-client';
 
-export type FormData = Record<string, string | number | boolean | undefined>;
+export type WizardFormData = Record<
+	string,
+	string | number | boolean | undefined
+>;
 
 /**
  * Interface for a button displayed in the wizard.
@@ -18,7 +21,7 @@ export interface WizardButton {
 }
 
 export interface WizardStepData {
-	formData?: FormData;
+	formData?: WizardFormData;
 	currentStepId: string;
 	errorMessage?: string;
 }
@@ -39,13 +42,13 @@ type AsyncExecution = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	storageInstance?: DraftStorage,
-) => Promise<FormData | string>;
+) => Promise<WizardFormData | string>;
 
 type Execution = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	storageInstance?: DraftStorage,
-) => FormData | string;
+) => WizardFormData | string;
 
 export interface WizardStepLayoutButton {
 	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
@@ -74,7 +77,7 @@ export interface CurrentStepRouteRequest {
 	/**ID of the step the use was on when thye pressed the button */
 	stepId: string;
 	/** arbitrary data entered by the user into a form before pressing the button */
-	formData?: FormData;
+	formData?: WizardFormData;
 }
 
 /**
@@ -88,6 +91,6 @@ export interface CurrentStepRouteResponse {
 	/** Buttons to display for the current step. */
 	buttons?: Record<string, WizardButton>;
 	/** arbitrary data entered by the user into a form before pressing the button */
-	formData?: FormData;
+	formData?: WizardFormData;
 	errorMessage?: string;
 }

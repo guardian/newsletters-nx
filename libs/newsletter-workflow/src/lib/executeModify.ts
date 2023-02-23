@@ -3,7 +3,7 @@ import type {
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
 import type {
-	FormData,
+	WizardFormData,
 	WizardStepData,
 	WizardStepLayout,
 	WizardStepLayoutButton,
@@ -13,7 +13,7 @@ export const executeModify: WizardStepLayoutButton['executeStep'] = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	storageInstance?: DraftStorage,
-): Promise<FormData | string> => {
+): Promise<WizardFormData | string> => {
 	if (!storageInstance) {
 		return 'no storage instance';
 	}

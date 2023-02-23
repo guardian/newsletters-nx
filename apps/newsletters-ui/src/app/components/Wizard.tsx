@@ -3,7 +3,7 @@ import { getFormBlankData, getFormSchema } from '@newsletters-nx/state-machine';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
-	FormData,
+	WizardFormData,
 } from '@newsletters-nx/state-machine';
 import { MarkdownView } from './MarkdownView';
 import type { FieldDef, FieldValue } from './SchemaForm';
@@ -24,7 +24,9 @@ export const Wizard: React.FC<WizardProps> = () => {
 	const [serverData, setServerData] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
-	const [formData, setFormData] = useState<FormData | undefined>(undefined);
+	const [formData, setFormData] = useState<WizardFormData | undefined>(
+		undefined,
+	);
 	const [listId, setListId] = useState<number | undefined>(undefined);
 	const [serverErrorMesssage, setServerErrorMessage] = useState<
 		string | undefined
