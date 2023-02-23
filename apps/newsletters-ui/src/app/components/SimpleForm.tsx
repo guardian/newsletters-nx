@@ -1,8 +1,8 @@
+import { Button, Paper } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { z } from 'zod';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
-import { Button, Paper } from '@mui/material';
 import { defaultFieldStyle, defaultFormStyle } from './SchemaForm/styling';
 
 type SchemaObjectType<T extends z.ZodRawShape> = {

@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { useState } from 'react';
 import {
 	deriveNewsletterFieldsFromName,
@@ -12,7 +13,6 @@ import { ArrayInput } from './ArrayInput';
 import { NewsletterDetail } from './NewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
-import { css } from '@emotion/react';
 
 interface Props {
 	existingIds: string[];
