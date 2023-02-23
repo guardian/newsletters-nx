@@ -1,6 +1,12 @@
-import type { FormEventHandler, FunctionComponent } from 'react';
-import { useRef } from 'react';
-import { FieldWrapper } from './FieldWrapper';
+import {
+	Checkbox,
+	css,
+	FormControlLabel,
+	FormGroup,
+	TextField,
+} from '@mui/material';
+import type { FormEventHandler, FunctionComponent} from 'react';
+import { useState } from 'react';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
@@ -13,9 +19,18 @@ export const OptionalNumberInput: FunctionComponent<
 		step?: number;
 	}
 > = (props) => {
-	const numberFieldRef = useRef<HTMLInputElement>(null);
+	const { value, label, min, max } = props;
+	const [storedNumber, setStoredNumber] = useState(value ?? 0);
 
 	const sendNumberValue: FormEventHandler<HTMLInputElement> = (event) => {
+		const newValue = eventToNumber(event);
+		if (typeof min === 'number' && newValue < min) {
+			return;
+		}
+		if (typeof max === 'number' && newValue > max) {
+			return;
+		}
+		setStoredNumber(newValue);
 		props.inputHandler(eventToNumber(event));
 	};
 
@@ -24,33 +39,41 @@ export const OptionalNumberInput: FunctionComponent<
 		if (checked) {
 			return props.inputHandler(undefined);
 		}
-		const numberInputValue = Number(numberFieldRef.current?.value);
-		if (!isNaN(numberInputValue)) {
-			return props.inputHandler(numberInputValue);
-		}
-		props.inputHandler(props.min ?? 0);
+
+		props.inputHandler(storedNumber);
 	};
 
 	return (
-		<FieldWrapper {...props}>
-			<input
-				type="number"
-				disabled={typeof props.value === 'undefined'}
-				value={props.value}
-				max={props.max}
-				min={props.min}
-				step={props.step}
+		<div
+			css={css`
+				margin-bottom: 1rem;
+				max-width: 24rem;
+				display: flex;
+				justify-content: space-between;
+			`}
+		>
+			<TextField
+				variant="filled"
+				label={label}
+				type={'number'}
+				value={props.value ?? storedNumber}
 				onInput={sendNumberValue}
-				ref={numberFieldRef}
+				helperText={props.error}
+				error={!!props.error}
+				required={!props.optional}
+				disabled={typeof props.value === 'undefined' || props.readOnly}
 			/>
-			<span>
-				<label>undef:</label>
-				<input
-					type="checkbox"
-					checked={typeof props.value === 'undefined'}
-					onChange={toggleUndefined}
+			<FormGroup>
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={typeof props.value === 'undefined'}
+							onChange={toggleUndefined}
+						/>
+					}
+					label={`${label ?? ''} undefined`}
 				/>
-			</span>
-		</FieldWrapper>
+			</FormGroup>
+		</div>
 	);
 };
