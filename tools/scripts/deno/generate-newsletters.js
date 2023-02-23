@@ -107,3 +107,5 @@ const filename = prompt(
 );
 const filepath = `./apps/newsletters-api/static/${filename}`;
 Deno.writeTextFile(filepath, JSON.stringify(data));
+
+console.log(`Written ${numNewsletters} newsletters to ${filepath}`);
