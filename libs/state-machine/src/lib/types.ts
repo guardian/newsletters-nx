@@ -35,13 +35,25 @@ type Validator = (
 	storageInstance?: DraftStorage,
 ) => string | undefined;
 
+type AsyncExecution = (
+	stepData: WizardStepData,
+	stepLayout?: WizardStepLayout,
+	storageInstance?: DraftStorage,
+) => Promise<FormData | string>;
+
+type Execution = (
+	stepData: WizardStepData,
+	stepLayout?: WizardStepLayout,
+	storageInstance?: DraftStorage,
+) => FormData | string;
+
 export interface WizardStepLayoutButton {
 	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
 	label: string;
 	stepToMoveTo: string;
 	onAfterStepStartValidate?: AsyncValidator | Validator;
 	onBeforeStepChangeValidate?: AsyncValidator | Validator;
-	executeStep?: AsyncValidator | Validator;
+	executeStep?: AsyncExecution | Execution;
 }
 export interface WizardStepLayout {
 	markdownToDisplay: string;

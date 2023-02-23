@@ -88,7 +88,7 @@ export async function stateMachineButtonPressed(
 			currentStepLayout,
 			storageInstance,
 		);
-		if (validationResult !== undefined) {
+		if (typeof validationResult === 'string') {
 			return {
 				...incomingStepData,
 				errorMessage: validationResult,
