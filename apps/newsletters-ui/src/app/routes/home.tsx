@@ -1,9 +1,13 @@
+import { Container } from '@mui/material';
 import type { RouteObject } from 'react-router-dom';
 import { Api } from '../components/Api';
 import { ButtonContainer } from '../components/ButtonContainer';
+import { FormDemoView } from '../components/FormDemoView';
+import { NewsletterCreateView } from '../components/NewsletterCreateView';
 import { Wizard } from '../components/Wizard';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
+import { listLoader } from './loaders';
 
 export const homeRoute: RouteObject = {
 	path: '/',
@@ -19,16 +23,20 @@ export const homeRoute: RouteObject = {
 			element: <Api />,
 		},
 		{
-			path: 'markdowntest/',
+			path: '/create',
+			element: <NewsletterCreateView />,
+			loader: listLoader,
+		},
+		{
+			path: '/test-forms',
+			element: <FormDemoView />,
+		},
+		{
+			path: 'wizardtest/',
 			element: (
-				<Wizard
-					markdown={`
-# Wizard
-This is the start of the wizard
-			`}
-					stepName="start"
-					wizardButtons={[{ label: 'Start', buttonType: 'GREEN', id: 'start' }]}
-				/>
+				<Container>
+					<Wizard newsletterId="" />
+				</Container>
 			),
 		},
 	],

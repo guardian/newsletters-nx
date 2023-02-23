@@ -1,13 +1,41 @@
 import type { FastifyInstance } from 'fastify';
-import type { WizardButtonProps } from '@newsletters-nx/newsletters-data-client';
+import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
+import type {
+	CurrentStepRouteRequest,
+	CurrentStepRouteResponse,
+	WizardButton,
+	WizardStepData,
+	WizardStepLayout,
+	WizardStepLayoutButton,
+} from '@newsletters-nx/state-machine';
+import {
+	setupInitialState,
+	stateMachineButtonPressed,
+} from '@newsletters-nx/state-machine';
+import { storageInstance } from '../../services/storageInstance';
 
-interface CurrentStepRouteParams {
-	/** If the newletterId is undefined then this is a new newsletter otherwise
-	 * an existing one */
-	newsletterId?: string;
-	/** ID of the button that was pressed to get to the current step */
-	pressedButtonId?: string;
-}
+const convertWizardStepLayoutButtonsToWizardButtons = (
+	layoutButtons: WizardStepLayout['buttons'],
+): CurrentStepRouteResponse['buttons'] => {
+	const convertButton = (
+		index: string,
+		input: WizardStepLayoutButton,
+	): WizardButton => {
+		return {
+			id: index,
+			label: input.label,
+			buttonType: input.buttonType,
+		};
+	};
+
+	const outputRecord: CurrentStepRouteResponse['buttons'] = {};
+
+	Object.entries(layoutButtons).forEach(([index, layoutButton]) => {
+		outputRecord[index] = convertButton(index, layoutButton);
+	});
+
+	return outputRecord;
+};
 
 /**
  * Register the current step route for the newsletter wizard
@@ -15,22 +43,58 @@ interface CurrentStepRouteParams {
  * @param app - Fastify instance to add the route to
  */
 export function registerCurrentStepRoute(app: FastifyInstance) {
-	app.get<{ Params: CurrentStepRouteParams }>('/v1/currentstep', (req, res) => {
-		const backButton: Omit<WizardButtonProps, 'onClick'> = {
-			label: 'Back',
-			buttonType: 'RED',
-			id: 'back',
-		};
-		const nextButton: Omit<WizardButtonProps, 'onClick'> = {
-			label: 'Next',
-			buttonType: 'GREEN',
-			id: 'next',
-		};
+	app.post<{ Body: CurrentStepRouteRequest }>(
+		'/v1/currentstep',
+		async (req, res): Promise<CurrentStepRouteResponse> => {
+			const body: CurrentStepRouteRequest = req.body;
 
-		return {
-			markdownToDisplay: '# From the API\n\nThis is the markdown from the API',
-			currentStepId: 'step1',
-			buttons: [backButton, nextButton],
-		};
-	});
+			if (body.newsletterId === undefined) {
+				return res
+					.status(400)
+					.send({ message: 'newsletter id is required', body: body });
+			}
+
+			let result: WizardStepData = { currentStepId: '' };
+			try {
+				result =
+					body.buttonId !== undefined
+						? await stateMachineButtonPressed(
+								body.buttonId,
+								{
+									currentStepId: body.stepId,
+									formData: body.formData,
+								},
+								newslettersWorkflowStepLayout,
+								storageInstance,
+						  )
+						: setupInitialState();
+			} catch (error) {
+				if (error instanceof Error) {
+					const errorResponse: CurrentStepRouteResponse = {
+						errorMessage: error.message,
+						currentStepId: body.stepId,
+					};
+					return res.status(400).send(errorResponse);
+				}
+			}
+
+			const nextWizardStepLayout =
+				newslettersWorkflowStepLayout[result.currentStepId];
+
+			if (!nextWizardStepLayout) {
+				return res
+					.status(400)
+					.send({ message: 'No next step found', body: body });
+			}
+
+			return {
+				markdownToDisplay: nextWizardStepLayout.markdownToDisplay,
+				currentStepId: result.currentStepId,
+				errorMessage: result.errorMessage,
+				buttons: convertWizardStepLayoutButtonsToWizardButtons(
+					nextWizardStepLayout.buttons,
+				),
+			};
+		},
+	);
 }

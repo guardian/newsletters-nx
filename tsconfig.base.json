@@ -16,9 +16,13 @@
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
+			"@newsletters-nx/newsletter-workflow": [
+				"libs/newsletter-workflow/src/index.ts"
+			],
 			"@newsletters-nx/newsletters-data-client": [
 				"libs/newsletters-data-client/src/index.ts"
-			]
+			],
+			"@newsletters-nx/state-machine": ["libs/state-machine/src/index.ts"]
 		},
 		"strictNullChecks": true,
 		"incremental": false
