@@ -5,8 +5,9 @@ import {
 	FormGroup,
 	TextField,
 } from '@mui/material';
-import type { FormEventHandler, FunctionComponent} from 'react';
+import type { FormEventHandler, FunctionComponent } from 'react';
 import { useState } from 'react';
+import { defaultFieldStyle } from './styling';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
@@ -44,16 +45,8 @@ export const OptionalNumberInput: FunctionComponent<
 	};
 
 	return (
-		<div
-			css={css`
-				margin-bottom: 1rem;
-				max-width: 24rem;
-				display: flex;
-				justify-content: space-between;
-			`}
-		>
+		<div css={defaultFieldStyle}>
 			<TextField
-				variant="filled"
 				label={label}
 				type={'number'}
 				value={props.value ?? storedNumber}

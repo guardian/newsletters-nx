@@ -1,5 +1,6 @@
-import { css, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
+import { defaultFieldStyle } from './styling';
 import type { FieldProps } from './util';
 import { eventToString } from './util';
 
@@ -17,15 +18,9 @@ export const StringInput: FunctionComponent<
 	};
 
 	return (
-		<div
-			css={css`
-				margin-bottom: 1rem;
-				max-width: 24rem;
-			`}
-		>
+		<div css={defaultFieldStyle}>
 			<TextField
 				fullWidth
-				variant="filled"
 				label={props.label}
 				type={type}
 				value={props.value}

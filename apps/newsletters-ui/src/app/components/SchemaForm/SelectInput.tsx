@@ -1,6 +1,7 @@
 import type { SelectChangeEvent } from '@mui/material';
-import { css, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import type { FunctionComponent } from 'react';
+import { defaultFieldStyle } from './styling';
 import type { FieldProps } from './util';
 
 const undefToken = '_____';
@@ -24,13 +25,8 @@ export const SelectInput: FunctionComponent<
 	const valueWithUndefinedToken = value ?? undefToken;
 
 	return (
-		<div
-			css={css`
-				margin-bottom: 1rem;
-				max-width: 24rem;
-			`}
-		>
-			<FormControl fullWidth variant="filled">
+		<div css={defaultFieldStyle}>
+			<FormControl fullWidth>
 				<InputLabel id="demo-simple-select-label">{label}</InputLabel>
 				<Select
 					value={valueWithUndefinedToken}

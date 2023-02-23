@@ -1,5 +1,6 @@
-import { Checkbox, css, FormControlLabel, FormGroup } from '@mui/material';
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
+import { defaultFieldStyle } from './styling';
 import type { FieldProps } from './util';
 import { eventToBoolean } from './util';
 
@@ -14,12 +15,7 @@ export const BooleanInput: FunctionComponent<
 	};
 
 	return (
-		<div
-			css={css`
-				margin-bottom: 1rem;
-				max-width: 24rem;
-			`}
-		>
+		<div css={defaultFieldStyle}>
 			<FormGroup>
 				<FormControlLabel
 					control={
