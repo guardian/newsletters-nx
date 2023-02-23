@@ -77,3 +77,10 @@ export const fieldValueAsDisplayString = (field: FieldDef): string => {
 			return 'VALUE OF UNKNOWN TYPE';
 	}
 };
+
+export type FieldProps = {
+	label?: string;
+	error?: string;
+	optional?: boolean;
+	readOnly?: boolean;
+};

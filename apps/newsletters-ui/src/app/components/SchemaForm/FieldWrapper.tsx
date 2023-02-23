@@ -6,6 +6,7 @@ import {
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
 import type { FunctionComponent, ReactNode } from 'react';
+import type { FieldProps } from './util';
 
 const fieldStyle = (readOnly?: boolean) => css`
 	padding-bottom: ${space[1]}px;
@@ -29,12 +30,7 @@ const errorStyle = css`
 	color: ${error[400]};
 `;
 
-export type FieldProps = {
-	label?: string;
-	error?: string;
-	optional?: boolean;
-	readOnly?: boolean;
-};
+
 export const FieldWrapper: FunctionComponent<
 	FieldProps & { children?: ReactNode }
 > = ({ children, label, error, optional, readOnly }) => {

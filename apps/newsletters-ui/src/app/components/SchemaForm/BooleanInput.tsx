@@ -1,6 +1,6 @@
 import { Checkbox, css, FormControlLabel, FormGroup } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
-import type { FieldProps } from './FieldWrapper';
+import type { FieldProps } from './util';
 import { eventToBoolean } from './util';
 
 export const BooleanInput: FunctionComponent<

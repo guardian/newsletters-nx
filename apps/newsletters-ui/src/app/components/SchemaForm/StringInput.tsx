@@ -1,6 +1,6 @@
 import { css, TextField } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
-import type { FieldProps } from './FieldWrapper';
+import type { FieldProps } from './util';
 import { eventToString } from './util';
 
 export const StringInput: FunctionComponent<

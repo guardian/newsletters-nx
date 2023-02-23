@@ -1,7 +1,7 @@
 import type { FormEventHandler, FunctionComponent } from 'react';
 import { useRef } from 'react';
-import type { FieldProps } from './FieldWrapper';
 import { FieldWrapper } from './FieldWrapper';
+import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
 export const OptionalNumberInput: FunctionComponent<

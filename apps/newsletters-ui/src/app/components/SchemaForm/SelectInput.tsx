@@ -1,7 +1,7 @@
 import type { SelectChangeEvent } from '@mui/material';
 import { css, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import type { FunctionComponent } from 'react';
-import type { FieldProps } from './FieldWrapper';
+import type { FieldProps } from './util';
 
 const undefToken = '_____';
 
