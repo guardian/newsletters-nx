@@ -1,11 +1,7 @@
 import Fastify from 'fastify';
-import { generateNewsletterData } from '../static/generate-newsletters';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerHealthRoute } from './app/routes/health';
 import { registerNewsletterRoutes } from './app/routes/newsletters';
-
-//TODO: remove!
-generateNewsletterData('LOCAL');
 
 const app = Fastify();
 
