@@ -22,6 +22,7 @@ export const descriptionLayout: WizardStepLayout = {
 			buttonType: 'RED',
 			label: 'Back',
 			stepToMoveTo: 'pillar',
+			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',

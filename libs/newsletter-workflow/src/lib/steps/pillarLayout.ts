@@ -25,6 +25,7 @@ export const pillarLayout: WizardStepLayout = {
 			buttonType: 'RED',
 			label: 'Back',
 			stepToMoveTo: 'createNewsletter',
+			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
