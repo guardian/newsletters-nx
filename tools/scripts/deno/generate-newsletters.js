@@ -100,7 +100,7 @@ const numNewsletters = prompt(
 	'How many newsletters do you want to generate?',
 	5,
 );
-const data = new Array(parseInt(numNewsletters)).fill(generateNewsletter());
+const data = new Array(parseInt(numNewsletters)).fill().map(generateNewsletter);
 const filename = prompt(
 	'What should the filename be called?',
 	'newsletters.local.json',

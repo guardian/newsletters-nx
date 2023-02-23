@@ -1,46 +1,46 @@
 {
-  "name": "newsletters-api",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/newsletters-api/src",
-  "projectType": "application",
-  "targets": {
-    "build": {
-      "executor": "@nrwl/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/apps/newsletters-api",
-        "format": ["cjs"],
-        "main": "apps/newsletters-api/src/main.ts",
-        "tsConfig": "apps/newsletters-api/tsconfig.app.json",
-        "assets": ["apps/newsletters-api/src/assets"]
-      }
-    },
-    "serve": {
-      "executor": "@nrwl/js:node",
-      "options": {
-        "buildTarget": "newsletters-api:build"
-      },
-      "configurations": {
-        "production": {
-          "buildTarget": "newsletters-api:build:production"
-        }
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/newsletters-api/**/*.ts"]
-      }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "apps/newsletters-api/jest.config.ts",
-        "passWithNoTests": true
-      }
-    }
-  },
-  "tags": []
+	"name": "newsletters-api",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "apps/newsletters-api/src",
+	"projectType": "application",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/esbuild:esbuild",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/apps/newsletters-api",
+				"format": ["cjs"],
+				"main": "apps/newsletters-api/src/main.ts",
+				"tsConfig": "apps/newsletters-api/tsconfig.app.json",
+				"assets": ["apps/newsletters-api/src/assets"]
+			}
+		},
+		"serve": {
+			"executor": "@nrwl/js:node",
+			"options": {
+				"buildTarget": "newsletters-api:build"
+			},
+			"configurations": {
+				"production": {
+					"buildTarget": "newsletters-api:build:production"
+				}
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["apps/newsletters-api/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+			"options": {
+				"jestConfig": "apps/newsletters-api/jest.config.ts",
+				"passWithNoTests": true
+			}
+		}
+	},
+	"tags": []
 }
