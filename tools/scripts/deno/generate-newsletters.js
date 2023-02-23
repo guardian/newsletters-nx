@@ -41,7 +41,7 @@ const generateNewsletter = () => {
 	const newsletter = {
 		identityName: newsletterId,
 		name,
-		description: faker.lorem.text(),
+		description: initCap(faker.lorem.text()),
 		frequency,
 		paused: faker.datatype.boolean(),
 		cancelled: faker.datatype.boolean(),
@@ -82,7 +82,7 @@ const generateNewsletter = () => {
 		emailEmbed: {
 			name,
 			title: `Sign up for ${name}`,
-			description: faker.lorem.text(),
+			description: initCap(faker.lorem.text()),
 			successHeadline: 'Subscription confirmed',
 			successDescription: `We'll send you ${name} ${frequency.toLowerCase()}`,
 			hexCode: '#DCDCDC',
