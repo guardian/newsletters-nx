@@ -1,4 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
+import { isDraft } from '@newsletters-nx/newsletters-data-client';
+import { DraftDetails } from '../DraftDetails';
 
 export const DraftDetailView = () => {
 	const matchedItem = useLoaderData();
@@ -6,11 +8,13 @@ export const DraftDetailView = () => {
 		return <article>NOT FOUND!</article>;
 	}
 
-	// TO DO parse / validate the matchedItem for display
+	if (!isDraft(matchedItem)) {
+		return <article>INVALID DATA</article>;
+	}
 
 	return (
 		<>
-			<div>{JSON.stringify(matchedItem)}</div>
+			<DraftDetails draft={matchedItem }/>
 			<Link to="/drafts/">Back to List</Link>
 		</>
 	);
