@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
-import { DraftDetailView } from '../components/DraftDetailView';
-import { DraftListView } from '../components/DraftListView';
+import { DraftDetailView } from '../components/views/DraftDetailView';
+import { DraftListView } from '../components/views/DraftListView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { draftDetailLoader, draftListLoader } from './loaders';

@@ -3,7 +3,7 @@ import type { RouteObject } from 'react-router-dom';
 import { Api } from '../components/Api';
 import { ButtonContainer } from '../components/ButtonContainer';
 import { FormDemoView } from '../components/FormDemoView';
-import { NewsletterCreateView } from '../components/NewsletterCreateView';
+import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
 import { Wizard } from '../components/Wizard';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';

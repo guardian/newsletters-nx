@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
-import { NewsletterDetailView } from '../components/NewsletterDetailView';
-import { NewsletterListView } from '../components/NewslettersListView';
+import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
+import { NewsletterListView } from '../components/views/NewslettersListView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { detailLoader, listLoader } from './loaders';

@@ -1,6 +1,6 @@
 import { useLoaderData } from 'react-router-dom';
 import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
-import { NewslettersTable } from './NewslettersTable';
+import { NewslettersTable } from '../NewslettersTable';
 
 export const NewsletterListView = () => {
 	const list = useLoaderData();
