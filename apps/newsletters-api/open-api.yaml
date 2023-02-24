@@ -35,7 +35,7 @@ paths:
                 required:
                   - ok
                   - total
-                  - data
+                  - results
                 properties:
                   ok:
                     type: boolean
@@ -44,12 +44,12 @@ paths:
                     type: number
                     example: 1
                     description: the number of newsletters in the results
-                  data:
+                  results:
                     type: array
                     items:
                       $ref: '#/components/schemas/Newsletter'
 
-  /v1/newsletters/{newsletterId}:
+  /newsletters/{newsletterId}:
     get:
       summary: Get a newsletter by newsletterId
       parameters:
@@ -67,7 +67,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '200':
-          description: Returns a response object with the matching newsletter as the data field.
+          description:  Returns a response object with the matching newsletters as the result field.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - results
+                  - ok
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  results:
+                    $ref: '#/components/schemas/Newsletter'
+
+  /v1/drafts:
+    get:
+      summary: Returns a response object with a list of drafts as the result field.
+      description: Includes the objects representing draft newsletters yet to be launched.
+      responses:
+        '200':
+          description: A JSON object containing array of draft entities
           content:
             application/json:
               schema:
@@ -75,7 +96,7 @@ paths:
                 required:
                   - ok
                   - total
-                  - data
+                  - results
                 properties:
                   ok:
                     type: boolean
@@ -83,8 +104,44 @@ paths:
                   total:
                     type: number
                     example: 1
-                  data:
-                    $ref: '#/components/schemas/Newsletter'
+                    description: the number of drafts in the results
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Draft'
+
+  /drafts/{draftId}:
+    get:
+      summary: Get a draft by draftId
+      parameters:
+        - in: path
+          name: draftId
+          schema:
+            type: number
+          required: true
+          description: The unique draftId number of the newsletter to get
+      responses:
+        '404':
+          description: A JSON object describing a 'not found' error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '200':
+          description:  Returns a response object with the matching draft as the result field.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - results
+                  - ok
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  results:
+                    $ref: '#/components/schemas/Draft'
 
 components:
   schemas:
@@ -220,3 +277,14 @@ components:
         message:
           type: string
           example: No newsletter with id fake-newsletter-id
+    Draft:
+      type: object
+      required:
+        - listId
+      properties:
+        listId:
+          type: integer
+          example:  7000
+        name:
+          type: string
+          example: 'First edition'
