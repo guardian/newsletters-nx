@@ -1,5 +1,7 @@
-import { headlineObjectStyles, neutral } from '@guardian/source-foundations';
+import { headlineObjectStyles, palette } from '@guardian/source-foundations';
 import { css } from '@mui/material';
+
+const { neutral } = palette;
 
 export const defaultFieldStyle = css`
 	margin-bottom: 0.75rem;
