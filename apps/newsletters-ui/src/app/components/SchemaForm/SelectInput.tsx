@@ -1,6 +1,10 @@
+import type { SelectChangeEvent } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import type { FunctionComponent } from 'react';
-import type { FieldProps } from './FieldWrapper';
-import { FieldWrapper } from './FieldWrapper';
+import { defaultFieldStyle } from './styling';
+import type { FieldProps } from './util';
+
+const undefToken = '_____';
 
 export const SelectInput: FunctionComponent<
 	FieldProps & {
@@ -12,25 +16,31 @@ export const SelectInput: FunctionComponent<
 > = (props) => {
 	const { value, optional, options, inputHandler, label = 'value' } = props;
 
-	const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-		return inputHandler(event.target.value || undefined);
+	const handleChange = (event: SelectChangeEvent<string>) => {
+		if (event.target.value === undefToken) {
+			return inputHandler(undefined);
+		}
+		return inputHandler(event.target.value);
 	};
+	const valueWithUndefinedToken = value ?? undefToken;
 
 	return (
-		<FieldWrapper {...props}>
-			<select onChange={handleChange} value={value}>
-				{optional && (
-					// picking the default option should result in the field being set to undefined
-					// but if the option value is undefined, the target.value the change event will
-					// use the text content of the option as a fall back.
-					<option value={''}>{`select ${label}`}</option>
-				)}
-				{options.map((option) => (
-					<option key={option} value={option}>
-						{option}
-					</option>
-				))}
-			</select>
-		</FieldWrapper>
+		<div css={defaultFieldStyle}>
+			<FormControl fullWidth>
+				<InputLabel id="demo-simple-select-label">{label}</InputLabel>
+				<Select
+					value={valueWithUndefinedToken}
+					label={label}
+					onChange={handleChange}
+				>
+					{optional && <MenuItem value={undefToken}>[UNDEFINED]</MenuItem>}
+					{options.map((option) => (
+						<MenuItem key={option} value={option}>
+							{option}
+						</MenuItem>
+					))}
+				</Select>
+			</FormControl>
+		</div>
 	);
 };

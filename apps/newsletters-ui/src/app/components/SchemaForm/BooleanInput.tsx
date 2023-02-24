@@ -1,6 +1,7 @@
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
-import type { FieldProps } from './FieldWrapper';
-import { FieldWrapper } from './FieldWrapper';
+import { defaultFieldStyle } from './styling';
+import type { FieldProps } from './util';
 import { eventToBoolean } from './util';
 
 export const BooleanInput: FunctionComponent<
@@ -14,8 +15,20 @@ export const BooleanInput: FunctionComponent<
 	};
 
 	return (
-		<FieldWrapper {...props}>
-			<input type={'checkbox'} checked={props.value} onChange={sendValue} />
-		</FieldWrapper>
+		<div css={defaultFieldStyle}>
+			<FormGroup>
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={props.value}
+							onChange={sendValue}
+							required={!props.optional}
+							disabled={props.readOnly}
+						/>
+					}
+					label={props.label}
+				/>
+			</FormGroup>
+		</div>
 	);
 };

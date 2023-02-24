@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { useState } from 'react';
 import {
 	deriveNewsletterFieldsFromName,
@@ -129,68 +130,80 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 	};
 
 	return (
-		<div>
-			<h2>Create newsletter form</h2>
-			<button onClick={deriveValuesFromName} disabled={newsletter.name === ''}>
-				Derive values from name
-			</button>
+		<article
+			css={css`
+				display: flex;
+			`}
+		>
+			<div
+				css={css`
+					flex-basis: 40rem;
+				`}
+			>
+				<h2>Create newsletter form</h2>
+				<button
+					onClick={deriveValuesFromName}
+					disabled={newsletter.name === ''}
+				>
+					Derive values from name
+				</button>
 
-			<SchemaForm
-				schema={newsletterSchema}
-				data={newsletter}
-				changeValue={manageChange}
-				showUnsupported
-				options={{
-					regionFocus: ['UK', 'AUS', 'US'],
-				}}
-				excludedKeys={[
-					'emailEmbed',
-					'illustration',
-					'brazeSubscribeAttributeNameAlternate',
-				]}
-				readOnlyKeys={['listId']}
-				validationWarnings={warnings}
-			/>
-
-			<ArrayInput
-				label="brazeSubscribeAttributeNameAlternate"
-				validationWarning={warnings.brazeSubscribeAttributeNameAlternate}
-				data={newsletter.brazeSubscribeAttributeNameAlternate ?? []}
-				change={(data) => {
-					manageArrayChange(data, 'brazeSubscribeAttributeNameAlternate');
-				}}
-			/>
-
-			<fieldset>
-				<legend>emailEmbed</legend>
 				<SchemaForm
-					schema={emailEmbedSchema}
-					data={newsletter.emailEmbed}
-					changeValue={manageEmailEmbedChange}
+					schema={newsletterSchema}
+					data={newsletter}
+					changeValue={manageChange}
 					showUnsupported
-					validationWarnings={{}}
+					options={{
+						regionFocus: ['UK', 'AUS', 'US'],
+					}}
+					excludedKeys={[
+						'emailEmbed',
+						'illustration',
+						'brazeSubscribeAttributeNameAlternate',
+					]}
+					readOnlyKeys={['listId']}
+					validationWarnings={warnings}
 				/>
-			</fieldset>
 
-			{/* TO DO - controll to add the illustration field to the newsletter if undefined */}
-			{newsletter.illustration && (
+				<ArrayInput
+					label="brazeSubscribeAttributeNameAlternate"
+					validationWarning={warnings.brazeSubscribeAttributeNameAlternate}
+					data={newsletter.brazeSubscribeAttributeNameAlternate ?? []}
+					change={(data) => {
+						manageArrayChange(data, 'brazeSubscribeAttributeNameAlternate');
+					}}
+				/>
+
 				<fieldset>
 					<legend>emailEmbed</legend>
 					<SchemaForm
-						schema={illustrationSchema}
-						data={newsletter.illustration}
-						changeValue={manageIllustrationChange}
+						schema={emailEmbedSchema}
+						data={newsletter.emailEmbed}
+						changeValue={manageEmailEmbedChange}
 						showUnsupported
 						validationWarnings={{}}
 					/>
 				</fieldset>
-			)}
 
-			<button onClick={handleSubmit} disabled={hasWarnings}>
-				Create Newsletter
-			</button>
+				{/* TO DO - controll to add the illustration field to the newsletter if undefined */}
+				{newsletter.illustration && (
+					<fieldset>
+						<legend>emailEmbed</legend>
+						<SchemaForm
+							schema={illustrationSchema}
+							data={newsletter.illustration}
+							changeValue={manageIllustrationChange}
+							showUnsupported
+							validationWarnings={{}}
+						/>
+					</fieldset>
+				)}
 
+				<button onClick={handleSubmit} disabled={hasWarnings}>
+					Create Newsletter
+				</button>
+			</div>
 			<NewsletterDetail newsletter={newsletter} />
-		</div>
+		</article>
 	);
 };

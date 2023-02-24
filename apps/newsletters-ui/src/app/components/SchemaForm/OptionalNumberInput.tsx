@@ -1,21 +1,42 @@
+import {
+	Checkbox,
+	FormControlLabel,
+	FormGroup,
+	TextField,
+} from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
-import { useRef } from 'react';
-import type { FieldProps } from './FieldWrapper';
-import { FieldWrapper } from './FieldWrapper';
+import { useState } from 'react';
+import { defaultFieldStyle } from './styling';
+import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
+/**
+ * Note - Material UI TextFields do not support the 'step' attribute.
+ * The prop will have no effect, but is retained so this implementation
+ * wors with the SchemaFieldProps interface.
+ */
 export const OptionalNumberInput: FunctionComponent<
 	FieldProps & {
 		value: number | undefined;
 		inputHandler: { (value: number | undefined): void };
 		max?: number;
 		min?: number;
+		/**Material UI TextFields do not support the 'step' attribute */
 		step?: number;
 	}
 > = (props) => {
-	const numberFieldRef = useRef<HTMLInputElement>(null);
+	const { value, label, min, max } = props;
+	const [storedNumber, setStoredNumber] = useState(value ?? 0);
 
 	const sendNumberValue: FormEventHandler<HTMLInputElement> = (event) => {
+		const newValue = eventToNumber(event);
+		if (typeof min === 'number' && newValue < min) {
+			return;
+		}
+		if (typeof max === 'number' && newValue > max) {
+			return;
+		}
+		setStoredNumber(newValue);
 		props.inputHandler(eventToNumber(event));
 	};
 
@@ -24,33 +45,33 @@ export const OptionalNumberInput: FunctionComponent<
 		if (checked) {
 			return props.inputHandler(undefined);
 		}
-		const numberInputValue = Number(numberFieldRef.current?.value);
-		if (!isNaN(numberInputValue)) {
-			return props.inputHandler(numberInputValue);
-		}
-		props.inputHandler(props.min ?? 0);
+
+		props.inputHandler(storedNumber);
 	};
 
 	return (
-		<FieldWrapper {...props}>
-			<input
-				type="number"
-				disabled={typeof props.value === 'undefined'}
-				value={props.value}
-				max={props.max}
-				min={props.min}
-				step={props.step}
+		<div css={defaultFieldStyle}>
+			<TextField
+				label={label}
+				type={'number'}
+				value={props.value ?? storedNumber}
 				onInput={sendNumberValue}
-				ref={numberFieldRef}
+				helperText={props.error}
+				error={!!props.error}
+				required={!props.optional}
+				disabled={typeof props.value === 'undefined' || props.readOnly}
 			/>
-			<span>
-				<label>undef:</label>
-				<input
-					type="checkbox"
-					checked={typeof props.value === 'undefined'}
-					onChange={toggleUndefined}
+			<FormGroup>
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={typeof props.value === 'undefined'}
+							onChange={toggleUndefined}
+						/>
+					}
+					label={`${label ?? ''} undefined`}
 				/>
-			</span>
-		</FieldWrapper>
+			</FormGroup>
+		</div>
 	);
 };
