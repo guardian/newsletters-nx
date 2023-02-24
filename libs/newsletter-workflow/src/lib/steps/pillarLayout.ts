@@ -4,10 +4,10 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../executeModify';
 
-const markdownToDisplay = `
+const markdownTemplate = `
 # Select a Pillar
 
-Now we choose the pillar that the newletter will appear under.
+Now we choose the pillar that **{{name}}** will appear under.
 
 For example:
 news, opinion, sport, culture, lifestyle
@@ -18,8 +18,21 @@ news, opinion, sport, culture, lifestyle
 
 `.trim();
 
+const staticMarkdown = markdownTemplate.replace('{{name}}', 'the newsletter');
+
 export const pillarLayout: WizardStepLayout = {
-	markdownToDisplay,
+	staticMarkdown,
+	dynamicMarkdown(requestData, responseData) {
+		if (!responseData) {
+			return staticMarkdown;
+		}
+		const { name = '' } = responseData;
+		if (typeof name !== 'string') {
+			return staticMarkdown;
+		}
+
+		return markdownTemplate.replace('{{name}}', name);
+	},
 	buttons: {
 		back: {
 			buttonType: 'RED',
