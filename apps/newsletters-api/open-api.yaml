@@ -67,7 +67,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '200':
-          description:  Returns a response object with the matching newsletters as the result field.
+          description: Returns a response object with the matching newsletters as the result field.
           content:
             application/json:
               schema:
@@ -128,7 +128,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '200':
-          description:  Returns a response object with the matching draft as the result field.
+          description: Returns a response object with the matching draft as the result field.
           content:
             application/json:
               schema:
@@ -284,7 +284,7 @@ components:
       properties:
         listId:
           type: integer
-          example:  7000
+          example: 7000
         name:
           type: string
           example: 'First edition'

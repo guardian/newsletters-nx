@@ -13,7 +13,6 @@ interface Props {
 	draft: Draft;
 }
 
-
 export const DraftDetails = ({ draft }: Props) => {
 	return (
 		<TableContainer component={Card} sx={{ width: '24rem' }}>
