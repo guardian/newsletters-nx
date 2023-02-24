@@ -1,4 +1,5 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { getStringValuesFromRecord } from '../getValuesFromRecord';
 
 const markdownTemplate = `# Finished
 
@@ -13,11 +14,7 @@ const finishLayout: WizardStepLayout = {
 		if (!responseData) {
 			return staticMarkdown;
 		}
-		const { name = '' } = responseData;
-		if (typeof name !== 'string') {
-			return staticMarkdown;
-		}
-
+		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
 		return markdownTemplate.replace('{{name}}', name);
 	},
 };
