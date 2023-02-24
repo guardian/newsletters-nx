@@ -1,11 +1,12 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../getValuesFromRecord';
+import { regExPatterns } from '../regExPatterns';
 
 const markdownTemplate = `# Finished
 
 You have reached the end of the wizard. The draft newsletter **{{name}}** has been created.`;
 
-const staticMarkdown = markdownTemplate.replace('{{name}}', '');
+const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
 const finishLayout: WizardStepLayout = {
 	staticMarkdown: staticMarkdown,
@@ -15,7 +16,7 @@ const finishLayout: WizardStepLayout = {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		return markdownTemplate.replace('{{name}}', name);
+		return markdownTemplate.replace(regExPatterns.name, name);
 	},
 };
 

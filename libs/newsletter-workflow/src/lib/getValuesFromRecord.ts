@@ -1,4 +1,4 @@
-import { WizardFormData } from '@newsletters-nx/state-machine';
+import type { WizardFormData } from '@newsletters-nx/state-machine';
 
 export const getStringValuesFromRecord = (
 	record: WizardFormData,
