@@ -1,5 +1,5 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { formSchemas } from '@newsletters-nx/state-machine';
+import { executeCreate } from '../executeCreate';
 
 export const createNewsletterLayout: WizardStepLayout = {
 	markdownToDisplay: `# Create a newsletter
@@ -22,48 +22,11 @@ For example:
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'pillar',
-			executeStep: async (
-				stepData,
-				stepLayout,
-				storageInstance,
-			): Promise<string | undefined> => {
-				const schema = formSchemas['createNewsletter'];
-				if (!storageInstance) {
-					throw new Error('no storageInstance');
-				}
-				const parseResult = schema.safeParse(stepData.formData);
-
-				if (!parseResult.success) {
-					return `Form data is invalid for schema: ${
-						schema.description ?? '[no description]'
-					}`;
-				}
-
-				const storageResponse = await storageInstance.createDraftNewsletter({
-					...parseResult.data,
-					listId: undefined,
-				});
-
-				if (storageResponse.ok) {
-					console.log(
-						'createNewsletter step has updated storage.',
-						storageInstance,
-					);
-					return undefined;
-				}
-
-				return storageResponse.message ?? 'UNKNOWN ERROR';
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const name = stepData.formData ? stepData.formData['name'] : undefined;
+				return name ? undefined : 'NO NAME PROVIDED';
 			},
-			onBeforeStepChangeValidate: (
-				stepData,
-				stepLayout,
-				storageInstance,
-			): string | undefined => {
-				if (!stepData.formData?.name) {
-					return 'NO NAME PROVIDED';
-				}
-				return undefined;
-			},
+			executeStep: executeCreate,
 		},
 	},
 };

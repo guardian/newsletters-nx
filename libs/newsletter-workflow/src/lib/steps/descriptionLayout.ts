@@ -2,6 +2,7 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
+import { executeModify } from '../executeModify';
 
 const markdownToDisplay = `
 # Specify the Description
@@ -21,21 +22,21 @@ export const descriptionLayout: WizardStepLayout = {
 			buttonType: 'RED',
 			label: 'Back',
 			stepToMoveTo: 'pillar',
+			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Finish',
 			stepToMoveTo: 'finish',
-			onBeforeStepChangeValidate: (
-				stepData: WizardStepData,
-				stepLayout?: WizardStepLayout,
-			) => {
-				if (!stepData.formData?.description) {
+			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
+				const description: string | number | boolean | undefined =
+					stepData.formData ? stepData.formData['description'] : undefined;
+				if (!description) {
 					return 'NO DESCRIPTION PROVIDED';
 				}
-
 				return undefined;
 			},
+			executeStep: executeModify,
 		},
 	},
 };

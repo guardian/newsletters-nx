@@ -1,21 +1,12 @@
 import type {
-	ApiResponse,
-	Newsletter,
+	DraftStorage,
 	WIZARD_BUTTON_TYPES,
 } from '@newsletters-nx/newsletters-data-client';
 
-export type FormData = Record<string, string | number | boolean | undefined>;
-
-// Interface partially duplicating the Abstract DraftStorage class
-// TO DO - move the classes to data-client(?) lib
-// so it can be used as a type here
-export type StorageInterface = {
-	createDraftNewsletter: {
-		(draft: Partial<Newsletter> & { listId: undefined }): Promise<
-			ApiResponse<Partial<Newsletter> & { listId: number }>
-		>;
-	};
-};
+export type WizardFormData = Record<
+	string,
+	string | number | boolean | undefined
+>;
 
 /**
  * Interface for a button displayed in the wizard.
@@ -30,7 +21,7 @@ export interface WizardButton {
 }
 
 export interface WizardStepData {
-	formData?: FormData;
+	formData?: WizardFormData;
 	currentStepId: string;
 	errorMessage?: string;
 }
@@ -38,22 +29,34 @@ export interface WizardStepData {
 type AsyncValidator = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
-	storageInstance?: StorageInterface,
+	storageInstance?: DraftStorage,
 ) => Promise<string | undefined>;
 
 type Validator = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
-	storageInstance?: StorageInterface,
+	storageInstance?: DraftStorage,
 ) => string | undefined;
+
+export type AsyncExecution = (
+	stepData: WizardStepData,
+	stepLayout?: WizardStepLayout,
+	storageInstance?: DraftStorage,
+) => Promise<WizardFormData | string>;
+
+type Execution = (
+	stepData: WizardStepData,
+	stepLayout?: WizardStepLayout,
+	storageInstance?: DraftStorage,
+) => WizardFormData | string;
 
 export interface WizardStepLayoutButton {
 	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
 	label: string;
 	stepToMoveTo: string;
 	onAfterStepStartValidate?: AsyncValidator | Validator;
-	executeStep?: AsyncValidator | Validator;
 	onBeforeStepChangeValidate?: AsyncValidator | Validator;
+	executeStep?: AsyncExecution | Execution;
 }
 export interface WizardStepLayout {
 	markdownToDisplay: string;
@@ -74,7 +77,7 @@ export interface CurrentStepRouteRequest {
 	/**ID of the step the use was on when thye pressed the button */
 	stepId: string;
 	/** arbitrary data entered by the user into a form before pressing the button */
-	formData?: FormData;
+	formData?: WizardFormData;
 }
 
 /**
@@ -87,5 +90,7 @@ export interface CurrentStepRouteResponse {
 	currentStepId: string;
 	/** Buttons to display for the current step. */
 	buttons?: Record<string, WizardButton>;
+	/** arbitrary data entered by the user into a form before pressing the button */
+	formData?: WizardFormData;
 	errorMessage?: string;
 }

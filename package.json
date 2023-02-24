@@ -10,6 +10,7 @@
 		"test": "nx run-many --target=test --all",
 		"generate:lib": "npx nx generate @nrwl/workspace:library --setParserOptionsProject --standaloneConfig --testEnvironment=node --",
 		"prepare": "husky install",
+		"generate-newsletters": "./tools/scripts/generate-newsletters.sh",
 		"postinstall": "npm install --prefix cdk",
 		"bundle-api": "npx nx build newsletters-api --configuration=production --outputFileName=index.js"
 	},
@@ -35,6 +36,7 @@
 	},
 	"devDependencies": {
 		"@emotion/babel-plugin": "11.10.5",
+		"@faker-js/faker": "^7.6.0",
 		"@guardian/eslint-config": "^2.0.3",
 		"@guardian/eslint-config-typescript": "^3.0.0",
 		"@guardian/prettier": "^2.1.5",

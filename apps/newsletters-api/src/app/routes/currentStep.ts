@@ -78,6 +78,9 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				}
 			}
 
+			console.log('checking formdata in currentstep');
+			console.table(result.formData);
+
 			const nextWizardStepLayout =
 				newslettersWorkflowStepLayout[result.currentStepId];
 
@@ -90,10 +93,11 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 			return {
 				markdownToDisplay: nextWizardStepLayout.markdownToDisplay,
 				currentStepId: result.currentStepId,
-				errorMessage: result.errorMessage,
 				buttons: convertWizardStepLayoutButtonsToWizardButtons(
 					nextWizardStepLayout.buttons,
 				),
+				errorMessage: result.errorMessage,
+				formData: result.formData,
 			};
 		},
 	);
