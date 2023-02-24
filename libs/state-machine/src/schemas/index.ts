@@ -3,12 +3,25 @@ import { z, ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
 
 type FormData = Record<string, string | number | boolean | undefined>;
 
+// TODO - move these definitions to a separate file
 export const formSchemas = {
 	createNewsletter: z
 		.object({
 			name: z.string(),
 		})
 		.describe('Input the name for the new newsletter'),
+
+	calculatedFields: z
+		.object({
+			identityName: z.string(),
+			brazeSubscribeEventNamePrefix: z.string(),
+			brazeNewsletterName: z.string(),
+			brazeSubscribeAttributeName: z.string(),
+			brazeSubscribeAttributeNameAlternate: z.string(),
+			campaignName: z.string(),
+			campaignCode: z.string(),
+		})
+		.describe('Edit the calculated fields if required'),
 
 	pillar: z
 		.object({
@@ -29,6 +42,9 @@ export const getFormSchema = (
 ): z.ZodObject<z.ZodRawShape> | undefined => {
 	if (stepId === 'createNewsletter') {
 		return formSchemas.createNewsletter;
+	}
+	if (stepId === 'calculatedFields') {
+		return formSchemas.calculatedFields;
 	}
 	if (stepId === 'pillar') {
 		return formSchemas.pillar;
