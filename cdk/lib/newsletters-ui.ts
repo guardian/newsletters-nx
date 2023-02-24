@@ -11,43 +11,24 @@ import { type App, Duration } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
-export interface NewslettersApiProps extends GuStackProps {
+export interface NewslettersUiProps extends GuStackProps {
 	app: string; // Force app to be a required prop
 	domainName: string;
 }
 
-export class NewslettersApi extends GuStack {
-	constructor(scope: App, id: string, props: NewslettersApiProps) {
+export class NewslettersUi extends GuStack {
+	constructor(scope: App, id: string, props: NewslettersUiProps) {
 		super(scope, id, props);
-
-		this.setUpS3Bucket(props);
 
 		this.setUpNodeEc2(props);
 	}
-
-	/**
-	 * Creates (empty) S3 bucket on initial build for the newsletters data to sit in.
-	 */
-	private setUpS3Bucket = (props: NewslettersApiProps) => {
-		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
-		const bucketSSMParameterName = `/${this.stage}/${this.stack}/${props.app}/s3BucketName`;
-		const bucketName = StringParameter.valueForStringParameter(
-			this,
-			bucketSSMParameterName,
-		);
-		new GuS3Bucket(this, 'DataBucket', {
-			bucketName,
-			app: props.app,
-			versioned: true,
-		});
-	};
 
 	/**
 	 * Generates user data for startup of EC2 instance
 	 * User data is a set of instructions to supply to the instance at launch
 	 * @see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 	 */
-	private getUserData = (app: NewslettersApiProps['app']) => {
+	private getUserData = (app: NewslettersUiProps['app']) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
@@ -62,7 +43,7 @@ export class NewslettersApi extends GuStack {
 		].join('\n');
 	};
 
-	private setUpNodeEc2 = (props: NewslettersApiProps) => {
+	private setUpNodeEc2 = (props: NewslettersUiProps) => {
 		const { app, domainName } = props;
 		/**
 		 *  Sets up Node app to be run in EC2
@@ -81,7 +62,7 @@ export class NewslettersApi extends GuStack {
 		 * Sets up CNAME record for domainName specified
 		 * @see https://en.wikipedia.org/wiki/CNAME_record
 		 */
-		new GuCname(this, 'NewslettersAPICname', {
+		new GuCname(this, 'NewslettersUiCname', {
 			app,
 			domainName,
 			ttl: Duration.hours(1),
