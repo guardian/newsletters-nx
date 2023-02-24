@@ -46,11 +46,18 @@ jobs:
         with:
           node-version: 18
 
-        # Build production-ready bundled file
-      - name: Bundle newsletters-api
+        # Install then build production-ready bundled files
+      - name: Install deps
         run: |
           npm ci
-          npm run bundle-api
+
+      - name: Bundle newsletters-api
+        run: |
+          npm run bundle:api
+
+      - name: Bundle newsletters-ui
+        run: |
+          npm run bundle:ui
 
         # Build Cloudformation definition from CDK
       - name: Build and synth CDK
@@ -61,7 +68,7 @@ jobs:
           npm run test
           npm run synth
 
-        # Upload artifacts (Cloudformation and bundled apps) for riff-raff deployment
+        # Upload artifacts for newsletters-api
       - uses: guardian/actions-riff-raff@v2
         with:
           app: newsletters-api
@@ -71,3 +78,14 @@ jobs:
               - cdk/cdk.out/NewslettersApi-CODE.template.json
             newsletters-api:
               - dist/apps/newsletters-api/index.cjs
+
+        # Upload artifacts for newsletters-ui
+      - uses: guardian/actions-riff-raff@v2
+        with:
+          app: newsletters-ui
+          configPath: riff-raff.yaml
+          contentDirectories: |
+            cloudformation:
+              - cdk/cdk.out/NewslettersUi-CODE.template.json
+            newsletters-ui:
+              - dist/apps/newsletters-ui
