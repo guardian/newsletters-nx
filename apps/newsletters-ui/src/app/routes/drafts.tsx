@@ -1,9 +1,9 @@
 import type { RouteObject } from 'react-router-dom';
-import { NewsletterDetailView } from '../components/NewsletterDetailView';
-import { NewsletterListView } from '../components/NewslettersListView';
+import { DraftDetailView } from '../components/DraftDetailView';
+import { DraftListView } from '../components/DraftListView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
-// import { detailLoader, listLoader } from './loaders';
+import { draftDetailLoader, draftListLoader } from './loaders';
 
 export const draftRoute: RouteObject = {
 	path: '/drafts',
@@ -12,13 +12,13 @@ export const draftRoute: RouteObject = {
 	children: [
 		{
 			path: '',
-			element: <p>list view</p>,
-			// loader: listLoader,
+			element: <DraftListView />,
+			loader: draftListLoader,
 		},
 		{
 			path: ':id',
-			element: <p>detail view</p>,
-			// loader: detailLoader,
+			element: <DraftDetailView />,
+			loader: draftDetailLoader,
 		},
 	],
 };

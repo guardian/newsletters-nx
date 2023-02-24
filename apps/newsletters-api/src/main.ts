@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
+import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import { registerNewsletterRoutes } from './app/routes/newsletters';
 
@@ -8,6 +9,7 @@ const app = Fastify();
 registerHealthRoute(app);
 registerNewsletterRoutes(app);
 registerCurrentStepRoute(app);
+registerDraftsRoutes(app)
 
 const start = async () => {
 	try {
