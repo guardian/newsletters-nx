@@ -4,17 +4,22 @@ import { defaultFieldStyle } from './styling';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
+/**
+ * Note - Material UI TextFields do not support the 'step' attribute.
+ * The prop will have no effect, but is retained so this implementation
+ * wors with the SchemaFieldProps interface.
+ */
 export const NumberInput: FunctionComponent<
 	FieldProps & {
 		value: number;
 		inputHandler: { (value: number): void };
 		max?: number;
 		min?: number;
-		step?: number; // NOT SUPPORTED
-		type?: 'number' | 'range'; // WILL NEED A SEPARATE COMPONENT USING Slider COMPONENT
+		/**Material UI TextFields do not support the 'step' attribute */
+		step?: number;
 	}
 > = (props) => {
-	const { type = 'number', max, min } = props;
+	const { max, min } = props;
 
 	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
 		const newValue = eventToNumber(event);
@@ -32,7 +37,7 @@ export const NumberInput: FunctionComponent<
 			<TextField
 				fullWidth
 				label={props.label}
-				type={type}
+				type={'number'}
 				value={props.value}
 				onInput={sendValue}
 				helperText={props.error}

@@ -10,12 +10,18 @@ import { defaultFieldStyle } from './styling';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
+/**
+ * Note - Material UI TextFields do not support the 'step' attribute.
+ * The prop will have no effect, but is retained so this implementation
+ * wors with the SchemaFieldProps interface.
+ */
 export const OptionalNumberInput: FunctionComponent<
 	FieldProps & {
 		value: number | undefined;
 		inputHandler: { (value: number | undefined): void };
 		max?: number;
 		min?: number;
+		/**Material UI TextFields do not support the 'step' attribute */
 		step?: number;
 	}
 > = (props) => {
