@@ -2,19 +2,21 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../executeModify';
 
 const markdownToDisplay = `
-# Modify Calculated Fields
+# Modify Ophan Campaign Values
 
-The following fields have been calculated from the Name that you entered on the previous step of the wizard.
+These are tracking fields used by Ophan.
+
+They have been calculated automatically from the Name that you entered on a previous step of the wizard, but you can change them if you need.
 
 `.trim();
 
-export const calculatedFieldLayout: WizardStepLayout = {
+export const ophanLayout: WizardStepLayout = {
 	markdownToDisplay,
 	buttons: {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'createNewsletter',
+			stepToMoveTo: 'braze',
 			executeStep: executeModify,
 		},
 		next: {
@@ -22,7 +24,7 @@ export const calculatedFieldLayout: WizardStepLayout = {
 			label: 'Next',
 			stepToMoveTo: 'pillar',
 			onBeforeStepChangeValidate: () => {
-				// TO DO - check that identityName does not already exist in other draft or actual newsletter
+				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
 				return undefined;
 			},
 			executeStep: executeModify,

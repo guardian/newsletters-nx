@@ -11,17 +11,27 @@ export const formSchemas = {
 		})
 		.describe('Input the name for the new newsletter'),
 
-	calculatedFields: z
+	identityName: z
 		.object({
 			identityName: z.string(),
+		})
+		.describe('Edit the identity name if required'),
+
+	braze: z
+		.object({
 			brazeSubscribeEventNamePrefix: z.string(),
 			brazeNewsletterName: z.string(),
 			brazeSubscribeAttributeName: z.string(),
 			brazeSubscribeAttributeNameAlternate: z.string(),
+		})
+		.describe('Edit the Braze values if required'),
+
+	ophan: z
+		.object({
 			campaignName: z.string(),
 			campaignCode: z.string(),
 		})
-		.describe('Edit the calculated fields if required'),
+		.describe('Edit the Ophan values if required'),
 
 	pillar: z
 		.object({
@@ -43,8 +53,14 @@ export const getFormSchema = (
 	if (stepId === 'createNewsletter') {
 		return formSchemas.createNewsletter;
 	}
-	if (stepId === 'calculatedFields') {
-		return formSchemas.calculatedFields;
+	if (stepId === 'identityName') {
+		return formSchemas.identityName;
+	}
+	if (stepId === 'braze') {
+		return formSchemas.braze;
+	}
+	if (stepId === 'ophan') {
+		return formSchemas.ophan;
 	}
 	if (stepId === 'pillar') {
 		return formSchemas.pillar;

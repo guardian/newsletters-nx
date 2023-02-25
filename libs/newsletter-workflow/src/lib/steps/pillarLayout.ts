@@ -24,7 +24,7 @@ export const pillarLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'calculatedFields',
+			stepToMoveTo: 'ophan',
 			executeStep: executeModify,
 		},
 		finish: {
