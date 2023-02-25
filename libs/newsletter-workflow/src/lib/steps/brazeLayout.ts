@@ -4,7 +4,7 @@ import { executeModify } from '../executeModify';
 const markdownToDisplay = `
 # Modify Braze Values
 
-These are tracking fields used by Braze.  TODO - MORE INFORMATION HERE
+These are tracking fields used by Braze.
 
 They have been calculated automatically from the Name that you entered on a previous step of the wizard, but you can change them if you need.
 
