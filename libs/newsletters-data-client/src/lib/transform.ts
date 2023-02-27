@@ -1,7 +1,7 @@
 import type { LegacyNewsletter } from './legacy-newsletter-type';
 import { isLegacyNewsletter } from './legacy-newsletter-type';
 import type { NewsletterData } from './newsletter-data-type';
-import { isLegacyNewsletterData } from './newsletter-data-type';
+import { isNewsletterData } from './newsletter-data-type';
 
 export const TRANSFORM_ERROR_MESSAGE = {
 	input: 'invalid input passed to transformDataToLegacyNewsletter',
@@ -52,7 +52,7 @@ const deriveLegacyNewsletter = (
 export const transformDataToLegacyNewsletter = (
 	newsletterData: NewsletterData,
 ): LegacyNewsletter => {
-	if (!isLegacyNewsletterData(newsletterData)) {
+	if (!isNewsletterData(newsletterData)) {
 		throw new Error(TRANSFORM_ERROR_MESSAGE.input);
 	}
 

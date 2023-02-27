@@ -41,8 +41,6 @@ export const newsletterDataSchema = z.object({
 /** NOT FINAL - this type a placeholder to test the data transformation structure */
 export type NewsletterData = z.infer<typeof newsletterDataSchema>;
 
-export function isLegacyNewsletterData(
-	subject: unknown,
-): subject is NewsletterData {
+export function isNewsletterData(subject: unknown): subject is NewsletterData {
 	return newsletterDataSchema.safeParse(subject).success;
 }
