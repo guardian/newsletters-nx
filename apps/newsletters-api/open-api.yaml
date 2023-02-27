@@ -19,7 +19,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Newsletter'
+                  $ref: '#/components/schemas/LegacyNewsletter'
 
   /v1/newsletters:
     get:
@@ -47,7 +47,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Newsletter'
+                      $ref: '#/components/schemas/LegacyNewsletter'
 
   /newsletters/{newsletterId}:
     get:
@@ -80,7 +80,7 @@ paths:
                     type: boolean
                     example: true
                   results:
-                    $ref: '#/components/schemas/Newsletter'
+                    $ref: '#/components/schemas/LegacyNewsletter'
 
   /v1/drafts:
     get:
@@ -145,7 +145,7 @@ paths:
 
 components:
   schemas:
-    Newsletter:
+    LegacyNewsletter:
       type: object
       required:
         - name
