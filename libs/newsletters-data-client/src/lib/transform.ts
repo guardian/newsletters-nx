@@ -5,7 +5,8 @@ import { isNewsletterData } from './newsletter-data-type';
 
 export const TRANSFORM_ERROR_MESSAGE = {
 	input: '[transformDataToLegacyNewsletter] invalid input',
-	output: '[transformDataToLegacyNewsletter] output is not LegacyNewsletter format',
+	output:
+		'[transformDataToLegacyNewsletter] output is not LegacyNewsletter format',
 	transform: '[transformDataToLegacyNewsletter] failed to transform data',
 } as const;
 
