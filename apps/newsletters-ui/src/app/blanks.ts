@@ -1,6 +1,6 @@
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 
-const BLANK_NEWSLETTER: Newsletter = {
+const BLANK_NEWSLETTER: LegacyNewsletter = {
 	identityName: '',
 	name: '',
 	cancelled: false,
@@ -33,4 +33,4 @@ const BLANK_NEWSLETTER: Newsletter = {
 	},
 };
 
-export const makeBlankNewsletter = (): Newsletter => ({ ...BLANK_NEWSLETTER });
+export const makeBlankNewsletter = (): LegacyNewsletter => ({ ...BLANK_NEWSLETTER });

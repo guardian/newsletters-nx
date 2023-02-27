@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import { brand, space } from '@guardian/source-foundations';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 
 interface Props {
-	newsletter: Newsletter;
+	newsletter: LegacyNewsletter;
 }
 
 const figureStyles = css`

@@ -4,14 +4,14 @@ import {
 	neutral,
 	space,
 } from '@guardian/source-foundations';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import type { SourcePalette } from '../util';
 import { Illustration } from './Illustration';
 import { NewsletterPropertyTable } from './NewsletterPropertyTable';
 
 interface Props {
-	newsletter: Newsletter;
+	newsletter: LegacyNewsletter;
 }
 
 const headingRowStyles = (palette: SourcePalette) => css`

@@ -1,5 +1,5 @@
 import { useLoaderData } from 'react-router-dom';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { NewslettersTable } from '../NewslettersTable';
 
 export const NewsletterListView = () => {
@@ -8,6 +8,6 @@ export const NewsletterListView = () => {
 		return <nav>NO LIST</nav>;
 	}
 
-	const newsLetters = list as Newsletter[];
+	const newsLetters = list as LegacyNewsletter[];
 	return <NewslettersTable newsletters={newsLetters} />;
 };

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { emailEmbedSchema } from './emailEmbedSchema';
-import { themeEnumSchema } from './newsletter-type';
+import { themeEnumSchema } from './legacy-newsletter-type';
 import { nonEmptyString } from './schema-helpers';
 
 /**
@@ -41,6 +41,6 @@ export const newsletterDataSchema = z.object({
 /** NOT FINAL - this type a placeholder to test the data transformation structure */
 export type NewsletterData = z.infer<typeof newsletterDataSchema>;
 
-export function isNewsletterData(subject: unknown): subject is NewsletterData {
+export function isLegacyNewsletterData(subject: unknown): subject is NewsletterData {
 	return newsletterDataSchema.safeParse(subject).success;
 }

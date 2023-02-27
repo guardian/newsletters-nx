@@ -1,7 +1,7 @@
+import type { LegacyNewsletter } from './legacy-newsletter-type';
+import { isLegacyNewsletter } from './legacy-newsletter-type';
 import type { NewsletterData } from './newsletter-data-type';
-import { isNewsletterData } from './newsletter-data-type';
-import type { Newsletter } from './newsletter-type';
-import { isNewsletter } from './newsletter-type';
+import { isLegacyNewsletterData } from './newsletter-data-type';
 
 export const TRANSFORM_ERROR_MESSAGE = {
 	input: 'invalid input passed to transformNewToOld',
@@ -25,9 +25,9 @@ const deriveBooleansFromStatus = (
  */
 const deriveNewsletter = (
 	newsletterData: NewsletterData,
-): Newsletter | undefined => {
+): LegacyNewsletter | undefined => {
 	try {
-		const merged: Newsletter & Partial<NewsletterData> = {
+		const merged: LegacyNewsletter & Partial<NewsletterData> = {
 			...newsletterData,
 			...deriveBooleansFromStatus(newsletterData.status),
 		};
@@ -51,8 +51,8 @@ const deriveNewsletter = (
  */
 export const transformDataToLegacyNewsletter = (
 	newsletterData: NewsletterData,
-): Newsletter => {
-	if (!isNewsletterData(newsletterData)) {
+): LegacyNewsletter => {
+	if (!isLegacyNewsletterData(newsletterData)) {
 		throw new Error(TRANSFORM_ERROR_MESSAGE.input);
 	}
 
@@ -61,7 +61,7 @@ export const transformDataToLegacyNewsletter = (
 		throw new Error(TRANSFORM_ERROR_MESSAGE.transform);
 	}
 
-	if (!isNewsletter(output)) {
+	if (!isLegacyNewsletter(output)) {
 		throw new Error(TRANSFORM_ERROR_MESSAGE.output);
 	}
 	return output;

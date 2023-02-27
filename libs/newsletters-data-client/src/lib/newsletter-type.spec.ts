@@ -1,30 +1,30 @@
 import { VALID_TECHSCAPE } from '../fixtures/newsletter-fixtures';
-import type { CancelledNewsletter, Newsletter } from './newsletter-type';
-import { isCancelledNewsletter, isNewsletter } from './newsletter-type';
+import type { LegacyCancelledNewsletter, LegacyNewsletter } from './legacy-newsletter-type';
+import { isLegacyCancelledNewsletter, isLegacyNewsletter } from './legacy-newsletter-type';
 
-describe('isNewsletter', () => {
+describe('isLegacyNewsletter', () => {
 	it('Will return true for a valid newsletter', () => {
-		expect(isNewsletter(VALID_TECHSCAPE)).toBe(true);
+		expect(isLegacyNewsletter(VALID_TECHSCAPE)).toBe(true);
 	});
 
 	it('Will return false for any falsy input or non-object', () => {
-		expect(isNewsletter(false)).toBe(false);
-		expect(isNewsletter(null)).toBe(false);
-		expect(isNewsletter(undefined)).toBe(false);
-		expect(isNewsletter(0)).toBe(false);
-		expect(isNewsletter(10)).toBe(false);
-		expect(isNewsletter('')).toBe(false);
-		expect(isNewsletter('unexpected string')).toBe(false);
+		expect(isLegacyNewsletter(false)).toBe(false);
+		expect(isLegacyNewsletter(null)).toBe(false);
+		expect(isLegacyNewsletter(undefined)).toBe(false);
+		expect(isLegacyNewsletter(0)).toBe(false);
+		expect(isLegacyNewsletter(10)).toBe(false);
+		expect(isLegacyNewsletter('')).toBe(false);
+		expect(isLegacyNewsletter('unexpected string')).toBe(false);
 	});
 
 	it('Will return false for non-matching object', () => {
-		expect(isNewsletter({})).toBe(false);
-		expect(isNewsletter({ id: 'foo' })).toBe(false);
-		expect(isNewsletter(new Error('Runtime problem'))).toBe(false);
+		expect(isLegacyNewsletter({})).toBe(false);
+		expect(isLegacyNewsletter({ id: 'foo' })).toBe(false);
+		expect(isLegacyNewsletter(new Error('Runtime problem'))).toBe(false);
 	});
 
 	it('Requires the identityName to be defined and not an empty string', () => {
-		const techscapeWithEmptyIdentityName: Newsletter = {
+		const techscapeWithEmptyIdentityName: LegacyNewsletter = {
 			...VALID_TECHSCAPE,
 			identityName: '',
 		};
@@ -32,12 +32,12 @@ describe('isNewsletter', () => {
 			...VALID_TECHSCAPE,
 			identityName: undefined,
 		};
-		expect(isNewsletter(techscapeWithEmptyIdentityName)).toBe(false);
-		expect(isNewsletter(techscapeWithNoIdentityName)).toBe(false);
+		expect(isLegacyNewsletter(techscapeWithEmptyIdentityName)).toBe(false);
+		expect(isLegacyNewsletter(techscapeWithNoIdentityName)).toBe(false);
 	});
 
 	it('Requires a desciption', () => {
-		const techscapeWithEmptyDescription: Newsletter = {
+		const techscapeWithEmptyDescription: LegacyNewsletter = {
 			...VALID_TECHSCAPE,
 			description: '',
 		};
@@ -45,20 +45,20 @@ describe('isNewsletter', () => {
 			...VALID_TECHSCAPE,
 			description: undefined,
 		};
-		expect(isNewsletter(techscapeWithEmptyDescription)).toBe(false);
-		expect(isNewsletter(techscapeWithNoDescription)).toBe(false);
+		expect(isLegacyNewsletter(techscapeWithEmptyDescription)).toBe(false);
+		expect(isLegacyNewsletter(techscapeWithNoDescription)).toBe(false);
 	});
 });
 
-describe('isCancelledNewsletter', () => {
+describe('isLegacyCancelledNewsletter', () => {
 	it('Only returns true if the newsletter is set to cancelled', () => {
 		const cancelledTechscape = { ...VALID_TECHSCAPE, cancelled: true };
-		expect(isCancelledNewsletter(VALID_TECHSCAPE)).toBe(false);
-		expect(isCancelledNewsletter(cancelledTechscape)).toBe(true);
+		expect(isLegacyCancelledNewsletter(VALID_TECHSCAPE)).toBe(false);
+		expect(isLegacyCancelledNewsletter(cancelledTechscape)).toBe(true);
 	});
 
 	it('allows the description to be missing', () => {
-		const techscapeWithEmptyDescription: CancelledNewsletter = {
+		const techscapeWithEmptyDescription: LegacyCancelledNewsletter = {
 			...VALID_TECHSCAPE,
 			description: '',
 			cancelled: true,
@@ -68,7 +68,7 @@ describe('isCancelledNewsletter', () => {
 			description: undefined,
 			cancelled: true,
 		};
-		expect(isCancelledNewsletter(techscapeWithEmptyDescription)).toBe(true);
-		expect(isCancelledNewsletter(techscapeWithNoDescription)).toBe(true);
+		expect(isLegacyCancelledNewsletter(techscapeWithEmptyDescription)).toBe(true);
+		expect(isLegacyCancelledNewsletter(techscapeWithNoDescription)).toBe(true);
 	});
 });

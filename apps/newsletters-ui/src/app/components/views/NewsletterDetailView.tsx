@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from 'react-router-dom';
-import { isNewsletter } from '@newsletters-nx/newsletters-data-client';
+import { isLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { NewsletterDetail } from '../NewsletterDetails';
 
 export const NewsletterDetailView = () => {
@@ -8,7 +8,7 @@ export const NewsletterDetailView = () => {
 		return <article>NOT FOUND!</article>;
 	}
 
-	if (!isNewsletter(matchedItem)) {
+	if (!isLegacyNewsletter(matchedItem)) {
 		return <article>NOT VALID!</article>;
 	}
 
