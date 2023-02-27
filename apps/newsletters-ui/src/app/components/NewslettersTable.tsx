@@ -14,14 +14,14 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 	const columns = useMemo<Column[]>(
 		() => [
 			{
-				Header: 'LegacyNewsletter ID',
+				Header: 'Newsletter ID',
 				accessor: 'identityName',
 				Cell: ({ cell: { value } }) => (
 					<Link to={`/newsletters/${value as string}`}>{value}</Link>
 				),
 			},
 			{
-				Header: 'LegacyNewsletter Name',
+				Header: 'Newsletter Name',
 				accessor: 'name',
 			},
 			{
