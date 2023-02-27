@@ -1,6 +1,6 @@
 import { useLoaderData } from 'react-router';
 import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
-import { NewsletterForm } from '../NewsletterForm';
+import { LegacyNewsletterForm } from '../LegacyNewsletterForm';
 
 export const NewsletterCreateView = () => {
 	const list = useLoaderData();
@@ -12,7 +12,7 @@ export const NewsletterCreateView = () => {
 
 	return (
 		<main>
-			<NewsletterForm existingIds={existingIds} />
+			<LegacyNewsletterForm existingIds={existingIds} />
 		</main>
 	);
 };

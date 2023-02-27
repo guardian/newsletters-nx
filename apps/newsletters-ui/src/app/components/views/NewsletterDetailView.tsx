@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { isLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
-import { NewsletterDetail } from '../NewsletterDetails';
+import { LegacyNewsletterDetail } from '../LegacyNewsletterDetails';
 
 export const NewsletterDetailView = () => {
 	const matchedItem = useLoaderData();
@@ -14,7 +14,7 @@ export const NewsletterDetailView = () => {
 
 	return (
 		<>
-			<NewsletterDetail newsletter={matchedItem} />
+			<LegacyNewsletterDetail newsletter={matchedItem} />
 			<Link to="/newsletters/">Back to List</Link>
 		</>
 	);

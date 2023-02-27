@@ -10,7 +10,7 @@ import {
 import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { makeBlankNewsletter } from '../blanks';
 import { ArrayInput } from './ArrayInput';
-import { NewsletterDetail } from './NewsletterDetails';
+import { LegacyNewsletterDetail } from './LegacyNewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
 
@@ -18,7 +18,7 @@ interface Props {
 	existingIds: string[];
 }
 
-export const NewsletterForm = ({ existingIds }: Props) => {
+export const LegacyNewsletterForm = ({ existingIds }: Props) => {
 	const [newsletter, setNewsletter] = useState<LegacyNewsletter>(
 		makeBlankNewsletter(),
 	);
@@ -203,7 +203,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 					Create LegacyNewsletter
 				</button>
 			</div>
-			<NewsletterDetail newsletter={newsletter} />
+			<LegacyNewsletterDetail newsletter={newsletter} />
 		</article>
 	);
 };

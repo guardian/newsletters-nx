@@ -8,7 +8,7 @@ import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import type { SourcePalette } from '../util';
 import { Illustration } from './Illustration';
-import { NewsletterPropertyTable } from './NewsletterPropertyTable';
+import { LegacyNewsletterPropertyTable } from './LegacyNewsletterPropertyTable';
 
 interface Props {
 	newsletter: LegacyNewsletter;
@@ -36,7 +36,7 @@ const headingRowStyles = (palette: SourcePalette) => css`
 	}
 `;
 
-export const NewsletterDetail = ({ newsletter }: Props) => {
+export const LegacyNewsletterDetail = ({ newsletter }: Props) => {
 	const { name, theme, cancelled, paused, restricted } = newsletter;
 
 	const palette = getPalette(theme);
@@ -52,7 +52,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 			</div>
 			<Illustration newsletter={newsletter} />
 
-			<NewsletterPropertyTable
+			<LegacyNewsletterPropertyTable
 				newsletter={newsletter}
 				caption="Reference Properties"
 				fields={[
@@ -61,7 +61,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 					{ property: 'listIdV1' },
 				]}
 			/>
-			<NewsletterPropertyTable
+			<LegacyNewsletterPropertyTable
 				newsletter={newsletter}
 				caption="Status Flags and Settings"
 				fields={[
@@ -71,7 +71,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 					{ property: 'restricted' },
 				]}
 			/>
-			<NewsletterPropertyTable
+			<LegacyNewsletterPropertyTable
 				newsletter={newsletter}
 				caption="Display and Information Properties"
 				fields={[
@@ -85,7 +85,7 @@ export const NewsletterDetail = ({ newsletter }: Props) => {
 					{ property: 'exampleUrl', displayValueAs: 'guardianLink' },
 				]}
 			/>
-			<NewsletterPropertyTable
+			<LegacyNewsletterPropertyTable
 				newsletter={newsletter}
 				caption="Tracking Values"
 				fields={[

@@ -48,7 +48,7 @@ const tableStyles = (palette: SourcePalette) => css`
 	}
 `;
 
-export const NewsletterPropertyTable = ({
+export const LegacyNewsletterPropertyTable = ({
 	newsletter,
 	fields,
 	caption,
