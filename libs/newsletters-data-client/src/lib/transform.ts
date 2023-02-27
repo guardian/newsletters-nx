@@ -4,9 +4,9 @@ import type { NewsletterData } from './newsletter-data-type';
 import { isLegacyNewsletterData } from './newsletter-data-type';
 
 export const TRANSFORM_ERROR_MESSAGE = {
-	input: 'invalid input passed to transformDataToLegacyNewsletter',
-	output: 'invalid output produced by transformDataToLegacyNewsletter',
-	transform: 'deriveLegacyNewsletter failed to derive a LegacyNewsletter',
+	input: '[transformDataToLegacyNewsletter] invalid input',
+	output: '[transformDataToLegacyNewsletter] output is not LegacyNewsletter format',
+	transform: '[transformDataToLegacyNewsletter] failed to transform data',
 } as const;
 
 const deriveBooleansFromStatus = (
