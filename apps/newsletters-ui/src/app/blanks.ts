@@ -33,4 +33,6 @@ const BLANK_NEWSLETTER: LegacyNewsletter = {
 	},
 };
 
-export const makeBlankNewsletter = (): LegacyNewsletter => ({ ...BLANK_NEWSLETTER });
+export const makeBlankNewsletter = (): LegacyNewsletter => ({
+	...BLANK_NEWSLETTER,
+});

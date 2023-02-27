@@ -1,6 +1,12 @@
 import { VALID_TECHSCAPE } from '../fixtures/newsletter-fixtures';
-import type { LegacyCancelledNewsletter, LegacyNewsletter } from './legacy-newsletter-type';
-import { isLegacyCancelledNewsletter, isLegacyNewsletter } from './legacy-newsletter-type';
+import type {
+	LegacyCancelledNewsletter,
+	LegacyNewsletter,
+} from './legacy-newsletter-type';
+import {
+	isLegacyCancelledNewsletter,
+	isLegacyNewsletter,
+} from './legacy-newsletter-type';
 
 describe('isLegacyNewsletter', () => {
 	it('Will return true for a valid newsletter', () => {
@@ -68,7 +74,9 @@ describe('isLegacyCancelledNewsletter', () => {
 			description: undefined,
 			cancelled: true,
 		};
-		expect(isLegacyCancelledNewsletter(techscapeWithEmptyDescription)).toBe(true);
+		expect(isLegacyCancelledNewsletter(techscapeWithEmptyDescription)).toBe(
+			true,
+		);
 		expect(isLegacyCancelledNewsletter(techscapeWithNoDescription)).toBe(true);
 	});
 });

@@ -16,8 +16,11 @@ async function fetchApiData<T>(path: string): Promise<T | undefined> {
 	}
 }
 
-export const listLoader: LoaderFunction = async (): Promise<LegacyNewsletter[]> => {
-	const list = (await fetchApiData<LegacyNewsletter[]>(`api/v1/newsletters`)) ?? [];
+export const listLoader: LoaderFunction = async (): Promise<
+	LegacyNewsletter[]
+> => {
+	const list =
+		(await fetchApiData<LegacyNewsletter[]>(`api/v1/newsletters`)) ?? [];
 	return list;
 };
 

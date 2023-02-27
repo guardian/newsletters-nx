@@ -106,8 +106,8 @@ export const legacyNewsletterSchema = baseLegacyNewsletterSchema.extend({
 	}),
 });
 
-export const legacyNewsletterSchemaAllowingEmptyStrings = baseLegacyNewsletterSchema.extend(
-	{
+export const legacyNewsletterSchemaAllowingEmptyStrings =
+	baseLegacyNewsletterSchema.extend({
 		name: z.string(),
 		identityName: z.string(),
 		group: z.string(),
@@ -119,23 +119,27 @@ export const legacyNewsletterSchemaAllowingEmptyStrings = baseLegacyNewsletterSc
 		emailEmbed: emailEmbedSchema.extend({
 			description: z.string(),
 		}),
-	},
-);
+	});
 
 export type LegacyNewsletter = z.infer<typeof legacyNewsletterSchema>;
 
-export function isLegacyNewsletter(subject: unknown): subject is LegacyNewsletter {
+export function isLegacyNewsletter(
+	subject: unknown,
+): subject is LegacyNewsletter {
 	return (
 		legacyNewsletterSchema.safeParse(subject).success ||
 		cancelledLegacyNewsletterSchema.safeParse(subject).success
 	);
 }
 
-export const cancelledLegacyNewsletterSchema = baseLegacyNewsletterSchema.extend({
-	cancelled: z.literal(true),
-});
+export const cancelledLegacyNewsletterSchema =
+	baseLegacyNewsletterSchema.extend({
+		cancelled: z.literal(true),
+	});
 
-export type LegacyCancelledNewsletter = z.infer<typeof cancelledLegacyNewsletterSchema>;
+export type LegacyCancelledNewsletter = z.infer<
+	typeof cancelledLegacyNewsletterSchema
+>;
 
 export function isLegacyCancelledNewsletter(
 	subject: unknown,
@@ -143,6 +147,8 @@ export function isLegacyCancelledNewsletter(
 	return cancelledLegacyNewsletterSchema.safeParse(subject).success;
 }
 
-export function isPropertyOptionalOnLegacy(property: keyof LegacyNewsletter): boolean {
+export function isPropertyOptionalOnLegacy(
+	property: keyof LegacyNewsletter,
+): boolean {
 	return legacyNewsletterSchema.shape[property].isOptional();
 }
