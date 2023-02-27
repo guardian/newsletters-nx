@@ -4,9 +4,9 @@ import type { NewsletterData } from './newsletter-data-type';
 import { isLegacyNewsletterData } from './newsletter-data-type';
 
 export const TRANSFORM_ERROR_MESSAGE = {
-	input: 'invalid input passed to transformNewToOld',
-	output: 'invalid output produced by transformNewToOld',
-	transform: 'transformNewToOld failed to derive',
+	input: 'invalid input passed to transformDataToLegacyNewsletter',
+	output: 'invalid output produced by transformDataToLegacyNewsletter',
+	transform: 'deriveLegacyNewsletter failed to derive a LegacyNewsletter',
 } as const;
 
 const deriveBooleansFromStatus = (
@@ -23,7 +23,7 @@ const deriveBooleansFromStatus = (
  * block transforming to as the final data model might require
  * casting looking up external references.
  */
-const deriveNewsletter = (
+const deriveLegacyNewsletter = (
 	newsletterData: NewsletterData,
 ): LegacyNewsletter | undefined => {
 	try {
@@ -32,7 +32,7 @@ const deriveNewsletter = (
 			...deriveBooleansFromStatus(newsletterData.status),
 		};
 
-		// Destructure out fields not present on Newsletter before returning the rest
+		// Destructure out fields not present on LegacyNewsletter before returning the rest
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Destructure
 		const { creationTimeStamp, status, ...rest } = merged;
 		return rest;
@@ -43,7 +43,7 @@ const deriveNewsletter = (
 };
 
 /**
- * Attempts to transform a NewsletterData to Newsletter.
+ * Attempts to transform a NewsletterData to LegacyNewsletter.
  *
  * Throws an error if the input or output fail validation.
  *
@@ -56,7 +56,7 @@ export const transformDataToLegacyNewsletter = (
 		throw new Error(TRANSFORM_ERROR_MESSAGE.input);
 	}
 
-	const output = deriveNewsletter(newsletterData);
+	const output = deriveLegacyNewsletter(newsletterData);
 	if (!output) {
 		throw new Error(TRANSFORM_ERROR_MESSAGE.transform);
 	}
