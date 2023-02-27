@@ -3,11 +3,13 @@ import type {
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../executeModify';
+import { getStringValuesFromRecord } from '../getValuesFromRecord';
+import { regExPatterns } from '../regExPatterns';
 
-const markdownToDisplay = `
-# Select a Pillar
+const markdownTemplate = `
+# Select a Pillar for {{name}}
 
-Now we choose the pillar that the newletter will appear under.
+Now we choose the pillar that **{{name}}** will appear under.
 
 For example:
 news, opinion, sport, culture, lifestyle
@@ -18,8 +20,20 @@ news, opinion, sport, culture, lifestyle
 
 `.trim();
 
+const staticMarkdown = markdownTemplate.replace(
+	regExPatterns.name,
+	'the newsletter',
+);
+
 export const pillarLayout: WizardStepLayout = {
-	markdownToDisplay,
+	staticMarkdown,
+	dynamicMarkdown(requestData, responseData) {
+		if (!responseData) {
+			return staticMarkdown;
+		}
+		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
+		return markdownTemplate.replace(regExPatterns.name, name);
+	},
 	buttons: {
 		back: {
 			buttonType: 'RED',
