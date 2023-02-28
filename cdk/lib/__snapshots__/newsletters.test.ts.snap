@@ -1,10 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`The NewslettersApi stack matches the snapshot 1`] = `
+exports[`The Newsletters stack matches the snapshot 1`] = `
 {
   "Metadata": {
     "gu:cdk:constructs": [
-      "GuS3Bucket",
       "GuDistributionBucketParameter",
       "GuVpcParameter",
       "GuSubnetListParameter",
@@ -24,25 +23,30 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
       "GuApplicationLoadBalancer",
       "GuApplicationTargetGroup",
       "GuHttpsApplicationListener",
+      "GuStringParameter",
       "GuCname",
     ],
     "gu:cdk:version": "TEST",
   },
   "Outputs": {
-    "LoadBalancerNewslettersapiDnsName": {
-      "Description": "DNS entry for LoadBalancerNewslettersapi",
+    "LoadBalancerNewslettersDnsName": {
+      "Description": "DNS entry for LoadBalancerNewsletters",
       "Value": {
         "Fn::GetAtt": [
-          "LoadBalancerNewslettersapi605B1E8A",
+          "LoadBalancerNewsletters7869FC55",
           "DNSName",
         ],
       },
     },
   },
   "Parameters": {
-    "AMINewslettersapi": {
-      "Description": "Amazon Machine Image ID for the app newsletters-api. Use this in conjunction with AMIgo to keep AMIs up to date.",
+    "AMINewsletters": {
+      "Description": "Amazon Machine Image ID for the app newsletters. Use this in conjunction with AMIgo to keep AMIs up to date.",
       "Type": "AWS::EC2::Image::Id",
+    },
+    "ClientId": {
+      "Description": "Google OAuth client ID",
+      "Type": "String",
     },
     "DistributionBucketName": {
       "Default": "/account/services/artifact.bucket",
@@ -54,33 +58,29 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
       "Description": "SSM parameter containing the Name (not ARN) on the kinesis stream",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
-    "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/TEST/newsletters/newsletters-api/s3BucketName",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
     "VpcId": {
       "Default": "/account/vpc/primary/id",
       "Description": "Virtual Private Cloud to run EC2 instances within. Should NOT be the account default VPC.",
       "Type": "AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>",
     },
-    "newslettersapiPrivateSubnets": {
+    "newslettersPrivateSubnets": {
       "Default": "/account/vpc/primary/subnets/private",
       "Description": "A list of private subnets",
       "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
     },
-    "newslettersapiPublicSubnets": {
+    "newslettersPublicSubnets": {
       "Default": "/account/vpc/primary/subnets/public",
       "Description": "A list of public subnets",
       "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
     },
   },
   "Resources": {
-    "AutoScalingGroupNewslettersapiASG06292ACA": {
+    "AutoScalingGroupNewslettersASG15647A78": {
       "Properties": {
         "HealthCheckGracePeriod": 120,
         "HealthCheckType": "ELB",
         "LaunchConfigurationName": {
-          "Ref": "AutoScalingGroupNewslettersapiLaunchConfig6EF45E9F",
+          "Ref": "AutoScalingGroupNewslettersLaunchConfigE2413199",
         },
         "MaxSize": "2",
         "MinSize": "1",
@@ -88,7 +88,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
           {
             "Key": "App",
             "PropagateAtLaunch": true,
-            "Value": "newsletters-api",
+            "Value": "newsletters",
           },
           {
             "Key": "gu:cdk:version",
@@ -110,7 +110,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
           {
             "Key": "Name",
             "PropagateAtLaunch": true,
-            "Value": "NewslettersApi-TEST/AutoScalingGroupNewslettersapi",
+            "Value": "Newsletters-TEST/AutoScalingGroupNewsletters",
           },
           {
             "Key": "Stack",
@@ -125,35 +125,35 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
         ],
         "TargetGroupARNs": [
           {
-            "Ref": "TargetGroupNewslettersapiDF74F995",
+            "Ref": "TargetGroupNewsletters7256B07E",
           },
         ],
         "VPCZoneIdentifier": {
-          "Ref": "newslettersapiPrivateSubnets",
+          "Ref": "newslettersPrivateSubnets",
         },
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
     },
-    "AutoScalingGroupNewslettersapiInstanceProfile6DBAC8ED": {
+    "AutoScalingGroupNewslettersInstanceProfileF68637F3": {
       "Properties": {
         "Roles": [
           {
-            "Ref": "InstanceRoleNewslettersapi01755604",
+            "Ref": "InstanceRoleNewsletters073D61C6",
           },
         ],
       },
       "Type": "AWS::IAM::InstanceProfile",
     },
-    "AutoScalingGroupNewslettersapiLaunchConfig6EF45E9F": {
+    "AutoScalingGroupNewslettersLaunchConfigE2413199": {
       "DependsOn": [
-        "InstanceRoleNewslettersapi01755604",
+        "InstanceRoleNewsletters073D61C6",
       ],
       "Properties": {
         "IamInstanceProfile": {
-          "Ref": "AutoScalingGroupNewslettersapiInstanceProfile6DBAC8ED",
+          "Ref": "AutoScalingGroupNewslettersInstanceProfileF68637F3",
         },
         "ImageId": {
-          "Ref": "AMINewslettersapi",
+          "Ref": "AMINewsletters",
         },
         "InstanceType": "t4g.small",
         "MetadataOptions": {
@@ -162,7 +162,7 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
         "SecurityGroups": [
           {
             "Fn::GetAtt": [
-              "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
+              "GuHttpsEgressSecurityGroupNewsletters0D4F41FF",
               "GroupId",
             ],
           },
@@ -185,9 +185,9 @@ aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-api/index.cjs /tmp
-chown ubuntu /tmp/index.cjs
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
+                "/newsletters/TEST/newsletters /tmp/app
+chown -R ubuntu /tmp/app
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters /app/tmp/index.cjs'",
               ],
             ],
           },
@@ -195,14 +195,14 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
-    "CertificateNewslettersapi7A81CAC3": {
+    "CertificateNewsletters752D28AD": {
       "DeletionPolicy": "Retain",
       "Properties": {
-        "DomainName": "newsletters-api.test.dev-gutools.co.uk",
+        "DomainName": "newsletters.test.dev-gutools.co.uk",
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-api",
+            "Value": "newsletters",
           },
           {
             "Key": "gu:cdk:version",
@@ -214,7 +214,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           },
           {
             "Key": "Name",
-            "Value": "NewslettersApi-TEST/CertificateNewslettersapi",
+            "Value": "Newsletters-TEST/CertificateNewsletters",
           },
           {
             "Key": "Stack",
@@ -228,47 +228,6 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "ValidationMethod": "DNS",
       },
       "Type": "AWS::CertificateManager::Certificate",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "DataBucketNewslettersapi96EED09B": {
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "BucketName": {
-          "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
-        },
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
-        },
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "newsletters-api",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/newsletters-nx",
-          },
-          {
-            "Key": "Stack",
-            "Value": "newsletters",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "VersioningConfiguration": {
-          "Status": "Enabled",
-        },
-      },
-      "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
     "DescribeEC2PolicyFF5F9295": {
@@ -291,13 +250,13 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "PolicyName": "describe-ec2-policy",
         "Roles": [
           {
-            "Ref": "InstanceRoleNewslettersapi01755604",
+            "Ref": "InstanceRoleNewsletters073D61C6",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "GetDistributablePolicyNewslettersapi1B9C4AAD": {
+    "GetDistributablePolicyNewslettersDC325273": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -312,7 +271,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
                     {
                       "Ref": "DistributionBucketName",
                     },
-                    "/newsletters/TEST/newsletters-api/*",
+                    "/newsletters/TEST/newsletters/*",
                   ],
                 ],
               },
@@ -320,16 +279,16 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "GetDistributablePolicyNewslettersapi1B9C4AAD",
+        "PolicyName": "GetDistributablePolicyNewslettersDC325273",
         "Roles": [
           {
-            "Ref": "InstanceRoleNewslettersapi01755604",
+            "Ref": "InstanceRoleNewsletters073D61C6",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2": {
+    "GuHttpsEgressSecurityGroupNewsletters0D4F41FF": {
       "Properties": {
         "GroupDescription": "Allow all outbound HTTPS traffic",
         "SecurityGroupEgress": [
@@ -344,7 +303,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-api",
+            "Value": "newsletters",
           },
           {
             "Key": "gu:cdk:version",
@@ -369,20 +328,20 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "GuHttpsEgressSecurityGroupNewslettersapifromNewslettersApiTESTLoadBalancerNewslettersapiSecurityGroupA1D81FBE3000D6025190": {
+    "GuHttpsEgressSecurityGroupNewslettersfromNewslettersTESTLoadBalancerNewslettersSecurityGroup79A079AA300040353A3C": {
       "Properties": {
         "Description": "Load balancer to target",
         "FromPort": 3000,
         "GroupId": {
           "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
+            "GuHttpsEgressSecurityGroupNewsletters0D4F41FF",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": {
           "Fn::GetAtt": [
-            "LoadBalancerNewslettersapiSecurityGroup874628D3",
+            "LoadBalancerNewslettersSecurityGroup9C95445B",
             "GroupId",
           ],
         },
@@ -422,13 +381,13 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "PolicyName": "GuLogShippingPolicy981BFE5A",
         "Roles": [
           {
-            "Ref": "InstanceRoleNewslettersapi01755604",
+            "Ref": "InstanceRoleNewsletters073D61C6",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "InstanceRoleNewslettersapi01755604": {
+    "InstanceRoleNewsletters073D61C6": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -460,7 +419,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-api",
+            "Value": "newsletters",
           },
           {
             "Key": "gu:cdk:version",
@@ -482,32 +441,52 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
       },
       "Type": "AWS::IAM::Role",
     },
-    "ListenerNewslettersapi696961C0": {
+    "ListenerNewsletters17AACCE9": {
       "Properties": {
         "Certificates": [
           {
             "CertificateArn": {
-              "Ref": "CertificateNewslettersapi7A81CAC3",
+              "Ref": "CertificateNewsletters752D28AD",
             },
           },
         ],
         "DefaultActions": [
           {
+            "AuthenticateOidcConfig": {
+              "AuthenticationRequestExtraParams": {
+                "hd": "guardian.co.uk",
+              },
+              "AuthorizationEndpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+              "ClientId": {
+                "Ref": "ClientId",
+              },
+              "ClientSecret": "{{resolve:secretsmanager:/TEST/deploy/newsletters/clientSecret:SecretString:::}}",
+              "Issuer": "https://accounts.google.com",
+              "OnUnauthenticatedRequest": "authenticate",
+              "Scope": "openid",
+              "TokenEndpoint": "https://oauth2.googleapis.com/token",
+              "UserInfoEndpoint": "https://openidconnect.googleapis.com/v1/userinfo",
+            },
+            "Order": 1,
+            "Type": "authenticate-oidc",
+          },
+          {
+            "Order": 2,
             "TargetGroupArn": {
-              "Ref": "TargetGroupNewslettersapiDF74F995",
+              "Ref": "TargetGroupNewsletters7256B07E",
             },
             "Type": "forward",
           },
         ],
         "LoadBalancerArn": {
-          "Ref": "LoadBalancerNewslettersapi605B1E8A",
+          "Ref": "LoadBalancerNewsletters7869FC55",
         },
         "Port": 443,
         "Protocol": "HTTPS",
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "LoadBalancerNewslettersapi605B1E8A": {
+    "LoadBalancerNewsletters7869FC55": {
       "Properties": {
         "LoadBalancerAttributes": [
           {
@@ -519,18 +498,18 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "SecurityGroups": [
           {
             "Fn::GetAtt": [
-              "LoadBalancerNewslettersapiSecurityGroup874628D3",
+              "LoadBalancerNewslettersSecurityGroup9C95445B",
               "GroupId",
             ],
           },
         ],
         "Subnets": {
-          "Ref": "newslettersapiPublicSubnets",
+          "Ref": "newslettersPublicSubnets",
         },
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-api",
+            "Value": "newsletters",
           },
           {
             "Key": "gu:cdk:version",
@@ -553,9 +532,9 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
-    "LoadBalancerNewslettersapiSecurityGroup874628D3": {
+    "LoadBalancerNewslettersSecurityGroup9C95445B": {
       "Properties": {
-        "GroupDescription": "Automatically created Security Group for ELB NewslettersApiTESTLoadBalancerNewslettersapi6FF7F70E",
+        "GroupDescription": "Automatically created Security Group for ELB NewslettersTESTLoadBalancerNewsletters6CAE8321",
         "SecurityGroupIngress": [
           {
             "CidrIp": "0.0.0.0/0",
@@ -568,7 +547,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-api",
+            "Value": "newsletters",
           },
           {
             "Key": "gu:cdk:version",
@@ -593,19 +572,19 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "LoadBalancerNewslettersapiSecurityGrouptoNewslettersApiTESTGuHttpsEgressSecurityGroupNewslettersapi913BB4F130007C71A78F": {
+    "LoadBalancerNewslettersSecurityGrouptoNewslettersTESTGuHttpsEgressSecurityGroupNewslettersF696E9FB300031CB4500": {
       "Properties": {
         "Description": "Load balancer to target",
         "DestinationSecurityGroupId": {
           "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
+            "GuHttpsEgressSecurityGroupNewsletters0D4F41FF",
             "GroupId",
           ],
         },
         "FromPort": 3000,
         "GroupId": {
           "Fn::GetAtt": [
-            "LoadBalancerNewslettersapiSecurityGroup874628D3",
+            "LoadBalancerNewslettersSecurityGroup9C95445B",
             "GroupId",
           ],
         },
@@ -614,14 +593,14 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "NewslettersAPICname": {
+    "NewslettersCname": {
       "Properties": {
-        "Name": "newsletters-api.test.dev-gutools.co.uk",
+        "Name": "newsletters.test.dev-gutools.co.uk",
         "RecordType": "CNAME",
         "ResourceRecords": [
           {
             "Fn::GetAtt": [
-              "LoadBalancerNewslettersapi605B1E8A",
+              "LoadBalancerNewsletters7869FC55",
               "DNSName",
             ],
           },
@@ -631,7 +610,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
       },
       "Type": "Guardian::DNS::RecordSet",
     },
-    "ParameterStoreReadNewslettersapi37E83AD5": {
+    "ParameterStoreReadNewslettersD7903C98": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -646,7 +625,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
                     {
                       "Ref": "AWS::AccountId",
                     },
-                    ":parameter/TEST/newsletters/newsletters-api",
+                    ":parameter/TEST/newsletters/newsletters",
                   ],
                 ],
               },
@@ -665,7 +644,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
                     {
                       "Ref": "AWS::AccountId",
                     },
-                    ":parameter/TEST/newsletters/newsletters-api/*",
+                    ":parameter/TEST/newsletters/newsletters/*",
                   ],
                 ],
               },
@@ -676,13 +655,13 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "PolicyName": "parameter-store-read-policy",
         "Roles": [
           {
-            "Ref": "InstanceRoleNewslettersapi01755604",
+            "Ref": "InstanceRoleNewsletters073D61C6",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "TargetGroupNewslettersapiDF74F995": {
+    "TargetGroupNewsletters7256B07E": {
       "Properties": {
         "HealthCheckIntervalSeconds": 10,
         "HealthCheckPath": "/healthcheck",
@@ -694,7 +673,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/index.cjs'",
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-api",
+            "Value": "newsletters",
           },
           {
             "Key": "gu:cdk:version",
