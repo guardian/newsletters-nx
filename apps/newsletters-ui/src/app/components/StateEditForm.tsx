@@ -1,7 +1,9 @@
+import { Paper } from '@mui/material';
 import type { z } from 'zod';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
+import { defaultFormStyle } from './SchemaForm/styling';
 
 interface Props {
 	formSchema: z.ZodObject<z.ZodRawShape>;
@@ -21,7 +23,7 @@ export const StateEditForm = ({ formSchema, formData, setFormData }: Props) => {
 	};
 
 	return (
-		<fieldset>
+		<Paper css={defaultFormStyle} elevation={3}>
 			<legend>{formSchema.description}</legend>
 			<SchemaForm
 				schema={formSchema}
@@ -29,6 +31,6 @@ export const StateEditForm = ({ formSchema, formData, setFormData }: Props) => {
 				validationWarnings={{}}
 				changeValue={changeFormData}
 			/>
-		</fieldset>
+		</Paper>
 	);
 };
