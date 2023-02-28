@@ -14,7 +14,7 @@ beforeEach(() => {
 
 const mockWizardLayout: WizardLayout = {
 	step1: {
-		markdownToDisplay: 'Step 1',
+		staticMarkdown: 'Step 1',
 		buttons: {
 			next: {
 				buttonType: 'RED',
@@ -35,7 +35,7 @@ const mockWizardLayout: WizardLayout = {
 		},
 	},
 	step2: {
-		markdownToDisplay: 'Step 2',
+		staticMarkdown: 'Step 2',
 		buttons: {
 			prev: {
 				buttonType: 'RED',
@@ -56,7 +56,7 @@ const mockWizardLayout: WizardLayout = {
 		},
 	},
 	exit: {
-		markdownToDisplay: 'Exit',
+		staticMarkdown: 'Exit',
 		buttons: {},
 	},
 };

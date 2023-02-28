@@ -16,7 +16,7 @@ This will appear on the sign up page e.g.
 `.trim();
 
 export const descriptionLayout: WizardStepLayout = {
-	markdownToDisplay,
+	staticMarkdown: markdownToDisplay,
 	buttons: {
 		back: {
 			buttonType: 'RED',

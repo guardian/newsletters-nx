@@ -19,6 +19,7 @@ const navLinks: NavLink[] = [
 	{ path: '/', label: 'home' },
 	{ path: '/api', label: 'api test page' },
 	{ path: '/newsletters/', label: 'View Current Newsletters' },
+	{ path: '/drafts/', label: 'View draft Newsletters' },
 	{ path: '/test-forms/', label: 'test forms' },
 	{ path: '/wizardtest/', label: 'wizard test' },
 ];
@@ -32,6 +33,7 @@ const navStyle = css`
 		${textSansObjectStyles.medium({ fontWeight: 'light' })};
 		min-width: 200px;
 		margin-right: ${space[2]}px;
+		margin-bottom: ${space[2]}px;
 		padding: ${space[1]}px;
 		background-color: ${neutral[97]};
 		color: ${neutral[7]};
