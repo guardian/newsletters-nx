@@ -50,26 +50,10 @@ export const formSchemas = {
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
-	if (stepId === 'createNewsletter') {
-		return formSchemas.createNewsletter;
-	}
-	if (stepId === 'identityName') {
-		return formSchemas.identityName;
-	}
-	if (stepId === 'braze') {
-		return formSchemas.braze;
-	}
-	if (stepId === 'ophan') {
-		return formSchemas.ophan;
-	}
-	if (stepId === 'pillar') {
-		return formSchemas.pillar;
-	}
-	if (stepId === 'description') {
-		return formSchemas.description;
-	}
-
-	return undefined;
+	const matchingEntry = Object.entries(formSchemas).find(
+		([key]) => key === stepId,
+	);
+	return matchingEntry ? matchingEntry[1] : undefined;
 };
 
 export const getFormBlankData = (stepId: string): FormData | undefined => {
