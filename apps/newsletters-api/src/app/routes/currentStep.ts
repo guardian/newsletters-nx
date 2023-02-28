@@ -90,8 +90,14 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					.send({ message: 'No next step found', body: body });
 			}
 
+			const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
+
+			const markdown = dynamicMarkdown
+				? dynamicMarkdown(body.formData, result.formData)
+				: staticMarkdown;
+
 			return {
-				markdownToDisplay: nextWizardStepLayout.markdownToDisplay,
+				markdownToDisplay: markdown,
 				currentStepId: result.currentStepId,
 				buttons: convertWizardStepLayoutButtonsToWizardButtons(
 					nextWizardStepLayout.buttons,

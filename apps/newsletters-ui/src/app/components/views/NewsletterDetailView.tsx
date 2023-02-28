@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { isNewsletter } from '@newsletters-nx/newsletters-data-client';
-import { NewsletterDetail } from './NewsletterDetails';
+import { NewsletterDetail } from '../NewsletterDetails';
 
 export const NewsletterDetailView = () => {
 	const matchedItem = useLoaderData();

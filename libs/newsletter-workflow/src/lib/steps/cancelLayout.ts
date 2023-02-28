@@ -7,6 +7,6 @@ Creation of the newsletter was cancelled.
 `.trim();
 
 export const cancelLayout: WizardStepLayout = {
-	markdownToDisplay,
+	staticMarkdown: markdownToDisplay,
 	buttons: {},
 };

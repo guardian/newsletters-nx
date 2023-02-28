@@ -2,7 +2,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../executeCreate';
 
 export const createNewsletterLayout: WizardStepLayout = {
-	markdownToDisplay: `# Create a newsletter
+	staticMarkdown: `# Create a newsletter
 
 This wizard will guide you through the process of creating and launching a new newsletter using email-rendering.
 
