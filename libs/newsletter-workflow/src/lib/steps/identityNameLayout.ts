@@ -11,7 +11,7 @@ It has been calculated automatically from the Name that you entered on the previ
 `.trim();
 
 export const identityNameLayout: WizardStepLayout = {
-	markdownToDisplay,
+	staticMarkdown: markdownToDisplay,
 	buttons: {
 		back: {
 			buttonType: 'RED',

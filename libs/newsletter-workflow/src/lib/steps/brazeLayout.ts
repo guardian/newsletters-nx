@@ -11,7 +11,7 @@ They have been calculated automatically from the Name that you entered on a prev
 `.trim();
 
 export const brazeLayout: WizardStepLayout = {
-	markdownToDisplay,
+	staticMarkdown: markdownToDisplay,
 	buttons: {
 		back: {
 			buttonType: 'RED',
