@@ -1,4 +1,7 @@
-import { themeEnumSchema } from '@newsletters-nx/newsletters-data-client';
+import {
+	kebabCasedString,
+	themeEnumSchema,
+} from '@newsletters-nx/newsletters-data-client';
 import { z, ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
 
 type FormData = Record<string, string | number | boolean | undefined>;
@@ -13,7 +16,7 @@ export const formSchemas = {
 
 	identityName: z
 		.object({
-			identityName: z.string().regex(/^[a-z]+(-[a-z]+)*$/, 'must be in kebab-case (only lower case words connected by dashes)'),
+			identityName: kebabCasedString(),
 		})
 		.describe('Edit the identity name if required'),
 
