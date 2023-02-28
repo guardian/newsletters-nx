@@ -1,16 +1,16 @@
 import { App } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { sharedProps } from '../bin/cdk';
-import { NewslettersApi } from './newsletters-api';
+import { Newsletters } from './newsletters';
 
-describe('The NewslettersApi stack', () => {
+describe('The Newsletters stack', () => {
 	it('matches the snapshot', () => {
 		const app = new App();
-		const stack = new NewslettersApi(app, 'NewslettersApi-TEST', {
+		const stack = new Newsletters(app, 'Newsletters-TEST', {
 			...sharedProps,
 			stage: 'TEST',
-			app: 'newsletters-api',
-			domainName: 'newsletters-api.test.dev-gutools.co.uk',
+			app: 'newsletters',
+			domainName: 'newsletters.test.dev-gutools.co.uk',
 		});
 		const template = Template.fromStack(stack);
 		expect(template.toJSON()).toMatchSnapshot();

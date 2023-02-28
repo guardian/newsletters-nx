@@ -3,21 +3,24 @@ import { AccessScope } from '@guardian/cdk/lib/constants';
 import {
 	GuDistributionBucketParameter,
 	GuStack,
+	GuStringParameter,
 	type GuStackProps,
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
-import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
-import { type App, Duration } from 'aws-cdk-lib';
+import { type App, Duration, SecretValue } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import {
+	ListenerAction,
+	UnauthenticatedAction,
+} from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 
-export interface NewslettersUiProps extends GuStackProps {
+export interface NewslettersProps extends GuStackProps {
 	app: string; // Force app to be a required prop
 	domainName: string;
 }
 
-export class NewslettersUi extends GuStack {
-	constructor(scope: App, id: string, props: NewslettersUiProps) {
+export class Newsletters extends GuStack {
+	constructor(scope: App, id: string, props: NewslettersProps) {
 		super(scope, id, props);
 
 		this.setUpNodeEc2(props);
@@ -28,7 +31,7 @@ export class NewslettersUi extends GuStack {
 	 * User data is a set of instructions to supply to the instance at launch
 	 * @see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 	 */
-	private getUserData = (app: NewslettersUiProps['app']) => {
+	private getUserData = (app: NewslettersProps['app']) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
@@ -37,13 +40,13 @@ export class NewslettersUi extends GuStack {
 			'#!/bin/bash', // "Shebang" to instruct the program loader to run this as a bash script
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
 			'set +x', // Prevents shell from printing statements before execution
-			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/index.cjs /tmp`, // copies file from s3
-			'chown ubuntu /tmp/index.cjs', // change ownership of the copied file to ubuntu user
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /tmp/index.cjs'`, // run the file as ubuntu user using pm2
+			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app} /tmp/app`, // copies files from s3
+			'chown -R ubuntu /tmp/app', // change ownership of the copied files to ubuntu user
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /app/tmp/index.cjs'`, // run the file as ubuntu user using pm2
 		].join('\n');
 	};
 
-	private setUpNodeEc2 = (props: NewslettersUiProps) => {
+	private setUpNodeEc2 = (props: NewslettersProps) => {
 		const { app, domainName } = props;
 		/**
 		 *  Sets up Node app to be run in EC2
@@ -58,11 +61,37 @@ export class NewslettersUi extends GuStack {
 			app,
 		});
 
+		const clientId = new GuStringParameter(this, 'ClientId', {
+			description: 'Google OAuth client ID',
+		});
+
+		/**
+		 * Adds authentication layer to the EC2 load balancer
+		 */
+		ec2App.listener.addAction('Google Auth', {
+			action: ListenerAction.authenticateOidc({
+				authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+				issuer: 'https://accounts.google.com',
+				scope: 'openid',
+				authenticationRequestExtraParams: { hd: 'guardian.co.uk' },
+				onUnauthenticatedRequest: UnauthenticatedAction.AUTHENTICATE,
+
+				tokenEndpoint: 'https://oauth2.googleapis.com/token',
+
+				userInfoEndpoint: 'https://openidconnect.googleapis.com/v1/userinfo',
+				clientId: clientId.valueAsString,
+				clientSecret: SecretValue.secretsManager(
+					`/${this.stage}/deploy/newsletters/clientSecret`,
+				),
+				next: ListenerAction.forward([ec2App.targetGroup]),
+			}),
+		});
+
 		/**
 		 * Sets up CNAME record for domainName specified
 		 * @see https://en.wikipedia.org/wiki/CNAME_record
 		 */
-		new GuCname(this, 'NewslettersUiCname', {
+		new GuCname(this, 'NewslettersCname', {
 			app,
 			domainName,
 			ttl: Duration.hours(1),

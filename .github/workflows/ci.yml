@@ -68,7 +68,18 @@ jobs:
           npm run test
           npm run synth
 
-        # Upload artifacts for newsletters-api
+        # Upload artifacts for newsletters internal tool
+      - uses: guardian/actions-riff-raff@v2
+        with:
+          app: newsletters
+          configPath: riff-raff.yaml
+          contentDirectories: |
+            cloudformation:
+              - cdk/cdk.out/Newsletters-CODE.template.json
+            newsletters:
+              - dist/apps/newsletters-api
+
+      # Upload artifacts for newsletters-api
       - uses: guardian/actions-riff-raff@v2
         with:
           app: newsletters-api
@@ -78,14 +89,3 @@ jobs:
               - cdk/cdk.out/NewslettersApi-CODE.template.json
             newsletters-api:
               - dist/apps/newsletters-api/index.cjs
-
-        # Upload artifacts for newsletters-ui
-      - uses: guardian/actions-riff-raff@v2
-        with:
-          app: newsletters-ui
-          configPath: riff-raff.yaml
-          contentDirectories: |
-            cloudformation:
-              - cdk/cdk.out/NewslettersUi-CODE.template.json
-            newsletters-ui:
-              - dist/apps/newsletters-ui
