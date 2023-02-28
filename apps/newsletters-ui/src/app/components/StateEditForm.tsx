@@ -11,6 +11,26 @@ interface Props {
 	setFormData: { (newData: WizardFormData): void };
 }
 
+const getValidationWarnings = (
+	formSchema: z.ZodObject<z.ZodRawShape>,
+	formData: WizardFormData,
+): Partial<Record<string, string>> => {
+	const parseResult = formSchema.safeParse(formData);
+	const validationWarnings: Partial<Record<string, string>> = {};
+
+	if (!parseResult.success) {
+		parseResult.error.issues.forEach((issue) => {
+			const { message, path, code } = issue;
+			const key = typeof path[0] === 'string' ? path[0] : undefined;
+
+			if (key) {
+				validationWarnings[key] = message || code;
+			}
+		});
+	}
+	return validationWarnings;
+};
+
 export const StateEditForm = ({ formSchema, formData, setFormData }: Props) => {
 	const changeFormData = (value: FieldValue, field: FieldDef) => {
 		const mod = getModification(value, field);
@@ -28,7 +48,7 @@ export const StateEditForm = ({ formSchema, formData, setFormData }: Props) => {
 			<SchemaForm
 				schema={formSchema}
 				data={formData}
-				validationWarnings={{}}
+				validationWarnings={getValidationWarnings(formSchema, formData)}
 				changeValue={changeFormData}
 			/>
 		</Paper>

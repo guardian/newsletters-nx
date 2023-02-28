@@ -13,7 +13,7 @@ export const formSchemas = {
 
 	identityName: z
 		.object({
-			identityName: z.string(),
+			identityName: z.string().regex(/^[a-z]+(-[a-z]+)*$/, 'must be in kebab-case (only lower case words connected by dashes)'),
 		})
 		.describe('Edit the identity name if required'),
 
