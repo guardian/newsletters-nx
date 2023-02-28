@@ -23,7 +23,7 @@
 		"@emotion/css": "^11.10.5",
 		"@emotion/react": "^11.10.5",
 		"@emotion/styled": "^11.10.5",
-    "@fastify/static": "^6.9.0",
+		"@fastify/static": "^6.9.0",
 		"@guardian/source-foundations": "^8.0.0",
 		"@mui/material": "^5.11.10",
 		"@types/react-table": "^7.7.14",

@@ -25,8 +25,6 @@ if (isServingReadEndpoints) {
 	registerDraftsRoutes(app);
 }
 
-
-
 const start = async () => {
 	try {
 		const options = {
