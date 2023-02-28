@@ -1,12 +1,9 @@
 import { deriveNewsletterFieldsFromName } from '@newsletters-nx/newsletters-data-client';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
 
-export const calculateFieldsFromName = (
-	formData: WizardFormData,
-): WizardFormData => {
-	const derivedFields = deriveNewsletterFieldsFromName(formData.name as string);
-	const updatedFormData: WizardFormData = {
-		...formData,
+export const calculateFieldsFromName = (formName: string): WizardFormData => {
+	const derivedFields = deriveNewsletterFieldsFromName(formName);
+	const updatedFormData: Partial<WizardFormData> = {
 		...{
 			identityName: derivedFields.identityName,
 		},

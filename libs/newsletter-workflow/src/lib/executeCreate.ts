@@ -27,8 +27,13 @@ export const executeCreate: AsyncExecution = async (
 	if (!listId) {
 		// TO DO - calculating fields from the Name at this point is not generic
 		// would it be better done somewhere else?
+		const derivedFields =
+			typeof parseResult.data.name === 'string' && !!parseResult.data.name
+				? calculateFieldsFromName(parseResult.data.name)
+				: {};
 		const storageResponse = await storageInstance.createDraftNewsletter({
-			...calculateFieldsFromName(parseResult.data),
+			...parseResult.data,
+			...derivedFields,
 			listId: undefined,
 		});
 		if (storageResponse.ok) {
