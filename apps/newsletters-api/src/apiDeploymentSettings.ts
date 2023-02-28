@@ -22,4 +22,4 @@ export const isServingReadEndpoints =
 	(process.env.NEWSLETTERS_API_READ === undefined &&
 		process.env.NODE_ENV !== 'production') ||
 	process.env.NEWSLETTERS_API_READ === 'true' ||
-	process.env.NEWSLETTERS_API_READ_WRITE === 'true';
+	isServingReadWriteEndpoints;
