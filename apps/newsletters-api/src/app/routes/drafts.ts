@@ -11,11 +11,11 @@ import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 // casting as DraftStorage so the methods are typed to
 // allow for failed responses.
-const drafStore = storageInstance as DraftStorage;
+const draftStore = storageInstance as DraftStorage;
 
 export function registerDraftsRoutes(app: FastifyInstance) {
 	app.get('/v1/drafts', async (req, res) => {
-		const storageResponse = await drafStore.listDrafts();
+		const storageResponse = await draftStore.listDrafts();
 		if (storageResponse.ok) {
 			return makeSuccessResponse(storageResponse.data);
 		}
@@ -31,7 +31,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 				return makeErrorResponse('Non numerical id passed');
 			}
 
-			const storageResponse = await drafStore.getDraftNewsletter(idAsNumber);
+			const storageResponse = await draftStore.getDraftNewsletter(idAsNumber);
 			if (storageResponse.ok) {
 				return makeSuccessResponse(storageResponse.data);
 			}
@@ -51,7 +51,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 				) as ApiResponse<DraftWithId>;
 			}
 
-			const storageResponse = await drafStore.deleteDraftNewsletter(idAsNumber);
+			const storageResponse = await draftStore.deleteDraftNewsletter(idAsNumber);
 
 			if (storageResponse.ok) {
 				return makeSuccessResponse(storageResponse.data);
