@@ -1,36 +1,14 @@
 import type { z } from 'zod';
 import { ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
-import { brazeLayout } from '../steps/brazeLayout';
-import { createNewsletterLayout } from '../steps/createNewsletterLayout';
-import { descriptionLayout } from '../steps/descriptionLayout';
-import { identityNameLayout } from '../steps/identityNameLayout';
-import { ophanLayout } from '../steps/ophanLayout';
-import { pillarLayout } from '../steps/pillarLayout';
+import { newslettersWorkflowStepLayout } from './steps';
 
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
-	if (stepId === 'createNewsletter') {
-		return createNewsletterLayout.schema;
-	}
-	if (stepId === 'identityName') {
-		return identityNameLayout.schema;
-	}
-	if (stepId === 'braze') {
-		return brazeLayout.schema;
-	}
-	if (stepId === 'ophan') {
-		return ophanLayout.schema;
-	}
-	if (stepId === 'pillar') {
-		return pillarLayout.schema;
-	}
-	if (stepId === 'description') {
-		return descriptionLayout.schema;
-	}
-
-	return undefined;
+	return newslettersWorkflowStepLayout[stepId]
+		? newslettersWorkflowStepLayout[stepId]?.schema
+		: undefined;
 };
 
 export const getFormBlankData = (
