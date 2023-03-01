@@ -8,18 +8,19 @@
  * @see ./main.ts
  */
 
+function undefinedAndNotProduction(envVar: string | undefined): boolean {
+	return envVar === undefined && process.env.NODE !== 'production';
+}
+
 export const isServingUI =
-	(process.env.NEWSLETTERS_UI_SERVE === undefined &&
-		process.env.NODE_ENV !== 'production') ||
+	undefinedAndNotProduction(process.env.NEWSETTERS_UI_SERVE) ||
 	process.env.NEWSLETTERS_UI_SERVE === 'true';
 
 export const isServingReadWriteEndpoints =
-	(process.env.NEWSLETTERS_API_READ_WRITE === undefined &&
-		process.env.NODE_ENV !== 'production') ||
+	undefinedAndNotProduction(process.env.NEWSLETTERS_API_READ_WRITE) ||
 	process.env.NEWSLETTERS_API_READ_WRITE === 'true';
 
 export const isServingReadEndpoints =
-	(process.env.NEWSLETTERS_API_READ === undefined &&
-		process.env.NODE_ENV !== 'production') ||
+	undefinedAndNotProduction(process.env.NEWSLETTERS_API_READ) ||
 	process.env.NEWSLETTERS_API_READ === 'true' ||
 	isServingReadWriteEndpoints;
