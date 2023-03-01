@@ -48,7 +48,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
 
-			if (body.newsletterId === undefined) {
+			if (body.id === undefined) {
 				return res
 					.status(400)
 					.send({ message: 'newsletter id is required', body: body });

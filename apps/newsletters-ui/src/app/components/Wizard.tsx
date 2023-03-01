@@ -66,7 +66,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 
 	useEffect(() => {
 		void fetchStep({
-			newsletterId: 'test',
+			id: 'test',
 			stepId: '',
 		});
 	}, []);
@@ -86,7 +86,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 
 	const handleButtonClick = (id: string) => () => {
 		void fetchStep({
-			newsletterId: 'test',
+			id: 'test',
 			buttonId: id,
 			stepId: serverData.currentStepId || '',
 			formData: { ...formData, listId }, // will work for the create+modify workflow, but might break other workflows
