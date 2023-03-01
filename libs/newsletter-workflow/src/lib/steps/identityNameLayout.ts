@@ -1,4 +1,4 @@
-import { z } from 'zod/lib';
+import { z } from 'zod';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../executeModify';
 
