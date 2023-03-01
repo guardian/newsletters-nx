@@ -1,13 +1,9 @@
-import { Container } from '@mui/material';
 import type { RouteObject } from 'react-router-dom';
+import { redirect } from 'react-router-dom';
 import { Api } from '../components/Api';
-import { ButtonContainer } from '../components/ButtonContainer';
-import { FormDemoView } from '../components/FormDemoView';
-import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
-import { Wizard } from '../components/Wizard';
+// import { NewslettersHome } from '../components/NewslettersHome';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
-import { listLoader } from './loaders';
 
 export const homeRoute: RouteObject = {
 	path: '/',
@@ -15,29 +11,20 @@ export const homeRoute: RouteObject = {
 	errorElement: <ErrorPage />,
 	children: [
 		{
-			path: '/',
-			element: <ButtonContainer />,
+			path: '',
+			action: () => redirect('/newsletters'),
 		},
 		{
-			path: 'api/',
+			path: 'api',
 			element: <Api />,
 		},
 		{
-			path: '/create',
-			element: <NewsletterCreateView />,
-			loader: listLoader,
+			path: 'templates',
+			element: <span>Coming soon...</span>,
 		},
 		{
-			path: '/test-forms',
-			element: <FormDemoView />,
-		},
-		{
-			path: 'wizardtest/',
-			element: (
-				<Container>
-					<Wizard newsletterId="" />
-				</Container>
-			),
+			path: 'thrashers',
+			element: <span>Coming soon...</span>,
 		},
 	],
 };

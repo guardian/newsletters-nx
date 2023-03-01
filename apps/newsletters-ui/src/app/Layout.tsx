@@ -33,12 +33,14 @@ export function Layout() {
 	return (
 		<>
 			<header css={headerStyle}>
-				<h1>Newsletters UI</h1>
+				<h1>Have I Got Newsletters For You</h1>
 				<MainNav pathname={location.pathname} />
 			</header>
+
 			<main>
 				<Outlet />
 			</main>
+
 			<footer css={footerStyle}>
 				<b>Footer</b>
 			</footer>
