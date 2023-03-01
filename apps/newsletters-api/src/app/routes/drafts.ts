@@ -1,7 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 // import { isNewsletter } from '@newsletters-nx/newsletters-data-client';
 // import newslettersData from '../../../static/newsletters.local.json';
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type {
+	ApiResponse,
+	DraftStorage,
+	DraftWithId,
+} from '@newsletters-nx/newsletters-data-client';
 import { storageInstance } from '../../services/storageInstance';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
@@ -32,6 +36,30 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 				return makeSuccessResponse(storageResponse.data);
 			}
 			return makeErrorResponse(storageResponse.message);
+		},
+	);
+
+	app.delete<{ Params: { listId: string } }>(
+		'/v1/drafts/delete/:listId',
+		async (req, res): Promise<ApiResponse<DraftWithId>> => {
+			const { listId } = req.params;
+			const idAsNumber = Number(listId);
+
+			if (isNaN(idAsNumber)) {
+				return makeErrorResponse(
+					'Non numerical id passed',
+				) as ApiResponse<DraftWithId>;
+			}
+
+			const storageResponse = await drafStore.deleteDraftNewsletter(idAsNumber);
+
+			if (storageResponse.ok) {
+				return makeSuccessResponse(storageResponse.data);
+			}
+
+			return makeErrorResponse(
+				storageResponse.message,
+			) as ApiResponse<DraftWithId>;
 		},
 	);
 }
