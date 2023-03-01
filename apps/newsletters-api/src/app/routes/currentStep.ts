@@ -49,18 +49,19 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 			const body: CurrentStepRouteRequest = req.body;
 			let result: WizardStepData = { currentStepId: '' };
 			try {
-				result =
-					body.buttonId !== undefined
-						? await stateMachineButtonPressed(
-								body.buttonId,
-								{
-									currentStepId: body.stepId,
-									formData: body.formData,
-								},
-								newslettersWorkflowStepLayout,
-								storageInstance,
-						  )
-						: setupInitialState(body.stepId);
+				if (body.buttonId !== undefined) {
+					result = await stateMachineButtonPressed(
+						body.buttonId,
+						{
+							currentStepId: body.stepId,
+							formData: body.formData,
+						},
+						newslettersWorkflowStepLayout,
+						storageInstance,
+					);
+				} else {
+					result = await setupInitialState(body, storageInstance);
+				}
 			} catch (error) {
 				if (error instanceof Error) {
 					const errorResponse: CurrentStepRouteResponse = {
