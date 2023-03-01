@@ -14,7 +14,7 @@ import { WizardButton } from './WizardButton';
  * Interface for the props passed to the `Wizard` component.
  */
 export interface WizardProps {
-	newsletterId?: number;
+	id?: string;
 }
 
 /**
