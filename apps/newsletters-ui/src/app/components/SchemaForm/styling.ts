@@ -1,4 +1,4 @@
-import { headlineObjectStyles, palette } from '@guardian/source-foundations';
+import { palette } from '@guardian/source-foundations';
 import { css } from '@mui/material';
 
 const { neutral } = palette;
@@ -18,7 +18,7 @@ export const defaultFormStyle = css`
 
 	legend {
 		display: block;
-		${headlineObjectStyles.xxsmall({ fontWeight: 'bold' })};
+		font-weight: bold;
 		border-bottom: 1px solid ${neutral[20]};
 		margin: 0.25rem 0 1rem;
 	}
