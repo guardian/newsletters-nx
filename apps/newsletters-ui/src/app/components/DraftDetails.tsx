@@ -7,11 +7,8 @@ import {
 	TableRow,
 } from '@mui/material';
 import { useState } from 'react';
-import type {
-	ApiResponse,
-	Draft,
-	DraftWithId,
-} from '@newsletters-nx/newsletters-data-client';
+import type { Draft } from '@newsletters-nx/newsletters-data-client';
+import { requestDraftDeletion } from '../lib/requestDraftDeletion';
 
 interface Props {
 	draft: Draft;
@@ -23,39 +20,21 @@ export const DraftDetails = ({ draft }: Props) => {
 		string | undefined
 	>(undefined);
 
-	const handleDeleteResponse = (payload: ApiResponse<DraftWithId>) => {
-		console.table(payload);
-		if (payload.ok) {
-			setHasBeenDeleted(true);
-		} else {
-			setDeleteErrorMessage(payload.message ?? 'UNKNOWN DELETE ERROR');
-		}
-	};
-
-	const sendDeleteRequest = async (listId: number) => {
-		const response = await fetch(`/api/v1/drafts/delete/${listId}`, {
-			method: 'DELETE',
-		});
-
-		try {
-			const payload = (await response.json()) as ApiResponse<DraftWithId>;
-			handleDeleteResponse(payload);
-		} catch (err) {
-			console.warn('ERROR');
-			console.log(err);
-
-			setDeleteErrorMessage('DELETE REQUEST FAILED');
-		}
-	};
-
-	const handleDeleteButton = () => {
+	const sendDeleteRequest = async () => {
 		const { listId } = draft;
 		if (typeof listId !== 'number') {
-			console.warn('no list id');
+			setDeleteErrorMessage('NO LIST ID');
 			return;
 		}
-		return sendDeleteRequest(listId);
+
+		const result = await requestDraftDeletion(listId);
+		if (result.ok) {
+			setHasBeenDeleted(true);
+		} else {
+			setDeleteErrorMessage(result.message);
+		}
 	};
+
 
 	return (
 		<>
@@ -83,7 +62,7 @@ export const DraftDetails = ({ draft }: Props) => {
 
 			{!hasBeenDeleted && (
 				<div>
-					<button onClick={handleDeleteButton}>DELETE</button>
+					<button onClick={sendDeleteRequest}>DELETE</button>
 				</div>
 			)}
 			{!!deleteErrorMessage && (
