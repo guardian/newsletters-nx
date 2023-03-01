@@ -1,0 +1,16 @@
+{
+	// Please only specify settings here that are necessary to improve the developer experience for the _whole_ team
+	// Any personal settings should be done in your user settings.json (not committed to git)
+	//
+	// You can override these settings for your user by using language-override settings
+	// @see https://code.visualstudio.com/docs/getstarted/settings#_language-specific-editor-settings
+	"deno.enable": false,
+	"deno.unstable": false,
+	"deno.enablePaths": ["./tools/scripts/deno"],
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": false
+	},
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"prettier.requireConfig": true
+}
