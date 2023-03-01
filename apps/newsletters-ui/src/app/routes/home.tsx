@@ -1,5 +1,7 @@
+import type { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { Container } from '@mui/material';
 import type { RouteObject } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Api } from '../components/Api';
 import { ButtonContainer } from '../components/ButtonContainer';
 import { FormDemoView } from '../components/FormDemoView';
@@ -32,12 +34,19 @@ export const homeRoute: RouteObject = {
 			element: <FormDemoView />,
 		},
 		{
-			path: 'wizardtest/',
-			element: (
-				<Container>
-					<Wizard newsletterId="" />
-				</Container>
-			),
+			path: 'wizard/:listId',
+			element: <WizardLink />,
 		},
 	],
 };
+
+function WizardLink(): ReactJSXElement {
+	const { listId } = useParams();
+	const listIdNumber = listId ? +listId : undefined;
+	if (!listIdNumber) return <p>Invalid listId</p>;
+	return (
+		<Container>
+			<Wizard listId={listIdNumber} />
+		</Container>
+	);
+}

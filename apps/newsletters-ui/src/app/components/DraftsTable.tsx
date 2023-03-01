@@ -9,7 +9,10 @@ interface Props {
 }
 
 export const DraftsTable = ({ drafts }: Props) => {
-	const data = drafts;
+	const data = drafts.map((draft) => ({
+		...draft,
+		wizardListId: draft['listId'],
+	}));
 	const columns = useMemo<Column[]>(
 		() => [
 			{
@@ -27,6 +30,13 @@ export const DraftsTable = ({ drafts }: Props) => {
 				Header: 'Pillar',
 				accessor: 'theme',
 				sortType: 'basic',
+			},
+			{
+				Header: 'Wizard',
+				accessor: 'wizardListId',
+				Cell: ({ cell: { value } }) => (
+					<Link to={`/wizard/${value as string}`}>Edit</Link>
+				),
 			},
 		],
 		[],
