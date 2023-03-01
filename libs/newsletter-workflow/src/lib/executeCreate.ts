@@ -1,4 +1,3 @@
-import { formSchemas } from '@newsletters-nx/state-machine';
 import type {
 	AsyncExecution,
 	WizardFormData,
@@ -11,9 +10,13 @@ export const executeCreate: AsyncExecution = async (
 	stepLayout,
 	storageInstance,
 ): Promise<WizardFormData | string> => {
-	const schema = formSchemas['createNewsletter']; // TODO - this needs to be generalised
 	if (!storageInstance) {
 		throw new Error('no storageInstance');
+	}
+	const schema = stepLayout?.schema
+
+	if (!schema) {
+		throw new Error(`the step used for execute create has no schema!`);
 	}
 
 	const parseResult = schema.safeParse(stepData.formData);

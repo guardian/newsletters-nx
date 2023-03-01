@@ -5,6 +5,7 @@ import type {
 import { executeModify } from '../executeModify';
 import { getStringValuesFromRecord } from '../getValuesFromRecord';
 import { regExPatterns } from '../regExPatterns';
+import { formSchemas } from '../schemas';
 
 const markdownTemplate = `
 # Select a Pillar for {{name}}
@@ -58,4 +59,5 @@ export const pillarLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.pillar,
 };

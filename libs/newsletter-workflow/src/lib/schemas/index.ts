@@ -1,5 +1,5 @@
-import { themeEnumSchema } from '@newsletters-nx/newsletters-data-client';
 import { z, ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
+import { themeEnumSchema } from '@newsletters-nx/newsletters-data-client';
 
 type FormData = Record<string, string | number | boolean | undefined>;
 
