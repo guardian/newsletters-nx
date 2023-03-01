@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import type { Draft } from '@newsletters-nx/newsletters-data-client';
-import { requestDraftDeletion } from '../lib/requestDraftDeletion';
+import { DeleteDraftButton } from './DeleteDraftButton';
 
 interface Props {
 	draft: Draft;
@@ -16,25 +16,6 @@ interface Props {
 
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
-	const [deleteErrorMessage, setDeleteErrorMessage] = useState<
-		string | undefined
-	>(undefined);
-
-	const sendDeleteRequest = async () => {
-		const { listId } = draft;
-		if (typeof listId !== 'number') {
-			setDeleteErrorMessage('NO LIST ID');
-			return;
-		}
-
-		const result = await requestDraftDeletion(listId);
-		if (result.ok) {
-			setHasBeenDeleted(true);
-		} else {
-			setDeleteErrorMessage(result.message);
-		}
-	};
-
 
 	return (
 		<>
@@ -60,17 +41,11 @@ export const DraftDetails = ({ draft }: Props) => {
 				</Table>
 			</TableContainer>
 
-			{!hasBeenDeleted && (
-				<div>
-					<button onClick={sendDeleteRequest}>DELETE</button>
-				</div>
-			)}
-			{!!deleteErrorMessage && (
-				<div>
-					<b>DELETED ERROR:</b>
-					<span>{deleteErrorMessage}</span>
-				</div>
-			)}
+			<DeleteDraftButton
+				draft={draft}
+				hasBeenDeleted={hasBeenDeleted}
+				setHasBeenDeleted={setHasBeenDeleted}
+			/>
 		</>
 	);
 };
