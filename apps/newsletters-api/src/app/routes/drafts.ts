@@ -46,12 +46,15 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 			const idAsNumber = Number(listId);
 
 			if (isNaN(idAsNumber)) {
+				await res.status(400);
 				return makeErrorResponse(
 					'Non numerical id passed',
 				) as ApiResponse<DraftWithId>;
 			}
 
-			const storageResponse = await draftStore.deleteDraftNewsletter(idAsNumber);
+			const storageResponse = await draftStore.deleteDraftNewsletter(
+				idAsNumber,
+			);
 
 			if (storageResponse.ok) {
 				return makeSuccessResponse(storageResponse.data);
