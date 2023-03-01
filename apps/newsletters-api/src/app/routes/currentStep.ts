@@ -47,13 +47,6 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		'/v1/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
-
-			if (body.id === undefined) {
-				return res
-					.status(400)
-					.send({ message: 'newsletter id is required', body: body });
-			}
-
 			let result: WizardStepData = { currentStepId: '' };
 			try {
 				result =
@@ -67,7 +60,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 								newslettersWorkflowStepLayout,
 								storageInstance,
 						  )
-						: setupInitialState();
+						: setupInitialState(body.stepId);
 			} catch (error) {
 				if (error instanceof Error) {
 					const errorResponse: CurrentStepRouteResponse = {

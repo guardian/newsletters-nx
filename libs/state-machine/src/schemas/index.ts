@@ -50,7 +50,7 @@ export const formSchemas = {
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
-	if (stepId === 'createNewsletter') {
+	if (stepId === 'createNewsletter' || stepId === 'editDraftNewsletter') {
 		return formSchemas.createNewsletter;
 	}
 	if (stepId === 'identityName') {

@@ -21,7 +21,7 @@ const navLinks: NavLink[] = [
 	{ path: '/newsletters/', label: 'View Current Newsletters' },
 	{ path: '/drafts/', label: 'View draft Newsletters' },
 	{ path: '/test-forms/', label: 'test forms' },
-	{ path: '/wizardtest/', label: 'wizard test' },
+	{ path: '/wizard', label: 'create draft' },
 ];
 
 const navStyle = css`

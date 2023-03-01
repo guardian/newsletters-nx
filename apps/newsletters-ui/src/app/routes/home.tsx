@@ -37,12 +37,15 @@ export const homeRoute: RouteObject = {
 			path: 'wizard/:listId',
 			element: <WizardLink />,
 		},
+		{
+			path: 'wizard',
+			element: <WizardLink />,
+		},
 	],
 };
 
 function WizardLink(): ReactJSXElement {
 	const { listId } = useParams();
-	if (!listId) return <p>Invalid listId</p>;
 	return (
 		<Container>
 			<Wizard id={listId} />
