@@ -42,11 +42,11 @@ export const homeRoute: RouteObject = {
 
 function WizardLink(): ReactJSXElement {
 	const { listId } = useParams();
-	const listIdNumber = listId ? +listId : undefined;
-	if (!listIdNumber) return <p>Invalid listId</p>;
+	const newsletterId = listId ? +listId : undefined;
+	if (!newsletterId) return <p>Invalid listId</p>;
 	return (
 		<Container>
-			<Wizard listId={listIdNumber} />
+			<Wizard newsletterId={newsletterId} />
 		</Container>
 	);
 }
