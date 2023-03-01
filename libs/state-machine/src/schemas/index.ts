@@ -4,8 +4,7 @@ import {
 	underscoreCasedString,
 } from '@newsletters-nx/newsletters-data-client';
 import { z, ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
-
-type FormData = Record<string, string | number | boolean | undefined>;
+import type { WizardFormData } from '../lib/types';
 
 // TODO - move these definitions to a separate file
 export const formSchemas = {
@@ -60,20 +59,22 @@ export const getFormSchema = (
 	return matchingEntry ? matchingEntry[1] : undefined;
 };
 
-export const getFormBlankData = (stepId: string): FormData | undefined => {
+export const getFormBlankData = (
+	stepId: string,
+): WizardFormData | undefined => {
 	const schema = getFormSchema(stepId);
 	if (!schema) {
 		return undefined;
 	}
 
-	return Object.keys(schema.shape).reduce<FormData>((formData, key) => {
+	return Object.keys(schema.shape).reduce<WizardFormData>((formData, key) => {
 		const zod = schema.shape[key];
 
 		if (!zod) {
 			return formData;
 		}
 
-		const mod: FormData = {};
+		const mod: WizardFormData = {};
 
 		if (zod instanceof ZodString) {
 			mod[key] = '';
