@@ -1,2 +1,2 @@
-export * from './lib/steps';
-export * from './lib/schemas';
+export * from './steps';
+export * from './schemas';
