@@ -1,6 +1,6 @@
+import { z } from 'zod';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../executeModify';
-import { formSchemas } from '../schemas';
 
 const markdownToDisplay = `
 # Modify Ophan Campaign Values
@@ -31,5 +31,10 @@ export const ophanLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.ophan
+	schema: z
+		.object({
+			campaignName: z.string(),
+			campaignCode: z.string(),
+		})
+		.describe('Edit the Ophan values if required'),
 };

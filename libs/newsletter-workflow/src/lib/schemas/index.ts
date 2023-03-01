@@ -1,91 +1,54 @@
-import { z, ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
-import { themeEnumSchema } from '@newsletters-nx/newsletters-data-client';
+import type { z } from 'zod';
+import { ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
+import type { WizardFormData } from '@newsletters-nx/state-machine';
+import { brazeLayout } from '../steps/brazeLayout';
+import { createNewsletterLayout } from '../steps/createNewsletterLayout';
+import { descriptionLayout } from '../steps/descriptionLayout';
+import { identityNameLayout } from '../steps/identityNameLayout';
+import { ophanLayout } from '../steps/ophanLayout';
+import { pillarLayout } from '../steps/pillarLayout';
 
-type FormData = Record<string, string | number | boolean | undefined>;
-
-// TODO - move these definitions to a separate file
-export const formSchemas = {
-	createNewsletter: z
-		.object({
-			name: z.string(),
-		})
-		.describe('Input the name for the new newsletter'),
-
-	identityName: z
-		.object({
-			identityName: z.string(),
-		})
-		.describe('Edit the identity name if required'),
-
-	braze: z
-		.object({
-			brazeSubscribeEventNamePrefix: z.string(),
-			brazeNewsletterName: z.string(),
-			brazeSubscribeAttributeName: z.string(),
-			brazeSubscribeAttributeNameAlternate: z.string(),
-		})
-		.describe('Edit the Braze values if required'),
-
-	ophan: z
-		.object({
-			campaignName: z.string(),
-			campaignCode: z.string(),
-		})
-		.describe('Edit the Ophan values if required'),
-
-	pillar: z
-		.object({
-			theme: themeEnumSchema,
-		})
-		.describe('Choose a theme'),
-
-	description: z
-		.object({
-			description: z.string(),
-		})
-		.describe('Input a short description to display to users'),
-};
-
-// TO DO - define the schemas in the library
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
 	if (stepId === 'createNewsletter') {
-		return formSchemas.createNewsletter;
+		return createNewsletterLayout.schema;
 	}
 	if (stepId === 'identityName') {
-		return formSchemas.identityName;
+		return identityNameLayout.schema;
 	}
 	if (stepId === 'braze') {
-		return formSchemas.braze;
+		return brazeLayout.schema;
 	}
 	if (stepId === 'ophan') {
-		return formSchemas.ophan;
+		return ophanLayout.schema;
 	}
 	if (stepId === 'pillar') {
-		return formSchemas.pillar;
+		return pillarLayout.schema;
 	}
 	if (stepId === 'description') {
-		return formSchemas.description;
+		return descriptionLayout.schema;
 	}
 
 	return undefined;
 };
 
-export const getFormBlankData = (stepId: string): FormData | undefined => {
+export const getFormBlankData = (
+	stepId: string,
+): WizardFormData | undefined => {
 	const schema = getFormSchema(stepId);
 	if (!schema) {
 		return undefined;
 	}
 
-	return Object.keys(schema.shape).reduce<FormData>((formData, key) => {
+	return Object.keys(schema.shape).reduce<WizardFormData>((formData, key) => {
 		const zod = schema.shape[key];
 
 		if (!zod) {
 			return formData;
 		}
 
-		const mod: FormData = {};
+		const mod: WizardFormData = {};
 
 		if (zod instanceof ZodString) {
 			mod[key] = '';

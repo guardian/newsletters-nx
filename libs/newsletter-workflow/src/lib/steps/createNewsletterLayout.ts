@@ -1,6 +1,6 @@
+import { z } from 'zod';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../executeCreate';
-import { formSchemas } from '../schemas';
 
 export const createNewsletterLayout: WizardStepLayout = {
 	staticMarkdown: `# Create a newsletter
@@ -30,5 +30,9 @@ For example:
 			executeStep: executeCreate,
 		},
 	},
-	schema: formSchemas.createNewsletter,
+	schema: z
+		.object({
+			name: z.string(),
+		})
+		.describe('Input the name for the new newsletter'),
 };

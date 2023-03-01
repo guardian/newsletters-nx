@@ -1,3 +1,5 @@
+import { z } from 'zod';
+import { themeEnumSchema } from '@newsletters-nx/newsletters-data-client';
 import type {
 	WizardStepData,
 	WizardStepLayout,
@@ -5,7 +7,6 @@ import type {
 import { executeModify } from '../executeModify';
 import { getStringValuesFromRecord } from '../getValuesFromRecord';
 import { regExPatterns } from '../regExPatterns';
-import { formSchemas } from '../schemas';
 
 const markdownTemplate = `
 # Select a Pillar for {{name}}
@@ -59,5 +60,9 @@ export const pillarLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.pillar,
+	schema: z
+		.object({
+			theme: themeEnumSchema,
+		})
+		.describe('Choose a theme'),
 };

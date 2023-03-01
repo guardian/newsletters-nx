@@ -1,6 +1,6 @@
+import { z } from 'zod/lib';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../executeModify';
-import { formSchemas } from '../schemas';
 
 const markdownToDisplay = `
 # Modify Braze Values
@@ -31,5 +31,12 @@ export const brazeLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.braze,
+	schema: z
+		.object({
+			brazeSubscribeEventNamePrefix: z.string(),
+			brazeNewsletterName: z.string(),
+			brazeSubscribeAttributeName: z.string(),
+			brazeSubscribeAttributeNameAlternate: z.string(),
+		})
+		.describe('Edit the Braze values if required'),
 };

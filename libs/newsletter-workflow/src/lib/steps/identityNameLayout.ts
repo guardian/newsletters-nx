@@ -1,6 +1,6 @@
+import { z } from 'zod/lib';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../executeModify';
-import { formSchemas } from '../schemas';
 
 const markdownToDisplay = `
 # Modify Identity Name
@@ -31,5 +31,9 @@ export const identityNameLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.identityName
+	schema: z
+		.object({
+			identityName: z.string(),
+		})
+		.describe('Edit the identity name if required'),
 };

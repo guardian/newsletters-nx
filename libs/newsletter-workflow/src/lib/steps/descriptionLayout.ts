@@ -1,9 +1,9 @@
+import { z } from 'zod';
 import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../executeModify';
-import { formSchemas } from '../schemas';
 
 const markdownToDisplay = `
 # Specify the Description
@@ -40,5 +40,9 @@ export const descriptionLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.description,
+	schema: z
+		.object({
+			description: z.string(),
+		})
+		.describe('Input a short description to display to users'),
 };
