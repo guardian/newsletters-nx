@@ -45,6 +45,7 @@ export const DraftDetails = ({ draft }: Props) => {
 				draft={draft}
 				hasBeenDeleted={hasBeenDeleted}
 				setHasBeenDeleted={setHasBeenDeleted}
+				margin={4}
 			/>
 		</>
 	);

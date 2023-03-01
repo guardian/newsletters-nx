@@ -7,12 +7,14 @@ interface Props {
 	draft: Draft;
 	hasBeenDeleted: boolean;
 	setHasBeenDeleted: { (value: boolean): void };
+	margin?: number;
 }
 
 export const DeleteDraftButton = ({
 	draft,
 	hasBeenDeleted,
 	setHasBeenDeleted,
+	margin = 0,
 }: Props) => {
 	const [showConfirmationButton, setShowConfirmationButton] = useState(false);
 	const [deleteErrorMessage, setDeleteErrorMessage] = useState<
@@ -36,7 +38,7 @@ export const DeleteDraftButton = ({
 	};
 
 	return (
-		<Box marginTop={4} marginBottom={4}>
+		<Box marginTop={margin} marginBottom={margin}>
 			{!hasBeenDeleted && !showConfirmationButton && (
 				<ButtonGroup>
 					<Button
