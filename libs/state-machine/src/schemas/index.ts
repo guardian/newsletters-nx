@@ -1,6 +1,7 @@
 import {
 	kebabCasedString,
 	themeEnumSchema,
+	underscoreCasedString,
 } from '@newsletters-nx/newsletters-data-client';
 import { z, ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
 
@@ -22,10 +23,10 @@ export const formSchemas = {
 
 	braze: z
 		.object({
-			brazeSubscribeEventNamePrefix: z.string(),
-			brazeNewsletterName: z.string(),
-			brazeSubscribeAttributeName: z.string(),
-			brazeSubscribeAttributeNameAlternate: z.string(),
+			brazeSubscribeEventNamePrefix: underscoreCasedString(),
+			brazeNewsletterName: underscoreCasedString(),
+			brazeSubscribeAttributeName: underscoreCasedString(),
+			brazeSubscribeAttributeNameAlternate: underscoreCasedString(),
 		})
 		.describe('Edit the Braze values if required'),
 

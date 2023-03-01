@@ -10,3 +10,11 @@ export const kebabCasedString = () =>
 			/^[a-z]+(-[a-z]+)*$/,
 			'Must be in kebab-case (only lower case words connected by dashes)',
 		);
+
+export const underscoreCasedString = () =>
+	z
+		.string()
+		.regex(
+			/^[a-zA-Z]+(_[a-zA-z]+)*$/,
+			'Must contain only letters and underscores',
+		);
