@@ -1,8 +1,8 @@
 import { Container } from '@mui/material';
 import type { RouteObject } from 'react-router-dom';
-import { Api } from '../components/Api';
 import { ButtonContainer } from '../components/ButtonContainer';
 import { FormDemoView } from '../components/FormDemoView';
+import { HealthCheck } from '../components/HealthCheck';
 import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
 import { Wizard } from '../components/Wizard';
 import { ErrorPage } from '../ErrorPage';
@@ -20,7 +20,7 @@ export const homeRoute: RouteObject = {
 		},
 		{
 			path: 'api/',
-			element: <Api />,
+			element: <HealthCheck />,
 		},
 		{
 			path: '/create',
@@ -32,12 +32,13 @@ export const homeRoute: RouteObject = {
 			element: <FormDemoView />,
 		},
 		{
-			path: 'wizardtest/',
+			path: '/wizardtest',
 			element: (
 				<Container>
 					<Wizard newsletterId="" />
 				</Container>
 			),
 		},
+		{ path: '*', element: <ErrorPage /> },
 	],
 };
