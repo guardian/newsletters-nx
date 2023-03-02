@@ -11,12 +11,10 @@ import { registerNewsletterRoutes } from './app/routes/newsletters';
 import { registerUIServer } from './register-ui-server';
 
 const app = Fastify();
+registerHealthRoute(app);
 if (isServingUI) {
 	registerUIServer(app);
 }
-
-registerHealthRoute(app);
-
 if (isServingReadWriteEndpoints) {
 	registerCurrentStepRoute(app);
 }

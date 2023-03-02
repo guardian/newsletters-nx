@@ -6,6 +6,9 @@
  *  Serving the read and write endpoints which can be checked with isServingReadWriteEndpoints
  * This is read in main.ts to enable/disable the endpoints
  * @see ./main.ts
+ *
+ * In development, variables can be adjusted locally on the command line e.g.
+ * 	NEWSLETTERS_UI_SERVE=false npm run dev
  */
 
 function undefinedAndNotProduction(envVar: string | undefined): boolean {
