@@ -36,20 +36,16 @@ export const convertWizardStepLayoutButtonsToWizardButtons = (
 	return outputRecord;
 };
 
-export const unsafelyGetState = async (
-	body: CurrentStepRouteRequest,
-): Promise<WizardStepData> => {
-	if (body.buttonId !== undefined) {
-		return await stateMachineButtonPressed(
-			body.buttonId,
-			{
-				currentStepId: body.stepId,
-				formData: body.formData,
-			},
-			newslettersWorkflowStepLayout,
-			storageInstance,
-		);
-	} else {
-		return await setupInitialState(body, storageInstance);
-	}
-};
+export async function getState(body: CurrentStepRouteRequest) {
+	return body.buttonId !== undefined
+		? await stateMachineButtonPressed(
+				body.buttonId,
+				{
+					currentStepId: body.stepId,
+					formData: body.formData,
+				},
+				newslettersWorkflowStepLayout,
+				storageInstance,
+		  )
+		: await setupInitialState(body, storageInstance);
+}
