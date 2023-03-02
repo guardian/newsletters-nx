@@ -110,7 +110,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Draft'
 
-  /drafts/{draftId}:
+  /v1/drafts/{draftId}:
     get:
       summary: Get a draft by draftId
       parameters:
@@ -143,7 +143,7 @@ paths:
                   results:
                     $ref: '#/components/schemas/Draft'
 
-  /drafts/delete/{draftId}:
+  /v1/drafts/{draftId}:
     delete:
       summary: Delete a draft by draftId
       parameters:

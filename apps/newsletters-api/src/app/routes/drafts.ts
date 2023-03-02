@@ -40,16 +40,15 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 	);
 
 	app.delete<{ Params: { listId: string } }>(
-		'/v1/drafts/delete/:listId',
+		'/v1/drafts/:listId',
 		async (req, res): Promise<ApiResponse<DraftWithId>> => {
 			const { listId } = req.params;
 			const idAsNumber = Number(listId);
 
 			if (isNaN(idAsNumber)) {
-				await res.status(400);
-				return makeErrorResponse(
-					'Non numerical id passed',
-				) as ApiResponse<DraftWithId>;
+				return res
+					.status(400)
+					.send(makeErrorResponse('Non numerical id passed'));
 			}
 
 			const storageResponse = await draftStore.deleteDraftNewsletter(

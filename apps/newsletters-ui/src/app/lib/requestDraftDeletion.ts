@@ -9,7 +9,7 @@ export const requestDraftDeletion = async (
 	{ ok: true; deletedDraft: DraftWithId } | { ok: false; message: string }
 > => {
 	try {
-		const response = await fetch(`/api/v1/drafts/delete/${listId}`, {
+		const response = await fetch(`/api/v1/drafts/${listId}`, {
 			method: 'DELETE',
 		});
 		const payload = (await response.json()) as ApiResponse<DraftWithId>;
