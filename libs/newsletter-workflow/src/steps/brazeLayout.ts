@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { underscoreCasedString } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../lib/executeModify';
 
@@ -33,10 +34,10 @@ export const brazeLayout: WizardStepLayout = {
 	},
 	schema: z
 		.object({
-			brazeSubscribeEventNamePrefix: z.string(),
-			brazeNewsletterName: z.string(),
-			brazeSubscribeAttributeName: z.string(),
-			brazeSubscribeAttributeNameAlternate: z.string(),
+			brazeSubscribeEventNamePrefix: underscoreCasedString(),
+			brazeNewsletterName: underscoreCasedString(),
+			brazeSubscribeAttributeName: underscoreCasedString(),
+			brazeSubscribeAttributeNameAlternate: underscoreCasedString(),
 		})
 		.describe('Edit the Braze values if required'),
 };

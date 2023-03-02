@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { kebabCasedString } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../lib/executeModify';
 
@@ -33,7 +34,7 @@ export const identityNameLayout: WizardStepLayout = {
 	},
 	schema: z
 		.object({
-			identityName: z.string(),
+			identityName: kebabCasedString(),
 		})
 		.describe('Edit the identity name if required'),
 };
