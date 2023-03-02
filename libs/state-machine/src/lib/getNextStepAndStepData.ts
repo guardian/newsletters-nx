@@ -1,14 +1,12 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { setupInitialState } from './setupInitialState';
+import { stateMachineButtonPressed } from './stateMachineButtonPressed';
 import type {
 	CurrentStepRouteRequest,
 	WizardLayout,
 	WizardStepData,
 	WizardStepLayout,
-} from '@newsletters-nx/state-machine';
-import {
-	setupInitialState,
-	stateMachineButtonPressed,
-} from '@newsletters-nx/state-machine';
+} from './types';
 
 /**
  * Get the the next step in the wizardLayout and the
