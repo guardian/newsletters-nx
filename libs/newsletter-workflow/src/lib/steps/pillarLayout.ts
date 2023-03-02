@@ -38,7 +38,7 @@ export const pillarLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'createNewsletter',
+			stepToMoveTo: 'ophan',
 			executeStep: executeModify,
 		},
 		finish: {

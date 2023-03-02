@@ -20,7 +20,7 @@ export const listLoader: LoaderFunction = async (): Promise<
 	LegacyNewsletter[]
 > => {
 	const list =
-		(await fetchApiData<LegacyNewsletter[]>(`api/v1/newsletters`)) ?? [];
+		(await fetchApiData<LegacyNewsletter[]>(`api/newsletters`)) ?? [];
 	return list;
 };
 
@@ -31,11 +31,11 @@ export const detailLoader: LoaderFunction = async ({
 	if (!id) {
 		return undefined;
 	}
-	return await fetchApiData<LegacyNewsletter>(`api/v1/newsletters/${id}`);
+	return await fetchApiData<LegacyNewsletter>(`api/newsletters/${id}`);
 };
 
 export const draftListLoader: LoaderFunction = async (): Promise<Draft[]> => {
-	const list = (await fetchApiData<Draft[]>(`api/v1/drafts`)) ?? [];
+	const list = (await fetchApiData<Draft[]>(`api/drafts`)) ?? [];
 	return list;
 };
 
@@ -46,5 +46,5 @@ export const draftDetailLoader: LoaderFunction = async ({
 	if (!id) {
 		return undefined;
 	}
-	return await fetchApiData<Draft>(`api/v1/drafts/${id}`);
+	return await fetchApiData<Draft>(`api/drafts/${id}`);
 };
