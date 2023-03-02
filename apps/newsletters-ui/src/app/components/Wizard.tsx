@@ -75,6 +75,7 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 				stepId: 'editDraftNewsletter',
 			});
 		}
+		setListId(undefined);
 	}, [id]);
 
 	if (serverData === undefined) {
