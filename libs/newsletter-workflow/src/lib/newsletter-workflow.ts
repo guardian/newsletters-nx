@@ -6,9 +6,12 @@ import { descriptionLayout } from './steps/descriptionLayout';
 import { editDraftNewsletterLayout } from './steps/editDraftNewsletterLayout';
 import { finishLayout } from './steps/finishLayout';
 import { identityNameLayout } from './steps/identityNameLayout';
+import { launchNewsletterLayout } from './steps/launchNewsletterLayout';
 import { ophanLayout } from './steps/ophanLayout';
 import { pillarLayout } from './steps/pillarLayout';
 
+// TODO - this list currently contains steps from *all* wizards
+// should separate wizards be separate out?
 export const newslettersWorkflowStepLayout: WizardLayout = {
 	createDraftNewsletter: createDraftNewsletterLayout,
 	editDraftNewsletter: editDraftNewsletterLayout,
@@ -19,4 +22,5 @@ export const newslettersWorkflowStepLayout: WizardLayout = {
 	pillar: pillarLayout,
 	description: descriptionLayout,
 	finish: finishLayout,
+	launchNewsletter: launchNewsletterLayout,
 };

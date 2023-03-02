@@ -1,4 +1,3 @@
-import type { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { Container } from '@mui/material';
 import type { RouteObject } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
@@ -7,9 +6,19 @@ import { ButtonContainer } from '../components/ButtonContainer';
 import { FormDemoView } from '../components/FormDemoView';
 import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
 import { Wizard } from '../components/Wizard';
+import type { WizardProps } from '../components/Wizard';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { listLoader } from './loaders';
+
+const WizardLink: React.FC<WizardProps> = ({ wizardId, id }: WizardProps) => {
+	const { listId } = useParams();
+	return (
+		<Container>
+			<Wizard wizardId={wizardId} id={listId} />
+		</Container>
+	);
+};
 
 export const homeRoute: RouteObject = {
 	path: '/',
@@ -35,20 +44,15 @@ export const homeRoute: RouteObject = {
 		},
 		{
 			path: 'newsletter-data/:listId',
-			element: <WizardLink />,
+			element: <WizardLink wizardId="NEWSLETTER_DATA" />,
 		},
 		{
 			path: 'newsletter-data',
-			element: <WizardLink />,
+			element: <WizardLink wizardId="NEWSLETTER_DATA" />,
+		},
+		{
+			path: 'launch-newsletter',
+			element: <WizardLink wizardId="LAUNCH_NEWSLETTER" />,
 		},
 	],
 };
-
-function WizardLink(): ReactJSXElement {
-	const { listId } = useParams();
-	return (
-		<Container>
-			<Wizard wizardId={'NEWSLETTER_DATA'} id={listId} />
-		</Container>
-	);
-}

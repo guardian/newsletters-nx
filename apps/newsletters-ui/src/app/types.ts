@@ -1,6 +1,6 @@
 export const WIZARDS = {
 	LAUNCH_NEWSLETTER: {
-		createStartStep: '',
+		createStartStep: 'launchNewsletter',
 		editStartStep: '',
 	},
 	NEWSLETTER_DATA: {
