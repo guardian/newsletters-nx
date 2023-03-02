@@ -47,6 +47,7 @@ paths:
                   results:
                     type: array
                     items:
+                      # This will change to the "Newsletter" schema when the new data model is implemented
                       $ref: '#/components/schemas/LegacyNewsletter'
 
   /newsletters/{newsletterId}:
@@ -80,6 +81,7 @@ paths:
                     type: boolean
                     example: true
                   results:
+                    # This will change to the "Newsletter" schema when the new data model is implemented
                     $ref: '#/components/schemas/LegacyNewsletter'
 
   /drafts:
@@ -145,6 +147,7 @@ paths:
 
 components:
   schemas:
+    # TO DO - define schema for Newsletter when implemented in code.
     LegacyNewsletter:
       type: object
       required:
