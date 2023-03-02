@@ -44,7 +44,7 @@ const convertWizardStepLayoutButtonsToWizardButtons = (
  */
 export function registerCurrentStepRoute(app: FastifyInstance) {
 	app.post<{ Body: CurrentStepRouteRequest }>(
-		'/api/v1/currentstep',
+		'/api/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
 
@@ -77,9 +77,6 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					return res.status(400).send(errorResponse);
 				}
 			}
-
-			console.log('checking formdata in currentstep');
-			console.table(result.formData);
 
 			const nextWizardStepLayout =
 				newslettersWorkflowStepLayout[result.currentStepId];

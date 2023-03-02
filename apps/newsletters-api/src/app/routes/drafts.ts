@@ -10,7 +10,7 @@ import { makeErrorResponse, makeSuccessResponse } from '../responses';
 const drafStore = storageInstance as DraftStorage;
 
 export function registerDraftsRoutes(app: FastifyInstance) {
-	app.get('/api/v1/drafts', async (req, res) => {
+	app.get('/api/drafts', async (req, res) => {
 		const storageResponse = await drafStore.listDrafts();
 		if (storageResponse.ok) {
 			return makeSuccessResponse(storageResponse.data);
@@ -19,7 +19,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 	});
 
 	app.get<{ Params: { listId: string } }>(
-		'/api/v1/drafts/:listId',
+		'/api/drafts/:listId',
 		async (req, res) => {
 			const { listId } = req.params;
 			const idAsNumber = Number(listId);

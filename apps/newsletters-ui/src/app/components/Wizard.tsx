@@ -33,7 +33,7 @@ export const Wizard: React.FC<WizardProps> = () => {
 	>();
 
 	const fetchStep = (body: CurrentStepRouteRequest) => {
-		return fetch(`/api/v1/currentstep`, {
+		return fetch(`/api/currentstep`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
