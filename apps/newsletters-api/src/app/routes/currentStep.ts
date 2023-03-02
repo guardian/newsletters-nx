@@ -5,7 +5,7 @@ import type {
 	CurrentStepRouteResponse,
 } from '@newsletters-nx/state-machine';
 import { getResponseFromBodyAndStateAndWizardStepLayout } from '@newsletters-nx/state-machine';
-import { getState } from '../state-machine';
+import { getNextStepAndStepData } from '../state-machine';
 
 /**
  * Register the current step route for the newsletter wizard
@@ -18,12 +18,12 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
 			try {
-				const state = await getState(body);
+				const { stepData, nextStep } = await getNextStepAndStepData(
+					body,
+					newslettersWorkflowStepLayout,
+				);
 
-				const nextWizardStepLayout =
-					newslettersWorkflowStepLayout[state.currentStepId];
-
-				if (!nextWizardStepLayout) {
+				if (!nextStep) {
 					const errorResponse = {
 						errorMessage: 'No next step found',
 						currentStepId: body.stepId,
@@ -33,8 +33,8 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 
 				return getResponseFromBodyAndStateAndWizardStepLayout(
 					body,
-					state,
-					nextWizardStepLayout,
+					stepData,
+					nextStep,
 				);
 			} catch (error) {
 				if (error instanceof Error) {
