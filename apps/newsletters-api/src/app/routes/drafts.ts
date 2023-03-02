@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-// import { isNewsletter } from '@newsletters-nx/newsletters-data-client';
+// import { isLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 // import newslettersData from '../../../static/newsletters.local.json';
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { storageInstance } from '../../services/storageInstance';

@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { formatCellBoolean } from './Cell';
 import { Table } from './Table';
 
 interface Props {
-	newsletters: Newsletter[];
+	newsletters: LegacyNewsletter[];
 }
 
 export const NewslettersTable = ({ newsletters }: Props) => {
