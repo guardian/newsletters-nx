@@ -5,7 +5,7 @@ type FormData = Record<string, string | number | boolean | undefined>;
 
 // TODO - move these definitions to a separate file
 export const formSchemas = {
-	createNewsletter: z
+	startDraftNewsletter: z
 		.object({
 			name: z.string(),
 		})
@@ -50,8 +50,8 @@ export const formSchemas = {
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
-	if (stepId === 'createNewsletter' || stepId === 'editDraftNewsletter') {
-		return formSchemas.createNewsletter;
+	if (stepId === 'createDraftNewsletter' || stepId === 'editDraftNewsletter') {
+		return formSchemas.startDraftNewsletter;
 	}
 	if (stepId === 'identityName') {
 		return formSchemas.identityName;

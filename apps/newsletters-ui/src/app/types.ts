@@ -4,7 +4,7 @@ export const WIZARDS = {
 		editStartStep: '',
 	},
 	NEWSLETTER_INFO: {
-		createStartStep: 'createNewsletter',
+		createStartStep: 'createDraftNewsletter',
 		editStartStep: 'editDraftNewsletter',
 	},
 };
