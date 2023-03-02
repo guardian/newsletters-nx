@@ -144,6 +144,43 @@ paths:
                     example: true
                   results:
                     $ref: '#/components/schemas/Draft'
+    delete:
+      summary: Delete a draft by draftId
+      parameters:
+        - in: path
+          name: draftId
+          schema:
+            type: number
+          required: true
+          description: The unique draftId number of the newsletter to get
+      responses:
+        '400':
+          description: A JSON object describing a 'bad request' error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: A JSON object describing an internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '200':
+          description: Returns a response object with the draft that was deleted as the result field.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - results
+                  - ok
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  results:
+                    $ref: '#/components/schemas/Draft'
 
 components:
   schemas:
