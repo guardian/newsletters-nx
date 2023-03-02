@@ -23,7 +23,7 @@ export const requestDraftDeletion = async (
 
 		return {
 			ok: false,
-			message: payload.message ?? 'UNKNOW DELETE ERROR',
+			message: payload.message ?? 'UNKNOWN DELETE ERROR',
 		};
 	} catch (err) {
 		console.warn('ERROR');
