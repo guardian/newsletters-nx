@@ -48,7 +48,7 @@ function WizardLink(): ReactJSXElement {
 	const { listId } = useParams();
 	return (
 		<Container>
-			<Wizard id={listId} />
+			<Wizard wizardId={'NEWSLETTER_INFO'} id={listId} />
 		</Container>
 	);
 }

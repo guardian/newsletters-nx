@@ -5,6 +5,7 @@ import type {
 	CurrentStepRouteResponse,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { WIZARDS } from '../types';
 import { MarkdownView } from './MarkdownView';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
@@ -14,13 +15,17 @@ import { WizardButton } from './WizardButton';
  * Interface for the props passed to the `Wizard` component.
  */
 export interface WizardProps {
+	wizardId: keyof typeof WIZARDS;
 	id?: string;
 }
 
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
  */
-export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
+export const Wizard: React.FC<WizardProps> = ({
+	wizardId,
+	id,
+}: WizardProps) => {
 	const [serverData, setServerData] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
@@ -65,18 +70,19 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 	};
 
 	useEffect(() => {
+		const { createStartStep = '', editStartStep = '' } = WIZARDS[wizardId];
 		if (id === undefined) {
 			void fetchStep({
-				stepId: 'createNewsletter',
+				stepId: createStartStep,
 			});
 		} else {
 			void fetchStep({
 				id: id,
-				stepId: 'editDraftNewsletter',
+				stepId: editStartStep,
 			});
 		}
 		setListId(undefined);
-	}, [id]);
+	}, [wizardId, id]);
 
 	if (serverData === undefined) {
 		return <p>'loading'</p>;
