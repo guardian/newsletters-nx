@@ -1,5 +1,5 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeCreate } from '../executeCreate';
+import { executeModify } from '../executeModify';
 
 export const editDraftNewsletterLayout: WizardStepLayout = {
 	staticMarkdown: `# Edit a draft newsletter
@@ -26,7 +26,7 @@ For example:
 				const name = stepData.formData ? stepData.formData['name'] : undefined;
 				return name ? undefined : 'NO NAME PROVIDED';
 			},
-			executeStep: executeCreate,
+			executeStep: executeModify,
 		},
 	},
 };
