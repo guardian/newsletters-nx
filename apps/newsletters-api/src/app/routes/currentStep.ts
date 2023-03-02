@@ -44,7 +44,7 @@ const convertWizardStepLayoutButtonsToWizardButtons = (
  */
 export function registerCurrentStepRoute(app: FastifyInstance) {
 	app.post<{ Body: CurrentStepRouteRequest }>(
-		'/v1/currentstep',
+		'/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
 			let result: WizardStepData = { currentStepId: '' };

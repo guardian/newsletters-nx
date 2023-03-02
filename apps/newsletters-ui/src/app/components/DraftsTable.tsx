@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { Draft } from '@newsletters-nx/newsletters-data-client';
@@ -13,6 +14,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 		...draft,
 		wizardListId: draft['listId'],
 	}));
+	const navigate = useNavigate();
 	const columns = useMemo<Column[]>(
 		() => [
 			{
@@ -35,11 +37,13 @@ export const DraftsTable = ({ drafts }: Props) => {
 				Header: 'Wizard',
 				accessor: 'wizardListId',
 				Cell: ({ cell: { value } }) => (
-					<Link to={`/wizard/${value as string}`}>Edit</Link>
+					<button onClick={() => navigate(`/demo/wizard/${value as string}`)}>
+						Edit
+					</button>
 				),
 			},
 		],
-		[],
+		[navigate],
 	);
 	return <Table data={data} columns={columns} defaultSortId="name" />;
 };

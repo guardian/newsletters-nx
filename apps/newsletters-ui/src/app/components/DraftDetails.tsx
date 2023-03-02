@@ -1,6 +1,5 @@
 import {
 	Card,
-	Paper,
 	Table,
 	TableBody,
 	TableCell,
@@ -15,7 +14,7 @@ interface Props {
 
 export const DraftDetails = ({ draft }: Props) => {
 	return (
-		<TableContainer component={Card} sx={{ width: '24rem' }}>
+		<TableContainer component={Card} sx={{ width: '36rem' }}>
 			<Table>
 				<TableBody>
 					{Object.entries(draft).map(([key, value]) => (
