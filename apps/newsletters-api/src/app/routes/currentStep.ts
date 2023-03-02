@@ -47,27 +47,21 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		'/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
-
-			if (body.newsletterId === undefined) {
-				return res
-					.status(400)
-					.send({ message: 'newsletter id is required', body: body });
-			}
-
 			let result: WizardStepData = { currentStepId: '' };
 			try {
-				result =
-					body.buttonId !== undefined
-						? await stateMachineButtonPressed(
-								body.buttonId,
-								{
-									currentStepId: body.stepId,
-									formData: body.formData,
-								},
-								newslettersWorkflowStepLayout,
-								storageInstance,
-						  )
-						: setupInitialState();
+				if (body.buttonId !== undefined) {
+					result = await stateMachineButtonPressed(
+						body.buttonId,
+						{
+							currentStepId: body.stepId,
+							formData: body.formData,
+						},
+						newslettersWorkflowStepLayout,
+						storageInstance,
+					);
+				} else {
+					result = await setupInitialState(body, storageInstance);
+				}
 			} catch (error) {
 				if (error instanceof Error) {
 					const errorResponse: CurrentStepRouteResponse = {

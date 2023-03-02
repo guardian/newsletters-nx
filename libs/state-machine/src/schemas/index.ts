@@ -53,6 +53,9 @@ export const formSchemas = {
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
+	if (stepId === 'createNewsletter' || stepId === 'editDraftNewsletter') {
+		return formSchemas.createNewsletter;
+	}
 	const matchingEntry = Object.entries(formSchemas).find(
 		([key]) => key === stepId,
 	);

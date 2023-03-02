@@ -13,13 +13,13 @@ import { WizardButton } from './WizardButton';
  * Interface for the props passed to the `Wizard` component.
  */
 export interface WizardProps {
-	newsletterId?: string;
+	id?: string;
 }
 
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
  */
-export const Wizard: React.FC<WizardProps> = () => {
+export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 	const [serverData, setServerData] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
@@ -64,11 +64,18 @@ export const Wizard: React.FC<WizardProps> = () => {
 	};
 
 	useEffect(() => {
-		void fetchStep({
-			newsletterId: 'test',
-			stepId: '',
-		});
-	}, []);
+		if (id === undefined) {
+			void fetchStep({
+				stepId: 'createNewsletter',
+			});
+		} else {
+			void fetchStep({
+				id: id,
+				stepId: 'editDraftNewsletter',
+			});
+		}
+		setListId(undefined);
+	}, [id]);
 
 	if (serverData === undefined) {
 		return <p>'loading'</p>;
@@ -83,10 +90,10 @@ export const Wizard: React.FC<WizardProps> = () => {
 		);
 	}
 
-	const handleButtonClick = (id: string) => () => {
+	const handleButtonClick = (buttonId: string) => () => {
 		void fetchStep({
-			newsletterId: 'test',
-			buttonId: id,
+			id: id,
+			buttonId: buttonId,
 			stepId: serverData.currentStepId || '',
 			formData: { ...formData, listId }, // will work for the create+modify workflow, but might break other workflows
 		});
