@@ -37,30 +37,30 @@ const convertWizardStepLayoutButtonsToWizardButtons = (
 };
 
 export async function getState(
-	body: CurrentStepRouteRequest,
+	requestBody: CurrentStepRouteRequest,
 ): Promise<WizardStepData> {
-	return body.buttonId !== undefined
+	return requestBody.buttonId !== undefined
 		? await stateMachineButtonPressed(
-				body.buttonId,
+				requestBody.buttonId,
 				{
-					currentStepId: body.stepId,
-					formData: body.formData,
+					currentStepId: requestBody.stepId,
+					formData: requestBody.formData,
 				},
 				newslettersWorkflowStepLayout,
 				storageInstance,
 		  )
-		: await setupInitialState(body, storageInstance);
+		: await setupInitialState(requestBody, storageInstance);
 }
 
 export const getResponseFromBodyAndStateAndWizardStepLayout = (
-	body: CurrentStepRouteRequest,
+	requestBody: CurrentStepRouteRequest,
 	state: WizardStepData,
 	nextWizardStepLayout: WizardStepLayout,
 ): CurrentStepRouteResponse => {
 	const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
 
 	const markdown = dynamicMarkdown
-		? dynamicMarkdown(body.formData, state.formData)
+		? dynamicMarkdown(requestBody.formData, state.formData)
 		: staticMarkdown;
 
 	const currentStepRouteResponse = {
