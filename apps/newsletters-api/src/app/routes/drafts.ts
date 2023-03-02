@@ -6,6 +6,7 @@ import type {
 	DraftStorage,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
+import { StorageRequestFailureReason } from '@newsletters-nx/newsletters-data-client';
 import { storageInstance } from '../../services/storageInstance';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
@@ -13,13 +14,28 @@ import { makeErrorResponse, makeSuccessResponse } from '../responses';
 // allow for failed responses.
 const draftStore = storageInstance as DraftStorage;
 
+const mapFailureReasonToStatusCode = (
+	reason?: StorageRequestFailureReason,
+): number => {
+	switch (reason) {
+		case StorageRequestFailureReason.InvalidDataInput:
+			return 400;
+		case StorageRequestFailureReason.NotFound:
+			return 404;
+		default:
+			return 500;
+	}
+};
+
 export function registerDraftsRoutes(app: FastifyInstance) {
 	app.get('/v1/drafts', async (req, res) => {
 		const storageResponse = await draftStore.listDrafts();
 		if (storageResponse.ok) {
 			return makeSuccessResponse(storageResponse.data);
 		}
-		return makeErrorResponse(storageResponse.message);
+		return res
+			.status(mapFailureReasonToStatusCode(storageResponse.reason))
+			.send(makeErrorResponse(storageResponse.message));
 	});
 
 	app.get<{ Params: { listId: string } }>(
@@ -35,7 +51,9 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 			if (storageResponse.ok) {
 				return makeSuccessResponse(storageResponse.data);
 			}
-			return makeErrorResponse(storageResponse.message);
+			return res
+				.status(mapFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
 		},
 	);
 
@@ -59,9 +77,9 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 				return makeSuccessResponse(storageResponse.data);
 			}
 
-			return makeErrorResponse(
-				storageResponse.message,
-			) as ApiResponse<DraftWithId>;
+			return res
+				.status(mapFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
 		},
 	);
 }
