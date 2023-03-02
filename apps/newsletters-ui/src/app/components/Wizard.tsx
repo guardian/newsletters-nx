@@ -6,8 +6,7 @@ import type {
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
 import { MarkdownView } from './MarkdownView';
-import type { FieldDef, FieldValue } from './SchemaForm';
-import { getModification, SchemaForm } from './SchemaForm';
+import { StateEditForm } from './StateEditForm';
 import { WizardButton } from './WizardButton';
 
 /**
@@ -95,30 +94,16 @@ export const Wizard: React.FC<WizardProps> = () => {
 
 	const formSchema = getFormSchema(serverData.currentStepId);
 
-	const changeFormData = (value: FieldValue, field: FieldDef) => {
-		const mod = getModification(value, field);
-		const revisedData = {
-			...formData,
-			...mod,
-		};
-
-		setFormData(revisedData);
-	};
-
 	return (
 		<>
 			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
 
 			{formSchema && formData && (
-				<fieldset>
-					<legend>{formSchema.description}</legend>
-					<SchemaForm
-						schema={formSchema}
-						data={formData}
-						validationWarnings={{}}
-						changeValue={changeFormData}
-					/>
-				</fieldset>
+				<StateEditForm
+					formSchema={formSchema}
+					formData={formData}
+					setFormData={setFormData}
+				/>
 			)}
 
 			{serverData.errorMessage && (

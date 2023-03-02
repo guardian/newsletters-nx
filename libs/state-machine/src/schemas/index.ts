@@ -1,7 +1,10 @@
-import { themeEnumSchema } from '@newsletters-nx/newsletters-data-client';
+import {
+	kebabCasedString,
+	themeEnumSchema,
+	underscoreCasedString,
+} from '@newsletters-nx/newsletters-data-client';
 import { z, ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
-
-type FormData = Record<string, string | number | boolean | undefined>;
+import type { WizardFormData } from '../lib/types';
 
 // TODO - move these definitions to a separate file
 export const formSchemas = {
@@ -13,16 +16,16 @@ export const formSchemas = {
 
 	identityName: z
 		.object({
-			identityName: z.string(),
+			identityName: kebabCasedString(),
 		})
 		.describe('Edit the identity name if required'),
 
 	braze: z
 		.object({
-			brazeSubscribeEventNamePrefix: z.string(),
-			brazeNewsletterName: z.string(),
-			brazeSubscribeAttributeName: z.string(),
-			brazeSubscribeAttributeNameAlternate: z.string(),
+			brazeSubscribeEventNamePrefix: underscoreCasedString(),
+			brazeNewsletterName: underscoreCasedString(),
+			brazeSubscribeAttributeName: underscoreCasedString(),
+			brazeSubscribeAttributeNameAlternate: underscoreCasedString(),
 		})
 		.describe('Edit the Braze values if required'),
 
@@ -50,42 +53,28 @@ export const formSchemas = {
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
-	if (stepId === 'createNewsletter') {
-		return formSchemas.createNewsletter;
-	}
-	if (stepId === 'identityName') {
-		return formSchemas.identityName;
-	}
-	if (stepId === 'braze') {
-		return formSchemas.braze;
-	}
-	if (stepId === 'ophan') {
-		return formSchemas.ophan;
-	}
-	if (stepId === 'pillar') {
-		return formSchemas.pillar;
-	}
-	if (stepId === 'description') {
-		return formSchemas.description;
-	}
-
-	return undefined;
+	const matchingEntry = Object.entries(formSchemas).find(
+		([key]) => key === stepId,
+	);
+	return matchingEntry ? matchingEntry[1] : undefined;
 };
 
-export const getFormBlankData = (stepId: string): FormData | undefined => {
+export const getFormBlankData = (
+	stepId: string,
+): WizardFormData | undefined => {
 	const schema = getFormSchema(stepId);
 	if (!schema) {
 		return undefined;
 	}
 
-	return Object.keys(schema.shape).reduce<FormData>((formData, key) => {
+	return Object.keys(schema.shape).reduce<WizardFormData>((formData, key) => {
 		const zod = schema.shape[key];
 
 		if (!zod) {
 			return formData;
 		}
 
-		const mod: FormData = {};
+		const mod: WizardFormData = {};
 
 		if (zod instanceof ZodString) {
 			mod[key] = '';

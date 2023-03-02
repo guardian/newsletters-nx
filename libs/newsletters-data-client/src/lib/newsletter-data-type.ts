@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { emailEmbedSchema } from './emailEmbedSchema';
-import { themeEnumSchema } from './newsletter-type';
+import { themeEnumSchema } from './legacy-newsletter-type';
 import { nonEmptyString } from './schema-helpers';
 
 /**
