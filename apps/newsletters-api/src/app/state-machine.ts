@@ -1,3 +1,4 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	WizardLayout,
@@ -8,7 +9,6 @@ import {
 	setupInitialState,
 	stateMachineButtonPressed,
 } from '@newsletters-nx/state-machine';
-import { storageInstance } from '../services/storageInstance';
 
 /**
  * Get the the next step in the wizardLayout and the
@@ -23,6 +23,7 @@ import { storageInstance } from '../services/storageInstance';
 export async function getNextStepAndStepData(
 	requestBody: CurrentStepRouteRequest,
 	wizardLayout: WizardLayout,
+	draftStorage: DraftStorage,
 ): Promise<{ stepData: WizardStepData; nextStep?: WizardStepLayout }> {
 	const stepData =
 		requestBody.buttonId !== undefined
@@ -33,9 +34,9 @@ export async function getNextStepAndStepData(
 						formData: requestBody.formData,
 					},
 					wizardLayout,
-					storageInstance,
+					draftStorage,
 			  )
-			: await setupInitialState(requestBody, storageInstance);
+			: await setupInitialState(requestBody, draftStorage);
 
 	const nextStep = wizardLayout[stepData.currentStepId];
 

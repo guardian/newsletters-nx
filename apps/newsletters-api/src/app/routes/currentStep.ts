@@ -5,6 +5,7 @@ import type {
 	CurrentStepRouteResponse,
 } from '@newsletters-nx/state-machine';
 import { getResponseFromBodyAndStateAndWizardStepLayout } from '@newsletters-nx/state-machine';
+import { storageInstance } from '../../services/storageInstance';
 import { getNextStepAndStepData } from '../state-machine';
 
 /**
@@ -21,6 +22,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				const { stepData, nextStep } = await getNextStepAndStepData(
 					body,
 					newslettersWorkflowStepLayout,
+					storageInstance,
 				);
 
 				if (!nextStep) {
