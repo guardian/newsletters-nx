@@ -15,7 +15,7 @@ export const DraftDetailView = () => {
 	return (
 		<>
 			<DraftDetails draft={matchedItem} />
-			<Link to="/drafts/">Back to List</Link>
+			<Link to="..">Back to List</Link>
 		</>
 	);
 };
