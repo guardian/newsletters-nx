@@ -17,7 +17,7 @@ async function fetchApiData<T>(path: string): Promise<T | undefined> {
 }
 
 export const listLoader: LoaderFunction = async (): Promise<Newsletter[]> => {
-	const list = (await fetchApiData<Newsletter[]>(`api/v1/newsletters`)) ?? [];
+	const list = (await fetchApiData<Newsletter[]>(`api/newsletters`)) ?? [];
 	return list;
 };
 
@@ -28,11 +28,11 @@ export const detailLoader: LoaderFunction = async ({
 	if (!id) {
 		return undefined;
 	}
-	return await fetchApiData<Newsletter>(`api/v1/newsletters/${id}`);
+	return await fetchApiData<Newsletter>(`api/newsletters/${id}`);
 };
 
 export const draftListLoader: LoaderFunction = async (): Promise<Draft[]> => {
-	const list = (await fetchApiData<Draft[]>(`api/v1/drafts`)) ?? [];
+	const list = (await fetchApiData<Draft[]>(`api/drafts`)) ?? [];
 	return list;
 };
 
@@ -43,5 +43,5 @@ export const draftDetailLoader: LoaderFunction = async ({
 	if (!id) {
 		return undefined;
 	}
-	return await fetchApiData<Draft>(`api/v1/drafts/${id}`);
+	return await fetchApiData<Draft>(`api/drafts/${id}`);
 };
