@@ -5,7 +5,7 @@ import type {
 	CurrentStepRouteResponse,
 } from '@newsletters-nx/state-machine';
 import {
-	convertWizardStepLayoutButtonsToWizardButtons,
+	getResponseFromBodyAndStateAndWizardStepLayout,
 	getState,
 } from '../state-machine';
 
@@ -33,23 +33,11 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					return res.status(400).send(errorResponse);
 				}
 
-				const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
-
-				const markdown = dynamicMarkdown
-					? dynamicMarkdown(body.formData, state.formData)
-					: staticMarkdown;
-
-				const currentStepRouteResponse = {
-					markdownToDisplay: markdown,
-					currentStepId: state.currentStepId,
-					buttons: convertWizardStepLayoutButtonsToWizardButtons(
-						nextWizardStepLayout.buttons,
-					),
-					errorMessage: state.errorMessage,
-					formData: state.formData,
-				};
-
-				return currentStepRouteResponse;
+				return getResponseFromBodyAndStateAndWizardStepLayout(
+					body,
+					state,
+					nextWizardStepLayout,
+				);
 			} catch (error) {
 				if (error instanceof Error) {
 					const errorResponse = {

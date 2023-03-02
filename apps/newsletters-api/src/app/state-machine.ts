@@ -13,7 +13,7 @@ import {
 } from '@newsletters-nx/state-machine';
 import { storageInstance } from '../services/storageInstance';
 
-export const convertWizardStepLayoutButtonsToWizardButtons = (
+const convertWizardStepLayoutButtonsToWizardButtons = (
 	layoutButtons: WizardStepLayout['buttons'],
 ): CurrentStepRouteResponse['buttons'] => {
 	const convertButton = (
@@ -36,7 +36,9 @@ export const convertWizardStepLayoutButtonsToWizardButtons = (
 	return outputRecord;
 };
 
-export async function getState(body: CurrentStepRouteRequest) {
+export async function getState(
+	body: CurrentStepRouteRequest,
+): Promise<WizardStepData> {
 	return body.buttonId !== undefined
 		? await stateMachineButtonPressed(
 				body.buttonId,
@@ -49,3 +51,27 @@ export async function getState(body: CurrentStepRouteRequest) {
 		  )
 		: await setupInitialState(body, storageInstance);
 }
+
+export const getResponseFromBodyAndStateAndWizardStepLayout = (
+	body: CurrentStepRouteRequest,
+	state: WizardStepData,
+	nextWizardStepLayout: WizardStepLayout,
+): CurrentStepRouteResponse => {
+	const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
+
+	const markdown = dynamicMarkdown
+		? dynamicMarkdown(body.formData, state.formData)
+		: staticMarkdown;
+
+	const currentStepRouteResponse = {
+		markdownToDisplay: markdown,
+		currentStepId: state.currentStepId,
+		buttons: convertWizardStepLayoutButtonsToWizardButtons(
+			nextWizardStepLayout.buttons,
+		),
+		errorMessage: state.errorMessage,
+		formData: state.formData,
+	};
+
+	return currentStepRouteResponse;
+};
