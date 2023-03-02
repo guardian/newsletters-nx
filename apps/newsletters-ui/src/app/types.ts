@@ -3,7 +3,7 @@ export const WIZARDS = {
 		createStartStep: '',
 		editStartStep: '',
 	},
-	NEWSLETTER_INFO: {
+	NEWSLETTER_DATA: {
 		createStartStep: 'createDraftNewsletter',
 		editStartStep: 'editDraftNewsletter',
 	},

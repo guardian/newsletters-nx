@@ -34,11 +34,11 @@ export const homeRoute: RouteObject = {
 			element: <FormDemoView />,
 		},
 		{
-			path: 'wizard/:listId',
+			path: 'newsletter-data/:listId',
 			element: <WizardLink />,
 		},
 		{
-			path: 'wizard',
+			path: 'newsletter-data',
 			element: <WizardLink />,
 		},
 	],
@@ -48,7 +48,7 @@ function WizardLink(): ReactJSXElement {
 	const { listId } = useParams();
 	return (
 		<Container>
-			<Wizard wizardId={'NEWSLETTER_INFO'} id={listId} />
+			<Wizard wizardId={'NEWSLETTER_DATA'} id={listId} />
 		</Container>
 	);
 }

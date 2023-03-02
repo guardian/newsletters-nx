@@ -35,7 +35,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				Header: 'Wizard',
 				accessor: 'wizardListId',
 				Cell: ({ cell: { value } }) => (
-					<Link to={`/wizard/${value as string}`}>Edit</Link>
+					<Link to={`/newsletter-data/${value as string}`}>Edit</Link>
 				),
 			},
 		],
