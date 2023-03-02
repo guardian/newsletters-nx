@@ -22,7 +22,7 @@ export const DraftDetails = ({ draft }: Props) => {
 			<TableContainer
 				component={Card}
 				sx={{
-					width: '24rem',
+					width: '36rem',
 					backgroundColor: hasBeenDeleted ? 'pink' : undefined,
 				}}
 			>

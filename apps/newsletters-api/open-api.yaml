@@ -7,7 +7,7 @@ info:
     email: newsletters-dev@guardian.co.uk
 
 paths:
-  /newsletters:
+  /legacy/newsletters:
     get:
       summary: Returns a list of newsletters.
       description: Provides the legacy API format, consisting only of the array of newsletters. Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
@@ -21,7 +21,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Newsletter'
 
-  /v1/newsletters:
+  /newsletters:
     get:
       summary: Returns a response object with a list of newsletters as the result field.
       description: Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
@@ -82,7 +82,7 @@ paths:
                   results:
                     $ref: '#/components/schemas/Newsletter'
 
-  /v1/drafts:
+  /drafts:
     get:
       summary: Returns a response object with a list of drafts as the result field.
       description: Includes the objects representing draft newsletters yet to be launched.
@@ -110,7 +110,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Draft'
 
-  /v1/drafts/{draftId}:
+  /drafts/{draftId}:
     get:
       summary: Get a draft by draftId
       parameters:

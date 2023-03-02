@@ -3,10 +3,10 @@ import { DraftDetailView } from '../components/views/DraftDetailView';
 import { DraftListView } from '../components/views/DraftListView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
-import { draftDetailLoader, draftListLoader } from './loaders';
+import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
 
 export const draftRoute: RouteObject = {
-	path: '/drafts',
+	path: '/newsletters/drafts',
 	element: <Layout />,
 	errorElement: <ErrorPage />,
 	children: [
