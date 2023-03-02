@@ -3,39 +3,12 @@ import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workfl
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
-	WizardButton,
 	WizardStepData,
-	WizardStepLayout,
-	WizardStepLayoutButton,
 } from '@newsletters-nx/state-machine';
 import {
-	setupInitialState,
-	stateMachineButtonPressed,
-} from '@newsletters-nx/state-machine';
-import { storageInstance } from '../../services/storageInstance';
-
-const convertWizardStepLayoutButtonsToWizardButtons = (
-	layoutButtons: WizardStepLayout['buttons'],
-): CurrentStepRouteResponse['buttons'] => {
-	const convertButton = (
-		index: string,
-		input: WizardStepLayoutButton,
-	): WizardButton => {
-		return {
-			id: index,
-			label: input.label,
-			buttonType: input.buttonType,
-		};
-	};
-
-	const outputRecord: CurrentStepRouteResponse['buttons'] = {};
-
-	Object.entries(layoutButtons).forEach(([index, layoutButton]) => {
-		outputRecord[index] = convertButton(index, layoutButton);
-	});
-
-	return outputRecord;
-};
+	convertWizardStepLayoutButtonsToWizardButtons,
+	unsafelyGetState,
+} from '../state-machine';
 
 /**
  * Register the current step route for the newsletter wizard
@@ -47,21 +20,10 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		'/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
-			let result: WizardStepData = { currentStepId: '' };
+
+			let state: WizardStepData = { currentStepId: '' };
 			try {
-				if (body.buttonId !== undefined) {
-					result = await stateMachineButtonPressed(
-						body.buttonId,
-						{
-							currentStepId: body.stepId,
-							formData: body.formData,
-						},
-						newslettersWorkflowStepLayout,
-						storageInstance,
-					);
-				} else {
-					result = await setupInitialState(body, storageInstance);
-				}
+				state = await unsafelyGetState(body);
 			} catch (error) {
 				if (error instanceof Error) {
 					const errorResponse: CurrentStepRouteResponse = {
@@ -73,10 +35,10 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 			}
 
 			console.log('checking formdata in currentstep');
-			console.table(result.formData);
+			console.table(state.formData);
 
 			const nextWizardStepLayout =
-				newslettersWorkflowStepLayout[result.currentStepId];
+				newslettersWorkflowStepLayout[state.currentStepId];
 
 			if (!nextWizardStepLayout) {
 				return res
@@ -87,17 +49,17 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 			const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
 
 			const markdown = dynamicMarkdown
-				? dynamicMarkdown(body.formData, result.formData)
+				? dynamicMarkdown(body.formData, state.formData)
 				: staticMarkdown;
 
 			return {
 				markdownToDisplay: markdown,
-				currentStepId: result.currentStepId,
+				currentStepId: state.currentStepId,
 				buttons: convertWizardStepLayoutButtonsToWizardButtons(
 					nextWizardStepLayout.buttons,
 				),
-				errorMessage: result.errorMessage,
-				formData: result.formData,
+				errorMessage: state.errorMessage,
+				formData: state.formData,
 			};
 		},
 	);
