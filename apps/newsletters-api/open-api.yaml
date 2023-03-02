@@ -142,8 +142,6 @@ paths:
                     example: true
                   results:
                     $ref: '#/components/schemas/Draft'
-
-  /v1/drafts/{draftId}:
     delete:
       summary: Delete a draft by draftId
       parameters:
