@@ -16,7 +16,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				Header: 'Draft ID number',
 				accessor: 'listId',
 				Cell: ({ cell: { value } }) => (
-					<Link to={`/drafts/${value as string}`}>{value}</Link>
+					<Link to={`./${value as string}`}>{value}</Link>
 				),
 			},
 			{
