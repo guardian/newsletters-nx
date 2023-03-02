@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, Box, Button, ButtonGroup } from '@mui/material';
 import { useState } from 'react';
 import type { Draft } from '@newsletters-nx/newsletters-data-client';
-import { requestDraftDeletion } from '../lib/requestDraftDeletion';
+import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
 
 interface Props {
 	draft: Draft;
