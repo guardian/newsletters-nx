@@ -4,7 +4,6 @@ import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 	WizardButton,
-	WizardStepData,
 	WizardStepLayout,
 	WizardStepLayoutButton,
 } from '@newsletters-nx/state-machine';
@@ -47,58 +46,57 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		'/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
-			let result: WizardStepData = { currentStepId: '' };
 			try {
-				if (body.buttonId !== undefined) {
-					result = await stateMachineButtonPressed(
-						body.buttonId,
-						{
-							currentStepId: body.stepId,
-							formData: body.formData,
-						},
-						newslettersWorkflowStepLayout,
-						storageInstance,
-					);
-				} else {
-					result = await setupInitialState(body, storageInstance);
-				}
-			} catch (error) {
-				if (error instanceof Error) {
-					const errorResponse: CurrentStepRouteResponse = {
-						errorMessage: error.message,
+				const state =
+					body.buttonId !== undefined
+						? await stateMachineButtonPressed(
+								body.buttonId,
+								{
+									currentStepId: body.stepId,
+									formData: body.formData,
+								},
+								newslettersWorkflowStepLayout,
+								storageInstance,
+						  )
+						: await setupInitialState(body, storageInstance);
+
+				const nextWizardStepLayout =
+					newslettersWorkflowStepLayout[state.currentStepId];
+
+				if (!nextWizardStepLayout) {
+					const errorResponse = {
+						errorMessage: 'No next step found',
 						currentStepId: body.stepId,
 					};
 					return res.status(400).send(errorResponse);
 				}
+
+				const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
+
+				const markdown = dynamicMarkdown
+					? dynamicMarkdown(body.formData, state.formData)
+					: staticMarkdown;
+
+				return {
+					markdownToDisplay: markdown,
+					currentStepId: state.currentStepId,
+					buttons: convertWizardStepLayoutButtonsToWizardButtons(
+						nextWizardStepLayout.buttons,
+					),
+					errorMessage: state.errorMessage,
+					formData: state.formData,
+				};
+			} catch (error) {
+				if (error instanceof Error) {
+					const errorResponse = {
+						errorMessage: error.message,
+						currentStepId: body.stepId,
+					};
+					return res.status(400).send(errorResponse);
+				} else {
+					return res.status(500).send({ errorMessage: JSON.stringify(error) });
+				}
 			}
-
-			console.log('checking formdata in currentstep');
-			console.table(result.formData);
-
-			const nextWizardStepLayout =
-				newslettersWorkflowStepLayout[result.currentStepId];
-
-			if (!nextWizardStepLayout) {
-				return res
-					.status(400)
-					.send({ message: 'No next step found', body: body });
-			}
-
-			const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
-
-			const markdown = dynamicMarkdown
-				? dynamicMarkdown(body.formData, result.formData)
-				: staticMarkdown;
-
-			return {
-				markdownToDisplay: markdown,
-				currentStepId: result.currentStepId,
-				buttons: convertWizardStepLayoutButtonsToWizardButtons(
-					nextWizardStepLayout.buttons,
-				),
-				errorMessage: result.errorMessage,
-				formData: result.formData,
-			};
 		},
 	);
 }
