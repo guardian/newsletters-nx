@@ -4,10 +4,8 @@ import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 } from '@newsletters-nx/state-machine';
-import {
-	getResponseFromBodyAndStateAndWizardStepLayout,
-	getState,
-} from '../state-machine';
+import { getResponseFromBodyAndStateAndWizardStepLayout } from '@newsletters-nx/state-machine';
+import { getState } from '../state-machine';
 
 /**
  * Register the current step route for the newsletter wizard

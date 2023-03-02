@@ -1,5 +1,6 @@
 export * from './lib/stateMachineButtonPressed';
 export * from './lib/setupInitialState';
+export * from './lib/makeResponse';
 export * from './lib/convertButtons';
 export * from './schemas';
 
