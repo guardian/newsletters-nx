@@ -16,7 +16,7 @@ export const sharedProps = {
 /** The internal tool for newsletter management */
 const newslettersAppName = 'newsletters';
 
-new Newsletters(app, 'NewslettersUi-CODE', {
+new Newsletters(app, 'Newsletters-CODE', {
 	...sharedProps,
 	stage: 'CODE',
 	app: newslettersAppName,
