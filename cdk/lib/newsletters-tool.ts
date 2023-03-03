@@ -42,10 +42,10 @@ export class NewslettersTool extends GuStack {
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
 			'set +x', // Prevents shell from printing statements before execution
 			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/${app}.zip /tmp`, // copies zipped file from s3
-			`mkdir -p /opt/${app}`, // make directory for app
-			`unzip /tmp/${app}.zip -d /opt/${app}`,
+			`mkdir -p /opt/${app}`, // make more permanent directory for app to be unzipped into
+			`unzip /tmp/${app}.zip -d /opt/${app}`, // unzip the downloaded zip from /tmp into directory in /opt instead
 			`chown -R ubuntu /opt/${app}`, // change ownership of the copied files to ubuntu user
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /opt/apps/newsletters-api/main.cjs'`, // run the file as ubuntu user using pm2
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /opt/dist/apps/newsletters-api/main.cjs'`, // run the main entrypoint file as ubuntu user using pm2
 		].join('\n');
 	};
 

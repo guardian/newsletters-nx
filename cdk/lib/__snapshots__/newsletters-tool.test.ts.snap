@@ -191,7 +191,7 @@ aws s3 cp s3://",
 mkdir -p /opt/newsletters-tool
 unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
 chown -R ubuntu /opt/newsletters-tool
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /opt/apps/newsletters-api/main.cjs'",
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /opt/dist/apps/newsletters-api/main.cjs'",
               ],
             ],
           },
