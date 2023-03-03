@@ -5,8 +5,8 @@ import type {
 	CurrentStepRouteResponse,
 } from '@newsletters-nx/state-machine';
 import {
-	getResponseFromBodyAndStateAndWizardStepLayout,
 	handleWizardRequest,
+	makeResponse,
 } from '@newsletters-nx/state-machine';
 import { storageInstance } from '../../services/storageInstance';
 
@@ -28,18 +28,14 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				);
 
 				if (!nextStep) {
-					const errorResponse = {
+					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: 'No next step found',
 						currentStepId: body.stepId,
 					};
 					return res.status(400).send(errorResponse);
 				}
 
-				return getResponseFromBodyAndStateAndWizardStepLayout(
-					body,
-					stepData,
-					nextStep,
-				);
+				return makeResponse(body, stepData, nextStep);
 			} catch (error) {
 				if (error instanceof Error) {
 					const errorResponse: CurrentStepRouteResponse = {
@@ -48,6 +44,9 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					};
 					return res.status(400).send(errorResponse);
 				} else {
+					// FIX ME - in this case, the return value is not a CurrentStepRouteResponse
+					// as the function signature expects
+					// also - not safe to stringify and unknown
 					return res.status(500).send({ errorMessage: JSON.stringify(error) });
 				}
 			}
