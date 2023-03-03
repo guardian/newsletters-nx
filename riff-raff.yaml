@@ -20,7 +20,7 @@ deployments:
   # Newsletters internal tool cloudformation deployment
   newsletters-tool-cfn:
     template: cloudformation-template
-    app: newsletters
+    app: newsletters-tool
     parameters:
       cloudFormationStackName: newsletters-tool
       templateStagePaths:
