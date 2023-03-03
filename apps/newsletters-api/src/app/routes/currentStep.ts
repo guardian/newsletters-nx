@@ -5,8 +5,8 @@ import type {
 	CurrentStepRouteResponse,
 } from '@newsletters-nx/state-machine';
 import {
-	getNextStepAndStepData,
 	getResponseFromBodyAndStateAndWizardStepLayout,
+	handleWizardRequest,
 } from '@newsletters-nx/state-machine';
 import { storageInstance } from '../../services/storageInstance';
 
@@ -21,7 +21,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
 			try {
-				const { stepData, nextStep } = await getNextStepAndStepData(
+				const { stepData, nextStep } = await handleWizardRequest(
 					body,
 					newslettersWorkflowStepLayout,
 					storageInstance,
@@ -42,7 +42,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				);
 			} catch (error) {
 				if (error instanceof Error) {
-					const errorResponse = {
+					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: error.message,
 						currentStepId: body.stepId,
 					};

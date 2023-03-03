@@ -9,16 +9,22 @@ import type {
 } from './types';
 
 /**
- * Get the the next step in the wizardLayout and the
- * data to populate it with, based on the data provided
- * in the user's request.
+ * Execute the changes to state (if any) in response to a
+ * user's request and return next step in the wizardLayout
+ * that the user needs to see and the
+ * data to populate it with.
  *
- * The nextStep can be undefined, which indicates an error
+ * If the user has provided invalid or unactionable data,
+ * the "next step" may be the same step that they just responded
+ * to, with an errorMessage in the data indicating why the
+ * submission was not accepted.
+ *
+ * The nextStep returned can be undefined, which indicates an error
  * in the wizardLayout - that it has produced step data with
  * a currentStepId that does not match any step in that
  * wizardLayout.
  */
-export async function getNextStepAndStepData(
+export async function handleWizardRequest(
 	requestBody: CurrentStepRouteRequest,
 	wizardLayout: WizardLayout,
 	draftStorage: DraftStorage,

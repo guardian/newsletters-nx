@@ -1,5 +1,5 @@
 export * from './lib/stateMachineButtonPressed';
-export * from './lib/getNextStepAndStepData';
+export * from './lib/handleWizardRequest';
 export * from './lib/setupInitialState';
 export * from './lib/makeResponse';
 export * from './lib/convertButtons';
