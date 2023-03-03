@@ -8,7 +8,6 @@ templates:
     parameters:
       cloudFormationStackByTags: false
       prependStackToCloudFormationStackName: false
-      amiParameter: AMINewslettersapi
       amiTags:
         Recipe: newsletters-node
         AmigoStage: PROD
@@ -23,6 +22,7 @@ deployments:
     app: newsletters-tool
     parameters:
       cloudFormationStackName: newsletters-tool
+      amiParameter: AMINewsletterstool
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json # TODO: add PROD stage path
   # Newsletters API cloudformation deployment
@@ -31,6 +31,7 @@ deployments:
   #   app: newsletters-api
   #   parameters:
   #     cloudFormationStackName: newsletters-api
+  #     amiParameter: AMINewslettersapi
   #     templateStagePaths:
   #       CODE: NewslettersApi-CODE.template.json # TODO: add PROD stage path
   # Newsletters internal tool autoscaling deployment
