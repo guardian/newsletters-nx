@@ -67,7 +67,7 @@ jobs:
         # Upload artifacts for newsletters internal tool
       - uses: guardian/actions-riff-raff@v2
         with:
-          app: newsletters
+          app: newsletters-tool
           configPath: riff-raff.yaml
           contentDirectories: |
             cloudformation:
