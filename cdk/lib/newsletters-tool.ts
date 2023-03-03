@@ -41,48 +41,46 @@ export class NewslettersTool extends GuStack {
 			'#!/bin/bash', // "Shebang" to instruct the program loader to run this as a bash script
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
 			'set +x', // Prevents shell from printing statements before execution
-			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app} /tmp`, // copies files from s3
-			'chown -R ubuntu /tmp', // change ownership of the copied files to ubuntu user
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /tmp/newsletters-api/main.cjs'`, // run the file as ubuntu user using pm2
+			`aws s3 cp --recursive s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app} /tmp/dist`, // copies files (and sub files/directories) from s3
+			'chown -R ubuntu /tmp/dist', // change ownership of the copied files to ubuntu user
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /tmp/dist/apps/newsletters-api/main.cjs'`, // run the file as ubuntu user using pm2
 		].join('\n');
 	};
 
 	private setUpNodeEc2 = (props: NewslettersToolProps) => {
 		const { app, domainName } = props;
-		/**
-		 *  Sets up Node app to be run in EC2
-		 */
+
+		/** Sets up Node app to be run in EC2 */
 		const ec2App = new GuNodeApp(this, {
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName },
 			monitoringConfiguration: { noMonitoring: true },
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
+			// Minimum of 1 EC2 instance running at a time. If one fails, scales up to 2 before dropping back to 1 again
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
+			// Instructions to set up the environment in the instance
 			userData: this.getUserData(app),
 			app,
 		});
 
-		// Ensure LB can egress to 443 (for Google endpoints) for OIDC flow.
-		const idpEgressSecurityGroup = new GuHttpsEgressSecurityGroup(
+		/** Security group to allow load balancer to egress to 443 for OIDC flow using Google auth */
+		const lbEgressSecurityGroup = new GuHttpsEgressSecurityGroup(
 			this,
-			'ldp-access',
-			{
-				app,
-				vpc: ec2App.vpc,
-			},
+			'IdP Access',
+			{ app, vpc: ec2App.vpc },
 		);
 
-		ec2App.loadBalancer.addSecurityGroup(idpEgressSecurityGroup);
+		/** Add security group to EC2 load balancer */
+		ec2App.loadBalancer.addSecurityGroup(lbEgressSecurityGroup);
 
-		const clientId = new GuStringParameter(this, 'googleClientId', {
+		/** Fetch Google clientId param from SSM */
+		const clientId = new GuStringParameter(this, 'Google Client ID', {
 			description: 'Google OAuth client ID',
 			default: `/${this.stage}/${this.stack}/${props.app}/googleClientId`,
 			fromSSM: true,
 		});
 
-		/**
-		 * Adds authentication layer to the EC2 load balancer
-		 */
+		/** Add Google authentication layer to the EC2 load balancer */
 		ec2App.listener.addAction('Google Auth', {
 			action: ListenerAction.authenticateOidc({
 				authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',

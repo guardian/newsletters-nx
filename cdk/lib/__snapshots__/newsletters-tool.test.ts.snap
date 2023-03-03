@@ -50,6 +50,11 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Description": "SSM parameter containing the S3 bucket name holding distribution artifacts",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
+    "GoogleClientID": {
+      "Default": "/TEST/newsletters/newsletters-tool/googleClientId",
+      "Description": "Google OAuth client ID",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
     "LoggingStreamName": {
       "Default": "/account/services/logging.stream.name",
       "Description": "SSM parameter containing the Name (not ARN) on the kinesis stream",
@@ -59,11 +64,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Default": "/account/vpc/primary/id",
       "Description": "Virtual Private Cloud to run EC2 instances within. Should NOT be the account default VPC.",
       "Type": "AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>",
-    },
-    "googleClientId": {
-      "Default": "/TEST/newsletters/newsletters-tool/googleClientId",
-      "Description": "Google OAuth client ID",
-      "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "newsletterstoolPrivateSubnets": {
       "Default": "/account/vpc/primary/subnets/private",
@@ -183,13 +183,13 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
                 "#!/bin/bash
 set -e
 set +x
-aws s3 cp s3://",
+aws s3 cp --recursive s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-tool /tmp
-chown -R ubuntu /tmp
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters-api/main.cjs'",
+                "/newsletters/TEST/newsletters-tool /tmp/dist
+chown -R ubuntu /tmp/dist
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/dist/apps/newsletters-api/main.cjs'",
               ],
             ],
           },
@@ -347,6 +347,27 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
+    "GuHttpsEgressSecurityGroupNewsletterstoolfromNewslettersToolTESTIdPAccessNewsletterstoolD34AC715300055F7D2AB": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "IdPAccessNewsletterstoolCB424E42",
+            "GroupId",
+          ],
+        },
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
     "GuHttpsEgressSecurityGroupNewsletterstoolfromNewslettersToolTESTLoadBalancerNewsletterstoolSecurityGroup304BBB80300072FF156C": {
       "Properties": {
         "Description": "Load balancer to target",
@@ -361,27 +382,6 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
         "SourceSecurityGroupId": {
           "Fn::GetAtt": [
             "LoadBalancerNewsletterstoolSecurityGroup5FD4AD1C",
-            "GroupId",
-          ],
-        },
-        "ToPort": 3000,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "GuHttpsEgressSecurityGroupNewsletterstoolfromNewslettersToolTESTldpaccessNewsletterstoolF2EF162F30002FA35665": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "FromPort": 3000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "ldpaccessNewsletterstool5E3375BD",
             "GroupId",
           ],
         },
@@ -426,6 +426,67 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "IdPAccessNewsletterstoolCB424E42": {
+      "Properties": {
+        "GroupDescription": "Allow all outbound HTTPS traffic",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound HTTPS traffic",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "newsletters-tool",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "Stack",
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "VpcId": {
+          "Ref": "VpcId",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "IdPAccessNewsletterstooltoNewslettersToolTESTGuHttpsEgressSecurityGroupNewsletterstool576F819230004F10AA16": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
+            "GroupId",
+          ],
+        },
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "IdPAccessNewsletterstoolCB424E42",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
     },
     "InstanceRoleNewsletterstoolDD0F3665": {
       "Properties": {
@@ -498,7 +559,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
               },
               "AuthorizationEndpoint": "https://accounts.google.com/o/oauth2/v2/auth",
               "ClientId": {
-                "Ref": "googleClientId",
+                "Ref": "GoogleClientID",
               },
               "ClientSecret": "{{resolve:secretsmanager:/TEST/deploy/newsletters/clientSecret:SecretString:::}}",
               "Issuer": "https://accounts.google.com",
@@ -544,7 +605,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
           },
           {
             "Fn::GetAtt": [
-              "ldpaccessNewsletterstool5E3375BD",
+              "IdPAccessNewsletterstoolCB424E42",
               "GroupId",
             ],
           },
@@ -781,67 +842,6 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ldpaccessNewsletterstool5E3375BD": {
-      "Properties": {
-        "GroupDescription": "Allow all outbound HTTPS traffic",
-        "SecurityGroupEgress": [
-          {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound HTTPS traffic",
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443,
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "newsletters-tool",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/newsletters-nx",
-          },
-          {
-            "Key": "Stack",
-            "Value": "newsletters",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "VpcId": {
-          "Ref": "VpcId",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ldpaccessNewsletterstooltoNewslettersToolTESTGuHttpsEgressSecurityGroupNewsletterstool576F81923000F23D3220": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": {
-          "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
-            "GroupId",
-          ],
-        },
-        "FromPort": 3000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "ldpaccessNewsletterstool5E3375BD",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "ToPort": 3000,
-      },
-      "Type": "AWS::EC2::SecurityGroupEgress",
     },
   },
 }
