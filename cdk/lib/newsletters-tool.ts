@@ -45,7 +45,7 @@ export class NewslettersTool extends GuStack {
 			`mkdir -p /opt/${app}`, // make more permanent directory for app to be unzipped into
 			`unzip /tmp/${app}.zip -d /opt/${app}`, // unzip the downloaded zip from /tmp into directory in /opt instead
 			`chown -R ubuntu /opt/${app}`, // change ownership of the copied files to ubuntu user
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /opt/dist/apps/newsletters-api/main.cjs'`, // run the main entrypoint file as ubuntu user using pm2
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /opt/${app}/dist/apps/newsletters-api/main.cjs'`, // run the main entrypoint file as ubuntu user using pm2
 		].join('\n');
 	};
 
