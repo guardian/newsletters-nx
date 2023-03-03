@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
 import { redirect } from 'react-router-dom';
-import { Api } from '../components/Api';
+import { HealthCheck } from '../components/HealthCheck';
 // import { NewslettersHome } from '../components/NewslettersHome';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
@@ -16,7 +16,7 @@ export const homeRoute: RouteObject = {
 		},
 		{
 			path: 'api',
-			element: <Api />,
+			element: <HealthCheck />,
 		},
 		{
 			path: 'templates',
