@@ -25,6 +25,13 @@ deployments:
       amiParameter: AMINewsletterstool
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json # TODO: add PROD stage path
+  # Newsletters internal tool autoscaling deployment
+  newsletters-tool:
+    template: autoscaling-template
+    dependencies: [newsletters-tool-cfn]
+
+  # Need to restrict riffraff deployment to do API OR Tool but not both...
+
   # Newsletters API cloudformation deployment
   # newsletters-api-cfn:
   #   template: cloudformation-template
@@ -34,11 +41,7 @@ deployments:
   #     amiParameter: AMINewslettersapi
   #     templateStagePaths:
   #       CODE: NewslettersApi-CODE.template.json # TODO: add PROD stage path
-  # Newsletters internal tool autoscaling deployment
-  newsletters-tool:
-    template: autoscaling-template
-    dependencies: [newsletters-tool-cfn]
-  # Newsletters API autoscaling deployment
+  # # Newsletters API autoscaling deployment
   # newsletters-api:
   #   template: autoscaling-template
   #   dependencies: [newsletters-api-cfn]
