@@ -1,6 +1,6 @@
 import 'source-map-support/register';
 import { App } from 'aws-cdk-lib';
-import { Newsletters } from '../lib/newsletters';
+import { NewslettersTool } from '../lib/newsletters-tool';
 import { NewslettersApi } from '../lib/newsletters-api';
 
 const app = new App();
@@ -8,26 +8,24 @@ const app = new App();
 // Shared props for all CDK apps
 export const sharedProps = {
 	stack: 'newsletters',
-	env: {
-		region: 'eu-west-1',
-	},
+	env: { region: 'eu-west-1' },
 };
 
 /** The internal tool for newsletter management */
-const newslettersAppName = 'newsletters';
+const newslettersToolAppName = 'newsletters-tool';
 
-new Newsletters(app, 'Newsletters-CODE', {
+new NewslettersTool(app, 'NewslettersTool-CODE', {
 	...sharedProps,
 	stage: 'CODE',
-	app: newslettersAppName,
-	domainName: `${newslettersAppName}.code.dev-gutools.co.uk`,
+	app: newslettersToolAppName,
+	domainName: `${newslettersToolAppName}.code.dev-gutools.co.uk`,
 });
 
-// new NewslettersApi(app, 'NewslettersUi-PROD', {
+// new NewslettersTool(app, 'NewslettersTool-PROD', {
 // 	...sharedProps,
 // 	stage: 'PROD',
-// 	app: newslettersUiAppName,
-// 	domainName: `${newslettersUiAppName}.gutools.co.uk`,
+// 	app: newslettersToolAppName,
+// 	domainName: `${newslettersToolAppName}.gutools.co.uk`,
 // });
 
 /** The read-only newsletters API */

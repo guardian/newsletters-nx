@@ -71,7 +71,7 @@ jobs:
           configPath: riff-raff.yaml
           contentDirectories: |
             cloudformation:
-              - cdk/cdk.out/Newsletters-CODE.template.json
+              - cdk/cdk.out/NewslettersTool-CODE.template.json
             newsletters:
               - dist
 

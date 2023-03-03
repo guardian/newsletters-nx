@@ -24,7 +24,7 @@ deployments:
     parameters:
       cloudFormationStackName: newsletters-tool
       templateStagePaths:
-        CODE: Newsletters-CODE.template.json # TODO: add PROD stage path
+        CODE: NewslettersTool-CODE.template.json # TODO: add PROD stage path
   # Newsletters API cloudformation deployment
   newsletters-api-cfn:
     template: cloudformation-template

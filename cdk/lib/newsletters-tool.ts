@@ -14,13 +14,13 @@ import {
 	UnauthenticatedAction,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 
-export interface NewslettersProps extends GuStackProps {
+export interface NewslettersToolProps extends GuStackProps {
 	app: string; // Force app to be a required prop
 	domainName: string;
 }
 
-export class Newsletters extends GuStack {
-	constructor(scope: App, id: string, props: NewslettersProps) {
+export class NewslettersTool extends GuStack {
+	constructor(scope: App, id: string, props: NewslettersToolProps) {
 		super(scope, id, props);
 
 		this.setUpNodeEc2(props);
@@ -31,7 +31,7 @@ export class Newsletters extends GuStack {
 	 * User data is a set of instructions to supply to the instance at launch
 	 * @see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 	 */
-	private getUserData = (app: NewslettersProps['app']) => {
+	private getUserData = (app: NewslettersToolProps['app']) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
@@ -46,7 +46,7 @@ export class Newsletters extends GuStack {
 		].join('\n');
 	};
 
-	private setUpNodeEc2 = (props: NewslettersProps) => {
+	private setUpNodeEc2 = (props: NewslettersToolProps) => {
 		const { app, domainName } = props;
 		/**
 		 *  Sets up Node app to be run in EC2
@@ -91,7 +91,7 @@ export class Newsletters extends GuStack {
 		 * Sets up CNAME record for domainName specified
 		 * @see https://en.wikipedia.org/wiki/CNAME_record
 		 */
-		new GuCname(this, 'NewslettersCname', {
+		new GuCname(this, 'CNAME', {
 			app,
 			domainName,
 			ttl: Duration.hours(1),
