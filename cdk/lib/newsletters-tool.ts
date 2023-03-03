@@ -61,13 +61,15 @@ export class NewslettersTool extends GuStack {
 			app,
 		});
 
-		const clientId = new GuStringParameter(this, 'ClientId', {
-			description: 'Google OAuth client ID',
-		});
-
 		/**
 		 * Adds authentication layer to the EC2 load balancer
 		 */
+		const clientId = new GuStringParameter(this, 'googleClientId', {
+			description: 'Google OAuth client ID',
+			default: `/${this.stage}/${this.stack}/${props.app}/googleClientId`,
+			fromSSM: true,
+		});
+
 		ec2App.listener.addAction('Google Auth', {
 			action: ListenerAction.authenticateOidc({
 				authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',

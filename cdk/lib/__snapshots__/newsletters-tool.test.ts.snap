@@ -44,10 +44,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Description": "Amazon Machine Image ID for the app newsletters-tool. Use this in conjunction with AMIgo to keep AMIs up to date.",
       "Type": "AWS::EC2::Image::Id",
     },
-    "ClientId": {
-      "Description": "Google OAuth client ID",
-      "Type": "String",
-    },
     "DistributionBucketName": {
       "Default": "/account/services/artifact.bucket",
       "Description": "SSM parameter containing the S3 bucket name holding distribution artifacts",
@@ -62,6 +58,11 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Default": "/account/vpc/primary/id",
       "Description": "Virtual Private Cloud to run EC2 instances within. Should NOT be the account default VPC.",
       "Type": "AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>",
+    },
+    "googleClientId": {
+      "Default": "/TEST/newsletters/newsletters-tool/googleClientId",
+      "Description": "Google OAuth client ID",
+      "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "newsletterstoolPrivateSubnets": {
       "Default": "/account/vpc/primary/subnets/private",
@@ -475,7 +476,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
               },
               "AuthorizationEndpoint": "https://accounts.google.com/o/oauth2/v2/auth",
               "ClientId": {
-                "Ref": "ClientId",
+                "Ref": "googleClientId",
               },
               "ClientSecret": "{{resolve:secretsmanager:/TEST/deploy/newsletters/clientSecret:SecretString:::}}",
               "Issuer": "https://accounts.google.com",
