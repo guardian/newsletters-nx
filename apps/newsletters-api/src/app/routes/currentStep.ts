@@ -9,18 +9,7 @@ import {
 	makeResponse,
 } from '@newsletters-nx/state-machine';
 import { storageInstance } from '../../services/storageInstance';
-
-/**
- * Attempts to stringify an unknown. returns the stringified fallback
- * object if the unknown cannot be stringified
- */
-const safeStringify = (err: unknown, fallback: object): string | undefined => {
-	try {
-		return JSON.stringify(err);
-	} catch (jsonError) {
-		return JSON.stringify(fallback);
-	}
-};
+import { safeStringify } from '../safeStringify';
 
 /**
  * Register the current step route for the newsletter wizard
