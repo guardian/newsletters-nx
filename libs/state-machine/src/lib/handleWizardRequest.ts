@@ -42,6 +42,8 @@ export async function handleWizardRequest(
 			  )
 			: await setupInitialState(requestBody, draftStorage);
 
+	// TO DO - should we be throwing an exception
+	// if there is no nextStep? this indicates a bug in the WizardLayout
 	const nextStep = wizardLayout[stepData.currentStepId];
 
 	return { stepData, nextStep };

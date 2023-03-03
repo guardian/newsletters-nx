@@ -11,6 +11,18 @@ import {
 import { storageInstance } from '../../services/storageInstance';
 
 /**
+ * Attempts to stringify an unknown. returns the stringified fallback
+ * object if the unknown cannot be stringified
+ */
+const safeStringify = (err: unknown, fallback: object): string | undefined => {
+	try {
+		return JSON.stringify(err);
+	} catch (jsonError) {
+		return JSON.stringify(fallback);
+	}
+};
+
+/**
  * Register the current step route for the newsletter wizard
  * TODO: This is a placeholder that will be changed to a state machine
  * @param app - Fastify instance to add the route to
@@ -27,6 +39,8 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					storageInstance,
 				);
 
+				// TO DO - should handleWizardRequest be throwing an exception
+				// if there is no nextStep? this indicates a bug in the WizardLayout
 				if (!nextStep) {
 					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: 'No next step found',
@@ -37,6 +51,8 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 
 				return makeResponse(body, stepData, nextStep);
 			} catch (error) {
+				// TO DO - define a subclass of StateMachineError in the state-machine library
+				// with an enum of internal error codes.
 				if (error instanceof Error) {
 					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: error.message,
@@ -46,8 +62,12 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				} else {
 					// FIX ME - in this case, the return value is not a CurrentStepRouteResponse
 					// as the function signature expects
-					// also - not safe to stringify and unknown
-					return res.status(500).send({ errorMessage: JSON.stringify(error) });
+
+					return res.status(500).send({
+						errorMessage: safeStringify(error, {
+							message: 'UNHANDLED ERROR',
+						}),
+					});
 				}
 			}
 		},
