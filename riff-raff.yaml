@@ -22,7 +22,7 @@ deployments:
     app: newsletters-tool
     parameters:
       cloudFormationStackName: newsletters-tool
-      amiParameter: AMINewsletterstool
+      amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json # TODO: add PROD stage path
   # Newsletters internal tool autoscaling deployment
@@ -38,7 +38,7 @@ deployments:
   #   app: newsletters-api
   #   parameters:
   #     cloudFormationStackName: newsletters-api
-  #     amiParameter: AMINewslettersapi
+  #     amiParameter: AMINewslettersapi # please don't change this unless you know what you're doing
   #     templateStagePaths:
   #       CODE: NewslettersApi-CODE.template.json # TODO: add PROD stage path
   # # Newsletters API autoscaling deployment

@@ -63,6 +63,7 @@ export class NewslettersTool extends GuStack {
 			// Instructions to set up the environment in the instance
 			userData: this.getUserData(app),
 			app,
+			accessLogging: { enabled: true },
 		});
 
 		/** Security group to allow load balancer to egress to 443 for OIDC flow using Google auth */
@@ -90,9 +91,7 @@ export class NewslettersTool extends GuStack {
 				scope: 'openid',
 				authenticationRequestExtraParams: { hd: 'guardian.co.uk' },
 				onUnauthenticatedRequest: UnauthenticatedAction.AUTHENTICATE,
-
 				tokenEndpoint: 'https://oauth2.googleapis.com/token',
-
 				userInfoEndpoint: 'https://openidconnect.googleapis.com/v1/userinfo',
 				clientId: clientId.valueAsString,
 				clientSecret: SecretValue.secretsManager(
