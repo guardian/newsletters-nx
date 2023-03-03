@@ -51,9 +51,10 @@ jobs:
         run: |
           npm ci
 
-      - name: Bundle
+      - name: Bundle and zip
         run: |
           npm run build
+          zip -r dist/newsletters-tool.zip dist
 
         # Build Cloudformation definition from CDK
       - name: Build and synth CDK
@@ -74,7 +75,7 @@ jobs:
             newsletters-tool-cfn:
               - cdk/cdk.out/NewslettersTool-CODE.template.json
             newsletters-tool:
-              - dist
+              - dist/newsletters-tool.zip
 
       # # Upload artifacts for newsletters-api
       # - name: Upload riff-raff artifacts - newsletters-api

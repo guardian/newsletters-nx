@@ -183,13 +183,15 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
                 "#!/bin/bash
 set -e
 set +x
-aws s3 cp --recursive s3://",
+aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-tool /tmp/dist
-chown -R ubuntu /tmp/dist
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/dist/apps/newsletters-api/main.cjs'",
+                "/newsletters/TEST/newsletters-tool/newsletters-tool.zip /tmp
+mkdir -p /opt/newsletters-tool
+unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
+chown -R ubuntu /opt/newsletters-tool
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /opt/apps/newsletters-api/main.cjs'",
               ],
             ],
           },
