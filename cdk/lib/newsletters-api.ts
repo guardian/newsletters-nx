@@ -58,7 +58,7 @@ export class NewslettersApi extends GuStack {
 			'set +x', // Prevents shell from printing statements before execution
 			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/main.cjs /tmp`, // copies file from s3
 			'chown ubuntu /tmp/main.cjs', // change ownership of the copied file to ubuntu user
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} NEWSLETTERS_UI_SERVE=false NEWSLETTERS_API_READ_WRITE=false /tmp/main.cjs'`, // run the file as ubuntu user using pm2
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /tmp/main.cjs'`, // run the file as ubuntu user using pm2
 		].join('\n');
 	};
 
