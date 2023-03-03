@@ -22,7 +22,7 @@ deployments:
     template: cloudformation-template
     app: newsletters
     parameters:
-      cloudFormationStackName: newsletters
+      cloudFormationStackName: newsletters-tool
       templateStagePaths:
         CODE: Newsletters-CODE.template.json # TODO: add PROD stage path
   # Newsletters API cloudformation deployment
@@ -34,7 +34,7 @@ deployments:
       templateStagePaths:
         CODE: NewslettersApi-CODE.template.json # TODO: add PROD stage path
   # Newsletters internal tool autoscaling deployment
-  newsletters:
+  newsletters-tool:
     template: autoscaling-template
     dependencies: [newsletters-tool-cfn]
   # Newsletters API autoscaling deployment

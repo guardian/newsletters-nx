@@ -40,9 +40,9 @@ export class Newsletters extends GuStack {
 			'#!/bin/bash', // "Shebang" to instruct the program loader to run this as a bash script
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
 			'set +x', // Prevents shell from printing statements before execution
-			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app} /tmp/app`, // copies files from s3
-			'chown -R ubuntu /tmp/app', // change ownership of the copied files to ubuntu user
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /app/tmp/index.cjs'`, // run the file as ubuntu user using pm2
+			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app} /tmp`, // copies files from s3
+			'chown -R ubuntu /tmp', // change ownership of the copied files to ubuntu user
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /tmp/newsletters-api/main.cjs'`, // run the file as ubuntu user using pm2
 		].join('\n');
 	};
 

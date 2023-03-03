@@ -185,9 +185,9 @@ aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters /tmp/app
-chown -R ubuntu /tmp/app
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters /app/tmp/index.cjs'",
+                "/newsletters/TEST/newsletters /tmp
+chown -R ubuntu /tmp
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters /tmp/newsletters-api/main.cjs'",
               ],
             ],
           },
