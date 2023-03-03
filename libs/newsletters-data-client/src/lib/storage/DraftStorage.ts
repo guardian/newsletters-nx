@@ -12,6 +12,11 @@ export const isDraft = (item: unknown): item is Draft => {
 	);
 };
 
+export enum StorageRequestFailureReason {
+	NotFound,
+	InvalidDataInput,
+}
+
 export type SuccessfulStorageResponse<T> = {
 	ok: true;
 	data: T;
@@ -20,6 +25,7 @@ export type SuccessfulStorageResponse<T> = {
 export type UnsuccessfulStorageResponse = {
 	ok: false;
 	message: string;
+	reason?: StorageRequestFailureReason;
 };
 
 export abstract class DraftStorage {

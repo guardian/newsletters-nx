@@ -2,12 +2,6 @@ import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { getFormSchema } from '../schemas';
 import type { WizardLayout, WizardStepData } from './types';
 
-export function setupInitialState(): WizardStepData {
-	return {
-		currentStepId: 'createNewsletter', //  TO DO - this needs to be generalised - each WizardLayout could have a different initial step
-	};
-}
-
 /**
  * Perform the vaidation and actions required for a button press.Result a
  * new WizardStepData containing either:

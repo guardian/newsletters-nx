@@ -20,7 +20,7 @@ export const themeEnumSchema = z.enum([
 ]);
 export type Theme = z.infer<typeof themeEnumSchema>;
 
-const baseNewsletterSchema = z.object({
+const baseLegacyNewsletterSchema = z.object({
 	identityName: nonEmptyString().describe('the unique id for the newsletter'),
 	name: nonEmptyString().describe('the public name of the newsletter'),
 	cancelled: z
@@ -85,11 +85,11 @@ const baseNewsletterSchema = z.object({
 	illustration: illustrationSchema.optional(),
 });
 
-type Base = z.infer<typeof baseNewsletterSchema>;
+type Base = z.infer<typeof baseLegacyNewsletterSchema>;
 export const getPropertyDescription = (key: keyof Base): string =>
-	baseNewsletterSchema.shape[key].description ?? '';
+	baseLegacyNewsletterSchema.shape[key].description ?? '';
 
-export const newsletterSchema = baseNewsletterSchema.extend({
+export const legacyNewsletterSchema = baseLegacyNewsletterSchema.extend({
 	description: nonEmptyString().describe(getPropertyDescription('description')),
 	frequency: nonEmptyString().describe(getPropertyDescription('frequency')),
 	brazeSubscribeAttributeName: nonEmptyString().describe(
@@ -106,8 +106,8 @@ export const newsletterSchema = baseNewsletterSchema.extend({
 	}),
 });
 
-export const newsletterSchemaAllowingEmptyStrings = baseNewsletterSchema.extend(
-	{
+export const legacyNewsletterSchemaAllowingEmptyStrings =
+	baseLegacyNewsletterSchema.extend({
 		name: z.string(),
 		identityName: z.string(),
 		group: z.string(),
@@ -119,30 +119,36 @@ export const newsletterSchemaAllowingEmptyStrings = baseNewsletterSchema.extend(
 		emailEmbed: emailEmbedSchema.extend({
 			description: z.string(),
 		}),
-	},
-);
+	});
 
-export type Newsletter = z.infer<typeof newsletterSchema>;
+export type LegacyNewsletter = z.infer<typeof legacyNewsletterSchema>;
 
-export function isNewsletter(subject: unknown): subject is Newsletter {
+export function isLegacyNewsletter(
+	subject: unknown,
+): subject is LegacyNewsletter {
 	return (
-		newsletterSchema.safeParse(subject).success ||
-		cancelledNewsletterSchema.safeParse(subject).success
+		legacyNewsletterSchema.safeParse(subject).success ||
+		cancelledLegacyNewsletterSchema.safeParse(subject).success
 	);
 }
 
-export const cancelledNewsletterSchema = baseNewsletterSchema.extend({
-	cancelled: z.literal(true),
-});
+export const cancelledLegacyNewsletterSchema =
+	baseLegacyNewsletterSchema.extend({
+		cancelled: z.literal(true),
+	});
 
-export type CancelledNewsletter = z.infer<typeof cancelledNewsletterSchema>;
+export type LegacyCancelledNewsletter = z.infer<
+	typeof cancelledLegacyNewsletterSchema
+>;
 
-export function isCancelledNewsletter(
+export function isLegacyCancelledNewsletter(
 	subject: unknown,
-): subject is CancelledNewsletter {
-	return cancelledNewsletterSchema.safeParse(subject).success;
+): subject is LegacyCancelledNewsletter {
+	return cancelledLegacyNewsletterSchema.safeParse(subject).success;
 }
 
-export function isPropertyOptional(property: keyof Newsletter): boolean {
-	return newsletterSchema.shape[property].isOptional();
+export function isPropertyOptionalOnLegacy(
+	property: keyof LegacyNewsletter,
+): boolean {
+	return legacyNewsletterSchema.shape[property].isOptional();
 }

@@ -4,13 +4,13 @@ import {
 	deriveNewsletterFieldsFromName,
 	emailEmbedSchema,
 	illustrationSchema,
-	newsletterSchema,
-	newsletterSchemaAllowingEmptyStrings,
+	legacyNewsletterSchema,
+	legacyNewsletterSchemaAllowingEmptyStrings,
 } from '@newsletters-nx/newsletters-data-client';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { makeBlankNewsletter } from '../blanks';
 import { ArrayInput } from './ArrayInput';
-import { NewsletterDetail } from './NewsletterDetails';
+import { LegacyNewsletterDetail } from './LegacyNewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
 
@@ -18,13 +18,13 @@ interface Props {
 	existingIds: string[];
 }
 
-export const NewsletterForm = ({ existingIds }: Props) => {
-	const [newsletter, setNewsletter] = useState<Newsletter>(
+export const LegacyNewsletterForm = ({ existingIds }: Props) => {
+	const [newsletter, setNewsletter] = useState<LegacyNewsletter>(
 		makeBlankNewsletter(),
 	);
 
 	const [warnings, setWarnings] = useState<
-		Partial<Record<keyof Newsletter, string>>
+		Partial<Record<keyof LegacyNewsletter, string>>
 	>({});
 
 	const hasWarnings = Object.values(warnings).some((warning) => !!warning);
@@ -48,8 +48,8 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 		updateDataAndWarnings(revisedData);
 	};
 
-	const manageArrayChange = (data: string[], field: keyof Newsletter) => {
-		const revisedData: Partial<Record<keyof Newsletter, unknown>> = {
+	const manageArrayChange = (data: string[], field: keyof LegacyNewsletter) => {
+		const revisedData: Partial<Record<keyof LegacyNewsletter, unknown>> = {
 			...newsletter,
 		};
 		revisedData[field] = data;
@@ -91,11 +91,11 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 	};
 
 	const updateDataAndWarnings = (
-		revisedData: Partial<Record<keyof Newsletter, unknown>>,
+		revisedData: Partial<Record<keyof LegacyNewsletter, unknown>>,
 	) => {
 		setWarnings({});
-		const parseResult = newsletterSchema.safeParse(revisedData);
-		const issueMap: Partial<Record<keyof Newsletter, string>> = {};
+		const parseResult = legacyNewsletterSchema.safeParse(revisedData);
+		const issueMap: Partial<Record<keyof LegacyNewsletter, string>> = {};
 		if (existingIds.includes(revisedData.identityName as string)) {
 			issueMap.identityName =
 				'There is an existing newsletters with this identityName';
@@ -108,7 +108,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 				const { message, path, code } = issue;
 				const key =
 					typeof path[0] === 'string'
-						? (path[0] as keyof Newsletter)
+						? (path[0] as keyof LegacyNewsletter)
 						: undefined;
 
 				if (key) {
@@ -117,7 +117,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 			});
 
 			const parseResultAllowingEmptyStrings =
-				newsletterSchemaAllowingEmptyStrings.safeParse(revisedData);
+				legacyNewsletterSchemaAllowingEmptyStrings.safeParse(revisedData);
 			if (parseResultAllowingEmptyStrings.success) {
 				setNewsletter(parseResultAllowingEmptyStrings.data);
 			}
@@ -149,7 +149,7 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 				</button>
 
 				<SchemaForm
-					schema={newsletterSchema}
+					schema={legacyNewsletterSchema}
 					data={newsletter}
 					changeValue={manageChange}
 					showUnsupported
@@ -200,10 +200,10 @@ export const NewsletterForm = ({ existingIds }: Props) => {
 				)}
 
 				<button onClick={handleSubmit} disabled={hasWarnings}>
-					Create Newsletter
+					Create LegacyNewsletter
 				</button>
 			</div>
-			<NewsletterDetail newsletter={newsletter} />
+			<LegacyNewsletterDetail newsletter={newsletter} />
 		</article>
 	);
 };
