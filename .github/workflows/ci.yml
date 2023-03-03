@@ -51,13 +51,9 @@ jobs:
         run: |
           npm ci
 
-      - name: Bundle newsletters-api
+      - name: Bundle
         run: |
-          npm run bundle:api
-
-      - name: Bundle newsletters-ui
-        run: |
-          npm run bundle:ui
+          npm run build
 
         # Build Cloudformation definition from CDK
       - name: Build and synth CDK
@@ -77,7 +73,7 @@ jobs:
             cloudformation:
               - cdk/cdk.out/Newsletters-CODE.template.json
             newsletters:
-              - dist/apps/newsletters-api
+              - dist
 
       # Upload artifacts for newsletters-api
       - uses: guardian/actions-riff-raff@v2
@@ -88,4 +84,4 @@ jobs:
             cloudformation:
               - cdk/cdk.out/NewslettersApi-CODE.template.json
             newsletters-api:
-              - dist/apps/newsletters-api/index.cjs
+              - dist/apps/newsletters-api/main.cjs
