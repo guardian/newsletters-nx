@@ -23,6 +23,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuApplicationLoadBalancer",
       "GuApplicationTargetGroup",
       "GuHttpsApplicationListener",
+      "GuHttpsEgressSecurityGroup",
       "GuStringParameter",
       "GuCname",
     ],
@@ -367,6 +368,27 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
+    "GuHttpsEgressSecurityGroupNewsletterstoolfromNewslettersToolTESTldpaccessNewsletterstoolF2EF162F30002FA35665": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "ldpaccessNewsletterstool5E3375BD",
+            "GroupId",
+          ],
+        },
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
     "GuLogShippingPolicy981BFE5A": {
       "Properties": {
         "PolicyDocument": {
@@ -517,6 +539,12 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
           {
             "Fn::GetAtt": [
               "LoadBalancerNewsletterstoolSecurityGroup5FD4AD1C",
+              "GroupId",
+            ],
+          },
+          {
+            "Fn::GetAtt": [
+              "ldpaccessNewsletterstool5E3375BD",
               "GroupId",
             ],
           },
@@ -753,6 +781,67 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /tmp/newsletters
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ldpaccessNewsletterstool5E3375BD": {
+      "Properties": {
+        "GroupDescription": "Allow all outbound HTTPS traffic",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound HTTPS traffic",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "newsletters-tool",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "Stack",
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "VpcId": {
+          "Ref": "VpcId",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ldpaccessNewsletterstooltoNewslettersToolTESTGuHttpsEgressSecurityGroupNewsletterstool576F81923000F23D3220": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
+            "GroupId",
+          ],
+        },
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "ldpaccessNewsletterstool5E3375BD",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
     },
   },
 }

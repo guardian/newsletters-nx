@@ -7,6 +7,7 @@ import {
 	type GuStackProps,
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
+import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
 import { type App, Duration, SecretValue } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import {
@@ -61,15 +62,27 @@ export class NewslettersTool extends GuStack {
 			app,
 		});
 
-		/**
-		 * Adds authentication layer to the EC2 load balancer
-		 */
+		// Ensure LB can egress to 443 (for Google endpoints) for OIDC flow.
+		const idpEgressSecurityGroup = new GuHttpsEgressSecurityGroup(
+			this,
+			'ldp-access',
+			{
+				app,
+				vpc: ec2App.vpc,
+			},
+		);
+
+		ec2App.loadBalancer.addSecurityGroup(idpEgressSecurityGroup);
+
 		const clientId = new GuStringParameter(this, 'googleClientId', {
 			description: 'Google OAuth client ID',
 			default: `/${this.stage}/${this.stack}/${props.app}/googleClientId`,
 			fromSSM: true,
 		});
 
+		/**
+		 * Adds authentication layer to the EC2 load balancer
+		 */
 		ec2App.listener.addAction('Google Auth', {
 			action: ListenerAction.authenticateOidc({
 				authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
