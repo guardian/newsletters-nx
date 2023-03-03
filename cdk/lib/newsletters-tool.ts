@@ -63,7 +63,10 @@ export class NewslettersTool extends GuStack {
 			// Instructions to set up the environment in the instance
 			userData: this.getUserData(app),
 			app,
-			accessLogging: { enabled: true },
+			accessLogging: {
+				enabled: true,
+				prefix: `ELBLogs/${this.stack}/${app}/${this.stage}`,
+			},
 		});
 
 		/** Security group to allow load balancer to egress to 443 for OIDC flow using Google auth */

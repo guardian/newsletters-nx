@@ -614,7 +614,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /opt/newsletters
           },
           {
             "Key": "access_logs.s3.prefix",
-            "Value": "",
+            "Value": "ELBLogs/newsletters/newsletters-tool/TEST",
           },
         ],
         "Scheme": "internet-facing",
