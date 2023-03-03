@@ -70,9 +70,9 @@ jobs:
           app: newsletters-tool
           configPath: riff-raff.yaml
           contentDirectories: |
-            cloudformation:
+            newsletters-tool-cfn:
               - cdk/cdk.out/NewslettersTool-CODE.template.json
-            newsletters:
+            newsletters-tool:
               - dist
 
       # Upload artifacts for newsletters-api
@@ -81,7 +81,7 @@ jobs:
           app: newsletters-api
           configPath: riff-raff.yaml
           contentDirectories: |
-            cloudformation:
+            newsletters-api-cfn:
               - cdk/cdk.out/NewslettersApi-CODE.template.json
             newsletters-api:
               - dist/apps/newsletters-api/main.cjs
