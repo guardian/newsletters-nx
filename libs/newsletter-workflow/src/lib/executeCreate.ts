@@ -13,7 +13,7 @@ export const executeCreate: AsyncExecution = async (
 	if (!storageInstance) {
 		throw new Error('no storageInstance');
 	}
-	const schema = stepLayout?.schema
+	const schema = stepLayout?.schema;
 
 	if (!schema) {
 		throw new Error(`the step used for execute create has no schema!`);

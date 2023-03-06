@@ -1,4 +1,4 @@
-import type { z} from 'zod';
+import type { z } from 'zod';
 import { ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
 import type { WizardFormData } from './types';
 
