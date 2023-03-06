@@ -18,7 +18,7 @@ import { safeStringify } from '../safeStringify';
  */
 export function registerCurrentStepRoute(app: FastifyInstance) {
 	app.post<{ Body: CurrentStepRouteRequest }>(
-		'/currentstep',
+		'/api/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
 			try {

@@ -1,15 +1,27 @@
 import Fastify from 'fastify';
+import {
+	isServingReadEndpoints,
+	isServingReadWriteEndpoints,
+	isServingUI,
+} from './apiDeploymentSettings';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import { registerNewsletterRoutes } from './app/routes/newsletters';
+import { registerUIServer } from './register-ui-server';
 
 const app = Fastify();
-
 registerHealthRoute(app);
-registerNewsletterRoutes(app);
-registerCurrentStepRoute(app);
-registerDraftsRoutes(app);
+if (isServingUI) {
+	registerUIServer(app);
+}
+if (isServingReadWriteEndpoints) {
+	registerCurrentStepRoute(app);
+}
+if (isServingReadEndpoints) {
+	registerNewsletterRoutes(app);
+	registerDraftsRoutes(app);
+}
 
 const start = async () => {
 	try {

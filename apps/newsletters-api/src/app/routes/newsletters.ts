@@ -6,18 +6,18 @@ import { makeErrorResponse, makeSuccessResponse } from '../responses';
 export function registerNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
-	app.get('/legacy/newsletters', async (req, res) => {
+	app.get('/api/legacy/newsletters', async (req, res) => {
 		const newsletters = newslettersData.filter(isLegacyNewsletter);
 		return newsletters;
 	});
 
-	app.get('/newsletters', async (req, res) => {
+	app.get('/api/newsletters', async (req, res) => {
 		const newsletters = newslettersData.filter(isLegacyNewsletter);
 		return makeSuccessResponse(newsletters);
 	});
 
 	app.get<{ Params: { newsletterId: string } }>(
-		'/newsletters/:newsletterId',
+		'/api/newsletters/:newsletterId',
 		async (req, res) => {
 			const { newsletterId } = req.params;
 			const newsletter = newslettersData
