@@ -3,6 +3,7 @@ import { brazeLayout } from './brazeLayout';
 import { cancelLayout } from './cancelLayout';
 import { createNewsletterLayout } from './createNewsletterLayout';
 import { descriptionLayout } from './descriptionLayout';
+import { editDraftNewsletterLayout } from './editDraftNewsletter';
 import { finishLayout } from './finishLayout';
 import { identityNameLayout } from './identityNameLayout';
 import { ophanLayout } from './ophanLayout';
@@ -11,6 +12,7 @@ import { pillarLayout } from './pillarLayout';
 export const newslettersWorkflowStepLayout: WizardLayout = {
 	createNewsletter: createNewsletterLayout,
 	cancel: cancelLayout,
+	editDraftNewsletter: editDraftNewsletterLayout,
 	identityName: identityNameLayout,
 	braze: brazeLayout,
 	ophan: ophanLayout,

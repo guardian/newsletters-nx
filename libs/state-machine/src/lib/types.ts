@@ -74,9 +74,8 @@ export type WizardLayout = Record<string, WizardStepLayout>;
  * Interface for the data payload sent to by the client for a single step in the wizard.
  */
 export interface CurrentStepRouteRequest {
-	/** If the newletterId is undefined then this is a new newsletter otherwise
-	 * an existing one */
-	newsletterId?: string;
+	/** If the id is undefined then this is new otherwise pre-existing */
+	id?: string;
 	/** ID of the button that was pressed to get to the current step */
 	buttonId?: string;
 	/**ID of the step the use was on when thye pressed the button */

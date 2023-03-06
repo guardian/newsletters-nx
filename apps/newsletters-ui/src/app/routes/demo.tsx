@@ -1,7 +1,6 @@
-import { Container } from '@mui/material';
 import type { RouteObject } from 'react-router-dom';
 import { FormDemoView } from '../components/FormDemoView';
-import { Wizard } from '../components/Wizard';
+import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 
@@ -16,12 +15,12 @@ export const demoRoute: RouteObject = {
 			element: <FormDemoView />,
 		},
 		{
+			path: 'wizard/:listId',
+			element: <WizardContainer />,
+		},
+		{
 			path: 'wizard',
-			element: (
-				<Container>
-					<Wizard newsletterId="" />
-				</Container>
-			),
+			element: <WizardContainer />,
 		},
 	],
 };

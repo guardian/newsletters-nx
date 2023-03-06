@@ -18,7 +18,7 @@ export const identityNameLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'createNewsletter',
+			stepToMoveTo: 'editDraftNewsletter',
 			executeStep: executeModify,
 		},
 		next: {

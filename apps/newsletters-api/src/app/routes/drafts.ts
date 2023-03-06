@@ -28,7 +28,7 @@ const mapFailureReasonToStatusCode = (
 };
 
 export function registerDraftsRoutes(app: FastifyInstance) {
-	app.get('/drafts', async (req, res) => {
+	app.get('/api/drafts', async (req, res) => {
 		const storageResponse = await draftStore.listDrafts();
 		if (storageResponse.ok) {
 			return makeSuccessResponse(storageResponse.data);
@@ -39,7 +39,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 	});
 
 	app.get<{ Params: { listId: string } }>(
-		'/drafts/:listId',
+		'/api/drafts/:listId',
 		async (req, res) => {
 			const { listId } = req.params;
 			const idAsNumber = Number(listId);
@@ -58,7 +58,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 	);
 
 	app.delete<{ Params: { listId: string } }>(
-		'/drafts/:listId',
+		'/api/drafts/:listId',
 		async (req, res): Promise<ApiResponse<DraftWithId>> => {
 			const { listId } = req.params;
 			const idAsNumber = Number(listId);
