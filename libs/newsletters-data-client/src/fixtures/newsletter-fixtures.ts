@@ -1,4 +1,4 @@
-import type { Newsletter } from '..';
+import type { LegacyNewsletter } from '..';
 import type { NewsletterData } from '../lib/newsletter-data-type';
 
 export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
@@ -39,7 +39,7 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	creationTimeStamp: new Date('2015'),
 };
 
-export const VALID_TECHSCAPE: Newsletter = {
+export const VALID_TECHSCAPE: LegacyNewsletter = {
 	identityName: 'tech-scape',
 	name: 'TechScape',
 	cancelled: false,
