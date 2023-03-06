@@ -3,38 +3,13 @@ import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workfl
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
-	WizardButton,
-	WizardStepLayout,
-	WizardStepLayoutButton,
 } from '@newsletters-nx/state-machine';
 import {
-	setupInitialState,
-	stateMachineButtonPressed,
+	handleWizardRequest,
+	makeResponse,
 } from '@newsletters-nx/state-machine';
 import { storageInstance } from '../../services/storageInstance';
-
-const convertWizardStepLayoutButtonsToWizardButtons = (
-	layoutButtons: WizardStepLayout['buttons'],
-): CurrentStepRouteResponse['buttons'] => {
-	const convertButton = (
-		index: string,
-		input: WizardStepLayoutButton,
-	): WizardButton => {
-		return {
-			id: index,
-			label: input.label,
-			buttonType: input.buttonType,
-		};
-	};
-
-	const outputRecord: CurrentStepRouteResponse['buttons'] = {};
-
-	Object.entries(layoutButtons).forEach(([index, layoutButton]) => {
-		outputRecord[index] = convertButton(index, layoutButton);
-	});
-
-	return outputRecord;
-};
+import { safeStringify } from '../safeStringify';
 
 /**
  * Register the current step route for the newsletter wizard
@@ -47,54 +22,41 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const body: CurrentStepRouteRequest = req.body;
 			try {
-				const state =
-					body.buttonId !== undefined
-						? await stateMachineButtonPressed(
-								body.buttonId,
-								{
-									currentStepId: body.stepId,
-									formData: body.formData,
-								},
-								newslettersWorkflowStepLayout,
-								storageInstance,
-						  )
-						: await setupInitialState(body, storageInstance);
+				const { stepData, nextStep } = await handleWizardRequest(
+					body,
+					newslettersWorkflowStepLayout,
+					storageInstance,
+				);
 
-				const nextWizardStepLayout =
-					newslettersWorkflowStepLayout[state.currentStepId];
-
-				if (!nextWizardStepLayout) {
-					const errorResponse = {
+				// TO DO - should handleWizardRequest be throwing an exception
+				// if there is no nextStep? this indicates a bug in the WizardLayout
+				if (!nextStep) {
+					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: 'No next step found',
 						currentStepId: body.stepId,
 					};
 					return res.status(400).send(errorResponse);
 				}
 
-				const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
-
-				const markdown = dynamicMarkdown
-					? dynamicMarkdown(body.formData, state.formData)
-					: staticMarkdown;
-
-				return {
-					markdownToDisplay: markdown,
-					currentStepId: state.currentStepId,
-					buttons: convertWizardStepLayoutButtonsToWizardButtons(
-						nextWizardStepLayout.buttons,
-					),
-					errorMessage: state.errorMessage,
-					formData: state.formData,
-				};
+				return makeResponse(body, stepData, nextStep);
 			} catch (error) {
+				// TO DO - define a subclass of StateMachineError in the state-machine library
+				// with an enum of internal error codes.
 				if (error instanceof Error) {
-					const errorResponse = {
+					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: error.message,
 						currentStepId: body.stepId,
 					};
 					return res.status(400).send(errorResponse);
 				} else {
-					return res.status(500).send({ errorMessage: JSON.stringify(error) });
+					// FIX ME - in this case, the return value is not a CurrentStepRouteResponse
+					// as the function signature expects
+
+					return res.status(500).send({
+						errorMessage: safeStringify(error, {
+							message: 'UNHANDLED ERROR',
+						}),
+					});
 				}
 			}
 		},
