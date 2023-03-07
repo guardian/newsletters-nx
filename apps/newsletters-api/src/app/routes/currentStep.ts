@@ -52,11 +52,6 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					return res.status(getHttpCode(error)).send(errorResponse);
 				}
 
-				// Any error that is not caught and coded as a StateMachineError is treated
-				// unhandled as an internal error.
-				// messaging may not be user-safe, so using a default message.
-				console.warn('Non StateMachineError exception in currentStep handler');
-				console.log(error);
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'UNHANDLED ERROR',
 					currentStepId: requestBody.stepId,

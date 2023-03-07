@@ -58,6 +58,12 @@ export async function handleWizardRequestAndReturnWizardResponse(
 			throw error;
 		}
 
+		// Any error that is not caught and coded as a StateMachineError is treated
+		// unhandled as an internal error.
+		// messaging may not be user-safe, so using a default message.
+		console.warn('Non StateMachineError exception in currentStep handler');
+		console.log(error);
+
 		throw new StateMachineError(
 			'UNHANDLED ERROR',
 			StateMachineErrorCode.Unhandled,
