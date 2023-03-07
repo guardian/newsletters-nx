@@ -1,1 +1,1 @@
-export * from './lib/metrics-metrics-api';
+export * from './lib/metrics-api';

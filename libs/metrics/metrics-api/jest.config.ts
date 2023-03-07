@@ -1,5 +1,5 @@
 module.exports = {
-	displayName: 'metrics-metrics-api',
+	displayName: 'metrics-api',
 	preset: '../../../jest.preset.js',
 	testEnvironment: 'node',
 	transform: {
