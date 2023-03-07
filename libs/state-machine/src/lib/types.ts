@@ -94,5 +94,10 @@ export interface CurrentStepRouteResponse {
 	buttons?: Record<string, WizardButton>;
 	/** arbitrary data entered by the user into a form before pressing the button */
 	formData?: WizardFormData;
+
+	/** a user-friendly error message */
 	errorMessage?: string;
+
+	/** Whether the request resulted in a fatal error, so the user shoudl not be prompted to try again */
+	hasFatalError?: boolean;
 }
