@@ -11,7 +11,6 @@ import {
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
 import { storageInstance } from '../../services/storageInstance';
-import { safeStringify } from '../safeStringify';
 
 const getHttpCode = (error: StateMachineError): number => {
 	switch (error.code) {
@@ -37,43 +36,35 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 	app.post<{ Body: CurrentStepRouteRequest }>(
 		'/api/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
-			const body: CurrentStepRouteRequest = req.body;
+			const requestBody: CurrentStepRouteRequest = req.body;
 			try {
 				const { stepData, nextStep } = await handleWizardRequest(
-					body,
+					requestBody,
 					newslettersWorkflowStepLayout,
 					storageInstance,
 				);
-
-				return makeResponse(body, stepData, nextStep);
+				return makeResponse(requestBody, stepData, nextStep);
 			} catch (error) {
-				// TO DO - define a subclass of StateMachineError in the state-machine library
-				// with an enum of internal error codes.
 				if (error instanceof StateMachineError) {
 					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: error.message,
-						currentStepId: body.stepId,
+						currentStepId: requestBody.stepId,
 						hasFatalError: error.isFatal,
 					};
 					return res.status(getHttpCode(error)).send(errorResponse);
 				}
 
-				if (error instanceof Error) {
-					const errorResponse: CurrentStepRouteResponse = {
-						errorMessage: error.message,
-						currentStepId: body.stepId,
-					};
-					return res.status(500).send(errorResponse);
-				}
-
-				// FIX ME - in this case, the return value is not a CurrentStepRouteResponse
-				// as the function signature expects
-
-				return res.status(500).send({
-					errorMessage: safeStringify(error, {
-						message: 'UNHANDLED ERROR',
-					}),
-				});
+				// Any error that is not caught and coded as a StateMachineError is treated
+				// unhandled as an internal error.
+				// messaging may not be user-safe, so using a default message.
+				console.warn('Non StateMachineError exception in currentStep handler');
+				console.log(error);
+				const errorResponse: CurrentStepRouteResponse = {
+					errorMessage: 'UNHANDLED ERROR',
+					currentStepId: requestBody.stepId,
+					hasFatalError: true,
+				};
+				return res.status(500).send(errorResponse);
 			}
 		},
 	);
