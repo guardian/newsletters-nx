@@ -17,7 +17,7 @@ export interface WizardProps {
 	id?: string;
 }
 
-const ErrorMessage = (props: { errorMessage: string; isFatal?: boolean }) => {
+const FailureAlert = (props: { errorMessage: string; isFatal?: boolean }) => {
 	const { errorMessage, isFatal } = props;
 	if (isFatal) {
 		return (
@@ -96,7 +96,7 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 
 	if (serverErrorMesssage) {
 		return (
-			<ErrorMessage
+			<FailureAlert
 				errorMessage={serverErrorMesssage}
 				isFatal={serverData.hasFatalError}
 			/>
@@ -127,7 +127,10 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 			)}
 
 			{serverData.errorMessage && (
-				<ErrorMessage errorMessage={serverData.errorMessage} />
+				<FailureAlert
+					errorMessage={serverData.errorMessage}
+					isFatal={serverData.hasFatalError}
+				/>
 			)}
 			{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
 				<WizardButton
