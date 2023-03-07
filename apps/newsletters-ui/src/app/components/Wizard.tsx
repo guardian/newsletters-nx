@@ -72,10 +72,12 @@ export const Wizard: React.FC<WizardProps> = ({
 		const { createStartStep = '', editStartStep = '' } = WIZARDS[wizardId];
 		if (id === undefined) {
 			void fetchStep({
+				wizardId: wizardId,
 				stepId: createStartStep,
 			});
 		} else {
 			void fetchStep({
+				wizardId: wizardId,
 				id: id,
 				stepId: editStartStep,
 			});
@@ -98,6 +100,7 @@ export const Wizard: React.FC<WizardProps> = ({
 
 	const handleButtonClick = (buttonId: string) => () => {
 		void fetchStep({
+			wizardId: wizardId,
 			id: id,
 			buttonId: buttonId,
 			stepId: serverData.currentStepId || '',
