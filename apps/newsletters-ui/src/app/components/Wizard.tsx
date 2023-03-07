@@ -1,3 +1,4 @@
+import { Alert } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getFormBlankData, getFormSchema } from '@newsletters-nx/state-machine';
 import type {
@@ -15,6 +16,18 @@ import { WizardButton } from './WizardButton';
 export interface WizardProps {
 	id?: string;
 }
+
+const ErrorMessage = (props: { errorMessage: string; isFatal?: boolean }) => {
+	const { errorMessage, isFatal } = props;
+	if (isFatal) {
+		return (
+			<Alert severity="error">
+				Sorry, this wizard has failed: {errorMessage}
+			</Alert>
+		);
+	}
+	return <Alert severity="warning">Please try again: {errorMessage}</Alert>;
+};
 
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
@@ -83,10 +96,10 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 
 	if (serverErrorMesssage) {
 		return (
-			<p>
-				<b>ERROR:</b>
-				<span>{serverErrorMesssage}</span>
-			</p>
+			<ErrorMessage
+				errorMessage={serverErrorMesssage}
+				isFatal={serverData.hasFatalError}
+			/>
 		);
 	}
 
@@ -114,7 +127,7 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 			)}
 
 			{serverData.errorMessage && (
-				<p>Please try again: {serverData.errorMessage}</p>
+				<ErrorMessage errorMessage={serverData.errorMessage} />
 			)}
 			{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
 				<WizardButton
