@@ -14,12 +14,6 @@ export const formSchemas = {
 		})
 		.describe('Input the name for the new newsletter'),
 
-	editDraftNewsletter: z
-		.object({
-			name: z.string(),
-		})
-		.describe('Input the name for the new newsletter'),
-
 	identityName: z
 		.object({
 			identityName: kebabCasedString(),
@@ -59,6 +53,9 @@ export const formSchemas = {
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
+	if (stepId === 'createDraftNewsletter' || stepId === 'editDraftNewsletter') {
+		return formSchemas.startDraftNewsletter;
+	}
 	const matchingEntry = Object.entries(formSchemas).find(
 		([key]) => key === stepId,
 	);
