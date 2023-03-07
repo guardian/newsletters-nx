@@ -19,35 +19,49 @@ import type {
  * submission was not accepted.
  *
  * Will throw a StateMachineError if the requestBody includes
- * a request for a step which does not exist in the WizardLayout.
+ * a request for a step which does not exist in the WizardLayout,
+ * or any of the methods defined on the WizardLayoutStep throws
+ * any exceptions.
  */
 export async function handleWizardRequestAndReturnWizardResponse(
 	requestBody: CurrentStepRouteRequest,
 	wizardLayout: WizardLayout,
 	draftStorage: DraftStorage,
 ): Promise<CurrentStepRouteResponse> {
-	const stepData =
-		requestBody.buttonId !== undefined
-			? await stateMachineButtonPressed(
-					requestBody.buttonId,
-					{
-						currentStepId: requestBody.stepId,
-						formData: requestBody.formData,
-					},
-					wizardLayout,
-					draftStorage,
-			  )
-			: await setupInitialState(requestBody, draftStorage);
+	try {
+		const stepData =
+			requestBody.buttonId !== undefined
+				? await stateMachineButtonPressed(
+						requestBody.buttonId,
+						{
+							currentStepId: requestBody.stepId,
+							formData: requestBody.formData,
+						},
+						wizardLayout,
+						draftStorage,
+				  )
+				: await setupInitialState(requestBody, draftStorage);
 
-	const nextStep = wizardLayout[stepData.currentStepId];
+		const nextStep = wizardLayout[stepData.currentStepId];
 
-	if (!nextStep) {
+		if (!nextStep) {
+			throw new StateMachineError(
+				`The requested step "${stepData.currentStepId}" was not found.`,
+				StateMachineErrorCode.NoSuchStep,
+				true,
+			);
+		}
+
+		return makeResponse(requestBody, stepData, nextStep);
+	} catch (error) {
+		if (error instanceof StateMachineError) {
+			throw error;
+		}
+
 		throw new StateMachineError(
-			`The requested step "${stepData.currentStepId}" was not found.`,
-			StateMachineErrorCode.NoSuchStep,
+			'UNHANDLED ERROR',
+			StateMachineErrorCode.Unhandled,
 			true,
 		);
 	}
-
-	return makeResponse(requestBody, stepData, nextStep);
 }

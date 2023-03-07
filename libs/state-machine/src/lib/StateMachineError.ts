@@ -3,6 +3,7 @@ export enum StateMachineErrorCode {
 	NoSuchButton,
 	StorageAccessError,
 	StepMethodFailed,
+	Unhandled,
 }
 
 export class StateMachineError extends Error {
