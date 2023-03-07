@@ -20,8 +20,6 @@ const navLinks: NavLink[] = [
 	{ path: '/newsletters', label: 'Newsletters' },
 	{ path: '/templates', label: 'Email Templates' },
 	{ path: '/thrashers', label: 'Thrashers' },
-	{ path: '/newsletter-data', label: 'Create Draft Newsletter' },
-	{ path: '/launch-newsletter', label: 'Launch New Newsletter' },
 ];
 
 const navStyle = css`

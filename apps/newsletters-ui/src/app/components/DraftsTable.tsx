@@ -41,7 +41,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				accessor: 'wizardListId',
 				Cell: ({ cell: { value } }) => (
 					<button
-						onClick={() => navigate(`/newsletter-data/${value as string}`)}
+						onClick={() => navigate(`/demo/newsletter-data/${value as string}`)}
 					>
 						Edit
 					</button>

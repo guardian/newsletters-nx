@@ -28,8 +28,12 @@ export function NewslettersHome() {
 				Create new newsletter
 			</button>
 
-			<button onClick={() => navigate('/newsletter-data')}>
+			<button onClick={() => navigate('/demo/newsletter-data')}>
 				Demo create newsletter wizard
+			</button>
+
+			<button onClick={() => navigate('/demo/launch-newsletter')}>
+				Demo launch newsletter wizard
 			</button>
 
 			<button onClick={() => navigate('/demo/forms')}>Demo form</button>
