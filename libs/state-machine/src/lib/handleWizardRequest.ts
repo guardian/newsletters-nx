@@ -1,6 +1,7 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { setupInitialState } from './setupInitialState';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
+import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
 	WizardLayout,
@@ -19,16 +20,14 @@ import type {
  * to, with an errorMessage in the data indicating why the
  * submission was not accepted.
  *
- * The nextStep returned can be undefined, which indicates an error
- * in the wizardLayout - that it has produced step data with
- * a currentStepId that does not match any step in that
- * wizardLayout.
+ * Will throw a StateMachineError if the requestBody includes
+ * a request for a step which does not exist in the WizardLayout.
  */
 export async function handleWizardRequest(
 	requestBody: CurrentStepRouteRequest,
 	wizardLayout: WizardLayout,
 	draftStorage: DraftStorage,
-): Promise<{ stepData: WizardStepData; nextStep?: WizardStepLayout }> {
+): Promise<{ stepData: WizardStepData; nextStep: WizardStepLayout }> {
 	const stepData =
 		requestBody.buttonId !== undefined
 			? await stateMachineButtonPressed(
@@ -42,9 +41,15 @@ export async function handleWizardRequest(
 			  )
 			: await setupInitialState(requestBody, draftStorage);
 
-	// TO DO - should we be throwing an exception
-	// if there is no nextStep? this indicates a bug in the WizardLayout
 	const nextStep = wizardLayout[stepData.currentStepId];
+
+	if (!nextStep) {
+		throw new StateMachineError(
+			`The requested step "${stepData.currentStepId}" was not found.`,
+			StateMachineErrorCode.NoSuchStep,
+			true,
+		);
+	}
 
 	return { stepData, nextStep };
 }

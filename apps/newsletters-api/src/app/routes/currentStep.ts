@@ -16,9 +16,9 @@ import { safeStringify } from '../safeStringify';
 const getHttpCode = (error: StateMachineError): number => {
 	switch (error.code) {
 		case StateMachineErrorCode.NoSuchButton:
-			return 501;
+			return 400;
 		case StateMachineErrorCode.NoSuchStep:
-			return 501;
+			return 400;
 		case StateMachineErrorCode.StepMethodFailed:
 			return 500;
 		case StateMachineErrorCode.StorageAccessError:
@@ -45,16 +45,6 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					storageInstance,
 				);
 
-				// TO DO - should handleWizardRequest be throwing an exception
-				// if there is no nextStep? this indicates a bug in the WizardLayout
-				if (!nextStep) {
-					const errorResponse: CurrentStepRouteResponse = {
-						errorMessage: 'No next step found',
-						currentStepId: body.stepId,
-					};
-					return res.status(400).send(errorResponse);
-				}
-
 				return makeResponse(body, stepData, nextStep);
 			} catch (error) {
 				// TO DO - define a subclass of StateMachineError in the state-machine library
@@ -73,7 +63,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 						errorMessage: error.message,
 						currentStepId: body.stepId,
 					};
-					return res.status(400).send(errorResponse);
+					return res.status(500).send(errorResponse);
 				}
 
 				// FIX ME - in this case, the return value is not a CurrentStepRouteResponse
