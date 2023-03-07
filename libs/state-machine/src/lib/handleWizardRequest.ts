@@ -1,19 +1,17 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { makeResponse } from './makeResponse';
 import { setupInitialState } from './setupInitialState';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
+	CurrentStepRouteResponse,
 	WizardLayout,
-	WizardStepData,
-	WizardStepLayout,
 } from './types';
 
 /**
  * Execute the changes to state (if any) in response to a
- * user's request and return next step in the wizardLayout
- * that the user needs to see and the
- * data to populate it with.
+ * user's request and return the CurrentStepRouteResponse.
  *
  * If the user has provided invalid or unactionable data,
  * the "next step" may be the same step that they just responded
@@ -23,11 +21,11 @@ import type {
  * Will throw a StateMachineError if the requestBody includes
  * a request for a step which does not exist in the WizardLayout.
  */
-export async function handleWizardRequest(
+export async function handleWizardRequestAndReturnWizardResponse(
 	requestBody: CurrentStepRouteRequest,
 	wizardLayout: WizardLayout,
 	draftStorage: DraftStorage,
-): Promise<{ stepData: WizardStepData; nextStep: WizardStepLayout }> {
+): Promise<CurrentStepRouteResponse> {
 	const stepData =
 		requestBody.buttonId !== undefined
 			? await stateMachineButtonPressed(
@@ -51,5 +49,5 @@ export async function handleWizardRequest(
 		);
 	}
 
-	return { stepData, nextStep };
+	return makeResponse(requestBody, stepData, nextStep);
 }
