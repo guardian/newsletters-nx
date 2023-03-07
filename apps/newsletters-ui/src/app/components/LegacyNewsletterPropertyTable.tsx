@@ -4,22 +4,22 @@ import {
 	space,
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
-import type { Newsletter } from '@newsletters-nx/newsletters-data-client';
+import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import {
 	getPropertyDescription,
-	isPropertyOptional,
+	isPropertyOptionalOnLegacy,
 } from '@newsletters-nx/newsletters-data-client';
 import { getGuardianUrl, getPalette, renderYesNo } from '../util';
 import type { SourcePalette } from '../util';
 
 interface Props {
-	newsletter: Newsletter;
+	newsletter: LegacyNewsletter;
 	fields: FieldRowProps[];
 	caption: string;
 }
 
 interface FieldRowProps {
-	property: keyof Newsletter;
+	property: keyof LegacyNewsletter;
 	defaultDisplayValue?: string;
 	displayValueAs?: 'guardianLink' | 'text';
 }
@@ -48,7 +48,7 @@ const tableStyles = (palette: SourcePalette) => css`
 	}
 `;
 
-export const NewsletterPropertyTable = ({
+export const LegacyNewsletterPropertyTable = ({
 	newsletter,
 	fields,
 	caption,
@@ -88,7 +88,7 @@ export const NewsletterPropertyTable = ({
 		return (
 			<tr>
 				<th>
-					{property} {isPropertyOptional(property) && <b>[OPTIONAL]</b>}
+					{property} {isPropertyOptionalOnLegacy(property) && <b>[OPTIONAL]</b>}
 				</th>
 				<td>{getValueCellContents()}</td>
 				<td>{getPropertyDescription(property)}</td>

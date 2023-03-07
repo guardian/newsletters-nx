@@ -5,6 +5,7 @@ import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from './DraftStorage';
+import { StorageRequestFailureReason } from './DraftStorage';
 
 // TO DO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
@@ -32,6 +33,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 			const response: UnsuccessfulStorageResponse = {
 				ok: false,
 				message: `No draft with listId ${listId} found.`,
+				reason: StorageRequestFailureReason.NotFound,
 			};
 			return Promise.resolve(response);
 		}
@@ -51,6 +53,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 			const response: UnsuccessfulStorageResponse = {
 				ok: false,
 				message: `No draft with listId ${changeToDraft.listId} found.`,
+				reason: StorageRequestFailureReason.NotFound,
 			};
 			return Promise.resolve(response);
 		}
@@ -75,6 +78,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 			const response: UnsuccessfulStorageResponse = {
 				ok: false,
 				message: `No draft with listId ${listId} found.`,
+				reason: StorageRequestFailureReason.NotFound,
 			};
 			return Promise.resolve(response);
 		}

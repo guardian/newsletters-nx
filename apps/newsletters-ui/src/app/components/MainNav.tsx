@@ -16,11 +16,10 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-	{ path: '/', label: 'home' },
-	{ path: '/api', label: 'api test page' },
-	{ path: '/newsletters/', label: 'View Current Newsletters' },
-	{ path: '/drafts/', label: 'View draft Newsletters' },
-	{ path: '/test-forms/', label: 'test forms' },
+	{ path: '/', label: 'Home' },
+	{ path: '/newsletters', label: 'Newsletters' },
+	{ path: '/templates', label: 'Email Templates' },
+	{ path: '/thrashers', label: 'Thrashers' },
 	{ path: '/newsletter-data', label: 'Create Draft Newsletter' },
 	{ path: '/launch-newsletter', label: 'Launch New Newsletter' },
 ];
@@ -32,13 +31,15 @@ const navStyle = css`
 
 	a {
 		${textSansObjectStyles.medium({ fontWeight: 'light' })};
-		min-width: 200px;
+		flex-wrap: nowrap;
+		flex-basis: 220px;
 		margin-right: ${space[2]}px;
 		margin-bottom: ${space[2]}px;
 		padding: ${space[1]}px;
 		background-color: ${neutral[97]};
 		color: ${neutral[7]};
 		text-decoration: none;
+		text-align: center;
 
 		&.current {
 			${textSansObjectStyles.medium({ fontWeight: 'bold' })};

@@ -1,15 +1,12 @@
 import { Container } from '@mui/material';
 import type { RouteObject } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import { Api } from '../components/Api';
-import { ButtonContainer } from '../components/ButtonContainer';
+import { redirect, useParams } from 'react-router-dom';
 import { FormDemoView } from '../components/FormDemoView';
-import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
+import { HealthCheck } from '../components/HealthCheck';
 import { Wizard } from '../components/Wizard';
 import type { WizardProps } from '../components/Wizard';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
-import { listLoader } from './loaders';
 
 const WizardLink: React.FC<WizardProps> = ({ wizardId, id }: WizardProps) => {
 	const { listId } = useParams();
@@ -26,17 +23,16 @@ export const homeRoute: RouteObject = {
 	errorElement: <ErrorPage />,
 	children: [
 		{
-			path: '/',
-			element: <ButtonContainer />,
+			path: '',
+			action: () => redirect('/newsletters'),
 		},
 		{
 			path: 'api/',
-			element: <Api />,
+			element: <HealthCheck />,
 		},
 		{
-			path: '/create',
-			element: <NewsletterCreateView />,
-			loader: listLoader,
+			path: 'templates',
+			element: <span>Coming soon...</span>,
 		},
 		{
 			path: '/test-forms',
@@ -54,5 +50,10 @@ export const homeRoute: RouteObject = {
 			path: 'launch-newsletter',
 			element: <WizardLink wizardId="LAUNCH_NEWSLETTER" />,
 		},
+		{
+			path: 'thrashers',
+			element: <span>Coming soon...</span>,
+		},
+		{ path: '*', element: <ErrorPage /> },
 	],
 };
