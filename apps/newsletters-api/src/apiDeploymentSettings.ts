@@ -11,19 +11,33 @@
  * 	NEWSLETTERS_UI_SERVE=false npm run dev
  */
 
-function undefinedAndNotProduction(envVar: string | undefined): boolean {
-	return envVar === undefined && process.env.NODE !== 'production';
+export function isUndefinedAndNotProduction(
+	envVar: string | undefined,
+): boolean {
+	return envVar === undefined && process.env.NODE_ENV !== 'production';
 }
 
-export const isServingUI =
-	undefinedAndNotProduction(process.env.NEWSETTERS_UI_SERVE) ||
-	process.env.NEWSLETTERS_UI_SERVE === 'true';
+export const isServingUI = () => {
+	const undefinedAndNotProduction = isUndefinedAndNotProduction(
+		process.env.NEWSLETTERS_UI_SERVE,
+	);
+	const isUIServe = process.env.NEWSLETTERS_UI_SERVE === 'true';
+	return undefinedAndNotProduction || isUIServe;
+};
 
-export const isServingReadWriteEndpoints =
-	undefinedAndNotProduction(process.env.NEWSLETTERS_API_READ_WRITE) ||
-	process.env.NEWSLETTERS_API_READ_WRITE === 'true';
+export const isServingReadWriteEndpoints = () => {
+	const undefinedAndNotProduction = isUndefinedAndNotProduction(
+		process.env.NEWSLETTERS_API_READ_WRITE,
+	);
+	const isApiReadWrite = process.env.NEWSLETTERS_API_READ_WRITE === 'true';
+	return undefinedAndNotProduction || isApiReadWrite;
+};
 
-export const isServingReadEndpoints =
-	undefinedAndNotProduction(process.env.NEWSLETTERS_API_READ) ||
-	process.env.NEWSLETTERS_API_READ === 'true' ||
-	isServingReadWriteEndpoints;
+export const isServingReadEndpoints = () => {
+	const undefinedAndNotProduction = isUndefinedAndNotProduction(
+		process.env.NEWSLETTERS_API_READ,
+	);
+	const isApiRead = process.env.NEWSLETTERS_API_READ === 'true';
+	const isApiReadWrite = isServingReadWriteEndpoints();
+	return undefinedAndNotProduction || isApiRead || isApiReadWrite;
+};
