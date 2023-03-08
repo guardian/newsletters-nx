@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import fastifyStatic from '@fastify/static';
+import { fastifyStatic } from '@fastify/static';
 import type { FastifyInstance } from 'fastify';
 
 export function registerUIServer(app: FastifyInstance) {
