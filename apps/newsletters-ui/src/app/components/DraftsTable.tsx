@@ -40,7 +40,9 @@ export const DraftsTable = ({ drafts }: Props) => {
 				Header: 'Wizard',
 				accessor: 'wizardListId',
 				Cell: ({ cell: { value } }) => (
-					<button onClick={() => navigate(`/demo/wizard/${value as string}`)}>
+					<button
+						onClick={() => navigate(`/demo/newsletter-data/${value as string}`)}
+					>
 						Edit
 					</button>
 				),

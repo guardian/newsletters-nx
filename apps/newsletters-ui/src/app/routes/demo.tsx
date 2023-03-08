@@ -15,12 +15,16 @@ export const demoRoute: RouteObject = {
 			element: <FormDemoView />,
 		},
 		{
-			path: 'wizard/:listId',
-			element: <WizardContainer />,
+			path: 'newsletter-data/:listId',
+			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
 		},
 		{
-			path: 'wizard',
-			element: <WizardContainer />,
+			path: 'newsletter-data',
+			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
+		},
+		{
+			path: 'launch-newsletter',
+			element: <WizardContainer wizardId="LAUNCH_NEWSLETTER" />,
 		},
 	],
 };
