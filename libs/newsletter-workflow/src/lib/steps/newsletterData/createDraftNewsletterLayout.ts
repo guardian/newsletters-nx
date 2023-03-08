@@ -1,5 +1,5 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeCreate } from '../executeCreate';
+import { executeCreate } from '../../executeCreate';
 
 export const createDraftNewsletterLayout: WizardStepLayout = {
 	staticMarkdown: `# Create a newsletter
