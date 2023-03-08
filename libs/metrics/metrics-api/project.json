@@ -1,5 +1,5 @@
 {
-  "name": "metrics-api",
+	"name": "metrics-api",
 	"$schema": "../../../node_modules/nx/schemas/project-schema.json",
 	"sourceRoot": "libs/metrics/metrics-api/src",
 	"projectType": "library",
