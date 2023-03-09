@@ -4,20 +4,25 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Modify Ophan Campaign Values
+# Link to the Design Brief
 
-These are tracking fields used by Ophan.
+Once the design brief has been signed off for **{{name}}**, please specify the link to Figma.
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+Please ensure that the design brief includes images for thrashers if these are required (for both desktop and mobile widths).
+
+***THIS PAGE IS ONLY RELEVANT WHILST DEVS STILL NEED TO MAKE CODE CHANGES TO LAUNCH A NEWSLETTER***
+
+***TO AUTOMATE, WOULD NEED TO REPLACE THIS PAGE WITH A SPECIFICATION OF IMAGES AND PALETTE***
+
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout = {
+export const designBriefLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -30,17 +35,13 @@ export const ophanLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'tags',
 			executeStep: executeModify,
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
+			label: 'Next',
+			stepToMoveTo: 'signUp',
 			executeStep: executeModify,
 		},
 	},

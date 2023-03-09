@@ -4,20 +4,22 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Modify Ophan Campaign Values
+# Will {{name}} appear online?
 
-These are tracking fields used by Ophan.
+Will **{{name}}** be available to read as a web article?
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+This is the case for most existing newsletters.
+
+However, for some newsletters (such as **Down to Earth**) there is no web version.
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout = {
+export const onlineArticleLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -30,17 +32,13 @@ export const ophanLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'frequency',
 			executeStep: executeModify,
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
+			label: 'Next',
+			stepToMoveTo: 'tags',
 			executeStep: executeModify,
 		},
 	},

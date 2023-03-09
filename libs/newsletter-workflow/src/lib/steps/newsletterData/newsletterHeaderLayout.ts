@@ -4,20 +4,28 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Modify Ophan Campaign Values
+# Rendering the Header section of {{name}}
 
-These are tracking fields used by Ophan.
+## Date
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+Should the publication date of each edition of **{{name}}** be displayed?
+
+Normally, the date is displayed for daily emails (such as **First Edition**), but not for weekly emails.
+
+## Standfirst
+
+Should the standfirst be included?
+
+***NEED SCREENSHOT(S) HERE***
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout = {
+export const newsletterHeaderLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -30,17 +38,13 @@ export const ophanLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'frequency',
 			executeStep: executeModify,
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
+			label: 'Next',
+			stepToMoveTo: 'image',
 			executeStep: executeModify,
 		},
 	},

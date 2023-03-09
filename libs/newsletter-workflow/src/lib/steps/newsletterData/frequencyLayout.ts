@@ -4,20 +4,31 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Modify Ophan Campaign Values
+# Specify Frequency
 
-These are tracking fields used by Ophan.
+How often will **{{name}}** be sent?
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+Most newsletter frequencies are one of the following:
+- Every day
+- Every weekday
+- Weekly
+- Every fortnight
+- Monthly
+
+However, it's also possible to enter a non-standard frequency e.g.
+- Weekly during election season
+- About three times a week
+
+***ADD SCREENSHOT HERE***
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout = {
+export const frequencyLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -30,17 +41,13 @@ export const ophanLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'regionFocus',
 			executeStep: executeModify,
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
+			label: 'Next',
+			stepToMoveTo: 'onlineArticle',
 			executeStep: executeModify,
 		},
 	},

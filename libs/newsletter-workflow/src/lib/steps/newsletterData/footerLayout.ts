@@ -4,20 +4,22 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Modify Ophan Campaign Values
+# Rendering the Footer section of {{name}}
 
-These are tracking fields used by Ophan.
+What email address would you like to display in the footer of **{{name}}**?
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+For example: newsletters@theguardian.com
+
+***NEED SCREENSHOT HERE***
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout = {
+export const footerLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -30,17 +32,13 @@ export const ophanLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'podcast',
 			executeStep: executeModify,
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
+			label: 'Next',
+			stepToMoveTo: 'identityName',
 			executeStep: executeModify,
 		},
 	},

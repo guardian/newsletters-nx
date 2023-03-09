@@ -38,13 +38,13 @@ export const pillarLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'ophan',
+			stepToMoveTo: 'dates',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'description',
+			stepToMoveTo: 'regionFocus',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const theme: string | number | boolean | undefined = stepData.formData
 					? stepData.formData['theme']

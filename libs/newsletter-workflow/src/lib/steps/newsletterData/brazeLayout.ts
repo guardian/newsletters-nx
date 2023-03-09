@@ -1,17 +1,31 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { getStringValuesFromRecord } from '../../getValuesFromRecord';
+import { regExPatterns } from '../../regExPatterns';
 
-const markdownToDisplay = `
+const markdownTemplate = `
 # Modify Braze Values
 
 These are tracking fields used by Braze.
 
-They have been calculated automatically from the Name that you entered on a previous step of the wizard, but you can change them if you need.
+They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
 
 `.trim();
 
+const staticMarkdown = markdownTemplate.replace(
+	regExPatterns.name,
+	'of the newsletter',
+);
+
 export const brazeLayout: WizardStepLayout = {
-	staticMarkdown: markdownToDisplay,
+	staticMarkdown,
+	dynamicMarkdown(requestData, responseData) {
+		if (!responseData) {
+			return staticMarkdown;
+		}
+		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
+		return markdownTemplate.replace(regExPatterns.name, name);
+	},
 	buttons: {
 		back: {
 			buttonType: 'RED',

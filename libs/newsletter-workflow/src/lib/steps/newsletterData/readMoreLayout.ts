@@ -4,20 +4,25 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Modify Ophan Campaign Values
+# Rendering 'Read More' sections in {{name}}
 
-These are tracking fields used by Ophan.
+At the end of some sections in **{{name}}** you may wish to have a link encouraging the reader to 'Read more on the Guardian'.
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+***NEED SCREENSHOT HERE***
+
+In order to render that link at the end of one or more sections, you need to specify the following for each:
+- the subheading that will trigger the display of the Read More link (the link will be displayed wherever the subheading is used)
+- the wording to display e.g. Read more on the Guardian
+- the URL of the page that will open when the reader clicks on the link
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout = {
+export const readMoreLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -30,17 +35,13 @@ export const ophanLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'image',
 			executeStep: executeModify,
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
+			label: 'Next',
+			stepToMoveTo: 'linkList',
 			executeStep: executeModify,
 		},
 	},

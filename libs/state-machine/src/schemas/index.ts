@@ -42,11 +42,13 @@ export const formSchemas = {
 		})
 		.describe('Choose a theme'),
 
-	description: z
+	signUp: z
 		.object({
+			headline: z.string(),
 			description: z.string(),
+			successMessage: z.string(),
 		})
-		.describe('Input a short description to display to users'),
+		.describe('Input the Sign Up text to display to users'),
 };
 
 // TO DO - define the schemas in the library

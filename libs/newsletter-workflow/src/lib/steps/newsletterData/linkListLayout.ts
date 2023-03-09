@@ -4,20 +4,26 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Modify Ophan Campaign Values
+# Rendering 'Link List' sections in {{name}}
 
-These are tracking fields used by Ophan.
+You may want to display some sections in **{{name}}** with LinkList styling.
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+***NEED SCREENSHOT HERE***
+
+In order to use this styling for one or more sections, you need to specify the subheading for each section.
+
+The styling will be implemented wherever these subheadings are used.
+
+***DOES THE SECTION NEED TO BE IMPLEMENTED IN ANY PARTICULAR WAY IN COMPOSER IN ORDER TO APPLY LINKLIST STYLING?***
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout = {
+export const linkListLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -30,17 +36,13 @@ export const ophanLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'readMore',
 			executeStep: executeModify,
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
+			label: 'Next',
+			stepToMoveTo: 'podcast',
 			executeStep: executeModify,
 		},
 	},
