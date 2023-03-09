@@ -5,9 +5,10 @@
     "types": ["node", "vitest/importMeta"]
   },
   "files": [
-    "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
-    "../../node_modules/@nrwl/react/typings/image.d.ts"
-  ],
+		"../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
+		"../../node_modules/@nrwl/react/typings/image.d.ts",
+		"./src/app/components/CircularProgressWithLabel.tsx"
+	],
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
