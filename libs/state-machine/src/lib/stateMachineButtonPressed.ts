@@ -29,13 +29,6 @@ export async function stateMachineButtonPressed(
 		);
 	}
 
-	if (!formSchemaForIncomingStep && incomingStepData.formData) {
-		return {
-			...incomingStepData,
-			errorMessage: `There should not be a form with the step ${incomingStepData.currentStepId}`,
-		};
-	}
-
 	if (formSchemaForIncomingStep) {
 		if (!incomingStepData.formData) {
 			return {
