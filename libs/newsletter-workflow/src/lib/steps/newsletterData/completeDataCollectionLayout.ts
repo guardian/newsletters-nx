@@ -4,22 +4,24 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Modify Braze Values
+# Complete Data Collection
 
-These are tracking fields used by Braze.
+All the data required to create and launch **{{name}}** has now been specified.
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+Once you move beyond this page, you will no longer be able to make changes to the data, until you reach the **Testing** step.
 
-***TO SIMPLY THE DATA COLLECTION PROCESS, THESE WILL BE DISPLAYED READ-ONLY WITH A LINK TO EDIT IF REQUIRED***
+To review or modify any values, please press **Back**.
+
+Otherwise, press **Next** to proceed with the creation of **{{name}}**.
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const brazeLayout: WizardStepLayout = {
+export const completeDataCollectionLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -32,15 +34,15 @@ export const brazeLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: 'ophan',
 			executeStep: executeModify,
 		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'ophan',
+			stepToMoveTo: 'emailCentralProduction',
 			onBeforeStepChangeValidate: () => {
-				// TO DO - check that braze values do not already exist in other draft or actual newsletter
+				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
 				return undefined;
 			},
 			executeStep: executeModify,

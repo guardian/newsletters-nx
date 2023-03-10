@@ -21,10 +21,6 @@ The Success Message is displayed after the reader signs up to **{{name}}** e.g.
 
 ***INCLUDE AN IMAGE TO SHOW THE "We'll send you First Edition every weekday" MESSAGE***
 
-Should a confirmation email be sent to verify the subscription after the reader submits the sign-up form?
-
-***IS THIS TOO MUCH INFORMATION ON ONE PAGE?***
-
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(

@@ -10,17 +10,17 @@ const markdownTemplate = `
 
 What is the URL showing the Series tag for **{{name}}**?
 
-For example: [https://www.theguardian.com/tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the **What's On** newsletter
+For example: [https://www.theguardian.com/tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the **What's On** newsletter.
+
+If the tag does not already exist, an email will automatically be sent to Central Production to request its production.
 
 ## Composer Tag Relationship
 
-In Composer, we now have a feature where a newsletter signup embed is proposed when a tag is added to an article
+In Composer, we now have a feature where a newsletter signup embed is proposed when a tag is added to an article.
 
-For example, the **Gaming** tag recommends the **Pushing Buttons** newsletter signup
+For example, the **Gaming** tag recommends the **Pushing Buttons** newsletter signup.
 
-How would you like this to work?
-
-***ARE WE GOING TO CAPTURE THIS INFORMATION AS A FREEFORM FIELD AND EMAIL IT TO CENTRAL PRODUCTION ONCE THE DATA COLLECTION SECTION OF THE WIZARD HAS BEEN COMPLETED?***
+If you would like to enable this feature, your request will automatically be emailed to Central Production.
 
 `.trim();
 

@@ -4,13 +4,10 @@ import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `# Finished
 
-You have reached the end of the data collection section of the wizard. The draft newsletter **{{name}}** has been created.
+You have reached the end of the wizard.
 
-Now that the data collection is complete, some automated functionality may be carried out e.g.
-- emailing Central Production if a tag relationship is required
-- setting things up in Braze (only some of this can be automated - some will still need to be done manually)
+Congratulatoions - the newsletter **{{name}}** has been launched.
 
-Additional pages will be inserted here relating to other steps required to launch a newsletter.
 `;
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');

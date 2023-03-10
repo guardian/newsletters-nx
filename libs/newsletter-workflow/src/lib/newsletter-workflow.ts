@@ -4,10 +4,12 @@ import { finishLayout as finishLaunchNewsletterLayout } from './steps/launchNews
 import { launchNewsletterLayout } from './steps/launchNewsletter/launchNewsletterLayout';
 import { brazeLayout } from './steps/newsletterData/brazeLayout';
 import { cancelLayout as cancelNewsletterDataLayout } from './steps/newsletterData/cancelLayout';
+import { completeDataCollectionLayout } from './steps/newsletterData/completeDataCollectionLayout';
 import { createDraftNewsletterLayout } from './steps/newsletterData/createDraftNewsletterLayout';
 import { dateLayout } from './steps/newsletterData/dateLayout';
 import { designBriefLayout } from './steps/newsletterData/designBriefLayout';
 import { editDraftNewsletterLayout } from './steps/newsletterData/editDraftNewsletterLayout';
+import { emailCentralProductionLayout } from './steps/newsletterData/emailCentralProductionLayout';
 import { finishLayout as finishNewsletterDataLayout } from './steps/newsletterData/finishLayout';
 import { footerLayout } from './steps/newsletterData/footerLayout';
 import { frequencyLayout } from './steps/newsletterData/frequencyLayout';
@@ -48,6 +50,8 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 		identityName: identityNameLayout,
 		braze: brazeLayout,
 		ophan: ophanLayout,
+		completeDataCollection: completeDataCollectionLayout,
+		emailCentralProduction: emailCentralProductionLayout,
 		finish: finishNewsletterDataLayout,
 	},
 	LAUNCH_NEWSLETTER: {

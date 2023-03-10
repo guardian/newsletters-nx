@@ -10,6 +10,8 @@ This is a unique identifier for the newsletter, used internally by the system an
 
 It has been calculated automatically from the name **{{name}}**, but you can change it if you need.
 
+***TO SIMPLY THE DATA COLLECTION PROCESS, THIS WILL BE DISPLAYED READ-ONLY WITH A LINK TO EDIT IF REQUIRED***
+
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(

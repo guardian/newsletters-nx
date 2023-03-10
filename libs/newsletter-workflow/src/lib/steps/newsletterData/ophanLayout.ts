@@ -10,6 +10,8 @@ These are tracking fields used by Ophan.
 
 They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
 
+***TO SIMPLY THE DATA COLLECTION PROCESS, THESE WILL BE DISPLAYED READ-ONLY WITH A LINK TO EDIT IF REQUIRED***
+
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
@@ -35,8 +37,8 @@ export const ophanLayout: WizardStepLayout = {
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
+			label: 'Complete Data Collection',
+			stepToMoveTo: 'completeDataCollection',
 			onBeforeStepChangeValidate: () => {
 				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
 				return undefined;
