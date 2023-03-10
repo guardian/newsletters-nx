@@ -36,10 +36,21 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 		'/api/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
 			const requestBody: CurrentStepRouteRequest = req.body;
+			const layout = newslettersWorkflowStepLayout[requestBody.wizardId];
+
+			if (!layout) {
+				const errorResponse: CurrentStepRouteResponse = {
+					errorMessage: 'No layout found',
+					currentStepId: requestBody.stepId,
+					hasFatalError: true,
+				};
+				return res.status(400).send(errorResponse);
+			}
+
 			try {
 				return await handleWizardRequestAndReturnWizardResponse(
 					requestBody,
-					newslettersWorkflowStepLayout,
+					layout,
 					storageInstance,
 				);
 			} catch (error) {

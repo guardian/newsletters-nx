@@ -2,9 +2,9 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
-import { executeModify } from '../executeModify';
-import { getStringValuesFromRecord } from '../getValuesFromRecord';
-import { regExPatterns } from '../regExPatterns';
+import { executeModify } from '../../executeModify';
+import { getStringValuesFromRecord } from '../../getValuesFromRecord';
+import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
 # Select a Pillar for {{name}}

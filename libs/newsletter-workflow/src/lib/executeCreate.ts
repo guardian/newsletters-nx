@@ -15,7 +15,7 @@ export const executeCreate: AsyncExecution = async (
 	stepLayout,
 	storageInstance,
 ): Promise<WizardFormData | string> => {
-	const schema = formSchemas['createNewsletter']; // TODO - this needs to be generalised
+	const schema = formSchemas['startDraftNewsletter']; // TODO - this needs to be generalised
 	if (!storageInstance) {
 		throw new StateMachineError(
 			'no storageInstance',

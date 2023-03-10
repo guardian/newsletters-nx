@@ -6,6 +6,7 @@ import type {
 	CurrentStepRouteResponse,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { WIZARDS } from '../types';
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { WizardButton } from './WizardButton';
@@ -14,6 +15,7 @@ import { WizardButton } from './WizardButton';
  * Interface for the props passed to the `Wizard` component.
  */
 export interface WizardProps {
+	wizardId: keyof typeof WIZARDS;
 	id?: string;
 }
 
@@ -32,7 +34,10 @@ const FailureAlert = (props: { errorMessage: string; isFatal?: boolean }) => {
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
  */
-export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
+export const Wizard: React.FC<WizardProps> = ({
+	wizardId,
+	id,
+}: WizardProps) => {
 	const [serverData, setServerData] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
@@ -77,18 +82,21 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 	};
 
 	useEffect(() => {
+		const { createStartStep = '', editStartStep = '' } = WIZARDS[wizardId];
 		if (id === undefined) {
 			void fetchStep({
-				stepId: 'createNewsletter',
+				wizardId: wizardId,
+				stepId: createStartStep,
 			});
 		} else {
 			void fetchStep({
+				wizardId: wizardId,
 				id: id,
-				stepId: 'editDraftNewsletter',
+				stepId: editStartStep,
 			});
 		}
 		setListId(undefined);
-	}, [id]);
+	}, [wizardId, id]);
 
 	if (serverData === undefined) {
 		return <p>'loading'</p>;
@@ -105,6 +113,7 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 
 	const handleButtonClick = (buttonId: string) => () => {
 		void fetchStep({
+			wizardId: wizardId,
 			id: id,
 			buttonId: buttonId,
 			stepId: serverData.currentStepId || '',

@@ -12,13 +12,13 @@ import { registerUIServer } from './register-ui-server';
 
 const app = Fastify();
 registerHealthRoute(app);
-if (isServingUI) {
+if (isServingUI()) {
 	registerUIServer(app);
 }
-if (isServingReadWriteEndpoints) {
+if (isServingReadWriteEndpoints()) {
 	registerCurrentStepRoute(app);
 }
-if (isServingReadEndpoints) {
+if (isServingReadEndpoints()) {
 	registerNewsletterRoutes(app);
 	registerDraftsRoutes(app);
 }

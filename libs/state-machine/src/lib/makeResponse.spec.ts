@@ -44,6 +44,7 @@ const STEP_2 = WIZARD['step2'] as WizardStepLayout;
 const STEP_3 = WIZARD['step3'] as WizardStepLayout;
 
 const REQUEST_FOR_NEXT: CurrentStepRouteRequest = {
+	wizardId: 'TEST_WIZARD',
 	stepId: 'step1',
 	buttonId: 'next',
 };
@@ -58,6 +59,7 @@ const AFTER_FAILED_NEXT: WizardStepData = {
 };
 
 const REQUEST_FOR_SKIP: CurrentStepRouteRequest = {
+	wizardId: 'TEST_WIZARD',
 	stepId: 'step1',
 	buttonId: 'skip',
 };

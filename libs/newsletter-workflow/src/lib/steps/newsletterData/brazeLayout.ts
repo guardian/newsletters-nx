@@ -1,30 +1,30 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModify } from '../executeModify';
+import { executeModify } from '../../executeModify';
 
 const markdownToDisplay = `
-# Modify Ophan Campaign Values
+# Modify Braze Values
 
-These are tracking fields used by Ophan.
+These are tracking fields used by Braze.
 
 They have been calculated automatically from the Name that you entered on a previous step of the wizard, but you can change them if you need.
 
 `.trim();
 
-export const ophanLayout: WizardStepLayout = {
+export const brazeLayout: WizardStepLayout = {
 	staticMarkdown: markdownToDisplay,
 	buttons: {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'identityName',
 			executeStep: executeModify,
 		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'pillar',
+			stepToMoveTo: 'ophan',
 			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
+				// TO DO - check that braze values do not already exist in other draft or actual newsletter
 				return undefined;
 			},
 			executeStep: executeModify,
