@@ -1,5 +1,6 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
+import { formSchemas } from './formSchemas';
 
 export const createDraftNewsletterLayout: WizardStepLayout = {
 	staticMarkdown: `# Create a newsletter
@@ -29,4 +30,5 @@ For example:
 			executeStep: executeCreate,
 		},
 	},
+	schema: formSchemas.startDraftNewsletter,
 };
