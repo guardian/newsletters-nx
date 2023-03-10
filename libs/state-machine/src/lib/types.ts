@@ -100,6 +100,7 @@ export interface CurrentStepRouteResponse {
 	/** a user-friendly error message */
 	errorMessage?: string;
 
-	/** Whether the request resulted in a fatal error, so the user shoudl not be prompted to try again */
-	hasFatalError?: boolean;
+	/** Whether the request resulted in a persistent error (as a opposed temporary connectivity error
+	 *  or validation error on the user input), so the user should not be prompted to try again */
+	hasPersistentError?: boolean;
 }

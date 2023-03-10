@@ -42,7 +42,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'No layout found',
 					currentStepId: requestBody.stepId,
-					hasFatalError: true,
+					hasPersistentError: true,
 				};
 				return res.status(400).send(errorResponse);
 			}
@@ -58,7 +58,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: error.message,
 						currentStepId: requestBody.stepId,
-						hasFatalError: error.isFatal,
+						hasPersistentError: error.isPersistant,
 					};
 					return res.status(getHttpCode(error)).send(errorResponse);
 				}
@@ -66,7 +66,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'UNHANDLED ERROR',
 					currentStepId: requestBody.stepId,
-					hasFatalError: true,
+					hasPersistentError: true,
 				};
 				return res.status(500).send(errorResponse);
 			}

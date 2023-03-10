@@ -8,10 +8,14 @@ export enum StateMachineErrorCode {
 
 export class StateMachineError extends Error {
 	code: StateMachineErrorCode;
-	isFatal: boolean;
-	constructor(message: string, code: StateMachineErrorCode, isFatal = false) {
+	isPersistant: boolean;
+	constructor(
+		message: string,
+		code: StateMachineErrorCode,
+		isPersistent = false,
+	) {
 		super(message);
 		this.code = code;
-		this.isFatal = isFatal;
+		this.isPersistant = isPersistent;
 	}
 }

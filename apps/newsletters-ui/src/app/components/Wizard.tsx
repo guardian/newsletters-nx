@@ -19,9 +19,12 @@ export interface WizardProps {
 	id?: string;
 }
 
-const FailureAlert = (props: { errorMessage: string; isFatal?: boolean }) => {
-	const { errorMessage, isFatal } = props;
-	if (isFatal) {
+const FailureAlert = (props: {
+	errorMessage: string;
+	isPersistent?: boolean;
+}) => {
+	const { errorMessage, isPersistent } = props;
+	if (isPersistent) {
 		return (
 			<Alert severity="error">
 				Sorry, this wizard has failed: {errorMessage}
@@ -106,7 +109,7 @@ export const Wizard: React.FC<WizardProps> = ({
 		return (
 			<FailureAlert
 				errorMessage={serverErrorMesssage}
-				isFatal={serverData.hasFatalError}
+				isPersistent={serverData.hasPersistentError}
 			/>
 		);
 	}
@@ -138,7 +141,7 @@ export const Wizard: React.FC<WizardProps> = ({
 			{serverData.errorMessage && (
 				<FailureAlert
 					errorMessage={serverData.errorMessage}
-					isFatal={serverData.hasFatalError}
+					isPersistent={serverData.hasPersistentError}
 				/>
 			)}
 			{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
