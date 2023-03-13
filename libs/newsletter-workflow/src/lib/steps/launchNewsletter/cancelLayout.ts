@@ -9,4 +9,5 @@ Launch of the newsletter was cancelled.
 export const cancelLayout: WizardStepLayout = {
 	staticMarkdown: markdownToDisplay,
 	buttons: {},
+	role: 'EARLY_EXIT',
 };

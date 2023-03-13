@@ -32,4 +32,5 @@ For example:
 		},
 	},
 	schema: formSchemas.startDraftNewsletter,
+	role: 'EDIT_START',
 };
