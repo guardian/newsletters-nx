@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { formatCellBoolean } from './Cell';
 import { Table } from './Table';
 
 interface Props {
-	newsletters: LegacyNewsletter[];
+	newsletters: NewsletterData[];
 }
 
 export const NewslettersTable = ({ newsletters }: Props) => {
@@ -25,8 +25,13 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				accessor: 'name',
 			},
 			{
-				Header: 'Paused',
-				accessor: 'paused',
+				Header: 'Status',
+				accessor: 'status',
+				sortType: 'basic',
+			},
+			{
+				Header: 'Restricted',
+				accessor: 'restricted',
 				sortType: 'basic',
 				Cell: formatCellBoolean,
 			},
