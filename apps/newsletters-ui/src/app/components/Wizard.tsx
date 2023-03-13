@@ -125,6 +125,7 @@ export const Wizard: React.FC<WizardProps> = ({
 			<StepNav
 				currentStepId={serverData.currentStepId}
 				stepList={getStepList(wizardId)}
+				onEditTrack={typeof id === 'number'}
 			/>
 			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
 

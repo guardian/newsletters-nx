@@ -1,8 +1,9 @@
-export type StepListing = { id: string; label: string };
+import type { StepListing } from '@newsletters-nx/state-machine';
 
 interface Props {
 	currentStepId?: string;
 	stepList: StepListing[];
+	onEditTrack: boolean;
 }
 
 export const StepNav = ({ currentStepId, stepList }: Props) => {
@@ -15,7 +16,7 @@ export const StepNav = ({ currentStepId, stepList }: Props) => {
 							fontWeight: step.id === currentStepId ? 'bold' : 'normal',
 						}}
 					>
-						{step.label || step.id}
+						{step.label ?? step.id}
 					</li>
 				))}
 			</ol>
