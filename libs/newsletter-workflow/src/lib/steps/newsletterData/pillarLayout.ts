@@ -2,9 +2,10 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
-import { executeModify } from '../executeModify';
-import { getStringValuesFromRecord } from '../getValuesFromRecord';
-import { regExPatterns } from '../regExPatterns';
+import { executeModify } from '../../executeModify';
+import { getStringValuesFromRecord } from '../../getValuesFromRecord';
+import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Select a Pillar for {{name}}
@@ -58,4 +59,5 @@ export const pillarLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.pillar,
 };

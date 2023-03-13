@@ -2,6 +2,7 @@ import type {
 	DraftStorage,
 	WIZARD_BUTTON_TYPES,
 } from '@newsletters-nx/newsletters-data-client';
+import type { ZodObject, ZodRawShape } from 'zod';
 
 export type WizardFormData = Record<
 	string,
@@ -64,6 +65,7 @@ export interface WizardStepLayout {
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;
 	};
 	buttons: Record<string, WizardStepLayoutButton>;
+	schema?: ZodObject<ZodRawShape>;
 }
 
 export type WizardLayout = Record<string, WizardStepLayout>;
@@ -72,7 +74,9 @@ export type WizardLayout = Record<string, WizardStepLayout>;
  * Interface for the data payload sent to by the client for a single step in the wizard.
  */
 export interface CurrentStepRouteRequest {
-	/** If the id is undefined then this is new otherwise pre-existing */
+	/** ID of wizard being invoked */
+	wizardId: string;
+	/** ID of entity being created/modified using the wizard.  If the id is undefined then this is new otherwise pre-existing */
 	id?: string;
 	/** ID of the button that was pressed to get to the current step */
 	buttonId?: string;

@@ -2,7 +2,8 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
-import { executeModify } from '../executeModify';
+import { executeModify } from '../../executeModify';
+import { formSchemas } from './formSchemas';
 
 const markdownToDisplay = `
 # Specify the Description
@@ -39,4 +40,5 @@ export const descriptionLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.description,
 };

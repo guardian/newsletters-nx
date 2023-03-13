@@ -1,5 +1,6 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModify } from '../executeModify';
+import { executeModify } from '../../executeModify';
+import { formSchemas } from './formSchemas';
 
 const markdownToDisplay = `
 # Modify Braze Values
@@ -30,4 +31,5 @@ export const brazeLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.braze,
 };

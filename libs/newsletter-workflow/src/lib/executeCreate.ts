@@ -1,8 +1,8 @@
-import { formSchemas } from '@newsletters-nx/state-machine';
 import type {
 	AsyncExecution,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { formSchemas } from '../lib/steps/newsletterData/formSchemas';
 import { calculateFieldsFromName } from './calculateFieldsFromName';
 import { executeModify } from './executeModify';
 
@@ -11,7 +11,7 @@ export const executeCreate: AsyncExecution = async (
 	stepLayout,
 	storageInstance,
 ): Promise<WizardFormData | string> => {
-	const schema = formSchemas['createNewsletter']; // TODO - this needs to be generalised
+	const schema = formSchemas['startDraftNewsletter']; // TODO - this needs to be generalised
 	if (!storageInstance) {
 		throw new Error('no storageInstance');
 	}

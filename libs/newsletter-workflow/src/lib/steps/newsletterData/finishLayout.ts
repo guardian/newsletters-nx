@@ -1,6 +1,6 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { getStringValuesFromRecord } from '../getValuesFromRecord';
-import { regExPatterns } from '../regExPatterns';
+import { getStringValuesFromRecord } from '../../getValuesFromRecord';
+import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `# Finished
 

@@ -13,7 +13,6 @@ export default defineConfig({
 				/** @TODO - Read target from env var / param instead of hardcoding */
 				target: 'http://0.0.0.0:3000',
 				secure: false,
-				rewrite: (path) => path.replace(/^\/api/, ''),
 			},
 		},
 	},
