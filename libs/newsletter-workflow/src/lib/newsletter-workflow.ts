@@ -16,13 +16,13 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 	NEWSLETTER_DATA: {
 		createDraftNewsletter: createDraftNewsletterLayout,
 		editDraftNewsletter: editDraftNewsletterLayout,
-		cancel: cancelNewsletterDataLayout,
 		identityName: identityNameLayout,
 		braze: brazeLayout,
 		ophan: ophanLayout,
 		pillar: pillarLayout,
 		description: descriptionLayout,
 		finish: finishNewsletterDataLayout,
+		cancel: cancelNewsletterDataLayout,
 	},
 	LAUNCH_NEWSLETTER: {
 		launchNewsletter: launchNewsletterLayout,
@@ -41,4 +41,18 @@ export const getFormSchema = (
 	}
 	const step = wizard[stepId];
 	return step?.schema;
+};
+
+export type StepListing = { id: string; label: string };
+export const getStepList = (
+	wizardId: keyof typeof newslettersWorkflowStepLayout,
+): StepListing[] => {
+	const wizard = newslettersWorkflowStepLayout[wizardId];
+	if (!wizard) {
+		return [];
+	}
+
+	return Object.entries(wizard).reduce<StepListing[]>((list, [id, step]) => {
+		return [...list, { id, label: step.label }];
+	}, []);
 };

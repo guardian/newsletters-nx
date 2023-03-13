@@ -13,6 +13,7 @@ For example:
   "Down to Earth"
 
 `,
+	label: 'Enter Name',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',

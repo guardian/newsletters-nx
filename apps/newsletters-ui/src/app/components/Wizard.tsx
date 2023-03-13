@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getFormSchema } from '@newsletters-nx/newsletter-workflow';
+import {
+	getFormSchema,
+	getStepList,
+} from '@newsletters-nx/newsletter-workflow';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
@@ -9,6 +12,7 @@ import { getEmptySchemaData } from '@newsletters-nx/state-machine';
 import { WIZARDS } from '../types';
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
+import { StepNav } from './StepNav';
 import { WizardButton } from './WizardButton';
 
 /**
@@ -118,6 +122,10 @@ export const Wizard: React.FC<WizardProps> = ({
 
 	return (
 		<>
+			<StepNav
+				currentStepId={serverData.currentStepId}
+				stepList={getStepList(wizardId)}
+			/>
 			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
 
 			{formSchema && formData && (
