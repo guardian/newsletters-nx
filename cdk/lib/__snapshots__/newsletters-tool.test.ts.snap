@@ -197,6 +197,8 @@ aws s3 cp s3://",
 mkdir -p /opt/newsletters-tool
 unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
 chown -R ubuntu /opt/newsletters-tool
+export NEWSLETTERS_API_READ=true
+export NEWSLETTERS_UI_SERVE=true
 su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool /opt/newsletters-tool/dist/apps/newsletters-api/main.cjs'",
               ],
             ],
