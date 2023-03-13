@@ -10,7 +10,7 @@
 		"test": "nx run-many --target=test --all",
 		"generate:lib": "npx nx generate @nrwl/workspace:library --setParserOptionsProject --standaloneConfig --testEnvironment=node --",
 		"prepare": "husky install",
-		"generate-newsletters": "./tools/scripts/generate-newsletters.sh",
+		"generate-legacy-newsletters": "./tools/scripts/generate-newsletters.sh",
 		"postinstall": "npm install --prefix cdk",
 		"bundle-api": "npx nx build newsletters-api --configuration=production --outputFileName=index.js",
 		"upgrade-nx": "nx migrate latest && nx migrate --run-migrations"
