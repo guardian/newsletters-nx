@@ -38,8 +38,8 @@ export const newsletterDataSchema = z.object({
 	exampleUrl: z.string().optional(),
 	illustrationCircle: z.string().optional(),
 
-	creationTimeStamp: z.date(),
-	cancellationTimeStamp: z.date().optional(),
+	creationTimeStamp: z.number(),
+	cancellationTimeStamp: z.number().optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */
