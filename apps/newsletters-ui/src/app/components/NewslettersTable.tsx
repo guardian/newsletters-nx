@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { formatCellBoolean } from './Cell';
+import { formatCellBoolean, formatCellDate } from './Cell';
 import { Table } from './Table';
 
 interface Props {
@@ -23,6 +23,16 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 			{
 				Header: 'Newsletter Name',
 				accessor: 'name',
+			},
+			{
+				Header: 'Created',
+				accessor: 'creationTimeStamp',
+				Cell: formatCellDate,
+			},
+			{
+				Header: 'Cancelled',
+				accessor: 'cancellationTimeStamp',
+				Cell: formatCellDate,
 			},
 			{
 				Header: 'Status',
