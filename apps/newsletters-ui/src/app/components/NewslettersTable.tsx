@@ -1,9 +1,9 @@
-import { Button } from '@mui/material';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { formatCellBoolean, formatCellDate } from './Cell';
+import { ExternalLinkButton } from './ExternalLinkButton';
 import { Table } from './Table';
 
 interface Props {
@@ -28,16 +28,11 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 			{
 				Header: 'Design',
 				accessor: 'designUrl',
+				disableSortBy: true,
+				disableFilters: true,
 				Cell: ({ cell: { value } }) =>
 					value ? (
-						<Button
-							href={value as string}
-							variant="outlined"
-							target="_blank"
-							endIcon={<span>↗</span>}
-						>
-							design
-						</Button>
+						<ExternalLinkButton href={value as string} text="design" />
 					) : null,
 			},
 			{
