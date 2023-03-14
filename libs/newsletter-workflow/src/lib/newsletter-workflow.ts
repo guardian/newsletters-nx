@@ -30,3 +30,15 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 		finish: finishLaunchNewsletterLayout,
 	},
 };
+
+export const getFormSchema = (
+	wizardId: keyof typeof newslettersWorkflowStepLayout,
+	stepId: string,
+) => {
+	const wizard = newslettersWorkflowStepLayout[wizardId];
+	if (!wizard) {
+		return undefined;
+	}
+	const step = wizard[stepId];
+	return step?.schema;
+};

@@ -2,6 +2,7 @@ import type {
 	DraftStorage,
 	WIZARD_BUTTON_TYPES,
 } from '@newsletters-nx/newsletters-data-client';
+import type { ZodObject, ZodRawShape } from 'zod';
 
 export type WizardFormData = Record<
 	string,
@@ -64,6 +65,7 @@ export interface WizardStepLayout {
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;
 	};
 	buttons: Record<string, WizardStepLayoutButton>;
+	schema?: ZodObject<ZodRawShape>;
 }
 
 export type WizardLayout = Record<string, WizardStepLayout>;

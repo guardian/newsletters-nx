@@ -1,5 +1,4 @@
 import {
-	formSchemas,
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
@@ -7,6 +6,7 @@ import type {
 	AsyncExecution,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { formSchemas } from '../lib/steps/newsletterData/formSchemas';
 import { calculateFieldsFromName } from './calculateFieldsFromName';
 import { executeModify } from './executeModify';
 

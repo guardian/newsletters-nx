@@ -1,6 +1,7 @@
 import { Alert } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { getFormBlankData, getFormSchema } from '@newsletters-nx/state-machine';
+import { useCallback, useEffect, useState } from 'react';
+import { getFormSchema } from '@newsletters-nx/newsletter-workflow';
+import { getEmptySchemaData } from '@newsletters-nx/state-machine';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
@@ -52,37 +53,42 @@ export const Wizard: React.FC<WizardProps> = ({
 		string | undefined
 	>();
 
-	const fetchStep = (body: CurrentStepRouteRequest) => {
-		return fetch(`/api/currentstep`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(body),
-		})
-			.then((response) => response.json())
-			.then((data: CurrentStepRouteResponse) => {
-				console.table(data);
-				const listIdOnData = data.formData?.listId;
-				if (typeof listIdOnData === 'number') {
-					setListId(listIdOnData);
-				}
-
-				setServerData(data);
-
-				const blank = getFormBlankData(data.currentStepId);
-				const populatedForm = {
-					...blank,
-					...data.formData,
-				};
-
-				setFormData(populatedForm as WizardFormData);
+	const fetchStep = useCallback(
+		(body: CurrentStepRouteRequest) => {
+			return fetch(`/api/currentstep`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(body),
 			})
-			.catch((error: unknown /* FIXME! */) => {
-				setServerErrorMessage('Wizard failed');
-				console.error('Error invoking next step of wizard:', error);
-			});
-	};
+				.then((response) => response.json())
+				.then((data: CurrentStepRouteResponse) => {
+					console.table(data);
+					const listIdOnData = data.formData?.listId;
+					if (typeof listIdOnData === 'number') {
+						setListId(listIdOnData);
+					}
+
+					setServerData(data);
+
+					const schema = getFormSchema(wizardId, data.currentStepId);
+					const blank = schema ? getEmptySchemaData(schema) : undefined;
+
+					const populatedForm = {
+						...blank,
+						...data.formData,
+					};
+
+					setFormData(populatedForm as WizardFormData);
+				})
+				.catch((error: unknown /* FIXME! */) => {
+					setServerErrorMessage('Wizard failed');
+					console.error('Error invoking next step of wizard:', error);
+				});
+		},
+		[wizardId],
+	);
 
 	useEffect(() => {
 		const { createStartStep = '', editStartStep = '' } = WIZARDS[wizardId];
@@ -99,7 +105,7 @@ export const Wizard: React.FC<WizardProps> = ({
 			});
 		}
 		setListId(undefined);
-	}, [wizardId, id]);
+	}, [wizardId, id, fetchStep]);
 
 	if (serverData === undefined) {
 		return <p>'loading'</p>;
@@ -124,7 +130,7 @@ export const Wizard: React.FC<WizardProps> = ({
 		});
 	};
 
-	const formSchema = getFormSchema(serverData.currentStepId);
+	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
 
 	return (
 		<>
