@@ -30,8 +30,9 @@ export const descriptionLayout: WizardStepLayout = {
 			label: 'Finish',
 			stepToMoveTo: 'finish',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const description: string | number | boolean | undefined =
-					stepData.formData ? stepData.formData['description'] : undefined;
+				const description = stepData.formData
+					? stepData.formData['description']
+					: undefined;
 				if (!description) {
 					return 'NO DESCRIPTION PROVIDED';
 				}

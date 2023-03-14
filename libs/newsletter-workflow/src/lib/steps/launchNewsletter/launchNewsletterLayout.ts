@@ -20,8 +20,8 @@ The first step is to enter all the data relating to the newsletter.
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
+			label: 'Next',
+			stepToMoveTo: 'dates',
 		},
 	},
 };
