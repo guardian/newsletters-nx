@@ -14,6 +14,9 @@ export const themeEnumSchema = z.enum([
 	'sport',
 	'lifestyle',
 	'features',
+]);
+export const themeLegacyEnumSchema = z.enum([
+	...themeEnumSchema.options,
 	'cancelled',
 	'work',
 	'from the papers',
@@ -46,7 +49,7 @@ const baseLegacyNewsletterSchema = z.object({
 	brazeNewsletterName: z.string().optional(),
 	brazeSubscribeAttributeName: z.string().optional(),
 	brazeSubscribeEventNamePrefix: z.string().optional(),
-	theme: themeEnumSchema,
+	theme: themeLegacyEnumSchema,
 	group: nonEmptyString().describe(
 		'the name of the section of the newsletters page the newsletter will be listed under',
 	),
