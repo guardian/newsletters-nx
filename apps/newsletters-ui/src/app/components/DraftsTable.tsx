@@ -49,11 +49,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				accessor: 'wizardListId',
 				Cell: ({ cell: { value } }) => (
 					<button
-						onClick={() =>
-							// TODO: This should include the newsletter ID
-							//navigate(`/demo/launch-newsletter/${value as string}`)
-							navigate(`/demo/launch-newsletter`)
-						}
+						onClick={() => navigate(`/demo/newsletter-data/${value as string}`)}
 					>
 						View
 					</button>
