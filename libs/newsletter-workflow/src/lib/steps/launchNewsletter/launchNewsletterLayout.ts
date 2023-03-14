@@ -21,7 +21,7 @@ The first step is to enter all the data relating to the newsletter.
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'dates',
+			stepToMoveTo: 'finish',
 		},
 	},
 };

@@ -17,7 +17,7 @@ export const brazeLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: 'dates',
 			executeStep: executeModify,
 		},
 		next: {

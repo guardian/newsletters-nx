@@ -1,7 +1,6 @@
 import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { cancelLayout as cancelLaunchNewsletterLayout } from './steps/launchNewsletter/cancelLayout';
 import { finishLayout as finishLaunchNewsletterLayout } from './steps/launchNewsletter/finishLayout';
-import { launchDateLayout } from './steps/launchNewsletter/launchDateLayout';
 import { launchNewsletterLayout } from './steps/launchNewsletter/launchNewsletterLayout';
 import { brazeLayout } from './steps/newsletterData/brazeLayout';
 import { cancelLayout as cancelNewsletterDataLayout } from './steps/newsletterData/cancelLayout';
@@ -12,6 +11,7 @@ import { finishLayout as finishNewsletterDataLayout } from './steps/newsletterDa
 import { identityNameLayout } from './steps/newsletterData/identityNameLayout';
 import { ophanLayout } from './steps/newsletterData/ophanLayout';
 import { pillarLayout } from './steps/newsletterData/pillarLayout';
+import { promotionDateLayout } from './steps/newsletterData/promotionDateLayout';
 
 export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 	NEWSLETTER_DATA: {
@@ -19,6 +19,7 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 		editDraftNewsletter: editDraftNewsletterLayout,
 		cancel: cancelNewsletterDataLayout,
 		identityName: identityNameLayout,
+		dates: promotionDateLayout,
 		braze: brazeLayout,
 		ophan: ophanLayout,
 		pillar: pillarLayout,
@@ -27,7 +28,6 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 	},
 	LAUNCH_NEWSLETTER: {
 		launchNewsletter: launchNewsletterLayout,
-		dates: launchDateLayout,
 		cancel: cancelLaunchNewsletterLayout,
 		finish: finishLaunchNewsletterLayout,
 	},

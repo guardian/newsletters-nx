@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 
-export const launchDateLayout: WizardStepLayout = {
-	staticMarkdown: `# Choose launch date
+export const promotionDateLayout: WizardStepLayout = {
+	staticMarkdown: `# Promotion
 
 	choose below
 
@@ -11,17 +11,17 @@ export const launchDateLayout: WizardStepLayout = {
 		cancel: {
 			buttonType: 'RED',
 			label: 'back',
-			stepToMoveTo: 'launchNewsletter',
+			stepToMoveTo: 'identityName',
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Finish',
+			label: 'next',
 			stepToMoveTo: 'finish',
 		},
 	},
 	schema: z
 		.object({
-			launchDate: z.coerce.date(),
+			signUpPageDate: z.coerce.date(),
 			thrasherDate: z.coerce.date(),
 		})
 		.describe('choose dates'),
