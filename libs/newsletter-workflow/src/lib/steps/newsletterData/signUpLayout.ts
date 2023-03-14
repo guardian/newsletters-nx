@@ -18,10 +18,6 @@ Please enter the headline and description for the sign up page for **{{name}}**
 [comment]: <> (https://uploads.guim.co.uk/2023/02/24/descScreenshot.png)
 ![Description](wizard-screenshots/descriptionScreenshotSmall.png)
 
-The Success Message is displayed after the reader signs up to **{{name}}** e.g.
-
-***INCLUDE AN IMAGE TO SHOW THE "We'll send you First Edition every weekday" MESSAGE***
-
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
@@ -59,11 +55,6 @@ export const signUpLayout: WizardStepLayout = {
 					stepData.formData ? stepData.formData['description'] : undefined;
 				if (!description) {
 					return 'NO DESCRIPTION PROVIDED';
-				}
-				const successMessage: string | number | boolean | undefined =
-					stepData.formData ? stepData.formData['successMessage'] : undefined;
-				if (!successMessage) {
-					return 'NO SUCCESS MESSAGE PROVIDED';
 				}
 				return undefined;
 			},

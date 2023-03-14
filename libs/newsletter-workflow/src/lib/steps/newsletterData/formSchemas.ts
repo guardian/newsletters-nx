@@ -44,7 +44,6 @@ export const formSchemas = {
 		.object({
 			headline: z.string(),
 			description: z.string(),
-			successMessage: z.string(),
 		})
 		.describe('Input the Sign Up text to display to users'),
 };

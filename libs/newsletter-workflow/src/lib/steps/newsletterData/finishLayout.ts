@@ -6,7 +6,7 @@ const markdownTemplate = `# Finished
 
 You have reached the end of the wizard.
 
-Congratulatoions - the newsletter **{{name}}** has been launched.
+Congratulations - the newsletter **{{name}}** has been launched.
 
 `;
 
