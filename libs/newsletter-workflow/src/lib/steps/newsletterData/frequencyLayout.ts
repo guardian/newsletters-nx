@@ -2,6 +2,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Specify the send frequency of {{name}}
@@ -54,7 +55,14 @@ export const frequencyLayout: WizardStepLayout = {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'onlineArticle',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const frequency = stepData.formData
+					? stepData.formData['frequency']
+					: undefined;
+				return frequency ? undefined : 'NO FREQUENCY PROVIDED';
+			},
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.frequency,
 };

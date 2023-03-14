@@ -50,7 +50,6 @@ export const pillarLayout: WizardStepLayout = {
 				if (!theme || theme === '') {
 					return 'NO THEME SELECTED';
 				}
-
 				return undefined;
 			},
 			executeStep: executeModify,

@@ -2,6 +2,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Specify the image caption setup for {{name}}
@@ -40,4 +41,5 @@ export const imageLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.images,
 };

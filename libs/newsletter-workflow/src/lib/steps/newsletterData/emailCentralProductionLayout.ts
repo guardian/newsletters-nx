@@ -10,14 +10,14 @@ const markdownTemplate = `
 ***EITHER***
 
 Emails have been sent to Central Production, requesting:
-- the creation of the series tag <INSERT SERIES TAG HERE>
-- the creation of relationship between the <INSERT TAG HERE> and **{{name}}** newsletter
+- the creation of the series tag **{{seriesTag}}**
+- the creation of the relationship in Composer between the **{{composerTag}}** tag and **{{composerCampaignTag}}** campaign tag
 
 Once responses have been received confirming their creation, the wizard will automatically progress to the next step.
 
 ***OR***
 
-An email has been sent to Central Production, requesting the creation of relationship between the <INSERT TAG HERE> and **{{name}}** newsletter.
+An email has been sent to Central Production, requesting the creation of the relationship in Composer between the **{{composerTag}}** tag and **{{composerCampaignTag}}** campaign tag.
 
 Once a response has been received confirming its creation, the wizard will automatically progress to the next step.
 
@@ -37,7 +37,20 @@ export const emailCentralProductionLayout: WizardStepLayout = {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		return markdownTemplate.replace(regExPatterns.name, name);
+		const [seriesTag = 'SERIESTAG'] = getStringValuesFromRecord(responseData, [
+			'seriesTag',
+		]);
+		const [composerTag = 'COMPOSERTAG'] = getStringValuesFromRecord(
+			responseData,
+			['composerTag'],
+		);
+		const [composerCampaignTag = 'COMPOSERCAMPAIGNTAG'] =
+			getStringValuesFromRecord(responseData, ['composerCampaignTag']);
+		return markdownTemplate
+			.replace(regExPatterns.name, name)
+			.replace(regExPatterns.seriesTag, seriesTag)
+			.replace(regExPatterns.composerTag, composerTag)
+			.replace(regExPatterns.composerCampaignTag, composerCampaignTag);
 	},
 	buttons: {},
 };

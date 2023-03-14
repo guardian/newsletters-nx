@@ -2,6 +2,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Specify the header setup for {{name}}
@@ -38,7 +39,7 @@ export const newsletterHeaderLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'frequency',
+			stepToMoveTo: 'signUp',
 			executeStep: executeModify,
 		},
 		finish: {
@@ -48,4 +49,5 @@ export const newsletterHeaderLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.newsletterHeader,
 };

@@ -1,14 +1,16 @@
-import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import type {
+	WizardStepData,
+	WizardStepLayout,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Choose the Geo Focus for {{name}}
 
 Is **{{name}}** specific to a UK, Australia or US audience, or does it have international appeal?
-
-Select from the drop down list.
 
 `.trim();
 
@@ -37,7 +39,16 @@ export const regionFocusLayout: WizardStepLayout = {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'frequency',
+			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
+				const regionFocus: string | number | boolean | undefined =
+					stepData.formData ? stepData.formData['regionFocus'] : undefined;
+				if (!regionFocus || regionFocus === '') {
+					return 'NO REGION FOCUS SELECTED';
+				}
+				return undefined;
+			},
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.regionFocus,
 };

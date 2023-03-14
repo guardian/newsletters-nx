@@ -1,27 +1,18 @@
 import { z } from 'zod';
 import { emailEmbedSchema } from './emailEmbedSchema';
+import { themeEnumSchema } from './newsletter-data-type';
 import { nonEmptyString } from './schema-helpers';
 
 export const illustrationSchema = z.object({
 	circle: z.string(),
 });
 
-export const themeEnumSchema = z.enum([
-	'',
-	'news',
-	'opinion',
-	'culture',
-	'sport',
-	'lifestyle',
-	'features',
-]);
 export const themeLegacyEnumSchema = z.enum([
 	...themeEnumSchema.options,
 	'cancelled',
 	'work',
 	'from the papers',
 ]);
-export type Theme = z.infer<typeof themeEnumSchema>;
 
 const baseLegacyNewsletterSchema = z.object({
 	identityName: nonEmptyString().describe('the unique id for the newsletter'),

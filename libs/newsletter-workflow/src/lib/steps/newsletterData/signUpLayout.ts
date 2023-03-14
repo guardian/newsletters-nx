@@ -44,7 +44,7 @@ export const signUpLayout: WizardStepLayout = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'thrasher',
+			stepToMoveTo: 'newsletterHeader',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const headline: string | number | boolean | undefined =
 					stepData.formData ? stepData.formData['headline'] : undefined;

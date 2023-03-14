@@ -2,9 +2,10 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Rendering the Footer section of {{name}}
+# Specify the footer setup for {{name}}
 
 What email address would you like to display in the footer of **{{name}}**?
 
@@ -39,7 +40,14 @@ export const footerLayout: WizardStepLayout = {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'identityName',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const email = stepData.formData
+					? stepData.formData['email']
+					: undefined;
+				return email ? undefined : 'NO EMAIL ADDRESS PROVIDED';
+			},
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.footer,
 };

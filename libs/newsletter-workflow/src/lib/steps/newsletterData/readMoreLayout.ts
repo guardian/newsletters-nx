@@ -2,6 +2,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Rendering 'Read More' sections in {{name}}
@@ -42,7 +43,31 @@ export const readMoreLayout: WizardStepLayout = {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'linkList',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const readMoreSubheading = stepData.formData
+					? stepData.formData['readMoreSubheading']
+					: undefined;
+				const readMoreWording = stepData.formData
+					? stepData.formData['readMoreWording']
+					: undefined;
+				const readMoreUrl = stepData.formData
+					? stepData.formData['readMoreUrl']
+					: undefined;
+				if (readMoreSubheading || readMoreWording || readMoreUrl) {
+					if (!readMoreSubheading) {
+						return 'ENTER THE SUBHEADING IF SPECIFYING THE WORDING OR URL';
+					}
+					if (!readMoreWording) {
+						return 'ENTER THE WORDING IF SPECIFYING THE SUBHEADING OR URL';
+					}
+					if (!readMoreUrl) {
+						return 'ENTER THE URL IF SPECIFYING THE SUBHEADING OR WORDING';
+					}
+				}
+				return undefined;
+			},
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.readMore,
 };

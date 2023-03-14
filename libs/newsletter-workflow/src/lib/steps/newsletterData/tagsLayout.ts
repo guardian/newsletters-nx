@@ -2,6 +2,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Specify the tag setup for {{name}}
@@ -12,7 +13,7 @@ Please share the series tag URL for the newsletter.
 
 For example: [https://www.theguardian.com/tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the What's On newsletter.
 
-If the tag does not already exist, an email will automatically be sent to Central Production to request its production.
+*If the tag does not already exist, an email will automatically be sent to Central Production to request its production.*
 
 ## Composer tag relationship for newsletter embeds
 
@@ -22,7 +23,7 @@ For example, the **Games (video games only)** tag recommends the user adds the *
 
 Which tag(s) would you like to propose the sign up embed for **{{name}}**?
 
-If you would like to enable this feature, your request will automatically be emailed to Central Production.
+*If you would like to enable this feature, your request will automatically be emailed to Central Production.*
 
 `.trim();
 
@@ -50,8 +51,30 @@ export const tagsLayout: WizardStepLayout = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'designBrief',
+			stepToMoveTo: 'thrasher',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const seriesTag = stepData.formData
+					? stepData.formData['seriesTag']
+					: undefined;
+				if (!seriesTag) return 'NO SERIES TAG PROVIDED';
+				const composerTag = stepData.formData
+					? stepData.formData['composerTag']
+					: undefined;
+				const composerCampaignTag = stepData.formData
+					? stepData.formData['composerCampaignTag']
+					: undefined;
+				if (composerTag || composerCampaignTag) {
+					if (!composerTag) {
+						return 'ENTER AT LEAST ONE COMPOSER TAG IF SPECIFYING COMPOSER CAMPAIGN TAG';
+					}
+					if (!composerCampaignTag) {
+						return 'ENTER COMPOSER CAMPAIGN TAG IF SPECIFYING COMPOSER TAG';
+					}
+				}
+				return undefined;
+			},
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.tags,
 };

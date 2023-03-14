@@ -1,7 +1,11 @@
-import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import type {
+	WizardStepData,
+	WizardStepLayout,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Will {{name}} be an online article?
@@ -39,7 +43,16 @@ export const onlineArticleLayout: WizardStepLayout = {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'tags',
+			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
+				const onlineArticle: string | number | boolean | undefined =
+					stepData.formData ? stepData.formData['onlineArticle'] : undefined;
+				if (!onlineArticle || onlineArticle === '') {
+					return 'NO ONLINE ARTICLE SETUP SELECTED';
+				}
+				return undefined;
+			},
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.onlineArticle,
 };

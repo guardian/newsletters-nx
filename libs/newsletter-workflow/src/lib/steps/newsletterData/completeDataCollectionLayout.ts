@@ -41,10 +41,6 @@ export const completeDataCollectionLayout: WizardStepLayout = {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'emailCentralProduction',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
 			executeStep: executeModify,
 		},
 	},

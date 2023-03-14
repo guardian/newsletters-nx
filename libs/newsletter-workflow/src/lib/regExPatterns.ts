@@ -8,4 +8,7 @@ export const regExPatterns = {
 		/{{brazeSubscribeAttributeNameAlternate}}/g,
 	campaignName: /{{campaignName}}/g,
 	campaignCode: /{{campaignCode}}/g,
+	seriesTag: /{{seriesTag}}/g,
+	composerTag: /{{composerTag}}/g,
+	composerCampaignTag: /{{composerCampaignTag}}/g,
 } as const;
