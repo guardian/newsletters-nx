@@ -1,14 +1,15 @@
+import { Alert } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import {
 	getFormSchema,
 	getStepList,
 } from '@newsletters-nx/newsletter-workflow';
+import { getEmptySchemaData } from '@newsletters-nx/state-machine';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
-import { getEmptySchemaData } from '@newsletters-nx/state-machine';
 import { WIZARDS } from '../types';
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
@@ -22,6 +23,21 @@ export interface WizardProps {
 	wizardId: keyof typeof WIZARDS;
 	id?: string;
 }
+
+const FailureAlert = (props: {
+	errorMessage: string;
+	isPersistent?: boolean;
+}) => {
+	const { errorMessage, isPersistent } = props;
+	if (isPersistent) {
+		return (
+			<Alert severity="error">
+				Sorry, this wizard has failed: {errorMessage}
+			</Alert>
+		);
+	}
+	return <Alert severity="warning">Please try again: {errorMessage}</Alert>;
+};
 
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
@@ -101,10 +117,10 @@ export const Wizard: React.FC<WizardProps> = ({
 
 	if (serverErrorMesssage) {
 		return (
-			<p>
-				<b>ERROR:</b>
-				<span>{serverErrorMesssage}</span>
-			</p>
+			<FailureAlert
+				errorMessage={serverErrorMesssage}
+				isPersistent={serverData.hasPersistentError}
+			/>
 		);
 	}
 
@@ -138,7 +154,10 @@ export const Wizard: React.FC<WizardProps> = ({
 			)}
 
 			{serverData.errorMessage && (
-				<p>Please try again: {serverData.errorMessage}</p>
+				<FailureAlert
+					errorMessage={serverData.errorMessage}
+					isPersistent={serverData.hasPersistentError}
+				/>
 			)}
 			{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
 				<WizardButton

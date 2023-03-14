@@ -1,3 +1,7 @@
+import {
+	StateMachineError,
+	StateMachineErrorCode,
+} from '@newsletters-nx/state-machine';
 import type {
 	AsyncExecution,
 	WizardFormData,
@@ -13,7 +17,11 @@ export const executeCreate: AsyncExecution = async (
 ): Promise<WizardFormData | string> => {
 	const schema = formSchemas['startDraftNewsletter']; // TODO - this needs to be generalised
 	if (!storageInstance) {
-		throw new Error('no storageInstance');
+		throw new StateMachineError(
+			'no storageInstance',
+			StateMachineErrorCode.StorageAccessError,
+			true,
+		);
 	}
 
 	const parseResult = schema.safeParse(stepData.formData);

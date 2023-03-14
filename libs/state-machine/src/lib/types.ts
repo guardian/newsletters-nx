@@ -82,7 +82,7 @@ export interface CurrentStepRouteRequest {
 	id?: string;
 	/** ID of the button that was pressed to get to the current step */
 	buttonId?: string;
-	/**ID of the step the use was on when thye pressed the button */
+	/**ID of the step the use was on when they pressed the button, or the id of the initial step requested when the Wizard page loads */
 	stepId: string;
 	/** arbitrary data entered by the user into a form before pressing the button */
 	formData?: WizardFormData;
@@ -100,5 +100,11 @@ export interface CurrentStepRouteResponse {
 	buttons?: Record<string, WizardButton>;
 	/** arbitrary data entered by the user into a form before pressing the button */
 	formData?: WizardFormData;
+
+	/** a user-friendly error message */
 	errorMessage?: string;
+
+	/** Whether the request resulted in a persistent error (as a opposed temporary connectivity error
+	 *  or validation error on the user input), so the user should not be prompted to try again */
+	hasPersistentError?: boolean;
 }
