@@ -8,7 +8,10 @@ import { completeDataCollectionLayout } from './steps/newsletterData/completeDat
 import { createDraftNewsletterLayout } from './steps/newsletterData/createDraftNewsletterLayout';
 import { dateLayout } from './steps/newsletterData/dateLayout';
 import { designBriefLayout } from './steps/newsletterData/designBriefLayout';
+import { editBrazeLayout } from './steps/newsletterData/editBrazeLayout';
 import { editDraftNewsletterLayout } from './steps/newsletterData/editDraftNewsletterLayout';
+import { editIdentityNameLayout } from './steps/newsletterData/editIdentityNameLayout';
+import { editOphanLayout } from './steps/newsletterData/editOphanLayout';
 import { emailCentralProductionLayout } from './steps/newsletterData/emailCentralProductionLayout';
 import { finishLayout as finishNewsletterDataLayout } from './steps/newsletterData/finishLayout';
 import { footerLayout } from './steps/newsletterData/footerLayout';
@@ -48,8 +51,11 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 		podcast: podcastLayout,
 		footer: footerLayout,
 		identityName: identityNameLayout,
+		editIdentityName: editIdentityNameLayout,
 		braze: brazeLayout,
+		editBraze: editBrazeLayout,
 		ophan: ophanLayout,
+		editOphan: editOphanLayout,
 		completeDataCollection: completeDataCollectionLayout,
 		emailCentralProduction: emailCentralProductionLayout,
 		finish: finishNewsletterDataLayout,
