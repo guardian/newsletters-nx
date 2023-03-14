@@ -1,4 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type { CurrentStepRouteRequest, WizardStepData } from './types';
 
 export async function setupInitialState(
@@ -6,7 +7,11 @@ export async function setupInitialState(
 	storageInstance?: DraftStorage,
 ): Promise<WizardStepData> {
 	if (!storageInstance) {
-		throw new Error('no storageInstance');
+		throw new StateMachineError(
+			'no storageInstance',
+			StateMachineErrorCode.StorageAccessError,
+			true,
+		);
 	}
 
 	const newsletterId = requestBody.id;
@@ -21,7 +26,11 @@ export async function setupInitialState(
 		newsletterIdAsNumber,
 	);
 	if (!storageResponse.ok) {
-		throw new Error(`cannot load draft newsletter with id ${newsletterId}`);
+		throw new StateMachineError(
+			`cannot load draft newsletter with id ${newsletterId}`,
+			StateMachineErrorCode.StorageAccessError,
+			false,
+		);
 	}
 	return {
 		formData: storageResponse.data,
