@@ -4,17 +4,17 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Rendering the Header section of {{name}}
+# Specify the header setup for {{name}}
 
 ## Date
 
-Should the publication date of each edition of **{{name}}** be displayed?
+Should the publication date display in each edition?
 
-Normally, the date is displayed for daily emails (such as **First Edition**), but not for weekly emails.
+This is typically shown for daily emails, but not for weekly ones.
 
 ## Standfirst
 
-Should the standfirst be included?
+Would you like this to be displayed?
 
 ***NEED SCREENSHOT(S) HERE***
 

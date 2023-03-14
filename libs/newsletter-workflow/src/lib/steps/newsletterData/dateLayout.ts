@@ -4,15 +4,17 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Specify Promotion and Launch Dates
+# Tell us about your launch date and promotion plans for {{name}}
 
 ## Launch
 
-What date and time will **{{name}}** first be sent?
+When will the first send of **{{name}}** be?  Please specify the time and date.
+
+This needs to be added in the UK timezone so the system can process this information correctly.
 
 ## Promotion
 
-Will **{{name}}** be promoted in advance, or will promotion go live on the day of the launch?
+Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?  If so:
 
 - what date will the sign up page go live?
 
@@ -20,17 +22,11 @@ Will **{{name}}** be promoted in advance, or will promotion go live on the day o
 
 ## Testing
 
-Would you like several days (or weeks) to test **{{name}}** before the launch?
+Please note that we will automatically add a testing period for the newsletter of 1 week before the first send.
 
-This is advised, as developers will not always be available on launch day in case of problems.
+This will give you an opportunity to try out the newsletter template in Composer.
 
-***IS THIS SECTION NEEDED IF IT'S ULTIMATELY GOING TO BE AUTOMATED?***
-
-***IF STILL NEEDED FOR NOW, SHOULD IT BE OPTIONAL, OR SHALL WE ALWAYS FORCE A TESTING PERIOD?***
-
-## Note
-
-Please specify dates and times in the UK timezone, regardless of the newsletter audience location.
+Does the newsletter need to be private e.g. in the case of it being confidential?
 
 `.trim();
 

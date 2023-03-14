@@ -4,13 +4,13 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Will {{name}} appear online?
+# Will {{name}} be an online article?
 
-Will **{{name}}** be available to read as a web article?
+Tell us if the newsletter will appear as a web article.
 
-This is the case for most existing newsletters.
+This is the case for most newsletters, but you may prefer to offer the newsletter exclusively as an email.
 
-However, for some newsletters (such as **Down to Earth**) there is no web version.
+Alternatively, you might want the first send on web to preview it, but subsequent sends to be email-only.
 
 `.trim();
 

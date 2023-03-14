@@ -4,11 +4,9 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Rendering images in {{name}}
+# Specify the image caption setup for {{name}}
 
-Would you like captions to be displayed under the images in **{{name}}**?
-
-Captions are turned off for most newsletters, but are displayed in **Football Daily**.
+Would you like captions to be displayed within the newsletter?
 
 ***NEED SCREENSHOT HERE***
 

@@ -8,9 +8,9 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Specify the Sign Up Details
+# Specify the sign up page copy
 
-The Headline and Description will appear on the sign up page for **{{name}}** e.g.
+Please enter the headline and description for the sign up page for **{{name}}**
 
 ***CHANGE THE IMAGE TO HIGHLIGHT THE HEADLINE AS WELL AS THE DESCRIPTION***
 

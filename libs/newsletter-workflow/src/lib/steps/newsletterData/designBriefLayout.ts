@@ -4,11 +4,15 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Link to the Design Brief
+# Add the design brief and Figma design link for {{name}}
 
-Once the design brief has been signed off for **{{name}}**, please specify the link to Figma.
+Please share the following for **{{name}}**:
+- the design brief Google document
+- the signed off Figma design URL
 
-Please ensure that the design brief includes images for thrashers if these are required (for both desktop and mobile widths).
+Does the Figma design file include images designs for thrashers?
+
+If so, please ensure the thrasher images are provided for both desktop and mobile widths.
 
 ***THIS PAGE IS ONLY RELEVANT WHILST DEVS STILL NEED TO MAKE CODE CHANGES TO LAUNCH A NEWSLETTER***
 

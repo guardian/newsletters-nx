@@ -4,20 +4,26 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Specify Frequency
+# Specify the send frequency of {{name}}
 
-How often will **{{name}}** be sent?
+Specify how regularly the newsletter will be sent e.g.
+- every day
+- every weekday
+- weekly
+- fortnightly
+- monthly
 
-Most newsletter frequencies are one of the following:
-- Every day
-- Every weekday
-- Weekly
-- Every fortnight
-- Monthly
+You can also add a different frequency e.g.
+- weekly during election season
+- weekly for eight weeks (in the case of an asynchronous newsletter)
 
-However, it's also possible to enter a non-standard frequency e.g.
-- Weekly during election season
-- About three times a week
+The frequency you specify will be shown on thrashers, on the sign up page and on the all newsletters page.
+
+***ADD SCREENSHOT HERE***
+
+It will also be used on the success message displayed after the reader signs up to the newsletter
+
+For example: We'll send you {{name}} every weekday
 
 ***ADD SCREENSHOT HERE***
 

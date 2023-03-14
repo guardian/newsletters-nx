@@ -8,12 +8,9 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Select a Pillar for {{name}}
+# Choose the Pillar for {{name}}
 
-Now we choose the pillar that **{{name}}** will appear under.
-
-For example:
-news, opinion, sport, culture, lifestyle
+Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
 
 [comment]: <> (TODO - use URL Image Signer to resize the image)
 [comment]: <> (https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)

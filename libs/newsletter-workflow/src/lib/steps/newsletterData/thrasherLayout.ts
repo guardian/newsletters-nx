@@ -4,11 +4,13 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Specify the Thrasher Details
+# Specify the thrasher setup for {{name}}
 
-Do you require a single thrasher for **{{name}}**?
+Do you need a single thrasher?
 
-Do you require one or more multi-thrashers i.e. sets where the thrasher for **{{name}}** is combined with thrashers for 2 or more other newsletters?
+Should the single thrasher appear on app and web?
+
+Do you need one or more multi-thrashers i.e. sets where the thrasher for **{{name}}** is combined with thrashers for 2 or more other newsletters?
 
 The description will appear on each thrasher e.g.
 

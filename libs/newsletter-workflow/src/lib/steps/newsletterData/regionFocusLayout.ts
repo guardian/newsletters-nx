@@ -4,9 +4,11 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Specify the Region Focus
+# Choose the Geo Focus for {{name}}
 
 Is **{{name}}** specific to a UK, Australia or US audience, or does it have international appeal?
+
+Select from the drop down list.
 
 `.trim();
 
