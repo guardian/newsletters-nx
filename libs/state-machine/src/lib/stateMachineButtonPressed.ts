@@ -1,4 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type { WizardLayout, WizardStepData } from './types';
 
 /**
@@ -24,8 +25,9 @@ export async function stateMachineButtonPressed(
 	console.table(incomingStepData.formData);
 
 	if (!buttonPressedDetails) {
-		throw new Error(
+		throw new StateMachineError(
 			`Button ${buttonPressed} not found in step ${incomingStepData.currentStepId}`,
+			StateMachineErrorCode.NoSuchStep,
 		);
 	}
 
