@@ -47,8 +47,7 @@ paths:
                   results:
                     type: array
                     items:
-                      # This will change to the "Newsletter" schema when the new data model is implemented
-                      $ref: '#/components/schemas/LegacyNewsletter'
+                      $ref: '#/components/schemas/Newsletter'
 
   /newsletters/{newsletterId}:
     get:
@@ -81,8 +80,7 @@ paths:
                     type: boolean
                     example: true
                   results:
-                    # This will change to the "Newsletter" schema when the new data model is implemented
-                    $ref: '#/components/schemas/LegacyNewsletter'
+                    $ref: '#/components/schemas/Newsletter'
 
   /drafts:
     get:
@@ -184,7 +182,92 @@ paths:
 
 components:
   schemas:
-    # TO DO - define schema for Newsletter when implemented in code.
+    Newsletter:
+      type: object
+      required:
+        - identityName
+        - name
+        - status
+        - theme
+        - group
+        - listId
+        - listIdV1
+        - emailEmbed
+        - restricted
+        - emailConfirmation
+        - creationTimeStamp
+      properties:
+        identityName:
+          type: string
+          example: morning-briefing
+        name:
+          type: string
+          example: First Edition
+        status:
+          type: string
+          example: 'live'
+        restricted:
+          type: boolean
+          example: false
+        emailConfirmation:
+          type: boolean
+          example: false
+        brazeNewsletterName:
+          type: string
+          example: Editorial_MorningBriefingUK
+        brazeSubscribeAttributeName:
+          type: string
+          example: MorningBriefingUk_Subscribe_Email
+        brazeSubscribeEventNamePrefix:
+          type: string
+          example: morning_briefing_uk
+        theme:
+          type: string
+          example: News
+        group:
+          type: string
+          example: News in brief
+        description:
+          type: string
+          example: Archie Bland and Nimo Omer take you through the top stories and what they mean, free every weekday morning
+        regionFocus:
+          type: string
+          example: UK
+        frequency:
+          type: string
+          example: Every weekday
+        listIdV1:
+          type: integer
+          example: 3640
+        listId:
+          type: integer
+          example: 4156
+        exampleUrl:
+          type: string
+          example: https://www.theguardian.com/world/series/guardian-morning-briefing/latest/email
+        signupPage:
+          type: string
+          example: https://www.theguardian.com/global/2022/sep/20/sign-up-for-the-first-edition-newsletter-our-free-news-email
+        illustrationCircle:
+          type: string
+          example: https://www.theguardian.com/global/2022/sep/20/sign-up-for-the-first-edition-newsletter-our-free-news-email
+        emailEmbed:
+          $ref: '#/components/schemas/EmailEmbed'
+        campaignName:
+          type: string
+          example: MorningBriefingUK
+        campaignCode:
+          type: string
+          example: morningbriefinguk_email
+        brazeSubscribeAttributeNameAlternative:
+          type: array
+          items:
+            type: string
+            example: email_subscribe_morning_briefing_uk
+        creationTimeStamp:
+          type: integer
+        cancellationTimeStamp:
+          type: integer
     LegacyNewsletter:
       type: object
       required:

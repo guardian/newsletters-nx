@@ -45,4 +45,10 @@ export const formSchemas = {
 			description: z.string(),
 		})
 		.describe('Input a short description to display to users'),
+
+	designLink: z
+		.object({
+			designUrl: z.string().url().optional(),
+		})
+		.describe('enter the link to the design page'),
 };

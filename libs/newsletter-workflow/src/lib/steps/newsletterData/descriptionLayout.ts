@@ -6,13 +6,11 @@ import { executeModify } from '../../executeModify';
 import { formSchemas } from './formSchemas';
 
 const markdownToDisplay = `
-# Specify the Description
+# Is there a design page?
 
-This will appear on the sign up page e.g.
+You can include a link to the design for reference (optional)
 
-[comment]: <> (TODO - use URL Image Signer to resize the image)
-[comment]: <> (https://uploads.guim.co.uk/2023/02/24/descScreenshot.png)
-![Description](wizard-screenshots/descriptionScreenshotSmall.png)
+
 
 `.trim();
 
@@ -27,8 +25,8 @@ export const descriptionLayout: WizardStepLayout = {
 		},
 		finish: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
+			label: 'Next',
+			stepToMoveTo: 'designLink',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const description: string | number | boolean | undefined =
 					stepData.formData ? stepData.formData['description'] : undefined;

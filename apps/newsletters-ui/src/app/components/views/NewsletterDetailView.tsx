@@ -1,5 +1,8 @@
 import { Link, useLoaderData } from 'react-router-dom';
-import { isLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
+import {
+	isNewsletterData,
+	transformDataToLegacyNewsletter,
+} from '@newsletters-nx/newsletters-data-client';
 import { LegacyNewsletterDetail } from '../LegacyNewsletterDetails';
 
 export const NewsletterDetailView = () => {
@@ -8,13 +11,15 @@ export const NewsletterDetailView = () => {
 		return <article>NOT FOUND!</article>;
 	}
 
-	if (!isLegacyNewsletter(matchedItem)) {
-		return <article>NOT VALID!</article>;
+	if (!isNewsletterData(matchedItem)) {
+		return <article>NOT VALID DATA!</article>;
 	}
+
+	const legacyFormat = transformDataToLegacyNewsletter(matchedItem);
 
 	return (
 		<>
-			<LegacyNewsletterDetail newsletter={matchedItem} />
+			<LegacyNewsletterDetail newsletter={legacyFormat} />
 			<Link to="/newsletters/">Back to List</Link>
 		</>
 	);

@@ -6,6 +6,7 @@ import { brazeLayout } from './steps/newsletterData/brazeLayout';
 import { cancelLayout as cancelNewsletterDataLayout } from './steps/newsletterData/cancelLayout';
 import { createDraftNewsletterLayout } from './steps/newsletterData/createDraftNewsletterLayout';
 import { descriptionLayout } from './steps/newsletterData/descriptionLayout';
+import { designLinkLayout } from './steps/newsletterData/designLinkLayout';
 import { editDraftNewsletterLayout } from './steps/newsletterData/editDraftNewsletterLayout';
 import { finishLayout as finishNewsletterDataLayout } from './steps/newsletterData/finishLayout';
 import { identityNameLayout } from './steps/newsletterData/identityNameLayout';
@@ -22,6 +23,7 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 		ophan: ophanLayout,
 		pillar: pillarLayout,
 		description: descriptionLayout,
+		designLink: designLinkLayout,
 		finish: finishNewsletterDataLayout,
 	},
 	LAUNCH_NEWSLETTER: {
