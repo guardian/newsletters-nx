@@ -1,12 +1,15 @@
 import { z } from 'zod';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 
+const markdownToDisplay = `
+# Promotion
+
+Will the newsletters be promoted in advance or will promotion go live on the day of launch?
+
+`.trim();
+
 export const promotionDateLayout: WizardStepLayout = {
-	staticMarkdown: `# Promotion
-
-	choose below
-
-`,
+	staticMarkdown: markdownToDisplay,
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
@@ -24,5 +27,5 @@ export const promotionDateLayout: WizardStepLayout = {
 			signUpPageDate: z.coerce.date(),
 			thrasherDate: z.coerce.date(),
 		})
-		.describe('choose dates'),
+		.describe('choose the dates you want promotions to appear'),
 };
