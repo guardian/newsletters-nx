@@ -25,6 +25,17 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				accessor: 'name',
 			},
 			{
+				Header: 'Design',
+				accessor: 'designUrl',
+				Cell: ({ cell: { value } }) => (
+					<>{value && <a href={value as string}>design page</a>}</>
+				),
+			},
+			{
+				Header: 'Pillar',
+				accessor: 'theme',
+			},
+			{
 				Header: 'Created',
 				accessor: 'creationTimeStamp',
 				Cell: formatCellDate,
