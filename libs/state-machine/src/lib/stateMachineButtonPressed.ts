@@ -1,5 +1,4 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import { getFormSchema } from '../schemas';
 import type { WizardLayout, WizardStepData } from './types';
 
 /**
@@ -20,9 +19,7 @@ export async function stateMachineButtonPressed(
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
 
-	const formSchemaForIncomingStep = getFormSchema(
-		incomingStepData.currentStepId,
-	);
+	const formSchemaForIncomingStep = currentStepLayout?.schema;
 	console.log('form data should be:', formSchemaForIncomingStep?.description);
 	console.table(incomingStepData.formData);
 
