@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
@@ -27,9 +28,17 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 			{
 				Header: 'Design',
 				accessor: 'designUrl',
-				Cell: ({ cell: { value } }) => (
-					<>{value && <a href={value as string}>design page</a>}</>
-				),
+				Cell: ({ cell: { value } }) =>
+					value ? (
+						<Button
+							href={value as string}
+							variant="outlined"
+							target="_blank"
+							endIcon={<span>↗</span>}
+						>
+							design
+						</Button>
+					) : null,
 			},
 			{
 				Header: 'Pillar',
