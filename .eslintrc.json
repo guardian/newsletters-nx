@@ -5,6 +5,7 @@
 		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
 			"rules": {
+				"@typescript-eslint/no-unsafe-call": "off",
 				"@nrwl/nx/enforce-module-boundaries": [
 					"error",
 					{
@@ -33,19 +34,25 @@
 					}
 				}
 			},
-			"rules": {}
+			"rules": {
+				"@typescript-eslint/no-unsafe-call": "off"
+			}
 		},
 		{
 			"files": ["*.js", "*.jsx"],
 			"extends": ["plugin:@nrwl/nx/javascript", "@guardian/eslint-config"],
-			"rules": {}
+			"rules": {
+				"@typescript-eslint/no-unsafe-call": "off"
+			}
 		},
 		{
 			"files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
 			"env": {
 				"jest": true
 			},
-			"rules": {}
+			"rules": {
+				"@typescript-eslint/no-unsafe-call": "off"
+			}
 		}
 	],
 	"ignorePatterns": ["!apps/*", "!libs/*"]
