@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { formatCellBoolean, formatCellDate } from './Cell';
+import { ExternalLinkButton } from './ExternalLinkButton';
 import { Table } from './Table';
 
 interface Props {
@@ -23,6 +24,20 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 			{
 				Header: 'Newsletter Name',
 				accessor: 'name',
+			},
+			{
+				Header: 'Design',
+				accessor: 'figmaDesignUrl',
+				disableSortBy: true,
+				disableFilters: true,
+				Cell: ({ cell: { value } }) =>
+					value ? (
+						<ExternalLinkButton href={value as string} text="design" />
+					) : null,
+			},
+			{
+				Header: 'Pillar',
+				accessor: 'theme',
 			},
 			{
 				Header: 'Created',

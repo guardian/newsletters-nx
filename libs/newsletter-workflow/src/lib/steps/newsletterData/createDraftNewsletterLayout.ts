@@ -10,6 +10,7 @@ Welcome!  This wizard will guide you through the process of creating a newslette
 The first step is to enter the name of your newsletter, for example **Down to Earth**.
 
 `,
+	label: 'Enter Name',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
@@ -28,4 +29,5 @@ The first step is to enter the name of your newsletter, for example **Down to Ea
 		},
 	},
 	schema: formSchemas.startDraftNewsletter,
+	role: 'CREATE_START',
 };
