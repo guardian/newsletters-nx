@@ -28,6 +28,10 @@ function buildObjectValue<T extends ZodRawShape>(
 	return parseResult.success ? parseResult.data : undefined;
 }
 
+/**
+ * TO DO: support Date conversions
+ * TO DO: support Arrays
+ */
 export const formDataToPartialNewsletter = (
 	formData: FormDataRecord,
 ): Partial<NewsletterData> => {
@@ -61,14 +65,56 @@ export const formDataToPartialNewsletter = (
 	return finalParseResult.data;
 };
 
+function addDestructuredObjectValues(
+	fieldKey: keyof NewsletterData,
+	source: Partial<NewsletterData>,
+	target: FormDataRecord,
+) {
+	const nestedObject = source[fieldKey];
+	if (typeof nestedObject !== 'object') {
+		return;
+	}
+	if (Array.isArray(nestedObject)) {
+		return;
+	}
+
+	Object.entries(nestedObject).forEach(([subKey, value]) => {
+		const combinedKey = [fieldKey, subKey].join('.');
+		target[combinedKey] = value;
+	});
+}
+
 export const partialNewsletterToFormData = (
 	partialNewsletter: Partial<NewsletterData>,
 ): FormDataRecord => {
 	const output: FormDataRecord = {};
 
-	Object.entries(partialNewsletter).forEach(([key, value]) => {
-		console.log(key, value);
-	});
+	for (const key in newsletterDataSchema.shape) {
+		const castkey = key as keyof NewsletterData;
+		const valueOnPartial = partialNewsletter[castkey];
+
+		switch (typeof valueOnPartial) {
+			case 'string':
+			case 'number':
+			case 'boolean':
+			case 'bigint':
+				output[castkey] = valueOnPartial;
+				break;
+			case 'object': {
+				if (Array.isArray(valueOnPartial)) {
+					console.log('NOT SUPPORTING ARRAYS');
+				} else {
+					addDestructuredObjectValues(castkey, partialNewsletter, output);
+				}
+				break;
+			}
+
+			case 'symbol':
+			case 'undefined':
+			case 'function':
+				break;
+		}
+	}
 
 	return output;
 };

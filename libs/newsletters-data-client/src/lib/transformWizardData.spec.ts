@@ -1,7 +1,10 @@
 import type { NewsletterData } from './newsletter-data-type';
 import { ispartialNewsletterData } from './newsletter-data-type';
 import type { FormDataRecord } from './transformWizardData';
-import { formDataToPartialNewsletter } from './transformWizardData';
+import {
+	formDataToPartialNewsletter,
+	partialNewsletterToFormData,
+} from './transformWizardData';
 
 const SIMPLE_VALID_FORM_DATA: FormDataRecord = {
 	name: 'test name',
@@ -17,7 +20,7 @@ const SIMPLE_VALID_DRAFT: Partial<NewsletterData> = {
 	emailConfirmation: false,
 };
 
-const COMPLEX_VALID_FORM_DATA: FormDataRecord = {
+const VALID_FORM_DATA_WITH_NESTED_OBJECT: FormDataRecord = {
 	name: 'test name',
 	'emailEmbed.name': 'embed name',
 	'emailEmbed.title': 'embed title',
@@ -27,7 +30,7 @@ const COMPLEX_VALID_FORM_DATA: FormDataRecord = {
 	'emailEmbed.hexCode': 'embed hexCode',
 };
 
-const COMPLEX_VALID_DRAFT: Partial<NewsletterData> = {
+const VALID_DRAFT_WITH_NESTED_OBJECT: Partial<NewsletterData> = {
 	name: 'test name',
 	emailEmbed: {
 		name: 'embed name',
@@ -65,8 +68,21 @@ describe('formDataToPartialNewsletter', () => {
 	});
 
 	it('will convert to nested object values', () => {
-		const output = formDataToPartialNewsletter(COMPLEX_VALID_FORM_DATA);
+		const output = formDataToPartialNewsletter(
+			VALID_FORM_DATA_WITH_NESTED_OBJECT,
+		);
 		expect(ispartialNewsletterData(output)).toBeTruthy();
-		expect(output).toEqual(COMPLEX_VALID_DRAFT);
+		expect(output).toEqual(VALID_DRAFT_WITH_NESTED_OBJECT);
+	});
+});
+
+describe('partialNewsletterToFormData', () => {
+	it('manages simple conversions', () => {
+		const output = partialNewsletterToFormData(SIMPLE_VALID_DRAFT);
+		expect(output).toEqual(SIMPLE_VALID_FORM_DATA);
+	});
+	it('manages nested object conversions', () => {
+		const output = partialNewsletterToFormData(VALID_DRAFT_WITH_NESTED_OBJECT);
+		expect(output).toEqual(VALID_FORM_DATA_WITH_NESTED_OBJECT);
 	});
 });
