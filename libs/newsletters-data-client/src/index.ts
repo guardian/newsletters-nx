@@ -6,5 +6,5 @@ export * from './lib/wizard-button-type';
 export * from './lib/testQuestionaireSchema';
 export * from './lib/emailEmbedSchema';
 export * from './lib/storage';
-export * from './lib/transform';
+export * from './lib/transformDataToLegacyNewsletter';
 export * from './lib/schema-helpers';

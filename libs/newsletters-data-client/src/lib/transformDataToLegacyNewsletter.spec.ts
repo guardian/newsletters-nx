@@ -6,7 +6,7 @@ import type { NewsletterData } from './newsletter-data-type';
 import {
 	TRANSFORM_ERROR_MESSAGE,
 	transformDataToLegacyNewsletter,
-} from './transform';
+} from './transformDataToLegacyNewsletter';
 
 describe('transformNewToOld', () => {
 	it('will transform new data to the legacy api format', () => {
