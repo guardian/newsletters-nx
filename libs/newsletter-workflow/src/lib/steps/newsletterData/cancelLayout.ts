@@ -9,4 +9,5 @@ Collection of newsletter data was cancelled.
 export const cancelLayout: WizardStepLayout = {
 	staticMarkdown: markdownToDisplay,
 	buttons: {},
+	role: 'EARLY_EXIT',
 };

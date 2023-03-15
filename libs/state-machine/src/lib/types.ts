@@ -60,6 +60,8 @@ export interface WizardStepLayoutButton {
 	executeStep?: AsyncExecution | Execution;
 }
 export interface WizardStepLayout {
+	label?: string;
+	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT';
 	staticMarkdown: string;
 	dynamicMarkdown?: {
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;

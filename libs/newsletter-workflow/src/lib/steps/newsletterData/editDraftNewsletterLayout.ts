@@ -13,6 +13,7 @@ For example:
   "Down to Earth"
 
 `,
+	label: 'Change Name',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
@@ -31,4 +32,5 @@ For example:
 		},
 	},
 	schema: formSchemas.startDraftNewsletter,
+	role: 'EDIT_START',
 };
