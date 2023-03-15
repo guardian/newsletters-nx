@@ -20,6 +20,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const imageLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Images',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

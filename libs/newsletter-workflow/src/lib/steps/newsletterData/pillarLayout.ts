@@ -23,7 +23,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const pillarLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Choose Pillar',
+	label: 'Pillar',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

@@ -25,6 +25,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const readMoreLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Read More Sections',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

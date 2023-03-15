@@ -23,6 +23,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const completeDataCollectionLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Complete Data Collection',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

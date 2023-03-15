@@ -25,6 +25,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const ophanLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Ophan',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

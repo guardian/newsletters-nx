@@ -34,6 +34,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const tagsLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Tag Setup',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

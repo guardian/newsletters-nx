@@ -32,6 +32,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const emailCentralProductionLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Email CP',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

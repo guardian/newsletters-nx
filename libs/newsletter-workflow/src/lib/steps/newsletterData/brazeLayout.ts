@@ -29,6 +29,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const brazeLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Braze',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

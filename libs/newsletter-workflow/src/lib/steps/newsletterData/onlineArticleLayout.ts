@@ -25,6 +25,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const onlineArticleLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Online Article',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

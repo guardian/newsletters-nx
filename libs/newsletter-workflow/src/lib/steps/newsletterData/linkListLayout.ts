@@ -26,6 +26,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const linkListLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Link List Sections',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

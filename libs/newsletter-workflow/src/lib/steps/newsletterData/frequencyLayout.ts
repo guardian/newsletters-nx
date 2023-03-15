@@ -37,6 +37,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const frequencyLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Send Frequency',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
