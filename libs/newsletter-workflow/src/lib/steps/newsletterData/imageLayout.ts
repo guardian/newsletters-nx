@@ -9,7 +9,7 @@ const markdownTemplate = `
 
 Would you like captions to be displayed within the newsletter?
 
-***NEED SCREENSHOT HERE***
+![Image captions](https://i.guim.co.uk/img/uploads/2023/03/15/Image_captions.png?quality=85&dpr=2&width=300&s=98e19bf182b3aaa690d5436f8ec0562b)
 
 `.trim();
 

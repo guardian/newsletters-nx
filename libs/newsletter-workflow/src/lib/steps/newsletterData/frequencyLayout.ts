@@ -20,13 +20,13 @@ You can also add a different frequency e.g.
 
 The frequency you specify will be shown on thrashers, on the sign up page and on the all newsletters page.
 
-***ADD SCREENSHOT HERE***
+![Frequency](https://i.guim.co.uk/img/uploads/2023/03/15/Frequency.png?quality=85&dpr=2&width=300&s=d5d201d2285880f52354f27c98ee7354)
 
 It will also be used on the success message displayed after the reader signs up to the newsletter
 
 For example: We'll send you {{name}} every weekday
 
-***ADD SCREENSHOT HERE***
+![Success message](https://i.guim.co.uk/img/uploads/2023/03/15/successMessage.png?quality=85&dpr=2&width=300&s=6f5d485263960ea04527a8f03ba3b45c)
 
 `.trim();
 
