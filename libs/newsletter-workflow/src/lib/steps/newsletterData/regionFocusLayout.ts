@@ -40,8 +40,9 @@ export const regionFocusLayout: WizardStepLayout = {
 			label: 'Next',
 			stepToMoveTo: 'frequency',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const regionFocus: string | number | boolean | undefined =
-					stepData.formData ? stepData.formData['regionFocus'] : undefined;
+				const regionFocus = stepData.formData
+					? stepData.formData['regionFocus']
+					: undefined;
 				if (!regionFocus || regionFocus === '') {
 					return 'NO REGION FOCUS SELECTED';
 				}

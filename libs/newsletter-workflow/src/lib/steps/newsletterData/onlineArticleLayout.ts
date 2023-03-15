@@ -44,8 +44,9 @@ export const onlineArticleLayout: WizardStepLayout = {
 			label: 'Next',
 			stepToMoveTo: 'tags',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const onlineArticle: string | number | boolean | undefined =
-					stepData.formData ? stepData.formData['onlineArticle'] : undefined;
+				const onlineArticle = stepData.formData
+					? stepData.formData['onlineArticle']
+					: undefined;
 				if (!onlineArticle || onlineArticle === '') {
 					return 'NO ONLINE ARTICLE SETUP SELECTED';
 				}
