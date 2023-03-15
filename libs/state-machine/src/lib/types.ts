@@ -6,7 +6,7 @@ import type { ZodObject, ZodRawShape } from 'zod';
 
 export type WizardFormData = Record<
 	string,
-	string | number | boolean | undefined
+	string | number | boolean | undefined | Date
 >;
 
 /**

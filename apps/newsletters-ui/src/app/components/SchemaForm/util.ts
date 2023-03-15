@@ -1,4 +1,5 @@
 import type { FormEvent } from 'react';
+import { z } from 'zod';
 
 export interface FieldDef {
 	key: string;
@@ -8,7 +9,7 @@ export interface FieldDef {
 	enumOptions?: string[];
 	readOnly?: boolean;
 }
-export type FieldValue = string | number | boolean | undefined;
+export type FieldValue = string | number | boolean | undefined | Date;
 
 export type NumberInputSettings = {
 	min?: number;
@@ -36,6 +37,11 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	if (field.type === 'ZodEnum') {
 		return field.enumOptions?.includes(value as string) ?? false;
 	}
+
+	if (field.type === 'ZodDate') {
+		return value instanceof Date;
+	}
+
 	switch (typeof value) {
 		case 'undefined':
 			return field.optional;

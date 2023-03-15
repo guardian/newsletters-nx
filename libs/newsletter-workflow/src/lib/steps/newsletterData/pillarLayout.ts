@@ -47,7 +47,7 @@ export const pillarLayout: WizardStepLayout = {
 			label: 'Next',
 			stepToMoveTo: 'description',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const theme: string | number | boolean | undefined = stepData.formData
+				const theme = stepData.formData
 					? stepData.formData['theme']
 					: undefined;
 				if (!theme || theme === '') {

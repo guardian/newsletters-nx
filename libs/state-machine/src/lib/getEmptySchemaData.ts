@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import { ZodBoolean, ZodEnum, ZodNumber, ZodString } from 'zod';
+import { ZodBoolean, ZodDate, ZodEnum, ZodNumber, ZodString } from 'zod';
 import type { WizardFormData } from './types';
 
 export const getEmptySchemaData = (
@@ -23,6 +23,8 @@ export const getEmptySchemaData = (
 			mod[key] = 0;
 		} else if (zod instanceof ZodBoolean) {
 			mod[key] = false;
+		} else if (zod instanceof ZodDate) {
+			mod[key] = new Date();
 		}
 
 		return {

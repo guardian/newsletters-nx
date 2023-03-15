@@ -11,6 +11,7 @@ import { finishLayout as finishNewsletterDataLayout } from './steps/newsletterDa
 import { identityNameLayout } from './steps/newsletterData/identityNameLayout';
 import { ophanLayout } from './steps/newsletterData/ophanLayout';
 import { pillarLayout } from './steps/newsletterData/pillarLayout';
+import { promotionDateLayout } from './steps/newsletterData/promotionDateLayout';
 
 export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 	NEWSLETTER_DATA: {
@@ -18,6 +19,7 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 		editDraftNewsletter: editDraftNewsletterLayout,
 		cancel: cancelNewsletterDataLayout,
 		identityName: identityNameLayout,
+		dates: promotionDateLayout,
 		braze: brazeLayout,
 		ophan: ophanLayout,
 		pillar: pillarLayout,
