@@ -46,4 +46,5 @@ export const editIdentityNameLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.identityName,
+	parentStepId: 'identityName',
 };

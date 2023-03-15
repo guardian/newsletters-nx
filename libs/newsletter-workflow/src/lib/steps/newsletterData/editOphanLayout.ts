@@ -46,4 +46,5 @@ export const editOphanLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.ophan,
+	parentStepId: 'ophan',
 };

@@ -9,6 +9,10 @@ interface Props {
 
 export const StepNav = ({ currentStepId, stepList, onEditTrack }: Props) => {
 	const filteredStepList = stepList.filter((step) => {
+		if (step.parentStepId) {
+			return false;
+		}
+
 		switch (step.role) {
 			case 'CREATE_START':
 				return !onEditTrack;
@@ -20,6 +24,8 @@ export const StepNav = ({ currentStepId, stepList, onEditTrack }: Props) => {
 				return true;
 		}
 	});
+
+	const currentStep = stepList.find((step) => step.id === currentStepId);
 
 	return (
 		<Stepper
@@ -33,7 +39,9 @@ export const StepNav = ({ currentStepId, stepList, onEditTrack }: Props) => {
 						margin-bottom: 0.125rem;
 					`}
 					key={step.id}
-					active={step.id === currentStepId}
+					active={
+						step.id === currentStep?.id || step.id === currentStep?.parentStepId
+					}
 				>
 					<StepLabel>{step.label ?? step.id}</StepLabel>
 				</Step>

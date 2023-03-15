@@ -46,4 +46,5 @@ export const editBrazeLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.braze,
+	parentStepId: 'braze',
 };
