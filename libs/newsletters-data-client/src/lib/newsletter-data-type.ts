@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { emailEmbedSchema } from './emailEmbedSchema';
 import { themeEnumSchema } from './legacy-newsletter-type';
-import { nonEmptyString } from './schema-helpers';
+import {
+	kebabCasedString,
+	nonEmptyString,
+	underscoreCasedString,
+} from './schema-helpers';
 
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
@@ -9,14 +13,14 @@ import { nonEmptyString } from './schema-helpers';
  * The actual data model is TBC.
  */
 export const newsletterDataSchema = z.object({
-	identityName: nonEmptyString(),
+	identityName: kebabCasedString(),
 	name: nonEmptyString(),
 	restricted: z.boolean(),
 	status: z.enum(['paused', 'cancelled', 'live']),
 	emailConfirmation: z.boolean(),
-	brazeSubscribeAttributeName: nonEmptyString(),
-	brazeSubscribeEventNamePrefix: nonEmptyString(),
-	brazeNewsletterName: nonEmptyString(),
+	brazeSubscribeAttributeName: underscoreCasedString(),
+	brazeSubscribeEventNamePrefix: underscoreCasedString(),
+	brazeNewsletterName: underscoreCasedString(),
 	theme: themeEnumSchema,
 	group: nonEmptyString(),
 	description: nonEmptyString(),
@@ -34,8 +38,8 @@ export const newsletterDataSchema = z.object({
 	exampleUrl: z.string().optional(),
 	illustrationCircle: z.string().optional(),
 
-	creationTimeStamp: z.date(),
-	cancellationTimeStamp: z.date().optional(),
+	creationTimeStamp: z.number(),
+	cancellationTimeStamp: z.number().optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */
@@ -43,4 +47,12 @@ export type NewsletterData = z.infer<typeof newsletterDataSchema>;
 
 export function isNewsletterData(subject: unknown): subject is NewsletterData {
 	return newsletterDataSchema.safeParse(subject).success;
+}
+
+export const partialNewsletterDataSchema = newsletterDataSchema.partial();
+
+export function ispartialNewsletterData(
+	subject: unknown,
+): subject is Partial<NewsletterData> {
+	return partialNewsletterDataSchema.safeParse(subject).success;
 }

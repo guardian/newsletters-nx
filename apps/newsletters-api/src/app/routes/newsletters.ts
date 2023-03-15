@@ -1,5 +1,9 @@
 import type { FastifyInstance } from 'fastify';
-import { isLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	isNewsletterData,
+	transformDataToLegacyNewsletter,
+} from '@newsletters-nx/newsletters-data-client';
 import newslettersData from '../../../static/newsletters.local.json';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
@@ -7,12 +11,15 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
 	app.get('/api/legacy/newsletters', async (req, res) => {
-		const newsletters = newslettersData.filter(isLegacyNewsletter);
-		return newsletters;
+		const newsletters = newslettersData.filter(
+			isNewsletterData,
+		) as unknown[] as NewsletterData[];
+
+		return newsletters.map(transformDataToLegacyNewsletter);
 	});
 
 	app.get('/api/newsletters', async (req, res) => {
-		const newsletters = newslettersData.filter(isLegacyNewsletter);
+		const newsletters = newslettersData.filter(isNewsletterData);
 		return makeSuccessResponse(newsletters);
 	});
 
@@ -21,7 +28,7 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		async (req, res) => {
 			const { newsletterId } = req.params;
 			const newsletter = newslettersData
-				.filter(isLegacyNewsletter)
+				.filter(isNewsletterData)
 				.find((newsletter) => newsletter.identityName === newsletterId);
 
 			if (!newsletter) {
