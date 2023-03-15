@@ -12,9 +12,7 @@ const markdownTemplate = `
 
 Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
 
-[comment]: <> (TODO - use URL Image Signer to resize the image)
-[comment]: <> (https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)
-![Pillars](wizard-screenshots/pillarScreenshotSmall.png)
+![Pillars](https://i.guim.co.uk/img/uploads/2023/02/21/pillarScreenshot.png?quality=85&dpr=2&width=300&s=0692a8714eaf66313fc599cb3462befd)
 
 `.trim();
 
@@ -45,7 +43,7 @@ export const pillarLayout: WizardStepLayout = {
 			label: 'Next',
 			stepToMoveTo: 'regionFocus',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const theme: string | number | boolean | undefined = stepData.formData
+				const theme = stepData.formData
 					? stepData.formData['theme']
 					: undefined;
 				if (!theme || theme === '') {
