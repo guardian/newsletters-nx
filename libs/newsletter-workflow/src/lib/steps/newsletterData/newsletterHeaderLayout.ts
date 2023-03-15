@@ -13,11 +13,13 @@ Should the publication date display in each edition?
 
 This is typically shown for daily emails, but not for weekly ones.
 
+![Date](https://i.guim.co.uk/img/uploads/2023/03/15/Date.png?quality=85&dpr=2&width=300&s=815d857cb40089e47f501bf6d5838c2a)
+
 ## Standfirst
 
 Would you like this to be displayed?
 
-***NEED SCREENSHOT(S) HERE***
+![Standfirst](https://i.guim.co.uk/img/uploads/2023/03/15/Standfirst.png?quality=85&dpr=2&width=300&s=52779b0975a45a2cc9e4ae3a6b034aac)
 
 `.trim();
 
