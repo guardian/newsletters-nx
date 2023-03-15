@@ -2,6 +2,11 @@ import type { z } from 'zod';
 import { ZodBoolean, ZodDate, ZodEnum, ZodNumber, ZodString } from 'zod';
 import type { WizardFormData } from './types';
 
+/**
+ * NOTE - ZodDates are defaulted to 'undefined'
+ * not a problem for the current usage of this function
+ * but may need to be revised.
+ */
 export const getEmptySchemaData = (
 	schema: z.ZodObject<z.ZodRawShape>,
 ): WizardFormData | undefined => {
@@ -24,7 +29,7 @@ export const getEmptySchemaData = (
 		} else if (zod instanceof ZodBoolean) {
 			mod[key] = false;
 		} else if (zod instanceof ZodDate) {
-			mod[key] = new Date();
+			mod[key] = undefined;
 		}
 
 		return {
