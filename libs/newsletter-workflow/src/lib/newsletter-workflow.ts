@@ -1,4 +1,5 @@
-import type { WizardLayout } from '@newsletters-nx/state-machine';
+import type { StepListing, WizardLayout } from '@newsletters-nx/state-machine';
+import { listStepsIn } from '@newsletters-nx/state-machine';
 import { cancelLayout as cancelLaunchNewsletterLayout } from './steps/launchNewsletter/cancelLayout';
 import { finishLayout as finishLaunchNewsletterLayout } from './steps/launchNewsletter/finishLayout';
 import { launchNewsletterLayout } from './steps/launchNewsletter/launchNewsletterLayout';
@@ -41,9 +42,9 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 		frequency: frequencyLayout,
 		onlineArticle: onlineArticleLayout,
 		tags: tagsLayout,
+		thrasher: thrasherLayout,
 		designBrief: designBriefLayout,
 		signUp: signUpLayout,
-		thrasher: thrasherLayout,
 		newsletterHeader: newsletterHeaderLayout,
 		image: imageLayout,
 		readMore: readMoreLayout,
@@ -77,4 +78,15 @@ export const getFormSchema = (
 	}
 	const step = wizard[stepId];
 	return step?.schema;
+};
+
+export const getStepList = (
+	wizardId: keyof typeof newslettersWorkflowStepLayout,
+): StepListing[] => {
+	const wizard = newslettersWorkflowStepLayout[wizardId];
+	if (!wizard) {
+		return [];
+	}
+
+	return listStepsIn(wizard);
 };

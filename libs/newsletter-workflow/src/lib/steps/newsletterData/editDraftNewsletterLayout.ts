@@ -10,6 +10,7 @@ This wizard allows you to edit an existing draft newsletter, guiding you through
 The first step is to enter the name for your newsletter, for example **Down to Earth**.
 
 `,
+	label: 'Change Name',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
@@ -28,4 +29,5 @@ The first step is to enter the name for your newsletter, for example **Down to E
 		},
 	},
 	schema: formSchemas.startDraftNewsletter,
+	role: 'EDIT_START',
 };
