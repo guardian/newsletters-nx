@@ -65,7 +65,7 @@ export const newsletterDataSchema = z.object({
 	brazeSubscribeAttributeNameAlternate: z.array(z.string()).optional(),
 	signupPage: z.string().optional(),
 	exampleUrl: z.string().optional(),
-	designUrl: z.string().url().optional(),
+	figmaDesignUrl: z.string().url().optional(),
 	illustrationCircle: z.string().optional(),
 
 	creationTimeStamp: z.number(),

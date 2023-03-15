@@ -32,7 +32,7 @@
 		"brazeSubscribeAttributeNameAlternate": [
 			"email_subscribe_bicycle_account_AU"
 		],
-		"designUrl": "https://www.figma.com/file/usQGLkOi6awHrbxKMBdnLd/First-Edition%2C-First-Thing-%26-Morning-Mail?node-id=1130%3A34876&t=6JATI6h1ZzQbVv5h-1",
+		"figmaDesignUrl": "https://www.figma.com/file/usQGLkOi6awHrbxKMBdnLd/First-Edition%2C-First-Thing-%26-Morning-Mail?node-id=1130%3A34876&t=6JATI6h1ZzQbVv5h-1",
 		"creationTimeStamp": 1634985134659
 	},
 	{
@@ -64,7 +64,7 @@
 		"campaignName": "AlongCapacitor",
 		"campaignCode": "alongcapacitor_email",
 		"brazeSubscribeAttributeNameAlternate": ["email_subscribe_along_capacitor"],
-		"designUrl": "this string is not a url",
+		"figmaDesignUrl": "this string is not a url",
 		"creationTimeStamp": 1634985134659
 	},
 	{

@@ -36,7 +36,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 			},
 			{
 				Header: 'Design',
-				accessor: 'designUrl',
+				accessor: 'figmaDesignUrl',
 				Cell: ({ cell: { value } }) =>
 					value ? (
 						<ExternalLinkButton href={value as string} text="design" />
