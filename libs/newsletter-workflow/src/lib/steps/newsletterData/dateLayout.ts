@@ -37,6 +37,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const dateLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Launch/Promotion Dates',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

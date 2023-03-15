@@ -28,6 +28,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const newsletterHeaderLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Header Setup',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

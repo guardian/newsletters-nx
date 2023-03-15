@@ -26,6 +26,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const podcastLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Podcast Sections',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

@@ -27,6 +27,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const signUpLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Sign Up',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

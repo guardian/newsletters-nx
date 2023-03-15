@@ -21,6 +21,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const regionFocusLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Geo Focus',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

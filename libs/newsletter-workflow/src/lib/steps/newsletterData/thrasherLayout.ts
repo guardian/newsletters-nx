@@ -28,6 +28,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const thrasherLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Thrashers',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

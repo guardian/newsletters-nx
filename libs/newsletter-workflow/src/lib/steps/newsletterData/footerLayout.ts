@@ -22,6 +22,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const footerLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Footer Setup',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
