@@ -39,6 +39,9 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (field.readOnly) {
 			return;
 		}
+		if (field.optional && newValue === '') {
+			return change(undefined, field);
+		}
 		change(newValue, field);
 	};
 

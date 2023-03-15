@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -5,6 +6,7 @@ import type { Column } from 'react-table';
 import type { Draft } from '@newsletters-nx/newsletters-data-client';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { ExternalLinkButton } from './ExternalLinkButton';
 import { Table } from './Table';
 
 interface Props {
@@ -31,6 +33,14 @@ export const DraftsTable = ({ drafts }: Props) => {
 			{
 				Header: 'Newsletter Name',
 				accessor: 'name',
+			},
+			{
+				Header: 'Design',
+				accessor: 'figmaDesignUrl',
+				Cell: ({ cell: { value } }) =>
+					value ? (
+						<ExternalLinkButton href={value as string} text="design" />
+					) : null,
 			},
 			{
 				Header: 'Pillar',
