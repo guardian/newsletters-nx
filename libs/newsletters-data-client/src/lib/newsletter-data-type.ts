@@ -1,11 +1,40 @@
 import { z } from 'zod';
 import { emailEmbedSchema } from './emailEmbedSchema';
-import { themeEnumSchema } from './legacy-newsletter-type';
 import {
 	kebabCasedString,
 	nonEmptyString,
 	underscoreCasedString,
 } from './schema-helpers';
+
+export const themeEnumSchema = z.enum([
+	'',
+	'news',
+	'opinion',
+	'culture',
+	'sport',
+	'lifestyle',
+	'features',
+]);
+export type Theme = z.infer<typeof themeEnumSchema>;
+
+export const regionFocusEnumSchema = z.enum(['', 'UK', 'AU', 'US', 'INTL']);
+export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
+
+export const onlineArticleSchema = z.enum([
+	'',
+	'Email only',
+	'Web for first send only',
+	'Web for all sends',
+]);
+export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
+
+export const singleThrasherLocation = z.enum([
+	'',
+	'Web only',
+	'App only',
+	'Web and App',
+]);
+export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
@@ -36,6 +65,7 @@ export const newsletterDataSchema = z.object({
 	brazeSubscribeAttributeNameAlternate: z.array(z.string()).optional(),
 	signupPage: z.string().optional(),
 	exampleUrl: z.string().optional(),
+	figmaDesignUrl: z.string().url().optional(),
 	illustrationCircle: z.string().optional(),
 
 	creationTimeStamp: z.number(),

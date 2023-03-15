@@ -8,13 +8,15 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Choose the Pillar for {{name}}
+# Specify the sign up page copy
 
-Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
+Please enter the headline and description for the sign up page for **{{name}}**
+
+***CHANGE THE IMAGE TO HIGHLIGHT THE HEADLINE AS WELL AS THE DESCRIPTION***
 
 [comment]: <> (TODO - use URL Image Signer to resize the image)
-[comment]: <> (https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)
-![Pillars](wizard-screenshots/pillarScreenshotSmall.png)
+[comment]: <> (https://uploads.guim.co.uk/2023/02/24/descScreenshot.png)
+![Description](wizard-screenshots/descriptionScreenshotSmall.png)
 
 `.trim();
 
@@ -23,9 +25,8 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const pillarLayout: WizardStepLayout = {
+export const signUpLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Choose Pillar',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -37,24 +38,28 @@ export const pillarLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'dates',
+			stepToMoveTo: 'designBrief',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'regionFocus',
+			stepToMoveTo: 'newsletterHeader',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const theme: string | number | boolean | undefined = stepData.formData
-					? stepData.formData['theme']
-					: undefined;
-				if (!theme || theme === '') {
-					return 'NO THEME SELECTED';
+				const headline: string | number | boolean | undefined =
+					stepData.formData ? stepData.formData['headline'] : undefined;
+				if (!headline) {
+					return 'NO HEADLINE PROVIDED';
+				}
+				const description: string | number | boolean | undefined =
+					stepData.formData ? stepData.formData['description'] : undefined;
+				if (!description) {
+					return 'NO DESCRIPTION PROVIDED';
 				}
 				return undefined;
 			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.pillar,
+	schema: formSchemas.signUp,
 };

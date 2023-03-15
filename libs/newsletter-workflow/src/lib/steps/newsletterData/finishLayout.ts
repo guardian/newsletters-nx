@@ -4,15 +4,13 @@ import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `# Finished
 
-You have reached the end of the wizard. The draft newsletter **{{name}}** has been created.
+You have reached the end of the wizard.
 
-{{block1}}
+Congratulations - the newsletter **{{name}}** has been launched.
 
 `;
 
-const staticMarkdown = markdownTemplate
-	.replace(regExPatterns.name, '')
-	.replace(regExPatterns.block1, '');
+const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
 const finishLayout: WizardStepLayout = {
 	staticMarkdown: staticMarkdown,
@@ -21,30 +19,8 @@ const finishLayout: WizardStepLayout = {
 		if (!responseData) {
 			return staticMarkdown;
 		}
-
-		const [name = 'NAME', signUpPageDate, thrasherDate] =
-			getStringValuesFromRecord(responseData, [
-				'name',
-				'signUpPageDate',
-				'thrasherDate',
-			]);
-
-		const signUpPageDateString = signUpPageDate
-			? new Date(signUpPageDate).toDateString()
-			: '?';
-		const thrasherDateString = thrasherDate
-			? new Date(thrasherDate).toDateString()
-			: '?';
-
-		const datesBlock = `
-		Sign up page date:  ${signUpPageDateString}
-
-		thrasher date: ${thrasherDateString}
-		`;
-
-		return markdownTemplate
-			.replace(regExPatterns.name, name)
-			.replace(regExPatterns.block1, datesBlock);
+		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
+		return markdownTemplate.replace(regExPatterns.name, name);
 	},
 };
 
