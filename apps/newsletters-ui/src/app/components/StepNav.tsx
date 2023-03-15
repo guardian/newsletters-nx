@@ -1,4 +1,4 @@
-import { Step, StepLabel, Stepper } from '@mui/material';
+import { css, Step, StepLabel, Stepper } from '@mui/material';
 import type { StepListing } from '@newsletters-nx/state-machine';
 
 interface Props {
@@ -22,9 +22,19 @@ export const StepNav = ({ currentStepId, stepList, onEditTrack }: Props) => {
 	});
 
 	return (
-		<Stepper>
+		<Stepper
+			css={css`
+				flex-wrap: wrap;
+			`}
+		>
 			{filteredStepList.map((step) => (
-				<Step key={step.id} active={step.id === currentStepId}>
+				<Step
+					css={css`
+						margin-bottom: 0.125rem;
+					`}
+					key={step.id}
+					active={step.id === currentStepId}
+				>
 					<StepLabel>{step.label ?? step.id}</StepLabel>
 				</Step>
 			))}
