@@ -117,9 +117,9 @@ export const formSchemas = {
 
 	tags: z
 		.object({
-			seriesTag: z.string().url().optional(),
-			composerTag: z.string(),
-			composerCampaignTag: z.string(),
+			seriesTag: z.string(),
+			composerTag: z.string().optional(),
+			composerCampaignTag: z.string().optional(),
 		})
 		.describe('Input the tag setup'),
 

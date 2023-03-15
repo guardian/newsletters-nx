@@ -11,7 +11,7 @@ const markdownTemplate = `
 
 Please share the series tag URL for the newsletter.
 
-For example: [https://www.theguardian.com/tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the What's On newsletter.
+For example: [tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the What's On newsletter.
 
 *If the tag does not already exist, an email will automatically be sent to Central Production to request its production.*
 
