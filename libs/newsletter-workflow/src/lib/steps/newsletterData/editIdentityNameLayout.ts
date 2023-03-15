@@ -2,17 +2,14 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Identity Name
+# Modify Identity Name
 
 This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
 
 It has been calculated automatically from the name **{{name}}**, but you can change it if you need.
-
-&nbsp;
-
-Identity name: **{{identityName}}**
 
 `.trim();
 
@@ -21,20 +18,14 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const identityNameLayout: WizardStepLayout = {
+export const editIdentityNameLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		const [identityName = 'IDENTITYNAME'] = getStringValuesFromRecord(
-			responseData,
-			['identityName'],
-		);
-		return markdownTemplate
-			.replace(regExPatterns.name, name)
-			.replace(regExPatterns.identityName, identityName);
+		return markdownTemplate.replace(regExPatterns.name, name);
 	},
 	buttons: {
 		back: {
@@ -43,15 +34,17 @@ export const identityNameLayout: WizardStepLayout = {
 			stepToMoveTo: 'footer',
 			executeStep: executeModify,
 		},
-		edit: {
-			buttonType: 'GREEN',
-			label: 'Edit',
-			stepToMoveTo: 'editIdentityName',
-		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'braze',
+			onBeforeStepChangeValidate: () => {
+				// TO DO - check that identityName does not already exist in other draft or actual newsletter
+				return undefined;
+			},
+			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.identityName,
+	parentStepId: 'identityName',
 };

@@ -8,13 +8,9 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Choose the Pillar for {{name}}
+# Choose the Geo Focus for {{name}}
 
-Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
-
-[comment]: <> (TODO - use URL Image Signer to resize the image)
-[comment]: <> (https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)
-![Pillars](wizard-screenshots/pillarScreenshotSmall.png)
+Is **{{name}}** specific to a UK, Australia or US audience, or does it have international appeal?
 
 `.trim();
 
@@ -23,9 +19,8 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const pillarLayout: WizardStepLayout = {
+export const regionFocusLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Choose Pillar',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -37,24 +32,24 @@ export const pillarLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'dates',
+			stepToMoveTo: 'pillar',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'regionFocus',
+			stepToMoveTo: 'frequency',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const theme = stepData.formData
-					? stepData.formData['theme']
+				const regionFocus = stepData.formData
+					? stepData.formData['regionFocus']
 					: undefined;
-				if (!theme || theme === '') {
-					return 'NO THEME SELECTED';
+				if (!regionFocus || regionFocus === '') {
+					return 'NO REGION FOCUS SELECTED';
 				}
 				return undefined;
 			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.pillar,
+	schema: formSchemas.regionFocus,
 };

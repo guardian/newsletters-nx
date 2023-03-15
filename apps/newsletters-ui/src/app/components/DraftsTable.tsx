@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -5,6 +6,7 @@ import type { Column } from 'react-table';
 import type { Draft } from '@newsletters-nx/newsletters-data-client';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { ExternalLinkButton } from './ExternalLinkButton';
 import { Table } from './Table';
 
 interface Props {
@@ -33,6 +35,14 @@ export const DraftsTable = ({ drafts }: Props) => {
 				accessor: 'name',
 			},
 			{
+				Header: 'Design',
+				accessor: 'figmaDesignUrl',
+				Cell: ({ cell: { value } }) =>
+					value ? (
+						<ExternalLinkButton href={value as string} text="design" />
+					) : null,
+			},
+			{
 				Header: 'Pillar',
 				accessor: 'theme',
 				sortType: 'basic',
@@ -49,11 +59,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				accessor: 'wizardListId',
 				Cell: ({ cell: { value } }) => (
 					<button
-						onClick={() =>
-							// TODO: This should include the newsletter ID
-							//navigate(`/demo/launch-newsletter/${value as string}`)
-							navigate(`/demo/launch-newsletter`)
-						}
+						onClick={() => navigate(`/demo/newsletter-data/${value as string}`)}
 					>
 						View
 					</button>

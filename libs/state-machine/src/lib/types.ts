@@ -6,7 +6,7 @@ import type { ZodObject, ZodRawShape } from 'zod';
 
 export type WizardFormData = Record<
 	string,
-	string | number | boolean | undefined
+	string | number | boolean | undefined | Date
 >;
 
 /**
@@ -60,6 +60,9 @@ export interface WizardStepLayoutButton {
 	executeStep?: AsyncExecution | Execution;
 }
 export interface WizardStepLayout {
+	label?: string;
+	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT';
+	parentStepId?: string;
 	staticMarkdown: string;
 	dynamicMarkdown?: {
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;

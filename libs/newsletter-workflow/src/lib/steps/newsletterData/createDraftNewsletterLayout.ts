@@ -3,16 +3,14 @@ import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
 
 export const createDraftNewsletterLayout: WizardStepLayout = {
-	staticMarkdown: `# Create a newsletter
+	staticMarkdown: `# Start creating a newsletter
 
-This wizard will guide you through the process of entering the data needed to create and launch a new newsletter using email-rendering.
+Welcome!  This wizard will guide you through the process of creating a newsletter using email-rendering.
 
-The first step is to choose a name for your newsletter.
-
-For example:
-  "Down to Earth"
+The first step is to enter the name of your newsletter, for example **Down to Earth**.
 
 `,
+	label: 'Enter Name',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
@@ -22,7 +20,7 @@ For example:
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: 'dates',
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const name = stepData.formData ? stepData.formData['name'] : undefined;
 				return name ? undefined : 'NO NAME PROVIDED';
@@ -31,4 +29,5 @@ For example:
 		},
 	},
 	schema: formSchemas.startDraftNewsletter,
+	role: 'CREATE_START',
 };
