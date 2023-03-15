@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -58,4 +59,10 @@ export const dateLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
+	schema: z
+		.object({
+			signUpPageDate: z.coerce.date(),
+			thrasherDate: z.coerce.date(),
+		})
+		.describe('choose the dates you want promotions to appear'),
 };

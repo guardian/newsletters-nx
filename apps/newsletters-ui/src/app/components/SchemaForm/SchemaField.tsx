@@ -1,5 +1,6 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { BooleanInput } from './BooleanInput';
+import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
 import { SelectInput } from './SelectInput';
@@ -54,6 +55,31 @@ export function SchemaField<T extends z.ZodRawShape>({
 	};
 
 	switch (type) {
+		case 'ZodDate':
+			if (typeof value === 'undefined') {
+				return (
+					<DateInput {...standardProps} value={value} type={stringInputType} />
+				);
+			}
+			if (typeof value === 'string') {
+				const date = new Date(value);
+				const coerceCheck = z.date().safeParse(date);
+
+				if (coerceCheck.success) {
+					return (
+						<DateInput {...standardProps} value={date} type={stringInputType} />
+					);
+				}
+				return <WrongTypeMessage field={field} />;
+			}
+
+			if (value instanceof Date) {
+				return (
+					<DateInput {...standardProps} value={value} type={stringInputType} />
+				);
+			}
+			return <WrongTypeMessage field={field} />;
+
 		case 'ZodString':
 			if (typeof value !== 'string' && typeof value !== 'undefined') {
 				return <WrongTypeMessage field={field} />;

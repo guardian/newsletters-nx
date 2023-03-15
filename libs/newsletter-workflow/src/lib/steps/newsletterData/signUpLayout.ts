@@ -46,13 +46,15 @@ export const signUpLayout: WizardStepLayout = {
 			label: 'Next',
 			stepToMoveTo: 'newsletterHeader',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const headline: string | number | boolean | undefined =
-					stepData.formData ? stepData.formData['headline'] : undefined;
+				const headline = stepData.formData
+					? stepData.formData['headline']
+					: undefined;
 				if (!headline) {
 					return 'NO HEADLINE PROVIDED';
 				}
-				const description: string | number | boolean | undefined =
-					stepData.formData ? stepData.formData['description'] : undefined;
+				const description = stepData.formData
+					? stepData.formData['description']
+					: undefined;
 				if (!description) {
 					return 'NO DESCRIPTION PROVIDED';
 				}
