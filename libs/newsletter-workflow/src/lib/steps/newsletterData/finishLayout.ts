@@ -4,7 +4,11 @@ import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `# Finished
 
-You have reached the end of the wizard. The draft newsletter **{{name}}** has been created.`;
+You have reached the end of the wizard.
+
+Congratulations - the newsletter **{{name}}** has been launched.
+
+`;
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 

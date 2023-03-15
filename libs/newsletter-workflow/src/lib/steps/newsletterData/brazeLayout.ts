@@ -1,18 +1,68 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
-import { formSchemas } from './formSchemas';
+import { getStringValuesFromRecord } from '../../getValuesFromRecord';
+import { regExPatterns } from '../../regExPatterns';
 
-const markdownToDisplay = `
-# Modify Braze Values
+const markdownTemplate = `
+# Braze Values
 
 These are tracking fields used by Braze.
 
-They have been calculated automatically from the Name that you entered on a previous step of the wizard, but you can change them if you need.
+They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+
+&nbsp;
+
+brazeSubscribeEventNamePrefix: **{{brazeSubscribeEventNamePrefix}}**
+
+brazeNewsletterName: **{{brazeNewsletterName}}**
+
+brazeSubscribeAttributeName: **{{brazeSubscribeAttributeName}}**
+
+brazeSubscribeAttributeNameAlternate: **{{brazeSubscribeAttributeNameAlternate}}**
 
 `.trim();
 
+const staticMarkdown = markdownTemplate.replace(
+	regExPatterns.name,
+	'of the newsletter',
+);
+
 export const brazeLayout: WizardStepLayout = {
-	staticMarkdown: markdownToDisplay,
+	staticMarkdown,
+	dynamicMarkdown(requestData, responseData) {
+		if (!responseData) {
+			return staticMarkdown;
+		}
+		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
+		const [brazeSubscribeEventNamePrefix = 'BRAZESUBSCRIBEEVENTNAMEPREFIX'] =
+			getStringValuesFromRecord(responseData, [
+				'brazeSubscribeEventNamePrefix',
+			]);
+		const [brazeNewsletterName = 'BRAZENEWSLETTERNAME'] =
+			getStringValuesFromRecord(responseData, ['brazeNewsletterName']);
+		const [brazeSubscribeAttributeName = 'BRAZESUBSRIBEATTRIBUTENAME'] =
+			getStringValuesFromRecord(responseData, ['brazeSubscribeAttributeName']);
+		const [
+			brazeSubscribeAttributeNameAlternate = 'BRAZESUBSCRIBEATTRIBUTENAMEALTERNATE',
+		] = getStringValuesFromRecord(responseData, [
+			'brazeSubscribeAttributeNameAlternate',
+		]);
+		return markdownTemplate
+			.replace(regExPatterns.name, name)
+			.replace(
+				regExPatterns.brazeSubscribeEventNamePrefix,
+				brazeSubscribeEventNamePrefix,
+			)
+			.replace(regExPatterns.brazeNewsletterName, brazeNewsletterName)
+			.replace(
+				regExPatterns.brazeSubscribeAttributeName,
+				brazeSubscribeAttributeName,
+			)
+			.replace(
+				regExPatterns.brazeSubscribeAttributeNameAlternate,
+				brazeSubscribeAttributeNameAlternate,
+			);
+	},
 	buttons: {
 		back: {
 			buttonType: 'RED',
@@ -20,16 +70,15 @@ export const brazeLayout: WizardStepLayout = {
 			stepToMoveTo: 'identityName',
 			executeStep: executeModify,
 		},
+		edit: {
+			buttonType: 'GREEN',
+			label: 'Edit',
+			stepToMoveTo: 'editBraze',
+		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: 'ophan',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that braze values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
-			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.braze,
 };

@@ -1,20 +1,17 @@
-import type {
-	WizardStepData,
-	WizardStepLayout,
-} from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Choose the Pillar for {{name}}
+# Specify the footer setup for {{name}}
 
-Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
+What email address would you like to display in the footer of **{{name}}**?
 
-[comment]: <> (TODO - use URL Image Signer to resize the image)
-[comment]: <> (https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)
-![Pillars](wizard-screenshots/pillarScreenshotSmall.png)
+For example: newsletters@theguardian.com
+
+***NEED SCREENSHOT HERE***
 
 `.trim();
 
@@ -23,7 +20,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const pillarLayout: WizardStepLayout = {
+export const footerLayout: WizardStepLayout = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -36,24 +33,21 @@ export const pillarLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'dates',
+			stepToMoveTo: 'podcast',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'regionFocus',
-			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const theme: string | number | boolean | undefined = stepData.formData
-					? stepData.formData['theme']
+			stepToMoveTo: 'identityName',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const email = stepData.formData
+					? stepData.formData['email']
 					: undefined;
-				if (!theme || theme === '') {
-					return 'NO THEME SELECTED';
-				}
-				return undefined;
+				return email ? undefined : 'NO EMAIL ADDRESS PROVIDED';
 			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.pillar,
+	schema: formSchemas.footer,
 };
