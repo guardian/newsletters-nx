@@ -1,16 +1,11 @@
-export type Draft = Record<string, string | number | boolean | undefined>;
+import type { NewsletterData } from '../newsletter-data-type';
+import { ispartialNewsletterData } from '../newsletter-data-type';
+
+export type Draft = Partial<NewsletterData>;
 export type DraftWithoutId = Draft & { listId: undefined };
 export type DraftWithId = Draft & { listId: number };
 
-export const isDraft = (item: unknown): item is Draft => {
-	if (!item || typeof item !== 'object') {
-		return false;
-	}
-
-	return Object.values(item).every((value) =>
-		['string', 'number', 'boolean', 'undefined'].includes(typeof value),
-	);
-};
+export const isDraft = ispartialNewsletterData;
 
 export enum StorageRequestFailureReason {
 	NotFound,

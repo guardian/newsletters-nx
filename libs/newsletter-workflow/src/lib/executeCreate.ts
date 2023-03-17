@@ -1,4 +1,8 @@
 import {
+	formDataToPartialNewsletter,
+	partialNewsletterToFormData,
+} from '@newsletters-nx/newsletters-data-client';
+import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
@@ -39,9 +43,12 @@ export const executeCreate: AsyncExecution = async (
 			typeof parseResult.data.name === 'string' && !!parseResult.data.name
 				? calculateFieldsFromName(parseResult.data.name)
 				: {};
+
 		const storageResponse = await storageInstance.createDraftNewsletter({
-			...parseResult.data,
-			...derivedFields,
+			...formDataToPartialNewsletter({
+				...parseResult.data,
+				...derivedFields,
+			}),
 			listId: undefined,
 		});
 		if (storageResponse.ok) {
@@ -49,7 +56,7 @@ export const executeCreate: AsyncExecution = async (
 				'createNewsletter step has updated storage.',
 				storageInstance,
 			);
-			return storageResponse.data;
+			return partialNewsletterToFormData(storageResponse.data);
 		}
 
 		return storageResponse.message;

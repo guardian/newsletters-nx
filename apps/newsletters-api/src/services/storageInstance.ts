@@ -8,8 +8,9 @@ const storageInstance = new InMemoryDraftStorage([
 		brazeSubscribeEventNamePrefix: 'test_draft_newsletter',
 		brazeNewsletterName: 'Editorial_Testdraftnewsletter',
 		brazeSubscribeAttributeName: 'Testdraftnewsletter_Subscribe_Email',
-		brazeSubscribeAttributeNameAlternate:
+		brazeSubscribeAttributeNameAlternate: [
 			'email_subscribe_test_draft_newsletter',
+		],
 		campaignName: 'Testdraftnewsletter',
 		campaignCode: 'testdraftnewsletter_email',
 	},
@@ -20,8 +21,9 @@ const storageInstance = new InMemoryDraftStorage([
 		brazeSubscribeEventNamePrefix: 'other_test_draft_newsletter',
 		brazeNewsletterName: 'Editorial_Othertestdraftnewsletter',
 		brazeSubscribeAttributeName: 'Othertestdraftnewsletter_Subscribe_Email',
-		brazeSubscribeAttributeNameAlternate:
+		brazeSubscribeAttributeNameAlternate: [
 			'email_subscribe_other_test_draft_newsletter',
+		],
 		campaignName: 'Othertestdraftnewsletter',
 		campaignCode: 'othertestdraftnewsletter_email',
 		theme: 'news',
@@ -32,7 +34,7 @@ const storageInstance = new InMemoryDraftStorage([
 		brazeSubscribeEventNamePrefix: 'response_academic',
 		brazeNewsletterName: 'Editorial_ResponseAcademic',
 		brazeSubscribeAttributeName: 'ResponseAcademic_Subscribe_Email',
-		brazeSubscribeAttributeNameAlternate: 'email_subscribe_response_academic',
+		brazeSubscribeAttributeNameAlternate: ['email_subscribe_response_academic'],
 		campaignName: 'ResponseAcademic',
 		campaignCode: 'responseacademic_email',
 		listId: 7002,
@@ -48,7 +50,7 @@ const storageInstance = new InMemoryDraftStorage([
 		brazeNewsletterName: 'Editorial_WagonAutomotiveAu',
 		brazeSubscribeAttributeName: 'WagonAutomotiveAu_Subscribe_Email',
 		brazeSubscribeEventNamePrefix: 'wagon_automotive_AU',
-		theme: 'work',
+		theme: 'news',
 		group: 'Work',
 		listId: 7009,
 	},
@@ -60,7 +62,7 @@ const storageInstance = new InMemoryDraftStorage([
 		brazeNewsletterName: 'Editorial_BackgroundHatchbackUk',
 		brazeSubscribeAttributeName: 'BackgroundHatchbackUk_Subscribe_Email',
 		brazeSubscribeEventNamePrefix: 'background_hatchback_UK',
-		theme: 'work',
+		theme: 'news',
 		group: 'Opinion',
 		listId: 7010,
 	},

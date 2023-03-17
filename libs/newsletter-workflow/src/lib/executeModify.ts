@@ -2,6 +2,7 @@ import type {
 	DraftStorage,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
+import { partialNewsletterToFormData } from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
 	WizardFormData,
@@ -38,7 +39,7 @@ export const executeModify: AsyncExecution = async (
 			);
 			if (storageResponse.ok) {
 				console.log('storage has been updated', storageInstance);
-				return storageResponse.data;
+				return partialNewsletterToFormData(storageResponse.data);
 			}
 			return storageResponse.message;
 		}
