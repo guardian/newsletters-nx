@@ -14,6 +14,30 @@ interface Props {
 	draft: Draft;
 }
 
+const propertyToString = (draft: Draft, key: keyof Draft) => {
+	const value = draft[key];
+
+	switch (typeof value) {
+		case 'string':
+		case 'number':
+		case 'bigint':
+		case 'boolean':
+		case 'symbol':
+			return value.toString();
+		case 'undefined':
+			return '[UNDEFINED]';
+		case 'object':
+			try {
+				const stringification = JSON.stringify(value);
+				return stringification;
+			} catch (err) {
+				return '[non-serialisable object]';
+			}
+		case 'function':
+			return '[function]';
+	}
+};
+
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
 
@@ -34,7 +58,9 @@ export const DraftDetails = ({ draft }: Props) => {
 								<TableCell size="small" sx={{ fontWeight: 'bold' }}>
 									{key}
 								</TableCell>
-								<TableCell>{value}</TableCell>
+								<TableCell>
+									{propertyToString(draft, key as keyof Draft)}
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
