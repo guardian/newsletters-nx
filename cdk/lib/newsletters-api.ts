@@ -56,10 +56,9 @@ export class NewslettersApi extends GuStack {
 			'#!/bin/bash', // "Shebang" to instruct the program loader to run this as a bash script
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
 			'set +x', // Prevents shell from printing statements before execution
-			'mkdir -p dist',
-			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/ dist --recursive`, // copies file from s3
-			'chown -R ubuntu dist', // change ownership of the copied file to ubuntu user
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/main.cjs'`, // run the file as ubuntu user using pm2
+			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app} /tmp --recursive`, // copies file from s3
+			'chown -R ubuntu /tmp', // change ownership of the copied file to ubuntu user
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /tmp/apps/newsletters-api/main.cjs'`, // run the file as ubuntu user using pm2
 		].join('\n');
 	};
 

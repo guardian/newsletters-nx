@@ -181,14 +181,13 @@ exports[`The NewslettersApi stack matches the snapshot 1`] = `
                 "#!/bin/bash
 set -e
 set +x
-mkdir -p dist
 aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-api/ dist --recursive
-chown -R ubuntu dist
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api dist/apps/newsletters-api/main.cjs'",
+                "/newsletters/TEST/newsletters-api /tmp --recursive
+chown -R ubuntu /tmp
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/apps/newsletters-api/main.cjs'",
               ],
             ],
           },

@@ -47,7 +47,8 @@ export class NewslettersTool extends GuStack {
 			`chown -R ubuntu /opt/${app}`, // change ownership of the copied files to ubuntu user
 			`export NEWSLETTERS_API_READ=true`,
 			`export NEWSLETTERS_UI_SERVE=true`,
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /opt/${app}/dist/apps/newsletters-api/index.cjs'`, // run the main entrypoint file as ubuntu user using pm2
+			`cd /opt/${app}`, // Run from the same folder as when running locally to reduce the difference.
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/main.cjs'`, // run the main entrypoint file as ubuntu user using pm2
 		].join('\n');
 	};
 
