@@ -48,7 +48,7 @@ export class NewslettersTool extends GuStack {
 			`export NEWSLETTERS_API_READ=true`,
 			`export NEWSLETTERS_UI_SERVE=true`,
 			`cd /opt/${app}`, // Run from the same folder as when running locally to reduce the difference.
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/main.cjs'`, // run the main entrypoint file as ubuntu user using pm2
+			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/index.cjs'`, // run the main entrypoint file as ubuntu user using pm2
 		].join('\n');
 	};
 
