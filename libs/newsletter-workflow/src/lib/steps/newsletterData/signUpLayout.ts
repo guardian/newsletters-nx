@@ -12,11 +12,7 @@ const markdownTemplate = `
 
 Please enter the headline and description for the sign up page for **{{name}}**
 
-***CHANGE THE IMAGE TO HIGHLIGHT THE HEADLINE AS WELL AS THE DESCRIPTION***
-
-[comment]: <> (TODO - use URL Image Signer to resize the image)
-[comment]: <> (https://uploads.guim.co.uk/2023/02/24/descScreenshot.png)
-![Description](wizard-screenshots/descriptionScreenshotSmall.png)
+![Headline and Description](https://i.guim.co.uk/img/uploads/2023/03/15/signUp.png?quality=85&dpr=2&width=300&s=3b06497952cbb042084787fd324ebe6c)
 
 `.trim();
 
@@ -27,6 +23,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const signUpLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Sign Up',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

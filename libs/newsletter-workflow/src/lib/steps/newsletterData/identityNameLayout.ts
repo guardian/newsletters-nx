@@ -23,6 +23,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const identityNameLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Identity Name',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

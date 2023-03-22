@@ -11,7 +11,7 @@ You may want to display some sections in **{{name}}** as Podcast sections.
 
 This will display the section with a dark background, and append a podcast graphic.
 
-***NEED SCREENSHOT HERE***
+![Podcast styling](https://i.guim.co.uk/img/uploads/2023/03/15/podcast.png?quality=85&dpr=2&width=300&s=441a36a662b2adc04b867e3d617d7315)
 
 In order to use this styling for one or more sections, you need to specify the subheading for each section.
 
@@ -26,6 +26,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const podcastLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Podcast Sections',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

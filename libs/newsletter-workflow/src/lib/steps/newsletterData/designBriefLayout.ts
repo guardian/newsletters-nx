@@ -24,6 +24,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const designBriefLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Design Brief',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

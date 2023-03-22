@@ -14,6 +14,7 @@ const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
 const finishLayout: WizardStepLayout = {
 	staticMarkdown: staticMarkdown,
+	label: 'Finish',
 	buttons: {},
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {

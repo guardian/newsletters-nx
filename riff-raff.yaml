@@ -2,24 +2,46 @@ $schema: 'https://raw.githubusercontent.com/guardian/riff-raff/master/contrib/ri
 stacks: [newsletters]
 regions: [eu-west-1]
 allowedStages: [CODE] # TODO: add PROD stage
-deployments:
-  # Newsletters API cloudformation deployment
-  cloudformation:
+templates:
+  cloudformation-template:
     type: cloud-formation
-    app: newsletters-api
     parameters:
-      cloudFormationStackName: newsletters-api
       cloudFormationStackByTags: false
       prependStackToCloudFormationStackName: false
-      templateStagePaths:
-        CODE: NewslettersApi-CODE.template.json # TODO: add PROD stage path
-      amiParameter: AMINewslettersapi
       amiTags:
         Recipe: newsletters-node
         AmigoStage: PROD
-  # Newsletters API autoscaling deployment
-  newsletters-api:
+  autoscaling-template:
     type: autoscaling
-    dependencies: [cloudformation]
     parameters:
       bucketSsmLookup: true
+deployments:
+  # Newsletters internal tool cloudformation deployment
+  newsletters-tool-cfn:
+    template: cloudformation-template
+    app: newsletters-tool
+    parameters:
+      cloudFormationStackName: newsletters-tool
+      amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
+      templateStagePaths:
+        CODE: NewslettersTool-CODE.template.json # TODO: add PROD stage path
+  # Newsletters internal tool autoscaling deployment
+  newsletters-tool:
+    template: autoscaling-template
+    dependencies: [newsletters-tool-cfn]
+
+  # Need to restrict riffraff deployment to do API OR Tool but not both...
+
+  # Newsletters API cloudformation deployment
+  # newsletters-api-cfn:
+  #   template: cloudformation-template
+  #   app: newsletters-api
+  #   parameters:
+  #     cloudFormationStackName: newsletters-api
+  #     amiParameter: AMINewslettersapi # please don't change this unless you know what you're doing
+  #     templateStagePaths:
+  #       CODE: NewslettersApi-CODE.template.json # TODO: add PROD stage path
+  # # Newsletters API autoscaling deployment
+  # newsletters-api:
+  #   template: autoscaling-template
+  #   dependencies: [newsletters-api-cfn]
