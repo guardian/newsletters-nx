@@ -1,3 +1,4 @@
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	formDataToPartialNewsletter,
 	partialNewsletterToFormData,
@@ -44,11 +45,15 @@ export const executeCreate: AsyncExecution = async (
 				? calculateFieldsFromName(parseResult.data.name)
 				: {};
 
-		const storageResponse = await storageInstance.createDraftNewsletter({
+		const draft: Partial<NewsletterData> = {
 			...formDataToPartialNewsletter({
 				...parseResult.data,
-				...derivedFields,
 			}),
+			...derivedFields,
+		};
+
+		const storageResponse = await storageInstance.createDraftNewsletter({
+			...draft,
 			listId: undefined,
 		});
 		if (storageResponse.ok) {
