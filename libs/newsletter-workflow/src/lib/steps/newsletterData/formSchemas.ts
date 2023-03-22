@@ -1,45 +1,38 @@
 import { z } from 'zod';
 import {
-	kebabCasedString,
+	newsletterDataSchema,
 	onlineArticleSchema,
-	regionFocusEnumSchema,
 	singleThrasherLocation,
-	themeEnumSchema,
-	underscoreCasedString,
 } from '@newsletters-nx/newsletters-data-client';
 
 export const formSchemas = {
-	startDraftNewsletter: z
-		.object({
-			name: z.string(),
-		})
+	startDraftNewsletter: newsletterDataSchema
+		.pick({ name: true })
 		.describe('Input the name for the new newsletter'),
 
-	identityName: z
-		.object({
-			identityName: kebabCasedString(),
-		})
+	identityName: newsletterDataSchema
+		.pick({ identityName: true })
 		.describe('Edit the identity name if required'),
 
-	braze: z
-		.object({
-			brazeSubscribeEventNamePrefix: underscoreCasedString(),
-			brazeNewsletterName: underscoreCasedString(),
-			brazeSubscribeAttributeName: underscoreCasedString(),
-			brazeSubscribeAttributeNameAlternate: underscoreCasedString(),
+	braze: newsletterDataSchema
+		.pick({
+			brazeSubscribeEventNamePrefix: true,
+			brazeNewsletterName: true,
+			brazeSubscribeAttributeName: true,
+			brazeSubscribeAttributeNameAlternate: true,
 		})
 		.describe('Edit the Braze values if required'),
 
-	ophan: z
-		.object({
-			campaignName: z.string(),
-			campaignCode: z.string(),
+	ophan: newsletterDataSchema
+		.pick({
+			campaignName: true,
+			campaignCode: true,
 		})
 		.describe('Edit the Ophan values if required'),
 
-	pillar: z
-		.object({
-			theme: themeEnumSchema,
+	pillar: newsletterDataSchema
+		.pick({
+			theme: true,
 		})
 		.describe('Choose a theme'),
 
@@ -50,9 +43,9 @@ export const formSchemas = {
 		})
 		.describe('Input the Sign Up page copy'),
 
-	regionFocus: z
-		.object({
-			regionFocus: regionFocusEnumSchema,
+	regionFocus: newsletterDataSchema
+		.pick({
+			regionFocus: true,
 		})
 		.describe('Select from the drop-down list'),
 
@@ -77,9 +70,9 @@ export const formSchemas = {
 		})
 		.describe('Input the footer setup'),
 
-	frequency: z
-		.object({
-			frequency: z.string(),
+	frequency: newsletterDataSchema
+		.pick({
+			frequency: true,
 		})
 		.describe('Input the send frequency'),
 
@@ -131,4 +124,11 @@ export const formSchemas = {
 			thrasherDescription: z.string(),
 		})
 		.describe('Input the thrasher setup'),
+
+	promotionDates: z
+		.object({
+			signUpPageDate: z.coerce.date(),
+			thrasherDate: z.coerce.date(),
+		})
+		.describe('choose the dates you want promotions to appear'),
 };
