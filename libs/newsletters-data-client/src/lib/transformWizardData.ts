@@ -55,6 +55,9 @@ export const formDataToPartialNewsletter = (
 		const parsedRecordValue = fieldSchema.safeParse(recordValue);
 		if (parsedRecordValue.success) {
 			output[key] = parsedRecordValue.data;
+		} else {
+			console.warn('WRONG VALUE', key, recordValue);
+			console.log(parsedRecordValue.error.issues.map((i) => i.message));
 		}
 	}
 
