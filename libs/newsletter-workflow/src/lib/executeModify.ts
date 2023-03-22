@@ -2,7 +2,10 @@ import type {
 	DraftStorage,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
-import { partialNewsletterToFormData } from '@newsletters-nx/newsletters-data-client';
+import {
+	formDataToPartialNewsletter,
+	partialNewsletterToFormData,
+} from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
 	WizardFormData,
@@ -31,14 +34,13 @@ export const executeModify: AsyncExecution = async (
 				listId: stepData.formData['listId'] as number,
 			};
 			const draftNewsletter: DraftWithId = {
-				...stepData.formData,
+				...formDataToPartialNewsletter(stepData.formData),
 				...listIdEntry,
 			};
 			const storageResponse = await storageInstance.modifyDraftNewsletter(
 				draftNewsletter,
 			);
 			if (storageResponse.ok) {
-				console.log('storage has been updated', storageInstance);
 				return partialNewsletterToFormData(storageResponse.data);
 			}
 			return storageResponse.message;

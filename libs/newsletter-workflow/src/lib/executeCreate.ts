@@ -52,10 +52,6 @@ export const executeCreate: AsyncExecution = async (
 			listId: undefined,
 		});
 		if (storageResponse.ok) {
-			console.log(
-				'createNewsletter step has updated storage.',
-				storageInstance,
-			);
 			return partialNewsletterToFormData(storageResponse.data);
 		}
 
