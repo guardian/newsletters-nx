@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- Destructure */
 import type { LegacyNewsletter } from './legacy-newsletter-type';
 import { isLegacyNewsletter } from './legacy-newsletter-type';
 import type { NewsletterData } from './newsletter-data-type';
@@ -34,8 +35,22 @@ const deriveLegacyNewsletter = (
 		};
 
 		// Destructure out fields not present on LegacyNewsletter before returning the rest
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Destructure
-		const { creationTimeStamp, status, ...rest } = merged;
+		const {
+			creationTimeStamp,
+			status,
+			figmaIncludesThrashers,
+			signUpPageDate,
+			thrasherDate,
+			onlineArticle,
+			headline,
+			designBriefDoc,
+			seriesTag,
+			composerCampaignTag,
+			composerTag,
+			renderingOptions,
+			thrasherOptions,
+			...rest
+		} = merged;
 		return rest;
 	} catch (err) {
 		console.error(err);
