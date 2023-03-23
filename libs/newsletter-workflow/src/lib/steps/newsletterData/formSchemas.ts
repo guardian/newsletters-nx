@@ -1,10 +1,13 @@
 import type { ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
-import type { RenderingOptions } from '@newsletters-nx/newsletters-data-client';
+import type {
+	RenderingOptions,
+	ThrasherOptions,
+} from '@newsletters-nx/newsletters-data-client';
 import {
 	newsletterDataSchema,
 	renderingOptionsSchema,
-	singleThrasherLocation,
+	thrasherOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
 
 const pickAndPrefixRenderingOption = (
@@ -13,6 +16,16 @@ const pickAndPrefixRenderingOption = (
 	const shape: ZodRawShape = {};
 	fieldKeys.forEach((key) => {
 		shape[`renderingOptions.${key}`] = renderingOptionsSchema.shape[key];
+	});
+	return z.object(shape);
+};
+
+const pickAndPrefixThrasherOption = (
+	fieldKeys: Array<keyof ThrasherOptions>,
+): ZodObject<ZodRawShape> => {
+	const shape: ZodRawShape = {};
+	fieldKeys.forEach((key) => {
+		shape[`thrasherOptions.${key}`] = thrasherOptionsSchema.shape[key];
 	});
 	return z.object(shape);
 };
@@ -116,14 +129,12 @@ export const formSchemas = {
 		})
 		.describe('Input the tag setup'),
 
-	thrasher: z
-		.object({
-			singleThrasher: z.boolean(),
-			multiThrasher: z.boolean(),
-			singleThrasherLocation: singleThrasherLocation,
-			thrasherDescription: z.string(),
-		})
-		.describe('Input the thrasher setup'),
+	thrasher: pickAndPrefixThrasherOption([
+		'singleThrasher',
+		'multiThrasher',
+		'singleThrasherLocation',
+		'thrasherDescription',
+	]).describe('Input the thrasher setup'),
 
 	promotionDates: newsletterDataSchema
 		.pick({

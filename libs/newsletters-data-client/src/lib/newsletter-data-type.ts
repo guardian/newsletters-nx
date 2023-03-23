@@ -49,6 +49,14 @@ export const renderingOptionsSchema = z.object({
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
+export const thrasherOptionsSchema = z.object({
+	singleThrasher: z.boolean(),
+	multiThrasher: z.boolean(),
+	singleThrasherLocation: singleThrasherLocation,
+	thrasherDescription: z.string(),
+});
+export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
+
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
  * Edits to this schema would need to be reflected in the transform function.
@@ -96,6 +104,7 @@ export const newsletterDataSchema = z.object({
 	onlineArticle: onlineArticleSchema,
 
 	renderingOptions: renderingOptionsSchema.optional(),
+	thrasherOptions: thrasherOptionsSchema.optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */
