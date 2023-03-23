@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
 	newsletterDataSchema,
 	onlineArticleSchema,
+	renderingOptionsSchema,
 	singleThrasherLocation,
 } from '@newsletters-nx/newsletters-data-client';
 
@@ -59,14 +60,16 @@ export const formSchemas = {
 
 	newsletterHeader: z
 		.object({
-			displayDate: z.boolean(),
-			displayStandfirst: z.boolean(),
+			'renderingOptions.displayDate': renderingOptionsSchema.shape.displayDate,
+			'renderingOptions.displayStandfirst':
+				renderingOptionsSchema.shape.displayStandfirst,
 		})
 		.describe('Input the header setup'),
 
 	footer: z
 		.object({
-			email: z.string().email().optional(),
+			'renderingOptions.contactEmail':
+				renderingOptionsSchema.shape.contactEmail,
 		})
 		.describe('Input the footer setup'),
 
@@ -78,9 +81,10 @@ export const formSchemas = {
 
 	images: z
 		.object({
-			displayImageCaptions: z.boolean(),
+			'renderingOptions.displayImageCaptions':
+				renderingOptionsSchema.shape.displayImageCaptions,
 		})
-		.describe('Specify the setup'),
+		.describe('Specify the image setup'),
 
 	onlineArticle: z
 		.object({
@@ -90,21 +94,25 @@ export const formSchemas = {
 
 	linkList: z
 		.object({
-			linkListSubheading: z.string(),
+			'renderingOptions.linkListSubheading':
+				renderingOptionsSchema.shape.linkListSubheading,
 		})
 		.describe('Input the subheading triggers'),
 
 	podcast: z
 		.object({
-			podcastSubheading: z.string(),
+			'renderingOptions.podcastSubheading':
+				renderingOptionsSchema.shape.podcastSubheading,
 		})
 		.describe('Input the subheading triggers'),
 
 	readMore: z
 		.object({
-			readMoreSubheading: z.string(),
-			readMoreWording: z.string(),
-			readMoreUrl: z.string().url().optional(),
+			'renderingOptions.readMoreSubheading':
+				renderingOptionsSchema.shape.readMoreSubheading,
+			'renderingOptions.readMoreWording':
+				renderingOptionsSchema.shape.readMoreWording,
+			'renderingOptions.readMoreUrl': renderingOptionsSchema.shape.readMoreUrl,
 		})
 		.describe('Input the Read More setup'),
 

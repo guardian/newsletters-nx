@@ -36,6 +36,18 @@ export const singleThrasherLocation = z.enum([
 ]);
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
+export const renderingOptionsSchema = z.object({
+	displayDate: z.boolean(),
+	displayStandfirst: z.boolean(),
+	contactEmail: z.string().email(),
+	displayImageCaptions: z.boolean(),
+	linkListSubheading: z.string().optional(),
+	podcastSubheading: z.string().optional(),
+	readMoreSubheading: z.string().optional(),
+	readMoreWording: z.string().optional(),
+	readMoreUrl: z.string().url().optional(),
+});
+
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
  * Edits to this schema would need to be reflected in the transform function.
@@ -70,6 +82,8 @@ export const newsletterDataSchema = z.object({
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
+
+	renderingOptions: renderingOptionsSchema.optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */
