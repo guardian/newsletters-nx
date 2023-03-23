@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars -- Destructure */
 import type { LegacyNewsletter } from './legacy-newsletter-type';
 import { isLegacyNewsletter } from './legacy-newsletter-type';
 import type { NewsletterData } from './newsletter-data-type';
@@ -29,29 +28,39 @@ const deriveLegacyNewsletter = (
 	newsletterData: NewsletterData,
 ): LegacyNewsletter | undefined => {
 	try {
-		const merged: LegacyNewsletter & Partial<NewsletterData> = {
-			...newsletterData,
-			...deriveBooleansFromStatus(newsletterData.status),
+		const statusBooleans = deriveBooleansFromStatus(newsletterData.status);
+
+		const legacyFormat: LegacyNewsletter = {
+			identityName: newsletterData.identityName,
+			name: newsletterData.name,
+			cancelled: statusBooleans.cancelled,
+			restricted: newsletterData.restricted,
+			paused: statusBooleans.paused,
+			emailConfirmation: newsletterData.emailConfirmation,
+			brazeNewsletterName: newsletterData.brazeNewsletterName,
+			brazeSubscribeAttributeName: newsletterData.brazeSubscribeAttributeName,
+			brazeSubscribeEventNamePrefix:
+				newsletterData.brazeSubscribeEventNamePrefix,
+			theme: newsletterData.theme,
+			group: newsletterData.group,
+			description: newsletterData.description,
+			regionFocus: newsletterData.regionFocus,
+			frequency: newsletterData.frequency,
+			listIdV1: newsletterData.listIdV1,
+			listId: newsletterData.listId,
+			exampleUrl: newsletterData.exampleUrl,
+			signupPage: newsletterData.signupPage,
+			illustration: newsletterData.illustrationCircle
+				? { circle: newsletterData.illustrationCircle }
+				: undefined,
+			emailEmbed: newsletterData.emailEmbed,
+			campaignName: newsletterData.campaignName,
+			campaignCode: newsletterData.campaignCode,
+			brazeSubscribeAttributeNameAlternate:
+				newsletterData.brazeSubscribeAttributeNameAlternate,
 		};
 
-		// Destructure out fields not present on LegacyNewsletter before returning the rest
-		const {
-			creationTimeStamp,
-			status,
-			figmaIncludesThrashers,
-			signUpPageDate,
-			thrasherDate,
-			onlineArticle,
-			headline,
-			designBriefDoc,
-			seriesTag,
-			composerCampaignTag,
-			composerTag,
-			renderingOptions,
-			thrasherOptions,
-			...rest
-		} = merged;
-		return rest;
+		return legacyFormat;
 	} catch (err) {
 		console.error(err);
 		return undefined;
