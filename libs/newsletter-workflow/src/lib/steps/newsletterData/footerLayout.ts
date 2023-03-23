@@ -43,7 +43,7 @@ export const footerLayout: WizardStepLayout = {
 			stepToMoveTo: 'identityName',
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const email = stepData.formData
-					? stepData.formData['email']
+					? stepData.formData['renderingOptions.contactEmail']
 					: undefined;
 				return email ? undefined : 'NO EMAIL ADDRESS PROVIDED';
 			},

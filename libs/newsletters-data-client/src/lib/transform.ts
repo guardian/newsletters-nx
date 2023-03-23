@@ -28,15 +28,39 @@ const deriveLegacyNewsletter = (
 	newsletterData: NewsletterData,
 ): LegacyNewsletter | undefined => {
 	try {
-		const merged: LegacyNewsletter & Partial<NewsletterData> = {
-			...newsletterData,
-			...deriveBooleansFromStatus(newsletterData.status),
+		const statusBooleans = deriveBooleansFromStatus(newsletterData.status);
+
+		const legacyFormat: LegacyNewsletter = {
+			identityName: newsletterData.identityName,
+			name: newsletterData.name,
+			cancelled: statusBooleans.cancelled,
+			restricted: newsletterData.restricted,
+			paused: statusBooleans.paused,
+			emailConfirmation: newsletterData.emailConfirmation,
+			brazeNewsletterName: newsletterData.brazeNewsletterName,
+			brazeSubscribeAttributeName: newsletterData.brazeSubscribeAttributeName,
+			brazeSubscribeEventNamePrefix:
+				newsletterData.brazeSubscribeEventNamePrefix,
+			theme: newsletterData.theme,
+			group: newsletterData.group,
+			description: newsletterData.description,
+			regionFocus: newsletterData.regionFocus,
+			frequency: newsletterData.frequency,
+			listIdV1: newsletterData.listIdV1,
+			listId: newsletterData.listId,
+			exampleUrl: newsletterData.exampleUrl,
+			signupPage: newsletterData.signupPage,
+			illustration: newsletterData.illustrationCircle
+				? { circle: newsletterData.illustrationCircle }
+				: undefined,
+			emailEmbed: newsletterData.emailEmbed,
+			campaignName: newsletterData.campaignName,
+			campaignCode: newsletterData.campaignCode,
+			brazeSubscribeAttributeNameAlternate:
+				newsletterData.brazeSubscribeAttributeNameAlternate,
 		};
 
-		// Destructure out fields not present on LegacyNewsletter before returning the rest
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Destructure
-		const { creationTimeStamp, status, ...rest } = merged;
-		return rest;
+		return legacyFormat;
 	} catch (err) {
 		console.error(err);
 		return undefined;

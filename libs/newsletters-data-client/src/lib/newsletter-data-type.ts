@@ -36,6 +36,27 @@ export const singleThrasherLocation = z.enum([
 ]);
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
+export const renderingOptionsSchema = z.object({
+	displayDate: z.boolean(),
+	displayStandfirst: z.boolean(),
+	contactEmail: z.string().email(),
+	displayImageCaptions: z.boolean(),
+	linkListSubheading: z.string().optional(),
+	podcastSubheading: z.string().optional(),
+	readMoreSubheading: z.string().optional(),
+	readMoreWording: z.string().optional(),
+	readMoreUrl: z.string().url().optional(),
+});
+export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
+
+export const thrasherOptionsSchema = z.object({
+	singleThrasher: z.boolean(),
+	multiThrasher: z.boolean(),
+	singleThrasherLocation: singleThrasherLocation,
+	thrasherDescription: z.string(),
+});
+export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
+
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
  * Edits to this schema would need to be reflected in the transform function.
@@ -52,6 +73,7 @@ export const newsletterDataSchema = z.object({
 	brazeNewsletterName: underscoreCasedString(),
 	theme: themeEnumSchema,
 	group: nonEmptyString(),
+	headline: z.string().optional(),
 	description: nonEmptyString(),
 	regionFocus: z.string().optional(),
 	frequency: nonEmptyString(),
@@ -65,11 +87,24 @@ export const newsletterDataSchema = z.object({
 	brazeSubscribeAttributeNameAlternate: z.array(z.string()).optional(),
 	signupPage: z.string().optional(),
 	exampleUrl: z.string().optional(),
+	designBriefDoc: z.string().optional(),
 	figmaDesignUrl: z.string().url().optional(),
+	figmaIncludesThrashers: z.boolean(),
 	illustrationCircle: z.string().optional(),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
+
+	seriesTag: z.string().optional(),
+	composerTag: z.string().optional(),
+	composerCampaignTag: z.string().optional(),
+
+	signUpPageDate: z.coerce.date(),
+	thrasherDate: z.coerce.date(),
+	onlineArticle: onlineArticleSchema,
+
+	renderingOptions: renderingOptionsSchema.optional(),
+	thrasherOptions: thrasherOptionsSchema.optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */
