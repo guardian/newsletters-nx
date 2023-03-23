@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { RenderingOptions } from '@newsletters-nx/newsletters-data-client';
 import {
 	newsletterDataSchema,
-	onlineArticleSchema,
 	renderingOptionsSchema,
 	singleThrasherLocation,
 } from '@newsletters-nx/newsletters-data-client';
@@ -49,10 +48,10 @@ export const formSchemas = {
 		})
 		.describe('Choose a theme'),
 
-	signUp: z
-		.object({
-			headline: z.string(),
-			description: z.string(),
+	signUp: newsletterDataSchema
+		.pick({
+			headline: true,
+			description: true,
 		})
 		.describe('Input the Sign Up page copy'),
 
@@ -62,11 +61,11 @@ export const formSchemas = {
 		})
 		.describe('Select from the drop-down list'),
 
-	designBrief: z
-		.object({
-			designBriefDoc: z.string(),
-			figmaDesignUrl: z.string().url().optional(),
-			figmaIncludesThrashers: z.boolean(),
+	designBrief: newsletterDataSchema
+		.pick({
+			designBriefDoc: true,
+			figmaDesignUrl: true,
+			figmaIncludesThrashers: true,
 		})
 		.describe('Input the design brief and Figma design'),
 
@@ -89,9 +88,9 @@ export const formSchemas = {
 		'Specify the image setup',
 	),
 
-	onlineArticle: z
-		.object({
-			onlineArticle: onlineArticleSchema,
+	onlineArticle: newsletterDataSchema
+		.pick({
+			onlineArticle: true,
 		})
 		.describe('Select from the drop-down list'),
 
@@ -109,11 +108,11 @@ export const formSchemas = {
 		'readMoreUrl',
 	]).describe('Input the Read More setup'),
 
-	tags: z
-		.object({
-			seriesTag: z.string(),
-			composerTag: z.string().optional(),
-			composerCampaignTag: z.string().optional(),
+	tags: newsletterDataSchema
+		.pick({
+			seriesTag: true,
+			composerTag: true,
+			composerCampaignTag: true,
 		})
 		.describe('Input the tag setup'),
 
@@ -126,10 +125,10 @@ export const formSchemas = {
 		})
 		.describe('Input the thrasher setup'),
 
-	promotionDates: z
-		.object({
-			signUpPageDate: z.coerce.date(),
-			thrasherDate: z.coerce.date(),
+	promotionDates: newsletterDataSchema
+		.pick({
+			signUpPageDate: true,
+			thrasherDate: true,
 		})
 		.describe('choose the dates you want promotions to appear'),
 };

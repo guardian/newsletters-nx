@@ -65,6 +65,7 @@ export const newsletterDataSchema = z.object({
 	brazeNewsletterName: underscoreCasedString(),
 	theme: themeEnumSchema,
 	group: nonEmptyString(),
+	headline: z.string().optional(),
 	description: nonEmptyString(),
 	regionFocus: z.string().optional(),
 	frequency: nonEmptyString(),
@@ -78,11 +79,21 @@ export const newsletterDataSchema = z.object({
 	brazeSubscribeAttributeNameAlternate: z.array(z.string()).optional(),
 	signupPage: z.string().optional(),
 	exampleUrl: z.string().optional(),
+	designBriefDoc: z.string().optional(),
 	figmaDesignUrl: z.string().url().optional(),
+	figmaIncludesThrashers: z.boolean(),
 	illustrationCircle: z.string().optional(),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
+
+	seriesTag: z.string().optional(),
+	composerTag: z.string().optional(),
+	composerCampaignTag: z.string().optional(),
+
+	signUpPageDate: z.coerce.date(),
+	thrasherDate: z.coerce.date(),
+	onlineArticle: onlineArticleSchema,
 
 	renderingOptions: renderingOptionsSchema.optional(),
 });
