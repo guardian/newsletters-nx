@@ -1,134 +1,145 @@
+import type { ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
+import type {
+	RenderingOptions,
+	ThrasherOptions,
+} from '@newsletters-nx/newsletters-data-client';
 import {
-	kebabCasedString,
-	onlineArticleSchema,
-	regionFocusEnumSchema,
-	singleThrasherLocation,
-	themeEnumSchema,
-	underscoreCasedString,
+	newsletterDataSchema,
+	renderingOptionsSchema,
+	thrasherOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
 
+const pickAndPrefixRenderingOption = (
+	fieldKeys: Array<keyof RenderingOptions>,
+): ZodObject<ZodRawShape> => {
+	const shape: ZodRawShape = {};
+	fieldKeys.forEach((key) => {
+		shape[`renderingOptions.${key}`] = renderingOptionsSchema.shape[key];
+	});
+	return z.object(shape);
+};
+
+const pickAndPrefixThrasherOption = (
+	fieldKeys: Array<keyof ThrasherOptions>,
+): ZodObject<ZodRawShape> => {
+	const shape: ZodRawShape = {};
+	fieldKeys.forEach((key) => {
+		shape[`thrasherOptions.${key}`] = thrasherOptionsSchema.shape[key];
+	});
+	return z.object(shape);
+};
+
 export const formSchemas = {
-	startDraftNewsletter: z
-		.object({
-			name: z.string(),
-		})
+	startDraftNewsletter: newsletterDataSchema
+		.pick({ name: true })
 		.describe('Input the name for the new newsletter'),
 
-	identityName: z
-		.object({
-			identityName: kebabCasedString(),
-		})
+	identityName: newsletterDataSchema
+		.pick({ identityName: true })
 		.describe('Edit the identity name if required'),
 
-	braze: z
-		.object({
-			brazeSubscribeEventNamePrefix: underscoreCasedString(),
-			brazeNewsletterName: underscoreCasedString(),
-			brazeSubscribeAttributeName: underscoreCasedString(),
-			brazeSubscribeAttributeNameAlternate: underscoreCasedString(),
+	braze: newsletterDataSchema
+		.pick({
+			brazeSubscribeEventNamePrefix: true,
+			brazeNewsletterName: true,
+			brazeSubscribeAttributeName: true,
+			brazeSubscribeAttributeNameAlternate: true,
 		})
 		.describe('Edit the Braze values if required'),
 
-	ophan: z
-		.object({
-			campaignName: z.string(),
-			campaignCode: z.string(),
+	ophan: newsletterDataSchema
+		.pick({
+			campaignName: true,
+			campaignCode: true,
 		})
 		.describe('Edit the Ophan values if required'),
 
-	pillar: z
-		.object({
-			theme: themeEnumSchema,
+	pillar: newsletterDataSchema
+		.pick({
+			theme: true,
 		})
 		.describe('Choose a theme'),
 
-	signUp: z
-		.object({
-			headline: z.string(),
-			description: z.string(),
+	signUp: newsletterDataSchema
+		.pick({
+			headline: true,
+			description: true,
 		})
 		.describe('Input the Sign Up page copy'),
 
-	regionFocus: z
-		.object({
-			regionFocus: regionFocusEnumSchema,
+	regionFocus: newsletterDataSchema
+		.pick({
+			regionFocus: true,
 		})
 		.describe('Select from the drop-down list'),
 
-	designBrief: z
-		.object({
-			designBriefDoc: z.string(),
-			figmaDesignUrl: z.string().url().optional(),
-			figmaIncludesThrashers: z.boolean(),
+	designBrief: newsletterDataSchema
+		.pick({
+			designBriefDoc: true,
+			figmaDesignUrl: true,
+			figmaIncludesThrashers: true,
 		})
 		.describe('Input the design brief and Figma design'),
 
-	newsletterHeader: z
-		.object({
-			displayDate: z.boolean(),
-			displayStandfirst: z.boolean(),
-		})
-		.describe('Input the header setup'),
+	newsletterHeader: pickAndPrefixRenderingOption([
+		'displayDate',
+		'displayStandfirst',
+	]).describe('Input the header setup'),
 
-	footer: z
-		.object({
-			email: z.string().email().optional(),
-		})
-		.describe('Input the footer setup'),
+	footer: pickAndPrefixRenderingOption(['contactEmail']).describe(
+		'Input the footer setup',
+	),
 
-	frequency: z
-		.object({
-			frequency: z.string(),
+	frequency: newsletterDataSchema
+		.pick({
+			frequency: true,
 		})
 		.describe('Input the send frequency'),
 
-	images: z
-		.object({
-			displayImageCaptions: z.boolean(),
-		})
-		.describe('Specify the setup'),
+	images: pickAndPrefixRenderingOption(['displayImageCaptions']).describe(
+		'Specify the image setup',
+	),
 
-	onlineArticle: z
-		.object({
-			onlineArticle: onlineArticleSchema,
+	onlineArticle: newsletterDataSchema
+		.pick({
+			onlineArticle: true,
 		})
 		.describe('Select from the drop-down list'),
 
-	linkList: z
-		.object({
-			linkListSubheading: z.string(),
-		})
-		.describe('Input the subheading triggers'),
+	linkList: pickAndPrefixRenderingOption(['linkListSubheading']).describe(
+		'Input the subheading triggers',
+	),
 
-	podcast: z
-		.object({
-			podcastSubheading: z.string(),
-		})
-		.describe('Input the subheading triggers'),
+	podcast: pickAndPrefixRenderingOption(['podcastSubheading']).describe(
+		'Input the subheading triggers',
+	),
 
-	readMore: z
-		.object({
-			readMoreSubheading: z.string(),
-			readMoreWording: z.string(),
-			readMoreUrl: z.string().url().optional(),
-		})
-		.describe('Input the Read More setup'),
+	readMore: pickAndPrefixRenderingOption([
+		'readMoreSubheading',
+		'readMoreWording',
+		'readMoreUrl',
+	]).describe('Input the Read More setup'),
 
-	tags: z
-		.object({
-			seriesTag: z.string(),
-			composerTag: z.string().optional(),
-			composerCampaignTag: z.string().optional(),
+	tags: newsletterDataSchema
+		.pick({
+			seriesTag: true,
+			composerTag: true,
+			composerCampaignTag: true,
 		})
 		.describe('Input the tag setup'),
 
-	thrasher: z
-		.object({
-			singleThrasher: z.boolean(),
-			multiThrasher: z.boolean(),
-			singleThrasherLocation: singleThrasherLocation,
-			thrasherDescription: z.string(),
+	thrasher: pickAndPrefixThrasherOption([
+		'singleThrasher',
+		'multiThrasher',
+		'singleThrasherLocation',
+		'thrasherDescription',
+	]).describe('Input the thrasher setup'),
+
+	promotionDates: newsletterDataSchema
+		.pick({
+			signUpPageDate: true,
+			thrasherDate: true,
 		})
-		.describe('Input the thrasher setup'),
+		.describe('choose the dates you want promotions to appear'),
 };

@@ -1,8 +1,8 @@
-import { z } from 'zod';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
 # Tell us about your launch date and promotion plans for {{name}}
@@ -60,10 +60,5 @@ export const dateLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
-	schema: z
-		.object({
-			signUpPageDate: z.coerce.date(),
-			thrasherDate: z.coerce.date(),
-		})
-		.describe('choose the dates you want promotions to appear'),
+	schema: formSchemas.promotionDates,
 };

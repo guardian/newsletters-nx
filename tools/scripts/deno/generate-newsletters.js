@@ -108,6 +108,11 @@ const generateNewsletter = () => {
 		creationTimeStamp: timeStampForOneToTwoYearsAgo,
 		cancellationTimeStamp:
 			status === 'cancelled' ? timeStampForZeroToOneYearsAgo : undefined,
+
+		figmaIncludesThrashers: false,
+		signUpPageDate: new Date(87678876),
+		thrasherDate: new Date(87678876),
+		onlineArticle: 'Web for all sends',
 	};
 	return newsletter;
 };
