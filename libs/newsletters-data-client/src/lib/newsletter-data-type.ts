@@ -47,6 +47,7 @@ export const renderingOptionsSchema = z.object({
 	readMoreWording: z.string().optional(),
 	readMoreUrl: z.string().url().optional(),
 });
+export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.

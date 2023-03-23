@@ -1,10 +1,22 @@
+import type { ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
+import type { RenderingOptions } from '@newsletters-nx/newsletters-data-client';
 import {
 	newsletterDataSchema,
 	onlineArticleSchema,
 	renderingOptionsSchema,
 	singleThrasherLocation,
 } from '@newsletters-nx/newsletters-data-client';
+
+const pickAndPrefixRenderingOption = (
+	fieldKeys: Array<keyof RenderingOptions>,
+): ZodObject<ZodRawShape> => {
+	const shape: ZodRawShape = {};
+	fieldKeys.forEach((key) => {
+		shape[`renderingOptions.${key}`] = renderingOptionsSchema.shape[key];
+	});
+	return z.object(shape);
+};
 
 export const formSchemas = {
 	startDraftNewsletter: newsletterDataSchema
@@ -58,20 +70,14 @@ export const formSchemas = {
 		})
 		.describe('Input the design brief and Figma design'),
 
-	newsletterHeader: z
-		.object({
-			'renderingOptions.displayDate': renderingOptionsSchema.shape.displayDate,
-			'renderingOptions.displayStandfirst':
-				renderingOptionsSchema.shape.displayStandfirst,
-		})
-		.describe('Input the header setup'),
+	newsletterHeader: pickAndPrefixRenderingOption([
+		'displayDate',
+		'displayStandfirst',
+	]).describe('Input the header setup'),
 
-	footer: z
-		.object({
-			'renderingOptions.contactEmail':
-				renderingOptionsSchema.shape.contactEmail,
-		})
-		.describe('Input the footer setup'),
+	footer: pickAndPrefixRenderingOption(['contactEmail']).describe(
+		'Input the footer setup',
+	),
 
 	frequency: newsletterDataSchema
 		.pick({
@@ -79,12 +85,9 @@ export const formSchemas = {
 		})
 		.describe('Input the send frequency'),
 
-	images: z
-		.object({
-			'renderingOptions.displayImageCaptions':
-				renderingOptionsSchema.shape.displayImageCaptions,
-		})
-		.describe('Specify the image setup'),
+	images: pickAndPrefixRenderingOption(['displayImageCaptions']).describe(
+		'Specify the image setup',
+	),
 
 	onlineArticle: z
 		.object({
@@ -92,29 +95,19 @@ export const formSchemas = {
 		})
 		.describe('Select from the drop-down list'),
 
-	linkList: z
-		.object({
-			'renderingOptions.linkListSubheading':
-				renderingOptionsSchema.shape.linkListSubheading,
-		})
-		.describe('Input the subheading triggers'),
+	linkList: pickAndPrefixRenderingOption(['linkListSubheading']).describe(
+		'Input the subheading triggers',
+	),
 
-	podcast: z
-		.object({
-			'renderingOptions.podcastSubheading':
-				renderingOptionsSchema.shape.podcastSubheading,
-		})
-		.describe('Input the subheading triggers'),
+	podcast: pickAndPrefixRenderingOption(['podcastSubheading']).describe(
+		'Input the subheading triggers',
+	),
 
-	readMore: z
-		.object({
-			'renderingOptions.readMoreSubheading':
-				renderingOptionsSchema.shape.readMoreSubheading,
-			'renderingOptions.readMoreWording':
-				renderingOptionsSchema.shape.readMoreWording,
-			'renderingOptions.readMoreUrl': renderingOptionsSchema.shape.readMoreUrl,
-		})
-		.describe('Input the Read More setup'),
+	readMore: pickAndPrefixRenderingOption([
+		'readMoreSubheading',
+		'readMoreWording',
+		'readMoreUrl',
+	]).describe('Input the Read More setup'),
 
 	tags: z
 		.object({
