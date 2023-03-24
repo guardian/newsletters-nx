@@ -3,10 +3,8 @@ import { ZodObject, ZodOptional } from 'zod';
 import type { DraftNewsletterData } from './newsletter-data-type';
 import { draftNewsletterDataSchema } from './newsletter-data-type';
 
-export type FormDataRecord = Record<
-	string,
-	string | number | boolean | undefined | Date | string[]
->;
+type SupportedValue = string | number | boolean | undefined | Date | string[];
+export type FormDataRecord = Record<string, SupportedValue>;
 
 /**
  * Finds all key/value pairs on the **formData** where the key starts with
@@ -149,7 +147,7 @@ function addDestructuredObjectValues(
 
 	Object.entries(nestedObject).forEach(([subKey, value]) => {
 		const combinedKey = [fieldKey, subKey].join('.');
-		target[combinedKey] = value;
+		target[combinedKey] = value as SupportedValue;
 	});
 }
 
