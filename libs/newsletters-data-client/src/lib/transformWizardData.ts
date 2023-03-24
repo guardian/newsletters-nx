@@ -1,6 +1,9 @@
 import type { ZodRawShape } from 'zod';
-import { ZodObject } from 'zod';
-import type { NewsletterData } from './newsletter-data-type';
+import { ZodObject, ZodOptional } from 'zod';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from './newsletter-data-type';
 import { newsletterDataSchema } from './newsletter-data-type';
 
 export type FormDataRecord = Record<
@@ -70,7 +73,7 @@ export const formDataToPartialNewsletter = (
 
 function addDestructuredObjectValues(
 	fieldKey: keyof NewsletterData,
-	source: Partial<NewsletterData>,
+	source: DraftNewsletterData,
 	target: FormDataRecord,
 ) {
 	const nestedObject = source[fieldKey];
@@ -88,7 +91,7 @@ function addDestructuredObjectValues(
 }
 
 export const partialNewsletterToFormData = (
-	partialNewsletter: Partial<NewsletterData>,
+	partialNewsletter: DraftNewsletterData,
 ): FormDataRecord => {
 	const output: FormDataRecord = {};
 

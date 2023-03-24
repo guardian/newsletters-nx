@@ -12,15 +12,18 @@ import {
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import type { Draft } from '@newsletters-nx/newsletters-data-client';
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
 
 interface Props {
-	draft: Draft;
+	draft: DraftNewsletterData;
 }
 
-const propertyToString = (draft: Draft, key: keyof Draft) => {
+const propertyToString = (
+	draft: DraftNewsletterData,
+	key: keyof DraftNewsletterData,
+) => {
 	const value = draft[key];
 
 	switch (typeof value) {
@@ -86,7 +89,7 @@ export const DraftDetails = ({ draft }: Props) => {
 										{key}
 									</TableCell>
 									<TableCell>
-										{propertyToString(draft, key as keyof Draft)}
+										{propertyToString(draft, key as keyof DraftNewsletterData)}
 									</TableCell>
 								</TableRow>
 							))}

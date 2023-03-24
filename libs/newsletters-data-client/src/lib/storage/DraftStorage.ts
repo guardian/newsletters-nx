@@ -1,11 +1,10 @@
-import type { NewsletterData } from '../newsletter-data-type';
-import { ispartialNewsletterData } from '../newsletter-data-type';
+import type { DraftNewsletterData } from '../newsletter-data-type';
+import { isDraftNewsletterData } from '../newsletter-data-type';
 
-export type Draft = Partial<NewsletterData>;
-export type DraftWithoutId = Draft & { listId: undefined };
-export type DraftWithId = Draft & { listId: number };
+export type DraftWithoutId = DraftNewsletterData & { listId: undefined };
+export type DraftWithId = DraftNewsletterData & { listId: number };
 
-export const isDraft = ispartialNewsletterData;
+export const isDraft = isDraftNewsletterData;
 
 export enum StorageRequestFailureReason {
 	NotFound,
