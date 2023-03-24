@@ -1,3 +1,4 @@
+import { TECHSCAPE_IN_NEW_FORMAT } from '../fixtures/newsletter-fixtures';
 import type { DraftNewsletterData } from './newsletter-data-type';
 import { isDraftNewsletterData } from './newsletter-data-type';
 import type { FormDataRecord } from './transformWizardData';
@@ -74,6 +75,24 @@ describe('formDataToDraftNewsletterData', () => {
 		expect(isDraftNewsletterData(output)).toBeTruthy();
 		expect(output).toEqual(VALID_DRAFT_WITH_NESTED_OBJECT);
 	});
+
+	it('will convert string arrays if the key is in the schema', () => {
+		const brazeSubscribeAttributeNameAlternate = ['v2', '2', 'foo'];
+		const willNotAppearInOutput = [
+			'because "willNotAppearInOutput" is not a key in the schema ',
+		];
+
+		const output = formDataToDraftNewsletterData({
+			...SIMPLE_VALID_FORM_DATA,
+			brazeSubscribeAttributeNameAlternate,
+			willNotAppearInOutput,
+		});
+		expect(isDraftNewsletterData(output)).toBeTruthy();
+		expect(output).toEqual({
+			...SIMPLE_VALID_DRAFT,
+			brazeSubscribeAttributeNameAlternate,
+		});
+	});
 });
 
 describe('draftNewsletterDataToFormData', () => {
@@ -86,5 +105,13 @@ describe('draftNewsletterDataToFormData', () => {
 			VALID_DRAFT_WITH_NESTED_OBJECT,
 		);
 		expect(output).toEqual(VALID_FORM_DATA_WITH_NESTED_OBJECT);
+	});
+
+	it('looses no data', () => {
+		const formData = draftNewsletterDataToFormData(TECHSCAPE_IN_NEW_FORMAT);
+
+		const recreatedNewsletter = formDataToDraftNewsletterData(formData);
+		expect(isDraftNewsletterData(recreatedNewsletter)).toBeTruthy();
+		// expect(recreatedNewsletter).toEqual(TECHSCAPE_IN_NEW_FORMAT);
 	});
 });

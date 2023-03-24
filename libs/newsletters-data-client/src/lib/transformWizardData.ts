@@ -5,7 +5,7 @@ import { draftNewsletterDataSchema } from './newsletter-data-type';
 
 export type FormDataRecord = Record<
 	string,
-	string | number | boolean | undefined | Date
+	string | number | boolean | undefined | Date | string[]
 >;
 
 /**
@@ -54,6 +54,14 @@ const buildObjectValue = (
 	return parseResult.success ? parseResult.data : undefined;
 };
 
+const recursiveUnwrap = (optional: ZodOptional<ZodTypeAny>): ZodTypeAny => {
+	const unwrapped = optional.unwrap();
+	if (unwrapped instanceof ZodOptional) {
+		return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
+	}
+	return unwrapped;
+};
+
 /**
  * Takes any Zod schema, if it is an optional, unwraps the schema recursively
  * to get to the underlying schema.
@@ -64,14 +72,6 @@ const buildObjectValue = (
 const getObjectSchemaIfObject = (
 	field: ZodTypeAny,
 ): ZodObject<ZodRawShape> | undefined => {
-	const recursiveUnwrap = (optional: ZodOptional<ZodTypeAny>): ZodTypeAny => {
-		const unwrapped = optional.unwrap();
-		if (unwrapped instanceof ZodOptional) {
-			return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
-		}
-		return unwrapped;
-	};
-
 	if (field instanceof ZodObject) {
 		return field;
 	}
@@ -97,7 +97,6 @@ export const formDataToDraftNewsletterData = (
 		const castKey = key as keyof DraftNewsletterData;
 		const recordValue = formData[castKey];
 		const fieldSchema = draftNewsletterDataSchema.shape[castKey];
-
 		const objectSchema = getObjectSchemaIfObject(fieldSchema);
 		if (objectSchema) {
 			const objectValue = buildObjectValue(castKey, objectSchema, formData);
@@ -162,8 +161,11 @@ export const draftNewsletterDataToFormData = (
 				output[castkey] = valueOnPartial;
 				break;
 			case 'object': {
-				if (Array.isArray(valueOnPartial)) {
-					console.log('NOT SUPPORTING ARRAYS');
+				if (
+					Array.isArray(valueOnPartial) &&
+					valueOnPartial.every((item) => typeof item === 'string')
+				) {
+					output[castkey] = [...valueOnPartial];
 				} else {
 					addDestructuredObjectValues(castkey, partialNewsletter, output);
 				}
