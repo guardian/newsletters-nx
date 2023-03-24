@@ -1,13 +1,11 @@
 import type {
 	DraftStorage,
+	FormDataRecord,
 	WIZARD_BUTTON_TYPES,
 } from '@newsletters-nx/newsletters-data-client';
 import type { ZodObject, ZodRawShape } from 'zod';
 
-export type WizardFormData = Record<
-	string,
-	string | number | boolean | undefined | Date
->;
+export type WizardFormData = FormDataRecord;
 
 /**
  * Interface for a button displayed in the wizard.

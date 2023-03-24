@@ -42,20 +42,24 @@ const buildObjectValue = (
 	}
 
 	const parseResult = objectSchema.safeParse(output);
-	if (!parseResult.success) {
-		console.warn(
-			`buildObjectValue for ${fieldKey} failed:`,
-			parseResult.error.issues.map((issue) => [
-				issue.path.join(),
-				issue.message,
-			]),
-		);
-	}
+	// if (!parseResult.success) {
+	// 	console.warn(
+	// 		`buildObjectValue for ${fieldKey} failed:`,
+	// 		parseResult.error.issues.map((issue) => [
+	// 			issue.path.join(),
+	// 			issue.message,
+	// 		]),
+	// 	);
+	// }
 	return parseResult.success ? parseResult.data : undefined;
 };
 
-const recursiveUnwrap = (optional: ZodOptional<ZodTypeAny>): ZodTypeAny => {
-	const unwrapped = optional.unwrap();
+const recursiveUnwrap = (field: ZodTypeAny): ZodTypeAny => {
+	if (!(field instanceof ZodOptional)) {
+		return field;
+	}
+
+	const unwrapped = field.unwrap() as ZodTypeAny;
 	if (unwrapped instanceof ZodOptional) {
 		return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
 	}
@@ -109,15 +113,20 @@ export const formDataToDraftNewsletterData = (
 		if (typeof recordValue === 'undefined') {
 			continue;
 		}
+
+		// If the fieldSchema is z.coerce.date() and the recordValue is a string,
+		// the safeParse function will attempt to parse the string to a Date object.
+		// If recordValue is a Date, safeParse clones that Date.
+		// IE no special handling is need for Dates values being stored as Dates or
+		// having been stringified.
 		const parsedRecordValue = fieldSchema.safeParse(recordValue);
 		if (parsedRecordValue.success) {
 			output[castKey] = parsedRecordValue.data;
 		} else {
-			console.warn('WRONG VALUE', castKey, recordValue);
-			console.log(parsedRecordValue.error.issues.map((i) => i.message));
+			// console.warn('WRONG VALUE', castKey, recordValue);
+			// console.log(parsedRecordValue.error.issues.map((i) => i.message));
 		}
 	}
-
 	const finalParseResult = draftNewsletterDataSchema.safeParse(output);
 	if (!finalParseResult.success) {
 		throw finalParseResult.error;
@@ -161,6 +170,9 @@ export const draftNewsletterDataToFormData = (
 				output[castkey] = valueOnPartial;
 				break;
 			case 'object': {
+				if (valueOnPartial instanceof Date) {
+					output[castkey] = new Date(valueOnPartial.valueOf());
+				}
 				if (
 					Array.isArray(valueOnPartial) &&
 					valueOnPartial.every((item) => typeof item === 'string')

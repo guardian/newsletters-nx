@@ -43,6 +43,17 @@ const VALID_DRAFT_WITH_NESTED_OBJECT: DraftNewsletterData = {
 	},
 };
 
+const FORM_DATA_WITH_DATES: FormDataRecord = {
+	name: 'test name',
+	signUpPageDate: new Date('10-10-2020').toDateString(),
+	thrasherDate: new Date('10-10-2021'),
+};
+const DRAFT_WITH_DATES: DraftNewsletterData = {
+	name: 'test name',
+	signUpPageDate: new Date('10-10-2020'),
+	thrasherDate: new Date('10-10-2021'),
+};
+
 describe('formDataToDraftNewsletterData', () => {
 	it('will convert valid simple values', () => {
 		const output = formDataToDraftNewsletterData(SIMPLE_VALID_FORM_DATA);
@@ -93,6 +104,11 @@ describe('formDataToDraftNewsletterData', () => {
 			brazeSubscribeAttributeNameAlternate,
 		});
 	});
+
+	it('manages Date conversions, for dates stored as strings or Date objects', () => {
+		const output = formDataToDraftNewsletterData(FORM_DATA_WITH_DATES);
+		expect(output).toEqual(DRAFT_WITH_DATES);
+	});
 });
 
 describe('draftNewsletterDataToFormData', () => {
@@ -107,11 +123,20 @@ describe('draftNewsletterDataToFormData', () => {
 		expect(output).toEqual(VALID_FORM_DATA_WITH_NESTED_OBJECT);
 	});
 
+	it('converts Dates from the draft to Dates on the form', () => {
+		const outputFormData = draftNewsletterDataToFormData(DRAFT_WITH_DATES);
+		expect(outputFormData['signUpPageDate']).toEqual(
+			new Date(FORM_DATA_WITH_DATES['signUpPageDate'] as Date | string),
+		);
+		expect(outputFormData['thrasherDate']).toEqual(
+			new Date(FORM_DATA_WITH_DATES['thrasherDate'] as Date | string),
+		);
+	});
+
 	it('looses no data', () => {
 		const formData = draftNewsletterDataToFormData(TECHSCAPE_IN_NEW_FORMAT);
-
 		const recreatedNewsletter = formDataToDraftNewsletterData(formData);
 		expect(isDraftNewsletterData(recreatedNewsletter)).toBeTruthy();
-		// expect(recreatedNewsletter).toEqual(TECHSCAPE_IN_NEW_FORMAT);
+		expect(recreatedNewsletter).toEqual(TECHSCAPE_IN_NEW_FORMAT);
 	});
 });
