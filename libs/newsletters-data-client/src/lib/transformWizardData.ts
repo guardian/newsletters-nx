@@ -40,15 +40,6 @@ const buildObjectValue = (
 	}
 
 	const parseResult = objectSchema.safeParse(output);
-	// if (!parseResult.success) {
-	// 	console.warn(
-	// 		`buildObjectValue for ${fieldKey} failed:`,
-	// 		parseResult.error.issues.map((issue) => [
-	// 			issue.path.join(),
-	// 			issue.message,
-	// 		]),
-	// 	);
-	// }
 	return parseResult.success ? parseResult.data : undefined;
 };
 
@@ -86,10 +77,6 @@ const getObjectSchemaIfObject = (
 	return undefined;
 };
 
-/**
- * TO DO: support Date conversions
- * TO DO: support Arrays
- */
 export const formDataToDraftNewsletterData = (
 	formData: FormDataRecord,
 ): DraftNewsletterData => {
@@ -120,9 +107,6 @@ export const formDataToDraftNewsletterData = (
 		const parsedRecordValue = fieldSchema.safeParse(recordValue);
 		if (parsedRecordValue.success) {
 			output[castKey] = parsedRecordValue.data;
-		} else {
-			// console.warn('WRONG VALUE', castKey, recordValue);
-			// console.log(parsedRecordValue.error.issues.map((i) => i.message));
 		}
 	}
 	const finalParseResult = draftNewsletterDataSchema.safeParse(output);
