@@ -170,8 +170,7 @@ export const draftNewsletterDataToFormData = (
 			case 'object': {
 				if (valueOnPartial instanceof Date) {
 					output[castkey] = new Date(valueOnPartial.valueOf());
-				}
-				if (
+				} else if (
 					Array.isArray(valueOnPartial) &&
 					valueOnPartial.every((item) => typeof item === 'string')
 				) {
