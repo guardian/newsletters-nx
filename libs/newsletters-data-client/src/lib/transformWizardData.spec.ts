@@ -2,7 +2,7 @@ import type { DraftNewsletterData } from './newsletter-data-type';
 import { isDraftNewsletterData } from './newsletter-data-type';
 import type { FormDataRecord } from './transformWizardData';
 import {
-	formDataToPartialNewsletter,
+	formDataToDraftNewsletterData,
 	partialNewsletterToFormData,
 } from './transformWizardData';
 
@@ -44,12 +44,12 @@ const VALID_DRAFT_WITH_NESTED_OBJECT: DraftNewsletterData = {
 
 describe('formDataToPartialNewsletter', () => {
 	it('will convert valid simple values', () => {
-		const output = formDataToPartialNewsletter(SIMPLE_VALID_FORM_DATA);
+		const output = formDataToDraftNewsletterData(SIMPLE_VALID_FORM_DATA);
 		expect(isDraftNewsletterData(output)).toBeTruthy();
 		expect(output).toEqual(SIMPLE_VALID_DRAFT);
 	});
 	it('will leave out fields not in the newsletterDataSchema', () => {
-		const output = formDataToPartialNewsletter({
+		const output = formDataToDraftNewsletterData({
 			...SIMPLE_VALID_FORM_DATA,
 			foo: 'bar',
 		});
@@ -57,7 +57,7 @@ describe('formDataToPartialNewsletter', () => {
 		expect(output).toEqual(SIMPLE_VALID_DRAFT);
 	});
 	it('will leave out values of the wrong type of which do not pass validation', () => {
-		const output = formDataToPartialNewsletter({
+		const output = formDataToDraftNewsletterData({
 			...SIMPLE_VALID_FORM_DATA,
 			brazeSubscribeAttributeName:
 				'This is not an acceptable value as it has spaces',
@@ -68,7 +68,7 @@ describe('formDataToPartialNewsletter', () => {
 	});
 
 	it('will convert to nested object values', () => {
-		const output = formDataToPartialNewsletter(
+		const output = formDataToDraftNewsletterData(
 			VALID_FORM_DATA_WITH_NESTED_OBJECT,
 		);
 		expect(isDraftNewsletterData(output)).toBeTruthy();

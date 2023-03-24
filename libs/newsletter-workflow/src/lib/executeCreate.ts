@@ -1,6 +1,6 @@
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
-	formDataToPartialNewsletter,
+	formDataToDraftNewsletterData,
 	partialNewsletterToFormData,
 } from '@newsletters-nx/newsletters-data-client';
 import {
@@ -46,7 +46,7 @@ export const executeCreate: AsyncExecution = async (
 				: {};
 
 		const draft: DraftNewsletterData = {
-			...formDataToPartialNewsletter({
+			...formDataToDraftNewsletterData({
 				...parseResult.data,
 			}),
 			...derivedFields,

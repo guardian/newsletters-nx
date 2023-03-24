@@ -8,14 +8,25 @@ export type FormDataRecord = Record<
 	string | number | boolean | undefined | Date
 >;
 
-function buildObjectValue(
-	fieldKey: string,
+/**
+ * Finds all key/value pairs on the **formData** where the key starts with
+ * the given **fieldKey** and builds a record of using those key/value pairs,
+ * but with the prefix removed from the key e.g. for the fieldKey "person"
+ *
+ * `{"person.name":"Bob", "person.age":32, time:204}` => `{name:"Bob", age:32}`
+ *
+ * Returns the new record, if it matches the **objectSchema**, if not returns
+ * undefined.
+ *
+ * If there are no keys on the **formData** that start with the prefix
+ * returns undefined rather than an empty object
+ */
+const buildObjectValue = (
+	fieldKey: keyof DraftNewsletterData,
 	objectSchema: ZodObject<ZodRawShape>,
 	formData: FormDataRecord,
-) {
-	// if there are no values in the form data that are properties in the
-	// nest object, return undefined rather than an empty object
-	if (!Object.keys(formData).some((key) => key.startsWith(fieldKey))) {
+): Record<string, unknown> | undefined => {
+	if (!Object.keys(formData).some((key) => key.startsWith(`${fieldKey}.`))) {
 		return undefined;
 	}
 
@@ -41,9 +52,16 @@ function buildObjectValue(
 		);
 	}
 	return parseResult.success ? parseResult.data : undefined;
-}
+};
 
-const deepUnwrapOptionalObject = (
+/**
+ * Takes any Zod schema, if it is an optional, unwraps the schema recursively
+ * to get to the underlying schema.
+ *
+ * If the original schema or underlying is a ZodObject, returns that ZodObject,
+ * otherwise returns undefined.
+ */
+const getObjectSchemaIfObject = (
 	field: ZodTypeAny,
 ): ZodObject<ZodRawShape> | undefined => {
 	const recursiveUnwrap = (optional: ZodOptional<ZodTypeAny>): ZodTypeAny => {
@@ -70,25 +88,21 @@ const deepUnwrapOptionalObject = (
  * TO DO: support Date conversions
  * TO DO: support Arrays
  */
-export const formDataToPartialNewsletter = (
+export const formDataToDraftNewsletterData = (
 	formData: FormDataRecord,
 ): DraftNewsletterData => {
 	const output: Record<string, unknown> = {};
 
 	for (const key in draftNewsletterDataSchema.shape) {
-		const recordValue = formData[key];
-		const fieldSchema =
-			draftNewsletterDataSchema.shape[key as keyof DraftNewsletterData];
+		const castKey = key as keyof DraftNewsletterData;
+		const recordValue = formData[castKey];
+		const fieldSchema = draftNewsletterDataSchema.shape[castKey];
 
-		const underlyingObjectSchema = deepUnwrapOptionalObject(fieldSchema);
-		if (underlyingObjectSchema) {
-			const objectValue = buildObjectValue(
-				key,
-				underlyingObjectSchema,
-				formData,
-			);
+		const objectSchema = getObjectSchemaIfObject(fieldSchema);
+		if (objectSchema) {
+			const objectValue = buildObjectValue(castKey, objectSchema, formData);
 			if (objectValue) {
-				output[key] = objectValue;
+				output[castKey] = objectValue;
 			}
 			continue;
 		}
@@ -98,9 +112,9 @@ export const formDataToPartialNewsletter = (
 		}
 		const parsedRecordValue = fieldSchema.safeParse(recordValue);
 		if (parsedRecordValue.success) {
-			output[key] = parsedRecordValue.data;
+			output[castKey] = parsedRecordValue.data;
 		} else {
-			console.warn('WRONG VALUE', key, recordValue);
+			console.warn('WRONG VALUE', castKey, recordValue);
 			console.log(parsedRecordValue.error.issues.map((i) => i.message));
 		}
 	}

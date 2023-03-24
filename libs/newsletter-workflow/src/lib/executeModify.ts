@@ -3,7 +3,7 @@ import type {
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
 import {
-	formDataToPartialNewsletter,
+	formDataToDraftNewsletterData,
 	partialNewsletterToFormData,
 } from '@newsletters-nx/newsletters-data-client';
 import type {
@@ -34,7 +34,7 @@ export const executeModify: AsyncExecution = async (
 				listId: stepData.formData['listId'] as number,
 			};
 			const draftNewsletter: DraftWithId = {
-				...formDataToPartialNewsletter(stepData.formData),
+				...formDataToDraftNewsletterData(stepData.formData),
 				...listIdEntry,
 			};
 			const storageResponse = await storageInstance.modifyDraftNewsletter(
