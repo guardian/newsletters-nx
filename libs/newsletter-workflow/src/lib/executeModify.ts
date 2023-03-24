@@ -3,8 +3,8 @@ import type {
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
 import {
+	draftNewsletterDataToFormData,
 	formDataToDraftNewsletterData,
-	partialNewsletterToFormData,
 } from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
@@ -41,7 +41,7 @@ export const executeModify: AsyncExecution = async (
 				draftNewsletter,
 			);
 			if (storageResponse.ok) {
-				return partialNewsletterToFormData(storageResponse.data);
+				return draftNewsletterDataToFormData(storageResponse.data);
 			}
 			return storageResponse.message;
 		}

@@ -1,7 +1,7 @@
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
+	draftNewsletterDataToFormData,
 	formDataToDraftNewsletterData,
-	partialNewsletterToFormData,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	StateMachineError,
@@ -57,7 +57,7 @@ export const executeCreate: AsyncExecution = async (
 			listId: undefined,
 		});
 		if (storageResponse.ok) {
-			return partialNewsletterToFormData(storageResponse.data);
+			return draftNewsletterDataToFormData(storageResponse.data);
 		}
 
 		return storageResponse.message;

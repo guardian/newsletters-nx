@@ -145,7 +145,7 @@ function addDestructuredObjectValues(
 	});
 }
 
-export const partialNewsletterToFormData = (
+export const draftNewsletterDataToFormData = (
 	partialNewsletter: DraftNewsletterData,
 ): FormDataRecord => {
 	const output: FormDataRecord = {};

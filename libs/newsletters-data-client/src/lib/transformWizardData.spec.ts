@@ -2,8 +2,8 @@ import type { DraftNewsletterData } from './newsletter-data-type';
 import { isDraftNewsletterData } from './newsletter-data-type';
 import type { FormDataRecord } from './transformWizardData';
 import {
+	draftNewsletterDataToFormData,
 	formDataToDraftNewsletterData,
-	partialNewsletterToFormData,
 } from './transformWizardData';
 
 const SIMPLE_VALID_FORM_DATA: FormDataRecord = {
@@ -42,7 +42,7 @@ const VALID_DRAFT_WITH_NESTED_OBJECT: DraftNewsletterData = {
 	},
 };
 
-describe('formDataToPartialNewsletter', () => {
+describe('formDataToDraftNewsletterData', () => {
 	it('will convert valid simple values', () => {
 		const output = formDataToDraftNewsletterData(SIMPLE_VALID_FORM_DATA);
 		expect(isDraftNewsletterData(output)).toBeTruthy();
@@ -76,13 +76,15 @@ describe('formDataToPartialNewsletter', () => {
 	});
 });
 
-describe('partialNewsletterToFormData', () => {
+describe('draftNewsletterDataToFormData', () => {
 	it('manages simple conversions', () => {
-		const output = partialNewsletterToFormData(SIMPLE_VALID_DRAFT);
+		const output = draftNewsletterDataToFormData(SIMPLE_VALID_DRAFT);
 		expect(output).toEqual(SIMPLE_VALID_FORM_DATA);
 	});
 	it('manages nested object conversions', () => {
-		const output = partialNewsletterToFormData(VALID_DRAFT_WITH_NESTED_OBJECT);
+		const output = draftNewsletterDataToFormData(
+			VALID_DRAFT_WITH_NESTED_OBJECT,
+		);
 		expect(output).toEqual(VALID_FORM_DATA_WITH_NESTED_OBJECT);
 	});
 });

@@ -1,5 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import { partialNewsletterToFormData } from '@newsletters-nx/newsletters-data-client';
+import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type { CurrentStepRouteRequest, WizardStepData } from './types';
 
@@ -34,7 +34,7 @@ export async function setupInitialState(
 		);
 	}
 	return {
-		formData: partialNewsletterToFormData(storageResponse.data),
+		formData: draftNewsletterDataToFormData(storageResponse.data),
 		currentStepId: requestBody.stepId,
 	};
 }
