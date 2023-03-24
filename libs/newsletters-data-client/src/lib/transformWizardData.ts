@@ -1,21 +1,24 @@
-import type { ZodRawShape } from 'zod';
+import type { ZodRawShape, ZodTypeAny } from 'zod';
 import { ZodObject, ZodOptional } from 'zod';
-import type {
-	DraftNewsletterData,
-	NewsletterData,
-} from './newsletter-data-type';
-import { newsletterDataSchema } from './newsletter-data-type';
+import type { DraftNewsletterData } from './newsletter-data-type';
+import { draftNewsletterDataSchema } from './newsletter-data-type';
 
 export type FormDataRecord = Record<
 	string,
 	string | number | boolean | undefined | Date
 >;
 
-function buildObjectValue<T extends ZodRawShape>(
+function buildObjectValue(
 	fieldKey: string,
-	objectSchema: ZodObject<T>,
+	objectSchema: ZodObject<ZodRawShape>,
 	formData: FormDataRecord,
 ) {
+	// if there are no values in the form data that are properties in the
+	// nest object, return undefined rather than an empty object
+	if (!Object.keys(formData).some((key) => key.startsWith(fieldKey))) {
+		return undefined;
+	}
+
 	const output: Record<string, unknown> = {};
 
 	for (const subKey in objectSchema.shape) {
@@ -28,8 +31,40 @@ function buildObjectValue<T extends ZodRawShape>(
 	}
 
 	const parseResult = objectSchema.safeParse(output);
+	if (!parseResult.success) {
+		console.warn(
+			`buildObjectValue for ${fieldKey} failed:`,
+			parseResult.error.issues.map((issue) => [
+				issue.path.join(),
+				issue.message,
+			]),
+		);
+	}
 	return parseResult.success ? parseResult.data : undefined;
 }
+
+const deepUnwrapOptionalObject = (
+	field: ZodTypeAny,
+): ZodObject<ZodRawShape> | undefined => {
+	const recursiveUnwrap = (optional: ZodOptional<ZodTypeAny>): ZodTypeAny => {
+		const unwrapped = optional.unwrap();
+		if (unwrapped instanceof ZodOptional) {
+			return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
+		}
+		return unwrapped;
+	};
+
+	if (field instanceof ZodObject) {
+		return field;
+	}
+
+	if (field instanceof ZodOptional) {
+		const deepUnwrapped = recursiveUnwrap(field as ZodOptional<ZodTypeAny>);
+		return deepUnwrapped instanceof ZodObject ? deepUnwrapped : undefined;
+	}
+
+	return undefined;
+};
 
 /**
  * TO DO: support Date conversions
@@ -37,15 +72,21 @@ function buildObjectValue<T extends ZodRawShape>(
  */
 export const formDataToPartialNewsletter = (
 	formData: FormDataRecord,
-): Partial<NewsletterData> => {
+): DraftNewsletterData => {
 	const output: Record<string, unknown> = {};
 
-	for (const key in newsletterDataSchema.shape) {
+	for (const key in draftNewsletterDataSchema.shape) {
 		const recordValue = formData[key];
-		const fieldSchema = newsletterDataSchema.shape[key as keyof NewsletterData];
+		const fieldSchema =
+			draftNewsletterDataSchema.shape[key as keyof DraftNewsletterData];
 
-		if (fieldSchema instanceof ZodObject) {
-			const objectValue = buildObjectValue(key, fieldSchema, formData);
+		const underlyingObjectSchema = deepUnwrapOptionalObject(fieldSchema);
+		if (underlyingObjectSchema) {
+			const objectValue = buildObjectValue(
+				key,
+				underlyingObjectSchema,
+				formData,
+			);
 			if (objectValue) {
 				output[key] = objectValue;
 			}
@@ -64,7 +105,7 @@ export const formDataToPartialNewsletter = (
 		}
 	}
 
-	const finalParseResult = newsletterDataSchema.partial().safeParse(output);
+	const finalParseResult = draftNewsletterDataSchema.safeParse(output);
 	if (!finalParseResult.success) {
 		throw finalParseResult.error;
 	}
@@ -72,7 +113,7 @@ export const formDataToPartialNewsletter = (
 };
 
 function addDestructuredObjectValues(
-	fieldKey: keyof NewsletterData,
+	fieldKey: keyof DraftNewsletterData,
 	source: DraftNewsletterData,
 	target: FormDataRecord,
 ) {
@@ -95,8 +136,8 @@ export const partialNewsletterToFormData = (
 ): FormDataRecord => {
 	const output: FormDataRecord = {};
 
-	for (const key in newsletterDataSchema.shape) {
-		const castkey = key as keyof NewsletterData;
+	for (const key in draftNewsletterDataSchema.shape) {
+		const castkey = key as keyof DraftNewsletterData;
 		const valueOnPartial = partialNewsletter[castkey];
 
 		switch (typeof valueOnPartial) {
