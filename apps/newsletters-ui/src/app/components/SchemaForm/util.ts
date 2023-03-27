@@ -9,7 +9,13 @@ export interface FieldDef {
 	readOnly?: boolean;
 	arrayItemType?: 'string' | 'unsupported';
 }
-export type FieldValue = string | number | boolean | undefined | Date;
+export type FieldValue =
+	| string
+	| number
+	| boolean
+	| undefined
+	| Date
+	| string[];
 
 export type NumberInputSettings = {
 	min?: number;
@@ -40,6 +46,12 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 
 	if (field.type === 'ZodDate') {
 		return value instanceof Date;
+	}
+
+	if (field.type === 'ZodArray' && field.arrayItemType === 'string') {
+		return (
+			Array.isArray(value) && value.every((item) => typeof item === 'string')
+		);
 	}
 
 	switch (typeof value) {
@@ -79,7 +91,6 @@ export const fieldValueAsDisplayString = (field: FieldDef): string => {
 				if (field.value.every((item) => typeof item === 'string')) {
 					return `STRING ARRAY [${field.value.join()}]`;
 				}
-
 				return 'ARRAY';
 			}
 			return field.value ? field.value.toString() : 'NULL';

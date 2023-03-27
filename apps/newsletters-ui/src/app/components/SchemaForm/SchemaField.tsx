@@ -3,6 +3,7 @@ import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
+import { SchemaArrayInput } from './SchemaArrayInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
@@ -141,15 +142,18 @@ export function SchemaField<T extends z.ZodRawShape>({
 			);
 
 		case 'ZodArray':
-			return (
-				<fieldset>
-					<legend>
-						{field.type}: {field.key}
-					</legend>
-					<p>array type: {field.arrayItemType}</p>
-					<p>{fieldValueAsDisplayString(field)}</p>
-				</fieldset>
-			);
+			if (field.arrayItemType === 'string') {
+				if (
+					Array.isArray(value) &&
+					value.every((item) => typeof item === 'string')
+				) {
+					return (
+						<SchemaArrayInput {...standardProps} value={value as string[]} />
+					);
+				}
+			}
+
+			return <WrongTypeMessage field={field} />;
 
 		default:
 			if (showUnsupported) {
