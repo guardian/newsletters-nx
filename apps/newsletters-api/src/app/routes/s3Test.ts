@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { listObjects } from '../../services/s3/utils';
+import { getObject, listObjects } from '../../services/s3/utils';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 export function registerS3TestRoutes(app: FastifyInstance) {
@@ -10,6 +10,23 @@ export function registerS3TestRoutes(app: FastifyInstance) {
 			const listOfKeys = Contents.map((item) => item.Key);
 
 			return makeSuccessResponse(listOfKeys);
+		} catch (err) {
+			console.warn(err);
+			return res.status(500).send(makeErrorResponse(`listObjects failed`));
+		}
+	});
+
+	app.get('/api/s3-test/get', async (req, res) => {
+		try {
+			const output = await getObject('newsletters.local.json');
+
+			const { Body } = output;
+
+			// to do - parse the conents more carefully - might not be valid json
+			const content = await Body?.transformToString();
+			const json = JSON.parse(content ?? '') as unknown[];
+
+			return makeSuccessResponse(json);
 		} catch (err) {
 			console.warn(err);
 			return res.status(500).send(makeErrorResponse(`listObjects failed`));

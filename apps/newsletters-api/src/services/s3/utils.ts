@@ -1,5 +1,5 @@
+import { GetObjectCommand, ListObjectsCommand } from '@aws-sdk/client-s3';
 import type AWS_S3 from '@aws-sdk/client-s3';
-import { ListObjectsCommand } from '@aws-sdk/client-s3';
 import { BUCKET, s3Client } from './credentials';
 
 export const listObjects = async (
@@ -13,6 +13,15 @@ export const listObjects = async (
 	};
 
 	return s3Client.send(new ListObjectsCommand(input));
+};
+
+export const getObject = async (key: string) => {
+	const input: AWS_S3.GetObjectCommandInput = {
+		Bucket: BUCKET,
+		Key: key,
+	};
+
+	return s3Client.send(new GetObjectCommand(input));
 };
 
 // /**
