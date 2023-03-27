@@ -1,3 +1,8 @@
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	draftNewsletterDataToFormData,
+	formDataToDraftNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import {
 	StateMachineError,
 	StateMachineErrorCode,
@@ -39,17 +44,20 @@ export const executeCreate: AsyncExecution = async (
 			typeof parseResult.data.name === 'string' && !!parseResult.data.name
 				? calculateFieldsFromName(parseResult.data.name)
 				: {};
-		const storageResponse = await storageInstance.createDraftNewsletter({
-			...parseResult.data,
+
+		const draft: DraftNewsletterData = {
+			...formDataToDraftNewsletterData({
+				...parseResult.data,
+			}),
 			...derivedFields,
+		};
+
+		const storageResponse = await storageInstance.createDraftNewsletter({
+			...draft,
 			listId: undefined,
 		});
 		if (storageResponse.ok) {
-			console.log(
-				'createNewsletter step has updated storage.',
-				storageInstance,
-			);
-			return storageResponse.data;
+			return draftNewsletterDataToFormData(storageResponse.data);
 		}
 
 		return storageResponse.message;

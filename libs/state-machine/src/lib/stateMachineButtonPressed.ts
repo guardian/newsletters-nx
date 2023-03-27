@@ -94,9 +94,6 @@ export async function stateMachineButtonPressed(
 		};
 	}
 
-	console.log('executionResult');
-	console.table(executionResult);
-
 	return {
 		currentStepId: buttonPressedDetails.stepToMoveTo,
 		formData: executionResult,

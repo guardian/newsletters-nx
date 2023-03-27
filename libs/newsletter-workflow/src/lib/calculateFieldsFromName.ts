@@ -1,9 +1,11 @@
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { deriveNewsletterFieldsFromName } from '@newsletters-nx/newsletters-data-client';
-import type { WizardFormData } from '@newsletters-nx/state-machine';
 
-export const calculateFieldsFromName = (formName: string): WizardFormData => {
+export const calculateFieldsFromName = (
+	formName: string,
+): Partial<NewsletterData> => {
 	const derivedFields = deriveNewsletterFieldsFromName(formName);
-	const updatedFormData: Partial<WizardFormData> = {
+	const updatedFormData: Partial<NewsletterData> = {
 		...{
 			identityName: derivedFields.identityName,
 		},
@@ -20,7 +22,7 @@ export const calculateFieldsFromName = (formName: string): WizardFormData => {
 		...{
 			brazeSubscribeAttributeNameAlternate:
 				derivedFields.brazeSubscribeAttributeNameAlternate
-					? derivedFields.brazeSubscribeAttributeNameAlternate[0]
+					? derivedFields.brazeSubscribeAttributeNameAlternate
 					: undefined,
 		},
 		...{ campaignName: derivedFields.campaignName },
