@@ -1,4 +1,5 @@
 import type { FormEvent } from 'react';
+import { isStringArray } from '../../util';
 
 export interface FieldDef {
 	key: string;
@@ -49,9 +50,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	}
 
 	if (field.type === 'ZodArray' && field.arrayItemType === 'string') {
-		return (
-			Array.isArray(value) && value.every((item) => typeof item === 'string')
-		);
+		return isStringArray(value);
 	}
 
 	switch (typeof value) {
@@ -87,10 +86,10 @@ export const fieldValueAsDisplayString = (field: FieldDef): string => {
 		case 'number':
 			return field.value.toString();
 		case 'object':
+			if (isStringArray(field.value)) {
+				return `STRING ARRAY [${field.value.join()}]`;
+			}
 			if (Array.isArray(field.value)) {
-				if (field.value.every((item) => typeof item === 'string')) {
-					return `STRING ARRAY [${field.value.join()}]`;
-				}
 				return 'ARRAY';
 			}
 			return field.value ? field.value.toString() : 'NULL';
