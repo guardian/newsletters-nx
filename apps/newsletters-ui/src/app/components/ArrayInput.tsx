@@ -42,9 +42,9 @@ export const ArrayInput = ({
 	};
 
 	return (
-		<Box paddingY={2} borderTop={1} borderBottom={1}>
+		<Box padding={2} border={1} borderColor={''} borderRadius={1}>
 			<Badge badgeContent={data.length} color="primary">
-				<Typography sx={{ fontWeight: 700 }}>{label}</Typography>
+				<Typography sx={{ fontWeight: 700, fontSize: 12 }}>{label}</Typography>
 			</Badge>
 			{validationWarning && (
 				<Alert severity="warning">{validationWarning}</Alert>
@@ -59,7 +59,7 @@ export const ArrayInput = ({
 
 				{data.map((item, index) => (
 					<Fragment key={index}>
-						<Grid item xs={10}>
+						<Grid item xs={9}>
 							<TextField
 								variant="standard"
 								fullWidth
@@ -67,7 +67,7 @@ export const ArrayInput = ({
 								onChange={(event) => handleInput(event, index)}
 							/>
 						</Grid>
-						<Grid item xs={2}>
+						<Grid item xs={3}>
 							<Button
 								size="small"
 								color="error"
@@ -83,7 +83,7 @@ export const ArrayInput = ({
 					</Fragment>
 				))}
 
-				<Grid item xs={10}>
+				<Grid item xs={9}>
 					<Button
 						fullWidth
 						size="small"
