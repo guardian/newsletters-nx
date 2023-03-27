@@ -1,7 +1,7 @@
 $schema: 'https://raw.githubusercontent.com/guardian/riff-raff/master/contrib/riff-raff-yaml-schema.json'
 stacks: [newsletters]
 regions: [eu-west-1]
-allowedStages: [CODE, PROD] # TODO: add PROD stage
+allowedStages: [CODE, PROD]
 templates:
   cloudformation-template:
     type: cloud-formation
