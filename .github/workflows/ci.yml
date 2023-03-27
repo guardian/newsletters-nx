@@ -78,4 +78,3 @@ jobs:
               - cdk/cdk.out/NewslettersTool-PROD.template.json
             newsletters-tool:
               - dist/newsletters-tool.zip
-          deploy: true
