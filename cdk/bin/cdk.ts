@@ -1,7 +1,6 @@
 import 'source-map-support/register';
 import { App } from 'aws-cdk-lib';
 import { NewslettersTool } from '../lib/newsletters-tool';
-import { NewslettersApi } from '../lib/newsletters-api';
 
 const app = new App();
 
@@ -20,29 +19,9 @@ new NewslettersTool(app, 'NewslettersTool-CODE', {
 	app: newslettersToolAppName,
 	domainName: `${newslettersToolAppName}.code.dev-gutools.co.uk`,
 });
-
-// new NewslettersTool(app, 'NewslettersTool-PROD', {
-// 	...sharedProps,
-// 	stage: 'PROD',
-// 	app: newslettersToolAppName,
-// 	domainName: `${newslettersToolAppName}.gutools.co.uk`,
-// });
-
-/** The read-only newsletters API */
-const newslettersApiAppName = 'newsletters-api';
-
-new NewslettersApi(app, 'NewslettersApi-CODE', {
+new NewslettersTool(app, 'NewslettersTool-PROD', {
 	...sharedProps,
-	stage: 'CODE',
-	app: newslettersApiAppName,
-	/** @todo - this ought to be a .guardianapis.co.uk domain */
-	domainName: `${newslettersApiAppName}.code.dev-gutools.co.uk`,
+	stage: 'PROD',
+	app: newslettersToolAppName,
+	domainName: `${newslettersToolAppName}.gutools.co.uk`,
 });
-
-// new NewslettersApi(app, 'NewslettersApi-PROD', {
-// 	...sharedProps,
-// 	stage: 'PROD',
-// 	app: newslettersApiAppName,
-// /** @todo - this ought to be a .guardianapis.co.uk domain */
-// 	domainName: `${newslettersApiAppName}.gutools.co.uk`,
-// });

@@ -1,7 +1,7 @@
 $schema: 'https://raw.githubusercontent.com/guardian/riff-raff/master/contrib/riff-raff-yaml-schema.json'
 stacks: [newsletters]
 regions: [eu-west-1]
-allowedStages: [CODE] # TODO: add PROD stage
+allowedStages: [CODE, PROD] # TODO: add PROD stage
 templates:
   cloudformation-template:
     type: cloud-formation
@@ -24,24 +24,10 @@ deployments:
       cloudFormationStackName: newsletters-tool
       amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
       templateStagePaths:
-        CODE: NewslettersTool-CODE.template.json # TODO: add PROD stage path
+        CODE: NewslettersTool-CODE.template.json
+        PROD: NewslettersTool-PROD.template.json
+
   # Newsletters internal tool autoscaling deployment
   newsletters-tool:
     template: autoscaling-template
     dependencies: [newsletters-tool-cfn]
-
-  # Need to restrict riffraff deployment to do API OR Tool but not both...
-
-  # Newsletters API cloudformation deployment
-  # newsletters-api-cfn:
-  #   template: cloudformation-template
-  #   app: newsletters-api
-  #   parameters:
-  #     cloudFormationStackName: newsletters-api
-  #     amiParameter: AMINewslettersapi # please don't change this unless you know what you're doing
-  #     templateStagePaths:
-  #       CODE: NewslettersApi-CODE.template.json # TODO: add PROD stage path
-  # # Newsletters API autoscaling deployment
-  # newsletters-api:
-  #   template: autoscaling-template
-  #   dependencies: [newsletters-api-cfn]
