@@ -140,7 +140,6 @@ export const formSchemas = {
 		.pick({
 			signUpPageDate: true,
 			thrasherDate: true,
-			brazeSubscribeAttributeNameAlternate: true,
 		})
 		.describe('choose the dates you want promotions to appear'),
 };

@@ -84,7 +84,9 @@ export const newsletterDataSchema = z.object({
 	}),
 	campaignName: z.string().optional(),
 	campaignCode: z.string().optional(),
-	brazeSubscribeAttributeNameAlternate: z.array(z.string()).optional(),
+	brazeSubscribeAttributeNameAlternate: z
+		.array(underscoreCasedString())
+		.optional(),
 	signupPage: z.string().optional(),
 	exampleUrl: z.string().optional(),
 	designBriefDoc: z.string().optional(),

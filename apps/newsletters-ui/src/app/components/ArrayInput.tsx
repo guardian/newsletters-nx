@@ -46,9 +46,6 @@ export const ArrayInput = ({
 			<Badge badgeContent={data.length} color="primary">
 				<Typography sx={{ fontWeight: 700, fontSize: 12 }}>{label}</Typography>
 			</Badge>
-			{validationWarning && (
-				<Alert severity="warning">{validationWarning}</Alert>
-			)}
 
 			<Grid container alignItems={'center'} rowSpacing={1} columnSpacing={2}>
 				{data.length === 0 && (
@@ -98,6 +95,10 @@ export const ArrayInput = ({
 					</Button>
 				</Grid>
 			</Grid>
+
+			{validationWarning && (
+				<Alert severity="warning">{validationWarning}</Alert>
+			)}
 		</Box>
 	);
 };

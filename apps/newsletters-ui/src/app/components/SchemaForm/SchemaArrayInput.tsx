@@ -17,7 +17,12 @@ export const SchemaArrayInput: FunctionComponent<
 
 	return (
 		<div css={defaultFieldStyle}>
-			<ArrayInput data={value} label={label ?? ''} change={sendValue} />
+			<ArrayInput
+				data={value}
+				label={label ?? ''}
+				change={sendValue}
+				validationWarning={props.error}
+			/>
 		</div>
 	);
 };
