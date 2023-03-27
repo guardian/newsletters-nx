@@ -144,11 +144,10 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 		case 'ZodArray':
 			if (field.arrayItemType === 'string') {
-				if (isStringArray(value)) {
-					return <SchemaArrayInput {...standardProps} value={value} />;
+				if (isStringArray(value) || typeof value === 'undefined') {
+					return <SchemaArrayInput {...standardProps} value={value ?? []} />;
 				}
 			}
-
 			return <WrongTypeMessage field={field} />;
 
 		default:
