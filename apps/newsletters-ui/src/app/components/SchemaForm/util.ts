@@ -1,5 +1,4 @@
 import type { FormEvent } from 'react';
-import { z } from 'zod';
 
 export interface FieldDef {
 	key: string;
@@ -8,6 +7,7 @@ export interface FieldDef {
 	value: unknown;
 	enumOptions?: string[];
 	readOnly?: boolean;
+	arrayItemType?: 'string' | 'unsupported';
 }
 export type FieldValue = string | number | boolean | undefined | Date;
 
@@ -76,6 +76,10 @@ export const fieldValueAsDisplayString = (field: FieldDef): string => {
 			return field.value.toString();
 		case 'object':
 			if (Array.isArray(field.value)) {
+				if (field.value.every((item) => typeof item === 'string')) {
+					return `STRING ARRAY [${field.value.join()}]`;
+				}
+
 				return 'ARRAY';
 			}
 			return field.value ? field.value.toString() : 'NULL';

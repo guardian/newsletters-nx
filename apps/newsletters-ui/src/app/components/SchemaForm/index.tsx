@@ -1,4 +1,5 @@
-import type { z } from 'zod';
+import type { z, ZodTypeAny } from 'zod';
+import { ZodArray, ZodOptional, ZodString } from 'zod';
 import { SchemaField } from './SchemaField';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 
@@ -15,6 +16,29 @@ interface Props<T extends z.ZodRawShape> {
 	readOnlyKeys?: string[];
 	validationWarnings: Partial<Record<keyof T, string>>;
 }
+
+const recursiveUnwrap = (field: ZodTypeAny): ZodTypeAny => {
+	if (!(field instanceof ZodOptional)) {
+		return field;
+	}
+	const unwrapped = field.unwrap() as ZodTypeAny;
+	if (unwrapped instanceof ZodOptional) {
+		return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
+	}
+	return unwrapped;
+};
+
+const getArrayItemType = (zod: ZodTypeAny): FieldDef['arrayItemType'] => {
+	const unwrappedZod = recursiveUnwrap(zod);
+	if (!(unwrappedZod instanceof ZodArray)) {
+		return undefined;
+	}
+	const elementSchema = unwrappedZod.element as ZodTypeAny;
+	if (elementSchema instanceof ZodString) {
+		return 'string';
+	}
+	return 'unsupported';
+};
 
 /**
  * Creates a form for the schema, Supports only primitives, optional primitives
@@ -58,6 +82,8 @@ export function SchemaForm<T extends z.ZodRawShape>({
 				  (zod._def.values as unknown as string[])
 				: undefined;
 
+		const arrayItemType = getArrayItemType(zod);
+
 		fields.push({
 			key,
 			optional: zod.isOptional(),
@@ -65,6 +91,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			value: data[key],
 			enumOptions,
 			readOnly: readOnlyKeys.includes(key),
+			arrayItemType,
 		});
 	}
 

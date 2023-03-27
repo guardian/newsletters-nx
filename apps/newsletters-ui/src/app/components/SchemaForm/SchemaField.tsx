@@ -140,6 +140,17 @@ export function SchemaField<T extends z.ZodRawShape>({
 				/>
 			);
 
+		case 'ZodArray':
+			return (
+				<fieldset>
+					<legend>
+						{field.type}: {field.key}
+					</legend>
+					<p>array type: {field.arrayItemType}</p>
+					<p>{fieldValueAsDisplayString(field)}</p>
+				</fieldset>
+			);
+
 		default:
 			if (showUnsupported) {
 				return (
