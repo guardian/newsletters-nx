@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isStringArray } from '../../util';
 import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
@@ -143,13 +144,8 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 		case 'ZodArray':
 			if (field.arrayItemType === 'string') {
-				if (
-					Array.isArray(value) &&
-					value.every((item) => typeof item === 'string')
-				) {
-					return (
-						<SchemaArrayInput {...standardProps} value={value as string[]} />
-					);
+				if (isStringArray(value)) {
+					return <SchemaArrayInput {...standardProps} value={value} />;
 				}
 			}
 
