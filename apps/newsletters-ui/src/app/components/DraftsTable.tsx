@@ -2,14 +2,14 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import type { Draft } from '@newsletters-nx/newsletters-data-client';
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { ExternalLinkButton } from './ExternalLinkButton';
 import { Table } from './Table';
 
 interface Props {
-	drafts: Draft[];
+	drafts: DraftNewsletterData[];
 }
 export const DraftsTable = ({ drafts }: Props) => {
 	const [data, setData] = useState(
@@ -67,7 +67,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 			{
 				Header: 'delete',
 				Cell: ({ row: { original } }) => {
-					const draft = original as Draft;
+					const draft = original as DraftNewsletterData;
 
 					return (
 						<DeleteDraftButton

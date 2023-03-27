@@ -2,6 +2,10 @@ import type {
 	DraftStorage,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
+import {
+	draftNewsletterDataToFormData,
+	formDataToDraftNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
 	WizardFormData,
@@ -30,15 +34,14 @@ export const executeModify: AsyncExecution = async (
 				listId: stepData.formData['listId'] as number,
 			};
 			const draftNewsletter: DraftWithId = {
-				...stepData.formData,
+				...formDataToDraftNewsletterData(stepData.formData),
 				...listIdEntry,
 			};
 			const storageResponse = await storageInstance.modifyDraftNewsletter(
 				draftNewsletter,
 			);
 			if (storageResponse.ok) {
-				console.log('storage has been updated', storageInstance);
-				return storageResponse.data;
+				return draftNewsletterDataToFormData(storageResponse.data);
 			}
 			return storageResponse.message;
 		}

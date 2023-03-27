@@ -1,7 +1,7 @@
 import type { LoaderFunction } from 'react-router';
 import type {
 	ApiResponse,
-	Draft,
+	DraftNewsletterData,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 
@@ -33,17 +33,19 @@ export const detailLoader: LoaderFunction = async ({
 	return await fetchApiData<NewsletterData>(`api/newsletters/${id}`);
 };
 
-export const draftListLoader: LoaderFunction = async (): Promise<Draft[]> => {
-	const list = (await fetchApiData<Draft[]>(`api/drafts`)) ?? [];
+export const draftListLoader: LoaderFunction = async (): Promise<
+	DraftNewsletterData[]
+> => {
+	const list = (await fetchApiData<DraftNewsletterData[]>(`api/drafts`)) ?? [];
 	return list;
 };
 
 export const draftDetailLoader: LoaderFunction = async ({
 	params,
-}): Promise<Draft | undefined> => {
+}): Promise<DraftNewsletterData | undefined> => {
 	const { id } = params;
 	if (!id) {
 		return undefined;
 	}
-	return await fetchApiData<Draft>(`api/drafts/${id}`);
+	return await fetchApiData<DraftNewsletterData>(`api/drafts/${id}`);
 };
