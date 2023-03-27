@@ -1,28 +1,14 @@
-import {
-	config,
-	CredentialProviderChain,
-	EnvironmentCredentials,
-	S3,
-	SharedIniFileCredentials,
-} from 'aws-sdk';
+import { S3Client } from '@aws-sdk/client-s3';
+import { fromIni } from '@aws-sdk/credential-providers';
 
-const credentialProvider = new CredentialProviderChain([
-	function () {
-		return new EnvironmentCredentials('AWS');
-	},
-	function () {
-		return new SharedIniFileCredentials({ profile: 'developerPlayground' });
-	},
-]);
-
+// Set the AWS Region.
 const REGION = 'eu-west-1';
 const BUCKET = 'gu-s3-training-dblatcher';
 
-config.update({
+// Create an Amazon S3 service client object.
+const s3Client = new S3Client({
 	region: REGION,
-	credentialProvider,
+	credentials: fromIni({ profile: 'developerPlayground' }),
 });
 
-const s3 = new S3({ apiVersion: '2006-03-01' });
-
-export { s3, BUCKET };
+export { s3Client, BUCKET };

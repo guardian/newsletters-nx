@@ -6,8 +6,10 @@ export function registerS3TestRoutes(app: FastifyInstance) {
 	app.get('/api/s3-test/list', async (req, res) => {
 		try {
 			const output = await listObjects('');
+			const { Contents = [] } = output;
+			const listOfKeys = Contents.map((item) => item.Key);
 
-			return makeSuccessResponse(output);
+			return makeSuccessResponse(listOfKeys);
 		} catch (err) {
 			console.warn(err);
 			return res.status(500).send(makeErrorResponse(`listObjects failed`));
