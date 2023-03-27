@@ -1,25 +1,51 @@
-import { useEffect, useState } from 'react';
-import { getFormBlankData, getFormSchema } from '@newsletters-nx/state-machine';
+import { Alert } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
+import {
+	getFormSchema,
+	getStepList,
+} from '@newsletters-nx/newsletter-workflow';
+import { getEmptySchemaData } from '@newsletters-nx/state-machine';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { WIZARDS } from '../types';
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
+import { StepNav } from './StepNav';
 import { WizardButton } from './WizardButton';
 
 /**
  * Interface for the props passed to the `Wizard` component.
  */
 export interface WizardProps {
+	wizardId: keyof typeof WIZARDS;
 	id?: string;
 }
+
+const FailureAlert = (props: {
+	errorMessage: string;
+	isPersistent?: boolean;
+}) => {
+	const { errorMessage, isPersistent } = props;
+	if (isPersistent) {
+		return (
+			<Alert severity="error">
+				Sorry, this wizard has failed: {errorMessage}
+			</Alert>
+		);
+	}
+	return <Alert severity="warning">Please try again: {errorMessage}</Alert>;
+};
 
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
  */
-export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
+export const Wizard: React.FC<WizardProps> = ({
+	wizardId,
+	id,
+}: WizardProps) => {
 	const [serverData, setServerData] = useState<
 		CurrentStepRouteResponse | undefined
 	>(undefined);
@@ -31,51 +57,59 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 		string | undefined
 	>();
 
-	const fetchStep = (body: CurrentStepRouteRequest) => {
-		return fetch(`/api/currentstep`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(body),
-		})
-			.then((response) => response.json())
-			.then((data: CurrentStepRouteResponse) => {
-				console.table(data);
-				const listIdOnData = data.formData?.listId;
-				if (typeof listIdOnData === 'number') {
-					setListId(listIdOnData);
-				}
-
-				setServerData(data);
-
-				const blank = getFormBlankData(data.currentStepId);
-				const populatedForm = {
-					...blank,
-					...data.formData,
-				};
-
-				setFormData(populatedForm as WizardFormData);
+	const fetchStep = useCallback(
+		(body: CurrentStepRouteRequest) => {
+			return fetch(`/api/currentstep`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(body),
 			})
-			.catch((error: unknown /* FIXME! */) => {
-				setServerErrorMessage('Wizard failed');
-				console.error('Error invoking next step of wizard:', error);
-			});
-	};
+				.then((response) => response.json())
+				.then((data: CurrentStepRouteResponse) => {
+					console.table(data);
+					const listIdOnData = data.formData?.listId;
+					if (typeof listIdOnData === 'number') {
+						setListId(listIdOnData);
+					}
+
+					setServerData(data);
+
+					const schema = getFormSchema(wizardId, data.currentStepId);
+					const blank = schema ? getEmptySchemaData(schema) : undefined;
+
+					const populatedForm = {
+						...blank,
+						...data.formData,
+					};
+
+					setFormData(populatedForm as WizardFormData);
+				})
+				.catch((error: unknown /* FIXME! */) => {
+					setServerErrorMessage('Wizard failed');
+					console.error('Error invoking next step of wizard:', error);
+				});
+		},
+		[wizardId],
+	);
 
 	useEffect(() => {
+		const { createStartStep = '', editStartStep = '' } = WIZARDS[wizardId];
 		if (id === undefined) {
 			void fetchStep({
-				stepId: 'createNewsletter',
+				wizardId: wizardId,
+				stepId: createStartStep,
 			});
 		} else {
 			void fetchStep({
+				wizardId: wizardId,
 				id: id,
-				stepId: 'editDraftNewsletter',
+				stepId: editStartStep,
 			});
 		}
 		setListId(undefined);
-	}, [id]);
+	}, [wizardId, id, fetchStep]);
 
 	if (serverData === undefined) {
 		return <p>'loading'</p>;
@@ -83,15 +117,16 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 
 	if (serverErrorMesssage) {
 		return (
-			<p>
-				<b>ERROR:</b>
-				<span>{serverErrorMesssage}</span>
-			</p>
+			<FailureAlert
+				errorMessage={serverErrorMesssage}
+				isPersistent={serverData.hasPersistentError}
+			/>
 		);
 	}
 
 	const handleButtonClick = (buttonId: string) => () => {
 		void fetchStep({
+			wizardId: wizardId,
 			id: id,
 			buttonId: buttonId,
 			stepId: serverData.currentStepId || '',
@@ -99,10 +134,15 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 		});
 	};
 
-	const formSchema = getFormSchema(serverData.currentStepId);
+	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
 
 	return (
 		<>
+			<StepNav
+				currentStepId={serverData.currentStepId}
+				stepList={getStepList(wizardId)}
+				onEditTrack={typeof id !== 'undefined'}
+			/>
 			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
 
 			{formSchema && formData && (
@@ -114,7 +154,10 @@ export const Wizard: React.FC<WizardProps> = ({ id }: WizardProps) => {
 			)}
 
 			{serverData.errorMessage && (
-				<p>Please try again: {serverData.errorMessage}</p>
+				<FailureAlert
+					errorMessage={serverData.errorMessage}
+					isPersistent={serverData.hasPersistentError}
+				/>
 			)}
 			{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
 				<WizardButton

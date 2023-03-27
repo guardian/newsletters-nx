@@ -1,16 +1,10 @@
-export type Draft = Record<string, string | number | boolean | undefined>;
-export type DraftWithoutId = Draft & { listId: undefined };
-export type DraftWithId = Draft & { listId: number };
+import type { DraftNewsletterData } from '../newsletter-data-type';
+import { isDraftNewsletterData } from '../newsletter-data-type';
 
-export const isDraft = (item: unknown): item is Draft => {
-	if (!item || typeof item !== 'object') {
-		return false;
-	}
+export type DraftWithoutId = DraftNewsletterData & { listId: undefined };
+export type DraftWithId = DraftNewsletterData & { listId: number };
 
-	return Object.values(item).every((value) =>
-		['string', 'number', 'boolean', 'undefined'].includes(typeof value),
-	);
-};
+export const isDraft = isDraftNewsletterData;
 
 export enum StorageRequestFailureReason {
 	NotFound,

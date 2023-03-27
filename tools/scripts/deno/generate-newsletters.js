@@ -1,5 +1,7 @@
 import { faker } from 'https://cdn.skypack.dev/@faker-js/faker@v7.6.0';
 
+const YEAR_IN_MS = 1000 * 60 * 60 * 24 * 365;
+
 /** Capitalises the first character and lowercases the rest */
 const initCap = (text) =>
 	text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -25,6 +27,13 @@ const generateNewsletter = () => {
 		faker.random.word(),
 	)}`;
 
+	const status = faker.helpers.arrayElement([
+		'paused',
+		'cancelled',
+		'live',
+		'live',
+	]);
+
 	const frequency = faker.helpers.arrayElement([
 		'Weekly',
 		'Fortnightly',
@@ -38,13 +47,17 @@ const generateNewsletter = () => {
 		? `${newsletterId}-${regionFocus}`
 		: newsletterId;
 
+	const timeStampForOneToTwoYearsAgo =
+		Date.now() - YEAR_IN_MS - Math.floor(Math.random() * YEAR_IN_MS);
+	const timeStampForZeroToOneYearsAgo =
+		Date.now() - Math.floor(Math.random() * YEAR_IN_MS);
+
 	const newsletter = {
 		identityName: newsletterId,
 		name,
 		description: initCap(faker.lorem.text()),
 		frequency,
-		paused: faker.datatype.boolean(),
-		cancelled: faker.datatype.boolean(),
+		status,
 		restricted: false,
 		emailConfirmation: false,
 		brazeNewsletterName: `Editorial_${slugConverter(idWithRegion, 'pascal')}`,
@@ -92,6 +105,14 @@ const generateNewsletter = () => {
 		brazeSubscribeAttributeNameAlternate: [
 			`email_subscribe_${slugConverter(idWithRegion, 'snake')}`,
 		],
+		creationTimeStamp: timeStampForOneToTwoYearsAgo,
+		cancellationTimeStamp:
+			status === 'cancelled' ? timeStampForZeroToOneYearsAgo : undefined,
+
+		figmaIncludesThrashers: false,
+		signUpPageDate: new Date(87678876),
+		thrasherDate: new Date(87678876),
+		onlineArticle: 'Web for all sends',
 	};
 	return newsletter;
 };

@@ -1,8 +1,17 @@
-import { formSchemas } from '@newsletters-nx/state-machine';
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	draftNewsletterDataToFormData,
+	formDataToDraftNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
+import {
+	StateMachineError,
+	StateMachineErrorCode,
+} from '@newsletters-nx/state-machine';
 import type {
 	AsyncExecution,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { formSchemas } from '../lib/steps/newsletterData/formSchemas';
 import { calculateFieldsFromName } from './calculateFieldsFromName';
 import { executeModify } from './executeModify';
 
@@ -11,9 +20,13 @@ export const executeCreate: AsyncExecution = async (
 	stepLayout,
 	storageInstance,
 ): Promise<WizardFormData | string> => {
-	const schema = formSchemas['createNewsletter']; // TODO - this needs to be generalised
+	const schema = formSchemas['startDraftNewsletter']; // TODO - this needs to be generalised
 	if (!storageInstance) {
-		throw new Error('no storageInstance');
+		throw new StateMachineError(
+			'no storageInstance',
+			StateMachineErrorCode.StorageAccessError,
+			true,
+		);
 	}
 
 	const parseResult = schema.safeParse(stepData.formData);
@@ -31,17 +44,20 @@ export const executeCreate: AsyncExecution = async (
 			typeof parseResult.data.name === 'string' && !!parseResult.data.name
 				? calculateFieldsFromName(parseResult.data.name)
 				: {};
-		const storageResponse = await storageInstance.createDraftNewsletter({
-			...parseResult.data,
+
+		const draft: DraftNewsletterData = {
+			...formDataToDraftNewsletterData({
+				...parseResult.data,
+			}),
 			...derivedFields,
+		};
+
+		const storageResponse = await storageInstance.createDraftNewsletter({
+			...draft,
 			listId: undefined,
 		});
 		if (storageResponse.ok) {
-			console.log(
-				'createNewsletter step has updated storage.',
-				storageInstance,
-			);
-			return storageResponse.data;
+			return draftNewsletterDataToFormData(storageResponse.data);
 		}
 
 		return storageResponse.message;

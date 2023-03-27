@@ -8,7 +8,7 @@ import type { WizardFormData } from '../lib/types';
 
 // TODO - move these definitions to a separate file
 export const formSchemas = {
-	createNewsletter: z
+	startDraftNewsletter: z
 		.object({
 			name: z.string(),
 		})
@@ -42,19 +42,20 @@ export const formSchemas = {
 		})
 		.describe('Choose a theme'),
 
-	description: z
+	signUp: z
 		.object({
+			headline: z.string(),
 			description: z.string(),
 		})
-		.describe('Input a short description to display to users'),
+		.describe('Input the Sign Up text to display to users'),
 };
 
 // TO DO - define the schemas in the library
 export const getFormSchema = (
 	stepId: string,
 ): z.ZodObject<z.ZodRawShape> | undefined => {
-	if (stepId === 'createNewsletter' || stepId === 'editDraftNewsletter') {
-		return formSchemas.createNewsletter;
+	if (stepId === 'createDraftNewsletter' || stepId === 'editDraftNewsletter') {
+		return formSchemas.startDraftNewsletter;
 	}
 	const matchingEntry = Object.entries(formSchemas).find(
 		([key]) => key === stepId,

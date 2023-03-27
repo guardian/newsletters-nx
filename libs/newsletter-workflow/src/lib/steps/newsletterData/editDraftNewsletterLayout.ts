@@ -1,17 +1,16 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModify } from '../executeModify';
+import { executeCreate } from '../../executeCreate';
+import { formSchemas } from './formSchemas';
 
 export const editDraftNewsletterLayout: WizardStepLayout = {
 	staticMarkdown: `# Edit a draft newsletter
 
-This wizard allows you to edit an existing draft newsletter, guiding you through the process of entering the data needed to create and launch a new newsletter using email-rendering.
+This wizard allows you to edit an existing draft newsletter, guiding you through the process of creating a newsletter using email-rendering.
 
-The first step is to choose a name for your newsletter.
-
-For example:
-  "Down to Earth"
+The first step is to enter the name for your newsletter, for example **Down to Earth**.
 
 `,
+	label: 'Change Name',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
@@ -21,12 +20,14 @@ For example:
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: 'dates',
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const name = stepData.formData ? stepData.formData['name'] : undefined;
 				return name ? undefined : 'NO NAME PROVIDED';
 			},
-			executeStep: executeModify,
+			executeStep: executeCreate,
 		},
 	},
+	schema: formSchemas.startDraftNewsletter,
+	role: 'EDIT_START',
 };

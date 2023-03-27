@@ -2,21 +2,17 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
-import { executeModify } from '../executeModify';
-import { getStringValuesFromRecord } from '../getValuesFromRecord';
-import { regExPatterns } from '../regExPatterns';
+import { executeModify } from '../../executeModify';
+import { getStringValuesFromRecord } from '../../getValuesFromRecord';
+import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Select a Pillar for {{name}}
+# Choose the Pillar for {{name}}
 
-Now we choose the pillar that **{{name}}** will appear under.
+Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
 
-For example:
-news, opinion, sport, culture, lifestyle
-
-[comment]: <> (TODO - use URL Image Signer to resize the image)
-[comment]: <> (https://uploads.guim.co.uk/2023/02/21/pillarScreenshot.png)
-![Pillars](wizard-screenshots/pillarScreenshotSmall.png)
+![Pillars](https://i.guim.co.uk/img/uploads/2023/02/21/pillarScreenshot.png?quality=85&dpr=2&width=300&s=0692a8714eaf66313fc599cb3462befd)
 
 `.trim();
 
@@ -27,6 +23,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const pillarLayout: WizardStepLayout = {
 	staticMarkdown,
+	label: 'Pillar',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -38,24 +35,24 @@ export const pillarLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'ophan',
+			stepToMoveTo: 'dates',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'description',
+			stepToMoveTo: 'regionFocus',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const theme: string | number | boolean | undefined = stepData.formData
+				const theme = stepData.formData
 					? stepData.formData['theme']
 					: undefined;
 				if (!theme || theme === '') {
 					return 'NO THEME SELECTED';
 				}
-
 				return undefined;
 			},
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.pillar,
 };

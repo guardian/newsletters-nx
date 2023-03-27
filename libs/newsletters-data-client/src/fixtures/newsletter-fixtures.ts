@@ -36,7 +36,11 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 		'email_subscribe_tech_tonic',
 	],
 
-	creationTimeStamp: new Date('2015'),
+	creationTimeStamp: 87678876,
+	figmaIncludesThrashers: false,
+	signUpPageDate: new Date(87678876),
+	thrasherDate: new Date(87678876),
+	onlineArticle: 'Web for all sends',
 };
 
 export const VALID_TECHSCAPE: LegacyNewsletter = {

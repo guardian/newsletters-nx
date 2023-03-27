@@ -2,19 +2,21 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import type { Draft } from '@newsletters-nx/newsletters-data-client';
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { ExternalLinkButton } from './ExternalLinkButton';
 import { Table } from './Table';
 
 interface Props {
-	drafts: Draft[];
+	drafts: DraftNewsletterData[];
 }
-
 export const DraftsTable = ({ drafts }: Props) => {
 	const [data, setData] = useState(
 		drafts.map((draft) => ({
 			...draft,
 			wizardListId: draft['listId'],
+			progress: Math.random() * 100,
 		})),
 	);
 	const navigate = useNavigate();
@@ -32,23 +34,40 @@ export const DraftsTable = ({ drafts }: Props) => {
 				accessor: 'name',
 			},
 			{
+				Header: 'Design',
+				accessor: 'figmaDesignUrl',
+				Cell: ({ cell: { value } }) =>
+					value ? (
+						<ExternalLinkButton href={value as string} text="design" />
+					) : null,
+			},
+			{
 				Header: 'Pillar',
 				accessor: 'theme',
 				sortType: 'basic',
 			},
 			{
+				Header: 'Progress',
+				accessor: 'progress',
+				Cell: ({ cell: { value } }) => (
+					<CircularProgressWithLabel value={value as number} />
+				),
+			},
+			{
 				Header: 'Wizard',
 				accessor: 'wizardListId',
 				Cell: ({ cell: { value } }) => (
-					<button onClick={() => navigate(`/demo/wizard/${value as string}`)}>
-						Edit
+					<button
+						onClick={() => navigate(`/demo/newsletter-data/${value as string}`)}
+					>
+						View
 					</button>
 				),
 			},
 			{
 				Header: 'delete',
 				Cell: ({ row: { original } }) => {
-					const draft = original as Draft;
+					const draft = original as DraftNewsletterData;
 
 					return (
 						<DeleteDraftButton
