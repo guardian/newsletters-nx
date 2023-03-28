@@ -1,5 +1,6 @@
 import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import {
+	DeleteObjectCommand,
 	GetObjectCommand,
 	ListObjectsCommand,
 	NoSuchKey,
@@ -131,17 +132,61 @@ export class S3DraftStorage extends DraftStorage {
 	> {
 		throw new Error('Method not implemented.');
 	}
-	deleteDraftNewsletter(
+
+	async deleteDraftNewsletter(
 		listId: number,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
-		throw new Error('Method not implemented.');
+		const key = `${this.STORAGE_FOLDER}${listId}.json`;
+
+		try {
+			const object = await this.fetchObject(key);
+			const draftToDelete = await this.objectToDraftWithId(object);
+
+			if (!draftToDelete) {
+				return {
+					ok: false,
+					message: `file ${key} was not a valid draft.`,
+					reason: StorageRequestFailureReason.DataInStoreNotValid,
+				};
+			}
+
+			await this.deleteObject(key);
+
+			return {
+				ok: true,
+				data: draftToDelete,
+			};
+		} catch (err) {
+			if (err instanceof NoSuchKey) {
+				return {
+					ok: false,
+					message: `draft with listId ${listId} does not exist.`,
+					reason: StorageRequestFailureReason.NotFound,
+				};
+			}
+
+			const message = err instanceof Error ? err.message : 'UNKNOWN ERROR';
+			return {
+				ok: false,
+				message,
+			};
+		}
 	}
 
 	private async fetchObject(key: string) {
 		return await this.s3Client.send(
 			new GetObjectCommand({
+				Bucket: this.params.bucket,
+				Key: key,
+			}),
+		);
+	}
+
+	private async deleteObject(key: string) {
+		return await this.s3Client.send(
+			new DeleteObjectCommand({
 				Bucket: this.params.bucket,
 				Key: key,
 			}),
