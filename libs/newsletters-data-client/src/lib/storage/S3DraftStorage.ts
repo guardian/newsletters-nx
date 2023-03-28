@@ -7,6 +7,7 @@ import {
 	GetObjectCommand,
 	ListObjectsCommand,
 	NoSuchKey,
+	PutObjectCommand,
 	S3Client,
 } from '@aws-sdk/client-s3';
 import { fromIni } from '@aws-sdk/credential-providers';
@@ -45,8 +46,50 @@ export class S3DraftStorage extends DraftStorage {
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
 		try {
-			await Promise.resolve();
-			throw new Error('Method not implemented.');
+			const listOfKeys = await this.getListOfObjectsKeys();
+			const listOfIds = listOfKeys.map((key) => this.keyToListId(key));
+			const highestId = listOfIds.reduce<number>(
+				(previousValue, currentValue) => {
+					if (typeof currentValue === 'undefined') {
+						return previousValue;
+					}
+					return Math.max(previousValue, currentValue);
+				},
+				0,
+			);
+			const nextId = highestId + 1;
+
+			const putObjectOutput = await this.putDraftObject({
+				...draft,
+				listId: nextId,
+			});
+
+			if (putObjectOutput.$metadata.httpStatusCode !== 200) {
+				return {
+					ok: false,
+					message: `failed to put ${draft.name ?? 'UNNAMED DRAFT'} in Storage.`,
+					reason: StorageRequestFailureReason.S3Failure,
+				};
+			}
+
+			const key = this.listIdToKey(nextId);
+			const getObjectOutput = await this.fetchObject(key);
+			const newDraft = await this.objectToDraftWithId(getObjectOutput);
+
+			if (!newDraft) {
+				return {
+					ok: false,
+					message: `failed to put and retireve ${
+						draft.name ?? 'UNNAMED DRAFT'
+					}.`,
+					reason: StorageRequestFailureReason.S3Failure,
+				};
+			}
+
+			return {
+				ok: true,
+				data: newDraft,
+			};
 		} catch (err) {
 			return this.errorToResponse(err, draft.listId);
 		}
@@ -56,15 +99,7 @@ export class S3DraftStorage extends DraftStorage {
 		UnsuccessfulStorageResponse | SuccessfulStorageResponse<DraftWithId[]>
 	> {
 		try {
-			const listOutput = await this.s3Client.send(
-				new ListObjectsCommand({
-					Bucket: this.params.bucket,
-					Prefix: this.STORAGE_FOLDER,
-					MaxKeys: 500, // to do - multiple requests if > 500?
-				}),
-			);
-			const listOfKeys = this.listOutputToKeyArray(listOutput);
-
+			const listOfKeys = await this.getListOfObjectsKeys();
 			const data: DraftWithId[] = [];
 			await Promise.all(
 				listOfKeys.map(async (key) => {
@@ -90,7 +125,7 @@ export class S3DraftStorage extends DraftStorage {
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
-		const key = `${this.STORAGE_FOLDER}${listId}.json`;
+		const key = this.listIdToKey(listId);
 
 		try {
 			const object = await this.fetchObject(key);
@@ -112,14 +147,43 @@ export class S3DraftStorage extends DraftStorage {
 			return this.errorToResponse(err, listId);
 		}
 	}
+
 	async modifyDraftNewsletter(
 		draft: DraftWithId,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
 		try {
-			await Promise.resolve();
-			throw new Error('Method not implemented.');
+			const putObjectOutput = await this.putDraftObject(draft);
+
+			if (putObjectOutput.$metadata.httpStatusCode !== 200) {
+				return {
+					ok: false,
+					message: `failed to put ${draft.name ?? 'UNNAMED DRAFT'} in Storage.`,
+					reason: StorageRequestFailureReason.S3Failure,
+				};
+			}
+
+			//fetching the data from s3 again to make sure the put worked. Is this necessary?
+			const getObjectOutput = await this.fetchObject(
+				this.listIdToKey(draft.listId),
+			);
+			const updatedDraft = await this.objectToDraftWithId(getObjectOutput);
+
+			if (!updatedDraft) {
+				return {
+					ok: false,
+					message: `failed to update and retireve ${
+						draft.name ?? 'UNNAMED DRAFT'
+					}.`,
+					reason: StorageRequestFailureReason.S3Failure,
+				};
+			}
+
+			return {
+				ok: true,
+				data: updatedDraft,
+			};
 		} catch (err) {
 			return this.errorToResponse(err, draft.listId);
 		}
@@ -130,7 +194,7 @@ export class S3DraftStorage extends DraftStorage {
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
-		const key = `${this.STORAGE_FOLDER}${listId}.json`;
+		const key = this.listIdToKey(listId);
 
 		try {
 			const object = await this.fetchObject(key);
@@ -153,6 +217,51 @@ export class S3DraftStorage extends DraftStorage {
 		} catch (err) {
 			return this.errorToResponse(err, listId);
 		}
+	}
+
+	private listIdToKey(listId: number): string {
+		return `${this.STORAGE_FOLDER}${listId}.json`;
+	}
+
+	private keyToListId(key: string): number | undefined {
+		const { STORAGE_FOLDER } = this;
+		if (!key.startsWith(STORAGE_FOLDER) || !key.endsWith('.json')) {
+			return undefined;
+		}
+		const idPart = key.substring(
+			STORAGE_FOLDER.length,
+			key.length - '.json'.length,
+		);
+		const listId = Number(idPart);
+
+		if (isNaN(listId)) {
+			return undefined;
+		}
+		return listId;
+	}
+
+	private async putDraftObject(draft: DraftWithId) {
+		const key = this.listIdToKey(draft.listId);
+		const body = JSON.stringify(draft);
+
+		return await this.s3Client.send(
+			new PutObjectCommand({
+				Bucket: this.params.bucket,
+				Key: key,
+				Body: body,
+			}),
+		);
+	}
+
+	private async getListOfObjectsKeys() {
+		const listOutput = await this.s3Client.send(
+			new ListObjectsCommand({
+				Bucket: this.params.bucket,
+				Prefix: this.STORAGE_FOLDER,
+				MaxKeys: 500, // to do - multiple requests if > 500?
+			}),
+		);
+		return this.listOutputToKeyArray(listOutput);
 	}
 
 	private async fetchObject(key: string) {
@@ -179,14 +288,17 @@ export class S3DraftStorage extends DraftStorage {
 		try {
 			const { Body } = getObjectOutput;
 			const content = await Body?.transformToString();
-			const parsedContent = (content ? JSON.parse(content) : {}) as unknown;
-			if (
-				isDraftNewsletterData(parsedContent) &&
-				typeof parsedContent.listId === 'number'
-			) {
-				return parsedContent as DraftWithId;
+			if (!content) {
+				return undefined;
 			}
-			return undefined;
+			const parsedContent = JSON.parse(content) as unknown;
+			if (!isDraftNewsletterData(parsedContent)) {
+				return undefined;
+			}
+			if (typeof parsedContent.listId !== 'number') {
+				return undefined;
+			}
+			return parsedContent as DraftWithId;
 		} catch (err) {
 			console.warn('objectToDraft failed');
 			console.warn(err);
@@ -206,6 +318,7 @@ export class S3DraftStorage extends DraftStorage {
 		err: unknown,
 		listId?: number,
 	): UnsuccessfulStorageResponse {
+		console.log(err);
 		if (err instanceof NoSuchKey) {
 			return {
 				ok: false,

@@ -10,6 +10,7 @@ export enum StorageRequestFailureReason {
 	NotFound,
 	InvalidDataInput,
 	DataInStoreNotValid,
+	S3Failure,
 }
 
 export type SuccessfulStorageResponse<T> = {
