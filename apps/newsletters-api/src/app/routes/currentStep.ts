@@ -9,7 +9,7 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
-import { storageInstance } from '../../services/storageInstance';
+import { s3DraftStorage as storageInstance } from '../../services/s3StorageInstance';
 
 const getHttpCode = (error: StateMachineError): number => {
 	switch (error.code) {

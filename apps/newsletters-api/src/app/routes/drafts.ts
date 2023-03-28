@@ -7,7 +7,7 @@ import type {
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
 import { StorageRequestFailureReason } from '@newsletters-nx/newsletters-data-client';
-import { storageInstance } from '../../services/storageInstance';
+import { s3DraftStorage as storageInstance } from '../../services/s3StorageInstance';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 // casting as DraftStorage so the methods are typed to

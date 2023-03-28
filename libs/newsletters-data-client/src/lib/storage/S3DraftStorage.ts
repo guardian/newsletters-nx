@@ -1,4 +1,7 @@
-import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
+import type {
+	GetObjectCommandOutput,
+	ListObjectsCommandOutput,
+} from '@aws-sdk/client-s3';
 import {
 	DeleteObjectCommand,
 	GetObjectCommand,
@@ -36,12 +39,17 @@ export class S3DraftStorage extends DraftStorage {
 		});
 	}
 
-	createDraftNewsletter(
+	async createDraftNewsletter(
 		draft: DraftWithoutId,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
-		throw new Error('Method not implemented.');
+		try {
+			await Promise.resolve();
+			throw new Error('Method not implemented.');
+		} catch (err) {
+			return this.errorToResponse(err, draft.listId);
+		}
 	}
 
 	async listDrafts(): Promise<
@@ -55,14 +63,9 @@ export class S3DraftStorage extends DraftStorage {
 					MaxKeys: 500, // to do - multiple requests if > 500?
 				}),
 			);
-			const { Contents = [] } = listOutput;
-			const listOfKeys = Contents.map((item) => item.Key).filter(
-				(key) =>
-					typeof key === 'string' && key.length > this.STORAGE_FOLDER.length,
-			) as string[];
+			const listOfKeys = this.listOutputToKeyArray(listOutput);
 
 			const data: DraftWithId[] = [];
-
 			await Promise.all(
 				listOfKeys.map(async (key) => {
 					const output = await this.fetchObject(key);
@@ -78,11 +81,7 @@ export class S3DraftStorage extends DraftStorage {
 				data,
 			};
 		} catch (err) {
-			const message = err instanceof Error ? err.message : 'UNKNOWN ERROR';
-			return {
-				ok: false,
-				message,
-			};
+			return this.errorToResponse(err);
 		}
 	}
 
@@ -110,27 +109,20 @@ export class S3DraftStorage extends DraftStorage {
 				data: draft,
 			};
 		} catch (err) {
-			if (err instanceof NoSuchKey) {
-				return {
-					ok: false,
-					message: `draft with listId ${listId} does not exist.`,
-					reason: StorageRequestFailureReason.NotFound,
-				};
-			}
-
-			const message = err instanceof Error ? err.message : 'UNKNOWN ERROR';
-			return {
-				ok: false,
-				message,
-			};
+			return this.errorToResponse(err, listId);
 		}
 	}
-	modifyDraftNewsletter(
+	async modifyDraftNewsletter(
 		draft: DraftWithId,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
-		throw new Error('Method not implemented.');
+		try {
+			await Promise.resolve();
+			throw new Error('Method not implemented.');
+		} catch (err) {
+			return this.errorToResponse(err, draft.listId);
+		}
 	}
 
 	async deleteDraftNewsletter(
@@ -159,19 +151,7 @@ export class S3DraftStorage extends DraftStorage {
 				data: draftToDelete,
 			};
 		} catch (err) {
-			if (err instanceof NoSuchKey) {
-				return {
-					ok: false,
-					message: `draft with listId ${listId} does not exist.`,
-					reason: StorageRequestFailureReason.NotFound,
-				};
-			}
-
-			const message = err instanceof Error ? err.message : 'UNKNOWN ERROR';
-			return {
-				ok: false,
-				message,
-			};
+			return this.errorToResponse(err, listId);
 		}
 	}
 
@@ -212,5 +192,34 @@ export class S3DraftStorage extends DraftStorage {
 			console.warn(err);
 			return undefined;
 		}
+	}
+
+	private listOutputToKeyArray(listOutput: ListObjectsCommandOutput): string[] {
+		const { Contents = [] } = listOutput;
+		return Contents.map((item) => item.Key).filter(
+			(key) =>
+				typeof key === 'string' && key.length > this.STORAGE_FOLDER.length,
+		) as string[];
+	}
+
+	private errorToResponse(
+		err: unknown,
+		listId?: number,
+	): UnsuccessfulStorageResponse {
+		if (err instanceof NoSuchKey) {
+			return {
+				ok: false,
+				message: listId
+					? `draft with listId ${listId} does not exist.`
+					: `requested item does not exist`,
+				reason: StorageRequestFailureReason.NotFound,
+			};
+		}
+
+		const message = err instanceof Error ? err.message : 'UNKNOWN ERROR';
+		return {
+			ok: false,
+			message,
+		};
 	}
 }
