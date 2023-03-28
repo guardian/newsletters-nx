@@ -2,6 +2,7 @@ import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import {
 	GetObjectCommand,
 	ListObjectsCommand,
+	NoSuchKey,
 	S3Client,
 } from '@aws-sdk/client-s3';
 import { fromIni } from '@aws-sdk/credential-providers';
@@ -12,7 +13,7 @@ import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from './DraftStorage';
-import { DraftStorage } from './DraftStorage';
+import { DraftStorage, StorageRequestFailureReason } from './DraftStorage';
 
 interface S3Params {
 	region: string;
@@ -84,12 +85,44 @@ export class S3DraftStorage extends DraftStorage {
 		}
 	}
 
-	getDraftNewsletter(
+	async getDraftNewsletter(
 		listId: number,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
-		throw new Error('Method not implemented.');
+		const key = `${this.STORAGE_FOLDER}${listId}.json`;
+
+		try {
+			const object = await this.fetchObject(key);
+			const draft = await this.objectToDraftWithId(object);
+
+			if (!draft) {
+				return {
+					ok: false,
+					message: `file ${key} was not a valid draft.`,
+					reason: StorageRequestFailureReason.DataInStoreNotValid,
+				};
+			}
+
+			return {
+				ok: true,
+				data: draft,
+			};
+		} catch (err) {
+			if (err instanceof NoSuchKey) {
+				return {
+					ok: false,
+					message: `draft with listId ${listId} does not exist.`,
+					reason: StorageRequestFailureReason.NotFound,
+				};
+			}
+
+			const message = err instanceof Error ? err.message : 'UNKNOWN ERROR';
+			return {
+				ok: false,
+				message,
+			};
+		}
 	}
 	modifyDraftNewsletter(
 		draft: DraftWithId,

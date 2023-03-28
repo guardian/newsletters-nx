@@ -22,6 +22,8 @@ const mapFailureReasonToStatusCode = (
 			return 400;
 		case StorageRequestFailureReason.NotFound:
 			return 404;
+		case StorageRequestFailureReason.DataInStoreNotValid:
+			return 422;
 		default:
 			return 500;
 	}
