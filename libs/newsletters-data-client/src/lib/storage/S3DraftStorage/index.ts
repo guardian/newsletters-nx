@@ -32,36 +32,15 @@ export class S3DraftStorage extends DraftStorage {
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
 		try {
-			const listOfKeys = await this.getListOfObjectsKeys();
-			const listOfIds = listOfKeys.map((key) => this.keyToListId(key));
-			const highestId = listOfIds.reduce<number>(
-				(previousValue, currentValue) => {
-					if (typeof currentValue === 'undefined') {
-						return previousValue;
-					}
-					return Math.max(previousValue, currentValue);
-				},
-				0,
-			);
-			const nextId = highestId + 1;
-
-			const putObjectOutput = await this.putDraftObject({
+			const nextId = await this.getNextId();
+			await this.putDraftObject({
 				...draft,
 				listId: nextId,
 			});
 
-			if (putObjectOutput.$metadata.httpStatusCode !== 200) {
-				return {
-					ok: false,
-					message: `failed to put ${draft.name ?? 'UNNAMED DRAFT'} in Storage.`,
-					reason: StorageRequestFailureReason.S3Failure,
-				};
-			}
-
-			const key = this.listIdToKey(nextId);
-			const getObjectOutput = await this.fetchObject(key);
+			//fetching the data from s3 again to make sure the put worked. Is this necessary?
+			const getObjectOutput = await this.fetchObject(this.listIdToKey(nextId));
 			const newDraft = await objectToDraftWithId(getObjectOutput);
-
 			if (!newDraft) {
 				return {
 					ok: false,
@@ -111,9 +90,8 @@ export class S3DraftStorage extends DraftStorage {
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
-		const key = this.listIdToKey(listId);
-
 		try {
+			const key = this.listIdToKey(listId);
 			const object = await this.fetchObject(key);
 			const draft = await objectToDraftWithId(object);
 
@@ -180,11 +158,10 @@ export class S3DraftStorage extends DraftStorage {
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
-		const key = this.listIdToKey(listId);
-
 		try {
-			const object = await this.fetchObject(key);
-			const draftToDelete = await objectToDraftWithId(object);
+			const key = this.listIdToKey(listId);
+			const getObjectOutput = await this.fetchObject(key);
+			const draftToDelete = await objectToDraftWithId(getObjectOutput);
 
 			if (!draftToDelete) {
 				return {
@@ -203,6 +180,21 @@ export class S3DraftStorage extends DraftStorage {
 		} catch (err) {
 			return errorToResponse(err, listId);
 		}
+	}
+
+	private async getNextId(): Promise<number> {
+		const listOfKeys = await this.getListOfObjectsKeys();
+		const listOfIds = listOfKeys.map((key) => this.keyToListId(key));
+		const highestId = listOfIds.reduce<number>(
+			(previousValue, currentValue) => {
+				if (typeof currentValue === 'undefined') {
+					return previousValue;
+				}
+				return Math.max(previousValue, currentValue);
+			},
+			0,
+		);
+		return highestId + 1;
 	}
 
 	listIdToKey(listId: number): string {
