@@ -3,6 +3,7 @@ import {
 	isServingReadWriteEndpoints,
 	isServingUI,
 	isUndefinedAndNotProduction,
+	isUsingTestS3Storage,
 } from './apiDeploymentSettings';
 
 const ORIGINAL_ENV = process.env;
@@ -144,5 +145,20 @@ describe('isServingReadWriteEndpoints', () => {
 		process.env.NODE_ENV = 'development';
 		process.env.NEWSLETTERS_API_READ_WRITE = 'false';
 		expect(isServingReadWriteEndpoints()).toBe(false);
+	});
+});
+
+describe('isUsingLocalTestS3', () => {
+	it('returns false in production, even if USE_TEST_S3_STORAGE is true', () => {
+		process.env.NODE_ENV = 'production';
+		process.env.USE_TEST_S3_STORAGE = 'true';
+		expect(isUsingTestS3Storage()).toBe(false);
+	});
+	it('returns false if USE_TEST_S3_STORAGE is not true', () => {
+		expect(isUsingTestS3Storage()).toBe(false);
+	});
+	it('returns true if USE_TEST_S3_STORAGE is true', () => {
+		process.env.USE_TEST_S3_STORAGE = 'true';
+		expect(isUsingTestS3Storage()).toBe(true);
 	});
 });

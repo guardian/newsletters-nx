@@ -9,7 +9,7 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
-import { s3DraftStorage as storageInstance } from '../../services/s3StorageInstance';
+import { draftStore } from '../../services/storage';
 
 const getHttpCode = (error: StateMachineError): number => {
 	switch (error.code) {
@@ -51,7 +51,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				return await handleWizardRequestAndReturnWizardResponse(
 					requestBody,
 					layout,
-					storageInstance,
+					draftStore,
 				);
 			} catch (error) {
 				if (error instanceof StateMachineError) {

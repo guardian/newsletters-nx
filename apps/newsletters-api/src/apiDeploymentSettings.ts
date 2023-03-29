@@ -41,3 +41,9 @@ export const isServingReadEndpoints = () => {
 	const isApiReadWrite = isServingReadWriteEndpoints();
 	return undefinedAndNotProduction || isApiRead || isApiReadWrite;
 };
+
+export const isUsingTestS3Storage = () => {
+	return (
+		process.env.NODE_ENV !== 'production' && !!process.env.USE_TEST_S3_STORAGE
+	);
+};

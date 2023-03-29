@@ -1,18 +1,11 @@
 import type { FastifyInstance } from 'fastify';
-// import { isLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
-// import newslettersData from '../../../static/newsletters.local.json';
 import type {
 	ApiResponse,
-	DraftStorage,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
 import { StorageRequestFailureReason } from '@newsletters-nx/newsletters-data-client';
-import { s3DraftStorage as storageInstance } from '../../services/s3StorageInstance';
+import { draftStore } from '../../services/storage';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
-
-// casting as DraftStorage so the methods are typed to
-// allow for failed responses.
-const draftStore = storageInstance as DraftStorage;
 
 const mapFailureReasonToStatusCode = (
 	reason?: StorageRequestFailureReason,
