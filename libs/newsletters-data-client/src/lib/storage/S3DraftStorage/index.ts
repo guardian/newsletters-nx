@@ -1,24 +1,19 @@
-import type {
-	GetObjectCommandOutput,
-	ListObjectsCommandOutput,
-	S3Client,
-} from '@aws-sdk/client-s3';
+import type { ListObjectsCommandOutput, S3Client } from '@aws-sdk/client-s3';
 import {
 	DeleteObjectCommand,
 	GetObjectCommand,
 	ListObjectsCommand,
-	NoSuchKey,
 	PutObjectCommand,
-	S3ServiceException,
 } from '@aws-sdk/client-s3';
-import { isDraftNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftWithId,
 	DraftWithoutId,
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
-} from './DraftStorage';
-import { DraftStorage, StorageRequestFailureReason } from './DraftStorage';
+} from '../DraftStorage';
+import { DraftStorage, StorageRequestFailureReason } from '../DraftStorage';
+import { errorToResponse } from './errorToResponse';
+import { objectToDraftWithId } from './objectToDraftWithId';
 
 export class S3DraftStorage extends DraftStorage {
 	private s3Client: S3Client;
@@ -65,7 +60,7 @@ export class S3DraftStorage extends DraftStorage {
 
 			const key = this.listIdToKey(nextId);
 			const getObjectOutput = await this.fetchObject(key);
-			const newDraft = await this.objectToDraftWithId(getObjectOutput);
+			const newDraft = await objectToDraftWithId(getObjectOutput);
 
 			if (!newDraft) {
 				return {
@@ -82,7 +77,7 @@ export class S3DraftStorage extends DraftStorage {
 				data: newDraft,
 			};
 		} catch (err) {
-			return this.errorToResponse(err, draft.listId);
+			return errorToResponse(err, draft.listId);
 		}
 	}
 
@@ -95,7 +90,7 @@ export class S3DraftStorage extends DraftStorage {
 			await Promise.all(
 				listOfKeys.map(async (key) => {
 					const output = await this.fetchObject(key);
-					const draft = await this.objectToDraftWithId(output);
+					const draft = await objectToDraftWithId(output);
 					if (draft) {
 						data.push(draft);
 					}
@@ -107,7 +102,7 @@ export class S3DraftStorage extends DraftStorage {
 				data,
 			};
 		} catch (err) {
-			return this.errorToResponse(err);
+			return errorToResponse(err);
 		}
 	}
 
@@ -120,7 +115,7 @@ export class S3DraftStorage extends DraftStorage {
 
 		try {
 			const object = await this.fetchObject(key);
-			const draft = await this.objectToDraftWithId(object);
+			const draft = await objectToDraftWithId(object);
 
 			if (!draft) {
 				return {
@@ -135,7 +130,7 @@ export class S3DraftStorage extends DraftStorage {
 				data: draft,
 			};
 		} catch (err) {
-			return this.errorToResponse(err, listId);
+			return errorToResponse(err, listId);
 		}
 	}
 
@@ -159,7 +154,7 @@ export class S3DraftStorage extends DraftStorage {
 			const getObjectOutput = await this.fetchObject(
 				this.listIdToKey(draft.listId),
 			);
-			const updatedDraft = await this.objectToDraftWithId(getObjectOutput);
+			const updatedDraft = await objectToDraftWithId(getObjectOutput);
 
 			if (!updatedDraft) {
 				return {
@@ -176,7 +171,7 @@ export class S3DraftStorage extends DraftStorage {
 				data: updatedDraft,
 			};
 		} catch (err) {
-			return this.errorToResponse(err, draft.listId);
+			return errorToResponse(err, draft.listId);
 		}
 	}
 
@@ -189,7 +184,7 @@ export class S3DraftStorage extends DraftStorage {
 
 		try {
 			const object = await this.fetchObject(key);
-			const draftToDelete = await this.objectToDraftWithId(object);
+			const draftToDelete = await objectToDraftWithId(object);
 
 			if (!draftToDelete) {
 				return {
@@ -206,7 +201,7 @@ export class S3DraftStorage extends DraftStorage {
 				data: draftToDelete,
 			};
 		} catch (err) {
-			return this.errorToResponse(err, listId);
+			return errorToResponse(err, listId);
 		}
 	}
 
@@ -273,79 +268,11 @@ export class S3DraftStorage extends DraftStorage {
 		);
 	}
 
-	private async objectToDraftWithId(
-		getObjectOutput: GetObjectCommandOutput,
-	): Promise<DraftWithId | undefined> {
-		try {
-			const { Body } = getObjectOutput;
-			const content = await Body?.transformToString();
-			if (!content) {
-				return undefined;
-			}
-			const parsedContent = JSON.parse(content) as unknown;
-			if (!isDraftNewsletterData(parsedContent)) {
-				return undefined;
-			}
-			if (typeof parsedContent.listId !== 'number') {
-				return undefined;
-			}
-			return parsedContent as DraftWithId;
-		} catch (err) {
-			console.warn('objectToDraft failed');
-			console.warn(err);
-			return undefined;
-		}
-	}
-
 	private listOutputToKeyArray(listOutput: ListObjectsCommandOutput): string[] {
 		const { Contents = [] } = listOutput;
 		return Contents.map((item) => item.Key).filter(
 			(key) =>
 				typeof key === 'string' && key.length > this.STORAGE_FOLDER.length,
 		) as string[];
-	}
-
-	private errorToResponse(
-		err: unknown,
-		listId?: number,
-	): UnsuccessfulStorageResponse {
-		if (err instanceof NoSuchKey) {
-			const message = listId
-				? `draft with listId ${listId} does not exist.`
-				: `requested item does not exist`;
-
-			return {
-				ok: false,
-				message,
-				reason: StorageRequestFailureReason.NotFound,
-			};
-		}
-
-		if (err instanceof S3ServiceException) {
-			// NOTE - the reason is not communicated to the UI as the "executeStep" functions
-			// on the WizardStepLayoutButton only returns a string (not an error) in the event
-			// of failure.
-			if (err.name === 'ExpiredToken') {
-				const message =
-					'The tool does not have permissions to access the storage system. Please report this error.';
-				return {
-					ok: false,
-					message,
-					reason: StorageRequestFailureReason.NoCredentials,
-				};
-			}
-
-			return {
-				ok: false,
-				message: err.message,
-				reason: StorageRequestFailureReason.S3Failure,
-			};
-		}
-
-		const message = err instanceof Error ? err.message : 'UNKNOWN ERROR';
-		return {
-			ok: false,
-			message,
-		};
 	}
 }
