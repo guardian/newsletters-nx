@@ -118,15 +118,7 @@ export class S3DraftStorage extends DraftStorage {
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	> {
 		try {
-			const putObjectOutput = await this.putDraftObject(draft);
-
-			if (putObjectOutput.$metadata.httpStatusCode !== 200) {
-				return {
-					ok: false,
-					message: `failed to put ${draft.name ?? 'UNNAMED DRAFT'} in Storage.`,
-					reason: StorageRequestFailureReason.S3Failure,
-				};
-			}
+			await this.putDraftObject(draft);
 
 			//fetching the data from s3 again to make sure the put worked. Is this necessary?
 			const getObjectOutput = await this.fetchObject(
