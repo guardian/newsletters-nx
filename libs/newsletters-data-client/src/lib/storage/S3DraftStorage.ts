@@ -1,6 +1,7 @@
 import type {
 	GetObjectCommandOutput,
 	ListObjectsCommandOutput,
+	S3Client,
 } from '@aws-sdk/client-s3';
 import {
 	DeleteObjectCommand,
@@ -8,9 +9,7 @@ import {
 	ListObjectsCommand,
 	NoSuchKey,
 	PutObjectCommand,
-	S3Client,
 } from '@aws-sdk/client-s3';
-import { fromIni } from '@aws-sdk/credential-providers';
 import { isDraftNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftWithId,
@@ -20,24 +19,15 @@ import type {
 } from './DraftStorage';
 import { DraftStorage, StorageRequestFailureReason } from './DraftStorage';
 
-interface S3Params {
-	region: string;
-	profile: string;
-	bucket: string;
-}
-
 export class S3DraftStorage extends DraftStorage {
-	readonly params: S3Params;
 	private s3Client: S3Client;
-	private STORAGE_FOLDER = 'draft-storage/';
+	private readonly bucketName: string;
+	private readonly STORAGE_FOLDER = 'draft-storage/';
 
-	constructor(params: S3Params) {
+	constructor(bucketName: string, s3Client: S3Client) {
 		super();
-		this.params = params;
-		this.s3Client = new S3Client({
-			region: params.region,
-			credentials: fromIni({ profile: params.profile }),
-		});
+		this.bucketName = bucketName;
+		this.s3Client = s3Client;
 	}
 
 	async createDraftNewsletter(
@@ -246,7 +236,7 @@ export class S3DraftStorage extends DraftStorage {
 
 		return await this.s3Client.send(
 			new PutObjectCommand({
-				Bucket: this.params.bucket,
+				Bucket: this.bucketName,
 				Key: key,
 				Body: body,
 			}),
@@ -256,7 +246,7 @@ export class S3DraftStorage extends DraftStorage {
 	private async getListOfObjectsKeys() {
 		const listOutput = await this.s3Client.send(
 			new ListObjectsCommand({
-				Bucket: this.params.bucket,
+				Bucket: this.bucketName,
 				Prefix: this.STORAGE_FOLDER,
 				MaxKeys: 500, // to do - multiple requests if > 500?
 			}),
@@ -267,7 +257,7 @@ export class S3DraftStorage extends DraftStorage {
 	private async fetchObject(key: string) {
 		return await this.s3Client.send(
 			new GetObjectCommand({
-				Bucket: this.params.bucket,
+				Bucket: this.bucketName,
 				Key: key,
 			}),
 		);
@@ -276,7 +266,7 @@ export class S3DraftStorage extends DraftStorage {
 	private async deleteObject(key: string) {
 		return await this.s3Client.send(
 			new DeleteObjectCommand({
-				Bucket: this.params.bucket,
+				Bucket: this.bucketName,
 				Key: key,
 			}),
 		);
