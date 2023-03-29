@@ -11,6 +11,7 @@ export enum StorageRequestFailureReason {
 	InvalidDataInput,
 	DataInStoreNotValid,
 	S3Failure,
+	NoCredentials,
 }
 
 export type SuccessfulStorageResponse<T> = {
