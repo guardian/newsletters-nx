@@ -1,10 +1,4 @@
-import type { ListObjectsCommandOutput, S3Client } from '@aws-sdk/client-s3';
-import {
-	DeleteObjectCommand,
-	GetObjectCommand,
-	ListObjectsCommand,
-	PutObjectCommand,
-} from '@aws-sdk/client-s3';
+import type { S3Client } from '@aws-sdk/client-s3';
 import type {
 	DraftWithId,
 	DraftWithoutId,
@@ -14,11 +8,17 @@ import type {
 import { DraftStorage, StorageRequestFailureReason } from '../DraftStorage';
 import { errorToResponse } from './errorToResponse';
 import { objectToDraftWithId } from './objectToDraftWithId';
+import {
+	deleteObject,
+	fetchObject,
+	getListOfObjectsKeys,
+	putDraftObject,
+} from './s3Functions';
 
 export class S3DraftStorage extends DraftStorage {
-	private s3Client: S3Client;
-	private readonly bucketName: string;
-	private readonly STORAGE_FOLDER = 'draft-storage/';
+	readonly s3Client: S3Client;
+	readonly bucketName: string;
+	readonly STORAGE_FOLDER = 'draft-storage/';
 
 	constructor(bucketName: string, s3Client: S3Client) {
 		super();
@@ -205,11 +205,11 @@ export class S3DraftStorage extends DraftStorage {
 		}
 	}
 
-	private listIdToKey(listId: number): string {
+	listIdToKey(listId: number): string {
 		return `${this.STORAGE_FOLDER}${listId}.json`;
 	}
 
-	private keyToListId(key: string): number | undefined {
+	keyToListId(key: string): number | undefined {
 		const { STORAGE_FOLDER } = this;
 		if (!key.startsWith(STORAGE_FOLDER) || !key.endsWith('.json')) {
 			return undefined;
@@ -226,53 +226,8 @@ export class S3DraftStorage extends DraftStorage {
 		return listId;
 	}
 
-	private async putDraftObject(draft: DraftWithId) {
-		const key = this.listIdToKey(draft.listId);
-		const body = JSON.stringify(draft);
-
-		return await this.s3Client.send(
-			new PutObjectCommand({
-				Bucket: this.bucketName,
-				Key: key,
-				Body: body,
-			}),
-		);
-	}
-
-	private async getListOfObjectsKeys() {
-		const listOutput = await this.s3Client.send(
-			new ListObjectsCommand({
-				Bucket: this.bucketName,
-				Prefix: this.STORAGE_FOLDER,
-				MaxKeys: 500, // to do - multiple requests if > 500?
-			}),
-		);
-		return this.listOutputToKeyArray(listOutput);
-	}
-
-	private async fetchObject(key: string) {
-		return await this.s3Client.send(
-			new GetObjectCommand({
-				Bucket: this.bucketName,
-				Key: key,
-			}),
-		);
-	}
-
-	private async deleteObject(key: string) {
-		return await this.s3Client.send(
-			new DeleteObjectCommand({
-				Bucket: this.bucketName,
-				Key: key,
-			}),
-		);
-	}
-
-	private listOutputToKeyArray(listOutput: ListObjectsCommandOutput): string[] {
-		const { Contents = [] } = listOutput;
-		return Contents.map((item) => item.Key).filter(
-			(key) =>
-				typeof key === 'string' && key.length > this.STORAGE_FOLDER.length,
-		) as string[];
-	}
+	private putDraftObject = putDraftObject(this);
+	private getListOfObjectsKeys = getListOfObjectsKeys(this);
+	private fetchObject = fetchObject(this);
+	private deleteObject = deleteObject(this);
 }
