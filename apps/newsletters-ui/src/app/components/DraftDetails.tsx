@@ -1,5 +1,6 @@
 import { space } from '@guardian/source-foundations';
 import {
+	ButtonGroup,
 	Card,
 	CardContent,
 	CardHeader,
@@ -16,6 +17,7 @@ import { Link } from 'react-router-dom';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { NavigateButton } from './NavigateButton';
 
 interface Props {
 	draft: DraftNewsletterData;
@@ -75,18 +77,18 @@ export const DraftDetails = ({ draft }: Props) => {
 			</CardContent>
 
 			{draft.listId && (
-				<>
-					<CardContent>
-						<Link to={`/demo/newsletter-data/${draft.listId}`}>
+				<CardContent>
+					<ButtonGroup>
+						<NavigateButton href={`/demo/newsletter-data/${draft.listId}`}>
 							Update draft
-						</Link>
-					</CardContent>
-					<CardContent>
-						<Link to={`/demo/newsletter-data-rendering/${draft.listId}`}>
+						</NavigateButton>
+						<NavigateButton
+							href={`/demo/newsletter-data-rendering/${draft.listId}`}
+						>
 							Change rendering options
-						</Link>
-					</CardContent>
-				</>
+						</NavigateButton>
+					</ButtonGroup>
+				</CardContent>
 			)}
 
 			<CardContent>
