@@ -1,5 +1,5 @@
 import type { RouteObject } from 'react-router-dom';
-import { NewslettersHome } from '../components/NewslettersHome';
+import { HomeMenu } from '../components/HomeMenu';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { listLoader } from '../loaders/newsletters';
@@ -12,7 +12,7 @@ export const homeRoute: RouteObject = {
 	children: [
 		{
 			path: '',
-			element: <NewslettersHome />,
+			element: <HomeMenu />,
 			loader: listLoader,
 		},
 		{

@@ -11,7 +11,7 @@ const ContainerStyle = styled.div`
 	}
 `;
 
-export function NewslettersHome() {
+export function HomeMenu() {
 	const navigate = useNavigate();
 
 	return (
