@@ -1,46 +1,80 @@
-import styled from '@emotion/styled';
+import type {
+	ButtonPropsColorOverrides,
+	ButtonPropsVariantOverrides,
+} from '@mui/material';
+import { Button, Grid } from '@mui/material';
+import { Container } from '@mui/system';
+import type { OverridableStringUnion } from '@mui/types';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 
-const ContainerStyle = styled.div`
-	display: grid;
-	grid-template-columns: auto auto auto;
-	column-gap: 40px;
-	row-gap: 25px;
-	@media (max-width: 375px) {
-		grid-template-columns: auto;
-	}
-`;
-
-export function HomeMenu() {
+const ButtonGridItem = ({
+	path,
+	content,
+	color = 'primary',
+	variant = 'outlined',
+}: {
+	path?: string;
+	content: ReactNode;
+	color?: OverridableStringUnion<
+		| 'secondary'
+		| 'inherit'
+		| 'primary'
+		| 'success'
+		| 'error'
+		| 'info'
+		| 'warning',
+		ButtonPropsColorOverrides
+	>;
+	variant?: OverridableStringUnion<
+		'text' | 'outlined' | 'contained',
+		ButtonPropsVariantOverrides
+	>;
+}) => {
 	const navigate = useNavigate();
 
+	const buttonProps = {
+		onClick: path ? () => navigate(path) : undefined,
+		disabled: !path,
+		color,
+		variant,
+	};
+
 	return (
-		<ContainerStyle>
-			<button onClick={() => navigate('/newsletters')}>
-				View current newsletters
-			</button>
+		<Grid item xs={6} sm={4} display={'flex'}>
+			<Button {...buttonProps} fullWidth>
+				{content}
+			</Button>
+		</Grid>
+	);
+};
 
-			<button onClick={() => navigate('/drafts')}>
-				View draft newsletters
-			</button>
-
-			<button onClick={() => navigate('/newsletters/create')}>
-				Create new newsletter
-			</button>
-
-			<button onClick={() => navigate('/demo/newsletter-data')}>
-				Demo create newsletter wizard
-			</button>
-
-			<button onClick={() => navigate('/demo/launch-newsletter')}>
-				Demo launch newsletter wizard
-			</button>
-
-			<button onClick={() => navigate('/demo/forms')}>Demo form</button>
-
-			<button disabled title="Not implemented yet">
-				Update newsletter
-			</button>
-		</ContainerStyle>
+export function HomeMenu() {
+	return (
+		<Container maxWidth={'lg'}>
+			<Grid container spacing={3} rowSpacing={6}>
+				<ButtonGridItem
+					path="/newsletters"
+					content={'View current newsletters'}
+				/>
+				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
+				<ButtonGridItem
+					path="/newsletters/create"
+					content={'Create new newsletter'}
+				/>
+				<ButtonGridItem
+					path="/demo/newsletter-data"
+					content={'Demo create newsletter wizard'}
+					color="success"
+					variant="contained"
+				/>
+				<ButtonGridItem
+					path="/demo/launch-newsletter"
+					content={'Demo launch newsletter wizard'}
+				/>
+				<ButtonGridItem path="/demo/forms" content={'Demo form'} />
+				<ButtonGridItem content={'Update newsletter'} />
+			</Grid>
+		</Container>
 	);
 }
