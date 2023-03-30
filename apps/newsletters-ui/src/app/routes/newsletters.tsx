@@ -1,5 +1,4 @@
 import type { RouteObject } from 'react-router-dom';
-import { NewslettersHome } from '../components/NewslettersHome';
 import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
 import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
 import { NewslettersListView } from '../components/views/NewslettersListView';
@@ -14,11 +13,6 @@ export const newslettersRoute: RouteObject = {
 	children: [
 		{
 			path: '',
-			element: <NewslettersHome />,
-			loader: listLoader,
-		},
-		{
-			path: 'all',
 			element: <NewslettersListView />,
 			loader: listLoader,
 		},

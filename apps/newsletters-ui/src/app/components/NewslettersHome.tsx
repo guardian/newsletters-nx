@@ -16,11 +16,11 @@ export function NewslettersHome() {
 
 	return (
 		<ContainerStyle>
-			<button onClick={() => navigate('/newsletters/all')}>
+			<button onClick={() => navigate('/newsletters')}>
 				View current newsletters
 			</button>
 
-			<button onClick={() => navigate('/newsletters/drafts')}>
+			<button onClick={() => navigate('/drafts')}>
 				View draft newsletters
 			</button>
 
