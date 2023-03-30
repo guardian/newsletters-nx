@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
 	brand,
 	space,
@@ -7,32 +7,47 @@ import {
 import { Outlet, useLocation } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
 
-const headerStyle = css`
-	margin-bottom: ${space[6]}px;
-	padding: ${space[1]}px;
-	border-bottom: 2px solid ${brand[300]};
-	background-color: ${brand[800]};
+const Frame = styled.div`
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	box-sizing: border-box;
+	overflow: hidden;
+	align-items: stretch;
 
-	h1 {
-		${textSansObjectStyles.xlarge({ fontStyle: 'italic' })};
-		margin: 0;
-		color: ${brand[300]};
+	> header {
+		padding: ${space[1]}px;
+		border-bottom: 2px solid ${brand[300]};
+		background-color: ${brand[800]};
+		box-sizing: border-box;
+
+		h1 {
+			${textSansObjectStyles.xlarge({ fontStyle: 'italic' })};
+			margin: 0;
+			color: ${brand[300]};
+		}
 	}
-`;
 
-const footerStyle = css`
-	margin-top: ${space[3]}px;
-	padding: ${space[1]}px;
-	border-top: 2px solid ${brand[300]};
-	background-color: ${brand[800]};
+	> main {
+		box-sizing: border-box;
+		flex: 1;
+		overflow: auto;
+	}
+
+	> footer {
+		box-sizing: border-box;
+		padding: ${space[1]}px;
+		border-top: 2px solid ${brand[300]};
+		background-color: ${brand[800]};
+	}
 `;
 
 export function Layout() {
 	const location = useLocation();
 
 	return (
-		<>
-			<header css={headerStyle}>
+		<Frame>
+			<header>
 				<h1>Have I Got Newsletters For You</h1>
 				<MainNav pathname={location.pathname} />
 			</header>
@@ -41,9 +56,9 @@ export function Layout() {
 				<Outlet />
 			</main>
 
-			<footer css={footerStyle}>
+			<footer>
 				<b>Footer</b>
 			</footer>
-		</>
+		</Frame>
 	);
 }

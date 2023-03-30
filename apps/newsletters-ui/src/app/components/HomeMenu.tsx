@@ -52,7 +52,7 @@ const ButtonGridItem = ({
 export function HomeMenu() {
 	return (
 		<Container maxWidth={'lg'}>
-			<Grid container spacing={3} rowSpacing={6}>
+			<Grid container spacing={3} rowSpacing={6} paddingY={2}>
 				<ButtonGridItem
 					path="/newsletters"
 					content={'View current newsletters'}
