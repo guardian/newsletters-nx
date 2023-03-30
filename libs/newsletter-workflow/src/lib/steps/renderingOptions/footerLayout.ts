@@ -2,24 +2,16 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Specify the header setup for {{name}}
+# Specify the footer setup for {{name}}
 
-## Date
+What email address would you like to display in the footer of **{{name}}**?
 
-Should the publication date display in each edition?
+For example: newsletters@theguardian.com
 
-This is typically shown for daily emails, but not for weekly ones.
-
-![Date](https://i.guim.co.uk/img/uploads/2023/03/15/Date.png?quality=85&dpr=2&width=300&s=815d857cb40089e47f501bf6d5838c2a)
-
-## Standfirst
-
-Would you like this to be displayed?
-
-![Standfirst](https://i.guim.co.uk/img/uploads/2023/03/15/Standfirst.png?quality=85&dpr=2&width=300&s=52779b0975a45a2cc9e4ae3a6b034aac)
+![Email footer](https://i.guim.co.uk/img/uploads/2023/03/15/Email_address_contact.png?quality=85&dpr=2&width=300&s=98ce6a07791b0bfb45f2df9c732ea1d2)
 
 `.trim();
 
@@ -28,9 +20,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const newsletterHeaderLayout: WizardStepLayout = {
+export const footerLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Header Setup',
+	label: 'Footer Setup',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -42,15 +34,21 @@ export const newsletterHeaderLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'signUp',
+			stepToMoveTo: 'podcast',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'image',
+			stepToMoveTo: 'identityName',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const email = stepData.formData
+					? stepData.formData['renderingOptions.contactEmail']
+					: undefined;
+				return email ? undefined : 'NO EMAIL ADDRESS PROVIDED';
+			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.newsletterHeader,
+	schema: formSchemas.footer,
 };

@@ -12,6 +12,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
@@ -72,6 +73,22 @@ export const DraftDetails = ({ draft }: Props) => {
 					margin={1}
 				/>
 			</CardContent>
+
+			{draft.listId && (
+				<>
+					<CardContent>
+						<Link to={`/demo/newsletter-data/${draft.listId}`}>
+							Update draft
+						</Link>
+					</CardContent>
+					<CardContent>
+						<Link to={`/demo/newsletter-data-rendering/${draft.listId}`}>
+							Change rendering options
+						</Link>
+					</CardContent>
+				</>
+			)}
+
 			<CardContent>
 				<TableContainer
 					component={Paper}

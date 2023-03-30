@@ -13,11 +13,11 @@ This wizard is to choose the options for how your article-based newsletter will 
 			label: 'Cancel',
 			stepToMoveTo: 'cancel',
 		},
-		// next: {
-		// 	buttonType: 'GREEN',
-		// 	label: 'Next',
-		// 	stepToMoveTo: 'dates',
-		// },
+		next: {
+			buttonType: 'GREEN',
+			label: 'Next',
+			stepToMoveTo: 'newsletterHeader',
+		},
 	},
 	role: 'EDIT_START',
 };

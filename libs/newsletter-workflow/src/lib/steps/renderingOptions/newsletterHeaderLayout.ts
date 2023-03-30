@@ -2,20 +2,24 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Rendering Podcast sections in {{name}}
+# Specify the header setup for {{name}}
 
-You may want to display some sections in **{{name}}** as Podcast sections.
+## Date
 
-This will display the section with a dark background, and append a podcast graphic.
+Should the publication date display in each edition?
 
-![Podcast styling](https://i.guim.co.uk/img/uploads/2023/03/15/podcast.png?quality=85&dpr=2&width=300&s=441a36a662b2adc04b867e3d617d7315)
+This is typically shown for daily emails, but not for weekly ones.
 
-In order to use this styling for one or more sections, you need to specify the subheading for each section.
+![Date](https://i.guim.co.uk/img/uploads/2023/03/15/Date.png?quality=85&dpr=2&width=300&s=815d857cb40089e47f501bf6d5838c2a)
 
-The styling will be implemented wherever these subheadings are used.
+## Standfirst
+
+Would you like this to be displayed?
+
+![Standfirst](https://i.guim.co.uk/img/uploads/2023/03/15/Standfirst.png?quality=85&dpr=2&width=300&s=52779b0975a45a2cc9e4ae3a6b034aac)
 
 `.trim();
 
@@ -24,9 +28,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const podcastLayout: WizardStepLayout = {
+export const newsletterHeaderLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Podcast Sections',
+	label: 'Header Setup',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -38,15 +42,15 @@ export const podcastLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'linkList',
+			stepToMoveTo: 'signUp',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'footer',
+			stepToMoveTo: 'image',
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.podcast,
+	schema: formSchemas.newsletterHeader,
 };

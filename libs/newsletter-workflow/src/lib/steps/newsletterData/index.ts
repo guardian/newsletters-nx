@@ -11,17 +11,11 @@ import { editIdentityNameLayout } from './editIdentityNameLayout';
 import { editOphanLayout } from './editOphanLayout';
 import { emailCentralProductionLayout } from './emailCentralProductionLayout';
 import { finishLayout } from './finishLayout';
-import { footerLayout } from './footerLayout';
 import { frequencyLayout } from './frequencyLayout';
 import { identityNameLayout } from './identityNameLayout';
-import { imageLayout } from './imageLayout';
-import { linkListLayout } from './linkListLayout';
-import { newsletterHeaderLayout } from './newsletterHeaderLayout';
 import { onlineArticleLayout } from './onlineArticleLayout';
 import { ophanLayout } from './ophanLayout';
 import { pillarLayout } from './pillarLayout';
-import { podcastLayout } from './podcastLayout';
-import { readMoreLayout } from './readMoreLayout';
 import { regionFocusLayout } from './regionFocusLayout';
 import { signUpLayout } from './signUpLayout';
 import { tagsLayout } from './tagsLayout';
@@ -40,12 +34,6 @@ export const newsletterDataLayout: WizardLayout = {
 	thrasher: thrasherLayout,
 	designBrief: designBriefLayout,
 	signUp: signUpLayout,
-	newsletterHeader: newsletterHeaderLayout,
-	image: imageLayout,
-	readMore: readMoreLayout,
-	linkList: linkListLayout,
-	podcast: podcastLayout,
-	footer: footerLayout,
 	identityName: identityNameLayout,
 	editIdentityName: editIdentityNameLayout,
 	braze: brazeLayout,
