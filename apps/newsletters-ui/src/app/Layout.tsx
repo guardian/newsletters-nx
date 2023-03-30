@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import {
 	brand,
+	brandAlt,
 	space,
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
@@ -17,8 +18,8 @@ const Frame = styled.div`
 
 	> header {
 		padding: ${space[1]}px;
-		border-bottom: 2px solid ${brand[300]};
-		background-color: ${brand[800]};
+		border-bottom: 2px solid ${brand[400]};
+		background-color: ${brandAlt[400]};
 		box-sizing: border-box;
 
 		h1 {
@@ -48,7 +49,6 @@ export function Layout() {
 	return (
 		<Frame>
 			<header>
-				<h1>Have I Got Newsletters For You</h1>
 				<MainNav pathname={location.pathname} />
 			</header>
 
