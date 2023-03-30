@@ -42,7 +42,7 @@ const ButtonGridItem = ({
 
 	return (
 		<Grid item xs={6} sm={4} display={'flex'}>
-			<Button {...buttonProps} fullWidth>
+			<Button {...buttonProps} fullWidth size="large">
 				{content}
 			</Button>
 		</Grid>
