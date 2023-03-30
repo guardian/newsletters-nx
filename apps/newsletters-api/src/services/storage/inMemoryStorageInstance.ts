@@ -1,6 +1,6 @@
 import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client';
 
-const storageInstance = new InMemoryDraftStorage([
+const inMemoryStorageInstance = new InMemoryDraftStorage([
 	{
 		listId: 7000,
 		name: 'Test draft newsletter',
@@ -68,4 +68,4 @@ const storageInstance = new InMemoryDraftStorage([
 	},
 ]);
 
-export { storageInstance };
+export { inMemoryStorageInstance };
