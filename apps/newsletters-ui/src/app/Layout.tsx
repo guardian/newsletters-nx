@@ -6,6 +6,7 @@ import {
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
 import { Outlet, useLocation } from 'react-router-dom';
+import { FooterContents } from './components/FooterContents';
 import { MainNav } from './components/MainNav';
 
 const Frame = styled.div`
@@ -57,7 +58,7 @@ export function Layout() {
 			</main>
 
 			<footer>
-				<b>Footer</b>
+				<FooterContents />
 			</footer>
 		</Frame>
 	);
