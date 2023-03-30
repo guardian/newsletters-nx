@@ -7,4 +7,8 @@ export const WIZARDS = {
 		createStartStep: 'createDraftNewsletter',
 		editStartStep: 'editDraftNewsletter',
 	},
+	RENDERING_OPTIONS: {
+		createStartStep: '',
+		editStartStep: 'start',
+	},
 };

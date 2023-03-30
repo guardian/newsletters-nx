@@ -30,6 +30,7 @@ import { regionFocusLayout } from './steps/newsletterData/regionFocusLayout';
 import { signUpLayout } from './steps/newsletterData/signUpLayout';
 import { tagsLayout } from './steps/newsletterData/tagsLayout';
 import { thrasherLayout } from './steps/newsletterData/thrasherLayout';
+import { renderingOptionsLayout } from './steps/renderingOptions';
 
 export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 	NEWSLETTER_DATA: {
@@ -66,6 +67,7 @@ export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 		cancel: cancelLaunchNewsletterLayout,
 		finish: finishLaunchNewsletterLayout,
 	},
+	RENDERING_OPTIONS: renderingOptionsLayout,
 };
 
 export const getFormSchema = (
