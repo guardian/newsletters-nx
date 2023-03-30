@@ -40,7 +40,7 @@ export const footerLayout: WizardStepLayout = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: 'finish',
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const email = stepData.formData
 					? stepData.formData['renderingOptions.contactEmail']

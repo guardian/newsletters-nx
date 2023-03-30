@@ -1,11 +1,12 @@
 import type { WizardLayout } from '@newsletters-nx/state-machine';
-import { footerLayout } from '../renderingOptions/footerLayout';
-import { imageLayout } from '../renderingOptions/imageLayout';
-import { linkListLayout } from '../renderingOptions/linkListLayout';
-import { newsletterHeaderLayout } from '../renderingOptions/newsletterHeaderLayout';
-import { podcastLayout } from '../renderingOptions/podcastLayout';
-import { readMoreLayout } from '../renderingOptions/readMoreLayout';
 import { cancelLayout } from './cancelLayout';
+import { finishLayout } from './finishLayout';
+import { footerLayout } from './footerLayout';
+import { imageLayout } from './imageLayout';
+import { linkListLayout } from './linkListLayout';
+import { newsletterHeaderLayout } from './newsletterHeaderLayout';
+import { podcastLayout } from './podcastLayout';
+import { readMoreLayout } from './readMoreLayout';
 import { startLayout } from './start';
 
 export const renderingOptionsLayout: WizardLayout = {
@@ -17,4 +18,5 @@ export const renderingOptionsLayout: WizardLayout = {
 	linkList: linkListLayout,
 	podcast: podcastLayout,
 	footer: footerLayout,
+	finish: finishLayout,
 };

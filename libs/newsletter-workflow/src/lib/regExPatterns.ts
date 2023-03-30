@@ -1,5 +1,6 @@
 export const regExPatterns = {
 	name: /{{name}}/g,
+	listId: /{{listId}}/g,
 	identityName: /{{identityName}}/g,
 	brazeSubscribeEventNamePrefix: /{{brazeSubscribeEventNamePrefix}}/g,
 	brazeNewsletterName: /{{brazeNewsletterName}}/g,
