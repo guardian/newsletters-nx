@@ -1,5 +1,11 @@
-import type { StepListing, WizardLayout } from '@newsletters-nx/state-machine';
-import { getStartStepAndId, listStepsIn } from '@newsletters-nx/state-machine';
+import type {
+	StepperConfig,
+	WizardLayout,
+} from '@newsletters-nx/state-machine';
+import {
+	getStartStepAndId,
+	getStepperConfig as makeStepperConfig,
+} from '@newsletters-nx/state-machine';
 import { launchLayout } from './steps/launchNewsletter';
 import { newsletterDataLayout } from './steps/newsletterData';
 import { renderingOptionsLayout } from './steps/renderingOptions';
@@ -24,15 +30,15 @@ export const getFormSchema = (
 	return step?.schema;
 };
 
-export const getStepList = (
+export const getStepperConfig = (
 	wizardId: keyof typeof newslettersWorkflowStepLayout,
-): StepListing[] => {
+): StepperConfig => {
 	const wizard = newslettersWorkflowStepLayout[wizardId];
 	if (!wizard) {
-		return [];
+		return { steps: [], isNonLinear: false };
 	}
 
-	return listStepsIn(wizard);
+	return makeStepperConfig(wizard);
 };
 
 export const getStartStepId = (

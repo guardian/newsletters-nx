@@ -67,6 +67,7 @@ export interface WizardStepLayout {
 	};
 	buttons: Record<string, WizardStepLayoutButton>;
 	schema?: ZodObject<ZodRawShape>;
+	canSkipTo?: boolean;
 }
 
 export type WizardLayout = Record<string, WizardStepLayout>;

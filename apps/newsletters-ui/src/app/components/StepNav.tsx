@@ -1,14 +1,18 @@
-import { css, Step, StepLabel, Stepper } from '@mui/material';
-import type { StepListing } from '@newsletters-nx/state-machine';
+import { css, Step, StepButton, StepLabel, Stepper } from '@mui/material';
+import type { StepperConfig } from '@newsletters-nx/state-machine';
 
 interface Props {
 	currentStepId?: string;
-	stepList: StepListing[];
+	stepperConfig: StepperConfig;
 	onEditTrack: boolean;
 }
 
-export const StepNav = ({ currentStepId, stepList, onEditTrack }: Props) => {
-	const filteredStepList = stepList.filter((step) => {
+export const StepNav = ({
+	currentStepId,
+	stepperConfig,
+	onEditTrack,
+}: Props) => {
+	const filteredStepList = stepperConfig.steps.filter((step) => {
 		if (step.parentStepId) {
 			return false;
 		}
@@ -25,10 +29,13 @@ export const StepNav = ({ currentStepId, stepList, onEditTrack }: Props) => {
 		}
 	});
 
-	const currentStep = stepList.find((step) => step.id === currentStepId);
+	const currentStep = stepperConfig.steps.find(
+		(step) => step.id === currentStepId,
+	);
 
 	return (
 		<Stepper
+			nonLinear={stepperConfig.isNonLinear}
 			css={css`
 				flex-wrap: wrap;
 			`}
@@ -36,14 +43,27 @@ export const StepNav = ({ currentStepId, stepList, onEditTrack }: Props) => {
 			{filteredStepList.map((step) => (
 				<Step
 					css={css`
-						margin-bottom: 0.125rem;
+						padding-bottom: 0.75rem;
+						padding-top: 0.75rem;
 					`}
 					key={step.id}
 					active={
 						step.id === currentStep?.id || step.id === currentStep?.parentStepId
 					}
 				>
-					<StepLabel>{step.label ?? step.id}</StepLabel>
+					{stepperConfig.isNonLinear && step.canSkipTo ? (
+						<StepButton
+							onClick={() => {
+								alert(step.id);
+							}}
+						>
+							<b css={{ textDecoration: 'underline' }}>
+								{step.label ?? step.id}
+							</b>
+						</StepButton>
+					) : (
+						<StepLabel>{step.label ?? step.id}</StepLabel>
+					)}
 				</Step>
 			))}
 		</Stepper>
