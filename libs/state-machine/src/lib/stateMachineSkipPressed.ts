@@ -1,8 +1,12 @@
 import type {
 	DraftStorage,
 	DraftWithId,
+	FormDataRecord,
 } from '@newsletters-nx/newsletters-data-client';
-import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
+import {
+	draftNewsletterDataToFormData,
+	formDataToDraftNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
@@ -10,31 +14,10 @@ import type {
 	WizardStepData,
 } from './types';
 import {
+	getExistingItem,
 	makeStepDataWithErrorMessage,
 	validateIncomingFormData,
 } from './utility';
-
-const getExistingData = async (
-	requestBody: CurrentStepRouteRequest,
-	storageInstance: DraftStorage,
-): Promise<DraftWithId | undefined> => {
-	const existingItemId = requestBody.id;
-	if (!existingItemId) {
-		return undefined;
-	}
-	const idAsNumber = +existingItemId;
-
-	const storageResponse = await storageInstance.getDraftNewsletter(idAsNumber);
-	if (!storageResponse.ok) {
-		throw new StateMachineError(
-			`cannot load draft newsletter with id ${existingItemId}`,
-			StateMachineErrorCode.StorageAccessError,
-			false,
-		);
-	}
-
-	return storageResponse.data;
-};
 
 export async function stateMachineSkipPressed(
 	requestBody: CurrentStepRouteRequest,
@@ -54,20 +37,50 @@ export async function stateMachineSkipPressed(
 	}
 
 	const incomingDataError = validateIncomingFormData(requestBody, wizardLayout);
-	console.log({ incomingDataError });
 	if (incomingDataError) {
 		return makeStepDataWithErrorMessage(incomingDataError, requestBody);
 	}
-	// TO DO storageInstance.modifyDraftNewsletter
 
-	const existingData = await getExistingData(requestBody, storageInstance);
-
-	const formDataToReturn = existingData
-		? draftNewsletterDataToFormData(existingData)
+	const existingItem = await getExistingItem(requestBody, storageInstance);
+	const existingFormData: FormDataRecord = existingItem
+		? draftNewsletterDataToFormData(existingItem)
 		: {};
-
-	return {
-		formData: formDataToReturn,
-		currentStepId: requestBody.stepToSkipToId,
+	const combinedFormData: FormDataRecord = {
+		...existingFormData,
+		...{ ...requestBody.formData },
 	};
+
+	const listId =
+		typeof combinedFormData['listId'] === 'number'
+			? combinedFormData['listId']
+			: undefined;
+
+	// Do not allow skipping before the 'create' step
+	if (!listId) {
+		return makeStepDataWithErrorMessage(
+			'Cannot skip from this step',
+			requestBody,
+		);
+	}
+
+	// formDataToDraftNewsletterData CAN THROW
+	const newDraftWithId: DraftWithId = {
+		...formDataToDraftNewsletterData(combinedFormData),
+		listId: listId,
+	};
+	const storageResponse = await storageInstance.modifyDraftNewsletter(
+		newDraftWithId,
+	);
+
+	if (storageResponse.ok) {
+		return {
+			formData: draftNewsletterDataToFormData(storageResponse.data),
+			currentStepId: requestBody.stepToSkipToId,
+		};
+	} else {
+		throw new StateMachineError(
+			`failed to update draft #${listId}`,
+			StateMachineErrorCode.StorageAccessError,
+		);
+	}
 }

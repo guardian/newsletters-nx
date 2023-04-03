@@ -1,4 +1,9 @@
 import type {
+	DraftStorage,
+	DraftWithId,
+} from '@newsletters-nx/newsletters-data-client';
+import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
+import type {
 	CurrentStepRouteRequest,
 	WizardLayout,
 	WizardStepData,
@@ -39,4 +44,26 @@ export const validateIncomingFormData = (
 	}
 
 	return false;
+};
+
+export const getExistingItem = async (
+	requestBody: CurrentStepRouteRequest,
+	storageInstance: DraftStorage,
+): Promise<DraftWithId | undefined> => {
+	const existingItemId = requestBody.id;
+	if (!existingItemId) {
+		return undefined;
+	}
+	const idAsNumber = +existingItemId;
+
+	const storageResponse = await storageInstance.getDraftNewsletter(idAsNumber);
+	if (!storageResponse.ok) {
+		throw new StateMachineError(
+			`cannot load draft newsletter with id ${existingItemId}`,
+			StateMachineErrorCode.StorageAccessError,
+			false,
+		);
+	}
+
+	return storageResponse.data;
 };
