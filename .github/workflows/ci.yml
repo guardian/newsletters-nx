@@ -13,7 +13,7 @@ concurrency:
 jobs:
   main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@latest
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@0.11.3
     with:
       number-of-agents: 3
       init-commands: |
@@ -27,7 +27,7 @@ jobs:
 
   agents:
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@latest
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@0.11.3
     with:
       number-of-agents: 3
 
