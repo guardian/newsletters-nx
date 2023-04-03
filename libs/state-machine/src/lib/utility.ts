@@ -51,14 +51,16 @@ export const validateIncomingFormData = (
 	return false;
 };
 
-/**
- * TO DO - FIX USE OF requestBody.id
- */
 export const getExistingItem = async (
 	requestBody: CurrentStepRouteRequest,
 	storageInstance: DraftStorage,
 ): Promise<DraftWithId | undefined> => {
-	const existingItemId = requestBody.id;
+	const listId =
+		typeof requestBody.formData?.['listId'] === 'number'
+			? requestBody.formData['listId']
+			: undefined;
+	const existingItemId = listId ?? requestBody.id;
+
 	if (!existingItemId) {
 		return undefined;
 	}
