@@ -32,7 +32,7 @@ export async function handleWizardRequestAndReturnWizardResponse(
 	try {
 		const stepData =
 			requestBody.stepToSkipToId !== undefined
-				? await stateMachineSkipPressed(requestBody, draftStorage)
+				? await stateMachineSkipPressed(requestBody, wizardLayout, draftStorage)
 				: requestBody.buttonId !== undefined
 				? await stateMachineButtonPressed(
 						requestBody.buttonId,

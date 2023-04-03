@@ -4,21 +4,15 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
-import type { CurrentStepRouteRequest, WizardStepData } from './types';
-
-const makeStepDataWithErrorMessage = (
-	errorMessage: string,
-	requestBody: CurrentStepRouteRequest,
-): WizardStepData => {
-	return {
-		...{
-			currentStepId: requestBody.stepId,
-			formData: requestBody.formData,
-		},
-		currentStepId: requestBody.stepId,
-		errorMessage,
-	};
-};
+import type {
+	CurrentStepRouteRequest,
+	WizardLayout,
+	WizardStepData,
+} from './types';
+import {
+	makeStepDataWithErrorMessage,
+	validateIncomingFormData,
+} from './utility';
 
 const getExistingData = async (
 	requestBody: CurrentStepRouteRequest,
@@ -44,6 +38,7 @@ const getExistingData = async (
 
 export async function stateMachineSkipPressed(
 	requestBody: CurrentStepRouteRequest,
+	wizardLayout: WizardLayout,
 	storageInstance?: DraftStorage,
 ): Promise<WizardStepData> {
 	if (!storageInstance) {
@@ -58,11 +53,14 @@ export async function stateMachineSkipPressed(
 		return makeStepDataWithErrorMessage('no stepToSkipToId', requestBody);
 	}
 
-	const existingData = await getExistingData(requestBody, storageInstance);
+	const incomingDataError = validateIncomingFormData(requestBody, wizardLayout);
+	console.log({ incomingDataError });
+	if (incomingDataError) {
+		return makeStepDataWithErrorMessage(incomingDataError, requestBody);
+	}
+	// TO DO storageInstance.modifyDraftNewsletter
 
-	// TO DO - validate the requestBody.formData
-	// if not valid makeStepDataWithErrorMessage
-	// else storageInstance.modifyDraftNewsletter
+	const existingData = await getExistingData(requestBody, storageInstance);
 
 	const formDataToReturn = existingData
 		? draftNewsletterDataToFormData(existingData)
