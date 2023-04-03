@@ -134,13 +134,12 @@ export const Wizard: React.FC<WizardProps> = ({
 		});
 	};
 
-	const handleStepClick = (stepId: string) => {
-		//TO DO - this triggers the setUpInitialState function since there is no button id
-		// server ignores the formData
+	const handleStepClick = (stepToSkipToId: string) => {
 		void fetchStep({
 			wizardId: wizardId,
 			id: id,
-			stepId: stepId,
+			stepId: serverData.currentStepId,
+			stepToSkipToId: stepToSkipToId,
 			formData: { ...formData, listId },
 		});
 	};
