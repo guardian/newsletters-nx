@@ -1,6 +1,7 @@
 import type {
 	DraftStorage,
 	DraftWithId,
+	FormDataRecord,
 } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
@@ -11,41 +12,48 @@ import type {
 
 export const makeStepDataWithErrorMessage = (
 	errorMessage: string,
-	requestBody: CurrentStepRouteRequest,
+	stepId: string,
+	formData?: FormDataRecord,
 ): WizardStepData => {
 	return {
 		...{
-			currentStepId: requestBody.stepId,
-			formData: requestBody.formData,
+			currentStepId: stepId,
+			formData: formData,
 		},
-		currentStepId: requestBody.stepId,
+		currentStepId: stepId,
 		errorMessage,
 	};
 };
 
 export const validateIncomingFormData = (
-	requestBody: CurrentStepRouteRequest,
+	stepId: string,
+	formData: FormDataRecord | undefined,
 	wizardLayout: WizardLayout,
 ) => {
-	const currentStepLayout = wizardLayout[requestBody.stepId];
+	const currentStepLayout = wizardLayout[stepId];
 	const formSchemaForIncomingStep = currentStepLayout?.schema;
 
 	if (formSchemaForIncomingStep) {
-		if (!requestBody.formData) {
+		if (!formData) {
 			return 'MISSING FORM DATA';
 		}
 
-		const parseResult = formSchemaForIncomingStep.safeParse(
-			requestBody.formData,
-		);
+		const parseResult = formSchemaForIncomingStep.safeParse(formData);
 		if (!parseResult.success) {
-			return 'INVALID FORM DATA';
+			const issueList = parseResult.error.issues.map((issue) => {
+				const fieldName = issue.path.map((part) => part.toString()).join('/');
+				return `${fieldName}: "${issue.message}"`;
+			});
+			return `VALIDATION ERRORS: ${issueList.join('; ')}`;
 		}
 	}
 
 	return false;
 };
 
+/**
+ * TO DO - FIX USE OF requestBody.id
+ */
 export const getExistingItem = async (
 	requestBody: CurrentStepRouteRequest,
 	storageInstance: DraftStorage,

@@ -33,12 +33,24 @@ export async function stateMachineSkipPressed(
 	}
 
 	if (!requestBody.stepToSkipToId) {
-		return makeStepDataWithErrorMessage('no stepToSkipToId', requestBody);
+		return makeStepDataWithErrorMessage(
+			'no stepToSkipToId',
+			requestBody.stepId,
+			requestBody.formData,
+		);
 	}
 
-	const incomingDataError = validateIncomingFormData(requestBody, wizardLayout);
+	const incomingDataError = validateIncomingFormData(
+		requestBody.stepId,
+		requestBody.formData,
+		wizardLayout,
+	);
 	if (incomingDataError) {
-		return makeStepDataWithErrorMessage(incomingDataError, requestBody);
+		return makeStepDataWithErrorMessage(
+			incomingDataError,
+			requestBody.stepId,
+			requestBody.formData,
+		);
 	}
 
 	const existingItem = await getExistingItem(requestBody, storageInstance);
@@ -59,7 +71,8 @@ export async function stateMachineSkipPressed(
 	if (!listId) {
 		return makeStepDataWithErrorMessage(
 			'Cannot skip from this step',
-			requestBody,
+			requestBody.stepId,
+			requestBody.formData,
 		);
 	}
 
