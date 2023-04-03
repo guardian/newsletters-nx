@@ -1,5 +1,5 @@
 import { css, Step, StepButton, StepLabel, Stepper } from '@mui/material';
-import type { StepperConfig } from '@newsletters-nx/state-machine';
+import type { StepListing, StepperConfig } from '@newsletters-nx/state-machine';
 
 interface Props {
 	currentStepId?: string;
@@ -33,6 +33,12 @@ export const StepNav = ({
 		(step) => step.id === currentStepId,
 	);
 
+	const isCurrent = (step: StepListing) =>
+		step.id === currentStep?.id || step.id === currentStep?.parentStepId;
+
+	const needsButton = (step: StepListing) =>
+		stepperConfig.isNonLinear && step.canSkipTo && !isCurrent(step);
+
 	return (
 		<Stepper
 			nonLinear={stepperConfig.isNonLinear}
@@ -47,14 +53,12 @@ export const StepNav = ({
 						padding-top: 0.75rem;
 					`}
 					key={step.id}
-					active={
-						step.id === currentStep?.id || step.id === currentStep?.parentStepId
-					}
+					active={isCurrent(step)}
 				>
-					{stepperConfig.isNonLinear && step.canSkipTo ? (
+					{needsButton(step) ? (
 						<StepButton
 							onClick={() => {
-								alert(step.id);
+								alert([currentStepId, step.id].join());
 							}}
 						>
 							<b css={{ textDecoration: 'underline' }}>
