@@ -134,6 +134,17 @@ export const Wizard: React.FC<WizardProps> = ({
 		});
 	};
 
+	const handleStepClick = (stepId: string) => {
+		//TO DO - this triggers the setUpInitialState function since there is no button id
+		// server ignores the formData
+		void fetchStep({
+			wizardId: wizardId,
+			id: id,
+			stepId: stepId,
+			formData: { ...formData, listId },
+		});
+	};
+
 	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
 
 	return (
@@ -142,6 +153,7 @@ export const Wizard: React.FC<WizardProps> = ({
 				currentStepId={serverData.currentStepId}
 				stepperConfig={getStepperConfig(wizardId)}
 				onEditTrack={typeof id !== 'undefined'}
+				handleStepClick={handleStepClick}
 			/>
 			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
 

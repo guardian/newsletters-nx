@@ -5,12 +5,14 @@ interface Props {
 	currentStepId?: string;
 	stepperConfig: StepperConfig;
 	onEditTrack: boolean;
+	handleStepClick: { (stepId: string): void };
 }
 
 export const StepNav = ({
 	currentStepId,
 	stepperConfig,
 	onEditTrack,
+	handleStepClick,
 }: Props) => {
 	const filteredStepList = stepperConfig.steps.filter((step) => {
 		if (step.parentStepId) {
@@ -58,7 +60,7 @@ export const StepNav = ({
 					{needsButton(step) ? (
 						<StepButton
 							onClick={() => {
-								alert([currentStepId, step.id].join());
+								handleStepClick(step.id);
 							}}
 						>
 							<b css={{ textDecoration: 'underline' }}>
