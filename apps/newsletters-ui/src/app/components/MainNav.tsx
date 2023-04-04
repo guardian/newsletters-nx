@@ -1,10 +1,6 @@
-import { css } from '@emotion/react';
-import {
-	neutral,
-	space,
-	textSansObjectStyles,
-} from '@guardian/source-foundations';
-import { Link } from 'react-router-dom';
+import { Button, ButtonGroup, Typography } from '@mui/material';
+import { Container } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
 	pathname: string;
@@ -18,54 +14,37 @@ interface NavLink {
 const navLinks: NavLink[] = [
 	{ path: '/', label: 'Home' },
 	{ path: '/newsletters', label: 'Newsletters' },
+	{ path: '/drafts', label: 'Drafts' },
 	{ path: '/templates', label: 'Email Templates' },
 	{ path: '/thrashers', label: 'Thrashers' },
 ];
 
-const navStyle = css`
-	display: flex;
-	padding: ${space[2]}px 0;
-	flex-wrap: wrap;
-
-	a {
-		${textSansObjectStyles.medium({ fontWeight: 'light' })};
-		flex-wrap: nowrap;
-		flex-basis: 220px;
-		margin-right: ${space[2]}px;
-		margin-bottom: ${space[2]}px;
-		padding: ${space[1]}px;
-		background-color: ${neutral[97]};
-		color: ${neutral[7]};
-		text-decoration: none;
-		text-align: center;
-
-		&.current {
-			${textSansObjectStyles.medium({ fontWeight: 'bold' })};
-			background-color: ${neutral[7]};
-			color: ${neutral[97]};
-		}
-	}
-`;
-
 export function MainNav({ pathname }: Props) {
-	const getLinkClass = (linkPath: string): string | undefined => {
+	const navigate = useNavigate();
+	const getButtonVariant = (linkPath: string): 'contained' | 'outlined' => {
 		if (linkPath === pathname) {
-			return 'current';
+			return 'contained';
 		}
-		return undefined;
+		return 'outlined';
 	};
 
 	return (
-		<nav css={navStyle}>
-			{navLinks.map((link) => (
-				<Link
-					key={link.path}
-					to={link.path}
-					className={getLinkClass(link.path)}
-				>
-					{link.label}
-				</Link>
-			))}
-		</nav>
+		<Container maxWidth="lg">
+			<ButtonGroup component={'nav'}>
+				{navLinks.map((link) => (
+					<Button
+						color="info"
+						variant={getButtonVariant(link.path)}
+						onClick={() => {
+							navigate(link.path);
+						}}
+						key={link.path}
+					>
+						{link.label}
+					</Button>
+				))}
+			</ButtonGroup>
+			<Typography component={'h1'}>Have I Got Newsletters For You</Typography>
+		</Container>
 	);
 }

@@ -6,7 +6,7 @@ import { Layout } from '../Layout';
 import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
 
 export const draftRoute: RouteObject = {
-	path: '/newsletters/drafts',
+	path: '/drafts',
 	element: <Layout />,
 	errorElement: <ErrorPage />,
 	children: [
