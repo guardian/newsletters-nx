@@ -38,3 +38,6 @@ testem.log
 .DS_Store
 Thumbs.db
 cdk/bin
+
+# Local environment files
+**/**/.env.local
