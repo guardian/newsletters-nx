@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import { z } from 'zod';
+import { isStringArray } from '../../util';
 
 export interface FieldDef {
 	key: string;
@@ -8,8 +8,15 @@ export interface FieldDef {
 	value: unknown;
 	enumOptions?: string[];
 	readOnly?: boolean;
+	arrayItemType?: 'string' | 'unsupported';
 }
-export type FieldValue = string | number | boolean | undefined | Date;
+export type FieldValue =
+	| string
+	| number
+	| boolean
+	| undefined
+	| Date
+	| string[];
 
 export type NumberInputSettings = {
 	min?: number;
@@ -40,6 +47,10 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 
 	if (field.type === 'ZodDate') {
 		return value instanceof Date;
+	}
+
+	if (field.type === 'ZodArray' && field.arrayItemType === 'string') {
+		return isStringArray(value);
 	}
 
 	switch (typeof value) {
@@ -75,6 +86,9 @@ export const fieldValueAsDisplayString = (field: FieldDef): string => {
 		case 'number':
 			return field.value.toString();
 		case 'object':
+			if (isStringArray(field.value)) {
+				return `STRING ARRAY [${field.value.join()}]`;
+			}
 			if (Array.isArray(field.value)) {
 				return 'ARRAY';
 			}

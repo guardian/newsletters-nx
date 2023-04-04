@@ -41,8 +41,8 @@ export const renderingOptionsSchema = z.object({
 	displayStandfirst: z.boolean(),
 	contactEmail: z.string().email(),
 	displayImageCaptions: z.boolean(),
-	linkListSubheading: z.string().optional(),
-	podcastSubheading: z.string().optional(),
+	linkListSubheading: z.array(z.string()).optional(),
+	podcastSubheading: z.array(z.string()).optional(),
 	readMoreSubheading: z.string().optional(),
 	readMoreWording: z.string().optional(),
 	readMoreUrl: z.string().url().optional(),
@@ -84,7 +84,9 @@ export const newsletterDataSchema = z.object({
 	}),
 	campaignName: z.string().optional(),
 	campaignCode: z.string().optional(),
-	brazeSubscribeAttributeNameAlternate: z.array(z.string()).optional(),
+	brazeSubscribeAttributeNameAlternate: z
+		.array(underscoreCasedString())
+		.optional(),
 	signupPage: z.string().optional(),
 	exampleUrl: z.string().optional(),
 	designBriefDoc: z.string().optional(),

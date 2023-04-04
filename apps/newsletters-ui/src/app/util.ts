@@ -43,3 +43,9 @@ export const getGuardianUrl = (relativeUrl: string): string =>
 
 export const renderYesNo = (value: boolean): string =>
 	value ? '✅ Yes' : '❌ No';
+
+export const isStringArray = (value: unknown): value is string[] => {
+	return (
+		Array.isArray(value) && value.every((item) => typeof item === 'string')
+	);
+};

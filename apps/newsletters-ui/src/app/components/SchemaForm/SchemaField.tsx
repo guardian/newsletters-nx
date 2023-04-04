@@ -1,8 +1,10 @@
 import { z } from 'zod';
+import { isStringArray } from '../../util';
 import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
+import { SchemaArrayInput } from './SchemaArrayInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
@@ -139,6 +141,14 @@ export function SchemaField<T extends z.ZodRawShape>({
 					options={field.enumOptions ?? []}
 				/>
 			);
+
+		case 'ZodArray':
+			if (field.arrayItemType === 'string') {
+				if (isStringArray(value) || typeof value === 'undefined') {
+					return <SchemaArrayInput {...standardProps} value={value ?? []} />;
+				}
+			}
+			return <WrongTypeMessage field={field} />;
 
 		default:
 			if (showUnsupported) {

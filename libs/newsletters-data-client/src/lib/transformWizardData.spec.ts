@@ -87,8 +87,12 @@ describe('formDataToDraftNewsletterData', () => {
 		expect(output).toEqual(VALID_DRAFT_WITH_NESTED_OBJECT);
 	});
 
-	it('will convert string arrays if the key is in the schema', () => {
-		const brazeSubscribeAttributeNameAlternate = ['v2', '2', 'foo'];
+	it('will convert string arrays if the key is in the schema and the strings pass validation', () => {
+		const brazeSubscribeAttributeNameAlternate = [
+			'valid_value_one',
+			'valid_value_two',
+			'valid_value_three',
+		];
 		const willNotAppearInOutput = [
 			'because "willNotAppearInOutput" is not a key in the schema ',
 		];
@@ -102,6 +106,23 @@ describe('formDataToDraftNewsletterData', () => {
 		expect(output).toEqual({
 			...SIMPLE_VALID_DRAFT,
 			brazeSubscribeAttributeNameAlternate,
+		});
+	});
+
+	it('will not convert string arrays if the key is in the schema but any of the string values fail validation', () => {
+		const brazeSubscribeAttributeNameAlternate = [
+			'valid_value_one',
+			'valid_value_two',
+			'not valid: brazeSubscribeAttributeNameAlternate items must be underscore_case',
+		];
+
+		const output = formDataToDraftNewsletterData({
+			...SIMPLE_VALID_FORM_DATA,
+			brazeSubscribeAttributeNameAlternate,
+		});
+		expect(isDraftNewsletterData(output)).toBeTruthy();
+		expect(output).toEqual({
+			...SIMPLE_VALID_DRAFT,
 		});
 	});
 
