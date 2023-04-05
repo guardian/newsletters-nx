@@ -16,5 +16,5 @@ export const underscoreCasedString = () =>
 		.string()
 		.regex(
 			/^[a-zA-Z]+(_[a-zA-z]+)*$/,
-			'Must contain only letters and underscores',
+			'Must contain only words(upper or lower case letters) connected by underscores',
 		);
