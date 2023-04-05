@@ -101,8 +101,10 @@ export const newsletterDataSchema = z.object({
 	composerTag: z.string().optional(),
 	composerCampaignTag: z.string().optional(),
 
+	launchDate: z.coerce.date(),
 	signUpPageDate: z.coerce.date(),
 	thrasherDate: z.coerce.date(),
+	privateUntilLaunch: z.boolean(),
 	onlineArticle: onlineArticleSchema,
 
 	renderingOptions: renderingOptionsSchema.optional(),

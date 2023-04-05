@@ -45,11 +45,13 @@ const VALID_DRAFT_WITH_NESTED_OBJECT: DraftNewsletterData = {
 
 const FORM_DATA_WITH_DATES: FormDataRecord = {
 	name: 'test name',
+	launchDate: new Date('01-02-2023'),
 	signUpPageDate: new Date('10-10-2020').toDateString(),
 	thrasherDate: new Date('10-10-2021'),
 };
 const DRAFT_WITH_DATES: DraftNewsletterData = {
 	name: 'test name',
+	launchDate: new Date('01-02-2023'),
 	signUpPageDate: new Date('10-10-2020'),
 	thrasherDate: new Date('10-10-2021'),
 };

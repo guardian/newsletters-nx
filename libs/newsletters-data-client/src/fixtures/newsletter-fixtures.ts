@@ -38,8 +38,10 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 
 	creationTimeStamp: 87678876,
 	figmaIncludesThrashers: false,
+	launchDate: new Date(87678876),
 	signUpPageDate: new Date(87678876),
 	thrasherDate: new Date(87678876),
+	privateUntilLaunch: false,
 	onlineArticle: 'Web for all sends',
 };
 
