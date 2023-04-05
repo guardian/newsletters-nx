@@ -75,7 +75,7 @@ export const newsletterDataSchema = z.object({
 	group: nonEmptyString(),
 	headline: z.string().optional(),
 	description: nonEmptyString(),
-	regionFocus: z.string().optional(),
+	regionFocus: regionFocusEnumSchema,
 	frequency: nonEmptyString(),
 	listId: z.number(),
 	listIdV1: z.number(),
