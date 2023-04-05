@@ -14,6 +14,7 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	group: 'News in depth',
 	description:
 		"Alex Hern's weekly dive in to how technology is shaping our lives",
+	regionFocus: '',
 	frequency: 'Weekly',
 	listIdV1: -1,
 	listId: 6013,
@@ -57,6 +58,7 @@ export const VALID_TECHSCAPE: LegacyNewsletter = {
 	group: 'News in depth',
 	description:
 		"Alex Hern's weekly dive in to how technology is shaping our lives",
+	regionFocus: '',
 	frequency: 'Weekly',
 	listIdV1: -1,
 	listId: 6013,
