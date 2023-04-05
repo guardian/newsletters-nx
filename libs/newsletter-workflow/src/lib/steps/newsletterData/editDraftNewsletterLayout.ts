@@ -3,9 +3,7 @@ import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
 
 export const editDraftNewsletterLayout: WizardStepLayout = {
-	staticMarkdown: `# Edit a draft newsletter
-
-This wizard allows you to edit an existing draft newsletter, guiding you through the process of creating a newsletter using email-rendering.
+	staticMarkdown: `# Name Your Newsletter
 
 The first step is to enter the name for your newsletter, for example **Down to Earth**.
 
