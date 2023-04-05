@@ -13,6 +13,7 @@ The first step is to enter all the data relating to the newsletter.
 
 `,
 	role: 'EDIT_START',
+	label: 'start',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',

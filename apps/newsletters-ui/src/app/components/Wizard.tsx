@@ -1,4 +1,4 @@
-import { Alert } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
@@ -147,7 +147,7 @@ export const Wizard: React.FC<WizardProps> = ({
 	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
 
 	return (
-		<>
+		<Box paddingY={2}>
 			<StepNav
 				currentStepId={serverData.currentStepId}
 				stepperConfig={getStepperConfig(wizardId)}
@@ -181,6 +181,6 @@ export const Wizard: React.FC<WizardProps> = ({
 					key={`${key}${button.label}`}
 				/>
 			))}
-		</>
+		</Box>
 	);
 };

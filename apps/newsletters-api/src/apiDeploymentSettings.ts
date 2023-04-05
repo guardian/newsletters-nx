@@ -42,8 +42,8 @@ export const isServingReadEndpoints = () => {
 	return undefinedAndNotProduction || isApiRead || isApiReadWrite;
 };
 
-export const isUsingTestS3Storage = () => {
-	return (
-		process.env.NODE_ENV !== 'production' && !!process.env.USE_TEST_S3_STORAGE
-	);
+export const isUsingInMemoryStorage = () => {
+	return process.env.NODE_ENV === 'production'
+		? false
+		: process.env.USE_LOCAL_STORAGE === 'true';
 };

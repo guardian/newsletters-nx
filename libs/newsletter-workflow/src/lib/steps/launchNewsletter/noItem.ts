@@ -9,6 +9,7 @@ This wizard will guide you through the process of launching a new newsletter usi
 
 `,
 	role: 'CREATE_START',
+	label: 'start',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
