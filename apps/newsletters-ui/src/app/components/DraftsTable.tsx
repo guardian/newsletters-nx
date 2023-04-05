@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -6,6 +7,7 @@ import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-clien
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { ExternalLinkButton } from './ExternalLinkButton';
+import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
 
 interface Props {
@@ -54,15 +56,32 @@ export const DraftsTable = ({ drafts }: Props) => {
 				),
 			},
 			{
-				Header: 'Wizard',
-				accessor: 'wizardListId',
-				Cell: ({ cell: { value } }) => (
-					<button
-						onClick={() => navigate(`/demo/newsletter-data/${value as string}`)}
-					>
-						View
-					</button>
-				),
+				Header: 'Set up',
+				Cell: ({ row: { original } }) => {
+					const draft = original as DraftNewsletterData;
+					const href = draft.listId
+						? `/demo/newsletter-data/${draft.listId.toString()}`
+						: undefined;
+					return (
+						<NavigateButton href={href} size="small">
+							update
+						</NavigateButton>
+					);
+				},
+			},
+			{
+				Header: 'Render Options',
+				Cell: ({ row: { original } }) => {
+					const draft = original as DraftNewsletterData;
+					const href = draft.listId
+						? `/demo/newsletter-data-rendering/${draft.listId.toString()}`
+						: undefined;
+					return (
+						<NavigateButton href={href} size="small">
+							edit
+						</NavigateButton>
+					);
+				},
 			},
 			{
 				Header: 'delete',

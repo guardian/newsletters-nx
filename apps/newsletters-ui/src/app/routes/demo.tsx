@@ -19,6 +19,10 @@ export const demoRoute: RouteObject = {
 			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
 		},
 		{
+			path: 'newsletter-data-rendering/:listId',
+			element: <WizardContainer wizardId="RENDERING_OPTIONS" />,
+		},
+		{
 			path: 'newsletter-data',
 			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
 		},

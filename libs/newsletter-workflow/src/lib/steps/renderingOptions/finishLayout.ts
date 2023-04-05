@@ -6,9 +6,9 @@ const markdownTemplate = `# Finished
 
 You have reached the end of the wizard.
 
-Congratulations - you've provided the key data for newsletter **{{name}}**.
+Congratulations - the rendering options for **{{name}}** have been set.
 
-You can see your draft on the [details page](newsletters/drafts/{{listId}}), which includes the options to edit the data you have provided and provide additional details.
+Go to the [details page](newsletters/drafts/{{listId}}) to see your draft.
 
 `;
 
@@ -23,7 +23,12 @@ const finishLayout: WizardStepLayout = {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		return markdownTemplate.replace(regExPatterns.name, name);
+		const [listId = 'listId'] = getStringValuesFromRecord(responseData, [
+			'listId',
+		]);
+		return markdownTemplate
+			.replace(regExPatterns.name, name)
+			.replace(regExPatterns.listId, listId);
 	},
 };
 
