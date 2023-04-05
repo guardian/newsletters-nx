@@ -20,7 +20,7 @@ The first step is to enter the name of your newsletter, for example **Down to Ea
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'dates',
+			stepToMoveTo: 'category',
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const name = stepData.formData ? stepData.formData['name'] : undefined;
 				return name ? undefined : 'NO NAME PROVIDED';

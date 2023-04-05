@@ -5,29 +5,17 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Tell us about your launch date and promotion plans for {{name}}
+# How will {{name}} be produced?
 
-## Launch
+Editorial newsletters can be produced in three ways:
 
-When will the first send of **{{name}}** be?  Please specify the time and date.
+**article-based**: Each chapter of the newsletter is written as a composer article.
 
-This needs to be added in the UK timezone so the system can process this information correctly.
+**fronts-based**: The newsletters are generated from a fronts page.
 
-## Promotion
+**manual-send**: The content of the email are generated manually or with an external tool.
 
-Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?  If so:
-
-- what date will the sign up page go live?
-
-- what date will the thrashers go live?
-
-## Testing
-
-Please note that we will automatically add a testing period for the newsletter of 1 week before the first send.
-
-This will give you an opportunity to try out the newsletter template in Composer.
-
-Does the newsletter need to be private e.g. in the case of it being confidential?
+If you aren't sure or none of the above fit, please select "other".
 
 `.trim();
 
@@ -36,9 +24,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const dateLayout: WizardStepLayout = {
+export const categoryLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Launch/Promotion Dates',
+	label: 'production category',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -50,7 +38,7 @@ export const dateLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'category',
+			stepToMoveTo: 'editDraftNewsletter',
 			executeStep: executeModify,
 		},
 		finish: {
@@ -60,5 +48,5 @@ export const dateLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.promotionDates,
+	schema: formSchemas.category,
 };
