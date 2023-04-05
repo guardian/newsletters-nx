@@ -2,6 +2,7 @@ name: Upgrade NX
 on:
   schedule:
     - cron: '0 10 * * 1'
+  workflow_dispatch:
 jobs:
   update-dep:
     runs-on: ubuntu-latest
