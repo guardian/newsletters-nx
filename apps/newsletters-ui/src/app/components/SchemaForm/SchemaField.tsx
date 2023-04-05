@@ -49,7 +49,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	};
 
 	const standardProps = {
-		label: field.key,
+		label: field.description ?? field.key,
 		inputHandler,
 		readOnly: !!field.readOnly,
 		optional: !!field.optional,

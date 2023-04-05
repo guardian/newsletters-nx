@@ -3,6 +3,7 @@ import { isStringArray } from '../../util';
 
 export interface FieldDef {
 	key: string;
+	description?: string;
 	optional: boolean;
 	type: string;
 	value: unknown;
