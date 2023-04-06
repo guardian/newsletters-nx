@@ -6,9 +6,9 @@ const markdownTemplate = `# Finished
 
 You have reached the end of the wizard.
 
-Congratulations - the rendering options for **{{name}}** have been set.
+The rendering options for **{{name}}** have been set, but you can come back to this wizard to update them.
 
-Go to the [details page](newsletters/drafts/{{listId}}) to see your draft.
+You can see the full details of **{{name}}** on the [details page](drafts/{{listId}}).
 
 `;
 

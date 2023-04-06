@@ -67,6 +67,7 @@ export interface WizardStepLayout {
 	};
 	buttons: Record<string, WizardStepLayoutButton>;
 	schema?: ZodObject<ZodRawShape>;
+	canSkipTo?: boolean;
 }
 
 export type WizardLayout = Record<string, WizardStepLayout>;
@@ -81,10 +82,12 @@ export interface CurrentStepRouteRequest {
 	id?: string;
 	/** ID of the button that was pressed to get to the current step */
 	buttonId?: string;
-	/**ID of the step the use was on when they pressed the button, or the id of the initial step requested when the Wizard page loads */
+	/**ID of the step the user was on when they pressed the button, or the id of the initial step requested when the Wizard page loads */
 	stepId: string;
 	/** arbitrary data entered by the user into a form before pressing the button */
 	formData?: WizardFormData;
+	/** ID of the step the user clicked a skip link for*/
+	stepToSkipToId?: string;
 }
 
 /**

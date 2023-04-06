@@ -53,4 +53,5 @@ export const newsletterHeaderLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.newsletterHeader,
+	canSkipTo: true,
 };

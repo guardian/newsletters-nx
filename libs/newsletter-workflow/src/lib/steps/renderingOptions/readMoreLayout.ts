@@ -71,4 +71,5 @@ export const readMoreLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.readMore,
+	canSkipTo: true,
 };

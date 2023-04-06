@@ -49,4 +49,5 @@ export const linkListLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.linkList,
+	canSkipTo: true,
 };

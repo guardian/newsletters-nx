@@ -4,7 +4,7 @@ import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
 	getFormSchema,
 	getStartStepId,
-	getStepList,
+	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
 import { getEmptySchemaData } from '@newsletters-nx/state-machine';
 import type {
@@ -69,7 +69,6 @@ export const Wizard: React.FC<WizardProps> = ({
 			})
 				.then((response) => response.json())
 				.then((data: CurrentStepRouteResponse) => {
-					console.table(data);
 					const listIdOnData = data.formData?.listId;
 					if (typeof listIdOnData === 'number') {
 						setListId(listIdOnData);
@@ -134,14 +133,25 @@ export const Wizard: React.FC<WizardProps> = ({
 		});
 	};
 
+	const handleStepClick = (stepToSkipToId: string) => {
+		void fetchStep({
+			wizardId: wizardId,
+			id: id,
+			stepId: serverData.currentStepId,
+			stepToSkipToId: stepToSkipToId,
+			formData: { ...formData, listId },
+		});
+	};
+
 	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
 
 	return (
 		<Box paddingY={2}>
 			<StepNav
 				currentStepId={serverData.currentStepId}
-				stepList={getStepList(wizardId)}
+				stepperConfig={getStepperConfig(wizardId)}
 				onEditTrack={typeof id !== 'undefined'}
+				handleStepClick={handleStepClick}
 			/>
 			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
 
