@@ -69,6 +69,9 @@ export const DraftDetails = ({ draft }: Props) => {
 					<Typography sx={{ fontSize: 28, color: palette[100] }}>
 						{draft.name ?? 'UNNAMED DRAFT'}
 					</Typography>
+					<Typography sx={{ fontSize: 16 }}>
+						category: {draft.category}
+					</Typography>
 					<Typography sx={{ fontSize: 16 }}>id: {draft.listId}</Typography>
 					<Typography sx={{ fontSize: 16 }}>
 						created: {draft.creationTimeStamp}
@@ -109,7 +112,7 @@ export const DraftDetails = ({ draft }: Props) => {
 						<Table>
 							{hasBeenDeleted && <caption>DELETED</caption>}
 							<TableBody>
-								{Object.entries(draft).map(([key, value]) => (
+								{Object.keys(draft).map((key) => (
 									<TableRow key={key}>
 										<TableCell size="small" sx={{ fontWeight: 'bold' }}>
 											{key}
