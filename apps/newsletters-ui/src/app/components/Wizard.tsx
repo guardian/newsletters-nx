@@ -69,7 +69,6 @@ export const Wizard: React.FC<WizardProps> = ({
 			})
 				.then((response) => response.json())
 				.then((data: CurrentStepRouteResponse) => {
-					console.table(data);
 					const listIdOnData = data.formData?.listId;
 					if (typeof listIdOnData === 'number') {
 						setListId(listIdOnData);

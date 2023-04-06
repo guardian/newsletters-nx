@@ -19,10 +19,7 @@ export async function stateMachineButtonPressed(
 ): Promise<WizardStepData> {
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
-
 	const formSchemaForIncomingStep = currentStepLayout?.schema;
-	console.log('form data should be:', formSchemaForIncomingStep?.description);
-	console.table(incomingStepData.formData);
 
 	if (!buttonPressedDetails) {
 		throw new StateMachineError(
