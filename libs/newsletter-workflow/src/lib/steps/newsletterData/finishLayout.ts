@@ -6,7 +6,9 @@ const markdownTemplate = `# Finished
 
 You have reached the end of the wizard.
 
-Congratulations - the newsletter **{{name}}** has been launched.
+Congratulations - you've provided the key data for newsletter **{{name}}**.
+
+You can see your draft on the [details page](newsletters/drafts/{{listId}}), which includes the options to edit the data you have provided and provide additional details.
 
 `;
 

@@ -2,24 +2,14 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Specify the header setup for {{name}}
+# Specify the image caption setup for {{name}}
 
-## Date
+Would you like captions to be displayed within the newsletter?
 
-Should the publication date display in each edition?
-
-This is typically shown for daily emails, but not for weekly ones.
-
-![Date](https://i.guim.co.uk/img/uploads/2023/03/15/Date.png?quality=85&dpr=2&width=300&s=815d857cb40089e47f501bf6d5838c2a)
-
-## Standfirst
-
-Would you like this to be displayed?
-
-![Standfirst](https://i.guim.co.uk/img/uploads/2023/03/15/Standfirst.png?quality=85&dpr=2&width=300&s=52779b0975a45a2cc9e4ae3a6b034aac)
+![Image captions](https://i.guim.co.uk/img/uploads/2023/03/15/Image_captions.png?quality=85&dpr=2&width=300&s=98e19bf182b3aaa690d5436f8ec0562b)
 
 `.trim();
 
@@ -28,9 +18,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const newsletterHeaderLayout: WizardStepLayout = {
+export const imageLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Header Setup',
+	label: 'Images',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -42,15 +32,15 @@ export const newsletterHeaderLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'signUp',
+			stepToMoveTo: 'newsletterHeader',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'image',
+			stepToMoveTo: 'readMore',
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.newsletterHeader,
+	schema: formSchemas.images,
 };

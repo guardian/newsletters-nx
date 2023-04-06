@@ -1,18 +1,11 @@
 import type { FastifyInstance } from 'fastify';
-// import { isLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
-// import newslettersData from '../../../static/newsletters.local.json';
 import type {
 	ApiResponse,
-	DraftStorage,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
 import { StorageRequestFailureReason } from '@newsletters-nx/newsletters-data-client';
-import { storageInstance } from '../../services/storageInstance';
+import { draftStore } from '../../services/storage';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
-
-// casting as DraftStorage so the methods are typed to
-// allow for failed responses.
-const draftStore = storageInstance as DraftStorage;
 
 const mapFailureReasonToStatusCode = (
 	reason?: StorageRequestFailureReason,
@@ -22,6 +15,10 @@ const mapFailureReasonToStatusCode = (
 			return 400;
 		case StorageRequestFailureReason.NotFound:
 			return 404;
+		case StorageRequestFailureReason.NoCredentials:
+			return 403;
+		case StorageRequestFailureReason.DataInStoreNotValid:
+			return 422;
 		default:
 			return 500;
 	}

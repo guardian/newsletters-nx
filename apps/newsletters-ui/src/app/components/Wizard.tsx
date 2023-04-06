@@ -1,7 +1,9 @@
-import { Alert } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
+import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
 	getFormSchema,
+	getStartStepId,
 	getStepList,
 } from '@newsletters-nx/newsletter-workflow';
 import { getEmptySchemaData } from '@newsletters-nx/state-machine';
@@ -10,7 +12,6 @@ import type {
 	CurrentStepRouteResponse,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
-import { WIZARDS } from '../types';
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
@@ -20,7 +21,7 @@ import { WizardButton } from './WizardButton';
  * Interface for the props passed to the `Wizard` component.
  */
 export interface WizardProps {
-	wizardId: keyof typeof WIZARDS;
+	wizardId: WizardId;
 	id?: string;
 }
 
@@ -95,17 +96,16 @@ export const Wizard: React.FC<WizardProps> = ({
 	);
 
 	useEffect(() => {
-		const { createStartStep = '', editStartStep = '' } = WIZARDS[wizardId];
 		if (id === undefined) {
 			void fetchStep({
 				wizardId: wizardId,
-				stepId: createStartStep,
+				stepId: getStartStepId(wizardId, false) ?? '',
 			});
 		} else {
 			void fetchStep({
 				wizardId: wizardId,
 				id: id,
-				stepId: editStartStep,
+				stepId: getStartStepId(wizardId, true) ?? '',
 			});
 		}
 		setListId(undefined);
@@ -137,7 +137,7 @@ export const Wizard: React.FC<WizardProps> = ({
 	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
 
 	return (
-		<>
+		<Box paddingY={2}>
 			<StepNav
 				currentStepId={serverData.currentStepId}
 				stepList={getStepList(wizardId)}
@@ -170,6 +170,6 @@ export const Wizard: React.FC<WizardProps> = ({
 					key={`${key}${button.label}`}
 				/>
 			))}
-		</>
+		</Box>
 	);
 };

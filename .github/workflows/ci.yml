@@ -6,25 +6,28 @@ on:
       - main
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.8
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.3
     with:
       number-of-agents: 3
       init-commands: |
         npx nx-cloud start-ci-run --stop-agents-after="build" --agent-count=3
       parallel-commands: |
-        npx nx-cloud record -- npx nx workspace-lint
         npx nx-cloud record -- npx nx format:check
       parallel-commands-on-agents: |
-        npx nx affected --target=lint --parallel=3
-        npx nx affected --target=test --parallel=3 --ci --code-coverage
-        npx nx affected --target=build --parallel=3
+        npx nx affected --target=lint
+        npx nx affected --target=test --ci --code-coverage
+        npx nx affected --target=build --with-deps --configuration=production
 
   agents:
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.8
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.3
     with:
       number-of-agents: 3
 
@@ -75,17 +78,6 @@ jobs:
           contentDirectories: |
             newsletters-tool-cfn:
               - cdk/cdk.out/NewslettersTool-CODE.template.json
+              - cdk/cdk.out/NewslettersTool-PROD.template.json
             newsletters-tool:
               - dist/newsletters-tool.zip
-
-      # # Upload artifacts for newsletters-api
-      # - name: Upload riff-raff artifacts - newsletters-api
-      #   uses: guardian/actions-riff-raff@v2
-      #   with:
-      #     app: newsletters-api
-      #     configPath: riff-raff.yaml
-      #     contentDirectories: |
-      #       newsletters-api-cfn:
-      #         - cdk/cdk.out/NewslettersApi-CODE.template.json
-      #       newsletters-api:
-      #         - dist/apps/newsletters-api/main.cjs

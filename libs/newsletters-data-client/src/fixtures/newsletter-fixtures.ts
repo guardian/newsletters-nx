@@ -14,6 +14,7 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	group: 'News in depth',
 	description:
 		"Alex Hern's weekly dive in to how technology is shaping our lives",
+	regionFocus: '',
 	frequency: 'Weekly',
 	listIdV1: -1,
 	listId: 6013,
@@ -38,8 +39,10 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 
 	creationTimeStamp: 87678876,
 	figmaIncludesThrashers: false,
+	launchDate: new Date(87678876),
 	signUpPageDate: new Date(87678876),
 	thrasherDate: new Date(87678876),
+	privateUntilLaunch: false,
 	onlineArticle: 'Web for all sends',
 };
 
@@ -57,6 +60,7 @@ export const VALID_TECHSCAPE: LegacyNewsletter = {
 	group: 'News in depth',
 	description:
 		"Alex Hern's weekly dive in to how technology is shaping our lives",
+	regionFocus: '',
 	frequency: 'Weekly',
 	listIdV1: -1,
 	listId: 6013,

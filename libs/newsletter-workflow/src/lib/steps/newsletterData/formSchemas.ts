@@ -138,8 +138,10 @@ export const formSchemas = {
 
 	promotionDates: newsletterDataSchema
 		.pick({
+			launchDate: true,
 			signUpPageDate: true,
 			thrasherDate: true,
+			privateUntilLaunch: true,
 		})
-		.describe('choose the dates you want promotions to appear'),
+		.describe('choose the launch date and promotion plans'),
 };

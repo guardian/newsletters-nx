@@ -2,7 +2,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
 # Rendering 'Link List' sections in {{name}}

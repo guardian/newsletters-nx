@@ -3,6 +3,7 @@ import {
 	isServingReadWriteEndpoints,
 	isServingUI,
 	isUndefinedAndNotProduction,
+	isUsingInMemoryStorage,
 } from './apiDeploymentSettings';
 
 const ORIGINAL_ENV = process.env;
@@ -144,5 +145,27 @@ describe('isServingReadWriteEndpoints', () => {
 		process.env.NODE_ENV = 'development';
 		process.env.NEWSLETTERS_API_READ_WRITE = 'false';
 		expect(isServingReadWriteEndpoints()).toBe(false);
+	});
+});
+
+describe('isUsingInMemoryStorage', () => {
+	it('returns false in production', () => {
+		process.env.NODE_ENV = 'production';
+		expect(isUsingInMemoryStorage()).toBe(false);
+	});
+	it('returns false in production, even if USE_LOCAL_STORAGE is true', () => {
+		process.env.NODE_ENV = 'production';
+		process.env.USE_LOCAL_STORAGE = 'true';
+		expect(isUsingInMemoryStorage()).toBe(false);
+	});
+	it('returns false if USE_LOCAL_STORAGE is not true', () => {
+		process.env.NODE_ENV = 'development';
+		process.env.USE_LOCAL_STORAGE = undefined;
+		expect(isUsingInMemoryStorage()).toBe(false);
+	});
+	it('returns true if USE_LOCAL_STORAGE is true and not in production', () => {
+		process.env.NODE_ENV = 'development';
+		process.env.USE_LOCAL_STORAGE = 'true';
+		expect(isUsingInMemoryStorage()).toBe(true);
 	});
 });

@@ -9,6 +9,9 @@ export const isDraft = isDraftNewsletterData;
 export enum StorageRequestFailureReason {
 	NotFound,
 	InvalidDataInput,
+	DataInStoreNotValid,
+	S3Failure,
+	NoCredentials,
 }
 
 export type SuccessfulStorageResponse<T> = {

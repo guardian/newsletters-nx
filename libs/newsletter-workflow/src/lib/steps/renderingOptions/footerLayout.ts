@@ -2,14 +2,16 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Specify the image caption setup for {{name}}
+# Specify the footer setup for {{name}}
 
-Would you like captions to be displayed within the newsletter?
+What email address would you like to display in the footer of **{{name}}**?
 
-![Image captions](https://i.guim.co.uk/img/uploads/2023/03/15/Image_captions.png?quality=85&dpr=2&width=300&s=98e19bf182b3aaa690d5436f8ec0562b)
+For example: newsletters@theguardian.com
+
+![Email footer](https://i.guim.co.uk/img/uploads/2023/03/15/Email_address_contact.png?quality=85&dpr=2&width=300&s=98ce6a07791b0bfb45f2df9c732ea1d2)
 
 `.trim();
 
@@ -18,9 +20,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const imageLayout: WizardStepLayout = {
+export const footerLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Images',
+	label: 'Footer Setup',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -32,15 +34,21 @@ export const imageLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'newsletterHeader',
+			stepToMoveTo: 'podcast',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'readMore',
+			stepToMoveTo: 'finish',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const email = stepData.formData
+					? stepData.formData['renderingOptions.contactEmail']
+					: undefined;
+				return email ? undefined : 'NO EMAIL ADDRESS PROVIDED';
+			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.images,
+	schema: formSchemas.footer,
 };

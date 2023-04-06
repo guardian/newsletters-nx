@@ -1,21 +1,19 @@
 import type { RouteObject } from 'react-router-dom';
-import { redirect } from 'react-router-dom';
-import { HealthCheck } from '../components/HealthCheck';
+import { HomeMenu } from '../components/HomeMenu';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
+import { listLoader } from '../loaders/newsletters';
 
 export const homeRoute: RouteObject = {
 	path: '/',
 	element: <Layout />,
 	errorElement: <ErrorPage />,
+
 	children: [
 		{
 			path: '',
-			action: () => redirect('/newsletters'),
-		},
-		{
-			path: 'api/',
-			element: <HealthCheck />,
+			element: <HomeMenu />,
+			loader: listLoader,
 		},
 		{
 			path: 'templates',

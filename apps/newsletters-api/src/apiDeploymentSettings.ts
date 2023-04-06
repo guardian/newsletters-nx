@@ -41,3 +41,9 @@ export const isServingReadEndpoints = () => {
 	const isApiReadWrite = isServingReadWriteEndpoints();
 	return undefinedAndNotProduction || isApiRead || isApiReadWrite;
 };
+
+export const isUsingInMemoryStorage = () => {
+	return process.env.NODE_ENV === 'production'
+		? false
+		: process.env.USE_LOCAL_STORAGE === 'true';
+};
