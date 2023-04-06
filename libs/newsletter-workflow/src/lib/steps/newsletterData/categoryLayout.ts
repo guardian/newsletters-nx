@@ -26,7 +26,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const categoryLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'production category',
+	label: 'Production Category',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
