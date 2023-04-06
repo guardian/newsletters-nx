@@ -17,6 +17,7 @@ import { useState } from 'react';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
 import { NavigateButton } from './NavigateButton';
 
 interface Props {
@@ -93,14 +94,7 @@ export const DraftDetails = ({ draft }: Props) => {
 							>
 								back to list
 							</NavigateButton>
-							<NavigateButton href={`/demo/newsletter-data/${draft.listId}`}>
-								Update draft
-							</NavigateButton>
-							<NavigateButton
-								href={`/demo/newsletter-data-rendering/${draft.listId}`}
-							>
-								Change rendering options
-							</NavigateButton>
+							<EditDraftNavigateButtons draft={draft} />
 						</ButtonGroup>
 					</CardContent>
 				)}
