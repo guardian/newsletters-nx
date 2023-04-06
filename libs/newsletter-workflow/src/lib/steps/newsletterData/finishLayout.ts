@@ -8,7 +8,7 @@ You have reached the end of the wizard.
 
 Congratulations - you've provided the key data for newsletter **{{name}}**.
 
-You can see your draft on the [details page](newsletters/drafts/{{listId}}), which includes the options to edit the data you have provided and provide additional details.
+You can see your draft on the [details page](drafts/{{listId}}), which includes the options to edit the data you have provided and provide additional details.
 
 `;
 
