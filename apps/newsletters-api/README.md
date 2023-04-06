@@ -9,9 +9,12 @@ On the default configuration, the API serves a the UI on its index page, so http
 
 ### Configuring the local instance with environment variables
 
-Copy **apps/newsletters-api/env.local.example.txt** and rename it **.env.local**. This file will be .gitignored.
+Local environment variables can be set by:
 
-By default, the local application uses an in-memory storage system (so data you enter will not persist when the application restarts). To use an S3 bucket for storage instead, you will need to set the s3 parameters in **.env.local**. You will need credentials for the right AWS account (IE the account the S3 bucket it in) from [Janus](https://janus.gutools.co.uk/), for the API to be able to access the bucket and read/write files.
+-   Coping **apps/newsletters-api/env.local.example.txt** and rename it **.env.local** (This file will be .gitignored), or
+-   setting them on the command line, eg `NEWSLETTERS_UI_SERVE=false npm run dev`
+
+By default, the local application uses an in-memory storage system (so data you enter will not persist when the application restarts). To use an S3 bucket for storage instead, you will need to set the environment variables for the s3 parameters. You will need credentials for the right AWS account (IE the account the S3 bucket it in) from [Janus](https://janus.gutools.co.uk/), for the API to be able to access the bucket and read/write files.
 
 ⚠ Avoid committing the names of S3 bucket into the repository. **.env.local** is gitignored. You should not need to enter them in any other files.
 
