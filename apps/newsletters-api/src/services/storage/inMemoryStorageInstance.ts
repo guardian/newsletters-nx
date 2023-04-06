@@ -5,6 +5,7 @@ export const makeInMemoryStorageInstance = () =>
 		{
 			listId: 7000,
 			name: 'Test draft newsletter',
+			category: 'article-based',
 			identityName: 'test-draft-newsletter',
 			brazeSubscribeEventNamePrefix: 'test_draft_newsletter',
 			brazeNewsletterName: 'Editorial_Testdraftnewsletter',
@@ -19,6 +20,7 @@ export const makeInMemoryStorageInstance = () =>
 			listId: 7001,
 			name: 'Other Test draft newsletter',
 			identityName: 'other-test-draft-newsletter',
+			category: 'other',
 			brazeSubscribeEventNamePrefix: 'other_test_draft_newsletter',
 			brazeNewsletterName: 'Editorial_Othertestdraftnewsletter',
 			brazeSubscribeAttributeName: 'Othertestdraftnewsletter_Subscribe_Email',
@@ -32,6 +34,7 @@ export const makeInMemoryStorageInstance = () =>
 		{
 			name: 'Response Academic',
 			identityName: 'response-academic',
+			category: 'article-based',
 			brazeSubscribeEventNamePrefix: 'response_academic',
 			brazeNewsletterName: 'Editorial_ResponseAcademic',
 			brazeSubscribeAttributeName: 'ResponseAcademic_Subscribe_Email',
@@ -49,6 +52,7 @@ export const makeInMemoryStorageInstance = () =>
 			identityName: 'wagon-automotive',
 			name: 'Wagon Automotive',
 			description: 'Mollitia saepe odio',
+			category: 'article-based',
 			frequency: 'Weekly',
 			brazeNewsletterName: 'Editorial_WagonAutomotiveAu',
 			brazeSubscribeAttributeName: 'WagonAutomotiveAu_Subscribe_Email',
@@ -60,6 +64,7 @@ export const makeInMemoryStorageInstance = () =>
 		{
 			identityName: 'background-hatchback',
 			name: 'Background Hatchback',
+			category: 'fronts-based',
 			description: 'Veritatis ipsum asperiores optio sunt eum ab architecto.',
 			frequency: 'Weekly',
 			brazeNewsletterName: 'Editorial_BackgroundHatchbackUk',
