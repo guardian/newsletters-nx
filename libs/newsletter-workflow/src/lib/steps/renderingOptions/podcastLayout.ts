@@ -49,4 +49,5 @@ export const podcastLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.podcast,
+	canSkipTo: true,
 };

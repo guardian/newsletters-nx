@@ -5,17 +5,35 @@ export type StepListing = {
 	label?: string;
 	role?: WizardStepLayout['role'];
 	parentStepId?: WizardStepLayout['parentStepId'];
+	canSkipTo?: boolean;
 };
-export const listStepsIn = (wizard: WizardLayout): StepListing[] => {
-	return Object.entries(wizard).reduce<StepListing[]>((list, [id, step]) => {
-		return [
-			...list,
-			{
-				id,
-				label: step.label,
-				role: step.role,
-				parentStepId: step.parentStepId,
-			},
-		];
-	}, []);
+
+export type StepperConfig = {
+	steps: StepListing[];
+	isNonLinear: boolean;
+};
+
+export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
+	const steps = Object.entries(wizard).reduce<StepListing[]>(
+		(list, [id, step]) => {
+			return [
+				...list,
+				{
+					id,
+					label: step.label,
+					role: step.role,
+					parentStepId: step.parentStepId,
+					canSkipTo: step.canSkipTo,
+				},
+			];
+		},
+		[],
+	);
+
+	const isNonLinear = Object.values(wizard).some((step) => step.canSkipTo);
+
+	return {
+		steps,
+		isNonLinear,
+	};
 };
