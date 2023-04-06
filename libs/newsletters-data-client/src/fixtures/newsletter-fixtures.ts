@@ -4,6 +4,7 @@ import type { NewsletterData } from '../lib/newsletter-data-type';
 export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	identityName: 'tech-scape',
 	name: 'TechScape',
+	category: 'article-based',
 	status: 'live',
 	restricted: false,
 	emailConfirmation: false,
