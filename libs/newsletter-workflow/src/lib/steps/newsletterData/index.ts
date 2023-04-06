@@ -1,6 +1,7 @@
 import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { brazeLayout } from './brazeLayout';
 import { cancelLayout } from './cancelLayout';
+import { categoryLayout } from './categoryLayout';
 import { completeDataCollectionLayout } from './completeDataCollectionLayout';
 import { createDraftNewsletterLayout } from './createDraftNewsletterLayout';
 import { dateLayout } from './dateLayout';
@@ -24,6 +25,7 @@ import { thrasherLayout } from './thrasherLayout';
 export const newsletterDataLayout: WizardLayout = {
 	createDraftNewsletter: createDraftNewsletterLayout,
 	editDraftNewsletter: editDraftNewsletterLayout,
+	category: categoryLayout,
 	cancel: cancelLayout,
 	dates: dateLayout,
 	pillar: pillarLayout,

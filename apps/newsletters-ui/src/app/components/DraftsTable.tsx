@@ -1,19 +1,21 @@
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { EditDraftDialog } from './EditDraftDialog';
 import { ExternalLinkButton } from './ExternalLinkButton';
-import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
 
 interface Props {
 	drafts: DraftNewsletterData[];
 }
 export const DraftsTable = ({ drafts }: Props) => {
+	const [draftInDialog, setDraftInDialog] = useState<
+		DraftNewsletterData | undefined
+	>(undefined);
 	const [data, setData] = useState(
 		drafts.map((draft) => ({
 			...draft,
@@ -21,7 +23,6 @@ export const DraftsTable = ({ drafts }: Props) => {
 			progress: Math.random() * 100,
 		})),
 	);
-	const navigate = useNavigate();
 	const columns = useMemo<Column[]>(
 		() => [
 			{
@@ -34,6 +35,10 @@ export const DraftsTable = ({ drafts }: Props) => {
 			{
 				Header: 'Newsletter Name',
 				accessor: 'name',
+			},
+			{
+				Header: 'Category',
+				accessor: 'category',
 			},
 			{
 				Header: 'Design',
@@ -56,30 +61,20 @@ export const DraftsTable = ({ drafts }: Props) => {
 				),
 			},
 			{
-				Header: 'Set up',
+				Header: 'Edit',
 				Cell: ({ row: { original } }) => {
 					const draft = original as DraftNewsletterData;
-					const href = draft.listId
-						? `/demo/newsletter-data/${draft.listId.toString()}`
-						: undefined;
+
 					return (
-						<NavigateButton href={href} size="small">
-							update
-						</NavigateButton>
-					);
-				},
-			},
-			{
-				Header: 'Render Options',
-				Cell: ({ row: { original } }) => {
-					const draft = original as DraftNewsletterData;
-					const href = draft.listId
-						? `/demo/newsletter-data-rendering/${draft.listId.toString()}`
-						: undefined;
-					return (
-						<NavigateButton href={href} size="small">
-							edit
-						</NavigateButton>
+						<Button
+							onClick={() => {
+								setDraftInDialog(draft);
+							}}
+							startIcon={'⚙'}
+							variant="outlined"
+						>
+							Edit
+						</Button>
 					);
 				},
 			},
@@ -102,7 +97,17 @@ export const DraftsTable = ({ drafts }: Props) => {
 				},
 			},
 		],
-		[data, navigate],
+		[data],
 	);
-	return <Table data={data} columns={columns} defaultSortId="name" />;
+	return (
+		<>
+			<Table data={data} columns={columns} defaultSortId="name" />;
+			<EditDraftDialog
+				draft={draftInDialog}
+				close={() => {
+					setDraftInDialog(undefined);
+				}}
+			/>
+		</>
+	);
 };

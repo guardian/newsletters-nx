@@ -65,6 +65,11 @@ export const thrasherOptionsSchema = z.object({
 });
 export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
 
+export const newsletterCategoriesSchema = z
+	.enum(['article-based', 'fronts-based', 'manual-send', 'other'])
+	.describe('production category');
+export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
+
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
  * Edits to this schema would need to be reflected in the transform function.
@@ -73,6 +78,7 @@ export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
 export const newsletterDataSchema = z.object({
 	identityName: kebabCasedString().describe('identity name'),
 	name: nonEmptyString(),
+	category: newsletterCategoriesSchema,
 	restricted: z.boolean(),
 	status: z.enum(['paused', 'cancelled', 'live']),
 	emailConfirmation: z.boolean().describe('email confirmation'),

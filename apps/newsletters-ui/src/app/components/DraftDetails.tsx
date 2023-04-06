@@ -17,6 +17,7 @@ import { useState } from 'react';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
 import { NavigateButton } from './NavigateButton';
 
 interface Props {
@@ -68,6 +69,9 @@ export const DraftDetails = ({ draft }: Props) => {
 					<Typography sx={{ fontSize: 28, color: palette[100] }}>
 						{draft.name ?? 'UNNAMED DRAFT'}
 					</Typography>
+					<Typography sx={{ fontSize: 16 }}>
+						category: {draft.category}
+					</Typography>
 					<Typography sx={{ fontSize: 16 }}>id: {draft.listId}</Typography>
 					<Typography sx={{ fontSize: 16 }}>
 						created: {draft.creationTimeStamp}
@@ -93,14 +97,7 @@ export const DraftDetails = ({ draft }: Props) => {
 							>
 								back to list
 							</NavigateButton>
-							<NavigateButton href={`/demo/newsletter-data/${draft.listId}`}>
-								Update draft
-							</NavigateButton>
-							<NavigateButton
-								href={`/demo/newsletter-data-rendering/${draft.listId}`}
-							>
-								Change rendering options
-							</NavigateButton>
+							<EditDraftNavigateButtons draft={draft} />
 						</ButtonGroup>
 					</CardContent>
 				)}
@@ -115,7 +112,7 @@ export const DraftDetails = ({ draft }: Props) => {
 						<Table>
 							{hasBeenDeleted && <caption>DELETED</caption>}
 							<TableBody>
-								{Object.entries(draft).map(([key, value]) => (
+								{Object.keys(draft).map((key) => (
 									<TableRow key={key}>
 										<TableCell size="small" sx={{ fontWeight: 'bold' }}>
 											{key}

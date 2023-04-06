@@ -39,6 +39,10 @@ export const formSchemas = {
 		.pick({ identityName: true })
 		.describe('Edit the identity name if required'),
 
+	category: newsletterDataSchema
+		.pick({ category: true })
+		.describe('Pick a category'),
+
 	braze: newsletterDataSchema
 		.pick({
 			brazeSubscribeEventNamePrefix: true,
