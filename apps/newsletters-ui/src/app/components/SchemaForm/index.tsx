@@ -1,6 +1,7 @@
 import type { z, ZodRawShape, ZodTypeAny } from 'zod';
 import { ZodArray, ZodObject, ZodString } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 
