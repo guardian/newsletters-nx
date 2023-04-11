@@ -1,26 +1,7 @@
-import type { z, ZodTypeAny } from 'zod';
-import {
-	ZodBoolean,
-	ZodDate,
-	ZodEnum,
-	ZodNumber,
-	ZodOptional,
-	ZodString,
-} from 'zod';
-import type { FormDataRecord } from './transformWizardData';
-
-//TO DO - deduplicate the versions of these functions in other libraries
-
-const recursiveUnwrap = (field: ZodTypeAny): ZodTypeAny => {
-	if (!(field instanceof ZodOptional)) {
-		return field;
-	}
-	const unwrapped = field.unwrap() as ZodTypeAny;
-	if (unwrapped instanceof ZodOptional) {
-		return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
-	}
-	return unwrapped;
-};
+import type { z } from 'zod';
+import { ZodBoolean, ZodDate, ZodEnum, ZodNumber, ZodString } from 'zod';
+import type { FormDataRecord } from '../transformWizardData';
+import { recursiveUnwrap } from './recursiveUnwrap';
 
 /**
  * NOTE - ZodDates are defaulted to 'undefined'

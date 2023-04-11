@@ -4,7 +4,7 @@ import {
 	kebabCasedString,
 	nonEmptyString,
 	underscoreCasedString,
-} from './schema-helpers';
+} from './zod-helpers/schema-helpers';
 
 export const themeEnumSchema = z.enum([
 	'',
