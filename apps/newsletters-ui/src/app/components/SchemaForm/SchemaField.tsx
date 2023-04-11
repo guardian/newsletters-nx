@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isStringArray } from '../../util';
+import { isPrimitiveRecordArray, isStringArray } from '../../util';
 import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
@@ -143,12 +143,27 @@ export function SchemaField<T extends z.ZodRawShape>({
 			);
 
 		case 'ZodArray':
-			if (field.arrayItemType === 'string') {
-				if (isStringArray(value) || typeof value === 'undefined') {
-					return <SchemaArrayInput {...standardProps} value={value ?? []} />;
+			switch (field.arrayItemType) {
+				case 'string': {
+					if (isStringArray(value) || typeof value === 'undefined') {
+						return <SchemaArrayInput {...standardProps} value={value ?? []} />;
+					}
+					return <WrongTypeMessage field={field} />;
+				}
+
+				case 'record': {
+					if (isPrimitiveRecordArray(value) || typeof value === 'undefined') {
+						return <p>TO DO - render record control</p>;
+					} else {
+						return <WrongTypeMessage field={field} />;
+					}
+				}
+
+				case 'unsupported': {
+					return <WrongTypeMessage field={field} />;
 				}
 			}
-			return <WrongTypeMessage field={field} />;
+			break;
 
 		default:
 			if (showUnsupported) {

@@ -9,7 +9,7 @@ export interface FieldDef {
 	value: unknown;
 	enumOptions?: string[];
 	readOnly?: boolean;
-	arrayItemType?: 'string' | 'unsupported';
+	arrayItemType?: 'string' | 'record' | 'unsupported';
 }
 export type FieldValue =
 	| string

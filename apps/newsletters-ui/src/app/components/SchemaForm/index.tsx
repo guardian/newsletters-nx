@@ -1,5 +1,5 @@
 import type { z, ZodTypeAny } from 'zod';
-import { ZodArray, ZodOptional, ZodString } from 'zod';
+import { ZodArray, ZodObject, ZodOptional, ZodString } from 'zod';
 import { SchemaField } from './SchemaField';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 
@@ -37,6 +37,10 @@ const getArrayItemType = (zod: ZodTypeAny): FieldDef['arrayItemType'] => {
 	if (elementSchema instanceof ZodString) {
 		return 'string';
 	}
+	if (elementSchema instanceof ZodObject) {
+		return 'record';
+	}
+	console.log(elementSchema);
 	return 'unsupported';
 };
 

@@ -52,6 +52,16 @@ export const renderingOptionsSchema = z.object({
 	readMoreSubheading: z.string().optional().describe('read more subheading'),
 	readMoreWording: z.string().optional().describe('read more wording'),
 	readMoreUrl: z.string().url().optional().describe('read more url'),
+	readMoreSections: z
+		.array(
+			z.object({
+				subheading: z.string().optional().describe('read more subheading'),
+				wording: z.string().optional().describe('read more wording'),
+				url: z.string().url().optional().describe('read more url'),
+			}),
+		)
+		.optional()
+		.describe('The configuration for readmore sections'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 

@@ -120,9 +120,10 @@ export const formSchemas = {
 	),
 
 	readMore: pickAndPrefixRenderingOption([
-		'readMoreSubheading',
-		'readMoreWording',
-		'readMoreUrl',
+		'readMoreSections',
+		// 'readMoreSubheading',
+		// 'readMoreWording',
+		// 'readMoreUrl',
 	]).describe('Input the Read More setup'),
 
 	tags: newsletterDataSchema

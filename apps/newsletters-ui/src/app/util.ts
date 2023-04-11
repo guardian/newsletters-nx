@@ -7,6 +7,7 @@ import {
 	specialReport,
 	sport,
 } from '@guardian/source-foundations';
+import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 
 export type SourcePalette =
 	| typeof culture
@@ -44,8 +45,24 @@ export const getGuardianUrl = (relativeUrl: string): string =>
 export const renderYesNo = (value: boolean): string =>
 	value ? '✅ Yes' : '❌ No';
 
-export const isStringArray = (value: unknown): value is string[] => {
-	return (
-		Array.isArray(value) && value.every((item) => typeof item === 'string')
+export const isStringArray = (value: unknown): value is string[] =>
+	Array.isArray(value) && value.every((item) => typeof item === 'string');
+
+const isPrimiveRecord = (value: unknown): value is PrimitiveRecord => {
+	if (!value || typeof value !== 'object') {
+		return false;
+	}
+	if (Array.isArray(value)) {
+		return false;
+	}
+	return Object.keys(value).every(
+		(propertyValue) =>
+			typeof propertyValue === 'boolean' ||
+			typeof propertyValue === 'number' ||
+			typeof propertyValue === 'string',
 	);
 };
+export const isPrimitiveRecordArray = (
+	value: unknown,
+): value is PrimitiveRecord[] =>
+	Array.isArray(value) && value.every(isPrimiveRecord);

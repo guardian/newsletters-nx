@@ -3,7 +3,17 @@ import { ZodObject, ZodOptional } from 'zod';
 import type { DraftNewsletterData } from './newsletter-data-type';
 import { draftNewsletterDataSchema } from './newsletter-data-type';
 
-type SupportedValue = string | number | boolean | undefined | Date | string[];
+export type PrimitiveRecord = Partial<
+	Record<string, string | number | boolean>
+>;
+type SupportedValue =
+	| string
+	| number
+	| boolean
+	| undefined
+	| Date
+	| string[]
+	| PrimitiveRecord;
 export type FormDataRecord = Record<string, SupportedValue>;
 
 /**
