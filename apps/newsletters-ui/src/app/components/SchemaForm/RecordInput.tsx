@@ -1,6 +1,6 @@
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
-// eslint-disable-next-line import/no-cycle -- recursive render!
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaForm } from '.';
 
 interface Props {

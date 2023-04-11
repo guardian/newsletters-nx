@@ -5,6 +5,7 @@ import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';

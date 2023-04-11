@@ -13,7 +13,7 @@ import type { ZodObject, ZodRawShape } from 'zod';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import { isPrimiveRecord } from '../../util';
-// eslint-disable-next-line import/no-cycle -- recursively rendering
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { RecordInput } from './RecordInput';
 import type { FieldProps, FieldValue } from './util';
 
