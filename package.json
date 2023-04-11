@@ -31,7 +31,7 @@
 		"@guardian/source-foundations": "^8.0.0",
 		"@mui/material": "^5.11.10",
 		"@types/react-table": "^7.7.14",
-		"aws-sdk": "^2.1343.0",
+		"aws-sdk": "^2.1354.0",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"react-markdown": "^8.0.5",
