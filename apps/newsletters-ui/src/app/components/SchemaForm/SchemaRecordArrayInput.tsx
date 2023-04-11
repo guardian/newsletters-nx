@@ -3,26 +3,9 @@ import type { ZodObject, ZodRawShape } from 'zod';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import { isPrimiveRecord } from '../../util';
+import { RecordInput } from './RecordInput';
 import { defaultFieldStyle } from './styling';
 import type { FieldProps, FieldValue } from './util';
-
-const RecordDisplay = ({
-	record,
-	recordSchema,
-	deleteRecord,
-}: {
-	record: PrimitiveRecord;
-	recordSchema: ZodObject<ZodRawShape>;
-	deleteRecord: { (): void };
-}) => {
-	return (
-		<>
-			<b>{recordSchema.description}</b>
-			<pre>{JSON.stringify(record, undefined, 2)}</pre>
-			<button onClick={deleteRecord}>delete</button>
-		</>
-	);
-};
 
 export const SchemaRecordArrayInput: FunctionComponent<
 	FieldProps & {
@@ -51,6 +34,14 @@ export const SchemaRecordArrayInput: FunctionComponent<
 		sendValue([...value.slice(0, index), ...value.slice(index + 1)]);
 	};
 
+	const editRecordIndex = (index: number, updatedRecord: PrimitiveRecord) => {
+		sendValue([
+			...value.slice(0, index),
+			updatedRecord,
+			...value.slice(index + 1),
+		]);
+	};
+
 	return (
 		<div css={defaultFieldStyle}>
 			<fieldset>
@@ -61,11 +52,14 @@ export const SchemaRecordArrayInput: FunctionComponent<
 					{value.map((propertyValue, index) => {
 						return (
 							<li key={index}>
-								<RecordDisplay
+								<RecordInput
 									record={propertyValue}
 									recordSchema={recordSchema}
 									deleteRecord={() => {
 										deleteRecordIndex(index);
+									}}
+									editRecord={(record) => {
+										editRecordIndex(index, record);
 									}}
 								/>
 							</li>
