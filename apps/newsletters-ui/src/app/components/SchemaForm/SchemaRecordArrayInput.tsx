@@ -27,7 +27,7 @@ export const SchemaRecordArrayInput: FunctionComponent<
 	const { value, label, inputHandler, recordSchema } = props;
 
 	const addNew = () => {
-		const newRecord = getEmptySchemaData(recordSchema);
+		const newRecord = getEmptySchemaData(recordSchema, true);
 		if (!isPrimiveRecord(newRecord)) {
 			console.warn(newRecord);
 			return;

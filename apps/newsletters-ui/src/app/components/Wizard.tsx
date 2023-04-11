@@ -6,7 +6,7 @@ import {
 	getStartStepId,
 	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
-import { getEmptySchemaData } from '@newsletters-nx/state-machine';
+import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,

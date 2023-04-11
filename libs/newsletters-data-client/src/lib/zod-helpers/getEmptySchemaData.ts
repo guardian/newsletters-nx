@@ -10,6 +10,7 @@ import { recursiveUnwrap } from './recursiveUnwrap';
  */
 export const getEmptySchemaData = (
 	schema: z.ZodObject<z.ZodRawShape>,
+	unwrapOptionals = false,
 ): FormDataRecord | undefined => {
 	return Object.keys(schema.shape).reduce<FormDataRecord>((formData, key) => {
 		const zodMaybeOptional = schema.shape[key];
@@ -17,7 +18,9 @@ export const getEmptySchemaData = (
 		if (!zodMaybeOptional) {
 			return formData;
 		}
-		const zod = recursiveUnwrap(zodMaybeOptional);
+		const zod = unwrapOptionals
+			? recursiveUnwrap(zodMaybeOptional)
+			: zodMaybeOptional;
 		const mod: FormDataRecord = {};
 
 		if (zod instanceof ZodString) {
