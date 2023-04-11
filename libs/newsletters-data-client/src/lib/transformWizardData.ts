@@ -2,6 +2,7 @@ import type { ZodRawShape, ZodTypeAny } from 'zod';
 import { ZodObject, ZodOptional } from 'zod';
 import type { DraftNewsletterData } from './newsletter-data-type';
 import { draftNewsletterDataSchema } from './newsletter-data-type';
+import { recursiveUnwrap } from './zod-helpers';
 
 export type PrimitiveRecord = Partial<
 	Record<string, string | number | boolean>
@@ -51,18 +52,6 @@ const buildObjectValue = (
 
 	const parseResult = objectSchema.safeParse(output);
 	return parseResult.success ? parseResult.data : undefined;
-};
-
-const recursiveUnwrap = (field: ZodTypeAny): ZodTypeAny => {
-	if (!(field instanceof ZodOptional)) {
-		return field;
-	}
-
-	const unwrapped = field.unwrap() as ZodTypeAny;
-	if (unwrapped instanceof ZodOptional) {
-		return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
-	}
-	return unwrapped;
 };
 
 /**

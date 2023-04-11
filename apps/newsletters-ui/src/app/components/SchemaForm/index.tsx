@@ -1,5 +1,6 @@
 import type { z, ZodRawShape, ZodTypeAny } from 'zod';
-import { ZodArray, ZodObject, ZodOptional, ZodString } from 'zod';
+import { ZodArray, ZodObject, ZodString } from 'zod';
+import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import { SchemaField } from './SchemaField';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 
@@ -16,17 +17,6 @@ interface Props<T extends z.ZodRawShape> {
 	readOnlyKeys?: string[];
 	validationWarnings: Partial<Record<keyof T, string>>;
 }
-
-const recursiveUnwrap = (field: ZodTypeAny): ZodTypeAny => {
-	if (!(field instanceof ZodOptional)) {
-		return field;
-	}
-	const unwrapped = field.unwrap() as ZodTypeAny;
-	if (unwrapped instanceof ZodOptional) {
-		return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
-	}
-	return unwrapped;
-};
 
 const getArrayItemTypeAndRecordSchema = (
 	zod: ZodTypeAny,
