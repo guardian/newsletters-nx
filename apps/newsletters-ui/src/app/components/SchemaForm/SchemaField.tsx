@@ -5,6 +5,7 @@ import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
+import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
@@ -153,7 +154,16 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 				case 'record': {
 					if (isPrimitiveRecordArray(value) || typeof value === 'undefined') {
-						return <p>TO DO - render record control</p>;
+						if (!field.recordSchema) {
+							return <p>MISSING SCHEMA</p>;
+						}
+						return (
+							<SchemaRecordArrayInput
+								{...standardProps}
+								value={value ?? []}
+								recordSchema={field.recordSchema}
+							/>
+						);
 					} else {
 						return <WrongTypeMessage field={field} />;
 					}

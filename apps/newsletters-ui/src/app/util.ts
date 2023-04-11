@@ -48,7 +48,7 @@ export const renderYesNo = (value: boolean): string =>
 export const isStringArray = (value: unknown): value is string[] =>
 	Array.isArray(value) && value.every((item) => typeof item === 'string');
 
-const isPrimiveRecord = (value: unknown): value is PrimitiveRecord => {
+export const isPrimiveRecord = (value: unknown): value is PrimitiveRecord => {
 	if (!value || typeof value !== 'object') {
 		return false;
 	}

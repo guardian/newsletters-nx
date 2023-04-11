@@ -1,4 +1,4 @@
-import type { z, ZodTypeAny } from 'zod';
+import type { z, ZodRawShape, ZodTypeAny } from 'zod';
 import { ZodArray, ZodObject, ZodOptional, ZodString } from 'zod';
 import { SchemaField } from './SchemaField';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
@@ -28,20 +28,21 @@ const recursiveUnwrap = (field: ZodTypeAny): ZodTypeAny => {
 	return unwrapped;
 };
 
-const getArrayItemType = (zod: ZodTypeAny): FieldDef['arrayItemType'] => {
+const getArrayItemTypeAndRecordSchema = (
+	zod: ZodTypeAny,
+): [FieldDef['arrayItemType'], ZodObject<ZodRawShape> | undefined] => {
 	const unwrappedZod = recursiveUnwrap(zod);
 	if (!(unwrappedZod instanceof ZodArray)) {
-		return undefined;
+		return [undefined, undefined];
 	}
 	const elementSchema = unwrappedZod.element as ZodTypeAny;
 	if (elementSchema instanceof ZodString) {
-		return 'string';
+		return ['string', undefined];
 	}
 	if (elementSchema instanceof ZodObject) {
-		return 'record';
+		return ['record', elementSchema];
 	}
-	console.log(elementSchema);
-	return 'unsupported';
+	return ['unsupported', undefined];
 };
 
 /**
@@ -86,7 +87,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 				  (zod._def.values as unknown as string[])
 				: undefined;
 
-		const arrayItemType = getArrayItemType(zod);
+		const [arrayItemType, recordSchema] = getArrayItemTypeAndRecordSchema(zod);
 
 		fields.push({
 			key,
@@ -97,6 +98,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			enumOptions,
 			readOnly: readOnlyKeys.includes(key),
 			arrayItemType,
+			recordSchema,
 		});
 	}
 
