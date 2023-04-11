@@ -7,7 +7,8 @@ import {
 	Grid,
 	Typography,
 } from '@mui/material';
-import { Fragment, type FunctionComponent } from 'react';
+import { Fragment } from 'react';
+import type { FunctionComponent } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
