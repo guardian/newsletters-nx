@@ -49,9 +49,6 @@ export const renderingOptionsSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('podcast subheading'),
-	readMoreSubheading: z.string().optional().describe('read more subheading'),
-	readMoreWording: z.string().optional().describe('read more wording'),
-	readMoreUrl: z.string().url().optional().describe('read more url'),
 	readMoreSections: z
 		.array(
 			z
