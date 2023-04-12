@@ -1,3 +1,4 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { brazeLayout } from './brazeLayout';
 import { cancelLayout } from './cancelLayout';
@@ -22,7 +23,7 @@ import { signUpLayout } from './signUpLayout';
 import { tagsLayout } from './tagsLayout';
 import { thrasherLayout } from './thrasherLayout';
 
-export const newsletterDataLayout: WizardLayout = {
+export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	createDraftNewsletter: createDraftNewsletterLayout,
 	editDraftNewsletter: editDraftNewsletterLayout,
 	category: categoryLayout,

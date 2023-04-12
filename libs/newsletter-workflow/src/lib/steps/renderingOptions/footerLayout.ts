@@ -1,3 +1,4 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -20,7 +21,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const footerLayout: WizardStepLayout = {
+export const footerLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Footer Setup',
 	dynamicMarkdown(requestData, responseData) {

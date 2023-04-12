@@ -1,3 +1,4 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type {
 	WizardStepData,
 	WizardStepLayout,
@@ -23,7 +24,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const onlineArticleLayout: WizardStepLayout = {
+export const onlineArticleLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Online Article',
 	dynamicMarkdown(requestData, responseData) {

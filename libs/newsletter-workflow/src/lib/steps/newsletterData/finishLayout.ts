@@ -1,3 +1,4 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -14,7 +15,7 @@ You can see your draft on the [details page](drafts/{{listId}}), which includes 
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
-const finishLayout: WizardStepLayout = {
+const finishLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown: staticMarkdown,
 	label: 'Finish',
 	buttons: {},
