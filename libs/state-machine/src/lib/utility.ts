@@ -1,7 +1,7 @@
-import type {
+import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
+import {
+	draftNewsletterDataToFormData,
 	DraftStorage,
-	DraftWithId,
-	FormDataRecord,
 } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
@@ -51,29 +51,35 @@ export const validateIncomingFormData = (
 	return false;
 };
 
-export const getExistingItem = async (
+export const getFormDataForExistingItem = async (
 	requestBody: CurrentStepRouteRequest,
-	storageInstance: DraftStorage,
-): Promise<DraftWithId | undefined> => {
-	const listId =
-		typeof requestBody.formData?.['listId'] === 'number'
-			? requestBody.formData['listId']
-			: undefined;
-	const existingItemId = listId ?? requestBody.id;
+	storageInstance: unknown,
+): Promise<FormDataRecord | undefined> => {
+	if (storageInstance instanceof DraftStorage) {
+		const listId =
+			typeof requestBody.formData?.['listId'] === 'number'
+				? requestBody.formData['listId']
+				: undefined;
+		const existingItemId = listId ?? requestBody.id;
 
-	if (!existingItemId) {
-		return undefined;
-	}
-	const idAsNumber = +existingItemId;
+		if (!existingItemId) {
+			return undefined;
+		}
+		const idAsNumber = +existingItemId;
 
-	const storageResponse = await storageInstance.getDraftNewsletter(idAsNumber);
-	if (!storageResponse.ok) {
-		throw new StateMachineError(
-			`cannot load draft newsletter with id ${existingItemId}`,
-			StateMachineErrorCode.StorageAccessError,
-			false,
+		const storageResponse = await storageInstance.getDraftNewsletter(
+			idAsNumber,
 		);
+		if (!storageResponse.ok) {
+			throw new StateMachineError(
+				`cannot load draft newsletter with id ${existingItemId}`,
+				StateMachineErrorCode.StorageAccessError,
+				false,
+			);
+		}
+
+		return draftNewsletterDataToFormData(storageResponse.data);
 	}
 
-	return storageResponse.data;
+	return undefined;
 };

@@ -14,7 +14,7 @@ import type {
 	WizardStepData,
 } from './types';
 import {
-	getExistingItem,
+	getFormDataForExistingItem,
 	makeStepDataWithErrorMessage,
 	validateIncomingFormData,
 } from './utility';
@@ -53,10 +53,8 @@ export async function stateMachineSkipPressed(
 		);
 	}
 
-	const existingItem = await getExistingItem(requestBody, storageInstance);
-	const existingFormData: FormDataRecord = existingItem
-		? draftNewsletterDataToFormData(existingItem)
-		: {};
+	const existingFormData =
+		(await getFormDataForExistingItem(requestBody, storageInstance)) ?? {};
 	const combinedFormData: FormDataRecord = {
 		...existingFormData,
 		...{ ...requestBody.formData },

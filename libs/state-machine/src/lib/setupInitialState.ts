@@ -1,10 +1,10 @@
-import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
 	GenericStorageInterface,
 	WizardStepData,
 } from './types';
+import { getFormDataForExistingItem } from './utility';
 
 export async function setupInitialState<T extends GenericStorageInterface>(
 	requestBody: CurrentStepRouteRequest,
@@ -18,26 +18,27 @@ export async function setupInitialState<T extends GenericStorageInterface>(
 		);
 	}
 
-	const newsletterId = requestBody.id;
-	if (!newsletterId) {
+	const itemId = requestBody.id;
+	if (!itemId) {
 		return {
 			currentStepId: requestBody.stepId,
 		};
 	}
-	const newsletterIdAsNumber = +newsletterId;
 
-	const storageResponse = await storageInstance.getDraftNewsletter(
-		newsletterIdAsNumber,
+	const formDataFromStorage = await getFormDataForExistingItem(
+		requestBody,
+		storageInstance,
 	);
-	if (!storageResponse.ok) {
+	if (!formDataFromStorage) {
 		throw new StateMachineError(
-			`cannot load draft newsletter with id ${newsletterId}`,
-			StateMachineErrorCode.StorageAccessError,
-			false,
+			`no item ${itemId} to edit`,
+			StateMachineErrorCode.NoSuchItem,
+			true,
 		);
 	}
+
 	return {
-		formData: draftNewsletterDataToFormData(storageResponse.data),
+		formData: formDataFromStorage,
 		currentStepId: requestBody.stepId,
 	};
 }
