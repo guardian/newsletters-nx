@@ -78,7 +78,7 @@ export const SchemaRecordArrayInput: FunctionComponent<
 									}}
 								/>
 							</Grid>
-							<Grid item xs={2}>
+							<Grid item xs={2} pb={1.5}>
 								<Button
 									sx={{ height: '100%' }}
 									size="small"
