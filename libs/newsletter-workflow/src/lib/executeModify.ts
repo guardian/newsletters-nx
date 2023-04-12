@@ -13,9 +13,9 @@ import type {
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 
-export const executeModify: AsyncExecution = async (
+export const executeModify: AsyncExecution<DraftStorage> = async (
 	stepData: WizardStepData,
-	stepLayout?: WizardStepLayout,
+	stepLayout?: WizardStepLayout<DraftStorage>,
 	storageInstance?: DraftStorage,
 ): Promise<WizardFormData | string> => {
 	if (!storageInstance) {

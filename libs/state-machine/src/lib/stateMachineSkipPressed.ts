@@ -43,7 +43,7 @@ export async function stateMachineSkipPressed(
 	const incomingDataError = validateIncomingFormData(
 		requestBody.stepId,
 		requestBody.formData,
-		wizardLayout,
+		wizardLayout as WizardLayout<unknown>,
 	);
 	if (incomingDataError) {
 		return makeStepDataWithErrorMessage(

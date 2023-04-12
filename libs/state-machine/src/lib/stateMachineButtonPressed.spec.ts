@@ -12,7 +12,7 @@ beforeEach(() => {
 	mockStepData = Object.assign({}, initialStep);
 });
 
-const mockWizardLayout: WizardLayout = {
+const mockWizardLayout: WizardLayout<DraftStorage> = {
 	step1: {
 		staticMarkdown: 'Step 1',
 		buttons: {

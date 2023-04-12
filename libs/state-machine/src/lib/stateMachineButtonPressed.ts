@@ -39,7 +39,7 @@ export async function stateMachineButtonPressed<
 	const incomingDataError = validateIncomingFormData(
 		incomingStepData.currentStepId,
 		incomingStepData.formData,
-		wizardLayout,
+		wizardLayout as WizardLayout,
 	);
 	if (incomingDataError) {
 		return makeStepDataWithErrorMessage(

@@ -1,11 +1,14 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
-import type { CurrentStepRouteRequest, WizardStepData } from './types';
+import type {
+	CurrentStepRouteRequest,
+	GenericStorageInterface,
+	WizardStepData,
+} from './types';
 
-export async function setupInitialState(
+export async function setupInitialState<T extends GenericStorageInterface>(
 	requestBody: CurrentStepRouteRequest,
-	storageInstance?: DraftStorage,
+	storageInstance?: T,
 ): Promise<WizardStepData> {
 	if (!storageInstance) {
 		throw new StateMachineError(
