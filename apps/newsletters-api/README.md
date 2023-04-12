@@ -11,7 +11,7 @@ On the default configuration, the API serves a the UI on its index page, so http
 
 Local environment variables can be set by:
 
--   Coping **apps/newsletters-api/env.local.example.txt** and rename it **.env.local** (This file will be .gitignored), or
+-   Copying **apps/newsletters-api/env.local.example.txt** and rename it **.env.local** (This file will be .gitignored), or
 -   setting them on the command line, eg `NEWSLETTERS_UI_SERVE=false npm run dev`
 
 By default, the local application uses an in-memory storage system (so data you enter will not persist when the application restarts). To use an S3 bucket for storage instead, you will need to set the environment variables for the s3 parameters. You will need credentials for the right AWS account (IE the account the S3 bucket it in) from [Janus](https://janus.gutools.co.uk/), for the API to be able to access the bucket and read/write files.
