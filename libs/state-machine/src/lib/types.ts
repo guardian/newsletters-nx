@@ -1,10 +1,11 @@
 import type {
-	DraftStorage,
 	FormDataRecord,
 	WIZARD_BUTTON_TYPES,
 } from '@newsletters-nx/newsletters-data-client';
 import type { ZodObject, ZodRawShape } from 'zod';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completey generic?
+export type GenericStorageInterface = any;
 export type WizardFormData = FormDataRecord;
 
 /**
@@ -25,39 +26,39 @@ export interface WizardStepData {
 	errorMessage?: string;
 }
 
-type AsyncValidator = (
+type AsyncValidator<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
-	stepLayout?: WizardStepLayout,
-	storageInstance?: DraftStorage,
+	stepLayout?: WizardStepLayout<T>,
+	storageInstance?: T,
 ) => Promise<string | undefined>;
 
-type Validator = (
+type Validator<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
-	stepLayout?: WizardStepLayout,
-	storageInstance?: DraftStorage,
+	stepLayout?: WizardStepLayout<T>,
+	storageInstance?: T,
 ) => string | undefined;
 
-export type AsyncExecution = (
+export type AsyncExecution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
-	stepLayout?: WizardStepLayout,
-	storageInstance?: DraftStorage,
+	stepLayout?: WizardStepLayout<T>,
+	storageInstance?: T,
 ) => Promise<WizardFormData | string>;
 
-type Execution = (
+type Execution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
-	stepLayout?: WizardStepLayout,
-	storageInstance?: DraftStorage,
+	stepLayout?: WizardStepLayout<T>,
+	storageInstance?: T,
 ) => WizardFormData | string;
 
-export interface WizardStepLayoutButton {
+export type WizardStepLayoutButton<T extends GenericStorageInterface> = {
 	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
 	label: string;
 	stepToMoveTo: string;
-	onAfterStepStartValidate?: AsyncValidator | Validator;
-	onBeforeStepChangeValidate?: AsyncValidator | Validator;
-	executeStep?: AsyncExecution | Execution;
-}
-export interface WizardStepLayout {
+	onAfterStepStartValidate?: AsyncValidator<T> | Validator<T>;
+	onBeforeStepChangeValidate?: AsyncValidator<T> | Validator<T>;
+	executeStep?: AsyncExecution<T> | Execution<T>;
+};
+export interface WizardStepLayout<T extends GenericStorageInterface> {
 	label?: string;
 	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT';
 	parentStepId?: string;
@@ -65,12 +66,15 @@ export interface WizardStepLayout {
 	dynamicMarkdown?: {
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;
 	};
-	buttons: Record<string, WizardStepLayoutButton>;
+	buttons: Record<string, WizardStepLayoutButton<T>>;
 	schema?: ZodObject<ZodRawShape>;
 	canSkipTo?: boolean;
 }
 
-export type WizardLayout = Record<string, WizardStepLayout>;
+export type WizardLayout<T extends GenericStorageInterface> = Record<
+	string,
+	WizardStepLayout<T>
+>;
 
 /**
  * Interface for the data payload sent to by the client for a single step in the wizard.

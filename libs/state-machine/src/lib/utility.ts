@@ -6,6 +6,7 @@ import type {
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
+	GenericStorageInterface,
 	WizardLayout,
 	WizardStepData,
 } from './types';
@@ -28,7 +29,7 @@ export const makeStepDataWithErrorMessage = (
 export const validateIncomingFormData = (
 	stepId: string,
 	formData: FormDataRecord | undefined,
-	wizardLayout: WizardLayout,
+	wizardLayout: WizardLayout<GenericStorageInterface>,
 ) => {
 	const currentStepLayout = wizardLayout[stepId];
 	const formSchemaForIncomingStep = currentStepLayout?.schema;

@@ -21,7 +21,7 @@ import {
 
 export async function stateMachineSkipPressed(
 	requestBody: CurrentStepRouteRequest,
-	wizardLayout: WizardLayout,
+	wizardLayout: WizardLayout<DraftStorage>,
 	storageInstance?: DraftStorage,
 ): Promise<WizardStepData> {
 	if (!storageInstance) {

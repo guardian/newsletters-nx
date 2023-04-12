@@ -1,6 +1,9 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
-import type { WizardLayout, WizardStepData } from './types';
+import type {
+	GenericStorageInterface,
+	WizardLayout,
+	WizardStepData,
+} from './types';
 import {
 	makeStepDataWithErrorMessage,
 	validateIncomingFormData,
@@ -15,11 +18,13 @@ import {
  *  - the currentStepId for the next step and the submitted form data
  *  if the step was success
  */
-export async function stateMachineButtonPressed(
+export async function stateMachineButtonPressed<
+	T extends GenericStorageInterface,
+>(
 	buttonPressed: string,
 	incomingStepData: WizardStepData,
-	wizardLayout: WizardLayout,
-	storageInstance: DraftStorage,
+	wizardLayout: WizardLayout<T>,
+	storageInstance: T,
 ): Promise<WizardStepData> {
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
