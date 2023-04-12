@@ -1,5 +1,8 @@
 import type { ZodObject, ZodRawShape } from 'zod';
-import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
+import {
+	getValidationWarnings,
+	type PrimitiveRecord,
+} from '@newsletters-nx/newsletters-data-client';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaForm } from '.';
 
@@ -10,11 +13,12 @@ interface Props {
 }
 
 export const RecordInput = ({ record, recordSchema, editRecord }: Props) => {
+	const warnings = getValidationWarnings(record, recordSchema);
 	return (
 		<SchemaForm
 			schema={recordSchema}
 			data={record}
-			validationWarnings={{}}
+			validationWarnings={warnings}
 			changeValue={(value, field) => {
 				const mod: PrimitiveRecord = {};
 				switch (typeof value) {
