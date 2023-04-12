@@ -1,7 +1,11 @@
-import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftWithId,
+	FormDataRecord,
+} from '@newsletters-nx/newsletters-data-client';
 import {
 	draftNewsletterDataToFormData,
 	DraftStorage,
+	formDataToDraftNewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
@@ -81,5 +85,36 @@ export const getFormDataForExistingItem = async (
 		return draftNewsletterDataToFormData(storageResponse.data);
 	}
 
+	console.warn('unsupported storageInstance', storageInstance);
+	return undefined;
+};
+
+export const modifyExistingItemWithFormData = async (
+	itemId: number,
+	formData: FormDataRecord,
+	storageInstance: unknown,
+): Promise<FormDataRecord | undefined> => {
+	if (storageInstance instanceof DraftStorage) {
+		// formDataToDraftNewsletterData CAN THROW
+		const newDraftWithId: DraftWithId = {
+			...formDataToDraftNewsletterData(formData),
+			listId: itemId,
+		};
+
+		const storageResponse = await storageInstance.modifyDraftNewsletter(
+			newDraftWithId,
+		);
+
+		if (!storageResponse.ok) {
+			throw new StateMachineError(
+				`failed to update draft #${itemId}`,
+				StateMachineErrorCode.StorageAccessError,
+			);
+		}
+
+		return draftNewsletterDataToFormData(storageResponse.data);
+	}
+
+	console.warn('unsupported storageInstance', storageInstance);
 	return undefined;
 };

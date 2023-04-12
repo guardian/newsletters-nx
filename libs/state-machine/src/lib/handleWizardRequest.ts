@@ -37,7 +37,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 			requestBody.stepToSkipToId !== undefined
 				? await stateMachineSkipPressed(
 						requestBody,
-						wizardLayout as WizardLayout,
+						wizardLayout,
 						genericInterface,
 				  )
 				: requestBody.buttonId !== undefined
