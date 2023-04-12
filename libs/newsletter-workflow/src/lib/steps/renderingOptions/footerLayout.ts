@@ -2,20 +2,16 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Rendering 'Link List' sections in {{name}}
+# Specify the footer setup for {{name}}
 
-You may want to display some sections in **{{name}}** with LinkList styling.
+What email address would you like to display in the footer of **{{name}}**?
 
-![Link List styling](https://i.guim.co.uk/img/uploads/2023/03/15/Link_List.png?quality=85&dpr=2&width=300&s=bc16383029708d4cb456fc40c540b157)
+For example: newsletters@theguardian.com
 
-In order to use this styling for one or more sections, you need to specify the subheading for each section.
-
-The styling will be implemented wherever these subheadings are used.
-
-*In Composer, you will need to use a bullet point list for the content of the section*
+![Email footer](https://i.guim.co.uk/img/uploads/2023/03/15/Email_address_contact.png?quality=85&dpr=2&width=300&s=98ce6a07791b0bfb45f2df9c732ea1d2)
 
 `.trim();
 
@@ -24,9 +20,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const linkListLayout: WizardStepLayout = {
+export const footerLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Link List Sections',
+	label: 'Footer Setup',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -38,15 +34,22 @@ export const linkListLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'readMore',
+			stepToMoveTo: 'podcast',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'podcast',
+			stepToMoveTo: 'finish',
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const email = stepData.formData
+					? stepData.formData['renderingOptions.contactEmail']
+					: undefined;
+				return email ? undefined : 'NO EMAIL ADDRESS PROVIDED';
+			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.linkList,
+	schema: formSchemas.footer,
+	canSkipTo: true,
 };

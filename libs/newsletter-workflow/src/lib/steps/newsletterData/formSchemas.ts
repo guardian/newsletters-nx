@@ -39,6 +39,10 @@ export const formSchemas = {
 		.pick({ identityName: true })
 		.describe('Edit the identity name if required'),
 
+	category: newsletterDataSchema
+		.pick({ category: true })
+		.describe('Pick a category'),
+
 	braze: newsletterDataSchema
 		.pick({
 			brazeSubscribeEventNamePrefix: true,
@@ -138,8 +142,10 @@ export const formSchemas = {
 
 	promotionDates: newsletterDataSchema
 		.pick({
+			launchDate: true,
 			signUpPageDate: true,
 			thrasherDate: true,
+			privateUntilLaunch: true,
 		})
-		.describe('choose the dates you want promotions to appear'),
+		.describe('choose the launch date and promotion plans'),
 };

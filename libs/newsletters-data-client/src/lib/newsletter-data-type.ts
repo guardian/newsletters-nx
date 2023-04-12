@@ -37,25 +37,38 @@ export const singleThrasherLocation = z.enum([
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
 export const renderingOptionsSchema = z.object({
-	displayDate: z.boolean(),
-	displayStandfirst: z.boolean(),
-	contactEmail: z.string().email(),
-	displayImageCaptions: z.boolean(),
-	linkListSubheading: z.array(z.string()).optional(),
-	podcastSubheading: z.array(z.string()).optional(),
-	readMoreSubheading: z.string().optional(),
-	readMoreWording: z.string().optional(),
-	readMoreUrl: z.string().url().optional(),
+	displayDate: z.boolean().describe('display date?'),
+	displayStandfirst: z.boolean().describe('display standfirst?'),
+	contactEmail: z.string().email().describe('contact email'),
+	displayImageCaptions: z.boolean().describe('display image captions?'),
+	linkListSubheading: z
+		.array(z.string())
+		.optional()
+		.describe('link list subheading'),
+	podcastSubheading: z
+		.array(z.string())
+		.optional()
+		.describe('podcast subheading'),
+	readMoreSubheading: z.string().optional().describe('read more subheading'),
+	readMoreWording: z.string().optional().describe('read more wording'),
+	readMoreUrl: z.string().url().optional().describe('read more url'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
 export const thrasherOptionsSchema = z.object({
-	singleThrasher: z.boolean(),
-	multiThrasher: z.boolean(),
-	singleThrasherLocation: singleThrasherLocation,
-	thrasherDescription: z.string(),
+	singleThrasher: z.boolean().describe('single thrasher required?'),
+	multiThrasher: z.boolean().describe('multi-thrasher(s) required?'),
+	singleThrasherLocation: singleThrasherLocation.describe(
+		'single thrasher location',
+	),
+	thrasherDescription: z.string().describe('thrasher description'),
 });
 export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
+
+export const newsletterCategoriesSchema = z
+	.enum(['article-based', 'fronts-based', 'manual-send', 'other'])
+	.describe('production category');
+export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
@@ -63,19 +76,20 @@ export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
  * The actual data model is TBC.
  */
 export const newsletterDataSchema = z.object({
-	identityName: kebabCasedString(),
+	identityName: kebabCasedString().describe('identity name'),
 	name: nonEmptyString(),
+	category: newsletterCategoriesSchema,
 	restricted: z.boolean(),
 	status: z.enum(['paused', 'cancelled', 'live']),
-	emailConfirmation: z.boolean(),
+	emailConfirmation: z.boolean().describe('email confirmation'),
 	brazeSubscribeAttributeName: underscoreCasedString(),
 	brazeSubscribeEventNamePrefix: underscoreCasedString(),
 	brazeNewsletterName: underscoreCasedString(),
 	theme: themeEnumSchema,
 	group: nonEmptyString(),
-	headline: z.string().optional(),
-	description: nonEmptyString(),
-	regionFocus: z.string().optional(),
+	headline: z.string().optional().describe('sign up headline'),
+	description: nonEmptyString().describe('sign up description'),
+	regionFocus: regionFocusEnumSchema.describe('region focus'),
 	frequency: nonEmptyString(),
 	listId: z.number(),
 	listIdV1: z.number(),
@@ -89,21 +103,25 @@ export const newsletterDataSchema = z.object({
 		.optional(),
 	signupPage: z.string().optional(),
 	exampleUrl: z.string().optional(),
-	designBriefDoc: z.string().optional(),
-	figmaDesignUrl: z.string().url().optional(),
-	figmaIncludesThrashers: z.boolean(),
+	designBriefDoc: z.string().optional().describe('design brief doc'),
+	figmaDesignUrl: z.string().url().optional().describe('figma design url'),
+	figmaIncludesThrashers: z
+		.boolean()
+		.describe('figma design includes thrashers?'),
 	illustrationCircle: z.string().optional(),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
 
-	seriesTag: z.string().optional(),
-	composerTag: z.string().optional(),
-	composerCampaignTag: z.string().optional(),
+	seriesTag: z.string().optional().describe('series tag'),
+	composerTag: z.string().optional().describe('composer tag'),
+	composerCampaignTag: z.string().optional().describe('composer campaign tag'),
 
-	signUpPageDate: z.coerce.date(),
-	thrasherDate: z.coerce.date(),
-	onlineArticle: onlineArticleSchema,
+	launchDate: z.coerce.date().describe('launch date'),
+	signUpPageDate: z.coerce.date().describe('sign up page date'),
+	thrasherDate: z.coerce.date().describe('thrasher date'),
+	privateUntilLaunch: z.boolean().describe('needs to be private until launch?'),
+	onlineArticle: onlineArticleSchema.describe('location of article'),
 
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),

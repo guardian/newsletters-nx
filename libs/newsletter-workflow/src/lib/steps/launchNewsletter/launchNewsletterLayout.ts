@@ -12,6 +12,8 @@ The first step is to enter all the data relating to the newsletter.
 *** Only able to proceed to the next step in this wizard once all required data has been entered for the draft ***
 
 `,
+	role: 'EDIT_START',
+	label: 'start',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',

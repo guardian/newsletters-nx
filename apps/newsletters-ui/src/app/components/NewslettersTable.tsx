@@ -26,6 +26,10 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				accessor: 'name',
 			},
 			{
+				Header: 'Category',
+				accessor: 'category',
+			},
+			{
 				Header: 'Design',
 				accessor: 'figmaDesignUrl',
 				disableSortBy: true,

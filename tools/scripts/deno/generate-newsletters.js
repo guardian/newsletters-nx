@@ -41,6 +41,13 @@ const generateNewsletter = () => {
 	]);
 	const regionFocus = faker.helpers.arrayElement(['UK', 'AU', 'US', undefined]);
 
+	const category = faker.helpers.arrayElement([
+		'article-based',
+		'fronts-based',
+		'manual-send',
+		'other',
+	]);
+
 	const newsletterId = faker.helpers.slugify(name).toLowerCase();
 
 	const idWithRegion = regionFocus
@@ -55,6 +62,7 @@ const generateNewsletter = () => {
 	const newsletter = {
 		identityName: newsletterId,
 		name,
+		category,
 		description: initCap(faker.lorem.text()),
 		frequency,
 		status,
@@ -73,7 +81,6 @@ const generateNewsletter = () => {
 			'culture',
 			'lifestyle',
 			'sport',
-			'work',
 			'from the papers',
 		]),
 		group: faker.helpers.arrayElement([
@@ -110,8 +117,10 @@ const generateNewsletter = () => {
 			status === 'cancelled' ? timeStampForZeroToOneYearsAgo : undefined,
 
 		figmaIncludesThrashers: false,
+		launchDate: new Date(87678876),
 		signUpPageDate: new Date(87678876),
 		thrasherDate: new Date(87678876),
+		privateUntilLaunch: false,
 		onlineArticle: 'Web for all sends',
 	};
 	return newsletter;

@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { isDraft } from '@newsletters-nx/newsletters-data-client';
 import { DraftDetails } from '../DraftDetails';
 
@@ -12,10 +12,5 @@ export const DraftDetailView = () => {
 		return <article>INVALID DATA</article>;
 	}
 
-	return (
-		<>
-			<DraftDetails draft={matchedItem} />
-			<Link to="..">Back to List</Link>
-		</>
-	);
+	return <DraftDetails draft={matchedItem} />;
 };

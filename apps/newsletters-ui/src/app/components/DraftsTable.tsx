@@ -1,10 +1,11 @@
+import { Button, IconButton } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { EditDraftDialog } from './EditDraftDialog';
 import { ExternalLinkButton } from './ExternalLinkButton';
 import { Table } from './Table';
 
@@ -12,6 +13,9 @@ interface Props {
 	drafts: DraftNewsletterData[];
 }
 export const DraftsTable = ({ drafts }: Props) => {
+	const [draftInDialog, setDraftInDialog] = useState<
+		DraftNewsletterData | undefined
+	>(undefined);
 	const [data, setData] = useState(
 		drafts.map((draft) => ({
 			...draft,
@@ -19,7 +23,6 @@ export const DraftsTable = ({ drafts }: Props) => {
 			progress: Math.random() * 100,
 		})),
 	);
-	const navigate = useNavigate();
 	const columns = useMemo<Column[]>(
 		() => [
 			{
@@ -32,6 +35,10 @@ export const DraftsTable = ({ drafts }: Props) => {
 			{
 				Header: 'Newsletter Name',
 				accessor: 'name',
+			},
+			{
+				Header: 'Category',
+				accessor: 'category',
 			},
 			{
 				Header: 'Design',
@@ -54,15 +61,22 @@ export const DraftsTable = ({ drafts }: Props) => {
 				),
 			},
 			{
-				Header: 'Wizard',
-				accessor: 'wizardListId',
-				Cell: ({ cell: { value } }) => (
-					<button
-						onClick={() => navigate(`/demo/newsletter-data/${value as string}`)}
-					>
-						View
-					</button>
-				),
+				Header: 'Edit',
+				Cell: ({ row: { original } }) => {
+					const draft = original as DraftNewsletterData;
+
+					return (
+						<Button
+							onClick={() => {
+								setDraftInDialog(draft);
+							}}
+							startIcon={'⚙'}
+							variant="outlined"
+						>
+							Edit
+						</Button>
+					);
+				},
 			},
 			{
 				Header: 'delete',
@@ -83,7 +97,17 @@ export const DraftsTable = ({ drafts }: Props) => {
 				},
 			},
 		],
-		[data, navigate],
+		[data],
 	);
-	return <Table data={data} columns={columns} defaultSortId="name" />;
+	return (
+		<>
+			<Table data={data} columns={columns} defaultSortId="name" />;
+			<EditDraftDialog
+				draft={draftInDialog}
+				close={() => {
+					setDraftInDialog(undefined);
+				}}
+			/>
+		</>
+	);
 };

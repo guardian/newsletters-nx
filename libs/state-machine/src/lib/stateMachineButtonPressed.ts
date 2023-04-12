@@ -1,6 +1,10 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type { WizardLayout, WizardStepData } from './types';
+import {
+	makeStepDataWithErrorMessage,
+	validateIncomingFormData,
+} from './utility';
 
 /**
  * Perform the vaidation and actions required for a button press.Result a
@@ -20,10 +24,6 @@ export async function stateMachineButtonPressed(
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
 
-	const formSchemaForIncomingStep = currentStepLayout?.schema;
-	console.log('form data should be:', formSchemaForIncomingStep?.description);
-	console.table(incomingStepData.formData);
-
 	if (!buttonPressedDetails) {
 		throw new StateMachineError(
 			`Button ${buttonPressed} not found in step ${incomingStepData.currentStepId}`,
@@ -31,33 +31,28 @@ export async function stateMachineButtonPressed(
 		);
 	}
 
-	if (formSchemaForIncomingStep) {
-		if (!incomingStepData.formData) {
-			return {
-				...incomingStepData,
-				errorMessage: 'MISSING FORM DATA',
-			};
-		}
-
-		const parseResult = formSchemaForIncomingStep.safeParse(
+	const incomingDataError = validateIncomingFormData(
+		incomingStepData.currentStepId,
+		incomingStepData.formData,
+		wizardLayout,
+	);
+	if (incomingDataError) {
+		return makeStepDataWithErrorMessage(
+			incomingDataError,
+			incomingStepData.currentStepId,
 			incomingStepData.formData,
 		);
-		if (!parseResult.success) {
-			return {
-				...incomingStepData,
-				errorMessage: 'INVALID FORM DATA',
-			};
-		}
 	}
 
 	if (buttonPressedDetails.onAfterStepStartValidate) {
 		const validationResult =
 			await buttonPressedDetails.onAfterStepStartValidate(incomingStepData);
 		if (validationResult !== undefined) {
-			return {
-				...incomingStepData,
-				errorMessage: validationResult,
-			};
+			return makeStepDataWithErrorMessage(
+				validationResult,
+				incomingStepData.currentStepId,
+				incomingStepData.formData,
+			);
 		}
 	}
 
@@ -68,10 +63,11 @@ export async function stateMachineButtonPressed(
 				currentStepLayout,
 			);
 		if (validationResult !== undefined) {
-			return {
-				...incomingStepData,
-				errorMessage: validationResult,
-			};
+			return makeStepDataWithErrorMessage(
+				validationResult,
+				incomingStepData.currentStepId,
+				incomingStepData.formData,
+			);
 		}
 	}
 
@@ -88,10 +84,11 @@ export async function stateMachineButtonPressed(
 		storageInstance,
 	);
 	if (typeof executionResult === 'string') {
-		return {
-			...incomingStepData,
-			errorMessage: executionResult,
-		};
+		return makeStepDataWithErrorMessage(
+			executionResult,
+			incomingStepData.currentStepId,
+			incomingStepData.formData,
+		);
 	}
 
 	return {

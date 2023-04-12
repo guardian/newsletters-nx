@@ -1,8 +1,9 @@
 import { space } from '@guardian/source-foundations';
 import {
+	ButtonGroup,
 	Card,
 	CardContent,
-	CardHeader,
+	Container,
 	Paper,
 	Table,
 	TableBody,
@@ -11,19 +12,22 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
+import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
+import { NavigateButton } from './NavigateButton';
 
 interface Props {
 	draft: DraftNewsletterData;
 }
 
-const propertyToString = (
+const propertyToNode = (
 	draft: DraftNewsletterData,
 	key: keyof DraftNewsletterData,
-) => {
+): ReactNode => {
 	const value = draft[key];
 
 	switch (typeof value) {
@@ -37,8 +41,8 @@ const propertyToString = (
 			return '[UNDEFINED]';
 		case 'object':
 			try {
-				const stringification = JSON.stringify(value);
-				return stringification;
+				const stringification = JSON.stringify(value, undefined, 2);
+				return <pre>{stringification}</pre>;
 			} catch (err) {
 				return '[non-serialisable object]';
 			}
@@ -53,50 +57,76 @@ export const DraftDetails = ({ draft }: Props) => {
 	const palette = getPalette(draft.theme ?? '');
 
 	return (
-		<Card sx={{ backgroundColor: palette[800], marginBottom: space[2] }}>
-			<CardContent>
-				<Typography sx={{ fontSize: 28, color: palette[100] }}>
-					{draft.name ?? 'UNNAMED DRAFT'}
-				</Typography>
-				<Typography sx={{ fontSize: 16 }}>id: {draft.listId}</Typography>
-				<Typography sx={{ fontSize: 16 }}>
-					created: {draft.creationTimeStamp}
-				</Typography>
-			</CardContent>
+		<Container maxWidth="lg">
+			<Card
+				sx={{
+					backgroundColor: palette[800],
+					marginBottom: space[2],
+					marginTop: space[1],
+				}}
+			>
+				<CardContent>
+					<Typography sx={{ fontSize: 28, color: palette[100] }}>
+						{draft.name ?? 'UNNAMED DRAFT'}
+					</Typography>
+					<Typography sx={{ fontSize: 16 }}>
+						category: {draft.category}
+					</Typography>
+					<Typography sx={{ fontSize: 16 }}>id: {draft.listId}</Typography>
+					<Typography sx={{ fontSize: 16 }}>
+						created: {draft.creationTimeStamp}
+					</Typography>
+				</CardContent>
 
-			<CardContent>
-				<DeleteDraftButton
-					draft={draft}
-					hasBeenDeleted={hasBeenDeleted}
-					setHasBeenDeleted={setHasBeenDeleted}
-					margin={1}
-				/>
-			</CardContent>
-			<CardContent>
-				<TableContainer
-					component={Paper}
-					sx={{
-						width: '36rem',
-						backgroundColor: hasBeenDeleted ? 'pink' : undefined,
-					}}
-				>
-					<Table>
-						{hasBeenDeleted && <caption>DELETED</caption>}
-						<TableBody>
-							{Object.entries(draft).map(([key, value]) => (
-								<TableRow key={key}>
-									<TableCell size="small" sx={{ fontWeight: 'bold' }}>
-										{key}
-									</TableCell>
-									<TableCell>
-										{propertyToString(draft, key as keyof DraftNewsletterData)}
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</TableContainer>
-			</CardContent>
-		</Card>
+				<CardContent>
+					<DeleteDraftButton
+						draft={draft}
+						hasBeenDeleted={hasBeenDeleted}
+						setHasBeenDeleted={setHasBeenDeleted}
+						margin={1}
+					/>
+				</CardContent>
+
+				{draft.listId && (
+					<CardContent>
+						<ButtonGroup>
+							<NavigateButton
+								href={`..`}
+								startIcon={<span>←</span>}
+								color="secondary"
+							>
+								back to list
+							</NavigateButton>
+							<EditDraftNavigateButtons draft={draft} />
+						</ButtonGroup>
+					</CardContent>
+				)}
+
+				<CardContent>
+					<TableContainer
+						component={Paper}
+						sx={{
+							backgroundColor: hasBeenDeleted ? 'pink' : undefined,
+						}}
+					>
+						<Table>
+							{hasBeenDeleted && <caption>DELETED</caption>}
+							<TableBody>
+								{Object.keys(draft).map((key) => (
+									<TableRow key={key}>
+										<TableCell size="small" sx={{ fontWeight: 'bold' }}>
+											{key}
+										</TableCell>
+										<TableCell>
+											{propertyToNode(draft, key as keyof DraftNewsletterData)}
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</CardContent>
+			</Card>
+		</Container>
 	);
 };

@@ -3,6 +3,7 @@ import { makeResponse } from './makeResponse';
 import { setupInitialState } from './setupInitialState';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
+import { stateMachineSkipPressed } from './stateMachineSkipPressed';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
@@ -30,7 +31,9 @@ export async function handleWizardRequestAndReturnWizardResponse(
 ): Promise<CurrentStepRouteResponse> {
 	try {
 		const stepData =
-			requestBody.buttonId !== undefined
+			requestBody.stepToSkipToId !== undefined
+				? await stateMachineSkipPressed(requestBody, wizardLayout, draftStorage)
+				: requestBody.buttonId !== undefined
 				? await stateMachineButtonPressed(
 						requestBody.buttonId,
 						{

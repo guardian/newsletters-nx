@@ -50,7 +50,7 @@ export const dateLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'editDraftNewsletter',
+			stepToMoveTo: 'category',
 			executeStep: executeModify,
 		},
 		finish: {

@@ -5,11 +5,17 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Specify the image caption setup for {{name}}
+# How will {{name}} be produced?
 
-Would you like captions to be displayed within the newsletter?
+Editorial newsletters can be produced in three ways:
 
-![Image captions](https://i.guim.co.uk/img/uploads/2023/03/15/Image_captions.png?quality=85&dpr=2&width=300&s=98e19bf182b3aaa690d5436f8ec0562b)
+**article-based**: Each chapter of the newsletter is written as a composer article.
+
+**fronts-based**: The newsletters are generated from a fronts page.
+
+**manual-send**: The content of the email are generated manually or with an external tool.
+
+If you aren't sure or none of the above fit, please select "other".
 
 `.trim();
 
@@ -18,9 +24,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const imageLayout: WizardStepLayout = {
+export const categoryLayout: WizardStepLayout = {
 	staticMarkdown,
-	label: 'Images',
+	label: 'Production Category',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -32,15 +38,15 @@ export const imageLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'newsletterHeader',
+			stepToMoveTo: 'editDraftNewsletter',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'readMore',
+			stepToMoveTo: 'pillar',
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.images,
+	schema: formSchemas.category,
 };

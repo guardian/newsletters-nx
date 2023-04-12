@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	isNewsletterData,
+	newsletterDataSchema,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
 import newslettersData from '../../../static/newsletters.local.json';
@@ -27,9 +28,12 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		'/api/newsletters/:newsletterId',
 		async (req, res) => {
 			const { newsletterId } = req.params;
-			const newsletter = newslettersData
-				.filter(isNewsletterData)
-				.find((newsletter) => newsletter.identityName === newsletterId);
+			const newsletter = newslettersData.find(
+				(newsletter) => newsletter.identityName === newsletterId,
+			);
+
+			const p = newsletterDataSchema.safeParse(newsletter);
+			console.log(p);
 
 			if (!newsletter) {
 				return res
