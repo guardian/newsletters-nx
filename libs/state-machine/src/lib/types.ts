@@ -73,10 +73,9 @@ export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
 	canSkipTo?: boolean;
 }
 
-export type WizardLayout<T extends GenericStorageInterface = unknown> = Record<
-	string,
-	WizardStepLayout<T>
->;
+export type WizardLayout<
+	T extends GenericStorageInterface = GenericStorageInterface,
+> = Record<string, WizardStepLayout<T>>;
 
 /**
  * Interface for the data payload sent to by the client for a single step in the wizard.

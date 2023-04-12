@@ -1,6 +1,7 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 
-export const startLayout: WizardStepLayout = {
+export const startLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown: `# Set Rendering Template Options
 
 This wizard is to choose the options for how an article-based newsletter will appear in Email-rendering.
