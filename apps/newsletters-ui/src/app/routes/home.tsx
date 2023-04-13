@@ -1,15 +1,14 @@
 import type { RouteObject } from 'react-router-dom';
-import { ComingSoon } from '../ComingSoonPage';
 import { HomeMenu } from '../components/HomeMenu';
+import { ContentWrapper } from '../ContentWrapper';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { listLoader } from '../loaders/newsletters';
-import { NotFound } from '../NotFoundPage';
 
 export const homeRoute: RouteObject = {
 	path: '/',
 	element: <Layout />,
-	errorElement: <ErrorPage />,
+	errorElement: <Layout outlet={<ErrorPage />} />,
 
 	children: [
 		{
@@ -19,12 +18,11 @@ export const homeRoute: RouteObject = {
 		},
 		{
 			path: 'templates',
-			element: <ComingSoon />,
+			element: <ContentWrapper>Coming soon...</ContentWrapper>,
 		},
 		{
 			path: 'thrashers',
-			element: <ComingSoon />,
+			element: <ContentWrapper>Coming soon...</ContentWrapper>,
 		},
-		{ path: '*', element: <NotFound /> },
 	],
 };
