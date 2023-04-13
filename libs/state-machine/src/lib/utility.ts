@@ -4,8 +4,9 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	draftNewsletterDataToFormData,
-	DraftStorage,
 	formDataToDraftNewsletterData,
+	InMemoryDraftStorage,
+	S3DraftStorage,
 } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
@@ -59,7 +60,10 @@ export const getFormDataForExistingItem = async (
 	requestBody: CurrentStepRouteRequest,
 	storageInstance: unknown,
 ): Promise<FormDataRecord | undefined> => {
-	if (storageInstance instanceof DraftStorage) {
+	if (
+		storageInstance instanceof S3DraftStorage ||
+		storageInstance instanceof InMemoryDraftStorage
+	) {
 		const listId =
 			typeof requestBody.formData?.['listId'] === 'number'
 				? requestBody.formData['listId']
@@ -94,7 +98,10 @@ export const modifyExistingItemWithFormData = async (
 	formData: FormDataRecord,
 	storageInstance: unknown,
 ): Promise<FormDataRecord | undefined> => {
-	if (storageInstance instanceof DraftStorage) {
+	if (
+		storageInstance instanceof S3DraftStorage ||
+		storageInstance instanceof InMemoryDraftStorage
+	) {
 		// formDataToDraftNewsletterData CAN THROW
 		const newDraftWithId: DraftWithId = {
 			...formDataToDraftNewsletterData(formData),
