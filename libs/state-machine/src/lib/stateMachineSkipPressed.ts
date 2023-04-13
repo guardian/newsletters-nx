@@ -27,14 +27,10 @@ export async function stateMachineSkipPressed<
 		);
 	}
 	if (!stepSkippingFrom.executeSkip) {
-		console.log('no execute skip function on', requestBody.stepId);
-		// TO DO - the UI could check for executeSkip on the current step
-		// when deciding whether to render any skip buttons in the nav
-		// when that is in place, should throw an error here since it should not occur
-		return makeStepDataWithErrorMessage(
-			'no executeSkip function!',
-			requestBody.stepId,
-			requestBody.formData,
+		throw new StateMachineError(
+			`step ${requestBody.stepId} cannot be skipped from`,
+			StateMachineErrorCode.Unhandled,
+			true,
 		);
 	}
 
