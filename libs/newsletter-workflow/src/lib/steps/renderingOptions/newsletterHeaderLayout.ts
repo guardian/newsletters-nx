@@ -43,7 +43,7 @@ export const newsletterHeaderLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'signUp',
+			stepToMoveTo: 'start',
 			executeStep: executeModify,
 		},
 		finish: {
