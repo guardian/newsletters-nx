@@ -9,6 +9,8 @@
  *
  * In development, variables can be adjusted locally on the command line e.g.
  * 	NEWSLETTERS_UI_SERVE=false npm run dev
+ *
+ * or by creating a .env.local file in the root folder for the newsletters-api project
  */
 
 export function isUndefinedAndNotProduction(
