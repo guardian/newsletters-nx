@@ -53,4 +53,5 @@ export const footerLayout: WizardStepLayout<DraftStorage> = {
 	},
 	schema: formSchemas.footer,
 	canSkipTo: true,
+	executeSkip: executeModify,
 };

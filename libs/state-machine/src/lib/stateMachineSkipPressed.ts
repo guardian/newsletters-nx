@@ -1,4 +1,3 @@
-import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
@@ -7,9 +6,7 @@ import type {
 	WizardStepData,
 } from './types';
 import {
-	getFormDataForExistingItem,
 	makeStepDataWithErrorMessage,
-	modifyExistingItemWithFormData,
 	validateIncomingFormData,
 } from './utility';
 
@@ -20,11 +17,24 @@ export async function stateMachineSkipPressed<
 	wizardLayout: WizardLayout<T>,
 	storageInstance?: T,
 ): Promise<WizardStepData> {
-	if (!storageInstance) {
+	const stepSkippingFrom = wizardLayout[requestBody.stepId];
+
+	if (!stepSkippingFrom) {
 		throw new StateMachineError(
-			'no storageInstance',
-			StateMachineErrorCode.StorageAccessError,
+			`no step ${requestBody.stepId}`,
+			StateMachineErrorCode.NoSuchStep,
 			true,
+		);
+	}
+	if (!stepSkippingFrom.executeSkip) {
+		console.log('no execute skip function on', requestBody.stepId);
+		// TO DO - the UI could check for executeSkip on the current step
+		// when deciding whether to render any skip buttons in the nav
+		// when that is in place, should throw an error here since it should not occur
+		return makeStepDataWithErrorMessage(
+			'no executeSkip function!',
+			requestBody.stepId,
+			requestBody.formData,
 		);
 	}
 
@@ -36,6 +46,24 @@ export async function stateMachineSkipPressed<
 		);
 	}
 
+	const stepSkippingTo = wizardLayout[requestBody.stepToSkipToId];
+	if (!stepSkippingTo) {
+		throw new StateMachineError(
+			`no step ${requestBody.stepToSkipToId}`,
+			StateMachineErrorCode.NoSuchStep,
+			true,
+		);
+	}
+
+	if (!stepSkippingTo.canSkipTo) {
+		throw new StateMachineError(
+			`step ${requestBody.stepToSkipToId} cannot be skipped to`,
+			StateMachineErrorCode.Unhandled,
+			true,
+		);
+	}
+
+	// validate the form on the step
 	const incomingDataError = validateIncomingFormData(
 		requestBody.stepId,
 		requestBody.formData,
@@ -49,37 +77,25 @@ export async function stateMachineSkipPressed<
 		);
 	}
 
-	const existingFormData =
-		(await getFormDataForExistingItem(requestBody, storageInstance)) ?? {};
-	const combinedFormData: FormDataRecord = {
-		...existingFormData,
-		...{ ...requestBody.formData },
-	};
+	const executeSkipResult = await stepSkippingFrom.executeSkip(
+		{
+			currentStepId: requestBody.stepId,
+			formData: requestBody.formData,
+		},
+		stepSkippingFrom,
+		storageInstance,
+	);
 
-	// TO DO - listId might not always be the id number property
-	const listId =
-		typeof combinedFormData['listId'] === 'number'
-			? combinedFormData['listId']
-			: undefined;
-
-	// Do not allow skipping before the 'create' step
-	if (!listId) {
+	if (typeof executeSkipResult === 'string') {
 		return makeStepDataWithErrorMessage(
-			'Cannot skip from this step',
+			executeSkipResult,
 			requestBody.stepId,
 			requestBody.formData,
 		);
 	}
 
-	// modify the existing item with the combinedFormData
-	const modifiedData = await modifyExistingItemWithFormData(
-		listId,
-		combinedFormData,
-		storageInstance,
-	);
-
 	return {
-		formData: modifiedData,
+		formData: executeSkipResult,
 		currentStepId: requestBody.stepToSkipToId,
 	};
 }
