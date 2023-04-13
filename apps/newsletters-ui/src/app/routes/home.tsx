@@ -4,7 +4,7 @@ import { HomeMenu } from '../components/HomeMenu';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { listLoader } from '../loaders/newsletters';
-import { NotFoundPage } from '../NotFoundPage';
+import { NotFound } from '../NotFoundPage';
 
 export const homeRoute: RouteObject = {
 	path: '/',
@@ -25,6 +25,6 @@ export const homeRoute: RouteObject = {
 			path: 'thrashers',
 			element: <ComingSoon />,
 		},
-		{ path: '*', element: <NotFoundPage /> },
+		{ path: '*', element: <NotFound /> },
 	],
 };
