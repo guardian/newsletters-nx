@@ -1,5 +1,6 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { getDraftFromStorage } from '../../getDraftFromStorage';
 
 export const startLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown: `# Set Rendering Template Options
@@ -23,4 +24,5 @@ You do **not need to complete** this wizard for **fronts-based newsletters or ne
 		},
 	},
 	role: 'EDIT_START',
+	getInitialFormData: getDraftFromStorage,
 };

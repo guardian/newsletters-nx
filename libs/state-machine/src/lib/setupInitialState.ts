@@ -2,20 +2,40 @@ import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
 	GenericStorageInterface,
+	WizardLayout,
 	WizardStepData,
 } from './types';
-import { getFormDataForExistingItem } from './utility';
 
 export async function setupInitialState<T extends GenericStorageInterface>(
 	requestBody: CurrentStepRouteRequest,
+	wizardLayout: WizardLayout<T>,
 	storageInstance?: T,
 ): Promise<WizardStepData> {
-	if (!storageInstance) {
+	const step = wizardLayout[requestBody.stepId];
+
+	if (!step) {
 		throw new StateMachineError(
-			'no storageInstance',
-			StateMachineErrorCode.StorageAccessError,
-			true,
+			`no such step ${requestBody.stepId}`,
+			StateMachineErrorCode.NoSuchStep,
 		);
+	}
+
+	if (step.getInitialFormData) {
+		if (!storageInstance) {
+			throw new StateMachineError(
+				'no storageInstance',
+				StateMachineErrorCode.StorageAccessError,
+				true,
+			);
+		}
+		const intialFormData = await step.getInitialFormData(
+			requestBody,
+			storageInstance,
+		);
+		return {
+			formData: intialFormData,
+			currentStepId: requestBody.stepId,
+		};
 	}
 
 	const itemId = requestBody.id;
@@ -25,20 +45,9 @@ export async function setupInitialState<T extends GenericStorageInterface>(
 		};
 	}
 
-	const formDataFromStorage = await getFormDataForExistingItem(
-		requestBody,
-		storageInstance,
+	throw new StateMachineError(
+		`The step ${requestBody.stepId} wants to edit an existing item with id ${itemId}, but does not have a method to fetch the item.`,
+		StateMachineErrorCode.StepMethodFailed,
+		true,
 	);
-	if (!formDataFromStorage) {
-		throw new StateMachineError(
-			`no item ${itemId} to edit`,
-			StateMachineErrorCode.NoSuchItem,
-			true,
-		);
-	}
-
-	return {
-		formData: formDataFromStorage,
-		currentStepId: requestBody.stepId,
-	};
 }

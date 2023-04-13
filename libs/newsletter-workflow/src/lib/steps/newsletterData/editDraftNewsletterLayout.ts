@@ -1,6 +1,7 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
+import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { formSchemas } from './formSchemas';
 
 export const editDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
@@ -29,4 +30,5 @@ The first step is to enter the name for your newsletter, for example **Down to E
 	},
 	schema: formSchemas.startDraftNewsletter,
 	role: 'EDIT_START',
+	getInitialFormData: getDraftFromStorage,
 };

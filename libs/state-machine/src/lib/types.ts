@@ -71,6 +71,12 @@ export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
 	buttons: Record<string, WizardStepLayoutButton<T>>;
 	schema?: ZodObject<ZodRawShape>;
 	canSkipTo?: boolean;
+	getInitialFormData?: {
+		(
+			request: CurrentStepRouteRequest,
+			storageInstance: T,
+		): Promise<FormDataRecord>;
+	};
 }
 
 export type WizardLayout<
