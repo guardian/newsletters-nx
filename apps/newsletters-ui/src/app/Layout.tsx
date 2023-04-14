@@ -44,18 +44,19 @@ const Frame = styled.div`
 	}
 `;
 
-export function Layout() {
-	const location = useLocation();
+interface IRootRoute {
+	outlet?: undefined | React.ReactNode;
+}
 
+export function Layout(props: IRootRoute) {
+	const location = useLocation();
 	return (
 		<Frame>
 			<header>
 				<MainNav pathname={location.pathname} />
 			</header>
 
-			<main>
-				<Outlet />
-			</main>
+			<main>{props.outlet ? props.outlet : <Outlet />}</main>
 
 			<footer>
 				<FooterContents />
