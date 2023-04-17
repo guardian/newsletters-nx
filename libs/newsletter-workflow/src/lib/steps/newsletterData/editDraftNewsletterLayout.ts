@@ -1,8 +1,9 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
 
-export const editDraftNewsletterLayout: WizardStepLayout = {
+export const editDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown: `# Name Your Newsletter
 
 The first step is to enter the name for your newsletter, for example **Down to Earth**.

@@ -1,4 +1,7 @@
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftNewsletterData,
+	DraftStorage,
+} from '@newsletters-nx/newsletters-data-client';
 import {
 	draftNewsletterDataToFormData,
 	formDataToDraftNewsletterData,
@@ -15,7 +18,7 @@ import { formSchemas } from '../lib/steps/newsletterData/formSchemas';
 import { calculateFieldsFromName } from './calculateFieldsFromName';
 import { executeModify } from './executeModify';
 
-export const executeCreate: AsyncExecution = async (
+export const executeCreate: AsyncExecution<DraftStorage> = async (
 	stepData,
 	stepLayout,
 	storageInstance,

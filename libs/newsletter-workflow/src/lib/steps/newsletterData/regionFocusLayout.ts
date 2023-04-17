@@ -1,3 +1,4 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type {
 	WizardStepData,
 	WizardStepLayout,
@@ -19,7 +20,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const regionFocusLayout: WizardStepLayout = {
+export const regionFocusLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Geo Focus',
 	dynamicMarkdown(requestData, responseData) {
