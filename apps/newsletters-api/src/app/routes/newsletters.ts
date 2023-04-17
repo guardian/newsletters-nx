@@ -1,39 +1,43 @@
 import type { FastifyInstance } from 'fastify';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import {
-	isNewsletterData,
-	newsletterDataSchema,
-	transformDataToLegacyNewsletter,
-} from '@newsletters-nx/newsletters-data-client';
-import newslettersData from '../../../static/newsletters.local.json';
+import { transformDataToLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
+import { newsletterStore } from '../../services/storage';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 export function registerNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
 	app.get('/api/legacy/newsletters', async (req, res) => {
-		const newsletters = newslettersData.filter(
-			isNewsletterData,
-		) as unknown[] as NewsletterData[];
+		const storageResponse = await newsletterStore.list();
+		if (!storageResponse.ok) {
+			return res.status(500).send(makeErrorResponse(storageResponse.message));
+		}
 
-		return newsletters.map(transformDataToLegacyNewsletter);
+		return storageResponse.data.map(transformDataToLegacyNewsletter);
 	});
 
 	app.get('/api/newsletters', async (req, res) => {
-		const newsletters = newslettersData.filter(isNewsletterData);
-		return makeSuccessResponse(newsletters);
+		const storageResponse = await newsletterStore.list();
+		if (!storageResponse.ok) {
+			return res.status(500).send(makeErrorResponse(storageResponse.message));
+		}
+
+		return makeSuccessResponse(storageResponse.data);
 	});
 
 	app.get<{ Params: { newsletterId: string } }>(
 		'/api/newsletters/:newsletterId',
 		async (req, res) => {
 			const { newsletterId } = req.params;
-			const newsletter = newslettersData.find(
+
+			// TO DO - newsletterStore.readByName
+			const storageResponse = await newsletterStore.list();
+			if (!storageResponse.ok) {
+				return res.status(500).send(makeErrorResponse(storageResponse.message));
+			}
+
+			const newsletter = storageResponse.data.find(
 				(newsletter) => newsletter.identityName === newsletterId,
 			);
-
-			const p = newsletterDataSchema.safeParse(newsletter);
-			console.log(p);
 
 			if (!newsletter) {
 				return res
