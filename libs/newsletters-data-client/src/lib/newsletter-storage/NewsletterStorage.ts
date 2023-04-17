@@ -20,6 +20,12 @@ export abstract class NewsletterStorage {
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	>;
 
+	abstract readByName(
+		identityName: string,
+	): Promise<
+		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+	>;
+
 	abstract update(
 		modifications: Partial<NewsletterData> & { listId: number },
 	): Promise<

@@ -64,7 +64,26 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		if (!match) {
 			const response: UnsuccessfulStorageResponse = {
 				ok: false,
-				message: `No item with listId ${listId} found.`,
+				message: `No item with listId #${listId} found.`,
+				reason: StorageRequestFailureReason.NotFound,
+			};
+			return Promise.resolve(response);
+		}
+		const response: SuccessfulStorageResponse<NewsletterData> = {
+			ok: true,
+			data: match,
+		};
+		return Promise.resolve(response);
+	}
+
+	readByName(identityName: string) {
+		const match = this.memory.find(
+			(newsletter) => newsletter.identityName === identityName,
+		);
+		if (!match) {
+			const response: UnsuccessfulStorageResponse = {
+				ok: false,
+				message: `No item with identityName "${identityName}" found.`,
 				reason: StorageRequestFailureReason.NotFound,
 			};
 			return Promise.resolve(response);

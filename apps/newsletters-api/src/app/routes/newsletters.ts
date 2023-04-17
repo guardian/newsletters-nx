@@ -1,5 +1,8 @@
 import type { FastifyInstance } from 'fastify';
-import { transformDataToLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
+import {
+	StorageRequestFailureReason,
+	transformDataToLegacyNewsletter,
+} from '@newsletters-nx/newsletters-data-client';
 import { newsletterStore } from '../../services/storage';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
@@ -29,23 +32,21 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		async (req, res) => {
 			const { newsletterId } = req.params;
 
-			// TO DO - newsletterStore.readByName
-			const storageResponse = await newsletterStore.list();
+			const storageResponse = await newsletterStore.readByName(newsletterId);
+
 			if (!storageResponse.ok) {
-				return res.status(500).send(makeErrorResponse(storageResponse.message));
+				if (storageResponse.reason === StorageRequestFailureReason.NotFound) {
+					return res
+						.status(404)
+						.send(makeErrorResponse(`no match for id ${newsletterId}`));
+				} else {
+					return res
+						.status(500)
+						.send(makeErrorResponse(storageResponse.message));
+				}
 			}
 
-			const newsletter = storageResponse.data.find(
-				(newsletter) => newsletter.identityName === newsletterId,
-			);
-
-			if (!newsletter) {
-				return res
-					.status(404)
-					.send(makeErrorResponse(`no match for id ${newsletterId}`));
-			}
-
-			return makeSuccessResponse(newsletter);
+			return makeSuccessResponse(storageResponse.data);
 		},
 	);
 }
