@@ -9,3 +9,4 @@ export * from './lib/draft-storage';
 export * from './lib/transformDataToLegacyNewsletter';
 export * from './lib/schema-helpers';
 export * from './lib/transformWizardData';
+export * from './lib/storage-response-types';
