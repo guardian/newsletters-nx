@@ -1,28 +1,24 @@
-import type {
-	DraftStorage,
-	DraftWithId,
-	FormDataRecord,
-} from '@newsletters-nx/newsletters-data-client';
-import {
-	draftNewsletterDataToFormData,
-	formDataToDraftNewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
+	GenericStorageInterface,
 	WizardLayout,
 	WizardStepData,
 } from './types';
 import {
-	getExistingItem,
+	getFormDataForExistingItem,
 	makeStepDataWithErrorMessage,
+	modifyExistingItemWithFormData,
 	validateIncomingFormData,
 } from './utility';
 
-export async function stateMachineSkipPressed(
+export async function stateMachineSkipPressed<
+	T extends GenericStorageInterface,
+>(
 	requestBody: CurrentStepRouteRequest,
-	wizardLayout: WizardLayout,
-	storageInstance?: DraftStorage,
+	wizardLayout: WizardLayout<T>,
+	storageInstance?: T,
 ): Promise<WizardStepData> {
 	if (!storageInstance) {
 		throw new StateMachineError(
@@ -43,7 +39,7 @@ export async function stateMachineSkipPressed(
 	const incomingDataError = validateIncomingFormData(
 		requestBody.stepId,
 		requestBody.formData,
-		wizardLayout,
+		wizardLayout as WizardLayout<unknown>,
 	);
 	if (incomingDataError) {
 		return makeStepDataWithErrorMessage(
@@ -53,15 +49,14 @@ export async function stateMachineSkipPressed(
 		);
 	}
 
-	const existingItem = await getExistingItem(requestBody, storageInstance);
-	const existingFormData: FormDataRecord = existingItem
-		? draftNewsletterDataToFormData(existingItem)
-		: {};
+	const existingFormData =
+		(await getFormDataForExistingItem(requestBody, storageInstance)) ?? {};
 	const combinedFormData: FormDataRecord = {
 		...existingFormData,
 		...{ ...requestBody.formData },
 	};
 
+	// TO DO - listId might not always be the id number property
 	const listId =
 		typeof combinedFormData['listId'] === 'number'
 			? combinedFormData['listId']
@@ -76,24 +71,15 @@ export async function stateMachineSkipPressed(
 		);
 	}
 
-	// formDataToDraftNewsletterData CAN THROW
-	const newDraftWithId: DraftWithId = {
-		...formDataToDraftNewsletterData(combinedFormData),
-		listId: listId,
-	};
-	const storageResponse = await storageInstance.modifyDraftNewsletter(
-		newDraftWithId,
+	// modify the existing item with the combinedFormData
+	const modifiedData = await modifyExistingItemWithFormData(
+		listId,
+		combinedFormData,
+		storageInstance,
 	);
 
-	if (storageResponse.ok) {
-		return {
-			formData: draftNewsletterDataToFormData(storageResponse.data),
-			currentStepId: requestBody.stepToSkipToId,
-		};
-	} else {
-		throw new StateMachineError(
-			`failed to update draft #${listId}`,
-			StateMachineErrorCode.StorageAccessError,
-		);
-	}
+	return {
+		formData: modifiedData,
+		currentStepId: requestBody.stepToSkipToId,
+	};
 }

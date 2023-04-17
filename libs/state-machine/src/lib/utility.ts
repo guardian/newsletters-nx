@@ -1,7 +1,12 @@
 import type {
-	DraftStorage,
 	DraftWithId,
 	FormDataRecord,
+} from '@newsletters-nx/newsletters-data-client';
+import {
+	draftNewsletterDataToFormData,
+	formDataToDraftNewsletterData,
+	InMemoryDraftStorage,
+	S3DraftStorage,
 } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
@@ -28,7 +33,7 @@ export const makeStepDataWithErrorMessage = (
 export const validateIncomingFormData = (
 	stepId: string,
 	formData: FormDataRecord | undefined,
-	wizardLayout: WizardLayout,
+	wizardLayout: WizardLayout<unknown>,
 ) => {
 	const currentStepLayout = wizardLayout[stepId];
 	const formSchemaForIncomingStep = currentStepLayout?.schema;
@@ -51,29 +56,72 @@ export const validateIncomingFormData = (
 	return false;
 };
 
-export const getExistingItem = async (
+export const getFormDataForExistingItem = async (
 	requestBody: CurrentStepRouteRequest,
-	storageInstance: DraftStorage,
-): Promise<DraftWithId | undefined> => {
-	const listId =
-		typeof requestBody.formData?.['listId'] === 'number'
-			? requestBody.formData['listId']
-			: undefined;
-	const existingItemId = listId ?? requestBody.id;
+	storageInstance: unknown,
+): Promise<FormDataRecord | undefined> => {
+	if (
+		storageInstance instanceof S3DraftStorage ||
+		storageInstance instanceof InMemoryDraftStorage
+	) {
+		const listId =
+			typeof requestBody.formData?.['listId'] === 'number'
+				? requestBody.formData['listId']
+				: undefined;
+		const existingItemId = listId ?? requestBody.id;
 
-	if (!existingItemId) {
-		return undefined;
-	}
-	const idAsNumber = +existingItemId;
+		if (!existingItemId) {
+			return undefined;
+		}
+		const idAsNumber = +existingItemId;
 
-	const storageResponse = await storageInstance.getDraftNewsletter(idAsNumber);
-	if (!storageResponse.ok) {
-		throw new StateMachineError(
-			`cannot load draft newsletter with id ${existingItemId}`,
-			StateMachineErrorCode.StorageAccessError,
-			false,
+		const storageResponse = await storageInstance.getDraftNewsletter(
+			idAsNumber,
 		);
+		if (!storageResponse.ok) {
+			throw new StateMachineError(
+				`cannot load draft newsletter with id ${existingItemId}`,
+				StateMachineErrorCode.StorageAccessError,
+				false,
+			);
+		}
+
+		return draftNewsletterDataToFormData(storageResponse.data);
 	}
 
-	return storageResponse.data;
+	console.warn('unsupported storageInstance', storageInstance);
+	return undefined;
+};
+
+export const modifyExistingItemWithFormData = async (
+	itemId: number,
+	formData: FormDataRecord,
+	storageInstance: unknown,
+): Promise<FormDataRecord | undefined> => {
+	if (
+		storageInstance instanceof S3DraftStorage ||
+		storageInstance instanceof InMemoryDraftStorage
+	) {
+		// formDataToDraftNewsletterData CAN THROW
+		const newDraftWithId: DraftWithId = {
+			...formDataToDraftNewsletterData(formData),
+			listId: itemId,
+		};
+
+		const storageResponse = await storageInstance.modifyDraftNewsletter(
+			newDraftWithId,
+		);
+
+		if (!storageResponse.ok) {
+			throw new StateMachineError(
+				`failed to update draft #${itemId}`,
+				StateMachineErrorCode.StorageAccessError,
+			);
+		}
+
+		return draftNewsletterDataToFormData(storageResponse.data);
+	}
+
+	console.warn('unsupported storageInstance', storageInstance);
+	return undefined;
 };

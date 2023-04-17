@@ -1,5 +1,3 @@
-import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
 import type { WizardLayout, WizardStepData } from './types';
 
@@ -61,7 +59,7 @@ const mockWizardLayout: WizardLayout = {
 	},
 };
 
-const mockStorage: DraftStorage = new InMemoryDraftStorage();
+const mockStorage = {};
 
 describe('stateMachineButtonPressed', () => {
 	it('should throw if buttonPressed is invalid', async () => {
