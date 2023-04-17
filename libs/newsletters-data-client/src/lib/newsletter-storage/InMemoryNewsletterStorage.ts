@@ -12,7 +12,7 @@ import type { NewsletterStorage } from './NewsletterStorage';
 
 // TO DO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
-export class InMemoryDraftStorage implements NewsletterStorage {
+export class InMemoryNewsletterStorage implements NewsletterStorage {
 	private memory: NewsletterData[];
 
 	constructor(newsletters?: NewsletterData[]) {
