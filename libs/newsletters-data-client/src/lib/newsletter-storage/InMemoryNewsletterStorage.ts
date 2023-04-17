@@ -9,6 +9,7 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import type { NewsletterStorage } from './NewsletterStorage';
+import { UNCHANGABLE_PROPERTIES } from './NewsletterStorage';
 
 // TO DO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
@@ -95,15 +96,29 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
-	update(modifications: Partial<NewsletterData> & { listId: number }) {
-		const match = this.memory.find(
-			(existingDraft) => existingDraft.listId === modifications.listId,
-		);
+	update(listId: number, modifications: Partial<NewsletterData>) {
+		const properiesChanged = Object.keys(modifications);
+		if (
+			properiesChanged.some((property) =>
+				UNCHANGABLE_PROPERTIES.includes(property),
+			)
+		) {
+			const response: UnsuccessfulStorageResponse = {
+				ok: false,
+				message: `Cannot change ${UNCHANGABLE_PROPERTIES.join(
+					' or ',
+				)} on a newsletter.`,
+				reason: StorageRequestFailureReason.InvalidDataInput,
+			};
+			return Promise.resolve(response);
+		}
+
+		const match = this.memory.find((item) => item.listId === listId);
 
 		if (!match) {
 			const response: UnsuccessfulStorageResponse = {
 				ok: false,
-				message: `No item with listId ${modifications.listId} found.`,
+				message: `No item with listId ${listId} found.`,
 				reason: StorageRequestFailureReason.NotFound,
 			};
 			return Promise.resolve(response);

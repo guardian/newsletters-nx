@@ -134,6 +134,12 @@ export function isNewsletterData(subject: unknown): subject is NewsletterData {
 	return newsletterDataSchema.safeParse(subject).success;
 }
 
+export function isPartialNewsletterData(
+	subject: unknown,
+): subject is Partial<NewsletterData> {
+	return newsletterDataSchema.partial().safeParse(subject).success;
+}
+
 export const draftNewsletterDataSchema = newsletterDataSchema.deepPartial();
 export type DraftNewsletterData = z.infer<typeof draftNewsletterDataSchema>;
 

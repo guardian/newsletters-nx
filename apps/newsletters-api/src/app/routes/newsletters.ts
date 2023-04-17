@@ -1,6 +1,8 @@
 import type { FastifyInstance } from 'fastify';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { transformDataToLegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
+import {
+	isPartialNewsletterData,
+	transformDataToLegacyNewsletter,
+} from '@newsletters-nx/newsletters-data-client';
 import { newsletterStore } from '../../services/storage';
 import {
 	makeErrorResponse,
@@ -51,21 +53,28 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 
 	app.patch<{
 		Params: { newsletterId: string };
-		Body: Partial<NewsletterData>;
+		Body: unknown;
 	}>('/api/newsletters/:newsletterId', async (req, res) => {
 		const { newsletterId } = req.params;
+		const { body: modifications } = req;
 		const newsletterIdAsNumber = Number(newsletterId);
 
 		if (isNaN(newsletterIdAsNumber)) {
 			return res.status(400).send(makeErrorResponse(`Non numeric id provided`));
 		}
-		const storageResponse = await newsletterStore.update({
-			...req.body,
-			listId: newsletterIdAsNumber,
-		});
+
+		if (!isPartialNewsletterData(modifications)) {
+			return res
+				.status(400)
+				.send(makeErrorResponse(`Not a valid partial newsletter`));
+		}
+
+		const storageResponse = await newsletterStore.update(
+			newsletterIdAsNumber,
+			modifications,
+		);
 
 		if (!storageResponse.ok) {
-			console.log(storageResponse.message);
 			return res
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));

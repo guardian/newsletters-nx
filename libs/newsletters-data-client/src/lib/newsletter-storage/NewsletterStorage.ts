@@ -7,6 +7,11 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 
+export const UNCHANGABLE_PROPERTIES: Readonly<string[]> = [
+	'listId',
+	'identityName',
+];
+
 export abstract class NewsletterStorage {
 	abstract create(
 		draft: DraftNewsletterData,
@@ -27,7 +32,8 @@ export abstract class NewsletterStorage {
 	>;
 
 	abstract update(
-		modifications: Partial<NewsletterData> & { listId: number },
+		listId: number,
+		modifications: Partial<NewsletterData>,
 	): Promise<
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	>;
