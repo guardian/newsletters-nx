@@ -14,14 +14,14 @@ export abstract class NewsletterStorage {
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	>;
 
-	abstract get(
+	abstract read(
 		listId: number,
 	): Promise<
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	>;
 
-	abstract modify(
-		draft: NewsletterData,
+	abstract update(
+		modifications: Partial<NewsletterData> & { listId: number },
 	): Promise<
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	>;
