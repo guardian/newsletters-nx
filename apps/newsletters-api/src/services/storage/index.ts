@@ -1,6 +1,7 @@
 import {
 	InMemoryNewsletterStorage,
 	isNewsletterData,
+	Launcheroo,
 } from '@newsletters-nx/newsletters-data-client';
 import type {
 	DraftStorage,
@@ -29,4 +30,6 @@ const newsletterStore: NewsletterStorage = new InMemoryNewsletterStorage(
 	validNewsletters as unknown as NewsletterData[],
 );
 
-export { draftStore, newsletterStore };
+const launcheroo = new Launcheroo(draftStore, newsletterStore);
+
+export { draftStore, newsletterStore, launcheroo };

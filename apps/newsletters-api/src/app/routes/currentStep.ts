@@ -9,7 +9,7 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
-import { draftStore } from '../../services/storage';
+import { draftStore, launcheroo } from '../../services/storage';
 
 const getHttpCode = (error: StateMachineError): number => {
 	switch (error.code) {
@@ -47,11 +47,14 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				return res.status(400).send(errorResponse);
 			}
 
+			const correctInterface =
+				requestBody.wizardId === 'LAUNCH_NEWSLETTER' ? launcheroo : draftStore;
+
 			try {
 				return await handleWizardRequestAndReturnWizardResponse(
 					requestBody,
 					layout,
-					draftStore,
+					correctInterface,
 				);
 			} catch (error) {
 				if (error instanceof StateMachineError) {
