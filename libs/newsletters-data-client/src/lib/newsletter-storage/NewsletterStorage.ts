@@ -3,11 +3,11 @@ import type {
 	DraftNewsletterData,
 	NewsletterData,
 } from '../newsletter-data-type';
-import {
-	StorageRequestFailureReason,
-	type SuccessfulStorageResponse,
-	type UnsuccessfulStorageResponse,
+import type {
+	SuccessfulStorageResponse,
+	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
+import { StorageRequestFailureReason } from '../storage-response-types';
 
 export const UNCHANGABLE_PROPERTIES: Readonly<string[]> = [
 	'listId',
