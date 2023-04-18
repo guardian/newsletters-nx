@@ -12,7 +12,10 @@ import { StringInput } from './StringInput';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 import { fieldValueAsDisplayString } from './util';
 
-interface SchemaFieldProps<T> {
+// T is the shape of the schema passed as a prop to the `SchemaForm`
+// It is not currently used, but a better implementation or future feature may need it.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- could use the schema on a better implementations
+interface SchemaFieldProps<T extends z.ZodRawShape> {
 	field: FieldDef;
 	change: { (value: FieldValue, field: FieldDef): void };
 	options?: string[];
