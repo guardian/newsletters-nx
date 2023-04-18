@@ -8,8 +8,7 @@ import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
-import type { NewsletterStorage } from './NewsletterStorage';
-import { UNCHANGABLE_PROPERTIES } from './NewsletterStorage';
+import { NewsletterStorage } from './NewsletterStorage';
 
 // TO DO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
@@ -97,24 +96,14 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	}
 
 	update(listId: number, modifications: Partial<NewsletterData>) {
-		const properiesChanged = Object.keys(modifications);
-		if (
-			properiesChanged.some((property) =>
-				UNCHANGABLE_PROPERTIES.includes(property),
-			)
-		) {
-			const response: UnsuccessfulStorageResponse = {
-				ok: false,
-				message: `Cannot change ${UNCHANGABLE_PROPERTIES.join(
-					' or ',
-				)} on a newsletter.`,
-				reason: StorageRequestFailureReason.InvalidDataInput,
-			};
-			return Promise.resolve(response);
+		console.log('UPDATE');
+
+		const modificationError = this.getModificationError(modifications);
+		if (modificationError) {
+			return Promise.resolve(modificationError);
 		}
 
 		const match = this.memory.find((item) => item.listId === listId);
-
 		if (!match) {
 			const response: UnsuccessfulStorageResponse = {
 				ok: false,
@@ -175,4 +164,6 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		);
 		return currentHighestListId + 1;
 	}
+
+	getModificationError = NewsletterStorage.prototype.getModificationError;
 }

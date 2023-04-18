@@ -1,10 +1,12 @@
+import { isPartialNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
 	NewsletterData,
 } from '../newsletter-data-type';
-import type {
-	SuccessfulStorageResponse,
-	UnsuccessfulStorageResponse,
+import {
+	StorageRequestFailureReason,
+	type SuccessfulStorageResponse,
+	type UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 
 export const UNCHANGABLE_PROPERTIES: Readonly<string[]> = [
@@ -47,4 +49,38 @@ export abstract class NewsletterStorage {
 	abstract list(): Promise<
 		SuccessfulStorageResponse<NewsletterData[]> | UnsuccessfulStorageResponse
 	>;
+
+	getModificationError(
+		modifications: Partial<NewsletterData>,
+	): UnsuccessfulStorageResponse | undefined {
+		const problems: string[] = [];
+		const properiesChanged = Object.keys(modifications);
+
+		const forbiddenKeyChanges = properiesChanged.filter((property) =>
+			UNCHANGABLE_PROPERTIES.includes(property),
+		);
+
+		if (forbiddenKeyChanges.length > 0) {
+			problems.push(
+				`Cannot change ${forbiddenKeyChanges
+					.map((key) => `"${key}"`)
+					.join(' or ')} on a newsletter.`,
+			);
+		}
+
+		if (!isPartialNewsletterData(modifications)) {
+			problems.push(
+				'Not all fields are of the required type or in the right format.',
+			);
+		}
+
+		if (problems.length === 0) {
+			return undefined;
+		}
+		return {
+			ok: false,
+			message: problems.join(' '),
+			reason: StorageRequestFailureReason.InvalidDataInput,
+		};
+	}
 }
