@@ -83,4 +83,19 @@ export abstract class NewsletterStorage {
 			reason: StorageRequestFailureReason.InvalidDataInput,
 		};
 	}
+
+	buildNoItemError(
+		listIdOrIdentityName: string | number,
+	): UnsuccessfulStorageResponse {
+		const message =
+			typeof listIdOrIdentityName === 'number'
+				? `No item with listId #${listIdOrIdentityName} found.`
+				: `No item with identityName "${listIdOrIdentityName}" found.`;
+
+		return {
+			ok: false,
+			message,
+			reason: StorageRequestFailureReason.NotFound,
+		};
+	}
 }

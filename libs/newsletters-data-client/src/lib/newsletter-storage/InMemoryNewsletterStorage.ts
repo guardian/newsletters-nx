@@ -20,8 +20,10 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	}
 
 	create(draft: DraftNewsletterData) {
+		// TO DO - use the schema.safeParse and if the test fails,
+		// use the list of issues to generate a message with the
+		// wrong/missing fields listed.
 		const draftReady = isNewsletterData(draft);
-
 		if (!draftReady) {
 			const error: UnsuccessfulStorageResponse = {
 				ok: false,
@@ -62,12 +64,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		);
 
 		if (!match) {
-			const response: UnsuccessfulStorageResponse = {
-				ok: false,
-				message: `No item with listId #${listId} found.`,
-				reason: StorageRequestFailureReason.NotFound,
-			};
-			return Promise.resolve(response);
+			return Promise.resolve(this.buildNoItemError(listId));
 		}
 		const response: SuccessfulStorageResponse<NewsletterData> = {
 			ok: true,
@@ -81,12 +78,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			(newsletter) => newsletter.identityName === identityName,
 		);
 		if (!match) {
-			const response: UnsuccessfulStorageResponse = {
-				ok: false,
-				message: `No item with identityName "${identityName}" found.`,
-				reason: StorageRequestFailureReason.NotFound,
-			};
-			return Promise.resolve(response);
+			return Promise.resolve(this.buildNoItemError(identityName));
 		}
 		const response: SuccessfulStorageResponse<NewsletterData> = {
 			ok: true,
@@ -96,8 +88,6 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	}
 
 	update(listId: number, modifications: Partial<NewsletterData>) {
-		console.log('UPDATE');
-
 		const modificationError = this.getModificationError(modifications);
 		if (modificationError) {
 			return Promise.resolve(modificationError);
@@ -105,19 +95,13 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 
 		const match = this.memory.find((item) => item.listId === listId);
 		if (!match) {
-			const response: UnsuccessfulStorageResponse = {
-				ok: false,
-				message: `No item with listId ${listId} found.`,
-				reason: StorageRequestFailureReason.NotFound,
-			};
-			return Promise.resolve(response);
+			return Promise.resolve(this.buildNoItemError(listId));
 		}
 
 		const updatedItem = {
 			...match,
 			...modifications,
 		};
-
 		this.memory.splice(this.memory.indexOf(match), 1, updatedItem);
 		const response: SuccessfulStorageResponse<NewsletterData> = {
 			ok: true,
@@ -130,12 +114,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		const match = this.memory.find((item) => item.listId === listId);
 
 		if (!match) {
-			const response: UnsuccessfulStorageResponse = {
-				ok: false,
-				message: `No draft with listId ${listId} found.`,
-				reason: StorageRequestFailureReason.NotFound,
-			};
-			return Promise.resolve(response);
+			return Promise.resolve(this.buildNoItemError(listId));
 		}
 
 		this.memory.splice(this.memory.indexOf(match), 1);
@@ -166,4 +145,5 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	}
 
 	getModificationError = NewsletterStorage.prototype.getModificationError;
+	buildNoItemError = NewsletterStorage.prototype.buildNoItemError;
 }
