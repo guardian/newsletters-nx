@@ -119,11 +119,9 @@ export const formSchemas = {
 		'Input the subheading triggers',
 	),
 
-	readMore: pickAndPrefixRenderingOption([
-		'readMoreSubheading',
-		'readMoreWording',
-		'readMoreUrl',
-	]).describe('Input the Read More setup'),
+	readMore: pickAndPrefixRenderingOption(['readMoreSections']).describe(
+		'Input the Read More setup',
+	),
 
 	tags: newsletterDataSchema
 		.pick({

@@ -7,5 +7,5 @@ export * from './lib/testQuestionaireSchema';
 export * from './lib/emailEmbedSchema';
 export * from './lib/storage';
 export * from './lib/transformDataToLegacyNewsletter';
-export * from './lib/schema-helpers';
 export * from './lib/transformWizardData';
+export * from './lib/zod-helpers';

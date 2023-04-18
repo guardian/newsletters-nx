@@ -1,5 +1,7 @@
-import type { z, ZodTypeAny } from 'zod';
-import { ZodArray, ZodOptional, ZodString } from 'zod';
+import type { z, ZodRawShape, ZodTypeAny } from 'zod';
+import { ZodArray, ZodObject, ZodString } from 'zod';
+import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 
@@ -17,27 +19,21 @@ interface Props<T extends z.ZodRawShape> {
 	validationWarnings: Partial<Record<keyof T, string>>;
 }
 
-const recursiveUnwrap = (field: ZodTypeAny): ZodTypeAny => {
-	if (!(field instanceof ZodOptional)) {
-		return field;
-	}
-	const unwrapped = field.unwrap() as ZodTypeAny;
-	if (unwrapped instanceof ZodOptional) {
-		return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
-	}
-	return unwrapped;
-};
-
-const getArrayItemType = (zod: ZodTypeAny): FieldDef['arrayItemType'] => {
+const getArrayItemTypeAndRecordSchema = (
+	zod: ZodTypeAny,
+): [FieldDef['arrayItemType'], ZodObject<ZodRawShape> | undefined] => {
 	const unwrappedZod = recursiveUnwrap(zod);
 	if (!(unwrappedZod instanceof ZodArray)) {
-		return undefined;
+		return [undefined, undefined];
 	}
 	const elementSchema = unwrappedZod.element as ZodTypeAny;
 	if (elementSchema instanceof ZodString) {
-		return 'string';
+		return ['string', undefined];
 	}
-	return 'unsupported';
+	if (elementSchema instanceof ZodObject) {
+		return ['record', elementSchema];
+	}
+	return ['unsupported', undefined];
 };
 
 /**
@@ -82,7 +78,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 				  (zod._def.values as unknown as string[])
 				: undefined;
 
-		const arrayItemType = getArrayItemType(zod);
+		const [arrayItemType, recordSchema] = getArrayItemTypeAndRecordSchema(zod);
 
 		fields.push({
 			key,
@@ -93,6 +89,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			enumOptions,
 			readOnly: readOnlyKeys.includes(key),
 			arrayItemType,
+			recordSchema,
 		});
 	}
 

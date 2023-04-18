@@ -4,7 +4,7 @@ import {
 	kebabCasedString,
 	nonEmptyString,
 	underscoreCasedString,
-} from './schema-helpers';
+} from './zod-helpers/schema-helpers';
 
 export const themeEnumSchema = z.enum([
 	'',
@@ -49,9 +49,18 @@ export const renderingOptionsSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('podcast subheading'),
-	readMoreSubheading: z.string().optional().describe('read more subheading'),
-	readMoreWording: z.string().optional().describe('read more wording'),
-	readMoreUrl: z.string().url().optional().describe('read more url'),
+	readMoreSections: z
+		.array(
+			z
+				.object({
+					subheading: z.string().optional().describe('read more subheading'),
+					wording: z.string().optional().describe('read more wording'),
+					url: z.string().url().optional().describe('read more url'),
+				})
+				.describe('read more section configuration'),
+		)
+		.optional()
+		.describe('The configuration for read more sections'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
