@@ -3,6 +3,50 @@ import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client';
 export const makeInMemoryStorageInstance = () =>
 	new InMemoryDraftStorage([
 		{
+			identityName: 'avon-recumbent',
+			name: 'Avon Recumbent',
+			category: 'article-based',
+			description:
+				'Quod nobis aperiam aperiam ipsum nobis officiis explicabo molestias quibusdam.',
+			frequency: 'Weekly',
+			status: 'paused',
+			restricted: false,
+			emailConfirmation: false,
+			brazeNewsletterName: 'Editorial_AvonRecumbentUs',
+			brazeSubscribeAttributeName: 'AvonRecumbentUs_Subscribe_Email',
+			brazeSubscribeEventNamePrefix: 'avon_recumbent_US',
+			theme: 'culture',
+			group: 'Work',
+			regionFocus: 'UK',
+			listIdV1: 3703,
+			listId: 5770,
+			exampleUrl: '/world/series/series-avon-recumbent/latest/email',
+			signupPage:
+				'/global/sign-up-for-the-avon-recumbent-newsletter-our-free-email',
+			emailEmbed: {
+				name: 'Avon Recumbent',
+				title: 'Sign up for Avon Recumbent',
+				description:
+					'Numquam ipsam culpa velit suscipit ratione corrupti. recusandae aliquam repudiandae eaque. error corporis deserunt suscipit dolor consequuntur dolor quaerat dolor. possimus cupiditate in nam. itaque quaerat illum sint quos blanditiis.',
+				successHeadline: 'Subscription confirmed',
+				successDescription: "We'll send you Avon Recumbent weekly",
+				hexCode: '#DCDCDC',
+			},
+			campaignName: 'AvonRecumbentUs',
+			campaignCode: 'avonrecumbentUS_email',
+			brazeSubscribeAttributeNameAlternate: [
+				'email_subscribe_avon_recumbent_US',
+			],
+			creationTimeStamp: 1633539258449,
+			figmaIncludesThrashers: false,
+			launchDate: new Date('1970-01-02T00:21:18.876Z'),
+			signUpPageDate: new Date('1970-01-02T00:21:18.876Z'),
+			thrasherDate: new Date('1970-01-02T00:21:18.876Z'),
+			privateUntilLaunch: false,
+			onlineArticle: 'Web for all sends',
+		},
+
+		{
 			listId: 7000,
 			name: 'Test draft newsletter',
 			category: 'article-based',
