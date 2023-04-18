@@ -20,7 +20,7 @@ export const getDraftFromStorage = async (
 	const existingItemId = listId ?? requestBody.id;
 
 	if (!existingItemId) {
-		// if there is no existingItemId, it is a new item so the state shoudl be empty
+		// if there is no existingItemId, it is a new item so the state should be empty
 		return {};
 	}
 	const idAsNumber = +existingItemId;
