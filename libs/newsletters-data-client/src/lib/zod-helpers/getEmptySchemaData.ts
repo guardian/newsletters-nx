@@ -1,6 +1,7 @@
 import type { z } from 'zod';
 import { ZodBoolean, ZodDate, ZodEnum, ZodNumber, ZodString } from 'zod';
-import type { WizardFormData } from './types';
+import type { FormDataRecord } from '../transformWizardData';
+import { recursiveUnwrap } from './recursiveUnwrap';
 
 /**
  * NOTE - ZodDates are defaulted to 'undefined'
@@ -9,15 +10,18 @@ import type { WizardFormData } from './types';
  */
 export const getEmptySchemaData = (
 	schema: z.ZodObject<z.ZodRawShape>,
-): WizardFormData | undefined => {
-	return Object.keys(schema.shape).reduce<WizardFormData>((formData, key) => {
-		const zod = schema.shape[key];
+	unwrapOptionals = false,
+): FormDataRecord | undefined => {
+	return Object.keys(schema.shape).reduce<FormDataRecord>((formData, key) => {
+		const zodMaybeOptional = schema.shape[key];
 
-		if (!zod) {
+		if (!zodMaybeOptional) {
 			return formData;
 		}
-
-		const mod: WizardFormData = {};
+		const zod = unwrapOptionals
+			? recursiveUnwrap(zodMaybeOptional)
+			: zodMaybeOptional;
+		const mod: FormDataRecord = {};
 
 		if (zod instanceof ZodString) {
 			mod[key] = '';

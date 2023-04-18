@@ -1,5 +1,7 @@
 import type { FormEvent } from 'react';
-import { isStringArray } from '../../util';
+import type { ZodObject, ZodRawShape } from 'zod';
+import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
+import { isPrimitiveRecordArray, isStringArray } from '../../util';
 
 export interface FieldDef {
 	key: string;
@@ -9,7 +11,8 @@ export interface FieldDef {
 	value: unknown;
 	enumOptions?: string[];
 	readOnly?: boolean;
-	arrayItemType?: 'string' | 'unsupported';
+	arrayItemType?: 'string' | 'record' | 'unsupported';
+	recordSchema?: ZodObject<ZodRawShape>;
 }
 export type FieldValue =
 	| string
@@ -17,7 +20,8 @@ export type FieldValue =
 	| boolean
 	| undefined
 	| Date
-	| string[];
+	| string[]
+	| PrimitiveRecord[];
 
 export type NumberInputSettings = {
 	min?: number;
@@ -52,6 +56,11 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 
 	if (field.type === 'ZodArray' && field.arrayItemType === 'string') {
 		return isStringArray(value);
+	}
+
+	if (field.type === 'ZodArray' && field.arrayItemType === 'record') {
+		// TO DO - use field.recordSchema to validate each item
+		return isPrimitiveRecordArray(value);
 	}
 
 	switch (typeof value) {

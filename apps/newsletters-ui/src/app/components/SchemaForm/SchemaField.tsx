@@ -1,16 +1,21 @@
 import { z } from 'zod';
-import { isStringArray } from '../../util';
+import { isPrimitiveRecordArray, isStringArray } from '../../util';
 import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
+import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 import { fieldValueAsDisplayString } from './util';
 
-interface SchemaFieldProps<T> {
+// T is the shape of the schema passed as a prop to the `SchemaForm`
+// It is not currently used, but a better implementation or future feature may need it.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- could use the schema on a better implementations
+interface SchemaFieldProps<T extends z.ZodRawShape> {
 	field: FieldDef;
 	change: { (value: FieldValue, field: FieldDef): void };
 	options?: string[];
@@ -143,12 +148,36 @@ export function SchemaField<T extends z.ZodRawShape>({
 			);
 
 		case 'ZodArray':
-			if (field.arrayItemType === 'string') {
-				if (isStringArray(value) || typeof value === 'undefined') {
-					return <SchemaArrayInput {...standardProps} value={value ?? []} />;
+			switch (field.arrayItemType) {
+				case 'string': {
+					if (isStringArray(value) || typeof value === 'undefined') {
+						return <SchemaArrayInput {...standardProps} value={value ?? []} />;
+					}
+					return <WrongTypeMessage field={field} />;
+				}
+
+				case 'record': {
+					if (isPrimitiveRecordArray(value) || typeof value === 'undefined') {
+						if (!field.recordSchema) {
+							return <p>MISSING SCHEMA</p>;
+						}
+						return (
+							<SchemaRecordArrayInput
+								{...standardProps}
+								value={value ?? []}
+								recordSchema={field.recordSchema}
+							/>
+						);
+					} else {
+						return <WrongTypeMessage field={field} />;
+					}
+				}
+
+				case 'unsupported': {
+					return <WrongTypeMessage field={field} />;
 				}
 			}
-			return <WrongTypeMessage field={field} />;
+			break;
 
 		default:
 			if (showUnsupported) {
@@ -160,7 +189,12 @@ export function SchemaField<T extends z.ZodRawShape>({
 					</div>
 				);
 			}
-
 			return null;
 	}
+	// the return statement in the default branch of the
+	// switch statement does work as a 'catch-all', but the
+	// linter didn't recognise this and was considering the
+	// the return type to be Element | null | undefined.
+	// adding an extra `return null` to supress the error.
+	return null;
 }
