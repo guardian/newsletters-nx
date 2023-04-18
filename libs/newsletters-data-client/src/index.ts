@@ -7,6 +7,7 @@ export * from './lib/testQuestionaireSchema';
 export * from './lib/emailEmbedSchema';
 export * from './lib/draft-storage';
 export * from './lib/newsletter-storage';
+export * from './lib/launcheroo';
 export * from './lib/transformDataToLegacyNewsletter';
 export * from './lib/transformWizardData';
 export * from './lib/storage-response-types';
