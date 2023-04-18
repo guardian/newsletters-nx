@@ -186,7 +186,12 @@ export function SchemaField<T extends z.ZodRawShape>({
 					</div>
 				);
 			}
-
 			return null;
 	}
+	// the return statement in the default branch of the
+	// switch statement does work as a 'catch-all', but the
+	// linter didn't recognise this and was considering the
+	// the return type to be Element | null | undefined.
+	// adding an extra `return null` to supress the error.
+	return null;
 }
