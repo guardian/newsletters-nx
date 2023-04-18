@@ -12,7 +12,7 @@ import type { FunctionComponent } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
-import { isPrimiveRecord } from '../../util';
+import { isPrimitiveRecord } from '../../util';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { RecordInput } from './RecordInput';
 import type { FieldProps, FieldValue } from './util';
@@ -28,7 +28,7 @@ export const SchemaRecordArrayInput: FunctionComponent<
 
 	const addNew = () => {
 		const newRecord = getEmptySchemaData(recordSchema, true);
-		if (!isPrimiveRecord(newRecord)) {
+		if (!isPrimitiveRecord(newRecord)) {
 			console.warn(newRecord);
 			return;
 		}

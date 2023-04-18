@@ -48,7 +48,7 @@ export const renderYesNo = (value: boolean): string =>
 export const isStringArray = (value: unknown): value is string[] =>
 	Array.isArray(value) && value.every((item) => typeof item === 'string');
 
-export const isPrimiveRecord = (value: unknown): value is PrimitiveRecord => {
+export const isPrimitiveRecord = (value: unknown): value is PrimitiveRecord => {
 	if (!value || typeof value !== 'object') {
 		return false;
 	}
@@ -65,4 +65,4 @@ export const isPrimiveRecord = (value: unknown): value is PrimitiveRecord => {
 export const isPrimitiveRecordArray = (
 	value: unknown,
 ): value is PrimitiveRecord[] =>
-	Array.isArray(value) && value.every(isPrimiveRecord);
+	Array.isArray(value) && value.every(isPrimitiveRecord);

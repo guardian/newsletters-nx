@@ -57,10 +57,10 @@ export const renderingOptionsSchema = z.object({
 					wording: z.string().optional().describe('read more wording'),
 					url: z.string().url().optional().describe('read more url'),
 				})
-				.describe('readmore section configuration'),
+				.describe('read more section configuration'),
 		)
 		.optional()
-		.describe('The configuration for readmore sections'),
+		.describe('The configuration for read more sections'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
