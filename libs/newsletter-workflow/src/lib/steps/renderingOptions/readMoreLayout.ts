@@ -50,4 +50,5 @@ export const readMoreLayout: WizardStepLayout<DraftStorage> = {
 	},
 	schema: formSchemas.readMore,
 	canSkipTo: true,
+	executeSkip: executeModify,
 };

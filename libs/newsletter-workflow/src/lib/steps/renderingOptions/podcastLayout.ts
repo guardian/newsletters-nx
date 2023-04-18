@@ -51,4 +51,5 @@ export const podcastLayout: WizardStepLayout<DraftStorage> = {
 	},
 	schema: formSchemas.podcast,
 	canSkipTo: true,
+	executeSkip: executeModify,
 };

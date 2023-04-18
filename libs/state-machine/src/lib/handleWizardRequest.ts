@@ -50,7 +50,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 						wizardLayout,
 						genericInterface,
 				  )
-				: await setupInitialState(requestBody, genericInterface);
+				: await setupInitialState(requestBody, wizardLayout, genericInterface);
 
 		const nextStep = wizardLayout[stepData.currentStepId];
 

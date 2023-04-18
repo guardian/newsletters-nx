@@ -6,6 +6,7 @@ export type StepListing = {
 	role?: WizardStepLayout['role'];
 	parentStepId?: WizardStepLayout['parentStepId'];
 	canSkipTo?: boolean;
+	canSkipFrom?: boolean;
 };
 
 export type StepperConfig = {
@@ -24,6 +25,7 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 					role: step.role,
 					parentStepId: step.parentStepId,
 					canSkipTo: step.canSkipTo,
+					canSkipFrom: !!step.executeSkip,
 				},
 			];
 		},

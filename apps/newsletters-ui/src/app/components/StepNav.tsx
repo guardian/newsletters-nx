@@ -38,8 +38,11 @@ export const StepNav = ({
 	const isCurrent = (step: StepListing) =>
 		step.id === currentStep?.id || step.id === currentStep?.parentStepId;
 
-	const needsButton = (step: StepListing) =>
-		stepperConfig.isNonLinear && step.canSkipTo && !isCurrent(step);
+	const shouldRenderAsButton = (step: StepListing) =>
+		currentStep?.canSkipFrom &&
+		stepperConfig.isNonLinear &&
+		step.canSkipTo &&
+		!isCurrent(step);
 
 	return (
 		<Stepper
@@ -57,7 +60,7 @@ export const StepNav = ({
 					key={step.id}
 					active={isCurrent(step)}
 				>
-					{needsButton(step) ? (
+					{shouldRenderAsButton(step) ? (
 						<StepButton
 							onClick={() => {
 								handleStepClick(step.id);
