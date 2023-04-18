@@ -11,7 +11,7 @@ interface Props {
 	originalItem: NewsletterData;
 }
 
-export const NewsletterEditForm = ({ originalItem }: Props) => {
+export const EditNewsletterForm = ({ originalItem }: Props) => {
 	const [item, setItem] = useState(originalItem);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [confirmationMessage, setConfirmationMessage] = useState<
@@ -59,6 +59,8 @@ export const NewsletterEditForm = ({ originalItem }: Props) => {
 					description: true,
 					headline: true,
 					category: true,
+					status: true,
+					theme: true,
 				})}
 			/>
 

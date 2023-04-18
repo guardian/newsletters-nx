@@ -4,6 +4,7 @@ import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { formatCellBoolean, formatCellDate } from './Cell';
 import { ExternalLinkButton } from './ExternalLinkButton';
+import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
 
 interface Props {
@@ -63,6 +64,19 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				accessor: 'restricted',
 				sortType: 'basic',
 				Cell: formatCellBoolean,
+			},
+			{
+				Header: 'edit',
+				Cell: ({ row: { original } }) => {
+					const newsletter = original as NewsletterData;
+					return (
+						<NavigateButton
+							href={`/newsletters/edit/${newsletter.identityName}`}
+						>
+							edit
+						</NavigateButton>
+					);
+				},
 			},
 		],
 		[],

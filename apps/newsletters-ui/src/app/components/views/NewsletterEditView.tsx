@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { NewsletterEditForm } from '../EditNewsletterForm';
+import { EditNewsletterForm } from '../EditNewsletterForm';
 
 export const NewsletterEditView = () => {
 	const matchedItem = useLoaderData();
@@ -14,7 +14,7 @@ export const NewsletterEditView = () => {
 
 	return (
 		<>
-			<NewsletterEditForm originalItem={matchedItem} />
+			<EditNewsletterForm originalItem={matchedItem} />
 			<Link to="/newsletters/">Back to List</Link>
 		</>
 	);
