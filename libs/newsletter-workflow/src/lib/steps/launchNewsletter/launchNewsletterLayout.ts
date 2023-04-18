@@ -1,4 +1,8 @@
-import type { Launcheroo } from '@newsletters-nx/newsletters-data-client';
+import {
+	isNewsletterData,
+	newsletterDataSchema,
+	type Launcheroo,
+} from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -8,6 +12,8 @@ const markdownTemplate = `
 # # Launch {{name}}
 
 This wizard will guide you through the process of putting your draft newsletter, **{{name}}** live.
+
+First, we need to check if it has all the necessary data.
 
 `.trim();
 
@@ -35,11 +41,25 @@ export const launchNewsletterLayout: WizardStepLayout<Launcheroo> = {
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Finish',
-			stepToMoveTo: 'finish',
+			label: 'Next',
+			stepToMoveTo: 'isReady',
 		},
 	},
-	getInitialFormData(request, launcheroo) {
-		return getDraftFromStorage(request, launcheroo.draftStorage);
+	async getInitialFormData(request, launcheroo) {
+		const storageResponse = request.id
+			? await launcheroo.draftStorage.getDraftNewsletter(+request.id)
+			: undefined;
+		const draft = storageResponse?.ok ? storageResponse.data : undefined;
+		const report = newsletterDataSchema.safeParse(draft);
+		console.log(draft);
+		if (!report.success) {
+			console.log('ISUES', report.error.issues);
+		}
+		const isReady = isNewsletterData(draft);
+		const formData = await getDraftFromStorage(
+			request,
+			launcheroo.draftStorage,
+		);
+		return { ...formData, isReady };
 	},
 };
