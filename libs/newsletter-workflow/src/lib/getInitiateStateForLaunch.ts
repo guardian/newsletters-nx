@@ -3,7 +3,10 @@ import type {
 	FormDataRecord,
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
-import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import {
+	newsletterDataSchema,
+	withDefaultNewsletterValues,
+} from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
 import { getValidationWarningsAsMarkDownLines } from './markdown-util';
 import { parseToNumber } from './util';
@@ -29,13 +32,17 @@ export const getInitialStateForLaunch = async (
 		id,
 	);
 
-	const draft = storageResponse.ok ? storageResponse.data : undefined;
-	const name = draft?.name;
-	const report = newsletterDataSchema.safeParse(draft);
+	const draft: DraftNewsletterData = storageResponse.ok
+		? storageResponse.data
+		: {};
+	const name = draft.name;
+	const report = newsletterDataSchema.safeParse(
+		withDefaultNewsletterValues(draft),
+	);
 
 	if (!report.success) {
 		const errorMarkdown = getValidationWarningsAsMarkDownLines(
-			draft as DraftNewsletterData,
+			draft,
 			newsletterDataSchema,
 		);
 

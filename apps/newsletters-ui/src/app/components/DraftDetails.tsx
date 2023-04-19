@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
@@ -56,7 +56,8 @@ export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
 
 	const palette = getPalette(draft.theme ?? '');
-	const readyToLaunch = newsletterDataSchema.safeParse(draft).success;
+	const issues = getDraftNotReadyIssues(draft);
+	const readyToLaunch = issues.length === 0;
 
 	return (
 		<Container maxWidth="lg">

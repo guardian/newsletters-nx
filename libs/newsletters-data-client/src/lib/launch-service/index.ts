@@ -1,4 +1,5 @@
 import type { DraftStorage } from '../draft-storage';
+import { withDefaultNewsletterValues } from '../draft-to-newsletter';
 import type { NewsletterData } from '../newsletter-data-type';
 import type { NewsletterStorage } from '../newsletter-storage';
 import type {
@@ -30,7 +31,7 @@ export class LaunchService {
 		}
 
 		const newsletterCreateResponse = await newsletterStorage.create(
-			draftGetResponse.data,
+			withDefaultNewsletterValues(draftGetResponse.data),
 		);
 		if (!newsletterCreateResponse.ok) {
 			return newsletterCreateResponse;

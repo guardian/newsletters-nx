@@ -15,7 +15,11 @@ export class InMemoryDraftStorage implements DraftStorage {
 	}
 
 	createDraftNewsletter(draft: DraftWithoutId) {
-		const newDraftWithListId = { ...draft, listId: this.getNextId() };
+		const newDraftWithListId: DraftWithId = {
+			...draft,
+			listId: this.getNextId(),
+			creationTimeStamp: Date.now(),
+		};
 		this.memory.push(newDraftWithListId);
 		const response: SuccessfulStorageResponse<DraftWithId> = {
 			ok: true,

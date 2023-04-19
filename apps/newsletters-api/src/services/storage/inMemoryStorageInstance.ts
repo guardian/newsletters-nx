@@ -18,7 +18,7 @@ export const makeInMemoryStorageInstance = () =>
 			theme: 'culture',
 			group: 'Work',
 			regionFocus: 'UK',
-			listIdV1: 3703,
+			// listIdV1: 3703,
 			listId: 5770,
 			exampleUrl: '/world/series/series-avon-recumbent/latest/email',
 			signupPage:
@@ -59,6 +59,7 @@ export const makeInMemoryStorageInstance = () =>
 			],
 			campaignName: 'Testdraftnewsletter',
 			campaignCode: 'testdraftnewsletter_email',
+			creationTimeStamp: 1633539258449,
 		},
 		{
 			listId: 7001,
@@ -74,6 +75,7 @@ export const makeInMemoryStorageInstance = () =>
 			campaignName: 'Othertestdraftnewsletter',
 			campaignCode: 'othertestdraftnewsletter_email',
 			theme: 'news',
+			creationTimeStamp: 1633539258449,
 		},
 		{
 			name: 'Response Academic',
@@ -91,6 +93,7 @@ export const makeInMemoryStorageInstance = () =>
 			theme: 'lifestyle',
 			description:
 				'Officia neque totam temporibus incidunt ad dolorem quo sit mollitia.\\net molestiae reprehenderit.\\nquo dolores beatae suscipit veniam maiores delectus.',
+			creationTimeStamp: 1633539258449,
 		},
 		{
 			identityName: 'wagon-automotive',
@@ -104,6 +107,7 @@ export const makeInMemoryStorageInstance = () =>
 			theme: 'news',
 			group: 'Work',
 			listId: 7009,
+			creationTimeStamp: 1633539258449,
 		},
 		{
 			identityName: 'background-hatchback',
@@ -117,5 +121,10 @@ export const makeInMemoryStorageInstance = () =>
 			theme: 'news',
 			group: 'Opinion',
 			listId: 7010,
+			regionFocus: 'UK',
+			creationTimeStamp: 1633539258449,
+			launchDate: new Date('1970-01-02T00:21:18.876Z'),
+			signUpPageDate: new Date('1970-01-02T00:21:18.876Z'),
+			thrasherDate: new Date('1970-01-02T00:21:18.876Z'),
 		},
 	]);
