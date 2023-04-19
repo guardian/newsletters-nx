@@ -12,6 +12,7 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
+import { validateIncomingFormData } from '@newsletters-nx/state-machine';
 
 export const executeModify: AsyncExecution<DraftStorage> = async (
 	stepData: WizardStepData,
@@ -28,6 +29,13 @@ export const executeModify: AsyncExecution<DraftStorage> = async (
 			return 'invalid or missing listId';
 		}
 
+		let formDataValidationResult = validateIncomingFormData( //TODO - where this is not false, do something
+			stepData.currentStepId,
+			stepData.formData,
+			stepLayout as WizardStepLayout<unknown>,
+		);
+
+		console.log('formDataValidationResult', formDataValidationResult);
 		// listId specifically added to draftNewsletter to ensure correct typing
 		if (stepData.formData['listId']) {
 			const listIdEntry = {
@@ -48,3 +56,4 @@ export const executeModify: AsyncExecution<DraftStorage> = async (
 	}
 	return 'missing form data';
 };
+

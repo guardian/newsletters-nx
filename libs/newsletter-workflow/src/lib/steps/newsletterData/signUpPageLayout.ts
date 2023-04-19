@@ -3,6 +3,7 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
+import { executeSkip } from "../../ececuteSkip";
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -62,4 +63,6 @@ export const signUpPageLayout: WizardStepLayout<DraftStorage> = {
 		},
 	},
 	schema: formSchemas.signUpPage,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

@@ -1,5 +1,5 @@
 import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
-import type { WizardLayout, WizardStepData } from './types';
+import type { WizardStepData, WizardStepLayout } from './types';
 
 export const makeStepDataWithErrorMessage = (
 	errorMessage: string,
@@ -19,10 +19,9 @@ export const makeStepDataWithErrorMessage = (
 export const validateIncomingFormData = (
 	stepId: string,
 	formData: FormDataRecord | undefined,
-	wizardLayout: WizardLayout<unknown>,
+	wizardStepLayout: WizardStepLayout<unknown>,
 ) => {
-	const currentStepLayout = wizardLayout[stepId];
-	const formSchemaForIncomingStep = currentStepLayout?.schema;
+	const formSchemaForIncomingStep = wizardStepLayout.schema;
 
 	if (formSchemaForIncomingStep) {
 		if (!formData) {

@@ -5,10 +5,7 @@ import type {
 	WizardLayout,
 	WizardStepData,
 } from './types';
-import {
-	makeStepDataWithErrorMessage,
-	validateIncomingFormData,
-} from './utility';
+import { makeStepDataWithErrorMessage } from './utility';
 
 export async function stateMachineSkipPressed<
 	T extends GenericStorageInterface,
@@ -56,20 +53,6 @@ export async function stateMachineSkipPressed<
 			`step ${requestBody.stepToSkipToId} cannot be skipped to`,
 			StateMachineErrorCode.Unhandled,
 			true,
-		);
-	}
-
-	// validate the form on the step
-	const incomingDataError = validateIncomingFormData(
-		requestBody.stepId,
-		requestBody.formData,
-		wizardLayout as WizardLayout<unknown>,
-	);
-	if (incomingDataError) {
-		return makeStepDataWithErrorMessage(
-			incomingDataError,
-			requestBody.stepId,
-			requestBody.formData,
 		);
 	}
 
