@@ -3,6 +3,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { appendListToMarkdown, isStringArray } from '../../markdown-util';
 import { regExPatterns } from '../../regExPatterns';
+import { parseToNumber } from '../../util';
 
 const markdownTemplate = `
 ## Is {{name}} ready to launch?
@@ -58,8 +59,8 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 			},
 
 			async executeStep(stepData, wizardStepData, launchService) {
-				const draftId = Number(stepData.formData?.['id']);
-				if (isNaN(draftId)) {
+				const draftId = parseToNumber(stepData.formData?.['id']);
+				if (draftId === undefined) {
 					return `ERROR: invalid id.`;
 				}
 

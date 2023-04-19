@@ -1,11 +1,7 @@
-import type {
-	DraftNewsletterData,
-	LaunchService,
-} from '@newsletters-nx/newsletters-data-client';
-import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { getInitialStateForLaunch } from '../../getInitiateStateForLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
-import { getValidationWarningsAsMarkDownLines } from '../../markdown-util';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
@@ -45,29 +41,5 @@ export const launchNewsletterLayout: WizardStepLayout<LaunchService> = {
 			stepToMoveTo: 'isReady',
 		},
 	},
-	async getInitialFormData(request, launchService) {
-		const storageResponse = request.id
-			? await launchService.draftStorage.getDraftNewsletter(+request.id)
-			: undefined;
-
-		const draft = storageResponse?.ok ? storageResponse.data : undefined;
-		const name = draft?.name;
-		const report = newsletterDataSchema.safeParse(draft);
-
-		if (!report.success) {
-			const errorMarkdown = getValidationWarningsAsMarkDownLines(
-				draft as DraftNewsletterData,
-				newsletterDataSchema,
-			);
-
-			return {
-				name,
-				isReady: false,
-				errorMarkdown,
-				id: request.id,
-			};
-		}
-
-		return { name, isReady: true, errorMarkdown: undefined, id: request.id };
-	},
+	getInitialFormData: getInitialStateForLaunch,
 };
