@@ -1,9 +1,9 @@
 import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { executeLaunch } from '../../executeLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { appendListToMarkdown, isStringArray } from '../../markdown-util';
 import { regExPatterns } from '../../regExPatterns';
-import { parseToNumber } from '../../util';
 
 const markdownTemplate = `
 ## Is {{name}} ready to launch?
@@ -57,28 +57,7 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 				}
 				return undefined;
 			},
-
-			async executeStep(stepData, wizardStepData, launchService) {
-				const draftId = parseToNumber(stepData.formData?.['id']);
-				if (draftId === undefined) {
-					return `ERROR: invalid id.`;
-				}
-
-				if (!launchService) {
-					return 'ERROR: no launch service available';
-				}
-
-				const response = await launchService.launchDraft(draftId);
-				if (!response.ok) {
-					return response.message;
-				}
-
-				return {
-					newNewsletterListId: response.data.listId,
-					newNewsletterName: response.data.name,
-					newNewsletterIdentityName: response.data.identityName,
-				};
-			},
+			executeStep: executeLaunch,
 		},
 	},
 };
