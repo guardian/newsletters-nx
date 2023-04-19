@@ -14,7 +14,10 @@ import {
 } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	newsletterDataSchema,
+	type DraftNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
@@ -55,6 +58,7 @@ export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
 
 	const palette = getPalette(draft.theme ?? '');
+	const readyToLaunch = newsletterDataSchema.safeParse(draft).success;
 
 	return (
 		<Container maxWidth="lg">
@@ -98,6 +102,20 @@ export const DraftDetails = ({ draft }: Props) => {
 								back to list
 							</NavigateButton>
 							<EditDraftNavigateButtons draft={draft} />
+
+							{readyToLaunch && (
+								<NavigateButton
+									href={`/demo/launch-newsletter/${draft.listId}`}
+									endIcon={
+										<span role="img" aria-label="rocket">
+											🚀
+										</span>
+									}
+									color="success"
+								>
+									Launch
+								</NavigateButton>
+							)}
 						</ButtonGroup>
 					</CardContent>
 				)}
