@@ -64,7 +64,7 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 				}
 
 				if (!launchService) {
-					return 'ERROR: no Storage services';
+					return 'ERROR: no launch service available';
 				}
 
 				const response = await launchService.launchDraft(draftId);

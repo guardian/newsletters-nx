@@ -28,9 +28,6 @@ export class LaunchService {
 		if (!draftGetResponse.ok) {
 			return draftGetResponse;
 		}
-		console.log(
-			`got draft "${draftGetResponse.data.identityName ?? 'WITHOUT NAME'}"`,
-		);
 
 		const newsletterCreateResponse = await newsletterStorage.create(
 			draftGetResponse.data,
@@ -38,9 +35,6 @@ export class LaunchService {
 		if (!newsletterCreateResponse.ok) {
 			return newsletterCreateResponse;
 		}
-		console.log(
-			`created newsletter: ${newsletterCreateResponse.data.identityName} with listId #${newsletterCreateResponse.data.listId}`,
-		);
 
 		// TO DO - should we actually delete the draft or archive it / mark as launched?
 		const draftDeleteResponse = await draftStorage.deleteDraftNewsletter(
