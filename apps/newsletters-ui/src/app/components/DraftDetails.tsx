@@ -14,10 +14,8 @@ import {
 } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import {
-	newsletterDataSchema,
-	type DraftNewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
