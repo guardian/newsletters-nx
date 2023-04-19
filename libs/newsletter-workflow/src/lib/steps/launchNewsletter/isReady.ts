@@ -60,48 +60,22 @@ export const isReadyLayout: WizardStepLayout<Launcheroo> = {
 			async executeStep(stepData, wizardStepData, launcheroo) {
 				const draftId = Number(stepData.formData?.['id']);
 				if (isNaN(draftId)) {
-					console.log(
-						'Id could not be coverted to number',
-						stepData.formData?.['id'],
-					);
 					return `ERROR: invalid id.`;
 				}
 
 				if (!launcheroo) {
 					return 'ERROR: no Storage services';
 				}
-				const { draftStorage, newsletterStorage } = launcheroo;
 
-				const draftGetResponse = await draftStorage.getDraftNewsletter(draftId);
-				if (!draftGetResponse.ok) {
-					return draftGetResponse.message;
-				}
-				console.log(
-					`got draft "${draftGetResponse.data.identityName ?? 'WITHOUT NAME'}"`,
-				);
-
-				const newsletterCreateResponse = await newsletterStorage.create(
-					draftGetResponse.data,
-				);
-				if (!newsletterCreateResponse.ok) {
-					return newsletterCreateResponse.message;
-				}
-				console.log(
-					`created newsletter: ${newsletterCreateResponse.data.identityName} with listId #${newsletterCreateResponse.data.listId}`,
-				);
-
-				// TO DO - should we actually delete the draft or archive it / mark as launched?
-				const draftDeleteResponse = await draftStorage.deleteDraftNewsletter(
-					draftId,
-				);
-				if (!draftDeleteResponse.ok) {
-					return `created newsletter: ${newsletterCreateResponse.data.identityName} with listId #${newsletterCreateResponse.data.listId}, but failed to delete the draft!!`;
+				const response = await launcheroo.launchDraft(draftId);
+				if (!response.ok) {
+					return response.message;
 				}
 
 				return {
-					newNewsletterListId: newsletterCreateResponse.data.listId,
-					newNewsletterName: newsletterCreateResponse.data.name,
-					newNewsletterIdentityName: newsletterCreateResponse.data.identityName,
+					newNewsletterListId: response.data.listId,
+					newNewsletterName: response.data.name,
+					newNewsletterIdentityName: response.data.identityName,
 				};
 			},
 		},
