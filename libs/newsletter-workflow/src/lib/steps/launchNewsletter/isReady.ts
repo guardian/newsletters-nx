@@ -1,4 +1,4 @@
-import type { Launcheroo } from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { appendListToMarkdown, isStringArray } from '../../markdown-util';
@@ -16,7 +16,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const isReadyLayout: WizardStepLayout<Launcheroo> = {
+export const isReadyLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -57,17 +57,17 @@ export const isReadyLayout: WizardStepLayout<Launcheroo> = {
 				return undefined;
 			},
 
-			async executeStep(stepData, wizardStepData, launcheroo) {
+			async executeStep(stepData, wizardStepData, launchService) {
 				const draftId = Number(stepData.formData?.['id']);
 				if (isNaN(draftId)) {
 					return `ERROR: invalid id.`;
 				}
 
-				if (!launcheroo) {
+				if (!launchService) {
 					return 'ERROR: no Storage services';
 				}
 
-				const response = await launcheroo.launchDraft(draftId);
+				const response = await launchService.launchDraft(draftId);
 				if (!response.ok) {
 					return response.message;
 				}

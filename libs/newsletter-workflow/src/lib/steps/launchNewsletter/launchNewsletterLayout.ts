@@ -1,6 +1,6 @@
 import type {
 	DraftNewsletterData,
-	Launcheroo,
+	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
@@ -22,7 +22,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const launchNewsletterLayout: WizardStepLayout<Launcheroo> = {
+export const launchNewsletterLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -45,9 +45,9 @@ export const launchNewsletterLayout: WizardStepLayout<Launcheroo> = {
 			stepToMoveTo: 'isReady',
 		},
 	},
-	async getInitialFormData(request, launcheroo) {
+	async getInitialFormData(request, launchService) {
 		const storageResponse = request.id
-			? await launcheroo.draftStorage.getDraftNewsletter(+request.id)
+			? await launchService.draftStorage.getDraftNewsletter(+request.id)
 			: undefined;
 
 		const draft = storageResponse?.ok ? storageResponse.data : undefined;

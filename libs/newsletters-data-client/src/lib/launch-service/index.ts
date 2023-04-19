@@ -6,7 +6,7 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 
-export class Launcheroo {
+export class LaunchService {
 	draftStorage: DraftStorage;
 	newsletterStorage: NewsletterStorage;
 
