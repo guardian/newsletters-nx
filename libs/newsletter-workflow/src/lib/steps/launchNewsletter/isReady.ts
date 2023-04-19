@@ -8,9 +8,14 @@ import { regExPatterns } from '../../regExPatterns';
 const markdownTemplate = `
 ## Is {{name}} ready to launch?
 
-The answer is: {{answer}}
+{{answer}}
 
 `.trim();
+
+const markdownAnswers = {
+	yes: `Yes! The draft for **{{name}}** has all the necessary information set and is ready to launch.`,
+	no: `No, there is some information for **{{name}}** that is missing or incomplete, as listed below. Please go to [the drafts page](/drafts) to update {{name}}.`,
+};
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
@@ -23,14 +28,15 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 		if (!responseData) {
 			return staticMarkdown;
 		}
-		const [name = 'NAME', isReady = 'IDK'] = getStringValuesFromRecord(
-			responseData,
-			['name', 'isReady'],
-		);
+		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
+		const isReady = responseData['isReady'] === true;
 
 		const populated = markdownTemplate
-			.replace(regExPatterns.name, name)
-			.replace(regExPatterns.answer, isReady);
+			.replace(
+				regExPatterns.answer,
+				isReady ? markdownAnswers.yes : markdownAnswers.no,
+			)
+			.replace(regExPatterns.name, name);
 
 		const { errorMarkdown } = responseData;
 		if (isStringArray(errorMarkdown)) {
