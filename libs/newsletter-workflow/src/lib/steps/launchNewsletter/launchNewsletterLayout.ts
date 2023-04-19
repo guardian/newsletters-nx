@@ -1,11 +1,11 @@
-import {
-	isNewsletterData,
-	newsletterDataSchema,
-	type Launcheroo,
+import type {
+	DraftNewsletterData,
+	Launcheroo,
 } from '@newsletters-nx/newsletters-data-client';
+import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
+import { getValidationWarningsAsMarkDownLines } from '../../markdown-util';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
@@ -49,17 +49,25 @@ export const launchNewsletterLayout: WizardStepLayout<Launcheroo> = {
 		const storageResponse = request.id
 			? await launcheroo.draftStorage.getDraftNewsletter(+request.id)
 			: undefined;
+
 		const draft = storageResponse?.ok ? storageResponse.data : undefined;
+		const name = draft?.name;
 		const report = newsletterDataSchema.safeParse(draft);
-		console.log(draft);
+
 		if (!report.success) {
-			console.log('ISUES', report.error.issues);
+			const errorMarkdown = getValidationWarningsAsMarkDownLines(
+				draft as DraftNewsletterData,
+				newsletterDataSchema,
+			);
+
+			return {
+				name,
+				isReady: false,
+				errorMarkdown,
+				id: request.id,
+			};
 		}
-		const isReady = isNewsletterData(draft);
-		const formData = await getDraftFromStorage(
-			request,
-			launcheroo.draftStorage,
-		);
-		return { ...formData, isReady };
+
+		return { name, isReady: true, errorMarkdown: undefined, id: request.id };
 	},
 };
