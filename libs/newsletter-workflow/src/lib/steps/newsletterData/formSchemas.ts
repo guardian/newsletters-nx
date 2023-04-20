@@ -65,12 +65,16 @@ export const formSchemas = {
 		})
 		.describe('Choose a theme'),
 
-	signUp: newsletterDataSchema
+	signUpPage: newsletterDataSchema
 		.pick({
-			headline: true,
-			description: true,
+			signUpHeadline: true,
+			signUpDescription: true,
 		})
 		.describe('Input the Sign Up page copy'),
+
+	signUpEmbed: newsletterDataSchema
+		.pick({ signUpEmbedDescription: true })
+		.describe('Input the Sign Up embed copy'),
 
 	regionFocus: newsletterDataSchema
 		.pick({

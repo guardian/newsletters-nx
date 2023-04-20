@@ -43,7 +43,7 @@ export const designBriefLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'signUp',
+			stepToMoveTo: 'signUpPage',
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const designBriefDoc = stepData.formData
 					? stepData.formData['designBriefDoc']

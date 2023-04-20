@@ -43,7 +43,7 @@ const deriveLegacyNewsletter = (
 				newsletterData.brazeSubscribeEventNamePrefix,
 			theme: newsletterData.theme,
 			group: newsletterData.group,
-			description: newsletterData.description,
+			description: newsletterData.signUpDescription,
 			regionFocus: newsletterData.regionFocus,
 			frequency: newsletterData.frequency,
 			listIdV1: newsletterData.listIdV1,

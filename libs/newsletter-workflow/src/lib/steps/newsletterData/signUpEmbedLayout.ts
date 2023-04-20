@@ -1,26 +1,30 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import type {
+	WizardStepData,
+	WizardStepLayout,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Modify Identity Name
+# Specify the sign up embed copy
 
-This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
+Please enter the description for the sign up embed for **{{name}}**
 
-It has been calculated automatically from the name **{{name}}**, but you can change it if you need.
+![Sign Up Embed Description](https://i.guim.co.uk/img/uploads/2023/04/20/signUp-embed.png?quality=85&dpr=2&width=300&s=48b7b65b3dcbff5fcd4b78c562a4175e)
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'of the newsletter',
+	'the newsletter',
 );
 
-export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
+export const signUpEmbedLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
+	label: 'Sign Up Embed',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -32,20 +36,24 @@ export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'signUpEmbed',
+			stepToMoveTo: 'signUpPage',
 			executeStep: executeModify,
 		},
-		next: {
+		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'braze',
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that identityName does not already exist in other draft or actual newsletter
+			stepToMoveTo: 'identityName',
+			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
+				const description = stepData.formData
+					? stepData.formData['signUpEmbedDescription']
+					: undefined;
+				if (!description) {
+					return 'NO DESCRIPTION PROVIDED';
+				}
 				return undefined;
 			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.identityName,
-	parentStepId: 'identityName',
+	schema: formSchemas.signUpEmbed,
 };

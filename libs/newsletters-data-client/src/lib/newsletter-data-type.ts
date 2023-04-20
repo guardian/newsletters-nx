@@ -96,8 +96,11 @@ export const newsletterDataSchema = z.object({
 	brazeNewsletterName: underscoreCasedString(),
 	theme: themeEnumSchema,
 	group: nonEmptyString(),
-	headline: z.string().optional().describe('sign up headline'),
-	description: nonEmptyString().describe('sign up description'),
+	signUpHeadline: z.string().optional().describe('sign up headline'),
+	signUpDescription: nonEmptyString().describe('sign up description'),
+	signUpEmbedDescription: nonEmptyString().describe(
+		'sign up embed description',
+	),
 	regionFocus: regionFocusEnumSchema.describe('region focus'),
 	frequency: nonEmptyString(),
 	listId: z.number(),
