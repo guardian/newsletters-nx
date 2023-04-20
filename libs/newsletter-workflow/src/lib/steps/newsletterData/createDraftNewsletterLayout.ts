@@ -1,7 +1,7 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeSkip } from '../../ececuteSkip';
 import { executeCreate } from '../../executeCreate';
+import { executeModify } from '../../executeModify';
 import { formSchemas } from './formSchemas';
 
 export const createDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
@@ -33,5 +33,5 @@ The first step is to enter the name of your newsletter, for example **Down to Ea
 	schema: formSchemas.startDraftNewsletter,
 	role: 'CREATE_START',
 	canSkipTo: true,
-	executeSkip: executeSkip,
+	executeSkip: executeModify,
 };
