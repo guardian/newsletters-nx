@@ -1,5 +1,6 @@
 import { Alert, Container, Snackbar } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type {
 	ApiResponse,
 	NewsletterData,
@@ -13,6 +14,7 @@ interface Props {
 
 export const EditNewsletterForm = ({ originalItem }: Props) => {
 	const [item, setItem] = useState(originalItem);
+	const navigate = useNavigate();
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [confirmationMessage, setConfirmationMessage] = useState<
 		string | undefined
@@ -41,6 +43,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		if (castResponse.ok) {
 			setItem(castResponse.data);
 			setConfirmationMessage('newsletter updated!');
+			navigate('../');
 		} else {
 			setErrorMessage(castResponse.message);
 		}
