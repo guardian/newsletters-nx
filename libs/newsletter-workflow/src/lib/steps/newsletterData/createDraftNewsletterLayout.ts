@@ -1,9 +1,8 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeSkip } from "../../ececuteSkip";
+import { executeSkip } from '../../ececuteSkip';
 import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
-
 
 export const createDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown: `# Start creating a newsletter
