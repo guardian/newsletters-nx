@@ -12,17 +12,31 @@ const defaultNewsletterValues: DraftNewsletterData = {
 	group: 'News in depth', // TO DO - add a step for this
 } as const;
 
+// TO DO - the NewsletterData should not have these structure - it's a legacy
+// feature. This should happen in deriveLegacyNewsletter
 const buildEmailEmbedObject = (draft: DraftNewsletterData): EmailEmbed => {
-	const name = draft.name ?? 'newsletter';
-	const successDescription = draft.frequency
-		? `We'll send you ${name} every ${draft.frequency.toLowerCase()}`
-		: `We'll send you ${name} every time it comes out`;
+	const {
+		name = 'newsletter',
+		emailConfirmation = false,
+		frequency,
+		mailSuccessDescription,
+	} = draft;
+
+	const successHeadline = emailConfirmation
+		? 'Check your email inbox and confirm your subscription'
+		: 'Subscription confirmed';
+
+	const successDescription =
+		mailSuccessDescription ??
+		(frequency
+			? `We'll send you ${name} every ${frequency.toLowerCase()}`
+			: `We'll send you ${name} every time it comes out`);
 
 	return {
 		description: draft.description ?? ' ',
 		name: name,
 		title: `Sign up to ${name}`,
-		successHeadline: 'Subscription confirmed',
+		successHeadline,
 		successDescription: successDescription,
 		hexCode: '#DCDCDC',
 		...draft.emailEmbed,
