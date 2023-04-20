@@ -20,7 +20,7 @@ import { ophanLayout } from './ophanLayout';
 import { pillarLayout } from './pillarLayout';
 import { regionFocusLayout } from './regionFocusLayout';
 import { signUpEmbedLayout } from './signUpEmbedLayout';
-import { signUpLayout } from './signUpLayout';
+import { signUpPageLayout } from './signUpPageLayout';
 import { tagsLayout } from './tagsLayout';
 import { thrasherLayout } from './thrasherLayout';
 
@@ -37,7 +37,7 @@ export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	tags: tagsLayout,
 	thrasher: thrasherLayout,
 	designBrief: designBriefLayout,
-	signUp: signUpLayout,
+	signUpPage: signUpPageLayout,
 	signUpEmbed: signUpEmbedLayout,
 	identityName: identityNameLayout,
 	editIdentityName: editIdentityNameLayout,

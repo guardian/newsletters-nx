@@ -65,7 +65,7 @@ export const formSchemas = {
 		})
 		.describe('Choose a theme'),
 
-	signUp: newsletterDataSchema
+	signUpPage: newsletterDataSchema
 		.pick({
 			signUpHeadline: true,
 			signUpDescription: true,

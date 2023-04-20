@@ -22,9 +22,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const signUpLayout: WizardStepLayout<DraftStorage> = {
+export const signUpPageLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Sign Up',
+	label: 'Sign Up Page',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -42,7 +42,7 @@ export const signUpLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: 'signUpEmbed',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const headline = stepData.formData
 					? stepData.formData['signUpHeadline']
@@ -61,5 +61,5 @@ export const signUpLayout: WizardStepLayout<DraftStorage> = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.signUp,
+	schema: formSchemas.signUpPage,
 };

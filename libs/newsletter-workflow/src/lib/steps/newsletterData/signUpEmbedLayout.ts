@@ -36,7 +36,7 @@ export const signUpEmbedLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'signUp',
+			stepToMoveTo: 'signUpPage',
 			executeStep: executeModify,
 		},
 		finish: {
