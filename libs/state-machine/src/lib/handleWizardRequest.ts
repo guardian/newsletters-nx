@@ -30,7 +30,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 >(
 	requestBody: CurrentStepRouteRequest,
 	wizardLayout: WizardLayout<T>,
-	genericInterface: T,
+	serviceInterface: T,
 ): Promise<CurrentStepRouteResponse> {
 	try {
 		const stepData =
@@ -38,7 +38,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 				? await stateMachineSkipPressed(
 						requestBody,
 						wizardLayout,
-						genericInterface,
+						serviceInterface,
 				  )
 				: requestBody.buttonId !== undefined
 				? await stateMachineButtonPressed(
@@ -48,9 +48,9 @@ export async function handleWizardRequestAndReturnWizardResponse<
 							formData: requestBody.formData,
 						},
 						wizardLayout,
-						genericInterface,
+						serviceInterface,
 				  )
-				: await setupInitialState(requestBody, wizardLayout, genericInterface);
+				: await setupInitialState(requestBody, wizardLayout, serviceInterface);
 
 		const nextStep = wizardLayout[stepData.currentStepId];
 

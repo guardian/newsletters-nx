@@ -47,7 +47,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				return res.status(400).send(errorResponse);
 			}
 
-			const correctInterface =
+			const serviceInterface =
 				requestBody.wizardId === 'LAUNCH_NEWSLETTER'
 					? launchService
 					: draftStore;
@@ -56,7 +56,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				return await handleWizardRequestAndReturnWizardResponse(
 					requestBody,
 					layout,
-					correctInterface,
+					serviceInterface,
 				);
 			} catch (error) {
 				if (error instanceof StateMachineError) {
