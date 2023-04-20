@@ -1,15 +1,14 @@
-import { Button, IconButton } from '@mui/material';
+import { Button } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import {
-	calculateProgress,
-	type DraftNewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftDialog } from './EditDraftDialog';
 import { ExternalLinkButton } from './ExternalLinkButton';
+import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
 
 interface Props {
@@ -96,6 +95,27 @@ export const DraftsTable = ({ drafts }: Props) => {
 								);
 							}}
 						/>
+					);
+				},
+			},
+			{
+				Header: 'launch',
+				Cell: ({ row: { original } }) => {
+					const draft = original as DraftNewsletterData;
+
+					if (!draft.listId) {
+						return null;
+					}
+					return (
+						<NavigateButton
+							href={`/demo/launch-newsletter/${draft.listId}`}
+							variant="outlined"
+							color="success"
+						>
+							<span role="img" aria-label="rocket">
+								🚀
+							</span>
+						</NavigateButton>
 					);
 				},
 			},
