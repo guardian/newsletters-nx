@@ -9,11 +9,10 @@ export const executeSkip: AsyncExecution<DraftStorage> = async (
 	if (!storageInstance) {
 		return 'no storage instance';
 	}
-	console.log("we're skipping.....");
 	return new Promise((resolve, reject) => {
-		if (stepData.formData) {
-			resolve(stepData.formData);
+		if (!stepData.formData) {
+			reject('missing form data');
 		}
-		reject('something terrible happened');
+		resolve(stepData.formData as WizardFormData);
 	});
 };
