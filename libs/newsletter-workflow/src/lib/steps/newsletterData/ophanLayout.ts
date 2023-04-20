@@ -50,7 +50,7 @@ export const ophanLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'signUp',
 			executeStep: executeModify,
 		},
 		edit: {
