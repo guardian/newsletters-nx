@@ -1,47 +1,85 @@
 import type { FastifyInstance } from 'fastify';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
-	isNewsletterData,
-	newsletterDataSchema,
+	isPartialNewsletterData,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
-import newslettersData from '../../../static/newsletters.local.json';
-import { makeErrorResponse, makeSuccessResponse } from '../responses';
+import { newsletterStore } from '../../services/storage';
+import {
+	makeErrorResponse,
+	makeSuccessResponse,
+	mapStorageFailureReasonToStatusCode,
+} from '../responses';
 
 export function registerNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
 	app.get('/api/legacy/newsletters', async (req, res) => {
-		const newsletters = newslettersData.filter(
-			isNewsletterData,
-		) as unknown[] as NewsletterData[];
+		const storageResponse = await newsletterStore.list();
+		if (!storageResponse.ok) {
+			return res
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
+		}
 
-		return newsletters.map(transformDataToLegacyNewsletter);
+		return storageResponse.data.map(transformDataToLegacyNewsletter);
 	});
 
 	app.get('/api/newsletters', async (req, res) => {
-		const newsletters = newslettersData.filter(isNewsletterData);
-		return makeSuccessResponse(newsletters);
+		const storageResponse = await newsletterStore.list();
+		if (!storageResponse.ok) {
+			return res
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
+		}
+
+		return makeSuccessResponse(storageResponse.data);
 	});
 
 	app.get<{ Params: { newsletterId: string } }>(
 		'/api/newsletters/:newsletterId',
 		async (req, res) => {
 			const { newsletterId } = req.params;
-			const newsletter = newslettersData.find(
-				(newsletter) => newsletter.identityName === newsletterId,
-			);
+			const storageResponse = await newsletterStore.readByName(newsletterId);
 
-			const p = newsletterDataSchema.safeParse(newsletter);
-			console.log(p);
-
-			if (!newsletter) {
+			if (!storageResponse.ok) {
 				return res
-					.status(404)
-					.send(makeErrorResponse(`no match for id ${newsletterId}`));
+					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+					.send(makeErrorResponse(storageResponse.message));
 			}
 
-			return makeSuccessResponse(newsletter);
+			return makeSuccessResponse(storageResponse.data);
 		},
 	);
+
+	app.patch<{
+		Params: { newsletterId: string };
+		Body: unknown;
+	}>('/api/newsletters/:newsletterId', async (req, res) => {
+		const { newsletterId } = req.params;
+		const { body: modifications } = req;
+		const newsletterIdAsNumber = Number(newsletterId);
+
+		if (isNaN(newsletterIdAsNumber)) {
+			return res.status(400).send(makeErrorResponse(`Non numeric id provided`));
+		}
+
+		if (!isPartialNewsletterData(modifications)) {
+			return res
+				.status(400)
+				.send(makeErrorResponse(`Not a valid partial newsletter`));
+		}
+
+		const storageResponse = await newsletterStore.update(
+			newsletterIdAsNumber,
+			modifications,
+		);
+
+		if (!storageResponse.ok) {
+			return res
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
+		}
+
+		return makeSuccessResponse(storageResponse.data);
+	});
 }

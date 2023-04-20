@@ -1,11 +1,9 @@
+import { StorageRequestFailureReason } from '../storage-response-types';
 import type {
-	DraftStorage,
-	DraftWithId,
-	DraftWithoutId,
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
-} from './DraftStorage';
-import { StorageRequestFailureReason } from './DraftStorage';
+} from '../storage-response-types';
+import type { DraftStorage, DraftWithId, DraftWithoutId } from './DraftStorage';
 
 // TO DO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
