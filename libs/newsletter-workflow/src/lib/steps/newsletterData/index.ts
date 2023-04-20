@@ -19,6 +19,7 @@ import { onlineArticleLayout } from './onlineArticleLayout';
 import { ophanLayout } from './ophanLayout';
 import { pillarLayout } from './pillarLayout';
 import { regionFocusLayout } from './regionFocusLayout';
+import { signUpEmbedLayout } from './signUpEmbedLayout';
 import { signUpLayout } from './signUpLayout';
 import { tagsLayout } from './tagsLayout';
 import { thrasherLayout } from './thrasherLayout';
@@ -37,6 +38,7 @@ export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	thrasher: thrasherLayout,
 	designBrief: designBriefLayout,
 	signUp: signUpLayout,
+	signUpEmbed: signUpEmbedLayout,
 	identityName: identityNameLayout,
 	editIdentityName: editIdentityNameLayout,
 	braze: brazeLayout,

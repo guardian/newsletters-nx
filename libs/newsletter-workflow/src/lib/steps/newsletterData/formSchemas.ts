@@ -72,6 +72,10 @@ export const formSchemas = {
 		})
 		.describe('Input the Sign Up page copy'),
 
+	signUpEmbed: newsletterDataSchema
+		.pick({ signUpEmbedDescription: true })
+		.describe('Input the Sign Up embed copy'),
+
 	regionFocus: newsletterDataSchema
 		.pick({
 			regionFocus: true,
