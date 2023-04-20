@@ -21,7 +21,9 @@ const issueToMessage = (issue: ZodIssue): string => {
 		case 'invalid_type': {
 			const { expected, message } = issue;
 			return message === 'Required'
-				? `This is a required field (of type "${expected}") but no value is set`
+				? `This is a required field (of type "${
+						expected as string
+				  }") but no value is set`
 				: message;
 		}
 
