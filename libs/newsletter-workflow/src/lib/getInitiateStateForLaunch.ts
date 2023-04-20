@@ -3,12 +3,9 @@ import type {
 	FormDataRecord,
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
-import {
-	newsletterDataSchema,
-	withDefaultNewsletterValues,
-} from '@newsletters-nx/newsletters-data-client';
+import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
-import { getValidationWarningsAsMarkDownLines } from './markdown-util';
+import { zodIssueToMarkdown } from './markdown-util';
 import { parseToNumber } from './util';
 
 type LaunchInitialState = FormDataRecord & {
@@ -36,16 +33,10 @@ export const getInitialStateForLaunch = async (
 		? storageResponse.data
 		: {};
 	const name = draft.name;
-	const report = newsletterDataSchema.safeParse(
-		withDefaultNewsletterValues(draft),
-	);
+	const issues = getDraftNotReadyIssues(draft);
 
-	if (!report.success) {
-		const errorMarkdown = getValidationWarningsAsMarkDownLines(
-			draft,
-			newsletterDataSchema,
-		);
-
+	if (issues.length > 0) {
+		const errorMarkdown = zodIssueToMarkdown(issues);
 		return {
 			name,
 			isReady: false,

@@ -1,17 +1,11 @@
-import type { ZodObject, ZodRawShape } from 'zod';
-import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
+import type { ZodIssue } from 'zod';
 
 export const isStringArray = (value: unknown): value is string[] =>
 	Array.isArray(value) && value.every((item) => typeof item === 'string');
 
-export const getValidationWarningsAsMarkDownLines = (
-	data: Partial<Record<string, unknown>>,
-	schema: ZodObject<ZodRawShape>,
-): string[] => {
-	const validationWarnings = getValidationWarnings(data, schema);
-
-	const lines = Object.entries(validationWarnings).map(
-		([key, warning]) => `**${key}**:  ${warning ?? ''}`,
+export const zodIssueToMarkdown = (issues: ZodIssue[]): string[] => {
+	const lines = issues.map(
+		(issue) => `**${issue.path.join()}**:  *${issue.message}*`,
 	);
 	return lines;
 };
