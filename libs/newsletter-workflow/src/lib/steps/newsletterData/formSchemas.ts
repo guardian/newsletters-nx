@@ -67,8 +67,8 @@ export const formSchemas = {
 
 	signUp: newsletterDataSchema
 		.pick({
-			headline: true,
-			description: true,
+			signUpHeadline: true,
+			signUpDescription: true,
 		})
 		.describe('Input the Sign Up page copy'),
 

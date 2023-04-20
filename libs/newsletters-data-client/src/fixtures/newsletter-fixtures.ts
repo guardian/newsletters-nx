@@ -13,7 +13,7 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	brazeSubscribeEventNamePrefix: 'tech_scape',
 	theme: 'news',
 	group: 'News in depth',
-	description:
+	signUpDescription:
 		"Alex Hern's weekly dive in to how technology is shaping our lives",
 	regionFocus: '',
 	frequency: 'Weekly',

@@ -45,13 +45,13 @@ export const makeInMemoryStorageInstance = () =>
 			campaignCode: 'responseacademic_email',
 			listId: 7002,
 			theme: 'lifestyle',
-			description:
+			signUpDescription:
 				'Officia neque totam temporibus incidunt ad dolorem quo sit mollitia.\\net molestiae reprehenderit.\\nquo dolores beatae suscipit veniam maiores delectus.',
 		},
 		{
 			identityName: 'wagon-automotive',
 			name: 'Wagon Automotive',
-			description: 'Mollitia saepe odio',
+			signUpDescription: 'Mollitia saepe odio',
 			category: 'article-based',
 			frequency: 'Weekly',
 			brazeNewsletterName: 'Editorial_WagonAutomotiveAu',
@@ -65,7 +65,8 @@ export const makeInMemoryStorageInstance = () =>
 			identityName: 'background-hatchback',
 			name: 'Background Hatchback',
 			category: 'fronts-based',
-			description: 'Veritatis ipsum asperiores optio sunt eum ab architecto.',
+			signUpDescription:
+				'Veritatis ipsum asperiores optio sunt eum ab architecto.',
 			frequency: 'Weekly',
 			brazeNewsletterName: 'Editorial_BackgroundHatchbackUk',
 			brazeSubscribeAttributeName: 'BackgroundHatchbackUk_Subscribe_Email',

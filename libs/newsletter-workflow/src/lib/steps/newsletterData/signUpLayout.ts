@@ -45,13 +45,13 @@ export const signUpLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: 'identityName',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const headline = stepData.formData
-					? stepData.formData['headline']
+					? stepData.formData['signUpHeadline']
 					: undefined;
 				if (!headline) {
 					return 'NO HEADLINE PROVIDED';
 				}
 				const description = stepData.formData
-					? stepData.formData['description']
+					? stepData.formData['signUpDescription']
 					: undefined;
 				if (!description) {
 					return 'NO DESCRIPTION PROVIDED';
