@@ -98,7 +98,9 @@ export const newsletterDataSchema = z.object({
 	group: nonEmptyString(),
 	signUpHeadline: z.string().optional().describe('sign up headline'),
 	signUpDescription: nonEmptyString().describe('sign up description'),
-	signUpEmbedDescription: nonEmptyString().describe('sign up embed description'),
+	signUpEmbedDescription: nonEmptyString().describe(
+		'sign up embed description',
+	),
 	regionFocus: regionFocusEnumSchema.describe('region focus'),
 	frequency: nonEmptyString(),
 	listId: z.number(),
