@@ -29,13 +29,14 @@ export const executeModify: AsyncExecution<DraftStorage> = async (
 			return 'invalid or missing listId';
 		}
 
-		let formDataValidationResult = validateIncomingFormData( //TODO - where this is not false, do something
+		const formValidationError = validateIncomingFormData(
 			stepData.currentStepId,
 			stepData.formData,
 			stepLayout as WizardStepLayout<unknown>,
 		);
 
-		console.log('formDataValidationResult', formDataValidationResult);
+		if (formValidationError) return formValidationError;
+
 		// listId specifically added to draftNewsletter to ensure correct typing
 		if (stepData.formData['listId']) {
 			const listIdEntry = {
