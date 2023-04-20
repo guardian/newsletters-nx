@@ -68,3 +68,24 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 	}
 	return [];
 };
+
+const TOTAL_FIELD_COUNT = getDraftNotReadyIssues({}).length;
+
+/**
+ * Returns an integer representing a percentage of 'completeness'
+ * of the draft, where 100 indicates the draft can be launched.
+ *
+ * The value is calculated based on the number validation issues
+ * raised when testing if the draft could be launched and comparing
+ * that to the number of issues raised for an empty draft.
+ *
+ * The calculation is approximate and only for display purposes.
+ */
+export const calculateProgress = (draft: DraftNewsletterData): number => {
+	const issueCount = getDraftNotReadyIssues(draft).length;
+	if (issueCount === 0) {
+		return 100;
+	}
+	const ratio = (TOTAL_FIELD_COUNT - issueCount) / TOTAL_FIELD_COUNT;
+	return Math.floor(ratio * 100);
+};

@@ -2,7 +2,10 @@ import { Button, IconButton } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	calculateProgress,
+	type DraftNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftDialog } from './EditDraftDialog';
@@ -20,7 +23,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 		drafts.map((draft) => ({
 			...draft,
 			wizardListId: draft['listId'],
-			progress: Math.random() * 100,
+			progress: calculateProgress(draft),
 		})),
 	);
 	const columns = useMemo<Column[]>(
