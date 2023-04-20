@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
 import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
+import { NewsletterEditView } from '../components/views/NewsletterEditView';
 import { NewslettersListView } from '../components/views/NewslettersListView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
@@ -19,6 +20,11 @@ export const newslettersRoute: RouteObject = {
 		{
 			path: ':id',
 			element: <NewsletterDetailView />,
+			loader: detailLoader,
+		},
+		{
+			path: 'edit/:id',
+			element: <NewsletterEditView />,
 			loader: detailLoader,
 		},
 		{
