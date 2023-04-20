@@ -5,10 +5,11 @@ import { newsletterDataSchema } from './newsletter-data-type';
 const defaultNewsletterValues: DraftNewsletterData = {
 	listIdV1: -1,
 	restricted: false,
-	status: 'paused',
+	status: 'paused', // TO DO - add step for this - maybe best in launch wizard?
 	emailConfirmation: false,
 	privateUntilLaunch: false,
 	figmaIncludesThrashers: false,
+	group: 'News in depth', // TO DO - add a step for this
 } as const;
 
 const buildEmailEmbedObject = (draft: DraftNewsletterData): EmailEmbed => {
