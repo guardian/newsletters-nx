@@ -3,6 +3,7 @@ import type {
 	GenericStorageInterface,
 	WizardLayout,
 	WizardStepData,
+	WizardStepLayout,
 } from './types';
 import {
 	makeStepDataWithErrorMessage,
@@ -29,12 +30,20 @@ export async function stateMachineButtonPressed<
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
 	const buttonPressedDetails = currentStepLayout?.buttons[buttonPressed];
 
-	if (!buttonPressedDetails) {
+	if (!currentStepLayout || !buttonPressedDetails) {
 		throw new StateMachineError(
 			`Button ${buttonPressed} not found in step ${incomingStepData.currentStepId}`,
 			StateMachineErrorCode.NoSuchStep,
 		);
 	}
+
+	const stepToMoveTo =
+		typeof buttonPressedDetails.stepToMoveTo === 'string'
+			? buttonPressedDetails.stepToMoveTo
+			: buttonPressedDetails.stepToMoveTo(
+					wizardLayout,
+					currentStepLayout as WizardStepLayout<unknown>,
+			  );
 
 	const incomingDataError = validateIncomingFormData(
 		incomingStepData.currentStepId,
@@ -78,7 +87,7 @@ export async function stateMachineButtonPressed<
 
 	if (!buttonPressedDetails.executeStep) {
 		return {
-			currentStepId: buttonPressedDetails.stepToMoveTo,
+			currentStepId: stepToMoveTo,
 			formData: incomingStepData.formData,
 		};
 	}
@@ -97,7 +106,7 @@ export async function stateMachineButtonPressed<
 	}
 
 	return {
-		currentStepId: buttonPressedDetails.stepToMoveTo,
+		currentStepId: stepToMoveTo,
 		formData: executionResult,
 	};
 }

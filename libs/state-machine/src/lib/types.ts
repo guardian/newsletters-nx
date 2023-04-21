@@ -50,16 +50,21 @@ type Execution<T extends GenericStorageInterface> = (
 	storageInstance?: T,
 ) => WizardFormData | string;
 
+export type StepFindFunction = {
+	(wizard: WizardLayout, currentStep: WizardStepLayout): string;
+};
+
 export type WizardStepLayoutButton<
 	T extends GenericStorageInterface = unknown,
 > = {
 	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
 	label: string;
-	stepToMoveTo: string;
+	stepToMoveTo: string | StepFindFunction;
 	onAfterStepStartValidate?: AsyncValidator<T> | Validator<T>;
 	onBeforeStepChangeValidate?: AsyncValidator<T> | Validator<T>;
 	executeStep?: AsyncExecution<T> | Execution<T>;
 };
+
 export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
 	label?: string;
 	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT';
