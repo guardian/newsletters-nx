@@ -51,7 +51,11 @@ type Execution<T extends GenericStorageInterface> = (
 ) => WizardFormData | string;
 
 export type StepFindFunction = {
-	(wizard: WizardLayout, currentStep: WizardStepLayout): string;
+	(
+		wizard: WizardLayout,
+		currentStep: WizardStepLayout,
+		isEditPath: boolean,
+	): string;
 };
 
 export type WizardStepLayoutButton<
