@@ -20,6 +20,7 @@ import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
 import { NavigateButton } from './NavigateButton';
+import { ZodIssuesReport } from './ZodIssuesReport';
 
 interface Props {
 	draft: DraftNewsletterData;
@@ -119,6 +120,15 @@ export const DraftDetails = ({ draft }: Props) => {
 					</CardContent>
 				)}
 
+				{issues.length > 0 && !hasBeenDeleted && (
+					<CardContent>
+						<ZodIssuesReport
+							issues={issues}
+							caption={'Missing data needed before launch'}
+						/>
+					</CardContent>
+				)}
+
 				<CardContent>
 					<TableContainer
 						component={Paper}
@@ -126,8 +136,11 @@ export const DraftDetails = ({ draft }: Props) => {
 							backgroundColor: hasBeenDeleted ? 'pink' : undefined,
 						}}
 					>
-						<Table>
-							{hasBeenDeleted && <caption>DELETED</caption>}
+						<Table size="small">
+							<caption style={{ captionSide: 'top' }}>
+								{hasBeenDeleted ? 'DELETED' : 'DATA'}
+							</caption>
+
 							<TableBody>
 								{Object.keys(draft).map((key) => (
 									<TableRow key={key}>
