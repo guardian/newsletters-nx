@@ -15,6 +15,7 @@ export const makeInMemoryStorageInstance = () =>
 			brazeNewsletterName: 'Editorial_AvonRecumbentUs',
 			brazeSubscribeAttributeName: 'AvonRecumbentUs_Subscribe_Email',
 			brazeSubscribeEventNamePrefix: 'avon_recumbent_US',
+			signUpEmbedDescription: "We'll send you Avon Recumbent weekly",
 			theme: 'culture',
 			group: 'Work',
 			regionFocus: 'UK',

@@ -18,6 +18,7 @@
 		"listId": 6,
 		"exampleUrl": "/world/series/series-blue-empowering/latest/email",
 		"signupPage": "/global/sign-up-for-the-blue-empowering-newsletter-our-free-email",
+		"signUpEmbedDescription": "We'll send you Blue Empowering fortnightly",
 		"emailEmbed": {
 			"name": "Blue Empowering",
 			"title": "Sign up for Blue Empowering",
@@ -56,6 +57,7 @@
 		"listId": 3174,
 		"exampleUrl": "/world/series/series-sint-denigrate/latest/email",
 		"signupPage": "/global/sign-up-for-the-sint-denigrate-newsletter-our-free-email",
+		"signUpEmbedDescription": "We'll send you Sint Denigrate monthly",
 		"emailEmbed": {
 			"name": "Sint Denigrate",
 			"title": "Sign up for Sint Denigrate",
@@ -96,6 +98,7 @@
 		"listId": 3438,
 		"exampleUrl": "/world/series/series-systems-northeast/latest/email",
 		"signupPage": "/global/sign-up-for-the-systems-northeast-newsletter-our-free-email",
+		"signUpEmbedDescription": "We'll send you Systems Northeast weekly",
 		"emailEmbed": {
 			"name": "Systems Northeast",
 			"title": "Sign up for Systems Northeast",
@@ -136,6 +139,7 @@
 		"listId": 829,
 		"exampleUrl": "/world/series/series-cambridgeshire-support/latest/email",
 		"signupPage": "/global/sign-up-for-the-cambridgeshire-support-newsletter-our-free-email",
+		"signUpEmbedDescription": "We'll send you Cambridgeshire Support fortnightly",
 		"emailEmbed": {
 			"name": "Cambridgeshire Support",
 			"title": "Sign up for Cambridgeshire Support",
