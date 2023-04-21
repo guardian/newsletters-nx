@@ -1,5 +1,6 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -54,7 +55,7 @@ export const identityNameLayout: WizardStepLayout<DraftStorage> = {
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: getNextStepId,
 		},
 	},
 	canSkipTo: true,

@@ -48,6 +48,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 							formData: requestBody.formData,
 						},
 						wizardLayout,
+						!!requestBody.id,
 						serviceInterface,
 				  )
 				: await setupInitialState(requestBody, wizardLayout, serviceInterface);

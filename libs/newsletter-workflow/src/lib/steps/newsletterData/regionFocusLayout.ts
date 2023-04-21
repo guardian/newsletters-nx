@@ -1,4 +1,8 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import type {
 	WizardStepData,
 	WizardStepLayout,
@@ -35,13 +39,13 @@ export const regionFocusLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'pillar',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'frequency',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const regionFocus = stepData.formData
 					? stepData.formData['regionFocus']
