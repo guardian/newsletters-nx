@@ -1,7 +1,8 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type {
-	WizardStepData,
-	WizardStepLayout,
+import {
+	goToNextNormalStep,
+	type WizardStepData,
+	type WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -42,7 +43,7 @@ export const pillarLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'regionFocus',
+			stepToMoveTo: goToNextNormalStep,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const theme = stepData.formData
 					? stepData.formData['theme']

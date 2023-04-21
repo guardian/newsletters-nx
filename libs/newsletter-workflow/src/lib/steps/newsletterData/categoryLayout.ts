@@ -1,5 +1,8 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import {
+	goToNextNormalStep,
+	type WizardStepLayout,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -45,7 +48,7 @@ export const categoryLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'pillar',
+			stepToMoveTo: goToNextNormalStep,
 			executeStep: executeModify,
 		},
 	},
