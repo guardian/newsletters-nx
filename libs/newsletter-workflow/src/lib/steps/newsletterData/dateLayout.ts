@@ -1,8 +1,9 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import {
 	goToNextNormalStep,
-	type WizardStepLayout,
+	goToPreviousStepOnEditPath,
 } from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -55,7 +56,7 @@ export const dateLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'category',
+			stepToMoveTo: goToPreviousStepOnEditPath,
 			executeStep: executeModify,
 		},
 		finish: {

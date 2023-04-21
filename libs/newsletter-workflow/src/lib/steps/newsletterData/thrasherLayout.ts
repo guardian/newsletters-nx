@@ -1,6 +1,9 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { goToNextNormalStep } from '@newsletters-nx/state-machine';
+import {
+	goToNextNormalStep,
+	goToPreviousStepOnEditPath,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -43,7 +46,7 @@ export const thrasherLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'tags',
+			stepToMoveTo: goToPreviousStepOnEditPath,
 			executeStep: executeModify,
 		},
 		next: {

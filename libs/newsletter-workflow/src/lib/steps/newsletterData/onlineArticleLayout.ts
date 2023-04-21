@@ -3,7 +3,10 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
-import { goToNextNormalStep } from '@newsletters-nx/state-machine';
+import {
+	goToNextNormalStep,
+	goToPreviousStepOnEditPath,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -40,7 +43,7 @@ export const onlineArticleLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'frequency',
+			stepToMoveTo: goToPreviousStepOnEditPath,
 			executeStep: executeModify,
 		},
 		finish: {

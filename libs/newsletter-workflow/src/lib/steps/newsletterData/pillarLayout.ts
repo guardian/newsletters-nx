@@ -1,5 +1,8 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import { goToNextNormalStep } from '@newsletters-nx/state-machine';
+import {
+	goToNextNormalStep,
+	goToPreviousNormalStepOrStartForPath,
+} from '@newsletters-nx/state-machine';
 import type {
 	WizardStepData,
 	WizardStepLayout,
@@ -38,7 +41,7 @@ export const pillarLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'dates',
+			stepToMoveTo: goToPreviousNormalStepOrStartForPath,
 			executeStep: executeModify,
 		},
 		finish: {

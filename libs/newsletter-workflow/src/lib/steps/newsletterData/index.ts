@@ -17,10 +17,10 @@ import { tagsLayout } from './tagsLayout';
 import { thrasherLayout } from './thrasherLayout';
 
 export const newsletterDataLayout: WizardLayout<DraftStorage> = {
+	cancel: cancelLayout,
 	createDraftNewsletter: createDraftNewsletterLayout,
 	editDraftNewsletter: editDraftNewsletterLayout,
 	category: categoryLayout,
-	cancel: cancelLayout,
 	dates: dateLayout,
 	pillar: pillarLayout,
 	regionFocus: regionFocusLayout,
