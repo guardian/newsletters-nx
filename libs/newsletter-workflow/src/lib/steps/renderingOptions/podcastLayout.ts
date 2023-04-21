@@ -1,5 +1,9 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import {
+	goToNextNormalStep,
+	goToPreviousStepOnEditPath,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -39,13 +43,13 @@ export const podcastLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'linkList',
+			stepToMoveTo: goToPreviousStepOnEditPath,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'footer',
+			stepToMoveTo: goToNextNormalStep,
 			executeStep: executeModify,
 		},
 	},

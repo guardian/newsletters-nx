@@ -12,7 +12,6 @@ import { startLayout } from './start';
 
 export const renderingOptionsLayout: WizardLayout<DraftStorage> = {
 	start: startLayout,
-	cancel: cancelLayout,
 	newsletterHeader: newsletterHeaderLayout,
 	image: imageLayout,
 	readMore: readMoreLayout,
@@ -20,4 +19,5 @@ export const renderingOptionsLayout: WizardLayout<DraftStorage> = {
 	podcast: podcastLayout,
 	footer: footerLayout,
 	finish: finishLayout,
+	cancel: cancelLayout,
 };
