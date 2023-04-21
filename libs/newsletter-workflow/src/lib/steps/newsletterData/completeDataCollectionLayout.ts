@@ -37,7 +37,7 @@ export const completeDataCollectionLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'ophan',
+			stepToMoveTo: 'signUpEmbed',
 			executeStep: executeModify,
 		},
 		next: {

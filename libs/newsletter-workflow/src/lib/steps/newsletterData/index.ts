@@ -1,22 +1,15 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardLayout } from '@newsletters-nx/state-machine';
-import { brazeLayout } from './brazeLayout';
 import { cancelLayout } from './cancelLayout';
 import { categoryLayout } from './categoryLayout';
 import { completeDataCollectionLayout } from './completeDataCollectionLayout';
 import { createDraftNewsletterLayout } from './createDraftNewsletterLayout';
 import { dateLayout } from './dateLayout';
 import { designBriefLayout } from './designBriefLayout';
-import { editBrazeLayout } from './editBrazeLayout';
 import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
-import { editIdentityNameLayout } from './editIdentityNameLayout';
-import { editOphanLayout } from './editOphanLayout';
-import { emailCentralProductionLayout } from './emailCentralProductionLayout';
 import { finishLayout } from './finishLayout';
 import { frequencyLayout } from './frequencyLayout';
-import { identityNameLayout } from './identityNameLayout';
 import { onlineArticleLayout } from './onlineArticleLayout';
-import { ophanLayout } from './ophanLayout';
 import { pillarLayout } from './pillarLayout';
 import { regionFocusLayout } from './regionFocusLayout';
 import { signUpEmbedLayout } from './signUpEmbedLayout';
@@ -39,13 +32,6 @@ export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	designBrief: designBriefLayout,
 	signUpPage: signUpPageLayout,
 	signUpEmbed: signUpEmbedLayout,
-	identityName: identityNameLayout,
-	editIdentityName: editIdentityNameLayout,
-	braze: brazeLayout,
-	editBraze: editBrazeLayout,
-	ophan: ophanLayout,
-	editOphan: editOphanLayout,
 	completeDataCollection: completeDataCollectionLayout,
-	emailCentralProduction: emailCentralProductionLayout,
 	finish: finishLayout,
 };

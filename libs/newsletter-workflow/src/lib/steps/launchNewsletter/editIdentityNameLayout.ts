@@ -4,14 +4,14 @@ import { executeSkip } from '../../ececuteSkip';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Modify Braze Values
+# Modify Identity Name
 
-These are tracking fields used by Braze.
+This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
+It has been calculated automatically from the name **{{name}}**, but you can change it if you need.
 
 `.trim();
 
@@ -20,7 +20,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const editBrazeLayout: WizardStepLayout<DraftStorage> = {
+export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -33,22 +33,22 @@ export const editBrazeLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: 'signUpEmbed',
 			executeStep: executeModify,
 		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'ophan',
+			stepToMoveTo: 'braze',
 			onBeforeStepChangeValidate: () => {
-				// TO DO - check that braze values do not already exist in other draft or actual newsletter
+				// TO DO - check that identityName does not already exist in other draft or actual newsletter
 				return undefined;
 			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.braze,
-	parentStepId: 'braze',
+	schema: formSchemas.identityName,
+	parentStepId: 'identityName',
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };
