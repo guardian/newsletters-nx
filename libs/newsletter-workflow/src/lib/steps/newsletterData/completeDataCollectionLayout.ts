@@ -1,3 +1,4 @@
+// TODO - decide whether we need this layout
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';

@@ -43,7 +43,7 @@ export const signUpEmbedLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'completeDataCollection',
+			stepToMoveTo: 'finish',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const description = stepData.formData
 					? stepData.formData['signUpEmbedDescription']

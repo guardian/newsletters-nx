@@ -2,7 +2,6 @@ import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { cancelLayout } from './cancelLayout';
 import { categoryLayout } from './categoryLayout';
-import { completeDataCollectionLayout } from './completeDataCollectionLayout';
 import { createDraftNewsletterLayout } from './createDraftNewsletterLayout';
 import { dateLayout } from './dateLayout';
 import { designBriefLayout } from './designBriefLayout';
@@ -32,6 +31,5 @@ export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	designBrief: designBriefLayout,
 	signUpPage: signUpPageLayout,
 	signUpEmbed: signUpEmbedLayout,
-	completeDataCollection: completeDataCollectionLayout,
 	finish: finishLayout,
 };
