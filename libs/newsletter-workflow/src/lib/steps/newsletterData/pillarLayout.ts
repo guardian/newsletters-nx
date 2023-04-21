@@ -1,7 +1,7 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import {
-	goToNextNormalStep,
-	goToPreviousNormalStepOrStartForPath,
+	getNextStepId,
+	getPreviousOrStartStepId,
 } from '@newsletters-nx/state-machine';
 import type {
 	WizardStepData,
@@ -41,13 +41,13 @@ export const pillarLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: goToPreviousNormalStepOrStartForPath,
+			stepToMoveTo: getPreviousOrStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: goToNextNormalStep,
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const theme = stepData.formData
 					? stepData.formData['theme']

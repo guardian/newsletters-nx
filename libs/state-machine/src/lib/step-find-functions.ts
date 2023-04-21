@@ -1,5 +1,9 @@
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
-import type { StepFindFunction, WizardLayout, WizardStepLayout } from './types';
+import type {
+	FindStepIdFunction,
+	WizardLayout,
+	WizardStepLayout,
+} from './types';
 
 const isNormalStep = (step: WizardStepLayout) =>
 	step.parentStepId === undefined && step.role === undefined;
@@ -26,7 +30,7 @@ const getContext = (wizard: WizardLayout, step: WizardStepLayout) => {
 	return { allIds, allSteps, indexOfCurrentStep };
 };
 
-export const goToNextNormalStep: StepFindFunction = (wizard, step) => {
+export const getNextStepId: FindStepIdFunction = (wizard, step) => {
 	const { allIds, allSteps, indexOfCurrentStep } = getContext(wizard, step);
 	const followingIds = allIds.slice(indexOfCurrentStep + 1);
 	const followingSteps = allSteps.slice(indexOfCurrentStep + 1);
@@ -43,7 +47,7 @@ export const goToNextNormalStep: StepFindFunction = (wizard, step) => {
 	return idOfNextStep;
 };
 
-export const goToPreviousNormalStepOrStartForPath: StepFindFunction = (
+export const getPreviousOrStartStepId: FindStepIdFunction = (
 	wizard,
 	step,
 	isEditPath,
@@ -67,7 +71,10 @@ export const goToPreviousNormalStepOrStartForPath: StepFindFunction = (
 	return idOfPreviousStep;
 };
 
-export const goToPreviousStepOnEditPath: StepFindFunction = (wizard, step) => {
+export const getPreviousOrEditStartStepId: FindStepIdFunction = (
+	wizard,
+	step,
+) => {
 	const { allIds, allSteps, indexOfCurrentStep } = getContext(wizard, step);
 	const previousIds = allIds.slice(0, indexOfCurrentStep).reverse();
 	const previousSteps = allSteps.slice(0, indexOfCurrentStep).reverse();

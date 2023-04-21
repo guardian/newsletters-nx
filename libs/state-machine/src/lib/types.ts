@@ -50,7 +50,7 @@ type Execution<T extends GenericStorageInterface> = (
 	storageInstance?: T,
 ) => WizardFormData | string;
 
-export type StepFindFunction = {
+export type FindStepIdFunction = {
 	(
 		wizard: WizardLayout,
 		currentStep: WizardStepLayout,
@@ -63,7 +63,7 @@ export type WizardStepLayoutButton<
 > = {
 	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
 	label: string;
-	stepToMoveTo: string | StepFindFunction;
+	stepToMoveTo: string | FindStepIdFunction;
 	onAfterStepStartValidate?: AsyncValidator<T> | Validator<T>;
 	onBeforeStepChangeValidate?: AsyncValidator<T> | Validator<T>;
 	executeStep?: AsyncExecution<T> | Execution<T>;

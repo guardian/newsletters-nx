@@ -1,8 +1,8 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import {
-	goToNextNormalStep,
-	goToPreviousStepOnEditPath,
+	getNextStepId,
+	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
@@ -42,13 +42,13 @@ export const designBriefLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: goToPreviousStepOnEditPath,
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: goToNextNormalStep,
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const designBriefDoc = stepData.formData
 					? stepData.formData['designBriefDoc']

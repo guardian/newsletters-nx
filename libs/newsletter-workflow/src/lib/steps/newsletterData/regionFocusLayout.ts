@@ -1,7 +1,7 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import {
-	goToNextNormalStep,
-	goToPreviousStepOnEditPath,
+	getNextStepId,
+	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import type {
 	WizardStepData,
@@ -39,13 +39,13 @@ export const regionFocusLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: goToPreviousStepOnEditPath,
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: goToNextNormalStep,
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const regionFocus = stepData.formData
 					? stepData.formData['regionFocus']

@@ -1,5 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import { goToPreviousStepOnEditPath } from '@newsletters-nx/state-machine';
+import { getPreviousOrEditStartStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -24,7 +24,7 @@ const finishLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: goToPreviousStepOnEditPath,
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 	},

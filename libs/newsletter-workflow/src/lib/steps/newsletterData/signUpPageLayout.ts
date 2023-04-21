@@ -4,8 +4,8 @@ import type {
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 import {
-	goToNextNormalStep,
-	goToPreviousStepOnEditPath,
+	getNextStepId,
+	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
@@ -41,13 +41,13 @@ export const signUpPageLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: goToPreviousStepOnEditPath,
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: goToNextNormalStep,
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const headline = stepData.formData
 					? stepData.formData['signUpHeadline']
