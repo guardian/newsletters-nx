@@ -1,31 +1,27 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Complete Data Collection
+# Modify Ophan Campaign Values
 
-All the data required to create and launch **{{name}}** has now been specified.
+These are tracking fields used by Ophan.
 
-Once you move beyond this page, you will no longer be able to make changes to the data, until you reach the **Testing** step.
-
-To review or modify any values, please press **Back**.
-
-Otherwise, press **Next** to proceed with the creation of **{{name}}**.
+They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
 
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
-	'the newsletter',
+	'of the newsletter',
 );
 
-export const completeDataCollectionLayout: WizardStepLayout<DraftStorage> = {
+export const editOphanLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Complete Data Collection',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -37,14 +33,20 @@ export const completeDataCollectionLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'ophan',
+			stepToMoveTo: 'signUpEmbed',
 			executeStep: executeModify,
 		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: goToNextNormalStep,
+			onBeforeStepChangeValidate: () => {
+				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
+				return undefined;
+			},
 			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.ophan,
+	parentStepId: 'ophan',
 };

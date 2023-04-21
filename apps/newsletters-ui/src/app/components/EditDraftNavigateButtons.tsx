@@ -1,4 +1,3 @@
-import { ButtonGroup } from '@mui/material';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { NavigateButton } from './NavigateButton';
 

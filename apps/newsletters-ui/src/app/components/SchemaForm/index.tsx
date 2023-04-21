@@ -1,5 +1,5 @@
 import type { z, ZodRawShape, ZodTypeAny } from 'zod';
-import { ZodArray, ZodObject, ZodString } from 'zod';
+import { ZodArray, ZodEnum, ZodObject, ZodString } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
@@ -62,21 +62,13 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			continue;
 		}
 
-		let type: string;
-		if (zod.isOptional()) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-			type = zod._def.innerType._def.typeName as unknown as string;
-		} else {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-			type = zod._def.typeName as unknown as string;
-		}
+		const innerZod = recursiveUnwrap(zod);
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
+		const type = innerZod._def.typeName as unknown as string;
 
 		const enumOptions =
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-			zod._def.typeName === 'ZodEnum'
-				? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-				  (zod._def.values as unknown as string[])
-				: undefined;
+			innerZod instanceof ZodEnum ? (innerZod.options as string[]) : undefined;
 
 		const [arrayItemType, recordSchema] = getArrayItemTypeAndRecordSchema(zod);
 

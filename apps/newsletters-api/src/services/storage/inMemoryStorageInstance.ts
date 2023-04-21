@@ -3,6 +3,51 @@ import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client';
 export const makeInMemoryStorageInstance = () =>
 	new InMemoryDraftStorage([
 		{
+			identityName: 'avon-recumbent',
+			name: 'Avon Recumbent',
+			category: 'article-based',
+			signUpDescription:
+				'Quod nobis aperiam aperiam ipsum nobis officiis explicabo molestias quibusdam.',
+			frequency: 'Weekly',
+			status: 'paused',
+			restricted: false,
+			emailConfirmation: false,
+			brazeNewsletterName: 'Editorial_AvonRecumbentUs',
+			brazeSubscribeAttributeName: 'AvonRecumbentUs_Subscribe_Email',
+			brazeSubscribeEventNamePrefix: 'avon_recumbent_US',
+			signUpEmbedDescription: "We'll send you Avon Recumbent weekly",
+			theme: 'culture',
+			group: 'Work',
+			regionFocus: 'UK',
+			// listIdV1: 3703,
+			listId: 5770,
+			exampleUrl: '/world/series/series-avon-recumbent/latest/email',
+			signupPage:
+				'/global/sign-up-for-the-avon-recumbent-newsletter-our-free-email',
+			emailEmbed: {
+				name: 'Avon Recumbent',
+				title: 'Sign up for Avon Recumbent',
+				description:
+					'Numquam ipsam culpa velit suscipit ratione corrupti. recusandae aliquam repudiandae eaque. error corporis deserunt suscipit dolor consequuntur dolor quaerat dolor. possimus cupiditate in nam. itaque quaerat illum sint quos blanditiis.',
+				successHeadline: 'Subscription confirmed',
+				successDescription: "We'll send you Avon Recumbent weekly",
+				hexCode: '#DCDCDC',
+			},
+			campaignName: 'AvonRecumbentUs',
+			campaignCode: 'avonrecumbentUS_email',
+			brazeSubscribeAttributeNameAlternate: [
+				'email_subscribe_avon_recumbent_US',
+			],
+			creationTimeStamp: 1633539258449,
+			figmaIncludesThrashers: false,
+			launchDate: new Date('1970-01-02T00:21:18.876Z'),
+			signUpPageDate: new Date('1970-01-02T00:21:18.876Z'),
+			thrasherDate: new Date('1970-01-02T00:21:18.876Z'),
+			privateUntilLaunch: false,
+			onlineArticle: 'Web for all sends',
+		},
+
+		{
 			listId: 7000,
 			name: 'Test draft newsletter',
 			category: 'article-based',
@@ -15,6 +60,7 @@ export const makeInMemoryStorageInstance = () =>
 			],
 			campaignName: 'Testdraftnewsletter',
 			campaignCode: 'testdraftnewsletter_email',
+			creationTimeStamp: 1633539258449,
 		},
 		{
 			listId: 7001,
@@ -30,6 +76,7 @@ export const makeInMemoryStorageInstance = () =>
 			campaignName: 'Othertestdraftnewsletter',
 			campaignCode: 'othertestdraftnewsletter_email',
 			theme: 'news',
+			creationTimeStamp: 1633539258449,
 		},
 		{
 			name: 'Response Academic',
@@ -47,6 +94,7 @@ export const makeInMemoryStorageInstance = () =>
 			theme: 'lifestyle',
 			signUpDescription:
 				'Officia neque totam temporibus incidunt ad dolorem quo sit mollitia.\\net molestiae reprehenderit.\\nquo dolores beatae suscipit veniam maiores delectus.',
+			creationTimeStamp: 1633539258449,
 		},
 		{
 			identityName: 'wagon-automotive',
@@ -60,6 +108,7 @@ export const makeInMemoryStorageInstance = () =>
 			theme: 'news',
 			group: 'Work',
 			listId: 7009,
+			creationTimeStamp: 1633539258449,
 		},
 		{
 			identityName: 'background-hatchback',
@@ -74,5 +123,10 @@ export const makeInMemoryStorageInstance = () =>
 			theme: 'news',
 			group: 'Opinion',
 			listId: 7010,
+			regionFocus: 'UK',
+			creationTimeStamp: 1633539258449,
+			launchDate: new Date('1970-01-02T00:21:18.876Z'),
+			signUpPageDate: new Date('1970-01-02T00:21:18.876Z'),
+			thrasherDate: new Date('1970-01-02T00:21:18.876Z'),
 		},
 	]);

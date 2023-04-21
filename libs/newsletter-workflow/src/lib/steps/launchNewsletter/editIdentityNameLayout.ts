@@ -2,21 +2,17 @@ import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Ophan Campaign Values
+# Modify Identity Name
 
-These are tracking fields used by Ophan.
+This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
 
-They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
-
-&nbsp;
-
-Campaign Name: **{{campaignName}}**
-
-Campaign Code: **{{campaignCode}}**
+It has been calculated automatically from the name **{{name}}**, but you can change it if you need.
 
 `.trim();
 
@@ -25,43 +21,35 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout<DraftStorage> = {
+export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Ophan',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		const [campaignName = 'CAMPAIGNNAME'] = getStringValuesFromRecord(
-			responseData,
-			['campaignName'],
-		);
-		const [campaignCode = 'CAMPAIGNCODE'] = getStringValuesFromRecord(
-			responseData,
-			['campaignCode'],
-		);
-		return markdownTemplate
-			.replace(regExPatterns.name, name)
-			.replace(regExPatterns.campaignName, campaignName)
-			.replace(regExPatterns.campaignCode, campaignCode);
+		return markdownTemplate.replace(regExPatterns.name, name);
 	},
 	buttons: {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: 'signUpEmbed',
 			executeStep: executeModify,
-		},
-		edit: {
-			buttonType: 'GREEN',
-			label: 'Edit',
-			stepToMoveTo: 'editOphan',
 		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
 			stepToMoveTo: goToNextNormalStep,
+			onBeforeStepChangeValidate: () => {
+				// TO DO - check that identityName does not already exist in other draft or actual newsletter
+				return undefined;
+			},
+			executeStep: executeModify,
 		},
 	},
+	schema: formSchemas.identityName,
+	parentStepId: 'identityName',
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

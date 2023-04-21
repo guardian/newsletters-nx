@@ -2,6 +2,7 @@ import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
+import { executeSkip } from '../../executeSkip';
 import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { formSchemas } from './formSchemas';
 
@@ -32,4 +33,6 @@ The first step is to enter the name for your newsletter, for example **Down to E
 	schema: formSchemas.startDraftNewsletter,
 	role: 'EDIT_START',
 	getInitialFormData: getDraftFromStorage,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

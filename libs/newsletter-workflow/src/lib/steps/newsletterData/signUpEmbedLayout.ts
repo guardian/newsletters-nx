@@ -5,6 +5,7 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -57,4 +58,6 @@ export const signUpEmbedLayout: WizardStepLayout<DraftStorage> = {
 		},
 	},
 	schema: formSchemas.signUpEmbed,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

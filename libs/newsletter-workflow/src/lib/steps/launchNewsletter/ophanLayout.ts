@@ -2,19 +2,22 @@ import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Identity Name
+# Ophan Campaign Values
 
-This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
+These are tracking fields used by Ophan.
 
-It has been calculated automatically from the name **{{name}}**, but you can change it if you need.
+They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
 
 &nbsp;
 
-Identity name: **{{identityName}}**
+Campaign Name: **{{campaignName}}**
+
+Campaign Code: **{{campaignCode}}**
 
 `.trim();
 
@@ -23,21 +26,26 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const identityNameLayout: WizardStepLayout<DraftStorage> = {
+export const ophanLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Identity Name',
+	label: 'Ophan',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		const [identityName = 'IDENTITYNAME'] = getStringValuesFromRecord(
+		const [campaignName = 'CAMPAIGNNAME'] = getStringValuesFromRecord(
 			responseData,
-			['identityName'],
+			['campaignName'],
+		);
+		const [campaignCode = 'CAMPAIGNCODE'] = getStringValuesFromRecord(
+			responseData,
+			['campaignCode'],
 		);
 		return markdownTemplate
 			.replace(regExPatterns.name, name)
-			.replace(regExPatterns.identityName, identityName);
+			.replace(regExPatterns.campaignName, campaignName)
+			.replace(regExPatterns.campaignCode, campaignCode);
 	},
 	buttons: {
 		back: {
@@ -49,7 +57,7 @@ export const identityNameLayout: WizardStepLayout<DraftStorage> = {
 		edit: {
 			buttonType: 'GREEN',
 			label: 'Edit',
-			stepToMoveTo: 'editIdentityName',
+			stepToMoveTo: 'editOphan',
 		},
 		next: {
 			buttonType: 'GREEN',
@@ -57,4 +65,6 @@ export const identityNameLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: goToNextNormalStep,
 		},
 	},
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

@@ -14,11 +14,13 @@ import {
 } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
 import { NavigateButton } from './NavigateButton';
+import { ZodIssuesReport } from './ZodIssuesReport';
 
 interface Props {
 	draft: DraftNewsletterData;
@@ -55,6 +57,8 @@ export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
 
 	const palette = getPalette(draft.theme ?? '');
+	const issues = getDraftNotReadyIssues(draft);
+	const readyToLaunch = issues.length === 0;
 
 	return (
 		<Container maxWidth="lg">
@@ -98,7 +102,30 @@ export const DraftDetails = ({ draft }: Props) => {
 								back to list
 							</NavigateButton>
 							<EditDraftNavigateButtons draft={draft} />
+
+							{readyToLaunch && (
+								<NavigateButton
+									href={`/demo/launch-newsletter/${draft.listId}`}
+									endIcon={
+										<span role="img" aria-label="rocket">
+											🚀
+										</span>
+									}
+									color="success"
+								>
+									Launch
+								</NavigateButton>
+							)}
 						</ButtonGroup>
+					</CardContent>
+				)}
+
+				{issues.length > 0 && !hasBeenDeleted && (
+					<CardContent>
+						<ZodIssuesReport
+							issues={issues}
+							caption={'Missing data needed before launch'}
+						/>
 					</CardContent>
 				)}
 
@@ -109,8 +136,11 @@ export const DraftDetails = ({ draft }: Props) => {
 							backgroundColor: hasBeenDeleted ? 'pink' : undefined,
 						}}
 					>
-						<Table>
-							{hasBeenDeleted && <caption>DELETED</caption>}
+						<Table size="small">
+							<caption style={{ captionSide: 'top' }}>
+								{hasBeenDeleted ? 'DELETED' : 'DATA'}
+							</caption>
+
 							<TableBody>
 								{Object.keys(draft).map((key) => (
 									<TableRow key={key}>

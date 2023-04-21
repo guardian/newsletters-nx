@@ -9,3 +9,5 @@ export const emailEmbedSchema = z.object({
 	hexCode: z.string(),
 	imageUrl: z.string().optional(),
 });
+
+export type EmailEmbed = z.infer<typeof emailEmbedSchema>;
