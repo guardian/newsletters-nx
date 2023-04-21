@@ -20,12 +20,9 @@ export type Theme = z.infer<typeof themeEnumSchema>;
 export const regionFocusEnumSchema = z.enum(['', 'UK', 'AU', 'US', 'INTL']);
 export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 
-export const onlineArticleSchema = z.enum([
-	'',
-	'Email only',
-	'Web for first send only',
-	'Web for all sends',
-]);
+export const onlineArticleSchema = z
+	.enum(['', 'Email only', 'Web for first send only', 'Web for all sends'])
+	.describe('location of article');
 export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
 
 export const singleThrasherLocation = z.enum([
@@ -105,6 +102,7 @@ export const newsletterDataSchema = z.object({
 	frequency: nonEmptyString(),
 	listId: z.number(),
 	listIdV1: z.number(),
+	// TO DO - remove emailEmbed from this schema and derive it as part of in deriveLegacyNewsletter
 	emailEmbed: emailEmbedSchema.extend({
 		description: z.string(),
 	}),
@@ -133,10 +131,11 @@ export const newsletterDataSchema = z.object({
 	signUpPageDate: z.coerce.date().describe('sign up page date'),
 	thrasherDate: z.coerce.date().describe('thrasher date'),
 	privateUntilLaunch: z.boolean().describe('needs to be private until launch?'),
-	onlineArticle: onlineArticleSchema.describe('location of article'),
+	onlineArticle: onlineArticleSchema.optional(),
 
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),
+	mailSuccessDescription: z.string().optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */

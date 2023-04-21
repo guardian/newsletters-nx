@@ -99,6 +99,7 @@ const generateNewsletter = () => {
 		listId: faker.datatype.number({ max: 6000 }),
 		exampleUrl: `/world/series/series-${newsletterId}/latest/email`,
 		signupPage: `/global/sign-up-for-the-${newsletterId}-newsletter-our-free-email`,
+		signUpEmbedDescription: `We'll send you ${name} ${frequency.toLowerCase()}`,
 		emailEmbed: {
 			name,
 			title: `Sign up for ${name}`,
