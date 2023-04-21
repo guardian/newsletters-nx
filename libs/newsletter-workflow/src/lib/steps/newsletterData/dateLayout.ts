@@ -1,6 +1,7 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -62,4 +63,6 @@ export const dateLayout: WizardStepLayout<DraftStorage> = {
 		},
 	},
 	schema: formSchemas.promotionDates,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

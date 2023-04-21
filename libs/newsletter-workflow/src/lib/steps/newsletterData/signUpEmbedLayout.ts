@@ -4,6 +4,7 @@ import type {
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -42,7 +43,7 @@ export const signUpEmbedLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: 'finish',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const description = stepData.formData
 					? stepData.formData['signUpEmbedDescription']
@@ -56,4 +57,6 @@ export const signUpEmbedLayout: WizardStepLayout<DraftStorage> = {
 		},
 	},
 	schema: formSchemas.signUpEmbed,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

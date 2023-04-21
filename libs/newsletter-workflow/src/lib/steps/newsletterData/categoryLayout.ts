@@ -45,9 +45,11 @@ export const categoryLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'pillar',
+			stepToMoveTo: 'dates',
 			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.category,
+	canSkipTo: true,
+	executeSkip: executeModify,
 };
