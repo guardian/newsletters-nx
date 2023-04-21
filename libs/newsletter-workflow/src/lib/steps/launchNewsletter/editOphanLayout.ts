@@ -3,14 +3,14 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Modify Identity Name
+# Modify Ophan Campaign Values
 
-This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
+These are tracking fields used by Ophan.
 
-It has been calculated automatically from the name **{{name}}**, but you can change it if you need.
+They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
 
 `.trim();
 
@@ -19,7 +19,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
+export const editOphanLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -32,20 +32,20 @@ export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'signUp',
+			stepToMoveTo: 'signUpEmbed',
 			executeStep: executeModify,
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Next',
-			stepToMoveTo: 'braze',
+			label: 'Complete Data Collection',
+			stepToMoveTo: 'completeDataCollection',
 			onBeforeStepChangeValidate: () => {
-				// TO DO - check that identityName does not already exist in other draft or actual newsletter
+				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
 				return undefined;
 			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.identityName,
-	parentStepId: 'identityName',
+	schema: formSchemas.ophan,
+	parentStepId: 'ophan',
 };

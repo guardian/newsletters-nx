@@ -6,7 +6,7 @@ export const makeInMemoryStorageInstance = () =>
 			identityName: 'avon-recumbent',
 			name: 'Avon Recumbent',
 			category: 'article-based',
-			description:
+			signUpDescription:
 				'Quod nobis aperiam aperiam ipsum nobis officiis explicabo molestias quibusdam.',
 			frequency: 'Weekly',
 			status: 'paused',
@@ -15,6 +15,7 @@ export const makeInMemoryStorageInstance = () =>
 			brazeNewsletterName: 'Editorial_AvonRecumbentUs',
 			brazeSubscribeAttributeName: 'AvonRecumbentUs_Subscribe_Email',
 			brazeSubscribeEventNamePrefix: 'avon_recumbent_US',
+			signUpEmbedDescription: "We'll send you Avon Recumbent weekly",
 			theme: 'culture',
 			group: 'Work',
 			regionFocus: 'UK',
@@ -91,14 +92,14 @@ export const makeInMemoryStorageInstance = () =>
 			campaignCode: 'responseacademic_email',
 			listId: 7002,
 			theme: 'lifestyle',
-			description:
+			signUpDescription:
 				'Officia neque totam temporibus incidunt ad dolorem quo sit mollitia.\\net molestiae reprehenderit.\\nquo dolores beatae suscipit veniam maiores delectus.',
 			creationTimeStamp: 1633539258449,
 		},
 		{
 			identityName: 'wagon-automotive',
 			name: 'Wagon Automotive',
-			description: 'Mollitia saepe odio',
+			signUpDescription: 'Mollitia saepe odio',
 			category: 'article-based',
 			frequency: 'Weekly',
 			brazeNewsletterName: 'Editorial_WagonAutomotiveAu',
@@ -113,7 +114,8 @@ export const makeInMemoryStorageInstance = () =>
 			identityName: 'background-hatchback',
 			name: 'Background Hatchback',
 			category: 'fronts-based',
-			description: 'Veritatis ipsum asperiores optio sunt eum ab architecto.',
+			signUpDescription:
+				'Veritatis ipsum asperiores optio sunt eum ab architecto.',
 			frequency: 'Weekly',
 			brazeNewsletterName: 'Editorial_BackgroundHatchbackUk',
 			brazeSubscribeAttributeName: 'BackgroundHatchbackUk_Subscribe_Email',

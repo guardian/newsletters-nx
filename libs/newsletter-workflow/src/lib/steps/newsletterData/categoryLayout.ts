@@ -50,4 +50,6 @@ export const categoryLayout: WizardStepLayout<DraftStorage> = {
 		},
 	},
 	schema: formSchemas.category,
+	canSkipTo: true,
+	executeSkip: executeModify,
 };

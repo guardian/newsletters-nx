@@ -33,7 +33,7 @@ const buildEmailEmbedObject = (draft: DraftNewsletterData): EmailEmbed => {
 			: `We'll send you ${name} every time it comes out`);
 
 	return {
-		description: draft.description ?? ' ',
+		description: draft.signUpEmbedDescription ?? ' ',
 		name: name,
 		title: `Sign up to ${name}`,
 		successHeadline,

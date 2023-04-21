@@ -10,13 +10,11 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Will {{name}} be an online article?
+# Specify the sign up embed copy
 
-Tell us if the newsletter will appear as a web article.
+Please enter the description for the sign up embed for **{{name}}**
 
-This is the case for most newsletters, but you may prefer to offer the newsletter exclusively as an email.
-
-Alternatively, you might want the first send on web to preview it, but subsequent sends to be email-only.
+![Sign Up Embed Description](https://i.guim.co.uk/img/uploads/2023/04/20/signUp-embed.png?quality=85&dpr=2&width=300&s=48b7b65b3dcbff5fcd4b78c562a4175e)
 
 `.trim();
 
@@ -25,9 +23,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const onlineArticleLayout: WizardStepLayout<DraftStorage> = {
+export const signUpEmbedLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Online Article',
+	label: 'Sign Up Embed',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -39,26 +37,26 @@ export const onlineArticleLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'frequency',
+			stepToMoveTo: 'signUpPage',
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'tags',
+			stepToMoveTo: 'finish',
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const onlineArticle = stepData.formData
-					? stepData.formData['onlineArticle']
+				const description = stepData.formData
+					? stepData.formData['signUpEmbedDescription']
 					: undefined;
-				if (!onlineArticle || onlineArticle === '') {
-					return 'NO ONLINE ARTICLE SETUP SELECTED';
+				if (!description) {
+					return 'NO DESCRIPTION PROVIDED';
 				}
 				return undefined;
 			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.onlineArticle,
+	schema: formSchemas.signUpEmbed,
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };
