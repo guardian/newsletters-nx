@@ -1,5 +1,6 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -43,7 +44,7 @@ export const designBriefLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'signUpPage',
+			stepToMoveTo: goToNextNormalStep,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const designBriefDoc = stepData.formData
 					? stepData.formData['designBriefDoc']

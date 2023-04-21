@@ -3,6 +3,7 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -39,10 +40,10 @@ export const signUpPageLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: 'designBrief',
 			executeStep: executeModify,
 		},
-		finish: {
+		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'signUpEmbed',
+			stepToMoveTo: goToNextNormalStep,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const headline = stepData.formData
 					? stepData.formData['signUpHeadline']

@@ -1,8 +1,8 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import {
-	goToNextNormalStep,
-	type WizardStepData,
-	type WizardStepLayout,
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
+import type {
+	WizardStepData,
+	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';

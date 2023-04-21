@@ -1,4 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -50,13 +51,13 @@ export const frequencyLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'regionFocus',
+			stepToMoveTo: goToNextNormalStep,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'onlineArticle',
+			stepToMoveTo: goToNextNormalStep,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const frequency = stepData.formData
 					? stepData.formData['frequency']

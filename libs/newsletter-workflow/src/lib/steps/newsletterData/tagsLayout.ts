@@ -1,5 +1,6 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -53,7 +54,7 @@ export const tagsLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'thrasher',
+			stepToMoveTo: goToNextNormalStep,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const seriesTag = stepData.formData
 					? stepData.formData['seriesTag']

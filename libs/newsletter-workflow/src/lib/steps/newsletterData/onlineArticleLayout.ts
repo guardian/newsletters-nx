@@ -3,6 +3,7 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -44,7 +45,7 @@ export const onlineArticleLayout: WizardStepLayout<DraftStorage> = {
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'tags',
+			stepToMoveTo: goToNextNormalStep,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const onlineArticle = stepData.formData
 					? stepData.formData['onlineArticle']

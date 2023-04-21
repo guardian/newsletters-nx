@@ -1,4 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -42,7 +43,7 @@ export const completeDataCollectionLayout: WizardStepLayout<DraftStorage> = {
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'emailCentralProduction',
+			stepToMoveTo: goToNextNormalStep,
 			executeStep: executeModify,
 		},
 	},

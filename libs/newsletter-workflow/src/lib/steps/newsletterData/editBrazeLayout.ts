@@ -1,5 +1,6 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { goToNextNormalStep } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -38,7 +39,7 @@ export const editBrazeLayout: WizardStepLayout<DraftStorage> = {
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'ophan',
+			stepToMoveTo: goToNextNormalStep,
 			onBeforeStepChangeValidate: () => {
 				// TO DO - check that braze values do not already exist in other draft or actual newsletter
 				return undefined;
