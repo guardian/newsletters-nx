@@ -31,4 +31,6 @@ The first step is to enter the name of your newsletter, for example **Down to Ea
 	},
 	schema: formSchemas.startDraftNewsletter,
 	role: 'CREATE_START',
+	canSkipTo: true,
+	executeSkip: executeCreate,
 };
