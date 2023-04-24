@@ -1,3 +1,4 @@
+import { TextField } from '@mui/material';
 import { useState } from 'react';
 
 type Props = {
@@ -11,13 +12,12 @@ export const GlobalFilter = ({ setGlobalFilter }: Props) => {
 		setGlobalFilter(e.target.value || '');
 	};
 	return (
-		<span>
-			Search:&nbsp;
-			<input
-				value={filterValue}
-				onChange={handleChange}
-				placeholder={`Filter data...`}
-			/>
-		</span>
+		<TextField
+			id="search-for-newsletters"
+			label="Search for Newsletters"
+			variant="outlined"
+			onChange={handleChange}
+			value={filterValue}
+		/>
 	);
 };

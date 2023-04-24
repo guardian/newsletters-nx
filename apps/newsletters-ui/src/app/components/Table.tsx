@@ -1,5 +1,7 @@
+import { Grid } from '@mui/material';
 import type { Cell, Column } from 'react-table';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
+import { ContentWrapper } from '../ContentWrapper';
 import { tableStyle } from '../styles';
 import { ColumnData } from './ColumnData';
 import { ColumnHeader } from './ColumnHeader';
@@ -28,14 +30,18 @@ export const Table = ({ data, columns, defaultSortId }: TableProps) => {
 	} = useTable({ columns, data, initialState }, useGlobalFilter, useSortBy);
 
 	return (
-		<>
+		<ContentWrapper>
 			<div>Hide/Show Columns</div>
-			<div>
-				{allColumns.map((column) => (
-					<ColumnVisibility column={column} key={`visibility ${column.id}`} />
-				))}
-			</div>
-			<GlobalFilter setGlobalFilter={setGlobalFilter} />
+			<Grid container spacing={2} rowSpacing={2} paddingY={2}>
+				<Grid item xs={12} display={'flex'} direction={'column'}>
+					{allColumns.map((column) => (
+						<ColumnVisibility column={column} key={`visibility ${column.id}`} />
+					))}
+				</Grid>
+				<Grid item xs={12} display={'flex'} direction={'column'}>
+					<GlobalFilter setGlobalFilter={setGlobalFilter} />
+				</Grid>
+			</Grid>
 			<table {...getTableProps()} css={tableStyle}>
 				<thead>
 					{headerGroups.map((headerGroup) => (
@@ -59,6 +65,6 @@ export const Table = ({ data, columns, defaultSortId }: TableProps) => {
 					})}
 				</tbody>
 			</table>
-		</>
+		</ContentWrapper>
 	);
 };
