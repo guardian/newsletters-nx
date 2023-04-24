@@ -18,6 +18,7 @@ export const GlobalFilter = ({ setGlobalFilter }: Props) => {
 			variant="outlined"
 			onChange={handleChange}
 			value={filterValue}
+			fullWidth
 		/>
 	);
 };

@@ -1,35 +1,34 @@
 import {
-	InMemoryNewsletterStorage,
-	isNewsletterData,
+	// InMemoryNewsletterStorage,
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
 import type {
 	DraftStorage,
-	NewsletterData,
 	NewsletterStorage,
 } from '@newsletters-nx/newsletters-data-client';
-import newslettersData from '../../../static/newsletters.local.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
 import { makeInMemoryStorageInstance } from './inMemoryStorageInstance';
 import { getS3Params } from './s3ParamsFromEnv';
-import { makeS3DraftStorageInstance } from './s3StorageInstance';
-
+import {makeNewsletterStorageInstance, makeS3DraftStorageInstance} from './s3StorageInstance';
+// todo - remove all this - was not working - hacked to make behave
 const s3Params = getS3Params();
 const canUseS3 = !isUsingInMemoryStorage() && s3Params;
-
+console.log('canUseS3', canUseS3)
+console.log('s3Params', s3Params)
 // TO DO - how to handle cases in production with missing s3 params?
 const draftStore: DraftStorage = canUseS3
 	? makeS3DraftStorageInstance(s3Params)
 	: makeInMemoryStorageInstance();
 
-const validNewsletters = newslettersData.filter((item) =>
-	isNewsletterData(item),
-);
+// const validNewsletters = newslettersData.filter((item) =>
+// 	isNewsletterData(item),
+// );
 
-const newsletterStore: NewsletterStorage = new InMemoryNewsletterStorage(
-	validNewsletters as unknown as NewsletterData[],
-);
+// const newsletterStore: NewsletterStorage = new InMemoryNewsletterStorage(
+// 	validNewsletters as unknown as NewsletterData[],
+// );
 
+const newsletterStore: NewsletterStorage = makeNewsletterStorageInstance(s3Params!);
 const launchService = new LaunchService(draftStore, newsletterStore);
 
 export { draftStore, newsletterStore, launchService };

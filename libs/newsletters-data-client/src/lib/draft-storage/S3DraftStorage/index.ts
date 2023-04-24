@@ -35,6 +35,7 @@ export class S3DraftStorage extends DraftStorage {
 			const nextId = await this.getNextId();
 			await this.putDraftObject({
 				...draft,
+				creationTimeStamp: Date.now(),
 				listId: nextId,
 			});
 
