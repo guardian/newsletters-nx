@@ -2,8 +2,8 @@ import { Container, Grid } from '@mui/material';
 
 export const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
 	<Container maxWidth="lg">
-		<Grid container spacing={3} rowSpacing={6} paddingY={2}>
-			<Grid item xs={6} sm={4} display={'flex'}>
+		<Grid container spacing={2} rowSpacing={2} paddingY={2}>
+			<Grid item xs={12} display={'flex'} direction={'column'}>
 				{children}
 			</Grid>
 		</Grid>
