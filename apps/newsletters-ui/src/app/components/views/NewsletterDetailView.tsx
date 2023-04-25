@@ -3,6 +3,7 @@ import {
 	isNewsletterData,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
+import { ContentWrapper } from "../../ContentWrapper";
 import { LegacyNewsletterDetail } from '../LegacyNewsletterDetails';
 
 export const NewsletterDetailView = () => {
@@ -18,9 +19,11 @@ export const NewsletterDetailView = () => {
 	const legacyFormat = transformDataToLegacyNewsletter(matchedItem);
 
 	return (
-		<>
+		<ContentWrapper>
 			<LegacyNewsletterDetail newsletter={legacyFormat} />
-			<Link to="/newsletters/">Back to List</Link>
-		</>
+			<span style={{ padding: "8px 0"}}>
+				<Link to="/newsletters/">Back to List</Link>
+			</span>
+		</ContentWrapper>
 	);
 };

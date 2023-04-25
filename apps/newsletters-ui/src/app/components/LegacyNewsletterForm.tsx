@@ -9,6 +9,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { makeBlankNewsletter } from '../blanks';
+import { ContentWrapper } from "../ContentWrapper";
 import { ArrayInput } from './ArrayInput';
 import { LegacyNewsletterDetail } from './LegacyNewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';
@@ -203,7 +204,9 @@ export const LegacyNewsletterForm = ({ existingIds }: Props) => {
 					Create LegacyNewsletter
 				</button>
 			</div>
-			<LegacyNewsletterDetail newsletter={newsletter} />
+			<ContentWrapper>
+				<LegacyNewsletterDetail newsletter={newsletter} />
+			</ContentWrapper>
 		</article>
 	);
 };

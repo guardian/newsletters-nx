@@ -136,6 +136,7 @@ export const newsletterDataSchema = z.object({
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),
 	mailSuccessDescription: z.string().optional(),
+	key: z.string().optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */

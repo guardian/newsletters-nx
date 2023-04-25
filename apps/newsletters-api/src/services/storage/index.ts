@@ -11,10 +11,9 @@ import { makeInMemoryStorageInstance } from './inMemoryStorageInstance';
 import { getS3Params } from './s3ParamsFromEnv';
 import {makeNewsletterStorageInstance, makeS3DraftStorageInstance} from './s3StorageInstance';
 // todo - remove all this - was not working - hacked to make behave
-const s3Params = getS3Params();
+const s3Params = getS3Params(); // rename this and have it return a  client
 const canUseS3 = !isUsingInMemoryStorage() && s3Params;
-console.log('canUseS3', canUseS3)
-console.log('s3Params', s3Params)
+
 // TO DO - how to handle cases in production with missing s3 params?
 const draftStore: DraftStorage = canUseS3
 	? makeS3DraftStorageInstance(s3Params)

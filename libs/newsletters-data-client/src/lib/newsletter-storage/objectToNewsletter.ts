@@ -4,6 +4,7 @@ import { isNewsletterData } from '../newsletter-data-type';
 
 export const objectToNewsletter = async (
 	getObjectOutput: GetObjectCommandOutput,
+	key: string | undefined
 ): Promise<NewsletterData | undefined> => {
 	try {
 		const { Body } = getObjectOutput;
@@ -15,7 +16,7 @@ export const objectToNewsletter = async (
 		if (!isNewsletterData(parsedContent)) {
 			return undefined;
 		}
-		return parsedContent;
+		return {...parsedContent, key};
 	} catch (err) {
 		console.warn('objectToDraft failed');
 		console.warn(err);
