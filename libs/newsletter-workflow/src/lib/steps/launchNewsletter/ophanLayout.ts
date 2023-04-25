@@ -1,7 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { getNextStepId } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -28,7 +26,7 @@ const staticMarkdown = markdownTemplate.replace(
 
 export const ophanLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Ophan',
+	label: 'ophan',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -48,11 +46,10 @@ export const ophanLayout: WizardStepLayout<DraftStorage> = {
 			.replace(regExPatterns.campaignCode, campaignCode);
 	},
 	buttons: {
-		back: {
+		cancel: {
 			buttonType: 'RED',
-			label: 'Back',
-			stepToMoveTo: 'signUpEmbed',
-			executeStep: executeModify,
+			label: 'Cancel',
+			stepToMoveTo: 'cancel',
 		},
 		edit: {
 			buttonType: 'GREEN',
@@ -61,8 +58,8 @@ export const ophanLayout: WizardStepLayout<DraftStorage> = {
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Next',
-			stepToMoveTo: getNextStepId,
+			label: 'Launch',
+			stepToMoveTo: 'finish',
 		},
 	},
 	canSkipTo: true,

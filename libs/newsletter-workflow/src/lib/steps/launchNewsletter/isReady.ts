@@ -1,4 +1,5 @@
 import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeLaunch } from '../../executeLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -54,8 +55,8 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Launch',
-			stepToMoveTo: 'finish',
+			label: 'Next',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate(stepData) {
 				const isReady = stepData.formData?.['isReady'];
 				if (isReady !== true) {

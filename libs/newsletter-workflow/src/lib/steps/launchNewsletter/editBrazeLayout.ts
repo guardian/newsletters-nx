@@ -31,11 +31,10 @@ export const editBrazeLayout: WizardStepLayout<DraftStorage> = {
 		return markdownTemplate.replace(regExPatterns.name, name);
 	},
 	buttons: {
-		back: {
+		cancel: {
 			buttonType: 'RED',
-			label: 'Back',
-			stepToMoveTo: 'identityName',
-			executeStep: executeModify,
+			label: 'Cancel',
+			stepToMoveTo: 'cancel',
 		},
 		next: {
 			buttonType: 'GREEN',
