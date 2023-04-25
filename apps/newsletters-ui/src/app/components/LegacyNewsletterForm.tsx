@@ -9,7 +9,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 import { makeBlankNewsletter } from '../blanks';
-import { ContentWrapper } from "../ContentWrapper";
+import { ContentWrapper } from '../ContentWrapper';
 import { ArrayInput } from './ArrayInput';
 import { LegacyNewsletterDetail } from './LegacyNewsletterDetails';
 import type { FieldDef, FieldValue } from './SchemaForm';

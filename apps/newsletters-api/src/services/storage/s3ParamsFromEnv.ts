@@ -1,10 +1,7 @@
-import type {AwsCredentialIdentityProvider} from "@aws-sdk/types";
-
 export type S3Params = {
 	bucket: string;
 	region: string;
 	profile: string;
-	credentials?: AwsCredentialIdentityProvider;
 };
 
 export const getS3Params = (): S3Params | undefined => {

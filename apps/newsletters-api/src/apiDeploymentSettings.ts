@@ -45,7 +45,7 @@ export const isServingReadEndpoints = () => {
 };
 
 export const isUsingInMemoryStorage = () => {
-	return process.env.NODE_ENV === 'production'
-		? false
-		: process.env.USE_LOCAL_STORAGE === 'true';
+	const shouldUseInMemory = process.env.USE_LOCAL_STORAGE === 'true';
+	console.log('shouldUseInMemory', shouldUseInMemory);
+	return shouldUseInMemory;
 };

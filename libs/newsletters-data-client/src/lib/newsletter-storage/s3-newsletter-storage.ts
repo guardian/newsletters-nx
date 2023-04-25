@@ -1,6 +1,6 @@
-import type {S3Client} from '@aws-sdk/client-s3';
-import {PutObjectCommand} from '@aws-sdk/client-s3';
-import {isNewsletterData} from '../newsletter-data-type';
+import type { S3Client } from '@aws-sdk/client-s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { isNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
 	NewsletterData,
@@ -10,8 +10,13 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import { NewsletterStorage } from './NewsletterStorage';
-import {objectToNewsletter} from "./objectToNewsletter";
-import {fetchObject, getListOfObjectsKeys, getNextId, objectExists} from './s3-functions';
+import { objectToNewsletter } from './objectToNewsletter';
+import {
+	fetchObject,
+	getListOfObjectsKeys,
+	getNextId,
+	objectExists,
+} from './s3-functions';
 
 export class S3NewsletterStorage implements NewsletterStorage {
 	readonly s3Client: S3Client;
@@ -51,7 +56,9 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const newIdentifier = `${draft.identityName}:${nextId}.json`;
 
 		try {
-			const newsletterWithSameKeyExists = await this.objectExists(newIdentifier);
+			const newsletterWithSameKeyExists = await this.objectExists(
+				newIdentifier,
+			);
 			if (newsletterWithSameKeyExists) {
 				return {
 					ok: false,
@@ -59,7 +66,6 @@ export class S3NewsletterStorage implements NewsletterStorage {
 					reason: undefined, // todo - add an appropriate type here
 				};
 			}
-
 		} catch (err) {
 			return {
 				ok: false,
@@ -102,7 +108,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	> {
 		// todo - implement this. We don't want to delete published newsletters - we will probably move them to a deleted folder
-		// todo - this function is not expose in the API layer - not required for MVP - Deletion will be an engineering task
+		//  this function is not exposed in the API layer; not required for MVP. Deletion will be an engineering task where required.
 		return Promise.resolve({
 			ok: false,
 			message: 'not implemented',
@@ -115,20 +121,23 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	> {
 		try {
 			const listOfObjectsKeys = await this.getListOfObjectsKeys();
-			const data: NewsletterData[] =[];
+			const data: NewsletterData[] = [];
 			await Promise.all(
 				listOfObjectsKeys.map(async (key) => {
 					const s3Response = await this.fetchObject(key);
-					const responseAsNewsletter = await objectToNewsletter(s3Response, key);
+					const responseAsNewsletter = await objectToNewsletter(
+						s3Response,
+						key,
+					);
 					if (responseAsNewsletter) {
 						data.push(responseAsNewsletter);
 					}
-				})
+				}),
 			);
 			return {
 				ok: true,
 				data,
-			}
+			};
 		} catch (error) {
 			return {
 				ok: false,
@@ -151,7 +160,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		});
 		if (matchingKey) {
 			const s3Object = await this.fetchObject(matchingKey);
-			const responseAsNewsletter = await objectToNewsletter(s3Object, matchingKey);
+			const responseAsNewsletter = await objectToNewsletter(
+				s3Object,
+				matchingKey,
+			);
 			if (responseAsNewsletter) {
 				return {
 					ok: true,
@@ -162,10 +174,12 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		return {
 			ok: false,
 			message: `failed to read newsletter with id ${listId}`,
-		}
+		};
 	}
 
-	async readByName(identityName: string): Promise<
+	async readByName(
+		identityName: string,
+	): Promise<
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	> {
 		const listOfObjectsKeys = await this.getListOfObjectsKeys();
@@ -176,7 +190,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		});
 		if (matchingKey) {
 			const s3Object = await this.fetchObject(matchingKey);
-			const responseAsNewsletter = await objectToNewsletter(s3Object, matchingKey);
+			const responseAsNewsletter = await objectToNewsletter(
+				s3Object,
+				matchingKey,
+			);
 			if (responseAsNewsletter) {
 				return {
 					ok: true,
@@ -188,7 +205,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			ok: false,
 			message: `failed to read newsletter with name ${identityName}`,
 			reason: undefined, // add an appropriate type here
-		}
+		};
 	}
 
 	async update(
@@ -209,13 +226,13 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const updatedNewsletter = {
 			...newsletterToUpdate.data,
 			...modifications,
-		}
+		};
 		if (!updatedNewsletter.key) {
 			return {
 				ok: false,
 				message: 'could not determine file key',
 				reason: undefined,
-			}
+			};
 		}
 		const updateNewsletterCommand = new PutObjectCommand({
 			Bucket: this.bucketName,
@@ -239,8 +256,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		}
 	}
 
-	private fetchObject = fetchObject(this)
-	private objectExists = objectExists(this)
+	private fetchObject = fetchObject(this);
+	private objectExists = objectExists(this);
 	private getListOfObjectsKeys = getListOfObjectsKeys(this);
 
 	getModificationError = NewsletterStorage.prototype.getModificationError;

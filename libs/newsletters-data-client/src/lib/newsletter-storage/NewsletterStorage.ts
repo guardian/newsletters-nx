@@ -9,7 +9,7 @@ import type {
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
 
-export const UNCHANGABLE_PROPERTIES: Readonly<string[]> = [
+export const IMMUTABLE_PROPERTIES: Readonly<string[]> = [
 	'listId',
 	'identityName',
 ];
@@ -54,10 +54,10 @@ export abstract class NewsletterStorage {
 		modifications: Partial<NewsletterData>,
 	): UnsuccessfulStorageResponse | undefined {
 		const problems: string[] = [];
-		const properiesChanged = Object.keys(modifications);
+		const propertiesChanged = Object.keys(modifications);
 
-		const forbiddenKeyChanges = properiesChanged.filter((property) =>
-			UNCHANGABLE_PROPERTIES.includes(property),
+		const forbiddenKeyChanges = propertiesChanged.filter((property) =>
+			IMMUTABLE_PROPERTIES.includes(property),
 		);
 
 		if (forbiddenKeyChanges.length > 0) {

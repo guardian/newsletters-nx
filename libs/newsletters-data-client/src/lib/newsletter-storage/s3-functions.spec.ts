@@ -12,7 +12,7 @@ const mockS3Response = {
 	},
 	Contents: [
 		{
-			Key: 'newsletters/',
+			Key: 'launched-newsletters/',
 			LastModified: '2023-04-24T14:01:09.000Z',
 			ETag: '"d41d8cd98f00b204e9800998ecf8427e"',
 			Size: 0,
@@ -23,7 +23,7 @@ const mockS3Response = {
 			},
 		},
 		{
-			Key: 'newsletters/someTitle:1.json',
+			Key: 'launched-newsletters/someTitle:1.json',
 			LastModified: '2023-04-24T14:04:32.000Z',
 			ETag: '"c4739e97d2e782ab9142b7cad4e36383"',
 			Size: 20,
@@ -34,7 +34,7 @@ const mockS3Response = {
 			},
 		},
 		{
-			Key: 'newsletters/someTitle:2.json',
+			Key: 'launched-newsletters/someTitle:2.json',
 			LastModified: '2023-04-24T14:02:32.000Z',
 			ETag: '"c4739e97d2e782ab9142b7cad4e36383"',
 			Size: 20,
@@ -45,7 +45,7 @@ const mockS3Response = {
 			},
 		},
 		{
-			Key: 'newsletters/someTitle:3.json',
+			Key: 'launched-newsletters/someTitle:3.json',
 			LastModified: '2023-04-24T14:02:32.000Z',
 			ETag: '"c4739e97d2e782ab9142b7cad4e36383"',
 			Size: 20,
@@ -56,7 +56,7 @@ const mockS3Response = {
 			},
 		},
 		{
-			Key: 'newsletters/someTitle:4.json',
+			Key: 'launched-newsletters/someTitle:4.json',
 			LastModified: '2023-04-24T14:02:32.000Z',
 			ETag: '"c4739e97d2e782ab9142b7cad4e36383"',
 			Size: 20,
@@ -71,23 +71,21 @@ const mockS3Response = {
 	Marker: '',
 	MaxKeys: 500,
 	Name: 'phill-newsletters-test',
-	Prefix: 'newsletters/',
+	Prefix: 'launched-newsletters/',
 };
 
 describe('s3-helper-functions', () => {
-	test('it fetches the id elements of a list of keys', () => {
+	test('it fetches the id elements of a list of keys', async () => {
 		const mockNewsletterStorage = {
 			s3Client: {
-				send: jest.fn(() => Promise.resolve(mockS3Response)),
+				send: jest.fn().mockResolvedValueOnce(mockS3Response),
 			},
 			bucketName: 'foo',
 			OBJECT_PREFIX: 'launched-newsletters',
 		} as unknown as S3NewsletterStorage;
 
 		const expectedResult = [1, 2, 3, 4];
-
-		expect(getObjectKeyIdNumbers(mockNewsletterStorage)).toEqual(
-			expectedResult,
-		);
+		const response = await getObjectKeyIdNumbers(mockNewsletterStorage);
+		expect(response).toEqual(expectedResult);
 	});
 });

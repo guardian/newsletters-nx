@@ -187,6 +187,13 @@ aws s3 cp s3://",
                 },
                 "/newsletters/TEST/newsletters-api /tmp --recursive
 chown -R ubuntu /tmp
+export STAGE=TEST
+export NEWSLETTER_BUCKET_NAME=",
+                {
+                  "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                "
+export USE_LOCAL_STORAGE=false
 su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/apps/newsletters-api/main.cjs'",
               ],
             ],

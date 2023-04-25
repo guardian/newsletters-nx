@@ -1,27 +1,24 @@
-import { S3Client } from '@aws-sdk/client-s3';
-import { fromIni } from '@aws-sdk/credential-providers';
-import { S3DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import {
-	S3NewsletterStorage
-} from "../../../../../libs/newsletters-data-client/src/lib/newsletter-storage/s3-newsletter-storage";
-import type { S3Params } from './s3ParamsFromEnv';
+	S3DraftStorage,
+	S3NewsletterStorage,
+} from '@newsletters-nx/newsletters-data-client';
+import { getS3Client } from './s3-client-factory';
 
-const makeS3DraftStorageInstance = (params: S3Params): S3DraftStorage => {
-	const s3Client = new S3Client({
-		region: params.region,
-		credentials: fromIni({ profile: params.profile }),
-	});
-
-	return new S3DraftStorage(params.bucket, s3Client);
+const getS3BucketName = (): string => {
+	const { NEWSLETTER_BUCKET_NAME } = process.env;
+	if (!NEWSLETTER_BUCKET_NAME) {
+		throw new Error(
+			'NEWSLETTER_BUCKET_NAME is undefined. Check config settings',
+		);
+	}
+	return NEWSLETTER_BUCKET_NAME;
+};
+const makeS3DraftStorageInstance = (): S3DraftStorage => {
+	return new S3DraftStorage(getS3BucketName(), getS3Client());
 };
 
-const makeNewsletterStorageInstance = (params: S3Params): S3NewsletterStorage => {
-	const s3Client = new S3Client({
-		region: params.region,
-		credentials: fromIni({ profile: params.profile }),
-	});
-
-	return new S3NewsletterStorage(params.bucket, s3Client);
+const makeNewsletterStorageInstance = (): S3NewsletterStorage => {
+	return new S3NewsletterStorage(getS3BucketName(), getS3Client());
 };
 
 export { makeS3DraftStorageInstance, makeNewsletterStorageInstance };

@@ -1,5 +1,5 @@
-import { GetObjectCommand, ListObjectsCommand} from "@aws-sdk/client-s3";
-import type {S3NewsletterStorage} from './s3-newsletter-storage';
+import { GetObjectCommand, ListObjectsCommand } from '@aws-sdk/client-s3';
+import type { S3NewsletterStorage } from './s3-newsletter-storage';
 
 // export const deleteObject =
 // 	(s3DraftStorage: S3DraftStorage) => async (key: string) => {
@@ -30,10 +30,10 @@ export const getListOfObjectsKeys =
 				MaxKeys: 500,
 			}),
 		);
-		const {Contents = []} = listOutput;
-		return Contents.map((item) => item.Key).filter(
-			(key) => typeof key === 'string',
-		) as string[];
+		const { Contents = [] } = listOutput;
+		return Contents.map((item) => item.Key)
+			.filter((key) => typeof key === 'string')
+			.filter((item) => item !== s3NewsletterStorage.OBJECT_PREFIX) as string[];
 	};
 
 export const getNextId = async (
@@ -56,32 +56,37 @@ export const getObjectKeyIdNumbers = async (
 		}),
 	);
 	const keys = s3Response.Contents?.map((item) => item.Key) ?? [];
+
 	// @ts-ignore
 	return keys.reduce((acc, cur) => {
 		if (typeof cur === 'string') {
 			// @ts-ignore
-			return [...acc, parseInt(cur.split(':').pop().split('.')[0])];
+			const numericId = parseInt(cur.split(':').pop().split('.')[0], 10);
+			if (isNaN(numericId)) {
+				return acc;
+			}
+			return [...acc, numericId];
 		}
 		return acc;
 	}, []);
 };
 
-
-export const objectExists = (s3NewsletterStorage: S3NewsletterStorage) => async (Key: string) => {
-	try {
-		await s3NewsletterStorage.s3Client.send(
-			new GetObjectCommand({
-				Bucket: s3NewsletterStorage.bucketName,
-				Key
-			}),
-		);
-	} catch (e: unknown) {
-		if (e instanceof Error) {
-			if (e.name === 'NoSuchKey') {
-				return false;
+export const objectExists =
+	(s3NewsletterStorage: S3NewsletterStorage) => async (Key: string) => {
+		try {
+			await s3NewsletterStorage.s3Client.send(
+				new GetObjectCommand({
+					Bucket: s3NewsletterStorage.bucketName,
+					Key,
+				}),
+			);
+		} catch (e: unknown) {
+			if (e instanceof Error) {
+				if (e.name === 'NoSuchKey') {
+					return false;
+				}
 			}
+			throw e;
 		}
-		throw e;
-	}
-	return true;
-};
+		return true;
+	};
