@@ -45,6 +45,12 @@ export const getNextId = async (
 	const currentHighestId = existingNewsletterIds.sort((a, b) => a - b).pop();
 	return currentHighestId ? currentHighestId + 1 : 1;
 };
+
+const getStringId = (key: string): string => {
+	const filenameWithExtension= key.split(':').pop();
+	const stringId = filenameWithExtension!.split('.')[0];
+	return stringId!;
+}
 export const getObjectKeyIdNumbers = async (
 	s3NewsletterStorage: S3NewsletterStorage,
 ): Promise<number[]> => {
@@ -57,18 +63,17 @@ export const getObjectKeyIdNumbers = async (
 	);
 	const keys = s3Response.Contents?.map((item) => item.Key) ?? [];
 
-	// @ts-ignore
+	const ids: number[] = [];
 	return keys.reduce((acc, cur) => {
 		if (typeof cur === 'string') {
-			// @ts-ignore
-			const numericId = parseInt(cur.split(':').pop().split('.')[0], 10);
+			const numericId = parseInt(getStringId(cur), 10);
 			if (isNaN(numericId)) {
 				return acc;
 			}
 			return [...acc, numericId];
 		}
 		return acc;
-	}, []);
+	}, ids);
 };
 
 export const objectExists =
