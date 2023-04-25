@@ -47,10 +47,10 @@ export const getNextId = async (
 };
 
 const getStringId = (key: string): string => {
-	const filenameWithExtension= key.split(':').pop();
+	const filenameWithExtension = key.split(':').pop();
 	const stringId = filenameWithExtension!.split('.')[0];
 	return stringId!;
-}
+};
 export const getObjectKeyIdNumbers = async (
 	s3NewsletterStorage: S3NewsletterStorage,
 ): Promise<number[]> => {

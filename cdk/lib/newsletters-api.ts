@@ -10,6 +10,13 @@ import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
 import { type App, Duration } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import {
+	Effect,
+	PolicyStatement,
+	Role,
+	ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
+import { GuPolicy } from '@guardian/cdk/lib/constructs/iam';
 
 export interface NewslettersApiProps extends GuStackProps {
 	app: string; // Force app to be a required prop
@@ -20,27 +27,8 @@ export class NewslettersApi extends GuStack {
 	constructor(scope: App, id: string, props: NewslettersApiProps) {
 		super(scope, id, props);
 
-		this.setUpS3Bucket(props);
-
 		this.setUpNodeEc2(props);
 	}
-
-	/**
-	 * Creates (empty) S3 bucket on initial build for the newsletters data to sit in.
-	 */
-	private setUpS3Bucket = (props: NewslettersApiProps) => {
-		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
-		const bucketSSMParameterName = `/${this.stage}/${this.stack}/${props.app}/s3BucketName`;
-		const bucketName = StringParameter.valueForStringParameter(
-			this,
-			bucketSSMParameterName,
-		);
-		new GuS3Bucket(this, 'DataBucket', {
-			bucketName,
-			app: props.app,
-			versioned: true,
-		});
-	};
 
 	/**
 	 * Generates user data for startup of EC2 instance
@@ -64,13 +52,51 @@ export class NewslettersApi extends GuStack {
 			'chown -R ubuntu /tmp', // change ownership of the copied file to ubuntu user
 			`export STAGE=${this.stage}`, // sets the stage environment variable
 			`export NEWSLETTER_BUCKET_NAME=${bucketName}`, // sets the bucket name environment variable
-			`export USE_LOCAL_STORAGE=false`,
+			`export USE_LOCAL_STORAGE=false`, // use s3 when running on cloud - todo: this naming could be improved
 			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} /tmp/apps/newsletters-api/main.cjs'`, // run the file as ubuntu user using pm2
 		].join('\n');
 	};
 
 	private setUpNodeEc2 = (props: NewslettersApiProps) => {
 		const { app, domainName } = props;
+
+		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
+		const bucketSSMParameterName = `/${this.stage}/${this.stack}/${props.app}/s3BucketName`;
+		const bucketName = StringParameter.valueForStringParameter(
+			this,
+			bucketSSMParameterName,
+		);
+		const dataStorageBucket = new GuS3Bucket(this, 'DataBucket', {
+			bucketName,
+			app: props.app,
+			versioned: true,
+		});
+
+		const s3AccessPolicy = new GuPolicy(this, `${app}-InstancePolicy`, {
+			policyName: 'root',
+			statements: [
+				new PolicyStatement({
+					sid: 'writeToDataStorageBucketPolicy',
+					effect: Effect.ALLOW,
+					actions: [
+						's3:PutObject',
+						's3:PutObjectAcl',
+						's3:GetObject',
+						's3:GetObjectAcl',
+						's3:GetObjectVersion',
+						's3:DeleteObject',
+						's3:ListBucket',
+						's3:DeleteObject',
+						's3:DeleteObjectVersion',
+					],
+					resources: [
+						`${dataStorageBucket.bucketArn}/*`,
+						`${dataStorageBucket.bucketArn}`,
+					],
+				}),
+			],
+		});
+
 		/**
 		 *  Sets up Node app to be run in EC2
 		 */
@@ -81,6 +107,9 @@ export class NewslettersApi extends GuStack {
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			userData: this.getUserData(app),
+			roleConfiguration: {
+				additionalPolicies: [s3AccessPolicy],
+			},
 			app,
 		});
 

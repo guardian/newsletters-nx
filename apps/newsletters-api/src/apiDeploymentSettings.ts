@@ -44,8 +44,5 @@ export const isServingReadEndpoints = () => {
 	return undefinedAndNotProduction || isApiRead || isApiReadWrite;
 };
 
-export const isUsingInMemoryStorage = () => {
-	const shouldUseInMemory = process.env.USE_LOCAL_STORAGE === 'true';
-	console.log('shouldUseInMemory', shouldUseInMemory);
-	return shouldUseInMemory;
-};
+export const isUsingInMemoryStorage = () =>
+	process.env.USE_LOCAL_STORAGE === 'true';
