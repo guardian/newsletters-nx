@@ -1,6 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -62,6 +61,4 @@ export const ophanLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: 'finish',
 		},
 	},
-	canSkipTo: true,
-	executeSkip: executeSkip,
 };

@@ -1,7 +1,6 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -83,6 +82,4 @@ export const brazeLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: getNextStepId,
 		},
 	},
-	canSkipTo: true,
-	executeSkip: executeSkip,
 };
