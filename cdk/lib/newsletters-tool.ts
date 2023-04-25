@@ -14,6 +14,10 @@ import {
 	ListenerAction,
 	UnauthenticatedAction,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { GuPolicy } from '@guardian/cdk/lib/constructs/iam';
+import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
 
 export interface NewslettersToolProps extends GuStackProps {
 	app: string; // Force app to be a required prop
@@ -36,7 +40,11 @@ export class NewslettersTool extends GuStack {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
-
+		const bucketSSMParameterName = `/${this.stage}/${this.stack}/newsletters-api/s3BucketName`;
+		const bucketName = StringParameter.valueForStringParameter(
+			this,
+			bucketSSMParameterName,
+		);
 		return [
 			'#!/bin/bash', // "Shebang" to instruct the program loader to run this as a bash script
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
@@ -48,6 +56,9 @@ export class NewslettersTool extends GuStack {
 			`export NEWSLETTERS_API_READ=true`,
 			`export NEWSLETTERS_API_READ_WRITE=true`,
 			`export NEWSLETTERS_UI_SERVE=true`,
+			`export STAGE=${this.stage}`, // sets the stage environment variable
+			`export NEWSLETTER_BUCKET_NAME=${bucketName}`, // sets the bucket name environment variable
+			`export USE_LOCAL_STORAGE=false`, // use s3 when running on cloud - todo: this naming could be improved
 			`cd /opt/${app}`, // Run from the same folder as when running locally to reduce the difference.
 			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/index.cjs'`, // run the main entrypoint file as ubuntu user using pm2
 		].join('\n');
@@ -55,6 +66,43 @@ export class NewslettersTool extends GuStack {
 
 	private setUpNodeEc2 = (props: NewslettersToolProps) => {
 		const { app, domainName } = props;
+
+		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
+		const bucketSSMParameterName = `/${this.stage}/${this.stack}/newsletters-api/s3BucketName`;
+		const bucketName = StringParameter.valueForStringParameter(
+			this,
+			bucketSSMParameterName,
+		);
+		const dataStorageBucket = new GuS3Bucket(this, 'DataBucket', {
+			bucketName,
+			app: props.app,
+			versioned: true,
+		});
+
+		const s3AccessPolicy = new GuPolicy(this, `${app}-InstancePolicy`, {
+			policyName: 'root',
+			statements: [
+				new PolicyStatement({
+					sid: 'writeToDataStorageBucketPolicy',
+					effect: Effect.ALLOW,
+					actions: [
+						's3:PutObject',
+						's3:PutObjectAcl',
+						's3:GetObject',
+						's3:GetObjectAcl',
+						's3:GetObjectVersion',
+						's3:DeleteObject',
+						's3:ListBucket',
+						's3:DeleteObject',
+						's3:DeleteObjectVersion',
+					],
+					resources: [
+						`${dataStorageBucket.bucketArn}/*`,
+						`${dataStorageBucket.bucketArn}`,
+					],
+				}),
+			],
+		});
 
 		/** Sets up Node app to be run in EC2 */
 		const ec2App = new GuNodeApp(this, {
@@ -66,6 +114,9 @@ export class NewslettersTool extends GuStack {
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			// Instructions to set up the environment in the instance
 			userData: this.getUserData(app),
+			roleConfiguration: {
+				additionalPolicies: [s3AccessPolicy],
+			},
 			app,
 			accessLogging: {
 				enabled: true,
