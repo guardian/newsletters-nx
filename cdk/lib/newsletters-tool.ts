@@ -36,7 +36,10 @@ export class NewslettersTool extends GuStack {
 	 * User data is a set of instructions to supply to the instance at launch
 	 * @see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 	 */
-	private getUserData = (app: NewslettersToolProps['app'], bucketName: string) => {
+	private getUserData = (
+		app: NewslettersToolProps['app'],
+		bucketName: string,
+	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);

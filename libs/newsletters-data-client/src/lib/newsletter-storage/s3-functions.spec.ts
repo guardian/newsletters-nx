@@ -1,5 +1,12 @@
-import { getObjectKeyIdNumbers } from './s3-functions';
+import { getNextId, getObjectKeyIdNumbers, objectExists } from './s3-functions';
 import type { S3NewsletterStorage } from './s3-newsletter-storage';
+
+class MockError extends Error {
+	constructor(message: string, name: string) {
+		super(message);
+		this.name = name;
+	}
+}
 
 const mockS3Response = {
 	$metadata: {
@@ -74,18 +81,90 @@ const mockS3Response = {
 	Prefix: 'launched-newsletters/',
 };
 
-describe('s3-helper-functions', () => {
-	test('it fetches the id elements of a list of keys', async () => {
-		const mockNewsletterStorage = {
-			s3Client: {
-				send: jest.fn().mockResolvedValueOnce(mockS3Response),
-			},
-			bucketName: 'foo',
-			OBJECT_PREFIX: 'launched-newsletters',
-		} as unknown as S3NewsletterStorage;
+describe('s3-functions', () => {
+	describe('getObjectKeyIdNumbers', () => {
+		test('it fetches the id elements of a list of keys', async () => {
+			const mockNewsletterStorage = {
+				s3Client: {
+					send: jest.fn().mockResolvedValueOnce(mockS3Response),
+				},
+				bucketName: 'foo',
+				OBJECT_PREFIX: 'launched-newsletters',
+			} as unknown as S3NewsletterStorage;
 
-		const expectedResult = [1, 2, 3, 4];
-		const response = await getObjectKeyIdNumbers(mockNewsletterStorage);
-		expect(response).toEqual(expectedResult);
+			const expectedResult = [1, 2, 3, 4];
+			const response = await getObjectKeyIdNumbers(mockNewsletterStorage);
+			expect(response).toEqual(expectedResult);
+		});
+	});
+	describe('getNextId', () => {
+		test('it returns the next id where there are existing ids', () => {
+			const mockNewsletterStorage = {
+				s3Client: {
+					send: jest.fn().mockResolvedValueOnce(mockS3Response),
+				},
+				bucketName: 'foo',
+				OBJECT_PREFIX: 'launched-newsletters',
+			} as unknown as S3NewsletterStorage;
+			void expect(getNextId(mockNewsletterStorage)).resolves.toEqual(5);
+		});
+		test('it returns 1 where adding the first item', () => {
+			const mockS3ResponseWithoutContent = { ...mockS3Response, Contents: [] };
+			const mockNewsletterStorage = {
+				s3Client: {
+					send: jest.fn().mockResolvedValueOnce(mockS3ResponseWithoutContent),
+				},
+				bucketName: 'foo',
+				OBJECT_PREFIX: 'launched-newsletters',
+			} as unknown as S3NewsletterStorage;
+			void expect(getNextId(mockNewsletterStorage)).resolves.toEqual(1);
+		});
+	});
+
+	describe('objectExists', () => {
+		test('it returns true when the object exists', () => {
+			const mockNewsletterStorage = {
+				s3Client: {
+					send: jest.fn().mockResolvedValueOnce({ foo: 'bar' }),
+				},
+				bucketName: 'foo',
+				OBJECT_PREFIX: 'launched-newsletters',
+			} as unknown as S3NewsletterStorage;
+			void expect(
+				objectExists(mockNewsletterStorage)('someTitle:1'),
+			).resolves.toEqual(true);
+		});
+		test('it returns false where we get a 404 from s3', () => {
+			const mockNewsletterStorage = {
+				s3Client: {
+					send: jest
+						.fn()
+						.mockRejectedValueOnce(
+							new MockError(
+								'NoSuchKey: The specified key does not exist.',
+								'NoSuchKey',
+							),
+						),
+				},
+				bucketName: 'foo',
+				OBJECT_PREFIX: 'launched-newsletters',
+			} as unknown as S3NewsletterStorage;
+			void expect(
+				objectExists(mockNewsletterStorage)('someTitle:1'),
+			).resolves.toEqual(false);
+		});
+		test('throws unknown errors', () => {
+			const mockError = new MockError('Something terrible happened.', 'BANG!');
+			const mockNewsletterStorage = {
+				s3Client: {
+					send: jest.fn().mockRejectedValueOnce(mockError),
+				},
+				bucketName: 'foo',
+				OBJECT_PREFIX: 'launched-newsletters',
+			} as unknown as S3NewsletterStorage;
+			void expect(
+				objectExists(mockNewsletterStorage)('someTitle:1'),
+			).rejects.toEqual(mockError);
+		});
 	});
 });
