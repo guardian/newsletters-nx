@@ -1,8 +1,10 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
 
-export const createDraftNewsletterLayout: WizardStepLayout = {
+export const createDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown: `# Start creating a newsletter
 
 Welcome!  This wizard will guide you through the process of creating a newsletter using email-rendering.
@@ -20,7 +22,7 @@ The first step is to enter the name of your newsletter, for example **Down to Ea
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'category',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const name = stepData.formData ? stepData.formData['name'] : undefined;
 				return name ? undefined : 'NO NAME PROVIDED';
@@ -30,4 +32,6 @@ The first step is to enter the name of your newsletter, for example **Down to Ea
 	},
 	schema: formSchemas.startDraftNewsletter,
 	role: 'CREATE_START',
+	canSkipTo: true,
+	executeSkip: executeCreate,
 };

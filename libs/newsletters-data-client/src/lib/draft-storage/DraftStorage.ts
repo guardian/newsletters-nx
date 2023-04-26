@@ -1,29 +1,14 @@
 import type { DraftNewsletterData } from '../newsletter-data-type';
 import { isDraftNewsletterData } from '../newsletter-data-type';
+import type {
+	SuccessfulStorageResponse,
+	UnsuccessfulStorageResponse,
+} from '../storage-response-types';
 
 export type DraftWithoutId = DraftNewsletterData & { listId: undefined };
 export type DraftWithId = DraftNewsletterData & { listId: number };
 
 export const isDraft = isDraftNewsletterData;
-
-export enum StorageRequestFailureReason {
-	NotFound,
-	InvalidDataInput,
-	DataInStoreNotValid,
-	S3Failure,
-	NoCredentials,
-}
-
-export type SuccessfulStorageResponse<T> = {
-	ok: true;
-	data: T;
-};
-
-export type UnsuccessfulStorageResponse = {
-	ok: false;
-	message: string;
-	reason?: StorageRequestFailureReason;
-};
 
 export abstract class DraftStorage {
 	abstract createDraftNewsletter(

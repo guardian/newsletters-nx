@@ -1,29 +1,35 @@
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
+import { ContentWrapper } from './ContentWrapper';
+import { DefaultError } from './DefaultError';
+
+const getErrorMessage = (error: unknown): string => {
+	if (typeof error === 'string') {
+		return error;
+	}
+	if (error instanceof Error) {
+		return error.message;
+	}
+	return 'Unknown Error';
+};
 
 const parseError = (error: unknown): { status: number; statusText: string } => {
 	if (isRouteErrorResponse(error)) {
 		return error;
 	}
-
 	return {
 		status: 500,
-		statusText: 'Unknown Error',
+		statusText: getErrorMessage(error),
 	};
 };
-
 export const ErrorPage = () => {
 	const error = useRouteError();
+
 	const { status, statusText } = parseError(error);
 
-	return (
-		<div id="error-page">
-			<h1>Oops!</h1>
-			<p>Sorry, an unexpected error has occurred.</p>
-			<p>
-				<i>
-					{status} : {statusText}
-				</i>
-			</p>
-		</div>
-	);
+	switch (status) {
+		case 404:
+			return <ContentWrapper>Not Found</ContentWrapper>;
+		default:
+			return <DefaultError status={status} statusText={statusText} />;
+	}
 };

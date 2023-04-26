@@ -1,15 +1,18 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
-import { formSchemas } from './formSchemas';
+import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Modify Identity Name
+# Modify Braze Values
 
-This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
+These are tracking fields used by Braze.
 
-It has been calculated automatically from the name **{{name}}**, but you can change it if you need.
+They have been calculated automatically from the name **{{name}}**, but you can change them if you need.
 
 `.trim();
 
@@ -18,7 +21,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const editIdentityNameLayout: WizardStepLayout = {
+export const editBrazeLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -31,20 +34,22 @@ export const editIdentityNameLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'signUp',
+			stepToMoveTo: 'identityName',
 			executeStep: executeModify,
 		},
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'braze',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: () => {
-				// TO DO - check that identityName does not already exist in other draft or actual newsletter
+				// TO DO - check that braze values do not already exist in other draft or actual newsletter
 				return undefined;
 			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.identityName,
-	parentStepId: 'identityName',
+	schema: formSchemas.braze,
+	parentStepId: 'braze',
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

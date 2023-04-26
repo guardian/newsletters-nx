@@ -1,5 +1,3 @@
-import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
 import type { WizardLayout, WizardStepData } from './types';
 
@@ -61,7 +59,7 @@ const mockWizardLayout: WizardLayout = {
 	},
 };
 
-const mockStorage: DraftStorage = new InMemoryDraftStorage();
+const mockStorage = {};
 
 describe('stateMachineButtonPressed', () => {
 	it('should throw if buttonPressed is invalid', async () => {
@@ -70,6 +68,7 @@ describe('stateMachineButtonPressed', () => {
 				'poop',
 				mockStepData,
 				mockWizardLayout,
+				false,
 				mockStorage,
 			),
 		).rejects.toThrowError('Button poop not found in step step1');
@@ -86,6 +85,7 @@ it('should execute step and move to next step if next button is pressed', async 
 			'next',
 			mockStepData,
 			mockWizardLayout,
+			false,
 			mockStorage,
 		);
 		expect(executeStepMock).toHaveBeenCalledWith(
@@ -109,6 +109,7 @@ it('should validate before step change and return error message if there is vali
 			'next',
 			mockStepData,
 			mockWizardLayout,
+			false,
 			mockStorage,
 		);
 		expect(onBeforeStepChangeValidateMock).toHaveBeenCalledWith(
@@ -132,6 +133,7 @@ it('should validate after step start and return error message if there is valida
 			'next',
 			mockStepData,
 			mockWizardLayout,
+			false,
 			mockStorage,
 		);
 		expect(onAfterStepStartValidateMock).toHaveBeenCalledWith(mockStepData);
@@ -150,6 +152,7 @@ it('should fail to execute step and return error message if there is validation 
 			'next',
 			mockStepData,
 			mockWizardLayout,
+			false,
 			mockStorage,
 		);
 		expect(executeStepMock).toHaveBeenCalled;
@@ -168,6 +171,7 @@ it('should move to previous step if prev button is pressed', async () => {
 			'back',
 			mockStepData,
 			mockWizardLayout,
+			false,
 			mockStorage,
 		);
 		expect(executeStepMock).toHaveBeenCalledWith(

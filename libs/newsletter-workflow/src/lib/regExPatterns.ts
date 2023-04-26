@@ -12,4 +12,5 @@ export const regExPatterns = {
 	seriesTag: /{{seriesTag}}/g,
 	composerTag: /{{composerTag}}/g,
 	composerCampaignTag: /{{composerCampaignTag}}/g,
+	answer: /{{answer}}/g,
 } as const;

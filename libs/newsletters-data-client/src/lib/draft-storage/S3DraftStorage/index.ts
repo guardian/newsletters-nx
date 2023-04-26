@@ -1,11 +1,11 @@
 import type { S3Client } from '@aws-sdk/client-s3';
 import type {
-	DraftWithId,
-	DraftWithoutId,
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
-} from '../DraftStorage';
-import { DraftStorage, StorageRequestFailureReason } from '../DraftStorage';
+} from '../../storage-response-types';
+import { StorageRequestFailureReason } from '../../storage-response-types';
+import type { DraftWithId, DraftWithoutId } from '../DraftStorage';
+import { DraftStorage } from '../DraftStorage';
 import { errorToResponse } from './errorToResponse';
 import { objectToDraftWithId } from './objectToDraftWithId';
 import {

@@ -1,18 +1,24 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Specify the sign up page copy
+# Specify the sign up embed copy
 
-Please enter the headline and description for the sign up page for **{{name}}**
+Please enter the description for the sign up embed for **{{name}}**
 
-![Headline and Description](https://i.guim.co.uk/img/uploads/2023/03/15/signUp.png?quality=85&dpr=2&width=300&s=3b06497952cbb042084787fd324ebe6c)
+![Sign Up Embed Description](https://i.guim.co.uk/img/uploads/2023/04/20/signUp-embed.png?quality=85&dpr=2&width=300&s=48b7b65b3dcbff5fcd4b78c562a4175e)
 
 `.trim();
 
@@ -21,9 +27,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const signUpLayout: WizardStepLayout = {
+export const signUpEmbedLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Sign Up',
+	label: 'Sign Up Embed',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -35,22 +41,16 @@ export const signUpLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'designBrief',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
-		finish: {
+		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'identityName',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const headline = stepData.formData
-					? stepData.formData['headline']
-					: undefined;
-				if (!headline) {
-					return 'NO HEADLINE PROVIDED';
-				}
 				const description = stepData.formData
-					? stepData.formData['description']
+					? stepData.formData['signUpEmbedDescription']
 					: undefined;
 				if (!description) {
 					return 'NO DESCRIPTION PROVIDED';
@@ -60,5 +60,7 @@ export const signUpLayout: WizardStepLayout = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.signUp,
+	schema: formSchemas.signUpEmbed,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

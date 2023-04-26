@@ -1,5 +1,8 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -27,7 +30,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const brazeLayout: WizardStepLayout = {
+export const brazeLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Braze',
 	dynamicMarkdown(requestData, responseData) {
@@ -79,7 +82,9 @@ export const brazeLayout: WizardStepLayout = {
 		next: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'ophan',
+			stepToMoveTo: getNextStepId,
 		},
 	},
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

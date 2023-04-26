@@ -1,14 +1,5 @@
-import type {
-	DraftStorage,
-	DraftWithId,
-	FormDataRecord,
-} from '@newsletters-nx/newsletters-data-client';
-import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
-import type {
-	CurrentStepRouteRequest,
-	WizardLayout,
-	WizardStepData,
-} from './types';
+import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
+import type { WizardStepData, WizardStepLayout } from './types';
 
 export const makeStepDataWithErrorMessage = (
 	errorMessage: string,
@@ -28,10 +19,9 @@ export const makeStepDataWithErrorMessage = (
 export const validateIncomingFormData = (
 	stepId: string,
 	formData: FormDataRecord | undefined,
-	wizardLayout: WizardLayout,
+	wizardStepLayout: WizardStepLayout<unknown>,
 ) => {
-	const currentStepLayout = wizardLayout[stepId];
-	const formSchemaForIncomingStep = currentStepLayout?.schema;
+	const formSchemaForIncomingStep = wizardStepLayout.schema;
 
 	if (formSchemaForIncomingStep) {
 		if (!formData) {
@@ -49,31 +39,4 @@ export const validateIncomingFormData = (
 	}
 
 	return false;
-};
-
-export const getExistingItem = async (
-	requestBody: CurrentStepRouteRequest,
-	storageInstance: DraftStorage,
-): Promise<DraftWithId | undefined> => {
-	const listId =
-		typeof requestBody.formData?.['listId'] === 'number'
-			? requestBody.formData['listId']
-			: undefined;
-	const existingItemId = listId ?? requestBody.id;
-
-	if (!existingItemId) {
-		return undefined;
-	}
-	const idAsNumber = +existingItemId;
-
-	const storageResponse = await storageInstance.getDraftNewsletter(idAsNumber);
-	if (!storageResponse.ok) {
-		throw new StateMachineError(
-			`cannot load draft newsletter with id ${existingItemId}`,
-			StateMachineErrorCode.StorageAccessError,
-			false,
-		);
-	}
-
-	return storageResponse.data;
 };

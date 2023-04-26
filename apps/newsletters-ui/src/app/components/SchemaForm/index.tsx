@@ -1,5 +1,7 @@
-import type { z, ZodTypeAny } from 'zod';
-import { ZodArray, ZodOptional, ZodString } from 'zod';
+import type { z, ZodRawShape, ZodTypeAny } from 'zod';
+import { ZodArray, ZodEnum, ZodObject, ZodString } from 'zod';
+import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
 
@@ -17,27 +19,21 @@ interface Props<T extends z.ZodRawShape> {
 	validationWarnings: Partial<Record<keyof T, string>>;
 }
 
-const recursiveUnwrap = (field: ZodTypeAny): ZodTypeAny => {
-	if (!(field instanceof ZodOptional)) {
-		return field;
-	}
-	const unwrapped = field.unwrap() as ZodTypeAny;
-	if (unwrapped instanceof ZodOptional) {
-		return recursiveUnwrap(unwrapped as ZodOptional<ZodTypeAny>);
-	}
-	return unwrapped;
-};
-
-const getArrayItemType = (zod: ZodTypeAny): FieldDef['arrayItemType'] => {
+const getArrayItemTypeAndRecordSchema = (
+	zod: ZodTypeAny,
+): [FieldDef['arrayItemType'], ZodObject<ZodRawShape> | undefined] => {
 	const unwrappedZod = recursiveUnwrap(zod);
 	if (!(unwrappedZod instanceof ZodArray)) {
-		return undefined;
+		return [undefined, undefined];
 	}
 	const elementSchema = unwrappedZod.element as ZodTypeAny;
 	if (elementSchema instanceof ZodString) {
-		return 'string';
+		return ['string', undefined];
 	}
-	return 'unsupported';
+	if (elementSchema instanceof ZodObject) {
+		return ['record', elementSchema];
+	}
+	return ['unsupported', undefined];
 };
 
 /**
@@ -66,23 +62,15 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			continue;
 		}
 
-		let type: string;
-		if (zod.isOptional()) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-			type = zod._def.innerType._def.typeName as unknown as string;
-		} else {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-			type = zod._def.typeName as unknown as string;
-		}
+		const innerZod = recursiveUnwrap(zod);
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
+		const type = innerZod._def.typeName as unknown as string;
 
 		const enumOptions =
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-			zod._def.typeName === 'ZodEnum'
-				? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-				  (zod._def.values as unknown as string[])
-				: undefined;
+			innerZod instanceof ZodEnum ? (innerZod.options as string[]) : undefined;
 
-		const arrayItemType = getArrayItemType(zod);
+		const [arrayItemType, recordSchema] = getArrayItemTypeAndRecordSchema(zod);
 
 		fields.push({
 			key,
@@ -93,6 +81,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			enumOptions,
 			readOnly: readOnlyKeys.includes(key),
 			arrayItemType,
+			recordSchema,
 		});
 	}
 

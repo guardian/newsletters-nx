@@ -1,11 +1,39 @@
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { getStringValuesFromRecord } from '../../getValuesFromRecord';
+import { regExPatterns } from '../../regExPatterns';
 
-const markdownToDisplay = `# Finished
+const markdownTemplate = `# Finished
 
-You have reached the end of the wizard. The newsletter has been launched.
+You have reached the end of the wizard. **{{name}}** has been launched!
+
+It has id {{listId}}.
+
+You can see its details on the [details page](/newsletters/{{identityName}})
+
 `.trim();
 
 export const finishLayout: WizardStepLayout = {
-	staticMarkdown: markdownToDisplay,
+	staticMarkdown: markdownTemplate,
+	dynamicMarkdown(requestData, responseData) {
+		if (!responseData) {
+			return markdownTemplate;
+		}
+		const [
+			newNewsletterListId = '',
+			newNewsletterName = '',
+			newNewsletterIdentityName = '',
+		] = getStringValuesFromRecord(responseData, [
+			'newNewsletterListId',
+			'newNewsletterName',
+			'newNewsletterIdentityName',
+		]);
+
+		const populated = markdownTemplate
+			.replace(regExPatterns.listId, newNewsletterListId)
+			.replace(regExPatterns.name, newNewsletterName)
+			.replace(regExPatterns.identityName, newNewsletterIdentityName);
+
+		return populated;
+	},
 	buttons: {},
 };

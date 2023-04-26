@@ -1,11 +1,9 @@
+import { StorageRequestFailureReason } from '../storage-response-types';
 import type {
-	DraftStorage,
-	DraftWithId,
-	DraftWithoutId,
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
-} from './DraftStorage';
-import { StorageRequestFailureReason } from './DraftStorage';
+} from '../storage-response-types';
+import type { DraftStorage, DraftWithId, DraftWithoutId } from './DraftStorage';
 
 // TO DO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
@@ -17,7 +15,11 @@ export class InMemoryDraftStorage implements DraftStorage {
 	}
 
 	createDraftNewsletter(draft: DraftWithoutId) {
-		const newDraftWithListId = { ...draft, listId: this.getNextId() };
+		const newDraftWithListId: DraftWithId = {
+			...draft,
+			listId: this.getNextId(),
+			creationTimeStamp: Date.now(),
+		};
 		this.memory.push(newDraftWithListId);
 		const response: SuccessfulStorageResponse<DraftWithId> = {
 			ok: true,

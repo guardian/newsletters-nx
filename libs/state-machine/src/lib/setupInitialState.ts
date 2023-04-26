@@ -1,40 +1,53 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
-import type { CurrentStepRouteRequest, WizardStepData } from './types';
+import type {
+	CurrentStepRouteRequest,
+	GenericStorageInterface,
+	WizardLayout,
+	WizardStepData,
+} from './types';
 
-export async function setupInitialState(
+export async function setupInitialState<T extends GenericStorageInterface>(
 	requestBody: CurrentStepRouteRequest,
-	storageInstance?: DraftStorage,
+	wizardLayout: WizardLayout<T>,
+	storageInstance?: T,
 ): Promise<WizardStepData> {
-	if (!storageInstance) {
+	const step = wizardLayout[requestBody.stepId];
+
+	if (!step) {
 		throw new StateMachineError(
-			'no storageInstance',
-			StateMachineErrorCode.StorageAccessError,
-			true,
+			`no such step ${requestBody.stepId}`,
+			StateMachineErrorCode.NoSuchStep,
 		);
 	}
 
-	const newsletterId = requestBody.id;
-	if (!newsletterId) {
+	if (step.getInitialFormData) {
+		if (!storageInstance) {
+			throw new StateMachineError(
+				'no storageInstance',
+				StateMachineErrorCode.StorageAccessError,
+				true,
+			);
+		}
+		const intialFormData = await step.getInitialFormData(
+			requestBody,
+			storageInstance,
+		);
+		return {
+			formData: intialFormData,
+			currentStepId: requestBody.stepId,
+		};
+	}
+
+	const itemId = requestBody.id;
+	if (!itemId) {
 		return {
 			currentStepId: requestBody.stepId,
 		};
 	}
-	const newsletterIdAsNumber = +newsletterId;
 
-	const storageResponse = await storageInstance.getDraftNewsletter(
-		newsletterIdAsNumber,
+	throw new StateMachineError(
+		`The step ${requestBody.stepId} wants to edit an existing item with id ${itemId}, but does not have a method to fetch the item.`,
+		StateMachineErrorCode.StepMethodFailed,
+		true,
 	);
-	if (!storageResponse.ok) {
-		throw new StateMachineError(
-			`cannot load draft newsletter with id ${newsletterId}`,
-			StateMachineErrorCode.StorageAccessError,
-			false,
-		);
-	}
-	return {
-		formData: draftNewsletterDataToFormData(storageResponse.data),
-		currentStepId: requestBody.stepId,
-	};
 }

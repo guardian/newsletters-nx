@@ -1,33 +1,32 @@
-import type {
-	DraftStorage,
-	DraftWithId,
-	FormDataRecord,
-} from '@newsletters-nx/newsletters-data-client';
-import {
-	draftNewsletterDataToFormData,
-	formDataToDraftNewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
 import { StateMachineError, StateMachineErrorCode } from './StateMachineError';
 import type {
 	CurrentStepRouteRequest,
+	GenericStorageInterface,
 	WizardLayout,
 	WizardStepData,
 } from './types';
-import {
-	getExistingItem,
-	makeStepDataWithErrorMessage,
-	validateIncomingFormData,
-} from './utility';
+import { makeStepDataWithErrorMessage } from './utility';
 
-export async function stateMachineSkipPressed(
+export async function stateMachineSkipPressed<
+	T extends GenericStorageInterface,
+>(
 	requestBody: CurrentStepRouteRequest,
-	wizardLayout: WizardLayout,
-	storageInstance?: DraftStorage,
+	wizardLayout: WizardLayout<T>,
+	storageInstance?: T,
 ): Promise<WizardStepData> {
-	if (!storageInstance) {
+	const stepSkippingFrom = wizardLayout[requestBody.stepId];
+
+	if (!stepSkippingFrom) {
 		throw new StateMachineError(
-			'no storageInstance',
-			StateMachineErrorCode.StorageAccessError,
+			`no step ${requestBody.stepId}`,
+			StateMachineErrorCode.NoSuchStep,
+			true,
+		);
+	}
+	if (!stepSkippingFrom.executeSkip) {
+		throw new StateMachineError(
+			`step ${requestBody.stepId} cannot be skipped from`,
+			StateMachineErrorCode.Unhandled,
 			true,
 		);
 	}
@@ -40,60 +39,42 @@ export async function stateMachineSkipPressed(
 		);
 	}
 
-	const incomingDataError = validateIncomingFormData(
-		requestBody.stepId,
-		requestBody.formData,
-		wizardLayout,
-	);
-	if (incomingDataError) {
-		return makeStepDataWithErrorMessage(
-			incomingDataError,
-			requestBody.stepId,
-			requestBody.formData,
-		);
-	}
-
-	const existingItem = await getExistingItem(requestBody, storageInstance);
-	const existingFormData: FormDataRecord = existingItem
-		? draftNewsletterDataToFormData(existingItem)
-		: {};
-	const combinedFormData: FormDataRecord = {
-		...existingFormData,
-		...{ ...requestBody.formData },
-	};
-
-	const listId =
-		typeof combinedFormData['listId'] === 'number'
-			? combinedFormData['listId']
-			: undefined;
-
-	// Do not allow skipping before the 'create' step
-	if (!listId) {
-		return makeStepDataWithErrorMessage(
-			'Cannot skip from this step',
-			requestBody.stepId,
-			requestBody.formData,
-		);
-	}
-
-	// formDataToDraftNewsletterData CAN THROW
-	const newDraftWithId: DraftWithId = {
-		...formDataToDraftNewsletterData(combinedFormData),
-		listId: listId,
-	};
-	const storageResponse = await storageInstance.modifyDraftNewsletter(
-		newDraftWithId,
-	);
-
-	if (storageResponse.ok) {
-		return {
-			formData: draftNewsletterDataToFormData(storageResponse.data),
-			currentStepId: requestBody.stepToSkipToId,
-		};
-	} else {
+	const stepSkippingTo = wizardLayout[requestBody.stepToSkipToId];
+	if (!stepSkippingTo) {
 		throw new StateMachineError(
-			`failed to update draft #${listId}`,
-			StateMachineErrorCode.StorageAccessError,
+			`no step ${requestBody.stepToSkipToId}`,
+			StateMachineErrorCode.NoSuchStep,
+			true,
 		);
 	}
+
+	if (!stepSkippingTo.canSkipTo) {
+		throw new StateMachineError(
+			`step ${requestBody.stepToSkipToId} cannot be skipped to`,
+			StateMachineErrorCode.Unhandled,
+			true,
+		);
+	}
+
+	const executeSkipResult = await stepSkippingFrom.executeSkip(
+		{
+			currentStepId: requestBody.stepId,
+			formData: requestBody.formData,
+		},
+		stepSkippingFrom,
+		storageInstance,
+	);
+
+	if (typeof executeSkipResult === 'string') {
+		return makeStepDataWithErrorMessage(
+			executeSkipResult,
+			requestBody.stepId,
+			requestBody.formData,
+		);
+	}
+
+	return {
+		formData: executeSkipResult,
+		currentStepId: requestBody.stepToSkipToId,
+	};
 }

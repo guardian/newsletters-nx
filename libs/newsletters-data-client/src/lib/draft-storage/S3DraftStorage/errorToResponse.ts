@@ -1,6 +1,6 @@
 import { NoSuchKey, S3ServiceException } from '@aws-sdk/client-s3';
-import type { UnsuccessfulStorageResponse } from '../DraftStorage';
-import { StorageRequestFailureReason } from '../DraftStorage';
+import type { UnsuccessfulStorageResponse } from '../../storage-response-types';
+import { StorageRequestFailureReason } from '../../storage-response-types';
 
 export const errorToResponse = (
 	err: unknown,

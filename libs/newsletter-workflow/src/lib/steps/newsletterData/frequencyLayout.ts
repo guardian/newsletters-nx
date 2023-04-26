@@ -1,5 +1,8 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -35,7 +38,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const frequencyLayout: WizardStepLayout = {
+export const frequencyLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Send Frequency',
 	dynamicMarkdown(requestData, responseData) {
@@ -49,13 +52,13 @@ export const frequencyLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'regionFocus',
+			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'onlineArticle',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const frequency = stepData.formData
 					? stepData.formData['frequency']
@@ -66,4 +69,6 @@ export const frequencyLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.frequency,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

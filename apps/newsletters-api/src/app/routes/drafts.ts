@@ -3,26 +3,12 @@ import type {
 	ApiResponse,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
-import { StorageRequestFailureReason } from '@newsletters-nx/newsletters-data-client';
 import { draftStore } from '../../services/storage';
-import { makeErrorResponse, makeSuccessResponse } from '../responses';
-
-const mapFailureReasonToStatusCode = (
-	reason?: StorageRequestFailureReason,
-): number => {
-	switch (reason) {
-		case StorageRequestFailureReason.InvalidDataInput:
-			return 400;
-		case StorageRequestFailureReason.NotFound:
-			return 404;
-		case StorageRequestFailureReason.NoCredentials:
-			return 403;
-		case StorageRequestFailureReason.DataInStoreNotValid:
-			return 422;
-		default:
-			return 500;
-	}
-};
+import {
+	makeErrorResponse,
+	makeSuccessResponse,
+	mapStorageFailureReasonToStatusCode,
+} from '../responses';
 
 export function registerDraftsRoutes(app: FastifyInstance) {
 	app.get('/api/drafts', async (req, res) => {
@@ -31,7 +17,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 			return makeSuccessResponse(storageResponse.data);
 		}
 		return res
-			.status(mapFailureReasonToStatusCode(storageResponse.reason))
+			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 			.send(makeErrorResponse(storageResponse.message));
 	});
 
@@ -49,7 +35,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 				return makeSuccessResponse(storageResponse.data);
 			}
 			return res
-				.status(mapFailureReasonToStatusCode(storageResponse.reason))
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));
 		},
 	);
@@ -75,7 +61,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 			}
 
 			return res
-				.status(mapFailureReasonToStatusCode(storageResponse.reason))
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));
 		},
 	);

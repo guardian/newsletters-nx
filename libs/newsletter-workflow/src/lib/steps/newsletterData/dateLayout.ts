@@ -1,5 +1,11 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -36,7 +42,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const dateLayout: WizardStepLayout = {
+export const dateLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Launch/Promotion Dates',
 	dynamicMarkdown(requestData, responseData) {
@@ -50,15 +56,17 @@ export const dateLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'category',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'pillar',
+			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.promotionDates,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

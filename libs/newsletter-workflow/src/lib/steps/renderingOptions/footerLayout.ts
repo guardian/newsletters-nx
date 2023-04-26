@@ -1,4 +1,9 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -20,7 +25,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const footerLayout: WizardStepLayout = {
+export const footerLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Footer Setup',
 	dynamicMarkdown(requestData, responseData) {
@@ -34,13 +39,13 @@ export const footerLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'podcast',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'finish',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const email = stepData.formData
 					? stepData.formData['renderingOptions.contactEmail']
@@ -52,4 +57,5 @@ export const footerLayout: WizardStepLayout = {
 	},
 	schema: formSchemas.footer,
 	canSkipTo: true,
+	executeSkip: executeModify,
 };

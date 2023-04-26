@@ -1,4 +1,3 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import { makeResponse } from './makeResponse';
 import { setupInitialState } from './setupInitialState';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
@@ -7,7 +6,9 @@ import { stateMachineSkipPressed } from './stateMachineSkipPressed';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
+	GenericStorageInterface,
 	WizardLayout,
+	WizardStepLayout,
 } from './types';
 
 /**
@@ -24,15 +25,21 @@ import type {
  * or any of the methods defined on the WizardLayoutStep throws
  * any exceptions.
  */
-export async function handleWizardRequestAndReturnWizardResponse(
+export async function handleWizardRequestAndReturnWizardResponse<
+	T extends GenericStorageInterface,
+>(
 	requestBody: CurrentStepRouteRequest,
-	wizardLayout: WizardLayout,
-	draftStorage: DraftStorage,
+	wizardLayout: WizardLayout<T>,
+	serviceInterface: T,
 ): Promise<CurrentStepRouteResponse> {
 	try {
 		const stepData =
 			requestBody.stepToSkipToId !== undefined
-				? await stateMachineSkipPressed(requestBody, wizardLayout, draftStorage)
+				? await stateMachineSkipPressed(
+						requestBody,
+						wizardLayout,
+						serviceInterface,
+				  )
 				: requestBody.buttonId !== undefined
 				? await stateMachineButtonPressed(
 						requestBody.buttonId,
@@ -41,9 +48,10 @@ export async function handleWizardRequestAndReturnWizardResponse(
 							formData: requestBody.formData,
 						},
 						wizardLayout,
-						draftStorage,
+						!!requestBody.id,
+						serviceInterface,
 				  )
-				: await setupInitialState(requestBody, draftStorage);
+				: await setupInitialState(requestBody, wizardLayout, serviceInterface);
 
 		const nextStep = wizardLayout[stepData.currentStepId];
 
@@ -55,7 +63,11 @@ export async function handleWizardRequestAndReturnWizardResponse(
 			);
 		}
 
-		return makeResponse(requestBody, stepData, nextStep);
+		return makeResponse(
+			requestBody,
+			stepData,
+			nextStep as WizardStepLayout<unknown>,
+		);
 	} catch (error) {
 		if (error instanceof StateMachineError) {
 			throw error;

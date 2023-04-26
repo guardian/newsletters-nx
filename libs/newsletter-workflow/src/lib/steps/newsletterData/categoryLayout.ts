@@ -1,4 +1,9 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -24,7 +29,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const categoryLayout: WizardStepLayout = {
+export const categoryLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Production Category',
 	dynamicMarkdown(requestData, responseData) {
@@ -38,15 +43,17 @@ export const categoryLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'editDraftNewsletter',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'pillar',
+			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.category,
+	canSkipTo: true,
+	executeSkip: executeModify,
 };

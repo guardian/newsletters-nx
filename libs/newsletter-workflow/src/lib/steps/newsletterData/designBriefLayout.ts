@@ -1,5 +1,11 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -22,7 +28,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const designBriefLayout: WizardStepLayout = {
+export const designBriefLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Design Brief',
 	dynamicMarkdown(requestData, responseData) {
@@ -36,13 +42,13 @@ export const designBriefLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'thrasher',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'signUp',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const designBriefDoc = stepData.formData
 					? stepData.formData['designBriefDoc']
@@ -72,4 +78,6 @@ export const designBriefLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.designBrief,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

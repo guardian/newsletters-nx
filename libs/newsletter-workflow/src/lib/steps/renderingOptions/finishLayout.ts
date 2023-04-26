@@ -1,4 +1,7 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { getPreviousOrEditStartStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -14,10 +17,17 @@ You can see the full details of **{{name}}** on the [details page](drafts/{{list
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
-const finishLayout: WizardStepLayout = {
+const finishLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown: staticMarkdown,
 	label: 'Finish',
-	buttons: {},
+	buttons: {
+		back: {
+			buttonType: 'RED',
+			label: 'Back',
+			stepToMoveTo: getPreviousOrEditStartStepId,
+			executeStep: executeModify,
+		},
+	},
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -30,6 +40,7 @@ const finishLayout: WizardStepLayout = {
 			.replace(regExPatterns.name, name)
 			.replace(regExPatterns.listId, listId);
 	},
+	executeSkip: executeModify,
 };
 
 export { finishLayout };

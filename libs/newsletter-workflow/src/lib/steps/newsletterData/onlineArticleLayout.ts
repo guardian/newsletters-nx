@@ -1,8 +1,14 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -23,7 +29,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const onlineArticleLayout: WizardStepLayout = {
+export const onlineArticleLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Online Article',
 	dynamicMarkdown(requestData, responseData) {
@@ -37,13 +43,13 @@ export const onlineArticleLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'frequency',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'tags',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
 				const onlineArticle = stepData.formData
 					? stepData.formData['onlineArticle']
@@ -57,4 +63,6 @@ export const onlineArticleLayout: WizardStepLayout = {
 		},
 	},
 	schema: formSchemas.onlineArticle,
+	canSkipTo: true,
+	executeSkip: executeSkip,
 };

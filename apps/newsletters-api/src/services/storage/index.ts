@@ -1,4 +1,14 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import {
+	InMemoryNewsletterStorage,
+	isNewsletterData,
+	LaunchService,
+} from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftStorage,
+	NewsletterData,
+	NewsletterStorage,
+} from '@newsletters-nx/newsletters-data-client';
+import newslettersData from '../../../static/newsletters.local.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
 import { makeInMemoryStorageInstance } from './inMemoryStorageInstance';
 import { getS3Params } from './s3ParamsFromEnv';
@@ -12,4 +22,14 @@ const draftStore: DraftStorage = canUseS3
 	? makeS3DraftStorageInstance(s3Params)
 	: makeInMemoryStorageInstance();
 
-export { draftStore };
+const validNewsletters = newslettersData.filter((item) =>
+	isNewsletterData(item),
+);
+
+const newsletterStore: NewsletterStorage = new InMemoryNewsletterStorage(
+	validNewsletters as unknown as NewsletterData[],
+);
+
+const launchService = new LaunchService(draftStore, newsletterStore);
+
+export { draftStore, newsletterStore, launchService };

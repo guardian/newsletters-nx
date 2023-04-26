@@ -65,12 +65,16 @@ export const formSchemas = {
 		})
 		.describe('Choose a theme'),
 
-	signUp: newsletterDataSchema
+	signUpPage: newsletterDataSchema
 		.pick({
-			headline: true,
-			description: true,
+			signUpHeadline: true,
+			signUpDescription: true,
 		})
 		.describe('Input the Sign Up page copy'),
+
+	signUpEmbed: newsletterDataSchema
+		.pick({ signUpEmbedDescription: true })
+		.describe('Input the Sign Up embed copy'),
 
 	regionFocus: newsletterDataSchema
 		.pick({
@@ -119,11 +123,9 @@ export const formSchemas = {
 		'Input the subheading triggers',
 	),
 
-	readMore: pickAndPrefixRenderingOption([
-		'readMoreSubheading',
-		'readMoreWording',
-		'readMoreUrl',
-	]).describe('Input the Read More setup'),
+	readMore: pickAndPrefixRenderingOption(['readMoreSections']).describe(
+		'Input the Read More setup',
+	),
 
 	tags: newsletterDataSchema
 		.pick({

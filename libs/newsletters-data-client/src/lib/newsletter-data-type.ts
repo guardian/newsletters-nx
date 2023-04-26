@@ -4,7 +4,7 @@ import {
 	kebabCasedString,
 	nonEmptyString,
 	underscoreCasedString,
-} from './schema-helpers';
+} from './zod-helpers/schema-helpers';
 
 export const themeEnumSchema = z.enum([
 	'',
@@ -20,12 +20,9 @@ export type Theme = z.infer<typeof themeEnumSchema>;
 export const regionFocusEnumSchema = z.enum(['', 'UK', 'AU', 'US', 'INTL']);
 export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 
-export const onlineArticleSchema = z.enum([
-	'',
-	'Email only',
-	'Web for first send only',
-	'Web for all sends',
-]);
+export const onlineArticleSchema = z
+	.enum(['', 'Email only', 'Web for first send only', 'Web for all sends'])
+	.describe('location of article');
 export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
 
 export const singleThrasherLocation = z.enum([
@@ -49,9 +46,18 @@ export const renderingOptionsSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('podcast subheading'),
-	readMoreSubheading: z.string().optional().describe('read more subheading'),
-	readMoreWording: z.string().optional().describe('read more wording'),
-	readMoreUrl: z.string().url().optional().describe('read more url'),
+	readMoreSections: z
+		.array(
+			z
+				.object({
+					subheading: z.string().optional().describe('read more subheading'),
+					wording: z.string().optional().describe('read more wording'),
+					url: z.string().url().optional().describe('read more url'),
+				})
+				.describe('read more section configuration'),
+		)
+		.optional()
+		.describe('The configuration for read more sections'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
@@ -87,12 +93,16 @@ export const newsletterDataSchema = z.object({
 	brazeNewsletterName: underscoreCasedString(),
 	theme: themeEnumSchema,
 	group: nonEmptyString(),
-	headline: z.string().optional().describe('sign up headline'),
-	description: nonEmptyString().describe('sign up description'),
+	signUpHeadline: z.string().optional().describe('sign up headline'),
+	signUpDescription: nonEmptyString().describe('sign up description'),
+	signUpEmbedDescription: nonEmptyString().describe(
+		'sign up embed description',
+	),
 	regionFocus: regionFocusEnumSchema.describe('region focus'),
 	frequency: nonEmptyString(),
 	listId: z.number(),
 	listIdV1: z.number(),
+	// TO DO - remove emailEmbed from this schema and derive it as part of in deriveLegacyNewsletter
 	emailEmbed: emailEmbedSchema.extend({
 		description: z.string(),
 	}),
@@ -121,10 +131,11 @@ export const newsletterDataSchema = z.object({
 	signUpPageDate: z.coerce.date().describe('sign up page date'),
 	thrasherDate: z.coerce.date().describe('thrasher date'),
 	privateUntilLaunch: z.boolean().describe('needs to be private until launch?'),
-	onlineArticle: onlineArticleSchema.describe('location of article'),
+	onlineArticle: onlineArticleSchema.optional(),
 
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),
+	mailSuccessDescription: z.string().optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */
@@ -132,6 +143,12 @@ export type NewsletterData = z.infer<typeof newsletterDataSchema>;
 
 export function isNewsletterData(subject: unknown): subject is NewsletterData {
 	return newsletterDataSchema.safeParse(subject).success;
+}
+
+export function isPartialNewsletterData(
+	subject: unknown,
+): subject is Partial<NewsletterData> {
+	return newsletterDataSchema.partial().safeParse(subject).success;
 }
 
 export const draftNewsletterDataSchema = newsletterDataSchema.deepPartial();

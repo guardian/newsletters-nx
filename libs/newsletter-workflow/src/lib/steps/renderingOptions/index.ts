@@ -1,3 +1,4 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { cancelLayout } from './cancelLayout';
 import { finishLayout } from './finishLayout';
@@ -9,9 +10,8 @@ import { podcastLayout } from './podcastLayout';
 import { readMoreLayout } from './readMoreLayout';
 import { startLayout } from './start';
 
-export const renderingOptionsLayout: WizardLayout = {
+export const renderingOptionsLayout: WizardLayout<DraftStorage> = {
 	start: startLayout,
-	cancel: cancelLayout,
 	newsletterHeader: newsletterHeaderLayout,
 	image: imageLayout,
 	readMore: readMoreLayout,
@@ -19,4 +19,5 @@ export const renderingOptionsLayout: WizardLayout = {
 	podcast: podcastLayout,
 	footer: footerLayout,
 	finish: finishLayout,
+	cancel: cancelLayout,
 };

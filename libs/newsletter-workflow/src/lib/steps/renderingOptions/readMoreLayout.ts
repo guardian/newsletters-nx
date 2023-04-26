@@ -1,4 +1,9 @@
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -23,7 +28,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const readMoreLayout: WizardStepLayout = {
+export const readMoreLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Read More Sections',
 	dynamicMarkdown(requestData, responseData) {
@@ -37,39 +42,17 @@ export const readMoreLayout: WizardStepLayout = {
 		back: {
 			buttonType: 'RED',
 			label: 'Back',
-			stepToMoveTo: 'image',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'GREEN',
 			label: 'Next',
-			stepToMoveTo: 'linkList',
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const readMoreSubheading = stepData.formData
-					? stepData.formData['readMoreSubheading']
-					: undefined;
-				const readMoreWording = stepData.formData
-					? stepData.formData['readMoreWording']
-					: undefined;
-				const readMoreUrl = stepData.formData
-					? stepData.formData['readMoreUrl']
-					: undefined;
-				if (readMoreSubheading || readMoreWording || readMoreUrl) {
-					if (!readMoreSubheading) {
-						return 'ENTER THE SUBHEADING IF SPECIFYING THE WORDING OR URL';
-					}
-					if (!readMoreWording) {
-						return 'ENTER THE WORDING IF SPECIFYING THE SUBHEADING OR URL';
-					}
-					if (!readMoreUrl) {
-						return 'ENTER THE URL IF SPECIFYING THE SUBHEADING OR WORDING';
-					}
-				}
-				return undefined;
-			},
+			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.readMore,
 	canSkipTo: true,
+	executeSkip: executeModify,
 };
