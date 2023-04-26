@@ -1,5 +1,8 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import { getNextStepId } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -30,10 +33,11 @@ export const editOphanLayout: WizardStepLayout<DraftStorage> = {
 		return markdownTemplate.replace(regExPatterns.name, name);
 	},
 	buttons: {
-		cancel: {
+		back: {
 			buttonType: 'RED',
-			label: 'Cancel',
-			stepToMoveTo: 'cancel',
+			label: 'Back',
+			stepToMoveTo: getPreviousOrEditStartStepId,
+			executeStep: executeModify,
 		},
 		next: {
 			buttonType: 'GREEN',

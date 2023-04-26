@@ -1,5 +1,8 @@
 import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
-import { getNextStepId } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -46,10 +49,10 @@ export const ophanLayout: WizardStepLayout<LaunchService> = {
 			.replace(regExPatterns.campaignCode, campaignCode);
 	},
 	buttons: {
-		cancel: {
+		back: {
 			buttonType: 'RED',
-			label: 'Cancel',
-			stepToMoveTo: 'cancel',
+			label: 'Back',
+			stepToMoveTo: getPreviousOrEditStartStepId,
 		},
 		edit: {
 			buttonType: 'GREEN',
