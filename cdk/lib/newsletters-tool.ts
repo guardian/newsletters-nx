@@ -36,15 +36,11 @@ export class NewslettersTool extends GuStack {
 	 * User data is a set of instructions to supply to the instance at launch
 	 * @see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 	 */
-	private getUserData = (app: NewslettersToolProps['app']) => {
+	private getUserData = (app: NewslettersToolProps['app'], bucketName: string) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
-		const bucketSSMParameterName = `/${this.stage}/${this.stack}/newsletters-api/s3BucketName`;
-		const bucketName = StringParameter.valueForStringParameter(
-			this,
-			bucketSSMParameterName,
-		);
+
 		return [
 			'#!/bin/bash', // "Shebang" to instruct the program loader to run this as a bash script
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
@@ -113,7 +109,7 @@ export class NewslettersTool extends GuStack {
 			// Minimum of 1 EC2 instance running at a time. If one fails, scales up to 2 before dropping back to 1 again
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			// Instructions to set up the environment in the instance
-			userData: this.getUserData(app),
+			userData: this.getUserData(app, bucketName),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],
 			},
