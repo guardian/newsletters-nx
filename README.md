@@ -14,6 +14,15 @@ For the current newsletters API in production go to https://github.com/guardian/
 ## Running locally
 
 To run the UI and API locally with the default options:
+
+### Run set-up script
+
+```bash
+./scripts/setup.sh
+```
+
+### Run the app
+
 `npm run dev`
 
 See the documentation for the [API](apps/newsletters-api/README.md) for the configuration options.
