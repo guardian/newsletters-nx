@@ -125,10 +125,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			await Promise.all(
 				listOfObjectsKeys.map(async (key) => {
 					const s3Response = await this.fetchObject(key);
-					const responseAsNewsletter = await objectToNewsletter(
-						s3Response,
-						key,
-					);
+					const responseAsNewsletter = await objectToNewsletter(s3Response);
 					if (responseAsNewsletter) {
 						data.push(responseAsNewsletter);
 					}
@@ -160,10 +157,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		});
 		if (matchingKey) {
 			const s3Object = await this.fetchObject(matchingKey);
-			const responseAsNewsletter = await objectToNewsletter(
-				s3Object,
-				matchingKey,
-			);
+			const responseAsNewsletter = await objectToNewsletter(s3Object);
 			if (responseAsNewsletter) {
 				return {
 					ok: true,
@@ -190,10 +184,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		});
 		if (matchingKey) {
 			const s3Object = await this.fetchObject(matchingKey);
-			const responseAsNewsletter = await objectToNewsletter(
-				s3Object,
-				matchingKey,
-			);
+			const responseAsNewsletter = await objectToNewsletter(s3Object);
 			if (responseAsNewsletter) {
 				return {
 					ok: true,
@@ -227,16 +218,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			...newsletterToUpdate.data,
 			...modifications,
 		};
-		if (!updatedNewsletter.key) {
-			return {
-				ok: false,
-				message: 'could not determine file key',
-				reason: undefined,
-			};
-		}
+
 		const updateNewsletterCommand = new PutObjectCommand({
 			Bucket: this.bucketName,
-			Key: updatedNewsletter.key,
+			Key: `${this.OBJECT_PREFIX}${updatedNewsletter.identityName}:${updatedNewsletter.listId}.json`,
 			Body: JSON.stringify(updatedNewsletter),
 			ContentType: 'application/json',
 		});

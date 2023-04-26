@@ -1,15 +1,19 @@
-import { GetObjectCommand, ListObjectsCommand } from '@aws-sdk/client-s3';
+import {
+	DeleteObjectCommand,
+	GetObjectCommand,
+	ListObjectsCommand,
+} from '@aws-sdk/client-s3';
 import type { S3NewsletterStorage } from './s3-newsletter-storage';
 
-// export const deleteObject =
-// 	(s3DraftStorage: S3DraftStorage) => async (key: string) => {
-// 		return await s3DraftStorage.s3Client.send(
-// 			new DeleteObjectCommand({
-// 				Bucket: s3DraftStorage.bucketName,
-// 				Key: key,
-// 			}),
-// 		);
-// 	};
+export const deleteObject =
+	(s3NewsletterStorage: S3NewsletterStorage) => async (key: string) => {
+		return await s3NewsletterStorage.s3Client.send(
+			new DeleteObjectCommand({
+				Bucket: s3NewsletterStorage.bucketName,
+				Key: key,
+			}),
+		);
+	};
 
 export const fetchObject =
 	(s3NewsletterStorage: S3NewsletterStorage) => async (key: string) => {

@@ -8,27 +8,27 @@ describe('objectToNewsletter', () => {
 		const getObjectOutput = {
 			Body: undefined,
 		} as GetObjectCommandOutput;
-		void expect(
-			objectToNewsletter(getObjectOutput, undefined),
-		).resolves.toEqual(undefined);
+		void expect(objectToNewsletter(getObjectOutput)).resolves.toEqual(
+			undefined,
+		);
 	});
 
 	test('returns undefined when invalid JSON body returned', () => {
 		const getObjectOutput = {
 			Body: { transformToString: () => Promise.resolve('not json') },
 		} as GetObjectCommandOutput;
-		void expect(
-			objectToNewsletter(getObjectOutput, undefined),
-		).resolves.toEqual(undefined);
+		void expect(objectToNewsletter(getObjectOutput)).resolves.toEqual(
+			undefined,
+		);
 	});
 
 	test('returns undefined when json is not a newsletter', () => {
 		const getObjectOutput = {
 			Body: { transformToString: () => Promise.resolve('{"foo": "bar"}') },
 		} as GetObjectCommandOutput;
-		void expect(
-			objectToNewsletter(getObjectOutput, undefined),
-		).resolves.toEqual(undefined);
+		void expect(objectToNewsletter(getObjectOutput)).resolves.toEqual(
+			undefined,
+		);
 	});
 
 	test('returns newsletter without key where no key is specified', async () => {
@@ -38,34 +38,9 @@ describe('objectToNewsletter', () => {
 					Promise.resolve(JSON.stringify(TECHSCAPE_IN_NEW_FORMAT)),
 			},
 		} as GetObjectCommandOutput;
-		const newsletterAsStored = JSON.stringify({
-			...TECHSCAPE_IN_NEW_FORMAT,
-			key: undefined,
-		});
+		const newsletterAsStored = JSON.stringify(TECHSCAPE_IN_NEW_FORMAT);
 		const expectedNewsletter = JSON.parse(newsletterAsStored) as NewsletterData;
-		const actualNewsletter = await objectToNewsletter(
-			getObjectOutput,
-			undefined,
-		);
-		expect(actualNewsletter).toEqual(expectedNewsletter);
-	});
-
-	test('returns newsletter with a key where specified', async () => {
-		const getObjectOutput = {
-			Body: {
-				transformToString: () =>
-					Promise.resolve(JSON.stringify(TECHSCAPE_IN_NEW_FORMAT)),
-			},
-		} as GetObjectCommandOutput;
-		const newsletterAsStored = JSON.stringify({
-			...TECHSCAPE_IN_NEW_FORMAT,
-			key: 'someKey',
-		});
-		const expectedNewsletter = JSON.parse(newsletterAsStored) as NewsletterData;
-		const actualNewsletter = await objectToNewsletter(
-			getObjectOutput,
-			'someKey',
-		);
+		const actualNewsletter = await objectToNewsletter(getObjectOutput);
 		expect(actualNewsletter).toEqual(expectedNewsletter);
 	});
 });
