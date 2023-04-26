@@ -12,7 +12,7 @@ import newslettersData from '../../../static/newsletters.local.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
 import { makeInMemoryStorageInstance } from './inMemoryStorageInstance';
 import {
-	makeNewsletterStorageInstance,
+	getS3NewsletterStore,
 	makeS3DraftStorageInstance,
 } from './s3StorageInstance';
 
@@ -29,7 +29,7 @@ const newsletterStore: NewsletterStorage = isUsingInMemoryStore
 	? new InMemoryNewsletterStorage(
 			validNewsletters as unknown as NewsletterData[],
 	  )
-	: makeNewsletterStorageInstance();
+	: getS3NewsletterStore();
 const launchService = new LaunchService(draftStore, newsletterStore);
 
 export { draftStore, newsletterStore, launchService };

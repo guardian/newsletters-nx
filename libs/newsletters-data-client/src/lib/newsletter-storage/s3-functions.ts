@@ -51,6 +51,7 @@ export const getNextId = async (
 };
 
 const getStringId = (key: string): string => {
+	// todo - deal with unexpected formats
 	const filenameWithExtension = key.split(':').pop();
 	const stringId = filenameWithExtension!.split('.')[0];
 	return stringId!;

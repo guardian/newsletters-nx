@@ -17,8 +17,8 @@ const makeS3DraftStorageInstance = (): S3DraftStorage => {
 	return new S3DraftStorage(getS3BucketName(), getS3Client());
 };
 
-const makeNewsletterStorageInstance = (): S3NewsletterStorage => {
+const getS3NewsletterStore = (): S3NewsletterStorage => {
 	return new S3NewsletterStorage(getS3BucketName(), getS3Client());
 };
 
-export { makeS3DraftStorageInstance, makeNewsletterStorageInstance };
+export { makeS3DraftStorageInstance, getS3NewsletterStore };
