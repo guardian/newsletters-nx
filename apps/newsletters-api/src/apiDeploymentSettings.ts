@@ -45,4 +45,4 @@ export const isServingReadEndpoints = () => {
 };
 
 export const isUsingInMemoryStorage = () =>
-	process.env.USE_LOCAL_STORAGE === 'true';
+	process.env.USE_IN_MEMORY_STORAGE === 'true';

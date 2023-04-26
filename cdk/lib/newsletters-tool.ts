@@ -58,7 +58,7 @@ export class NewslettersTool extends GuStack {
 			`export NEWSLETTERS_UI_SERVE=true`,
 			`export STAGE=${this.stage}`, // sets the stage environment variable
 			`export NEWSLETTER_BUCKET_NAME=${bucketName}`, // sets the bucket name environment variable
-			`export USE_LOCAL_STORAGE=false`, // use s3 when running on cloud - todo: this naming could be improved
+			`export USE_IN_MEMORY_STORAGE=false`, // use s3 when running on cloud
 			`cd /opt/${app}`, // Run from the same folder as when running locally to reduce the difference.
 			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/index.cjs'`, // run the main entrypoint file as ubuntu user using pm2
 		].join('\n');

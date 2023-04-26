@@ -212,7 +212,7 @@ export NEWSLETTER_BUCKET_NAME=",
                   "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
                 },
                 "
-export USE_LOCAL_STORAGE=false
+export USE_IN_MEMORY_STORAGE=false
 cd /opt/newsletters-tool
 su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsletters-api/index.cjs'",
               ],

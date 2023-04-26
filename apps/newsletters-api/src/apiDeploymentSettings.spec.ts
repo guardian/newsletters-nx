@@ -149,19 +149,19 @@ describe('isServingReadWriteEndpoints', () => {
 });
 
 describe('isUsingInMemoryStorage', () => {
-	it('returns false where USE_LOCAL_STORAGE is not set', () => {
+	it('returns false where USE_IN_MEMORY_STORAGE is not set', () => {
 		expect(isUsingInMemoryStorage()).toBe(false);
 	});
-	it('returns false where USE_LOCAL_STORAGE is false', () => {
-		process.env.USE_LOCAL_STORAGE = 'false';
+	it('returns false where USE_IN_MEMORY_STORAGE is false', () => {
+		process.env.USE_IN_MEMORY_STORAGE = 'false';
 		expect(isUsingInMemoryStorage()).toBe(false);
 	});
-	it('returns true where USE_LOCAL_STORAGE is true', () => {
-		process.env.USE_LOCAL_STORAGE = 'true';
+	it('returns true where USE_IN_MEMORY_STORAGE is true', () => {
+		process.env.USE_IN_MEMORY_STORAGE = 'true';
 		expect(isUsingInMemoryStorage()).toBe(true);
 	});
-	it('returns false if USE_LOCAL_STORAGE is something other than true or false', () => {
-		process.env.USE_LOCAL_STORAGE = 'foo';
+	it('returns false if USE_IN_MEMORY_STORAGE is something other than true or false', () => {
+		process.env.USE_IN_MEMORY_STORAGE = 'foo';
 		expect(isUsingInMemoryStorage()).toBe(false);
 	});
 });
