@@ -4,6 +4,8 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
 {
   "Metadata": {
     "gu:cdk:constructs": [
+      "GuS3Bucket",
+      "GuPolicy",
       "GuDistributionBucketParameter",
       "GuVpcParameter",
       "GuSubnetListParameter",
@@ -64,6 +66,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
     "LoggingStreamName": {
       "Default": "/account/services/logging.stream.name",
       "Description": "SSM parameter containing the Name (not ARN) on the kinesis stream",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/TEST/newsletters/newsletters-api/s3BucketName",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "VpcId": {
@@ -200,6 +206,13 @@ chown -R ubuntu /opt/newsletters-tool
 export NEWSLETTERS_API_READ=true
 export NEWSLETTERS_API_READ_WRITE=true
 export NEWSLETTERS_UI_SERVE=true
+export STAGE=TEST
+export NEWSLETTER_BUCKET_NAME=",
+                {
+                  "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                "
+export USE_IN_MEMORY_STORAGE=false
 cd /opt/newsletters-tool
 su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsletters-api/index.cjs'",
               ],
@@ -259,6 +272,47 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         "ValidationMethod": "DNS",
       },
       "Type": "AWS::CertificateManager::Certificate",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "DataBucketNewsletterstool43BC2D76": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketName": {
+          "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "newsletters-tool",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "Stack",
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
     "DescribeEC2PolicyFF5F9295": {
@@ -868,6 +922,56 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
+    },
+    "newsletterstoolInstancePolicy214EAC72": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:DeleteObject",
+                "s3:ListBucket",
+                "s3:DeleteObjectVersion",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DataBucketNewsletterstool43BC2D76",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::GetAtt": [
+                    "DataBucketNewsletterstool43BC2D76",
+                    "Arn",
+                  ],
+                },
+              ],
+              "Sid": "writeToDataStorageBucketPolicy",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "readWriteAccessToDataBucket",
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewsletterstoolDD0F3665",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
   },
 }

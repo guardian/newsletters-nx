@@ -35,6 +35,7 @@ export class S3DraftStorage extends DraftStorage {
 			const nextId = await this.getNextId();
 			await this.putDraftObject({
 				...draft,
+				creationTimeStamp: Date.now(),
 				listId: nextId,
 			});
 
@@ -44,7 +45,7 @@ export class S3DraftStorage extends DraftStorage {
 			if (!newDraft) {
 				return {
 					ok: false,
-					message: `failed to put and retireve ${
+					message: `failed to put and retrieve ${
 						draft.name ?? 'UNNAMED DRAFT'
 					}.`,
 					reason: StorageRequestFailureReason.S3Failure,

@@ -5,11 +5,11 @@ export type S3Params = {
 };
 
 export const getS3Params = (): S3Params | undefined => {
-	const { S3_BUCKET, S3_REGIONS, S3_PROFILE } = process.env;
+	const { NEWSLETTER_BUCKET_NAME, S3_REGIONS, S3_PROFILE } = process.env;
 
-	if (S3_BUCKET && S3_REGIONS && S3_PROFILE) {
+	if (NEWSLETTER_BUCKET_NAME && S3_REGIONS && S3_PROFILE) {
 		return {
-			bucket: S3_BUCKET,
+			bucket: NEWSLETTER_BUCKET_NAME,
 			region: S3_REGIONS,
 			profile: S3_PROFILE,
 		};

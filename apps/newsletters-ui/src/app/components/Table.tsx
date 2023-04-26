@@ -33,12 +33,12 @@ export const Table = ({ data, columns, defaultSortId }: TableProps) => {
 		<ContentWrapper>
 			<div>Hide/Show Columns</div>
 			<Grid container spacing={2} rowSpacing={2} paddingY={2}>
-				<Grid item xs={12} display={'flex'} direction={'column'}>
+				<Grid item xs={12} display={'flex'}>
 					{allColumns.map((column) => (
 						<ColumnVisibility column={column} key={`visibility ${column.id}`} />
 					))}
 				</Grid>
-				<Grid item xs={12} display={'flex'} direction={'column'}>
+				<Grid item xs={12} display={'flex'}>
 					<GlobalFilter setGlobalFilter={setGlobalFilter} />
 				</Grid>
 			</Grid>
