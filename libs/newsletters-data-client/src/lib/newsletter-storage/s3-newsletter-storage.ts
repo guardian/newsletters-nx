@@ -9,6 +9,7 @@ import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
+import { StorageRequestFailureReason } from '../storage-response-types';
 import { NewsletterStorage } from './NewsletterStorage';
 import { objectToNewsletter } from './objectToNewsletter';
 import {
@@ -16,6 +17,7 @@ import {
 	getListOfObjectsKeys,
 	getNextId,
 	objectExists,
+	putObject,
 } from './s3-functions';
 
 export class S3NewsletterStorage implements NewsletterStorage {
@@ -39,7 +41,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			const error: UnsuccessfulStorageResponse = {
 				ok: false,
 				message: `draft was not ready to be live`,
-				reason: undefined,
+				reason: StorageRequestFailureReason.InvalidDataInput,
 			};
 			return Promise.resolve(error);
 		}
@@ -48,7 +50,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			return {
 				ok: false,
 				message: `identityName is undefined`,
-				reason: undefined, // todo - add an appropriate type here
+				reason: StorageRequestFailureReason.InvalidDataInput,
 			};
 		}
 
@@ -63,14 +65,14 @@ export class S3NewsletterStorage implements NewsletterStorage {
 				return {
 					ok: false,
 					message: `Newsletter with name ${newIdentifier} already exists`,
-					reason: undefined, // todo - add an appropriate type here
+					reason: StorageRequestFailureReason.DataInStoreNotValid,
 				};
 			}
 		} catch (err) {
 			return {
 				ok: false,
 				message: `failed to check if newsletter with name ${newIdentifier} exists`,
-				reason: undefined, // todo - add an appropriate type here
+				reason: StorageRequestFailureReason.S3Failure,
 			};
 		}
 
@@ -78,21 +80,14 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			...draft,
 			listId: nextId,
 		};
-		// todo - move this out to the s3-functions file
-		const createNewNewsletterCommand = new PutObjectCommand({
-			Bucket: this.bucketName,
-			Key: this.OBJECT_PREFIX + newIdentifier,
-			Body: JSON.stringify(newNewsletter),
-			ContentType: 'application/json',
-		});
 
 		try {
-			await this.s3Client.send(createNewNewsletterCommand);
+			await this.putObject(newNewsletter, newIdentifier);
 		} catch (err) {
 			return {
 				ok: false,
 				message: `failed create newsletter ${draft.identityName}.`,
-				reason: undefined, // add an appropriate type here
+				reason: StorageRequestFailureReason.S3Failure,
 			};
 		}
 
@@ -236,12 +231,13 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			return {
 				ok: false,
 				message: `failed to update newsletter with id ${listId}`,
-				reason: undefined, // add an appropriate type here
+				reason: StorageRequestFailureReason.S3Failure,
 			};
 		}
 	}
 
 	private fetchObject = fetchObject(this);
+	private putObject = putObject(this);
 	private objectExists = objectExists(this);
 	private getListOfObjectsKeys = getListOfObjectsKeys(this);
 

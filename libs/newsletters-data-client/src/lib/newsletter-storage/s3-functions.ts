@@ -2,7 +2,9 @@ import {
 	DeleteObjectCommand,
 	GetObjectCommand,
 	ListObjectsCommand,
+	PutObjectCommand,
 } from '@aws-sdk/client-s3';
+import type { NewsletterData } from '../newsletter-data-type';
 import type { S3NewsletterStorage } from './s3-newsletter-storage';
 
 export const deleteObject =
@@ -56,6 +58,20 @@ const getStringId = (key: string): string => {
 	const stringId = filenameWithExtension!.split('.')[0];
 	return stringId!;
 };
+
+export const putObject =
+	(s3NewsletterStorage: S3NewsletterStorage) =>
+	async (newsLetter: NewsletterData, key: string) => {
+		const createNewNewsletterCommand = new PutObjectCommand({
+			Bucket: s3NewsletterStorage.bucketName,
+			Key: s3NewsletterStorage.OBJECT_PREFIX + key,
+			Body: JSON.stringify(newsLetter),
+			ContentType: 'application/json',
+		});
+
+		return s3NewsletterStorage.s3Client.send(createNewNewsletterCommand);
+	};
+
 export const getObjectKeyIdNumbers = async (
 	s3NewsletterStorage: S3NewsletterStorage,
 ): Promise<number[]> => {
