@@ -134,7 +134,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			return {
 				ok: false,
 				message: `failed to list newsletters`,
-				reason: undefined, // add an appropriate type here
+				reason: StorageRequestFailureReason.S3Failure,
 			};
 		}
 	}
