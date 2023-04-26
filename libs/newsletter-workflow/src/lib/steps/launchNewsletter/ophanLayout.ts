@@ -1,4 +1,5 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -23,7 +24,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout<DraftStorage> = {
+export const ophanLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	label: 'ophan',
 	dynamicMarkdown(requestData, responseData) {
@@ -57,8 +58,8 @@ export const ophanLayout: WizardStepLayout<DraftStorage> = {
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Launch',
-			stepToMoveTo: 'finish',
+			label: 'Next',
+			stepToMoveTo: getNextStepId,
 		},
 	},
 };

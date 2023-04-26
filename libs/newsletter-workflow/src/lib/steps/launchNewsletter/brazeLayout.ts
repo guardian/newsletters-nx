@@ -1,4 +1,4 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -28,7 +28,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const brazeLayout: WizardStepLayout<DraftStorage> = {
+export const brazeLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	label: 'braze',
 	dynamicMarkdown(requestData, responseData) {

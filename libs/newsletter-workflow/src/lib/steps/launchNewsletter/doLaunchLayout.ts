@@ -1,15 +1,15 @@
 import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { getInitialStateForLaunch } from '../../getInitiateStateForLaunch';
+import { executeLaunch } from '../../executeLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
+// TODO - this page is a placeholder until we implement automation
+// I have added it so that both Ophan and Edit Ophan point to a single place from which to call the Launch functionality
 const markdownTemplate = `
-## Launch {{name}}
+## {{name}} is ready to launch
 
-This wizard will guide you through the process of putting your draft newsletter, **{{name}}** live.
-
-First, we need to check if it has all the necessary information.
+All the steps have been completed, so please press the Launch button when you're ready to continue.
 
 `.trim();
 
@@ -18,7 +18,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const launchNewsletterLayout: WizardStepLayout<LaunchService> = {
+export const doLaunchLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -27,8 +27,7 @@ export const launchNewsletterLayout: WizardStepLayout<LaunchService> = {
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
 		return markdownTemplate.replace(regExPatterns.name, name);
 	},
-	role: 'EDIT_START',
-	label: 'start',
+	label: 'launch',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
@@ -37,9 +36,9 @@ export const launchNewsletterLayout: WizardStepLayout<LaunchService> = {
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Next',
-			stepToMoveTo: 'isDataComplete',
+			label: 'Launch',
+			stepToMoveTo: 'finish',
+			executeStep: executeLaunch,
 		},
 	},
-	getInitialFormData: getInitialStateForLaunch,
 };

@@ -1,4 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -36,8 +37,8 @@ export const editOphanLayout: WizardStepLayout<DraftStorage> = {
 		},
 		next: {
 			buttonType: 'GREEN',
-			label: 'Launch',
-			stepToMoveTo: 'finish',
+			label: 'Next',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: () => {
 				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
 				return undefined;
