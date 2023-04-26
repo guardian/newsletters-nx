@@ -17,7 +17,7 @@ export const objectToNewsletter = async (
 		}
 		return parsedContent;
 	} catch (err) {
-		console.warn('objectToDraft failed');
+		console.warn('objectToNewsletter failed');
 		console.warn(err);
 		return undefined;
 	}

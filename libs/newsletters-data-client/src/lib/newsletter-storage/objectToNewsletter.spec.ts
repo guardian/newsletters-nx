@@ -38,6 +38,8 @@ describe('objectToNewsletter', () => {
 					Promise.resolve(JSON.stringify(TECHSCAPE_IN_NEW_FORMAT)),
 			},
 		} as GetObjectCommandOutput;
+		// What's going on here? The fixture is a NewsletterData object (Containing Dates), what
+		// We are storing is JSON, hence the Stringify and Parse.
 		const newsletterAsStored = JSON.stringify(TECHSCAPE_IN_NEW_FORMAT);
 		const expectedNewsletter = JSON.parse(newsletterAsStored) as NewsletterData;
 		const actualNewsletter = await objectToNewsletter(getObjectOutput);
