@@ -930,9 +930,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
             {
               "Action": [
                 "s3:PutObject",
-                "s3:PutObjectAcl",
                 "s3:GetObject",
-                "s3:GetObjectAcl",
                 "s3:GetObjectVersion",
                 "s3:DeleteObject",
                 "s3:ListBucket",
