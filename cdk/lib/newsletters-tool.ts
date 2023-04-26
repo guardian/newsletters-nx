@@ -79,7 +79,7 @@ export class NewslettersTool extends GuStack {
 		});
 
 		const s3AccessPolicy = new GuPolicy(this, `${app}-InstancePolicy`, {
-			policyName: 'root',
+			policyName: 'readWriteAccessToDataBucket',
 			statements: [
 				new PolicyStatement({
 					sid: 'writeToDataStorageBucketPolicy',
