@@ -66,14 +66,14 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Cell: formatCellBoolean,
 			},
 			{
-				Header: 'edit',
+				Header: 'Edit',
 				Cell: ({ row: { original } }) => {
 					const newsletter = original as NewsletterData;
 					return (
 						<NavigateButton
 							href={`/newsletters/edit/${newsletter.identityName}`}
 						>
-							edit
+							Edit
 						</NavigateButton>
 					);
 				},

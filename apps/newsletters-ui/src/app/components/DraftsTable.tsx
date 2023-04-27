@@ -81,7 +81,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				},
 			},
 			{
-				Header: 'delete',
+				Header: 'Delete',
 				Cell: ({ row: { original } }) => {
 					const draft = original as DraftNewsletterData;
 
@@ -99,7 +99,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				},
 			},
 			{
-				Header: 'launch',
+				Header: 'Launch',
 				Cell: ({ row: { original } }) => {
 					const draft = original as DraftNewsletterData;
 
