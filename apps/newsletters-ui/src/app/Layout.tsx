@@ -8,6 +8,7 @@ import {
 import { Outlet, useLocation } from 'react-router-dom';
 import { FooterContents } from './components/FooterContents';
 import { MainNav } from './components/MainNav';
+import { Navigation } from './components/Nav';
 
 const Frame = styled.div`
 	display: flex;
@@ -17,12 +18,7 @@ const Frame = styled.div`
 	overflow: hidden;
 	align-items: stretch;
 
-	> header {
-		padding: ${space[1]}px;
-		border-bottom: 2px solid ${brand[400]};
-		background-color: ${brandAlt[400]};
-		box-sizing: border-box;
-
+	>
 		h1 {
 			${textSansObjectStyles.xlarge({ fontStyle: 'italic' })};
 			margin: 0;
@@ -49,18 +45,19 @@ interface IRootRoute {
 }
 
 export function Layout(props: IRootRoute) {
-	const location = useLocation();
+	// const location = useLocation();
 	return (
 		<Frame>
 			<header>
-				<MainNav pathname={location.pathname} />
+				{/*<MainNav pathname={location.pathname} />*/}
+				<Navigation />
 			</header>
 
 			<main>{props.outlet ? props.outlet : <Outlet />}</main>
 
-			<footer>
-				<FooterContents />
-			</footer>
+			{/*<footer>*/}
+			{/*	<FooterContents />*/}
+			{/*</footer>*/}
 		</Frame>
 	);
 }
