@@ -1,14 +1,11 @@
 import styled from '@emotion/styled';
 import {
 	brand,
-	brandAlt,
 	space,
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
-import { Outlet, useLocation } from 'react-router-dom';
-import { FooterContents } from './components/FooterContents';
+import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
-import { Navigation } from './components/Nav';
 
 const Frame = styled.div`
 	display: flex;
@@ -49,15 +46,9 @@ export function Layout(props: IRootRoute) {
 	return (
 		<Frame>
 			<header>
-				{/*<MainNav pathname={location.pathname} />*/}
-				<Navigation />
+				<MainNav />
 			</header>
-
 			<main>{props.outlet ? props.outlet : <Outlet />}</main>
-
-			{/*<footer>*/}
-			{/*	<FooterContents />*/}
-			{/*</footer>*/}
 		</Frame>
 	);
 }
