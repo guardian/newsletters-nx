@@ -28,7 +28,7 @@ export const launchNewsletterLayout: WizardStepLayout<LaunchService> = {
 		return markdownTemplate.replace(regExPatterns.name, name);
 	},
 	role: 'EDIT_START',
-	label: 'start',
+	label: 'Start',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',

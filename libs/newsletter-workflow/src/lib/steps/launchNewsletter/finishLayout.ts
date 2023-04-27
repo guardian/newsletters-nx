@@ -14,6 +14,7 @@ You can see its details on the [details page](/newsletters/{{identityName}})
 
 export const finishLayout: WizardStepLayout = {
 	staticMarkdown: markdownTemplate,
+	label: 'Finish',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return markdownTemplate;

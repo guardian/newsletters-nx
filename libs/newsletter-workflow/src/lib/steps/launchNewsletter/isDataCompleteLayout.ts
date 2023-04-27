@@ -45,7 +45,7 @@ export const isDataCompleteLayout: WizardStepLayout<LaunchService> = {
 
 		return populated;
 	},
-	label: 'check data complete',
+	label: 'Check Data Complete',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',
