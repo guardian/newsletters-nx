@@ -11,15 +11,16 @@ const markdownTemplate = `
 # Specify the send frequency of {{name}}
 
 Specify how regularly the newsletter will be sent e.g.
-- every day
-- every weekday
-- weekly
-- fortnightly
-- monthly
+- Every day
+- Every weekday
+- Weekly
+- Fortnightly
+- Monthly
+- Monthly
 
 You can also add a different frequency e.g.
-- weekly during election season
-- weekly for eight weeks (in the case of an asynchronous newsletter)
+- Weekly during election season
+- Weekly for eight weeks (in the case of an asynchronous newsletter)
 
 The frequency you specify will be shown on thrashers, on the sign up page and on the all newsletters page.
 

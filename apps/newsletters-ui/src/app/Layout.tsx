@@ -12,7 +12,6 @@ const Frame = styled.div`
 	flex-direction: column;
 	height: 100vh;
 	box-sizing: border-box;
-	overflow: hidden;
 	align-items: stretch;
 
 	>
