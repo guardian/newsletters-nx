@@ -1,10 +1,18 @@
-import { Button, ButtonGroup, Typography } from '@mui/material';
-import { Container } from '@mui/system';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import MenuIcon from '@mui/icons-material/Menu';
+import AppBar from '@mui/material/AppBar';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface Props {
-	pathname: string;
-}
 
 interface NavLink {
 	path: string;
@@ -12,39 +20,147 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-	{ path: '/', label: 'Home' },
 	{ path: '/newsletters', label: 'Newsletters' },
 	{ path: '/drafts', label: 'Drafts' },
 	{ path: '/templates', label: 'Email Templates' },
 	{ path: '/thrashers', label: 'Thrashers' },
 ];
 
-export function MainNav({ pathname }: Props) {
+const menuItemIsSelected = (path: string): boolean => {
+	return window.location.pathname.startsWith(path);
+};
+
+export function MainNav() {
+	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+		null,
+	);
+
 	const navigate = useNavigate();
-	const getButtonVariant = (linkPath: string): 'contained' | 'outlined' => {
-		if (linkPath === pathname) {
-			return 'contained';
-		}
-		return 'outlined';
+
+	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorElNav(event.currentTarget);
+	};
+
+	const handleCloseNavMenu = () => {
+		setAnchorElNav(null);
 	};
 
 	return (
-		<Container maxWidth="lg">
-			<ButtonGroup component={'nav'}>
-				{navLinks.map((link) => (
-					<Button
-						color="info"
-						variant={getButtonVariant(link.path)}
-						onClick={() => {
-							navigate(link.path);
+		<AppBar position="static" sx={{ bgcolor: '#1C5689' }}>
+			<Container maxWidth="xl">
+				<Toolbar disableGutters>
+					<MailOutlineIcon
+						sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+					/>
+					<Typography
+						variant="h6"
+						noWrap
+						component="a"
+						href="/"
+						sx={{
+							mr: 2,
+							display: { xs: 'none', md: 'flex' },
+							fontFamily: 'monospace',
+							fontWeight: 700,
+							letterSpacing: '.3rem',
+							color: 'inherit',
+							textDecoration: 'none',
 						}}
-						key={link.path}
 					>
-						{link.label}
-					</Button>
-				))}
-			</ButtonGroup>
-			<Typography component={'h1'}>Have I Got Newsletters For You</Typography>
-		</Container>
+						Newsletters
+					</Typography>
+
+					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+						<IconButton
+							size="large"
+							aria-label="account of current user"
+							aria-controls="menu-appbar"
+							aria-haspopup="true"
+							onClick={handleOpenNavMenu}
+							color="inherit"
+						>
+							<MenuIcon />
+						</IconButton>
+						<Menu
+							id="menu-appbar"
+							anchorEl={anchorElNav}
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'left',
+							}}
+							keepMounted
+							transformOrigin={{
+								vertical: 'top',
+								horizontal: 'left',
+							}}
+							open={Boolean(anchorElNav)}
+							onClose={handleCloseNavMenu}
+							sx={{
+								display: { xs: 'block', md: 'none' },
+							}}
+						>
+							{navLinks.map(({ path, label }) => (
+								<MenuItem
+									key={label}
+									onClick={() => {
+										navigate(path);
+										handleCloseNavMenu();
+									}}
+									selected={menuItemIsSelected(path)}
+								>
+									<Typography textAlign="center">{label}</Typography>
+								</MenuItem>
+							))}
+						</Menu>
+					</Box>
+					<MailOutlineIcon
+						sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+					/>
+					<Typography
+						variant="h5"
+						noWrap
+						component="a"
+						href=""
+						sx={{
+							mr: 2,
+							display: { xs: 'flex', md: 'none' },
+							flexGrow: 1,
+							fontFamily: 'monospace',
+							fontWeight: 700,
+							letterSpacing: '.3rem',
+							color: 'inherit',
+							textDecoration: 'none',
+						}}
+					>
+						Newsletters
+					</Typography>
+					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+						{navLinks.map(({ path, label }) => (
+							<Button
+								key={label}
+								onClick={() => {
+									navigate(path);
+								}}
+								sx={{
+									my: 2,
+									color: menuItemIsSelected(path) ? 'grey' : 'white',
+									display: 'block',
+								}}
+							>
+								{label}
+							</Button>
+						))}
+					</Box>
+
+					<Box sx={{ flexGrow: 0 }}>
+						<Tooltip title="Logged in user">
+							<IconButton sx={{ p: 0 }}>
+								<Avatar alt="Logged in user" />
+							</IconButton>
+						</Tooltip>
+					</Box>
+				</Toolbar>
+			</Container>
+		</AppBar>
 	);
 }

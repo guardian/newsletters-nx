@@ -1,12 +1,10 @@
 import styled from '@emotion/styled';
 import {
 	brand,
-	brandAlt,
 	space,
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
-import { Outlet, useLocation } from 'react-router-dom';
-import { FooterContents } from './components/FooterContents';
+import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
 
 const Frame = styled.div`
@@ -17,12 +15,7 @@ const Frame = styled.div`
 	overflow: hidden;
 	align-items: stretch;
 
-	> header {
-		padding: ${space[1]}px;
-		border-bottom: 2px solid ${brand[400]};
-		background-color: ${brandAlt[400]};
-		box-sizing: border-box;
-
+	>
 		h1 {
 			${textSansObjectStyles.xlarge({ fontStyle: 'italic' })};
 			margin: 0;
@@ -49,18 +42,12 @@ interface IRootRoute {
 }
 
 export function Layout(props: IRootRoute) {
-	const location = useLocation();
 	return (
 		<Frame>
 			<header>
-				<MainNav pathname={location.pathname} />
+				<MainNav />
 			</header>
-
 			<main>{props.outlet ? props.outlet : <Outlet />}</main>
-
-			<footer>
-				<FooterContents />
-			</footer>
 		</Frame>
 	);
 }

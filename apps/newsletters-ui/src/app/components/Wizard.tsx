@@ -54,7 +54,7 @@ export const Wizard: React.FC<WizardProps> = ({
 		undefined,
 	);
 	const [listId, setListId] = useState<number | undefined>(undefined);
-	const [serverErrorMesssage, setServerErrorMessage] = useState<
+	const [serverErrorMessage, setServerErrorMessage] = useState<
 		string | undefined
 	>();
 
@@ -114,10 +114,10 @@ export const Wizard: React.FC<WizardProps> = ({
 		return <p>'loading'</p>;
 	}
 
-	if (serverErrorMesssage) {
+	if (serverErrorMessage) {
 		return (
 			<FailureAlert
-				errorMessage={serverErrorMesssage}
+				errorMessage={serverErrorMessage}
 				isPersistent={serverData.hasPersistentError}
 			/>
 		);
