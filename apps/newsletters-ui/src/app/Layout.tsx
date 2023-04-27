@@ -42,7 +42,6 @@ interface IRootRoute {
 }
 
 export function Layout(props: IRootRoute) {
-	// const location = useLocation();
 	return (
 		<Frame>
 			<header>
