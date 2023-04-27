@@ -1,4 +1,7 @@
-import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
+import type {
+	FormDataRecord,
+	LaunchService,
+} from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -30,10 +33,10 @@ export const identityNameLayout: WizardStepLayout<LaunchService> = {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		const [identityName = 'IDENTITYNAME'] = getStringValuesFromRecord(
-			responseData,
-			['identityName'],
-		);
+		const draft = responseData.draft as FormDataRecord;
+		const [identityName = 'IDENTITYNAME'] = getStringValuesFromRecord(draft, [
+			'identityName',
+		]);
 		return markdownTemplate
 			.replace(regExPatterns.name, name)
 			.replace(regExPatterns.identityName, identityName);
