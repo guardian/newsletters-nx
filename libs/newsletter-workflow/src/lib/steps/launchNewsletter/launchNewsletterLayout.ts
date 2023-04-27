@@ -1,6 +1,6 @@
 import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { getInitialStateForLaunch } from '../../getInitiateStateForLaunch';
+import { getInitialStateForLaunch } from '../../getInitialStateForLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
