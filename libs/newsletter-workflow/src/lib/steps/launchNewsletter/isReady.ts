@@ -45,7 +45,7 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 
 		return populated;
 	},
-	label: 'check if ready',
+	label: 'Check if ready',
 	buttons: {
 		cancel: {
 			buttonType: 'RED',

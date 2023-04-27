@@ -19,8 +19,6 @@ Should the single thrasher appear on app and web?
 
 Do you need one or more multi-thrashers i.e. sets where the thrasher for **{{name}}** is combined with thrashers for 2 or more other newsletters?
 
-***NEED TO DETERMINE THE BEST WAY TO CAPTURE THIS INFORMATION - CLEARLY A CHECKBOX IS INSUFFICIENT!***
-
 The description will appear on each thrasher e.g.
 
 ![Thrasher description](https://i.guim.co.uk/img/uploads/2023/03/15/thrasher.png?quality=85&dpr=2&width=300&s=d11e194cac6fd51bdd84fca862786501)
