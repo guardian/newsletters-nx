@@ -9,8 +9,6 @@ export const startLayout: WizardStepLayout<DraftStorage> = {
 
 This wizard is to choose the options for how an article-based newsletter will appear in Email-rendering.
 
-You do **not need to complete** this wizard for **fronts-based newsletters or newsletters that do not use Email-rendering**.
-
 `,
 	label: 'Start',
 	buttons: {

@@ -4,7 +4,8 @@
 	"license": "MIT",
 	"scripts": {
 		"preinstall": "./tools/scripts/preinstall.sh",
-		"dev": "nx run-many --target=serve --all",
+		"dev": "USE_IN_MEMORY_STORAGE='true' nx run-many --target=serve --all",
+		"dev:s3": "USE_IN_MEMORY_STORAGE='false' nx run-many --target=serve --all",
 		"lint": "nx run-many --target=lint --all",
 		"build": "nx run-many --target=build --all",
 		"test": "nx run-many --target=test --all",
