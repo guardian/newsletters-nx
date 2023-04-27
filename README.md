@@ -2,7 +2,7 @@
 
 This is a monorepo for:
 
--   defining the data model for editorial newsletters at the guardian
+-   defining the data model for editorial newsletters at the Guardian
 -   serving an API to access the newsletter data
 -   serving a user interface for editorial to manage thier newsletters
 -   the state-machine library used between UI and API
