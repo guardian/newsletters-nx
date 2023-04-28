@@ -20,13 +20,13 @@ const getLinks = (draft: DraftNewsletterData): WizardLink[] => {
 
 	links.push({
 		label: 'Newsletter set-up',
-		href: `/demo/newsletter-data/${listId.toString()}`,
+		href: `/newsletters/newsletter-data/${listId.toString()}`,
 	});
 
 	if (category === 'article-based') {
 		links.push({
 			label: 'Article Rendering',
-			href: `/demo/newsletter-data-rendering/${listId.toString()}`,
+			href: `/newsletters/newsletter-data-rendering/${listId.toString()}`,
 		});
 	}
 

@@ -2,9 +2,11 @@
  * Properties for a wizard button type
  */
 export interface WizardButtonTypesProps {
-	/** Background color */
+	/** Background colour */
 	background: string;
-	/** Border color */
+	/** Hove state background colour */
+	hoverBackground: string;
+	/** Border colour */
 	border: string;
 }
 
@@ -14,10 +16,12 @@ export interface WizardButtonTypesProps {
 export const WIZARD_BUTTON_TYPES: Record<string, WizardButtonTypesProps> = {
 	RED: {
 		background: '#ff7676',
+		hoverBackground: '#ef6666',
 		border: '#ff0000',
 	},
 	GREEN: {
 		background: '#a6e9a6',
+		hoverBackground: '#a6d9a6',
 		border: '#66da66',
 	},
 };
