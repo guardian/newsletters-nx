@@ -13,6 +13,7 @@ import { StorageRequestFailureReason } from '../storage-response-types';
 import { NewsletterStorage } from './NewsletterStorage';
 import { objectToNewsletter } from './objectToNewsletter';
 import {
+	deleteObject,
 	fetchObject,
 	getListOfObjectsKeys,
 	getNextId,
@@ -97,18 +98,30 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		};
 	}
 
-	delete(
+	async delete(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		SuccessfulStorageResponse<string> | UnsuccessfulStorageResponse
 	> {
-		// todo - implement this. We don't want to delete published newsletters - we will probably move them to a deleted folder
-		//  this function is not exposed in the API layer; not required for MVP. Deletion will be an engineering task where required.
-		return Promise.resolve({
-			ok: false,
-			message: 'not implemented',
-			reason: undefined,
-		});
+		const newsletterToDelete = await this.read(listId);
+		if (!newsletterToDelete.ok) {
+			return newsletterToDelete;
+		}
+		try {
+			const { data: { listId, identityName } } = newsletterToDelete;
+			const key = `${this.OBJECT_PREFIX}${identityName}:${listId}.json`;
+			await this.deleteObject(key);
+		} catch (error) {
+			return {
+				ok: false,
+				message: `failed to delete newsletter with id ${listId}`,
+				reason: StorageRequestFailureReason.S3Failure,
+			};
+		}
+		return {
+			ok: true,
+			data: `newsletter with id ${listId} deleted`,
+		}
 	}
 
 	async list(): Promise<
@@ -201,9 +214,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	> {
 		const modificationError = this.getModificationError(modifications);
-		if (modificationError) {
-			modificationError;
-		}
+		if (modificationError) return modificationError;
 		const newsletterToUpdate = await this.read(listId);
 
 		if (!newsletterToUpdate.ok) {
@@ -238,6 +249,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 	private fetchObject = fetchObject(this);
 	private putObject = putObject(this);
+	private deleteObject = deleteObject(this);
 	private objectExists = objectExists(this);
 	private getListOfObjectsKeys = getListOfObjectsKeys(this);
 
