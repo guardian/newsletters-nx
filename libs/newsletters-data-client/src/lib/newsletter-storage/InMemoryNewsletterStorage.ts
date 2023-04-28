@@ -118,11 +118,10 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		}
 
 		this.memory.splice(this.memory.indexOf(match), 1);
-		const response: SuccessfulStorageResponse<NewsletterData> = {
+		return Promise.resolve({
 			ok: true,
-			data: match,
-		};
-		return Promise.resolve(response);
+			data: `newsletter #${listId} deleted`,
+		} as SuccessfulStorageResponse<string>);
 	}
 
 	list() {

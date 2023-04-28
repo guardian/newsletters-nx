@@ -42,9 +42,7 @@ export abstract class NewsletterStorage {
 
 	abstract delete(
 		listId: number,
-	): Promise<
-		SuccessfulStorageResponse<string> | UnsuccessfulStorageResponse
-	>;
+	): Promise<SuccessfulStorageResponse<string> | UnsuccessfulStorageResponse>;
 
 	abstract list(): Promise<
 		SuccessfulStorageResponse<NewsletterData[]> | UnsuccessfulStorageResponse

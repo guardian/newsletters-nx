@@ -100,15 +100,15 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 	async delete(
 		listId: number,
-	): Promise<
-		SuccessfulStorageResponse<string> | UnsuccessfulStorageResponse
-	> {
+	): Promise<SuccessfulStorageResponse<string> | UnsuccessfulStorageResponse> {
 		const newsletterToDelete = await this.read(listId);
 		if (!newsletterToDelete.ok) {
 			return newsletterToDelete;
 		}
 		try {
-			const { data: { listId, identityName } } = newsletterToDelete;
+			const {
+				data: { listId, identityName },
+			} = newsletterToDelete;
 			const key = `${this.OBJECT_PREFIX}${identityName}:${listId}.json`;
 			await this.deleteObject(key);
 		} catch (error) {
@@ -121,7 +121,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		return {
 			ok: true,
 			data: `newsletter with id ${listId} deleted`,
-		}
+		};
 	}
 
 	async list(): Promise<
