@@ -14,13 +14,8 @@ const markdownTemplate = `
 # Add the design brief and Figma design link for {{name}}
 
 Please share the following for **{{name}}**:
-- the design brief Google document
-- the signed off Figma design URL
-
-Does the Figma design file include images designs for thrashers?
-
-If so, please ensure the thrasher images are provided for both desktop and mobile widths.
-
+- The design brief Google document URL
+- The signed off and final Figma design URL, including thrasher designs for mobile and desktop
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
@@ -28,9 +23,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const designBriefLayout: WizardStepLayout<DraftStorage> = {
+export const newsletterDesignLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Design Brief',
+	label: 'Newsletter Design',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -50,10 +45,10 @@ export const designBriefLayout: WizardStepLayout<DraftStorage> = {
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const designBriefDoc = stepData.formData
+				const newsletterDesignDoc = stepData.formData
 					? stepData.formData['designBriefDoc']
 					: undefined;
-				if (!designBriefDoc) return 'NO DESIGN BRIEF DOC PROVIDED';
+				if (!newsletterDesignDoc) return 'NO DESIGN BRIEF DOC PROVIDED';
 				const figmaDesignUrl = stepData.formData
 					? stepData.formData['figmaDesignUrl']
 					: undefined;
@@ -77,7 +72,7 @@ export const designBriefLayout: WizardStepLayout<DraftStorage> = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.designBrief,
+	schema: formSchemas.newsletterDesign,
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };

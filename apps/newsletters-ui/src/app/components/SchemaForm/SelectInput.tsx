@@ -33,7 +33,7 @@ export const SelectInput: FunctionComponent<
 					label={label}
 					onChange={handleChange}
 				>
-					{optional && <MenuItem value={undefToken}>[UNDEFINED]</MenuItem>}
+					{optional && <MenuItem value={undefToken}>Select value</MenuItem>}
 					{options.map((option) => (
 						<MenuItem key={option} value={option}>
 							{option}
