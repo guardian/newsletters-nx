@@ -1,4 +1,4 @@
-import { Alert, Container, Snackbar } from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type {
@@ -50,17 +50,15 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 	};
 
 	return (
-		<Container maxWidth="lg">
+		<>
 			<SimpleForm
-				title={`edit ${originalItem.identityName}`}
+				title={`Edit ${originalItem.identityName}`}
 				initalData={item}
 				submit={(modification) => {
 					void requestUpdate(modification);
 				}}
 				schema={newsletterDataSchema.pick({
 					name: true,
-					description: true,
-					headline: true,
 					category: true,
 					status: true,
 					theme: true,
@@ -84,6 +82,6 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			>
 				<Alert severity="info">{confirmationMessage}</Alert>
 			</Snackbar>
-		</Container>
+		</>
 	);
 };

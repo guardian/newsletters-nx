@@ -108,7 +108,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 					}
 					return (
 						<NavigateButton
-							href={`/demo/launch-newsletter/${draft.listId}`}
+							href={`/newsletters/launch-newsletter/${draft.listId}`}
 							variant="outlined"
 							color="success"
 						>
