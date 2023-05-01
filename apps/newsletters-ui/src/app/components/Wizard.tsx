@@ -173,7 +173,9 @@ export const Wizard: React.FC<WizardProps> = ({
 			<Stack spacing={2} direction="row">
 				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
 					<Button
+						// todo - the variant should be calculated from the presence of the type in an array of 'primary' types
 						variant={button.buttonType === 'NEXT' ? 'contained' : 'outlined'}
+						// todo - use the Guardian blue (bgcolor: #1C5689) where this is a  primary type
 						sx={{ borderRadius: 0 }}
 						onClick={() => {
 							handleButtonClick(button.id)();
