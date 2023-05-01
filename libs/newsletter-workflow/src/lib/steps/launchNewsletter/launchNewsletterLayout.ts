@@ -31,12 +31,12 @@ export const launchNewsletterLayout: WizardStepLayout<LaunchService> = {
 	label: 'start',
 	buttons: {
 		cancel: {
-			buttonType: 'RED',
+			buttonType: 'CANCEL',
 			label: 'Cancel',
 			stepToMoveTo: 'cancel',
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: 'isReady',
 		},

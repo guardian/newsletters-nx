@@ -15,7 +15,7 @@ const mockWizardLayout: WizardLayout = {
 		staticMarkdown: 'Step 1',
 		buttons: {
 			next: {
-				buttonType: 'RED',
+				buttonType: 'NEXT',
 				label: 'Next',
 				stepToMoveTo: 'step2',
 				onAfterStepStartValidate: jest.fn(),
@@ -23,7 +23,7 @@ const mockWizardLayout: WizardLayout = {
 				executeStep: jest.fn(),
 			},
 			cancel: {
-				buttonType: 'RED',
+				buttonType: 'CANCEL',
 				label: 'Cancel',
 				stepToMoveTo: 'exit',
 				onAfterStepStartValidate: jest.fn(),
@@ -36,7 +36,7 @@ const mockWizardLayout: WizardLayout = {
 		staticMarkdown: 'Step 2',
 		buttons: {
 			prev: {
-				buttonType: 'RED',
+				buttonType: 'PREVIOUS',
 				label: 'Previous',
 				stepToMoveTo: 'step1',
 				onAfterStepStartValidate: jest.fn(),
@@ -44,7 +44,7 @@ const mockWizardLayout: WizardLayout = {
 				executeStep: jest.fn(),
 			},
 			finish: {
-				buttonType: 'GREEN',
+				buttonType: 'NEXT',
 				label: 'Finish',
 				stepToMoveTo: 'exit',
 				onBeforeStepChangeValidate: jest.fn(),
