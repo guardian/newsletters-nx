@@ -32,13 +32,13 @@ export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: 'signUpEmbed',
 			executeStep: executeModify,
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: () => {

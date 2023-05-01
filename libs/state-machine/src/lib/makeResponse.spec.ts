@@ -12,12 +12,12 @@ const WIZARD: WizardLayout = {
 		staticMarkdown: 'This is step 1',
 		buttons: {
 			next: {
-				buttonType: 'green',
+				buttonType: 'NEXT',
 				label: 'GO TO STEP 2',
 				stepToMoveTo: 'step2',
 			},
 			skip: {
-				buttonType: 'green',
+				buttonType: 'NEXT',
 				label: 'GO TO STEP 3',
 				stepToMoveTo: 'step3',
 			},
@@ -94,12 +94,12 @@ describe('makeResponse', () => {
 				next: {
 					id: 'next',
 					label: STEP_1.buttons['next']?.label as string,
-					buttonType: STEP_1.buttons['next']?.buttonType as string,
+					buttonType: 'NEXT',
 				},
 				skip: {
 					id: 'skip',
 					label: STEP_1.buttons['skip']?.label as string,
-					buttonType: STEP_1.buttons['skip']?.buttonType as string,
+					buttonType: 'NEXT',
 				},
 			},
 			errorMessage: AFTER_FAILED_NEXT.errorMessage,

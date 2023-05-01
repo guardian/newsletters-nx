@@ -1,4 +1,4 @@
-import { Alert, Box } from '@mui/material';
+import { Alert, Box, Button, Stack } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
@@ -15,7 +15,6 @@ import type {
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
-import { WizardButton } from './WizardButton';
 
 /**
  * Interface for the props passed to the `Wizard` component.
@@ -164,22 +163,27 @@ export const Wizard: React.FC<WizardProps> = ({
 			)}
 
 			{serverData.errorMessage && (
-				<FailureAlert
-					errorMessage={serverData.errorMessage}
-					isPersistent={serverData.hasPersistentError}
-				/>
+				<div style={{ paddingBottom: '12px' }}>
+					<FailureAlert
+						errorMessage={serverData.errorMessage}
+						isPersistent={serverData.hasPersistentError}
+					/>
+				</div>
 			)}
-			{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
-				<WizardButton
-					id={button.id}
-					label={button.label}
-					buttonType={button.buttonType}
-					onClick={() => {
-						handleButtonClick(button.id)();
-					}}
-					key={`${key}${button.label}`}
-				/>
-			))}
+			<Stack spacing={2} direction="row">
+				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
+					<Button
+						variant={button.buttonType === 'NEXT' ? 'contained' : 'outlined'}
+						sx={{ borderRadius: 0 }}
+						onClick={() => {
+							handleButtonClick(button.id)();
+						}}
+						key={`${key}${button.label}`}
+					>
+						{button.label}
+					</Button>
+				))}
+			</Stack>
 		</Box>
 	);
 };

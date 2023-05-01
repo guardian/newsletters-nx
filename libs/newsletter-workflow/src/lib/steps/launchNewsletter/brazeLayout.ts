@@ -69,18 +69,18 @@ export const brazeLayout: WizardStepLayout<DraftStorage> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: 'identityName',
 			executeStep: executeModify,
 		},
 		edit: {
-			buttonType: 'GREEN',
+			buttonType: 'EDIT',
 			label: 'Edit',
 			stepToMoveTo: 'editBraze',
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 		},

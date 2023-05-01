@@ -22,7 +22,7 @@ const finishLayout: WizardStepLayout<DraftStorage> = {
 	label: 'Finish',
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
