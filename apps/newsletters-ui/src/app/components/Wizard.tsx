@@ -6,11 +6,8 @@ import {
 	getStartStepId,
 	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
-import type {
-	WizardButtonType} from '@newsletters-nx/newsletters-data-client';
-import {
-	getEmptySchemaData
-} from '@newsletters-nx/newsletters-data-client';
+import type { WizardButtonType } from '@newsletters-nx/newsletters-data-client';
+import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
