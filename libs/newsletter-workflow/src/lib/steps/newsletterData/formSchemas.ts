@@ -82,7 +82,7 @@ export const formSchemas = {
 		})
 		.describe('Select from the drop-down list'),
 
-	designBrief: newsletterDataSchema
+	newsletterDesign: newsletterDataSchema
 		.pick({
 			designBriefDoc: true,
 			figmaDesignUrl: true,

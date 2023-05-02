@@ -14,11 +14,11 @@ const markdownTemplate = `
 
 Editorial newsletters can be produced in three ways:
 
-**article-based**: Each chapter of the newsletter is written as a composer article.
+- **article-based**: Each chapter of the newsletter is written as a composer article.
 
-**fronts-based**: The newsletters are generated from a fronts page.
+- **fronts-based**: The newsletters are generated from a fronts page.
 
-**manual-send**: The content of the email are generated manually or with an external tool.
+- **manual-send**: The content of the email are generated manually or with an external tool.
 
 If you aren't sure or none of the above fit, please select "other".
 

@@ -4,10 +4,10 @@ import { cancelLayout } from './cancelLayout';
 import { categoryLayout } from './categoryLayout';
 import { createDraftNewsletterLayout } from './createDraftNewsletterLayout';
 import { dateLayout } from './dateLayout';
-import { designBriefLayout } from './designBriefLayout';
 import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
 import { finishLayout } from './finishLayout';
 import { frequencyLayout } from './frequencyLayout';
+import { newsletterDesignLayout } from './newsletterDesignLayout';
 import { onlineArticleLayout } from './onlineArticleLayout';
 import { pillarLayout } from './pillarLayout';
 import { regionFocusLayout } from './regionFocusLayout';
@@ -28,7 +28,7 @@ export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	onlineArticle: onlineArticleLayout,
 	tags: tagsLayout,
 	thrasher: thrasherLayout,
-	designBrief: designBriefLayout,
+	newsletterDesign: newsletterDesignLayout,
 	signUpPage: signUpPageLayout,
 	signUpEmbed: signUpEmbedLayout,
 	finish: finishLayout,

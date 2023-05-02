@@ -23,9 +23,9 @@ This needs to be added in the UK timezone so the system can process this informa
 
 Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?  If so:
 
-- what date will the sign up page go live?
+- What date will the sign up page go live?
 
-- what date will the thrashers go live?
+- What date will the thrashers go live?
 
 ## Testing
 
