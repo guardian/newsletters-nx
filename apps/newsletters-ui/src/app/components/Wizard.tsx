@@ -6,10 +6,15 @@ import {
 	getStartStepId,
 	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
-import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	WizardButtonType} from '@newsletters-nx/newsletters-data-client';
+import {
+	getEmptySchemaData
+} from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
+	WizardButton,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
 import { MarkdownView } from './MarkdownView';
@@ -122,13 +127,42 @@ export const Wizard: React.FC<WizardProps> = ({
 		);
 	}
 
+	const getWizardButton = (
+		button: WizardButton,
+		onClick: (buttonId: string) => () => void,
+		key: string,
+	) => {
+		const primaryActions: WizardButtonType[] = ['NEXT', 'LAUNCH'];
+		const baseStyle = {
+			borderRadius: '0px',
+		};
+
+		const variant = primaryActions.includes(button.buttonType)
+			? 'contained'
+			: 'outlined';
+		const styling = primaryActions.includes(button.buttonType)
+			? { ...baseStyle, bgcolor: '#1C5689' }
+			: baseStyle;
+		return (
+			<Button
+				variant={variant}
+				sx={styling}
+				onClick={() => {
+					onClick(button.id)();
+				}}
+				key={`${key}${button.label}`}
+			>
+				{button.label}
+			</Button>
+		);
+	};
 	const handleButtonClick = (buttonId: string) => () => {
 		void fetchStep({
 			wizardId: wizardId,
 			id: id,
 			buttonId: buttonId,
 			stepId: serverData.currentStepId || '',
-			formData: { ...formData, listId }, // will work for the create+modify workflow, but might break other workflows
+			formData: { ...formData, listId }, // will work for the create and modify workflow, but might break other workflows
 		});
 	};
 
@@ -171,20 +205,9 @@ export const Wizard: React.FC<WizardProps> = ({
 				</div>
 			)}
 			<Stack spacing={2} direction="row">
-				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
-					<Button
-						// todo - the variant should be calculated from the presence of the type in an array of 'primary' types
-						variant={button.buttonType === 'NEXT' ? 'contained' : 'outlined'}
-						// todo - use the Guardian blue (bgcolor: #1C5689) where this is a  primary type
-						sx={{ borderRadius: 0 }}
-						onClick={() => {
-							handleButtonClick(button.id)();
-						}}
-						key={`${key}${button.label}`}
-					>
-						{button.label}
-					</Button>
-				))}
+				{Object.entries(serverData.buttons ?? {}).map(([key, button]) =>
+					getWizardButton(button, handleButtonClick, key),
+				)}
 			</Stack>
 		</Box>
 	);
