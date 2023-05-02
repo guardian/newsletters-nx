@@ -1,71 +1,40 @@
-import {
-	Box,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableRow,
-	Typography,
-} from '@mui/material';
-import type { ReactNode } from 'react';
-import type {
-	DraftNewsletterData,
-	NewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
+import { type ReactNode } from 'react';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { RawDataDialog } from './RawDataDialog';
 
 interface Props {
 	newsletter: NewsletterData;
 }
 
-const propertyToNode = (
-	newsletter: NewsletterData,
-	key: keyof NewsletterData,
-): ReactNode => {
-	const value = newsletter[key];
-
-	switch (typeof value) {
-		case 'string':
-		case 'number':
-		case 'bigint':
-		case 'boolean':
-		case 'symbol':
-			return value.toString();
-		case 'undefined':
-			return '[UNDEFINED]';
-		case 'object':
-			try {
-				const stringification = JSON.stringify(value, undefined, 2);
-				return <pre>{stringification}</pre>;
-			} catch (err) {
-				return '[non-serialisable object]';
-			}
-		case 'function':
-			return '[function]';
-	}
-};
-
 export const NewsletterDataDetails = ({ newsletter }: Props) => {
+	const { status, name, category, identityName, listId } = newsletter;
+
 	return (
 		<Box>
-			<Typography variant="h2">{newsletter.identityName}</Typography>
+			<Grid
+				container
+				columnGap={2}
+				columnSpacing={2}
+				justifyContent={'space-between'}
+			>
+				<Grid item>
+					<Badge badgeContent={status} color="secondary">
+						<Typography variant="h2">{name}</Typography>
+					</Badge>
+				</Grid>
+				<Grid item>
+					<Stack>
+						<Typography variant="subtitle2">category: {category}</Typography>
+						<Typography variant="subtitle2">
+							identityName: {identityName}
+						</Typography>
+						<Typography variant="subtitle2">id number: {listId}</Typography>
+					</Stack>
+				</Grid>
+			</Grid>
 
-			<TableContainer component={Paper}>
-				<Table size="small">
-					<TableBody>
-						{Object.keys(newsletter).map((key) => (
-							<TableRow key={key}>
-								<TableCell size="small" sx={{ fontWeight: 'bold' }}>
-									{key}
-								</TableCell>
-								<TableCell>
-									{propertyToNode(newsletter, key as keyof NewsletterData)}
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
+			<RawDataDialog newsletter={newsletter} />
 		</Box>
 	);
 };
