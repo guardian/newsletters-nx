@@ -25,7 +25,7 @@ export class LaunchService {
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	> {
 		const { draftStorage, newsletterStorage } = this;
-		const draftGetResponse = await draftStorage.getDraftNewsletter(draftId);
+		const draftGetResponse = await draftStorage.read(draftId);
 		if (!draftGetResponse.ok) {
 			return draftGetResponse;
 		}
@@ -38,9 +38,7 @@ export class LaunchService {
 		}
 
 		// TO DO - should we actually delete the draft or archive it / mark as launched?
-		const draftDeleteResponse = await draftStorage.deleteDraftNewsletter(
-			draftId,
-		);
+		const draftDeleteResponse = await draftStorage.deleteItem(draftId);
 		if (!draftDeleteResponse.ok) {
 			console.warn(
 				`created newsletter: ${newsletterCreateResponse.data.identityName} with listId #${newsletterCreateResponse.data.listId}, but failed to delete the draft.`,

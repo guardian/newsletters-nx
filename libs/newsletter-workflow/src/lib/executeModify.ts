@@ -46,9 +46,7 @@ export const executeModify: AsyncExecution<DraftStorage> = async (
 				...formDataToDraftNewsletterData(stepData.formData),
 				...listIdEntry,
 			};
-			const storageResponse = await storageInstance.modifyDraftNewsletter(
-				draftNewsletter,
-			);
+			const storageResponse = await storageInstance.update(draftNewsletter);
 			if (storageResponse.ok) {
 				return draftNewsletterDataToFormData(storageResponse.data);
 			}

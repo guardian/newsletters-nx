@@ -55,7 +55,7 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 			...derivedFields,
 		};
 
-		const storageResponse = await storageInstance.createDraftNewsletter({
+		const storageResponse = await storageInstance.create({
 			...draft,
 			listId: undefined,
 		});
