@@ -13,7 +13,6 @@ type LaunchInitialState = FormDataRecord & {
 	isReady: boolean;
 	errorMarkdown?: string[];
 	id?: string;
-	draft?: DraftNewsletterData;
 };
 
 export const getInitialStateForLaunch = async (
@@ -51,6 +50,14 @@ export const getInitialStateForLaunch = async (
 		isReady: true,
 		errorMarkdown: undefined,
 		id: request.id,
-		draft: draft,
+		identityName: draft.identityName,
+		listId: draft.listId,
+		brazeSubscribeEventNamePrefix: draft.brazeSubscribeEventNamePrefix,
+		brazeNewsletterName: draft.brazeNewsletterName,
+		brazeSubscribeAttributeName: draft.brazeSubscribeAttributeName,
+		brazeSubscribeAttributeNameAlternate:
+			draft.brazeSubscribeAttributeNameAlternate,
+		campaignName: draft.campaignName,
+		campaignCode: draft.campaignCode,
 	};
 };

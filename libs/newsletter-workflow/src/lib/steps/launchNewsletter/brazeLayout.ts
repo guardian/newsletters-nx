@@ -1,7 +1,4 @@
-import type {
-	FormDataRecord,
-	LaunchService,
-} from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
@@ -42,16 +39,17 @@ export const brazeLayout: WizardStepLayout<LaunchService> = {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		const draft = responseData.draft as FormDataRecord;
 		const [brazeSubscribeEventNamePrefix = 'BRAZESUBSCRIBEEVENTNAMEPREFIX'] =
-			getStringValuesFromRecord(draft, ['brazeSubscribeEventNamePrefix']);
+			getStringValuesFromRecord(responseData, [
+				'brazeSubscribeEventNamePrefix',
+			]);
 		const [brazeNewsletterName = 'BRAZENEWSLETTERNAME'] =
-			getStringValuesFromRecord(draft, ['brazeNewsletterName']);
+			getStringValuesFromRecord(responseData, ['brazeNewsletterName']);
 		const [brazeSubscribeAttributeName = 'BRAZESUBSRIBEATTRIBUTENAME'] =
-			getStringValuesFromRecord(draft, ['brazeSubscribeAttributeName']);
+			getStringValuesFromRecord(responseData, ['brazeSubscribeAttributeName']);
 		const [
 			brazeSubscribeAttributeNameAlternate = 'BRAZESUBSCRIBEATTRIBUTENAMEALTERNATE',
-		] = getStringValuesFromRecord(draft, [
+		] = getStringValuesFromRecord(responseData, [
 			'brazeSubscribeAttributeNameAlternate',
 		]);
 		return markdownTemplate

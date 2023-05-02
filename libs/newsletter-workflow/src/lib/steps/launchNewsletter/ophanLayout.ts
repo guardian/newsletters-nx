@@ -1,7 +1,4 @@
-import type {
-	FormDataRecord,
-	LaunchService,
-} from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
@@ -38,13 +35,14 @@ export const ophanLayout: WizardStepLayout<LaunchService> = {
 			return staticMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		const draft = responseData.draft as FormDataRecord;
-		const [campaignName = 'CAMPAIGNNAME'] = getStringValuesFromRecord(draft, [
-			'campaignName',
-		]);
-		const [campaignCode = 'CAMPAIGNCODE'] = getStringValuesFromRecord(draft, [
-			'campaignCode',
-		]);
+		const [campaignName = 'CAMPAIGNNAME'] = getStringValuesFromRecord(
+			responseData,
+			['campaignName'],
+		);
+		const [campaignCode = 'CAMPAIGNCODE'] = getStringValuesFromRecord(
+			responseData,
+			['campaignCode'],
+		);
 		return markdownTemplate
 			.replace(regExPatterns.name, name)
 			.replace(regExPatterns.campaignName, campaignName)
