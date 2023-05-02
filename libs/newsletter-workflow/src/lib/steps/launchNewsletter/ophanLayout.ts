@@ -49,18 +49,18 @@ export const ophanLayout: WizardStepLayout<DraftStorage> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: 'signUpEmbed',
 			executeStep: executeModify,
 		},
 		edit: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Edit',
 			stepToMoveTo: 'editOphan',
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 		},

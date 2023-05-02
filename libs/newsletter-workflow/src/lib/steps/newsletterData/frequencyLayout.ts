@@ -51,13 +51,13 @@ export const frequencyLayout: WizardStepLayout<DraftStorage> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},
 		finish: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {

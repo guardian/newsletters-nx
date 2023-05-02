@@ -48,12 +48,12 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 	label: 'Check if ready',
 	buttons: {
 		cancel: {
-			buttonType: 'RED',
+			buttonType: 'CANCEL',
 			label: 'Cancel',
 			stepToMoveTo: 'cancel',
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Launch',
 			stepToMoveTo: 'finish',
 			onBeforeStepChangeValidate(stepData) {
