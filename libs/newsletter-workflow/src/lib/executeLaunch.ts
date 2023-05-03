@@ -7,7 +7,7 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 	wizardStepData,
 	launchService,
 ) => {
-	const draftId = parseToNumber(stepData.formData?.['id']);
+	const draftId = parseToNumber(stepData['id']);
 	if (draftId === undefined) {
 		return `ERROR: invalid id.`;
 	}
