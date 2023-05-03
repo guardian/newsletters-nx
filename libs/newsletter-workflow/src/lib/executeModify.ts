@@ -31,6 +31,7 @@ const executeModifyWithEither = async (
 	}
 
 	const serviceIsADraftInstance = isADraftStorage(service);
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- linting bug?
 	const ourDraftService: DraftStorage = serviceIsADraftInstance
 		? service
 		: service.draftStorage;
