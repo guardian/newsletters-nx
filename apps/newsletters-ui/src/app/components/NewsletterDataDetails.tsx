@@ -33,7 +33,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				</Grid>
 			</Grid>
 
-			<RawDataDialog newsletter={newsletter} />
+			<RawDataDialog record={newsletter} title={newsletter.identityName} />
 		</Box>
 	);
 };

@@ -14,10 +14,10 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 
 interface Props {
-	newsletter: NewsletterData;
+	record: Record<string, unknown>;
+	title?: string;
 }
 
 const propertyToNode = (
@@ -51,14 +51,14 @@ const propertyToNode = (
 	}
 };
 
-export const RawDataDialog = ({ newsletter }: Props) => {
+export const RawDataDialog = ({ record, title = 'raw data' }: Props) => {
 	const [showRawData, setShowRawData] = useState(false);
 	const [showClipboardSuccess, setShowClipboardSuccess] = useState(false);
 	const [showClipboardFail, setShowClipboardFail] = useState(false);
 
 	const copyJson = async () => {
 		try {
-			const json = JSON.stringify(newsletter);
+			const json = JSON.stringify(record);
 			await navigator.clipboard.writeText(json);
 			setShowClipboardSuccess(true);
 		} catch (err) {
@@ -84,16 +84,16 @@ export const RawDataDialog = ({ newsletter }: Props) => {
 					setShowRawData(false);
 				}}
 			>
-				<DialogTitle>{newsletter.identityName}</DialogTitle>
+				<DialogTitle>{title}</DialogTitle>
 				<TableContainer component={Paper}>
 					<Table size="small">
 						<TableBody>
-							{Object.keys(newsletter).map((key) => (
+							{Object.keys(record).map((key) => (
 								<TableRow key={key}>
 									<TableCell size="small" sx={{ fontWeight: 'bold' }}>
 										{key}
 									</TableCell>
-									<TableCell>{propertyToNode(newsletter, key)}</TableCell>
+									<TableCell>{propertyToNode(record, key)}</TableCell>
 								</TableRow>
 							))}
 						</TableBody>
