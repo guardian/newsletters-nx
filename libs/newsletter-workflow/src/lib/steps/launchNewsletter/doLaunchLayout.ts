@@ -35,7 +35,7 @@ export const doLaunchLayout: WizardStepLayout<LaunchService> = {
 			stepToMoveTo: 'cancel',
 		},
 		next: {
-			buttonType: 'NEXT',
+			buttonType: 'LAUNCH',
 			label: 'Launch',
 			stepToMoveTo: 'finish',
 			executeStep: executeLaunch,
