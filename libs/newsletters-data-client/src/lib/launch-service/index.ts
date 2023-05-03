@@ -1,4 +1,4 @@
-import type { DraftStorage, DraftWithId } from '../draft-storage';
+import type { DraftStorage } from '../draft-storage';
 import { withDefaultNewsletterValues } from '../draft-to-newsletter';
 import type { NewsletterData } from '../newsletter-data-type';
 import type { NewsletterStorage } from '../newsletter-storage';
@@ -17,10 +17,6 @@ export class LaunchService {
 	) {
 		this.draftStorage = draftStorage;
 		this.newsletterStorage = newsletterStorage;
-	}
-
-	async modifyDraftNewsletter(draftNewsletter: DraftWithId) {
-		return this.draftStorage.modifyDraftNewsletter(draftNewsletter);
 	}
 
 	async launchDraft(

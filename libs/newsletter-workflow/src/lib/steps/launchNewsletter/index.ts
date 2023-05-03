@@ -1,3 +1,4 @@
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { brazeLayout } from './brazeLayout';
 import { cancelLayout } from './cancelLayout';
@@ -12,7 +13,7 @@ import { launchNewsletterLayout } from './launchNewsletterLayout';
 import { noItemLayout } from './noItem';
 import { ophanLayout } from './ophanLayout';
 
-export const launchLayout: WizardLayout = {
+export const launchLayout: WizardLayout<LaunchService> = {
 	launchNewsletter: launchNewsletterLayout,
 	isDataComplete: isDataCompleteLayout,
 	identityName: identityNameLayout,

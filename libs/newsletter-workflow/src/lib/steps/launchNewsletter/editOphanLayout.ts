@@ -1,10 +1,10 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
+import { executeModifyWithinLaunch } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
@@ -23,7 +23,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const editOphanLayout: WizardStepLayout<DraftStorage> = {
+export const editOphanLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -37,7 +37,7 @@ export const editOphanLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'RED',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModify,
+			executeStep: executeModifyWithinLaunch,
 		},
 		next: {
 			buttonType: 'GREEN',
@@ -47,7 +47,7 @@ export const editOphanLayout: WizardStepLayout<DraftStorage> = {
 				// TO DO - check that ophan values do not already exist in other draft or actual newsletter
 				return undefined;
 			},
-			executeStep: executeModify,
+			executeStep: executeModifyWithinLaunch,
 		},
 	},
 	schema: formSchemas.ophan,

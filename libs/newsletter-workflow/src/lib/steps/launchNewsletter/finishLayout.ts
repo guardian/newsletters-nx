@@ -1,3 +1,4 @@
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -12,7 +13,7 @@ You can see its details on the [details page](/newsletters/{{identityName}})
 
 `.trim();
 
-export const finishLayout: WizardStepLayout = {
+export const finishLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown: markdownTemplate,
 	label: 'Finish',
 	dynamicMarkdown(requestData, responseData) {
