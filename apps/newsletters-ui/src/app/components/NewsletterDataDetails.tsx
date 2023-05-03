@@ -50,9 +50,9 @@ const FieldBox = (props: { title: string; children: ReactNode }) => (
 	</Box>
 );
 
-export const NewsletterDataDetails = ({ newsletter }: Props) => {
-	const { status, name, category, identityName, listId } = newsletter;
-	const DataPoint = (props: {
+const hlDataPoint =
+	(newsletter: NewsletterData) =>
+	(props: {
 		label?: string;
 		property: keyof NewsletterData;
 		tooltip?: string;
@@ -90,6 +90,11 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 		);
 	};
 
+export const NewsletterDataDetails = ({ newsletter }: Props) => {
+	const { status, name } = newsletter;
+
+	const DataPoint = hlDataPoint(newsletter);
+
 	return (
 		<Box>
 			<Grid
@@ -104,38 +109,27 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 					</Badge>
 				</Grid>
 				<Grid item>
-					<Stack>
-						<Typography variant="subtitle2">category: {category}</Typography>
-						<Typography variant="subtitle2">
-							identityName: {identityName}
-						</Typography>
-						<Typography variant="subtitle2">id number: {listId}</Typography>
-					</Stack>
+					<Illustration
+						name={newsletter.name}
+						url={newsletter.illustrationCircle}
+					/>
 				</Grid>
 			</Grid>
 
-			<Stack
-				direction={'row'}
-				justifyContent={'space-between'}
-				alignItems={'flex-start'}
-			>
-				<FieldBox title="Attributes">
-					<DataPoint property="status" />
-					<DataPoint property="restricted" />
-					<DataPoint property="theme" />
-					<DataPoint property="group" />
-					<DataPoint
-						property="regionFocus"
-						tooltip={getPropertyDescription('regionFocus')}
-					/>
-					<DataPoint property="frequency" />
-				</FieldBox>
-
-				<Illustration
-					name={newsletter.name}
-					url={newsletter.illustrationCircle}
+			<FieldBox title="Attributes">
+				<DataPoint property="listId" label="id number" />
+				<DataPoint property="identityName" label="id" />
+				<DataPoint property="category" />
+				<DataPoint property="status" />
+				<DataPoint property="restricted" />
+				<DataPoint property="theme" />
+				<DataPoint property="group" />
+				<DataPoint
+					property="regionFocus"
+					tooltip={getPropertyDescription('regionFocus')}
 				/>
-			</Stack>
+				<DataPoint property="frequency" />
+			</FieldBox>
 
 			<FieldBox title="Copy">
 				<DataPoint property="name" />
