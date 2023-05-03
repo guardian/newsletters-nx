@@ -16,7 +16,7 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 # Choose the Geo Focus for {{name}}
 
-Is **{{name}}** specific to a UK, Australia or US audience, or does it have international appeal?
+What’s the geo focus of **{{name}}**? UK, US, Australia or International??
 
 `.trim();
 
@@ -37,13 +37,13 @@ export const regionFocusLayout: WizardStepLayout<DraftStorage> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData: WizardStepData) => {

@@ -13,7 +13,7 @@ This wizard will guide you through the process of launching a new newsletter usi
 	label: 'start',
 	buttons: {
 		cancel: {
-			buttonType: 'RED',
+			buttonType: 'CANCEL',
 			label: 'Cancel',
 			stepToMoveTo: 'cancel',
 		},

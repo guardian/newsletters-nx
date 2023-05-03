@@ -50,17 +50,17 @@ export const ophanLayout: WizardStepLayout<LaunchService> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
 		},
 		edit: {
-			buttonType: 'GREEN',
+			buttonType: 'EDIT',
 			label: 'Edit',
 			stepToMoveTo: 'editOphan',
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 		},

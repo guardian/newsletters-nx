@@ -1,11 +1,11 @@
 # state-machine
 
-The State-machine is library to support "Wizard" user interfaces where the user is guided through a series of step which impsct the state of a server-side application, such as entering or modifying data or instructing the application to take an action.
+The State-machine is library to support "Wizard" user interfaces where the user is guided through a series of step which inspect the state of a server-side application, such as entering or modifying data or instructing the application to take an action.
 
 It exports:
 
--   a set of types that can be imported into other libraries to define `WizardLayout`s for specific workflows.
--   a handler function to be called on the server side to validiate the user input against the parameters defined in the `WizardLayout`, dispatch and resulting actions and return the state information for the next step to the client
+-   A set of types that can be imported into other libraries to define `WizardLayout`s for specific workflows.
+-   A handler function to be called on the server side to validate the user input against the parameters defined in the `WizardLayout`, dispatch and resulting actions and return the state information for the next step to the client
 
 The aim is to keep this library generic, so it could be used for `WizardLayout` describing any workflow and any data model.
 

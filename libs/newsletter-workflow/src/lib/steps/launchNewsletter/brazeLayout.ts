@@ -70,17 +70,17 @@ export const brazeLayout: WizardStepLayout<LaunchService> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
 		},
 		edit: {
-			buttonType: 'GREEN',
+			buttonType: 'EDIT',
 			label: 'Edit',
 			stepToMoveTo: 'editBraze',
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 		},

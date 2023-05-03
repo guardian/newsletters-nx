@@ -23,9 +23,9 @@ This needs to be added in the UK timezone so the system can process this informa
 
 Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?  If so:
 
-- what date will the sign up page go live?
+- What date will the sign up page go live?
 
-- what date will the thrashers go live?
+- What date will the thrashers go live?
 
 ## Testing
 
@@ -54,13 +54,13 @@ export const dateLayout: WizardStepLayout<DraftStorage> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
 		finish: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,

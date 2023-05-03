@@ -105,7 +105,7 @@ export const DraftDetails = ({ draft }: Props) => {
 
 							{readyToLaunch && (
 								<NavigateButton
-									href={`/demo/launch-newsletter/${draft.listId}`}
+									href={`/newsletters/launch-newsletter/${draft.listId}`}
 									endIcon={
 										<span role="img" aria-label="rocket">
 											🚀

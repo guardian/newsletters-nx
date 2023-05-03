@@ -40,17 +40,17 @@ export const identityNameLayout: WizardStepLayout<LaunchService> = {
 	},
 	buttons: {
 		cancel: {
-			buttonType: 'RED',
+			buttonType: 'CANCEL',
 			label: 'Cancel',
 			stepToMoveTo: 'cancel',
 		},
 		edit: {
-			buttonType: 'GREEN',
+			buttonType: 'EDIT',
 			label: 'Edit',
 			stepToMoveTo: 'editIdentityName',
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 		},

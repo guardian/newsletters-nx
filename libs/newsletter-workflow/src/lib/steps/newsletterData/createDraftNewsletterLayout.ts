@@ -9,18 +9,18 @@ export const createDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
 
 Welcome!  This wizard will guide you through the process of creating a newsletter using email-rendering.
 
-The first step is to enter the name of your newsletter, for example **Down to Earth**.
+The first step is to enter the name of your newsletter. For example,  **Down to Earth**.
 
 `,
 	label: 'Enter Name',
 	buttons: {
 		cancel: {
-			buttonType: 'RED',
+			buttonType: 'CANCEL',
 			label: 'Cancel',
 			stepToMoveTo: 'cancel',
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {

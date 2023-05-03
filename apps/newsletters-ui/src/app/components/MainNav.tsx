@@ -20,7 +20,7 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-	{ path: '/newsletters', label: 'Newsletters' },
+	{ path: '/newsletters', label: 'Launched' },
 	{ path: '/drafts', label: 'Drafts' },
 	{ path: '/templates', label: 'Email Templates' },
 	{ path: '/thrashers', label: 'Thrashers' },
