@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
 import { NewsletterDataDetails } from '../NewsletterDataDetails';
@@ -16,9 +16,6 @@ export const NewsletterDetailView = () => {
 	return (
 		<ContentWrapper>
 			<NewsletterDataDetails newsletter={matchedItem} />
-			<span style={{ padding: '8px 0' }}>
-				<Link to="/newsletters/">Back to List</Link>
-			</span>
 		</ContentWrapper>
 	);
 };

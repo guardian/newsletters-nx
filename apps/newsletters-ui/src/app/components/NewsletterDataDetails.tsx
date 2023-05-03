@@ -12,6 +12,7 @@ import type { ReactNode } from 'react';
 import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { Illustration } from './Illustration';
+import { NavigateButton } from './NavigateButton';
 import { RawDataDialog } from './RawDataDialog';
 
 interface Props {
@@ -169,7 +170,12 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<DataPoint property="figmaDesignUrl" url />
 			</FieldBox>
 
-			<RawDataDialog record={newsletter} title={newsletter.identityName} />
+			<Stack direction={'row'} justifyContent={'space-between'}>
+				<NavigateButton href="../" variant="outlined">
+					Back to List
+				</NavigateButton>
+				<RawDataDialog record={newsletter} title={newsletter.identityName} />
+			</Stack>
 		</Box>
 	);
 };

@@ -70,6 +70,7 @@ export const RawDataDialog = ({ record, title = 'raw data' }: Props) => {
 	return (
 		<>
 			<Button
+				variant="contained"
 				onClick={() => {
 					setShowRawData(true);
 				}}
