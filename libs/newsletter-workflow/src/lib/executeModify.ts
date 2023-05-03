@@ -15,14 +15,25 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { validateIncomingFormData } from '@newsletters-nx/state-machine';
 
-export const executeModify: AsyncExecution<DraftStorage> = async (
+const isADraftStorage = (
+	service: LaunchService | DraftStorage,
+): service is DraftStorage => {
+	return typeof (service as LaunchService).launchDraft === 'undefined';
+};
+
+const executeModifyWithEither = async (
 	stepData: WizardStepData,
-	stepLayout?: WizardStepLayout<DraftStorage>,
-	draftStorage?: DraftStorage,
+	stepLayout?: WizardStepLayout,
+	service?: LaunchService | DraftStorage,
 ): Promise<WizardFormData | string> => {
-	if (!draftStorage) {
+	if (!service) {
 		return 'no storage instance';
 	}
+
+	const serviceIsADraftInstance = isADraftStorage(service);
+	const ourDraftService: DraftStorage = serviceIsADraftInstance
+		? service
+		: service.draftStorage;
 
 	if (stepData.formData) {
 		const { listId } = stepData.formData;
@@ -47,7 +58,7 @@ export const executeModify: AsyncExecution<DraftStorage> = async (
 				...formDataToDraftNewsletterData(stepData.formData),
 				...listIdEntry,
 			};
-			const storageResponse = await draftStorage.modifyDraftNewsletter(
+			const storageResponse = await ourDraftService.modifyDraftNewsletter(
 				draftNewsletter,
 			);
 			if (storageResponse.ok) {
@@ -59,45 +70,26 @@ export const executeModify: AsyncExecution<DraftStorage> = async (
 	return 'missing form data';
 };
 
+export const executeModify: AsyncExecution<DraftStorage> = async (
+	stepData: WizardStepData,
+	stepLayout?: WizardStepLayout<DraftStorage>,
+	draftStorage?: DraftStorage,
+): Promise<WizardFormData | string> => {
+	return executeModifyWithEither(
+		stepData,
+		stepLayout as WizardStepLayout,
+		draftStorage,
+	);
+};
+
 export const executeModifyWithinLaunch: AsyncExecution<LaunchService> = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<LaunchService>,
 	launchService?: LaunchService,
 ): Promise<WizardFormData | string> => {
-	if (!launchService) {
-		return 'no storage instance';
-	}
-
-	if (stepData.formData) {
-		const { listId } = stepData.formData;
-		if (typeof listId !== 'number') {
-			return 'invalid or missing listId';
-		}
-
-		const formValidationError = validateIncomingFormData(
-			stepData.currentStepId,
-			stepData.formData,
-			stepLayout as WizardStepLayout<unknown>,
-		);
-
-		if (formValidationError) return formValidationError;
-
-		// listId specifically added to draftNewsletter to ensure correct typing
-		if (stepData.formData['listId']) {
-			const listIdEntry = {
-				listId: stepData.formData['listId'] as number,
-			};
-			const draftNewsletter: DraftWithId = {
-				...formDataToDraftNewsletterData(stepData.formData),
-				...listIdEntry,
-			};
-			const storageResponse =
-				await launchService.draftStorage.modifyDraftNewsletter(draftNewsletter);
-			if (storageResponse.ok) {
-				return draftNewsletterDataToFormData(storageResponse.data);
-			}
-			return storageResponse.message;
-		}
-	}
-	return 'missing form data';
+	return executeModifyWithEither(
+		stepData,
+		stepLayout as WizardStepLayout,
+		launchService,
+	);
 };
