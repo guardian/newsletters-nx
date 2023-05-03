@@ -1,5 +1,4 @@
 import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
-import { type ReactNode } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { RawDataDialog } from './RawDataDialog';
 

@@ -1,9 +1,11 @@
 import {
+	Alert,
 	Button,
 	Dialog,
 	DialogActions,
 	DialogTitle,
 	Paper,
+	Snackbar,
 	Table,
 	TableBody,
 	TableCell,
@@ -19,10 +21,10 @@ interface Props {
 }
 
 const propertyToNode = (
-	newsletter: NewsletterData,
-	key: keyof NewsletterData,
+	record: Record<string, unknown>,
+	key: string,
 ): ReactNode => {
-	const value = newsletter[key];
+	const value = record[key];
 
 	switch (typeof value) {
 		case 'string':
@@ -45,12 +47,25 @@ const propertyToNode = (
 				return '[non-serialisable object]';
 			}
 		case 'function':
-			return '[function]';
+			return `[function: ${value.name}]`;
 	}
 };
 
 export const RawDataDialog = ({ newsletter }: Props) => {
 	const [showRawData, setShowRawData] = useState(false);
+	const [showClipboardSuccess, setShowClipboardSuccess] = useState(false);
+	const [showClipboardFail, setShowClipboardFail] = useState(false);
+
+	const copyJson = async () => {
+		try {
+			const json = JSON.stringify(newsletter);
+			await navigator.clipboard.writeText(json);
+			setShowClipboardSuccess(true);
+		} catch (err) {
+			console.log(err);
+			setShowClipboardFail(true);
+		}
+	};
 
 	return (
 		<>
@@ -78,16 +93,16 @@ export const RawDataDialog = ({ newsletter }: Props) => {
 									<TableCell size="small" sx={{ fontWeight: 'bold' }}>
 										{key}
 									</TableCell>
-									<TableCell>
-										{propertyToNode(newsletter, key as keyof NewsletterData)}
-									</TableCell>
+									<TableCell>{propertyToNode(newsletter, key)}</TableCell>
 								</TableRow>
 							))}
 						</TableBody>
 					</Table>
 				</TableContainer>
 				<DialogActions>
+					<Button onClick={copyJson}>copy json</Button>
 					<Button
+						variant="contained"
 						onClick={() => {
 							setShowRawData(false);
 						}}
@@ -96,6 +111,25 @@ export const RawDataDialog = ({ newsletter }: Props) => {
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			<Snackbar
+				open={showClipboardSuccess}
+				autoHideDuration={4000}
+				onClose={() => {
+					setShowClipboardSuccess(false);
+				}}
+			>
+				<Alert severity="success">Copied to clipboard</Alert>
+			</Snackbar>
+			<Snackbar
+				open={showClipboardFail}
+				autoHideDuration={4000}
+				onClose={() => {
+					setShowClipboardFail(false);
+				}}
+			>
+				<Alert severity="error">Failed to copy to clipboard!</Alert>
+			</Snackbar>
 		</>
 	);
 };
