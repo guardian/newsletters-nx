@@ -1,8 +1,9 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import { getNextStepId } from '@newsletters-nx/state-machine';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -30,7 +31,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const brazeLayout: WizardStepLayout<DraftStorage> = {
+export const brazeLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	label: 'Braze',
 	dynamicMarkdown(requestData, responseData) {
@@ -71,8 +72,7 @@ export const brazeLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'PREVIOUS',
 			label: 'Back',
-			stepToMoveTo: 'identityName',
-			executeStep: executeModify,
+			stepToMoveTo: getPreviousOrEditStartStepId,
 		},
 		edit: {
 			buttonType: 'EDIT',
@@ -85,6 +85,4 @@ export const brazeLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: getNextStepId,
 		},
 	},
-	canSkipTo: true,
-	executeSkip: executeSkip,
 };

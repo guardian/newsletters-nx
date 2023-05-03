@@ -1,6 +1,6 @@
 import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
+import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeLaunch } from '../../executeLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { appendListToMarkdown, isStringArray } from '../../markdown-util';
 import { regExPatterns } from '../../regExPatterns';
@@ -22,7 +22,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const isReadyLayout: WizardStepLayout<LaunchService> = {
+export const isDataCompleteLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -45,7 +45,7 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 
 		return populated;
 	},
-	label: 'Check if ready',
+	label: 'Check Data Complete',
 	buttons: {
 		cancel: {
 			buttonType: 'CANCEL',
@@ -54,8 +54,8 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 		},
 		next: {
 			buttonType: 'NEXT',
-			label: 'Launch',
-			stepToMoveTo: 'finish',
+			label: 'Next',
+			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate(stepData) {
 				const isReady = stepData.formData?.['isReady'];
 				if (isReady !== true) {
@@ -63,7 +63,6 @@ export const isReadyLayout: WizardStepLayout<LaunchService> = {
 				}
 				return undefined;
 			},
-			executeStep: executeLaunch,
 		},
 	},
 };
