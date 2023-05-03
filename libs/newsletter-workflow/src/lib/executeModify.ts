@@ -21,7 +21,7 @@ const isADraftStorage = (
 	return typeof (service as LaunchService).launchDraft === 'undefined';
 };
 
-const executeModifyWithEither = async (
+const doModify = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	service?: LaunchService | DraftStorage,
@@ -76,11 +76,7 @@ export const executeModify: AsyncExecution<DraftStorage> = async (
 	stepLayout?: WizardStepLayout<DraftStorage>,
 	draftStorage?: DraftStorage,
 ): Promise<WizardFormData | string> => {
-	return executeModifyWithEither(
-		stepData,
-		stepLayout as WizardStepLayout,
-		draftStorage,
-	);
+	return doModify(stepData, stepLayout as WizardStepLayout, draftStorage);
 };
 
 export const executeModifyWithinLaunch: AsyncExecution<LaunchService> = async (
@@ -88,9 +84,5 @@ export const executeModifyWithinLaunch: AsyncExecution<LaunchService> = async (
 	stepLayout?: WizardStepLayout<LaunchService>,
 	launchService?: LaunchService,
 ): Promise<WizardFormData | string> => {
-	return executeModifyWithEither(
-		stepData,
-		stepLayout as WizardStepLayout,
-		launchService,
-	);
+	return doModify(stepData, stepLayout as WizardStepLayout, launchService);
 };
