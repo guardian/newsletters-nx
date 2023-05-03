@@ -62,6 +62,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 					category: true,
 					status: true,
 					theme: true,
+					designBriefDoc: true,
 				})}
 			/>
 
