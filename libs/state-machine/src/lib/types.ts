@@ -1,6 +1,6 @@
 import type {
 	FormDataRecord,
-	WIZARD_BUTTON_TYPES,
+	WizardButtonType,
 } from '@newsletters-nx/newsletters-data-client';
 import type { ZodObject, ZodRawShape } from 'zod';
 
@@ -17,7 +17,7 @@ export interface WizardButton {
 	/** Label displayed on the button. */
 	label: string;
 	/** Type of the button, mapped to a specific background and border color. */
-	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
+	buttonType: WizardButtonType;
 }
 
 export interface WizardStepData {
@@ -61,7 +61,7 @@ export type FindStepIdFunction = {
 export type WizardStepLayoutButton<
 	T extends GenericStorageInterface = unknown,
 > = {
-	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
+	buttonType: WizardButtonType;
 	label: string;
 	stepToMoveTo: string | FindStepIdFunction;
 	onAfterStepStartValidate?: AsyncValidator<T> | Validator<T>;
