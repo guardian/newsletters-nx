@@ -142,6 +142,10 @@ export const formSchemas = {
 		'thrasherDescription',
 	]).describe('Input the thrasher setup'),
 
+	multiThrashers: pickAndPrefixThrasherOption(['multiThrashers']).describe(
+		'Input details of the multi-thrashers',
+	),
+
 	promotionDates: newsletterDataSchema
 		.pick({
 			launchDate: true,

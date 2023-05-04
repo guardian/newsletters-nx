@@ -68,6 +68,7 @@ export const thrasherOptionsSchema = z.object({
 		'single thrasher location',
 	),
 	thrasherDescription: z.string().describe('thrasher description'),
+	multiThrashers: z.array(z.string()).optional().describe('multi-thrashers'),
 });
 export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
 
