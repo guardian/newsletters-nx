@@ -8,7 +8,10 @@ import {
 	Tooltip,
 	Typography,
 } from '@mui/material';
-import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
+import {
+	getPropertyDescription,
+	newsletterDataSchema,
+} from '@newsletters-nx/newsletters-data-client';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { DetailAccordian } from './DetailAccordian';
 import { Illustration } from './Illustration';
@@ -41,7 +44,12 @@ const propertyDisplayValue = (value: unknown): string => {
 	}
 };
 
-const toGuardianHref = (path: string | undefined) => {};
+const toGuardianHref = (path: string | undefined) => {
+	if (!path) {
+		return undefined;
+	}
+	return `http://theguardian.com${path}`;
+};
 
 const hlDataPoint =
 	(newsletter: NewsletterData) =>
@@ -49,23 +57,29 @@ const hlDataPoint =
 		label?: string;
 		property: keyof NewsletterData;
 		tooltip?: string;
-		url?: string | true;
+		url?: boolean;
+		guardianUrl?: boolean;
 	}) => {
-		const { label, property, tooltip, url } = props;
+		const { label, property, tooltip, url, guardianUrl } = props;
 		const value = newsletter[props.property];
+
 		const href =
-			typeof url === 'string'
-				? url
-				: url === true && typeof value === 'string'
-				? value
+			typeof value === 'string'
+				? guardianUrl
+					? toGuardianHref(value)
+					: url
+					? value
+					: undefined
 				: undefined;
 
+		const displayLabel =
+			label ?? newsletterDataSchema.shape[property].description ?? property;
 		const displayValue = propertyDisplayValue(value);
 
 		return (
 			<Grid container justifyContent={'space-between'} spacing={1}>
 				<Grid item xs={3} flexGrow={1} flexShrink={0}>
-					<Typography variant="caption">{label ?? property}</Typography>
+					<Typography variant="caption">{displayLabel}</Typography>
 					{tooltip && (
 						<Tooltip title={tooltip} arrow>
 							<Chip size="small" label="?" />
@@ -73,7 +87,7 @@ const hlDataPoint =
 					)}
 				</Grid>
 				<Grid item xs={9} flexShrink={1}>
-					{value && url ? (
+					{value && href ? (
 						<Link href={href}>{displayValue}</Link>
 					) : (
 						<Typography>{displayValue}</Typography>
@@ -110,7 +124,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 
 			<DetailAccordian title="Attributes" defaultExpanded>
 				<DataPoint property="listId" label="id number" />
-				<DataPoint property="identityName" label="id" />
+				<DataPoint property="identityName" />
 				<DataPoint property="category" />
 				<DataPoint property="status" />
 				<DataPoint property="restricted" />
@@ -129,7 +143,6 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<DataPoint property="signUpDescription" />
 				<DataPoint
 					property="signUpEmbedDescription"
-					label="confirmation message"
 					tooltip="The short message to display when the user signs up using a sign up embed."
 				/>
 				<DataPoint property="mailSuccessDescription" />
@@ -141,18 +154,18 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<DataPoint property="composerCampaignTag" />
 			</DetailAccordian>
 
-			<DetailAccordian title="Links">
+			<DetailAccordian title="Links" defaultExpanded>
 				<DataPoint
 					property="signupPage"
 					tooltip={getPropertyDescription('signupPage')}
-					url={toGuardianHref(newsletter.signupPage)}
+					guardianUrl
 				/>
 				<DataPoint
 					property="exampleUrl"
 					tooltip={getPropertyDescription('exampleUrl')}
-					url={toGuardianHref(newsletter.exampleUrl)}
+					guardianUrl
 				/>
-				<DataPoint property="designBriefDoc" />
+				<DataPoint property="designBriefDoc" url />
 				<DataPoint property="figmaDesignUrl" url />
 			</DetailAccordian>
 
@@ -162,6 +175,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<DataPoint property="brazeNewsletterName" />
 				<DataPoint property="brazeSubscribeAttributeNameAlternate" />
 			</DetailAccordian>
+
 			<DetailAccordian title="Ophan Values">
 				<DataPoint property="campaignName" />
 				<DataPoint property="campaignCode" />
