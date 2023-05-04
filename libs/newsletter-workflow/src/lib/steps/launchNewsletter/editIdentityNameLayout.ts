@@ -1,8 +1,10 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { getNextStepId } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
-import { executeSkip } from '../../executeSkip';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
+import { executeModifyWithinLaunch } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
@@ -21,7 +23,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
+export const editIdentityNameLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
@@ -32,24 +34,22 @@ export const editIdentityNameLayout: WizardStepLayout<DraftStorage> = {
 	},
 	buttons: {
 		back: {
-			buttonType: 'RED',
+			buttonType: 'PREVIOUS',
 			label: 'Back',
-			stepToMoveTo: 'signUpEmbed',
-			executeStep: executeModify,
+			stepToMoveTo: getPreviousOrEditStartStepId,
+			executeStep: executeModifyWithinLaunch,
 		},
 		next: {
-			buttonType: 'GREEN',
+			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: () => {
 				// TO DO - check that identityName does not already exist in other draft or actual newsletter
 				return undefined;
 			},
-			executeStep: executeModify,
+			executeStep: executeModifyWithinLaunch,
 		},
 	},
 	schema: formSchemas.identityName,
 	parentStepId: 'identityName',
-	canSkipTo: true,
-	executeSkip: executeSkip,
 };

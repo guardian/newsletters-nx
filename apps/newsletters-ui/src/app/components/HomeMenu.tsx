@@ -63,16 +63,16 @@ export function HomeMenu() {
 					content={'Create new newsletter'}
 				/>
 				<ButtonGridItem
-					path="/demo/newsletter-data"
-					content={'Demo create newsletter wizard'}
+					path="/newsletters/newsletter-data"
+					content={'Create newsletter wizard'}
 					color="success"
 					variant="contained"
 				/>
 				<ButtonGridItem
-					path="/demo/launch-newsletter"
-					content={'Demo launch newsletter wizard'}
+					path="/newsletters/launch-newsletter"
+					content={'launch newsletter wizard'}
 				/>
-				<ButtonGridItem path="/demo/forms" content={'Demo form'} />
+				<ButtonGridItem path="/newsletters/forms" content={'Demo form'} />
 				<ButtonGridItem content={'Update newsletter'} />
 			</Grid>
 		</Container>

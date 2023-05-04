@@ -46,6 +46,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 						{
 							currentStepId: requestBody.stepId,
 							formData: requestBody.formData,
+							id: requestBody.id,
 						},
 						wizardLayout,
 						!!requestBody.id,

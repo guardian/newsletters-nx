@@ -1,6 +1,6 @@
 import type {
 	FormDataRecord,
-	WIZARD_BUTTON_TYPES,
+	WizardButtonType,
 } from '@newsletters-nx/newsletters-data-client';
 import type { ZodObject, ZodRawShape } from 'zod';
 
@@ -17,13 +17,18 @@ export interface WizardButton {
 	/** Label displayed on the button. */
 	label: string;
 	/** Type of the button, mapped to a specific background and border color. */
-	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
+	buttonType: WizardButtonType;
 }
 
 export interface WizardStepData {
 	formData?: WizardFormData;
 	currentStepId: string;
 	errorMessage?: string;
+	// ID should be the id of item being editted, as determined by
+	// the page URL, rather than from the form data inputted by the user.
+	// It should be undefined for a "create" operation where the page will
+	// not start with an existing item to to be editted.
+	id?: string;
 }
 
 type AsyncValidator<T extends GenericStorageInterface> = (
@@ -61,7 +66,7 @@ export type FindStepIdFunction = {
 export type WizardStepLayoutButton<
 	T extends GenericStorageInterface = unknown,
 > = {
-	buttonType: keyof typeof WIZARD_BUTTON_TYPES;
+	buttonType: WizardButtonType;
 	label: string;
 	stepToMoveTo: string | FindStepIdFunction;
 	onAfterStepStartValidate?: AsyncValidator<T> | Validator<T>;
