@@ -1,8 +1,9 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { getNextStepId } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -26,7 +27,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const ophanLayout: WizardStepLayout<DraftStorage> = {
+export const ophanLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	label: 'Ophan',
 	dynamicMarkdown(requestData, responseData) {
@@ -51,11 +52,10 @@ export const ophanLayout: WizardStepLayout<DraftStorage> = {
 		back: {
 			buttonType: 'PREVIOUS',
 			label: 'Back',
-			stepToMoveTo: 'signUpEmbed',
-			executeStep: executeModify,
+			stepToMoveTo: getPreviousOrEditStartStepId,
 		},
 		edit: {
-			buttonType: 'NEXT',
+			buttonType: 'EDIT',
 			label: 'Edit',
 			stepToMoveTo: 'editOphan',
 		},
@@ -65,6 +65,4 @@ export const ophanLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: getNextStepId,
 		},
 	},
-	canSkipTo: true,
-	executeSkip: executeSkip,
 };

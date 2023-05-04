@@ -1,8 +1,6 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getNextStepId } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -24,7 +22,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'of the newsletter',
 );
 
-export const identityNameLayout: WizardStepLayout<DraftStorage> = {
+export const identityNameLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	label: 'Identity Name',
 	dynamicMarkdown(requestData, responseData) {
@@ -41,11 +39,10 @@ export const identityNameLayout: WizardStepLayout<DraftStorage> = {
 			.replace(regExPatterns.identityName, identityName);
 	},
 	buttons: {
-		back: {
-			buttonType: 'PREVIOUS',
-			label: 'Back',
-			stepToMoveTo: 'signUpEmbed',
-			executeStep: executeModify,
+		cancel: {
+			buttonType: 'CANCEL',
+			label: 'Cancel',
+			stepToMoveTo: 'cancel',
 		},
 		edit: {
 			buttonType: 'EDIT',
@@ -58,6 +55,4 @@ export const identityNameLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: getNextStepId,
 		},
 	},
-	canSkipTo: true,
-	executeSkip: executeSkip,
 };
