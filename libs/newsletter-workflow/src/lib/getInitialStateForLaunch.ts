@@ -13,7 +13,7 @@ import { parseToNumber } from './util';
 
 export type LaunchInitialState = FormDataRecord & {
 	name?: string;
-	isReady: boolean;
+	hasAllStandardData: boolean;
 	hasRenderingOptionsIfNeeded: boolean;
 	errorMarkdown?: string[];
 	id?: string;
@@ -27,7 +27,7 @@ export const getInitialStateForLaunch = async (
 	if (id === undefined) {
 		return {
 			hasRenderingOptionsIfNeeded: false,
-			isReady: false,
+			hasAllStandardData: false,
 		};
 	}
 	const storageResponse = await launchService.draftStorage.getDraftNewsletter(
@@ -51,7 +51,7 @@ export const getInitialStateForLaunch = async (
 		const errorMarkdown = zodIssueToMarkdown(issues);
 		return {
 			name,
-			isReady: false,
+			hasAllStandardData: false,
 			hasRenderingOptionsIfNeeded,
 			errorMarkdown,
 			id: request.id,
@@ -60,7 +60,7 @@ export const getInitialStateForLaunch = async (
 
 	return {
 		name,
-		isReady: true,
+		hasAllStandardData: true,
 		hasRenderingOptionsIfNeeded,
 		errorMarkdown: undefined,
 		id: request.id,

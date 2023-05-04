@@ -26,10 +26,10 @@ const staticMarkdown = markdownTemplate.replace(
 );
 
 const getReadinessMessage = (
-	isReady?: boolean,
+	hasAllStandardData?: boolean,
 	hasRenderingOptionsIfNeeded?: boolean,
 ) => {
-	return isReady
+	return hasAllStandardData
 		? hasRenderingOptionsIfNeeded
 			? markdownAnswers.yes
 			: markdownAnswers.yesButRenderingOptions
@@ -49,7 +49,7 @@ export const isDataCompleteLayout: WizardStepLayout<LaunchService> = {
 		const launchInitialState = responseData as LaunchInitialState;
 
 		const answer = getReadinessMessage(
-			launchInitialState.isReady,
+			launchInitialState.hasAllStandardData,
 			launchInitialState.hasRenderingOptionsIfNeeded,
 		);
 
@@ -81,7 +81,7 @@ export const isDataCompleteLayout: WizardStepLayout<LaunchService> = {
 					| LaunchInitialState
 					| undefined;
 
-				if (launchInitialState?.isReady !== true) {
+				if (launchInitialState?.hasAllStandardData !== true) {
 					return 'The draft is not ready to launch';
 				}
 				if (!launchInitialState.hasRenderingOptionsIfNeeded) {
