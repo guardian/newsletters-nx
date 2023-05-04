@@ -72,7 +72,7 @@ export const thrasherOptionsSchema = z.object({
 export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
 
 export const newsletterCategoriesSchema = z
-	.enum(['article-based', 'fronts-based', 'manual-send', 'other'])
+	.enum(['', 'article-based', 'fronts-based', 'manual-send', 'other'])
 	.describe('production category');
 export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 
