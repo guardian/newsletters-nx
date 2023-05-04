@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import { brand, space } from '@guardian/source-foundations';
-import type { LegacyNewsletter } from '@newsletters-nx/newsletters-data-client';
 
 interface Props {
-	newsletter: LegacyNewsletter;
+	name: string;
+	url?: string;
 }
 
 const figureStyles = css`
@@ -20,10 +20,8 @@ const figureStyles = css`
 	}
 `;
 
-export const Illustration = ({ newsletter }: Props) => {
-	const { illustration, name } = newsletter;
-
-	if (!illustration) {
+export const Illustration = ({ name, url }: Props) => {
+	if (!url) {
 		return (
 			<figure css={figureStyles}>
 				<span role="img" aria-label="no illustration">
@@ -36,7 +34,7 @@ export const Illustration = ({ newsletter }: Props) => {
 
 	return (
 		<figure css={figureStyles}>
-			<img src={illustration.circle} alt="" height={100} />
+			<img src={url} alt="" height={100} />
 			<figcaption>illustration for {name}</figcaption>
 		</figure>
 	);

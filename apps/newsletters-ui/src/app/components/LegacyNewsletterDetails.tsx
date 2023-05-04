@@ -50,7 +50,10 @@ export const LegacyNewsletterDetail = ({ newsletter }: Props) => {
 				{restricted && <div>restricted</div>}
 				{!paused && !cancelled && <div>LIVE</div>}
 			</div>
-			<Illustration newsletter={newsletter} />
+			<Illustration
+				name={newsletter.name}
+				url={newsletter.illustration?.circle}
+			/>
 
 			<LegacyNewsletterPropertyTable
 				newsletter={newsletter}
