@@ -8,9 +8,9 @@ import {
 	Tooltip,
 	Typography,
 } from '@mui/material';
-import type { ReactNode } from 'react';
 import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { DetailAccordian } from './DetailAccordian';
 import { Illustration } from './Illustration';
 import { NavigateButton } from './NavigateButton';
 import { RawDataDialog } from './RawDataDialog';
@@ -30,25 +30,18 @@ const propertyDisplayValue = (value: unknown): string => {
 		case 'undefined':
 			return '[UNDEFINED]';
 		case 'object':
-			return '[OBJECT]';
+			try {
+				const stringification = JSON.stringify(value);
+				return stringification;
+			} catch (err) {
+				return '[non-serialisable object]';
+			}
 		case 'function':
 			return value.toString();
 	}
 };
 
-const toGuardianHref = (path: string | undefined) => {
-	if (!path) {
-		return undefined;
-	}
-	return `http://theguardian.com/${path}`;
-};
-
-const FieldBox = (props: { title: string; children: ReactNode }) => (
-	<Box flex={1} borderBottom={1} marginBottom={2} paddingBottom={2}>
-		<Typography variant="h3">{props.title}</Typography>
-		{props.children}
-	</Box>
-);
+const toGuardianHref = (path: string | undefined) => {};
 
 const hlDataPoint =
 	(newsletter: NewsletterData) =>
@@ -71,7 +64,7 @@ const hlDataPoint =
 
 		return (
 			<Grid container justifyContent={'space-between'} spacing={1}>
-				<Grid item xs={2}>
+				<Grid item xs={3} flexGrow={1} flexShrink={0}>
 					<Typography variant="caption">{label ?? property}</Typography>
 					{tooltip && (
 						<Tooltip title={tooltip} arrow>
@@ -79,7 +72,7 @@ const hlDataPoint =
 						</Tooltip>
 					)}
 				</Grid>
-				<Grid item xs={10} flexShrink={1}>
+				<Grid item xs={9} flexShrink={1}>
 					{value && url ? (
 						<Link href={href}>{displayValue}</Link>
 					) : (
@@ -92,7 +85,6 @@ const hlDataPoint =
 
 export const NewsletterDataDetails = ({ newsletter }: Props) => {
 	const { status, name } = newsletter;
-
 	const DataPoint = hlDataPoint(newsletter);
 
 	return (
@@ -116,7 +108,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				</Grid>
 			</Grid>
 
-			<FieldBox title="Attributes">
+			<DetailAccordian title="Attributes" defaultExpanded>
 				<DataPoint property="listId" label="id number" />
 				<DataPoint property="identityName" label="id" />
 				<DataPoint property="category" />
@@ -129,9 +121,9 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 					tooltip={getPropertyDescription('regionFocus')}
 				/>
 				<DataPoint property="frequency" />
-			</FieldBox>
+			</DetailAccordian>
 
-			<FieldBox title="Copy">
+			<DetailAccordian title="Copy">
 				<DataPoint property="name" />
 				<DataPoint property="signUpHeadline" />
 				<DataPoint property="signUpDescription" />
@@ -141,15 +133,15 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 					tooltip="The short message to display when the user signs up using a sign up embed."
 				/>
 				<DataPoint property="mailSuccessDescription" />
-			</FieldBox>
+			</DetailAccordian>
 
-			<FieldBox title="Tags">
+			<DetailAccordian title="Tags">
 				<DataPoint property="seriesTag" />
 				<DataPoint property="composerTag" />
 				<DataPoint property="composerCampaignTag" />
-			</FieldBox>
+			</DetailAccordian>
 
-			<FieldBox title="Links">
+			<DetailAccordian title="Links">
 				<DataPoint
 					property="signupPage"
 					tooltip={getPropertyDescription('signupPage')}
@@ -162,9 +154,20 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				/>
 				<DataPoint property="designBriefDoc" />
 				<DataPoint property="figmaDesignUrl" url />
-			</FieldBox>
+			</DetailAccordian>
 
-			<Stack direction={'row'} justifyContent={'space-between'}>
+			<DetailAccordian title="Braze Values">
+				<DataPoint property="brazeSubscribeAttributeName" />
+				<DataPoint property="brazeSubscribeEventNamePrefix" />
+				<DataPoint property="brazeNewsletterName" />
+				<DataPoint property="brazeSubscribeAttributeNameAlternate" />
+			</DetailAccordian>
+			<DetailAccordian title="Ophan Values">
+				<DataPoint property="campaignName" />
+				<DataPoint property="campaignCode" />
+			</DetailAccordian>
+
+			<Stack direction={'row'} justifyContent={'space-between'} marginTop={3}>
 				<NavigateButton href="../" variant="outlined">
 					Back to List
 				</NavigateButton>
