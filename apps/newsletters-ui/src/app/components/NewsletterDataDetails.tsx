@@ -1,19 +1,8 @@
-import {
-	Badge,
-	Box,
-	Chip,
-	Grid,
-	Link,
-	Stack,
-	Tooltip,
-	Typography,
-} from '@mui/material';
-import {
-	getPropertyDescription,
-	newsletterDataSchema,
-} from '@newsletters-nx/newsletters-data-client';
+import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
 import { DetailAccordian } from './DetailAccordian';
+import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
 import { NavigateButton } from './NavigateButton';
 import { RawDataDialog } from './RawDataDialog';
@@ -22,84 +11,9 @@ interface Props {
 	newsletter: NewsletterData;
 }
 
-const propertyDisplayValue = (value: unknown): string => {
-	switch (typeof value) {
-		case 'string':
-		case 'number':
-		case 'bigint':
-		case 'boolean':
-		case 'symbol':
-			return value.toString();
-		case 'undefined':
-			return '[UNDEFINED]';
-		case 'object':
-			try {
-				const stringification = JSON.stringify(value);
-				return stringification;
-			} catch (err) {
-				return '[non-serialisable object]';
-			}
-		case 'function':
-			return value.toString();
-	}
-};
-
-const toGuardianHref = (path: string | undefined) => {
-	if (!path) {
-		return undefined;
-	}
-	return `http://theguardian.com${path}`;
-};
-
-const hlDataPoint =
-	(newsletter: NewsletterData) =>
-	(props: {
-		label?: string;
-		property: keyof NewsletterData;
-		tooltip?: string;
-		url?: boolean;
-		guardianUrl?: boolean;
-	}) => {
-		const { label, property, tooltip, url, guardianUrl } = props;
-		const value = newsletter[props.property];
-
-		const href =
-			typeof value === 'string'
-				? guardianUrl
-					? toGuardianHref(value)
-					: url
-					? value
-					: undefined
-				: undefined;
-
-		const displayLabel =
-			label ?? newsletterDataSchema.shape[property].description ?? property;
-		const displayValue = propertyDisplayValue(value);
-
-		return (
-			<Grid container justifyContent={'space-between'} spacing={1}>
-				<Grid item xs={3} flexGrow={1} flexShrink={0}>
-					<Typography variant="caption">{displayLabel}</Typography>
-					{tooltip && (
-						<Tooltip title={tooltip} arrow>
-							<Chip size="small" label="?" />
-						</Tooltip>
-					)}
-				</Grid>
-				<Grid item xs={9} flexShrink={1}>
-					{value && href ? (
-						<Link href={href}>{displayValue}</Link>
-					) : (
-						<Typography>{displayValue}</Typography>
-					)}
-				</Grid>
-			</Grid>
-		);
-	};
-
 export const NewsletterDataDetails = ({ newsletter }: Props) => {
 	const { status, name } = newsletter;
-	const DataPoint = hlDataPoint(newsletter);
+	const DataPoint = higherLevelDataPoint(newsletter);
 
 	return (
 		<Box>
