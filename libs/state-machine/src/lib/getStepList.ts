@@ -1,3 +1,4 @@
+import type { ZodObject, ZodRawShape } from 'zod';
 import type { WizardLayout, WizardStepLayout } from './types';
 
 export type StepListing = {
@@ -7,6 +8,7 @@ export type StepListing = {
 	parentStepId?: WizardStepLayout['parentStepId'];
 	canSkipTo?: boolean;
 	canSkipFrom?: boolean;
+	schema?: ZodObject<ZodRawShape>;
 };
 
 export type StepperConfig = {
@@ -26,6 +28,7 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 					parentStepId: step.parentStepId,
 					canSkipTo: step.canSkipTo,
 					canSkipFrom: !!step.executeSkip,
+					schema: step.schema,
 				},
 			];
 		},

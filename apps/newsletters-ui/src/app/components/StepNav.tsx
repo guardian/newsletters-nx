@@ -1,11 +1,16 @@
 import { css, Step, StepButton, StepLabel, Stepper } from '@mui/material';
-import type { StepListing, StepperConfig } from '@newsletters-nx/state-machine';
+import type {
+	StepListing,
+	StepperConfig,
+	WizardFormData,
+} from '@newsletters-nx/state-machine';
 
 interface Props {
 	currentStepId?: string;
 	stepperConfig: StepperConfig;
 	onEditTrack: boolean;
 	handleStepClick: { (stepId: string): void };
+	formData?: WizardFormData;
 }
 
 export const StepNav = ({
@@ -13,6 +18,7 @@ export const StepNav = ({
 	stepperConfig,
 	onEditTrack,
 	handleStepClick,
+	formData,
 }: Props) => {
 	const filteredStepList = stepperConfig.steps.filter((step) => {
 		if (step.parentStepId) {
@@ -44,6 +50,9 @@ export const StepNav = ({
 		step.canSkipTo &&
 		!isCurrent(step);
 
+	const isComplete = (step: StepListing) =>
+		step.schema ? step.schema.safeParse(formData).success : true;
+
 	return (
 		<Stepper
 			nonLinear={stepperConfig.isNonLinear}
@@ -56,6 +65,7 @@ export const StepNav = ({
 					css={css`
 						padding-bottom: 0.75rem;
 						padding-top: 0.75rem;
+						background-color: ${isComplete(step) ? 'green' : 'red'};
 					`}
 					key={step.id}
 					active={isCurrent(step)}
