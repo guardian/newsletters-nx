@@ -7,7 +7,6 @@ import {
 } from './zod-helpers/schema-helpers';
 
 export const themeEnumSchema = z.enum([
-	'',
 	'news',
 	'opinion',
 	'culture',
@@ -17,16 +16,17 @@ export const themeEnumSchema = z.enum([
 ]);
 export type Theme = z.infer<typeof themeEnumSchema>;
 
-export const regionFocusEnumSchema = z.enum(['', 'UK', 'AU', 'US', 'INTL']);
+export const regionFocusEnumSchema = z
+	.enum(['UK', 'AU', 'US', 'INTL'])
+	.optional();
 export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 
 export const onlineArticleSchema = z
-	.enum(['', 'Email only', 'Web for first send only', 'Web for all sends'])
+	.enum(['Email only', 'Web for first send only', 'Web for all sends'])
 	.describe('location of article');
 export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
 
 export const singleThrasherLocation = z.enum([
-	'',
 	'Web only',
 	'App only',
 	'Web and App',
@@ -72,7 +72,7 @@ export const thrasherOptionsSchema = z.object({
 export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
 
 export const newsletterCategoriesSchema = z
-	.enum(['', 'article-based', 'fronts-based', 'manual-send', 'other'])
+	.enum(['article-based', 'fronts-based', 'manual-send', 'other'])
 	.describe('production category');
 export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 

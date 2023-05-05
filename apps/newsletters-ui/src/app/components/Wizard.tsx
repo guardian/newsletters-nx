@@ -182,6 +182,7 @@ export const Wizard: React.FC<WizardProps> = ({
 				stepperConfig={getStepperConfig(wizardId)}
 				onEditTrack={typeof id !== 'undefined'}
 				handleStepClick={handleStepClick}
+				formData={formData}
 			/>
 			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
 

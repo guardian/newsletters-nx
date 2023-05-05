@@ -35,7 +35,7 @@ export const getStepperConfig = (
 ): StepperConfig => {
 	const wizard = newslettersWorkflowStepLayout[wizardId];
 	if (!wizard) {
-		return { steps: [], isNonLinear: false };
+		return { steps: [], isNonLinear: false, indicateStepsComplete: false };
 	}
 
 	return makeStepperConfig(wizard);
