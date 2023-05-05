@@ -16,7 +16,9 @@ export const themeEnumSchema = z.enum([
 ]);
 export type Theme = z.infer<typeof themeEnumSchema>;
 
-export const regionFocusEnumSchema = z.enum(['UK', 'AU', 'US', 'INTL']);
+export const regionFocusEnumSchema = z
+	.enum(['UK', 'AU', 'US', 'INTL'])
+	.optional();
 export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 
 export const onlineArticleSchema = z
