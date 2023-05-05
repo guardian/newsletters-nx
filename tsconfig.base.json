@@ -22,6 +22,7 @@
 			"@newsletters-nx/newsletters-data-client": [
 				"libs/newsletters-data-client/src/index.ts"
 			],
+			"@newsletters-nx/services": ["libs/services/src/index.ts"],
 			"@newsletters-nx/state-machine": ["libs/state-machine/src/index.ts"]
 		},
 		"strictNullChecks": true,
