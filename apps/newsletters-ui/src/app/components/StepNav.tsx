@@ -1,4 +1,10 @@
-import { css, Step, StepButton, StepLabel, Stepper } from '@mui/material';
+import {
+	Step,
+	StepButton,
+	StepLabel,
+	Stepper,
+	Typography,
+} from '@mui/material';
 import { useState } from 'react';
 import type {
 	StepListing,
@@ -13,6 +19,35 @@ interface Props {
 	handleStepClick: { (stepId: string): void };
 	formData?: WizardFormData;
 }
+
+/**
+ * completeness=undefined indicates the step has no schema, so is neither
+ * complete or incomplete.
+ */
+const CompletionCaption = (props: { completeness: boolean | undefined }) => {
+	switch (props.completeness) {
+		case undefined:
+			return null;
+		case true:
+			return (
+				<Typography variant="caption">
+					Complete{' '}
+					<span role="img" aria-label="checkmark">
+						✅
+					</span>
+				</Typography>
+			);
+		case false:
+			return (
+				<Typography variant="caption">
+					incomplete{' '}
+					<span role="img" aria-label="cross">
+						❌
+					</span>
+				</Typography>
+			);
+	}
+};
 
 export const StepNav = ({
 	currentStepId,
@@ -29,7 +64,7 @@ export const StepNav = ({
 	const [currentStepIdOnLastRender, setCurrenStepIdOnLastRender] =
 		useState(currentStepId);
 	const [completionRecord, setCompletionRecord] = useState<
-		Partial<Record<string, boolean>>
+		Partial<Record<string, boolean | undefined>>
 	>({});
 
 	const filteredStepList = stepperConfig.steps.filter((step) => {
@@ -50,16 +85,15 @@ export const StepNav = ({
 	});
 
 	const updateCompletion = () => {
-		const list = stepperConfig.steps.reduce<Partial<Record<string, boolean>>>(
-			(record, step) => {
-				const result = step.schema
-					? step.schema.safeParse(formData).success
-					: true;
+		const list = stepperConfig.steps.reduce<
+			Partial<Record<string, boolean | undefined>>
+		>((record, step) => {
+			const result = step.schema
+				? step.schema.safeParse(formData).success
+				: undefined;
 
-				return { ...record, [step.id]: result };
-			},
-			{},
-		);
+			return { ...record, [step.id]: result };
+		}, {});
 
 		setCompletionRecord(list);
 	};
@@ -82,9 +116,6 @@ export const StepNav = ({
 	const isCurrent = (step: StepListing) =>
 		step.id === currentStep?.id || step.id === currentStep?.parentStepId;
 
-	const isComplete = (step: StepListing) =>
-		stepperConfig.indicateStepsComplete && completionRecord[step.id];
-
 	const shouldRenderAsButton = (step: StepListing) =>
 		currentStep?.canSkipFrom &&
 		stepperConfig.isNonLinear &&
@@ -92,37 +123,38 @@ export const StepNav = ({
 		!isCurrent(step);
 
 	return (
-		<Stepper
-			nonLinear={stepperConfig.isNonLinear}
-			css={css`
-				flex-wrap: wrap;
-			`}
-		>
-			{filteredStepList.map((step) => (
-				<Step
-					css={css`
-						padding-bottom: 0.75rem;
-						padding-top: 0.75rem;
-						background-color: ${isComplete(step) ? 'green' : undefined};
-					`}
-					key={step.id}
-					active={isCurrent(step)}
-				>
-					{shouldRenderAsButton(step) ? (
-						<StepButton
-							onClick={() => {
-								handleStepClick(step.id);
-							}}
-						>
-							<b css={{ textDecoration: 'underline' }}>
-								{step.label ?? step.id}
-							</b>
-						</StepButton>
-					) : (
-						<StepLabel>{step.label ?? step.id}</StepLabel>
-					)}
-				</Step>
-			))}
+		<Stepper sx={{ flexWrap: 'wrap' }} nonLinear={stepperConfig.isNonLinear}>
+			{filteredStepList.map((step) => {
+				const caption = stepperConfig.indicateStepsComplete ? (
+					<CompletionCaption completeness={completionRecord[step.id]} />
+				) : undefined;
+
+				return (
+					<Step
+						sx={{
+							paddingBottom: '0.75rem',
+							paddingTop: '0.75rem',
+						}}
+						key={step.id}
+						active={isCurrent(step)}
+					>
+						{shouldRenderAsButton(step) ? (
+							<StepButton
+								onClick={() => {
+									handleStepClick(step.id);
+								}}
+								optional={caption}
+							>
+								<b css={{ textDecoration: 'underline' }}>
+									{step.label ?? step.id}
+								</b>
+							</StepButton>
+						) : (
+							<StepLabel optional={caption}> {step.label ?? step.id}</StepLabel>
+						)}
+					</Step>
+				);
+			})}
 		</Stepper>
 	);
 };
