@@ -62,7 +62,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	}
 
 	if (field.type === 'ZodArray' && field.arrayItemType === 'record') {
-		// TO DO - use field.recordSchema to validate each item
+		// TODO - use field.recordSchema to validate each item
 		return isPrimitiveRecordArray(value);
 	}
 
