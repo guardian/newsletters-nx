@@ -14,6 +14,7 @@ export type StepListing = {
 export type StepperConfig = {
 	steps: StepListing[];
 	isNonLinear: boolean;
+	indicateStepsComplete: boolean;
 };
 
 export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
@@ -35,10 +36,18 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 		[],
 	);
 
+	// TO DO - these should really be properties of the WizardLayout, rather than
+	// a WizardStepLayout in the WizardLayout.
+	// Since WizardLayout is defined as a record of WizardLayouts, we can't add
+	// any additional "meta" properties to it, without changing that definition.
 	const isNonLinear = Object.values(wizard).some((step) => step.canSkipTo);
+	const indicateStepsComplete = Object.values(wizard).some(
+		(step) => step.indicateStepsCompleteOnThisWizard,
+	);
 
 	return {
 		steps,
 		isNonLinear,
+		indicateStepsComplete,
 	};
 };

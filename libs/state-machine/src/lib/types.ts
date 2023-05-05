@@ -75,6 +75,7 @@ export type WizardStepLayoutButton<
 };
 
 export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
+	indicateStepsCompleteOnThisWizard?: boolean;
 	label?: string;
 	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT';
 	parentStepId?: string;

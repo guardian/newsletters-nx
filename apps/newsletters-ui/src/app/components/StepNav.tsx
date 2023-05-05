@@ -82,7 +82,8 @@ export const StepNav = ({
 	const isCurrent = (step: StepListing) =>
 		step.id === currentStep?.id || step.id === currentStep?.parentStepId;
 
-	const isComplete = (step: StepListing) => completionRecord[step.id];
+	const isComplete = (step: StepListing) =>
+		stepperConfig.indicateStepsComplete && completionRecord[step.id];
 
 	const shouldRenderAsButton = (step: StepListing) =>
 		currentStep?.canSkipFrom &&
@@ -102,7 +103,7 @@ export const StepNav = ({
 					css={css`
 						padding-bottom: 0.75rem;
 						padding-top: 0.75rem;
-						background-color: ${isComplete(step) ? 'green' : 'red'};
+						background-color: ${isComplete(step) ? 'green' : undefined};
 					`}
 					key={step.id}
 					active={isCurrent(step)}
