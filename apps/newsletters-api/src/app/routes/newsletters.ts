@@ -3,6 +3,7 @@ import {
 	isPartialNewsletterData,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
+import { emailService } from '../../services/email';
 import { newsletterStore } from '../../services/storage';
 import {
 	makeErrorResponse,
@@ -32,6 +33,12 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 				.send(makeErrorResponse(storageResponse.message));
 		}
 
+		const report = await emailService.send(
+			['bob@burger.com'],
+			'newsletter list accessed',
+			'Someone made an api call to read the newsletters',
+		);
+		console.log({ report });
 		return makeSuccessResponse(storageResponse.data);
 	});
 

@@ -4,5 +4,11 @@ type EmailReport = {
 };
 
 export abstract class EmailServiceAbstract {
-	abstract send(): EmailReport;
+	abstract send(
+		recipients: string[],
+		subject: string,
+		body: string,
+	): Promise<EmailReport>;
+
+	abstract init(): Promise<EmailReport>;
 }
