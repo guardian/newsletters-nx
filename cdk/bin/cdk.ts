@@ -12,16 +12,20 @@ export const sharedProps = {
 
 /** The internal tool for newsletter management */
 const newslettersToolAppName = 'newsletters-tool';
+const newslettersApiName = 'readonly-newsletters';
 
 new NewslettersTool(app, 'NewslettersTool-CODE', {
 	...sharedProps,
 	stage: 'CODE',
 	app: newslettersToolAppName,
-	domainName: `${newslettersToolAppName}.code.dev-gutools.co.uk`,
+	domainNameTool: `${newslettersToolAppName}.code.dev-gutools.co.uk`,
+	domainNameApi: `${newslettersApiName}.code.dev-gutools.co.uk`,
 });
+
 new NewslettersTool(app, 'NewslettersTool-PROD', {
 	...sharedProps,
 	stage: 'PROD',
 	app: newslettersToolAppName,
-	domainName: `${newslettersToolAppName}.gutools.co.uk`,
+	domainNameTool: `${newslettersToolAppName}.gutools.co.uk`,
+	domainNameApi: `${newslettersApiName}.gutools.co.uk`,
 });
