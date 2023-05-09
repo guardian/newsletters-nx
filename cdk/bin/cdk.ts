@@ -34,3 +34,10 @@ new NewslettersApi(app, 'NewslettersApi-CODE', {
 	app: readOnlyNewslettersApiName,
 	domainName: `${readOnlyNewslettersApiName}.code.dev-gutools.co.uk`,
 });
+
+new NewslettersApi(app, 'NewslettersApi-PROD', {
+	...sharedProps,
+	stage: 'PROD',
+	app: readOnlyNewslettersApiName,
+	domainName: `${readOnlyNewslettersApiName}.gutools.co.uk`,
+});
