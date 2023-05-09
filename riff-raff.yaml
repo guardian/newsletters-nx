@@ -27,7 +27,23 @@ deployments:
         CODE: NewslettersTool-CODE.template.json
         PROD: NewslettersTool-PROD.template.json
 
+        # Newsletters internal tool cloudformation deployment
+  newsletters-api-cfn:
+    template: cloudformation-template
+    app: newsletters-api
+    parameters:
+      cloudFormationStackName: newsletters-api
+      amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
+      templateStagePaths:
+        CODE: NewslettersApi-CODE.template.json
+        PROD: NewslettersApi-PROD.template.json
+
   # Newsletters internal tool autoscaling deployment
   newsletters-tool:
     template: autoscaling-template
     dependencies: [newsletters-tool-cfn]
+
+  # Newsletters external API autoscaling deployment
+  newsletters-api:
+    template: autoscaling-template
+    dependencies: [newsletters-api-cfn]
