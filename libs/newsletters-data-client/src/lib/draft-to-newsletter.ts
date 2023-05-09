@@ -12,7 +12,6 @@ const defaultNewsletterValues: DraftNewsletterData = {
 	emailConfirmation: false,
 	privateUntilLaunch: false,
 	figmaIncludesThrashers: false,
-	group: 'News in depth', // TODO - add a step for this
 } as const;
 
 // TODO - the NewsletterData should not have these structure - it's a legacy
