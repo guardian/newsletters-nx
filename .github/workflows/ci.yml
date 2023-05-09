@@ -59,7 +59,7 @@ jobs:
           npm run bundle:ui
           npm run bundle:api
           zip -r dist/newsletters-tool.zip dist
-          zip -r dist/newsletters-api.zip dist
+          cp dist/newsletters-tool.zip dist/newsletters-api.zip
 
         # Build Cloudformation definition from CDK
       - name: Build and synth CDK
@@ -70,11 +70,10 @@ jobs:
           npm run test
           npm run synth
 
-        # Upload artifacts for newsletters internal tool
+        # Upload artifacts for newsletters tool and api
       - name: Upload riff-raff artifacts - newsletters-tool
         uses: guardian/actions-riff-raff@v2
         with:
-          app: newsletters-tool
           configPath: riff-raff.yaml
           contentDirectories: |
             newsletters-tool-cfn:
@@ -82,16 +81,10 @@ jobs:
               - cdk/cdk.out/NewslettersTool-PROD.template.json
             newsletters-tool:
               - dist/newsletters-tool.zip
-
-        # Upload artifacts for newsletters read only API
-      - name: Upload riff-raff artifacts - newsletters-api
-        uses: guardian/actions-riff-raff@v2
-        with:
-          app: newsletters-api
-          configPath: riff-raff.yaml
-          contentDirectories: |
             newsletters-api-cfn:
               - cdk/cdk.out/NewslettersApi-CODE.template.json
               - cdk/cdk.out/NewslettersApi-PROD.template.json
             newsletters-api:
               - dist/newsletters-api.zip
+
+
