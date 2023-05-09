@@ -10,7 +10,7 @@ import type {
 } from '../storage-response-types';
 import { NewsletterStorage } from './NewsletterStorage';
 
-// TO DO - serialise Drafts before returning
+// TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
 export class InMemoryNewsletterStorage implements NewsletterStorage {
 	private memory: NewsletterData[];
@@ -20,7 +20,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	}
 
 	create(draft: DraftNewsletterData) {
-		// TO DO - use the schema.safeParse and if the test fails,
+		// TODO - use the schema.safeParse and if the test fails,
 		// use the list of issues to generate a message with the
 		// wrong/missing fields listed.
 		const draftReady = isNewsletterData(draft);

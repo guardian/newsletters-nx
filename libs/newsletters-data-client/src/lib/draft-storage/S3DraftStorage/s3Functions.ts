@@ -33,7 +33,7 @@ export const getListOfObjectsKeys =
 			new ListObjectsCommand({
 				Bucket: s3DraftStorage.bucketName,
 				Prefix: s3DraftStorage.STORAGE_FOLDER,
-				MaxKeys: 500, // to do - multiple requests if > 500?
+				MaxKeys: 500, // TODO - multiple requests if > 500?
 			}),
 		);
 		const { Contents = [] } = listOutput;
