@@ -5,13 +5,13 @@ import { newsletterDataSchema } from './newsletter-data-type';
 const defaultNewsletterValues: DraftNewsletterData = {
 	listIdV1: -1,
 	restricted: false,
-	status: 'paused', // TO DO - add step for this - maybe best in launch wizard?
+	status: 'paused', // TODO - add step for this - maybe best in launch wizard?
 	emailConfirmation: false,
 	privateUntilLaunch: false,
 	figmaIncludesThrashers: false,
 } as const;
 
-// TO DO - the NewsletterData should not have these structure - it's a legacy
+// TODO - the NewsletterData should not have these structure - it's a legacy
 // feature. This should happen in deriveLegacyNewsletter
 const buildEmailEmbedObject = (draft: DraftNewsletterData): EmailEmbed => {
 	const {

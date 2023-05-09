@@ -41,7 +41,7 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 
 	const listId = stepData.formData ? stepData.formData['listId'] : undefined;
 	if (!listId) {
-		// TO DO - calculating fields from the Name at this point is not generic
+		// TODO - calculating fields from the Name at this point is not generic
 		// would it be better done somewhere else?
 		const derivedFields =
 			typeof parseResult.data.name === 'string' && !!parseResult.data.name

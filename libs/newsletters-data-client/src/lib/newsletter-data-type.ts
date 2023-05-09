@@ -102,7 +102,7 @@ export const newsletterDataSchema = z.object({
 	frequency: nonEmptyString(),
 	listId: z.number(),
 	listIdV1: z.number(),
-	// TO DO - remove emailEmbed from this schema and derive it as part of in deriveLegacyNewsletter
+	// TODO - remove emailEmbed from this schema and derive it as part of in deriveLegacyNewsletter
 	emailEmbed: emailEmbedSchema.extend({
 		description: z.string(),
 	}),
