@@ -3,8 +3,19 @@ stacks: [newsletters]
 regions: [eu-west-1]
 allowedStages: [CODE, PROD]
 templates:
-  cloudformation-template:
+  cloudformation-template-tool:
     type: cloud-formation
+    app: newsletters-tool
+    parameters:
+      cloudFormationStackByTags: false
+      prependStackToCloudFormationStackName: false
+      amiTags:
+        Recipe: newsletters-node
+        AmigoStage: PROD
+
+  cloudformation-template-api:
+    type: cloud-formation
+    app: newsletters-api
     parameters:
       cloudFormationStackByTags: false
       prependStackToCloudFormationStackName: false
@@ -18,7 +29,7 @@ templates:
 deployments:
   # Newsletters internal tool cloudformation deployment
   newsletters-tool-cfn:
-    template: cloudformation-template
+    template: cloudformation-template-tool
     app: newsletters-tool
     parameters:
       cloudFormationStackName: newsletters-tool
@@ -29,7 +40,7 @@ deployments:
 
         # Newsletters internal tool cloudformation deployment
   newsletters-api-cfn:
-    template: cloudformation-template
+    template: cloudformation-template-api
     app: newsletters-api
     parameters:
       cloudFormationStackName: newsletters-api
