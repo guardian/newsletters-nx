@@ -186,7 +186,7 @@ export const LegacyNewsletterForm = ({ existingIds }: Props) => {
 					/>
 				</fieldset>
 
-				{/* TO DO - controll to add the illustration field to the newsletter if undefined */}
+				{/* TODO - controll to add the illustration field to the newsletter if undefined */}
 				{newsletter.illustration && (
 					<fieldset>
 						<legend>emailEmbed</legend>
