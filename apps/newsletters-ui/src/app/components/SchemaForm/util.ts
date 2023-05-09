@@ -47,6 +47,9 @@ export function eventToString(event: FormEvent, defaultValue = ''): string {
 
 function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	if (field.type === 'ZodEnum') {
+		if (field.optional && typeof value === 'undefined') {
+			return true;
+		}
 		return field.enumOptions?.includes(value as string) ?? false;
 	}
 

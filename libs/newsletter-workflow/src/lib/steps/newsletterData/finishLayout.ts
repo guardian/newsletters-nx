@@ -17,6 +17,7 @@ const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
 const finishLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown: staticMarkdown,
+	indicateStepsCompleteOnThisWizard: true,
 	label: 'Finish',
 	buttons: {},
 	dynamicMarkdown(requestData, responseData) {
