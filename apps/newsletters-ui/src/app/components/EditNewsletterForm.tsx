@@ -59,11 +59,16 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 				}}
 				schema={newsletterDataSchema.pick({
 					name: true,
+					signUpHeadline: true,
+					signUpDescription: true,
+					frequency: true,
+					regionFocus: true,
+					theme: true,
 					category: true,
 					status: true,
-					theme: true,
-					designBriefDoc: true,
+					emailConfirmation: true,
 				})}
+				submitButtonText="Update Newsletter"
 			/>
 
 			<Snackbar
