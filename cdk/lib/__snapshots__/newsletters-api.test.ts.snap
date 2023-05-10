@@ -185,8 +185,10 @@ aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-api /tmp --recursive
-chown -R ubuntu /tmp
+                "/newsletters/TEST/newsletters-api/newsletters-api.zip /tmp
+mkdir -p /opt/newsletters-api
+unzip /tmp/newsletters-api.zip -d /opt/newsletters-api
+chown -R ubuntu /opt/newsletters-api
 export NEWSLETTERS_API_READ=true
 export NEWSLETTERS_API_READ_WRITE=false
 export NEWSLETTERS_UI_SERVE=false
@@ -196,8 +198,8 @@ export NEWSLETTER_BUCKET_NAME=",
                   "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
                 },
                 "
-export USE_IN_MEMORY_STORAGE=false
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api /tmp/apps/newsletters-api/main.cjs'",
+cd /opt/newsletters-api
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api dist/apps/newsletters-api/index.cjs'",
               ],
             ],
           },
