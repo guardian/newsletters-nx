@@ -123,7 +123,11 @@ export const StepNav = ({
 		!isCurrent(step);
 
 	return (
-		<Stepper sx={{ flexWrap: 'wrap' }} nonLinear={stepperConfig.isNonLinear}>
+		<Stepper
+			sx={{ flexWrap: 'wrap' }}
+			nonLinear={stepperConfig.isNonLinear}
+			connector={null}
+		>
 			{filteredStepList.map((step) => {
 				const caption = stepperConfig.indicateStepsComplete ? (
 					<CompletionCaption completeness={completionRecord[step.id]} />
@@ -132,22 +136,22 @@ export const StepNav = ({
 				return (
 					<Step
 						sx={{
-							paddingBottom: '0.75rem',
-							paddingTop: '0.75rem',
+							paddingBottom: '0.5rem',
+							paddingTop: '0.5rem',
+							flexBasis: '11rem',
 						}}
 						key={step.id}
 						active={isCurrent(step)}
 					>
 						{shouldRenderAsButton(step) ? (
 							<StepButton
+								className="left-aligned-step-button"
 								onClick={() => {
 									handleStepClick(step.id);
 								}}
 								optional={caption}
 							>
-								<b css={{ textDecoration: 'underline' }}>
-									{step.label ?? step.id}
-								</b>
+								<b>{step.label ?? step.id}</b>
 							</StepButton>
 						) : (
 							<StepLabel optional={caption}> {step.label ?? step.id}</StepLabel>
