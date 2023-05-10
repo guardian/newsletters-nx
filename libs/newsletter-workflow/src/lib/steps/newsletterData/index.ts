@@ -9,7 +9,7 @@ import { finishLayout } from './finishLayout';
 import { frequencyLayout } from './frequencyLayout';
 import { newsletterDesignLayout } from './newsletterDesignLayout';
 import { onlineArticleLayout } from './onlineArticleLayout';
-import { pillarLayout } from './pillarLayout';
+import { pillarAndGroupLayout } from './pillarAndGroupLayout';
 import { regionFocusLayout } from './regionFocusLayout';
 import { signUpEmbedLayout } from './signUpEmbedLayout';
 import { signUpPageLayout } from './signUpPageLayout';
@@ -22,7 +22,7 @@ export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	editDraftNewsletter: editDraftNewsletterLayout,
 	category: categoryLayout,
 	dates: dateLayout,
-	pillar: pillarLayout,
+	pillarAndGroup: pillarAndGroupLayout,
 	regionFocus: regionFocusLayout,
 	frequency: frequencyLayout,
 	onlineArticle: onlineArticleLayout,

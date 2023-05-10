@@ -17,7 +17,9 @@ const markdownTemplate = `
 
 Editorial newsletters can be produced in three ways:
 
-- **article-based**: Each chapter of the newsletter is written as a composer article.
+- **article-based**: Each chapter of the newsletter is written as a composer article and published using "email-rendering".
+
+- **article-based-legacy**: Each chapter of the newsletter is written as a composer article and published using the legacy "frontend" email template (not recommended!).
 
 - **fronts-based**: The newsletters are generated from a fronts page.
 
