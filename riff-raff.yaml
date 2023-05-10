@@ -34,7 +34,7 @@ deployments:
     template: cloudformation-template
     app: newsletters-tool
     parameters:
-      cloudFormationStackName: newsletters-api
+      cloudFormationStackName: newsletters-tool
       amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
       templateStagePaths:
         CODE: NewslettersApi-CODE.template.json
