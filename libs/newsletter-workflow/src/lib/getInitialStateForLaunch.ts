@@ -3,14 +3,18 @@ import type {
 	FormDataRecord,
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
-import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
+import {
+	getDraftNotReadyIssues,
+	renderingOptionsSchema,
+} from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
 import { zodIssueToMarkdown } from './markdown-util';
 import { parseToNumber } from './util';
 
-type LaunchInitialState = FormDataRecord & {
+export type LaunchInitialState = FormDataRecord & {
 	name?: string;
-	isReady: boolean;
+	hasAllStandardData: boolean;
+	hasRenderingOptionsIfNeeded: boolean;
 	errorMarkdown?: string[];
 	id?: string;
 };
@@ -22,7 +26,8 @@ export const getInitialStateForLaunch = async (
 	const id = parseToNumber(request.id);
 	if (id === undefined) {
 		return {
-			isReady: false,
+			hasRenderingOptionsIfNeeded: false,
+			hasAllStandardData: false,
 		};
 	}
 	const storageResponse = await launchService.draftStorage.getDraftNewsletter(
@@ -35,11 +40,19 @@ export const getInitialStateForLaunch = async (
 	const name = draft.name;
 	const issues = getDraftNotReadyIssues(draft);
 
+	const hasRenderingOptionsIfNeeded =
+		draft.category === 'article-based'
+			? draft.renderingOptions
+				? renderingOptionsSchema.safeParse(draft.renderingOptions).success
+				: false
+			: true;
+
 	if (issues.length > 0) {
 		const errorMarkdown = zodIssueToMarkdown(issues);
 		return {
 			name,
-			isReady: false,
+			hasAllStandardData: false,
+			hasRenderingOptionsIfNeeded,
 			errorMarkdown,
 			id: request.id,
 		};
@@ -47,7 +60,8 @@ export const getInitialStateForLaunch = async (
 
 	return {
 		name,
-		isReady: true,
+		hasAllStandardData: true,
+		hasRenderingOptionsIfNeeded,
 		errorMarkdown: undefined,
 		id: request.id,
 		identityName: draft.identityName,
