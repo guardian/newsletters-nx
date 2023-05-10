@@ -14,10 +14,10 @@ const markdownTemplate = `
 `.trim();
 
 const markdownAnswers = {
-	yes: `Yes! The draft for **{{name}}** has all the necessary information set and is ready to launch.`,
-	yesButRenderingOptions: `No, The draft for **{{name}}** is 'article-based' and needs the renderingOptions set. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
-	no: `No, there is some information for **{{name}}** that is missing or incomplete, as listed below. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
-	noAndRenderingOptions: `No, there is some information for **{{name}}** that is missing or incomplete, as listed below. Also, **{{name}}** is 'article-based' and needs the renderingOptions set. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
+	allComplete: `Yes! The draft for **{{name}}** has all the necessary information set and is ready to launch.`,
+	standardCompleteButNotRenderingOptions: `No, The draft for **{{name}}** is 'article-based' and needs the renderingOptions set. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
+	standardNotComplete: `No, there is some information for **{{name}}** that is missing or incomplete, as listed below. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
+	standardAndRenderingOptionsNotComplete: `No, there is some information for **{{name}}** that is missing or incomplete, as listed below. Also, **{{name}}** is 'article-based' and needs the renderingOptions set. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
 };
 
 const staticMarkdown = markdownTemplate.replace(
@@ -29,13 +29,14 @@ const getReadinessMessage = (
 	hasAllStandardData?: boolean,
 	hasRenderingOptionsIfNeeded?: boolean,
 ) => {
-	return hasAllStandardData
-		? hasRenderingOptionsIfNeeded
-			? markdownAnswers.yes
-			: markdownAnswers.yesButRenderingOptions
-		: hasRenderingOptionsIfNeeded
-		? markdownAnswers.no
-		: markdownAnswers.noAndRenderingOptions;
+	if (hasAllStandardData) {
+		return hasRenderingOptionsIfNeeded
+			? markdownAnswers.allComplete
+			: markdownAnswers.standardCompleteButNotRenderingOptions;
+	}
+	return hasRenderingOptionsIfNeeded
+		? markdownAnswers.standardNotComplete
+		: markdownAnswers.standardAndRenderingOptionsNotComplete;
 };
 
 export const isDataCompleteLayout: WizardStepLayout<LaunchService> = {
