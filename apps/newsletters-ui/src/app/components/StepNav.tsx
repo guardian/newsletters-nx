@@ -136,8 +136,7 @@ export const StepNav = ({
 				return (
 					<Step
 						sx={{
-							paddingBottom: '0.5rem',
-							paddingTop: '0.5rem',
+							paddingBottom: '0.25rem',
 							flexBasis: '11rem',
 						}}
 						key={step.id}
