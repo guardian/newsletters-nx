@@ -31,13 +31,13 @@ new NewslettersTool(app, 'NewslettersTool-PROD', {
 new NewslettersApi(app, 'NewslettersApi-CODE', {
 	...sharedProps,
 	stage: 'CODE',
-	app: readOnlyNewslettersApiName,
+	app: newslettersToolAppName,
 	domainName: `${readOnlyNewslettersApiName}.code.dev-gutools.co.uk`,
 });
 
 new NewslettersApi(app, 'NewslettersApi-PROD', {
 	...sharedProps,
 	stage: 'PROD',
-	app: readOnlyNewslettersApiName,
+	app: newslettersToolAppName,
 	domainName: `${readOnlyNewslettersApiName}.gutools.co.uk`,
 });

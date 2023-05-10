@@ -82,14 +82,6 @@ jobs:
               - cdk/cdk.out/NewslettersTool-PROD.template.json
             newsletters-tool:
               - dist/newsletters-tool.zip
-
-        # Upload artifacts for newsletters read only API
-      - name: Upload riff-raff artifacts - newsletters-api
-        uses: guardian/actions-riff-raff@v2
-        with:
-          app: newsletters-api
-          configPath: riff-raff.yaml
-          contentDirectories: |
             newsletters-api-cfn:
               - cdk/cdk.out/NewslettersApi-CODE.template.json
               - cdk/cdk.out/NewslettersApi-PROD.template.json

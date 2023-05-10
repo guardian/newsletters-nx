@@ -3,7 +3,7 @@ stacks: [newsletters]
 regions: [eu-west-1]
 allowedStages: [CODE, PROD]
 templates:
-  cloudformation-template-tool:
+  cloudformation-template:
     type: cloud-formation
     app: newsletters-tool
     parameters:
@@ -13,15 +13,6 @@ templates:
         Recipe: newsletters-node
         AmigoStage: PROD
 
-  cloudformation-template-api:
-    type: cloud-formation
-    app: newsletters-api
-    parameters:
-      cloudFormationStackByTags: false
-      prependStackToCloudFormationStackName: false
-      amiTags:
-        Recipe: newsletters-node
-        AmigoStage: PROD
   autoscaling-template:
     type: autoscaling
     parameters:
@@ -29,7 +20,7 @@ templates:
 deployments:
   # Newsletters internal tool cloudformation deployment
   newsletters-tool-cfn:
-    template: cloudformation-template-tool
+    template: cloudformation-template
     app: newsletters-tool
     parameters:
       cloudFormationStackName: newsletters-tool
@@ -40,8 +31,8 @@ deployments:
 
         # Newsletters internal tool cloudformation deployment
   newsletters-api-cfn:
-    template: cloudformation-template-api
-    app: newsletters-api
+    template: cloudformation-template
+    app: newsletters-tool
     parameters:
       cloudFormationStackName: newsletters-api
       amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
