@@ -29,12 +29,12 @@ const getJsonString = (
 	}
 };
 
-const isValidJson = (value: string): boolean => {
+const safeJsonParse = (value: string): JsonRecord | undefined => {
 	try {
-		JSON.parse(value);
-		return true;
+		const record = JSON.parse(value) as JsonRecord;
+		return record;
 	} catch (err) {
-		return false;
+		return undefined;
 	}
 };
 
@@ -98,27 +98,29 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 	};
 
 	const checkJsonValidity = () => {
-		setJsonCheckResult(isValidJson(fieldContents));
+		setJsonCheckResult(!!safeJsonParse(fieldContents));
 	};
 
 	const checkSchema = () => {
-		try {
-			const data = JSON.parse(fieldContents) as JsonRecord;
-			const result = schema.safeParse(data);
-
-			setJsonCheckResult(true);
-			if (result.success) {
-				setSchemaCheckResult(true);
-				setSchemaCheckIssues([]);
-			} else {
-				setSchemaCheckResult(false);
-				setSchemaCheckIssues(result.error.issues);
-			}
-		} catch (err) {
+		const data = safeJsonParse(fieldContents);
+		if (!data) {
 			setSchemaCheckResult(false);
 			setSchemaCheckIssues([]);
 			setJsonCheckResult(false);
+			return;
 		}
+
+		setJsonCheckResult(true);
+
+		const result = schema.safeParse(data);
+		if (!result.success) {
+			setSchemaCheckResult(true);
+			setSchemaCheckIssues([]);
+			return;
+		}
+
+		setSchemaCheckResult(true);
+		setSchemaCheckIssues([]);
 	};
 
 	const reset = () => {
@@ -128,9 +130,8 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 	const handleSubmit = () => {
 		checkJsonValidity();
 		checkSchema();
-
 		try {
-			const output = schema.parse(JSON.parse(fieldContents) as JsonRecord);
+			const output = schema.parse(safeJsonParse(fieldContents));
 			submit(output);
 		} catch (err) {
 			console.warn('submit fail');
