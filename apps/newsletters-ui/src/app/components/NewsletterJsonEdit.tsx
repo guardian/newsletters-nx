@@ -3,7 +3,6 @@ import { useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
-import type { JsonRecord } from './JsonEdittor';
 import { JsonEdittor } from './JsonEdittor';
 
 interface Props {
@@ -17,19 +16,13 @@ export const NewsletterJsonEdit = ({ originalItem }: Props) => {
 		undefined,
 	);
 
-	// TO DO - catch errors in the function
-	const handleSubmission = async (record: JsonRecord) => {
-		const parsedSubmission = newsletterDataSchema.parse(
-			record,
-		) as Partial<NewsletterData>;
-		const { listId } = parsedSubmission;
-		delete parsedSubmission.listId;
-		delete parsedSubmission.identityName;
-
-		const apiResonse = await requestNewsletterEdit(
-			listId as number,
-			parsedSubmission,
-		);
+	const handleSubmission = async (record: NewsletterData) => {
+		const partial = {
+			...record,
+			listId: undefined,
+			identityName: undefined,
+		} as Partial<NewsletterData>;
+		const apiResonse = await requestNewsletterEdit(record.listId, partial);
 
 		if (apiResonse.ok) {
 			setItem(apiResonse.data);

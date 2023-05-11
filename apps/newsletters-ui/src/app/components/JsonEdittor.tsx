@@ -7,16 +7,24 @@ import {
 	TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
+import type { z, ZodIssue, ZodObject, ZodRawShape } from 'zod';
 import { ZodIssuesReport } from './ZodIssuesReport';
 
-export type JsonRecord = Record<string, unknown>;
+type JsonRecord = Record<string, unknown>;
 
-interface Props {
-	originalData: JsonRecord;
-	schema: ZodObject<ZodRawShape>;
-	submit: { (data: JsonRecord): void };
+interface Props<T extends ZodRawShape> {
+	originalData: SchemaObjectType<T>;
+	schema: ZodObject<T>;
+	submit: { (data: SchemaObjectType<T>): void };
 }
+
+type SchemaObjectType<T extends z.ZodRawShape> = {
+	[k in keyof z.objectUtil.addQuestionMarks<{
+		[k in keyof T]: T[k]['_output'];
+	}>]: z.objectUtil.addQuestionMarks<{
+		[k in keyof T]: T[k]['_output'];
+	}>[k];
+};
 
 const getFormattedJsonString = (
 	data: JsonRecord,
@@ -70,7 +78,11 @@ const CheckResultMessage = (props: {
 	);
 };
 
-export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
+export const JsonEdittor = <T extends ZodRawShape>({
+	originalData,
+	schema,
+	submit,
+}: Props<T>) => {
 	const [originalJson, setOriginalJson] = useState<string | undefined>();
 	const [fieldContents, setFieldContents] = useState<string>('');
 	const [jsonCheckResult, setJsonCheckResult] = useState<boolean | undefined>();
