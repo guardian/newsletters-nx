@@ -18,11 +18,11 @@ interface Props {
 	submit: { (data: JsonRecord): void };
 }
 
-const getJsonString = (
+const getFormattedJsonString = (
 	data: JsonRecord,
 ): { ok: true; json: string } | { ok: false } => {
 	try {
-		const json = JSON.stringify(data, undefined, 2);
+		const json = JSON.stringify(data, undefined, 4);
 		return { json, ok: true };
 	} catch (err) {
 		return { ok: false };
@@ -80,7 +80,7 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 	const [schemaCheckIssues, setSchemaCheckIssues] = useState<ZodIssue[]>([]);
 
 	useEffect(() => {
-		const stringifyResult = getJsonString(originalData);
+		const stringifyResult = getFormattedJsonString(originalData);
 
 		if (stringifyResult.ok) {
 			setOriginalJson(stringifyResult.json);
@@ -139,6 +139,23 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 		}
 	};
 
+	const formatContents = () => {
+		const data = safeJsonParse(fieldContents);
+		if (!data) {
+			setJsonCheckResult(false);
+			return;
+		}
+		const formatted = getFormattedJsonString(data);
+
+		if (!formatted.ok) {
+			setJsonCheckResult(false);
+			return;
+		}
+
+		setJsonCheckResult(true);
+		setFieldContents(formatted.json);
+	};
+
 	return (
 		<Box>
 			<TextField
@@ -152,6 +169,9 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 			<ButtonGroup sx={{ marginY: 2 }}>
 				<Button variant="outlined" onClick={reset}>
 					reset
+				</Button>
+				<Button variant="outlined" onClick={formatContents}>
+					format
 				</Button>
 				<Button variant="outlined" onClick={checkJsonValidity}>
 					check valid
