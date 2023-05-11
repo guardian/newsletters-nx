@@ -26,7 +26,7 @@ deployments:
         AMINewsletterstool:
           BuiltBy: amigo
           Recipe: newsletters-node
-        AMINewsletterstoolapi:
+        AMINewslettersapi:
           BuiltBy: amigo
           Recipe: newsletters-node
       templateStagePaths:
