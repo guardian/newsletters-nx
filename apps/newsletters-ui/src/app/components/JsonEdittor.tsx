@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
 import { ZodIssuesReport } from './ZodIssuesReport';
 
-type JsonRecord = Record<string, unknown>;
+export type JsonRecord = Record<string, unknown>;
 
 interface Props {
 	originalData: JsonRecord;

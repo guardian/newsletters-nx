@@ -1,10 +1,7 @@
 import { useLoaderData } from 'react-router-dom';
-import {
-	isNewsletterData,
-	newsletterDataSchema,
-} from '@newsletters-nx/newsletters-data-client';
+import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
-import { JsonEdittor } from '../JsonEdittor';
+import { NewsletterJsonEdit } from '../NewsletterJsonEdit';
 
 export const NewsletterJsonEditView = () => {
 	const matchedItem = useLoaderData();
@@ -18,13 +15,7 @@ export const NewsletterJsonEditView = () => {
 
 	return (
 		<ContentWrapper>
-			<JsonEdittor
-				originalData={matchedItem}
-				schema={newsletterDataSchema}
-				submit={(record) => {
-					console.log('record got', record);
-				}}
-			/>
+			<NewsletterJsonEdit newsletter={matchedItem} />
 		</ContentWrapper>
 	);
 };

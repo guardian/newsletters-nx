@@ -3,7 +3,7 @@ import { FormDemoView } from '../components/FormDemoView';
 import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
 import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
 import { NewsletterEditView } from '../components/views/NewsletterEditView';
-import { NewsletterJsonEditView } from '../components/views/NewsletterJsonEdit';
+import { NewsletterJsonEditView } from '../components/views/NewsletterJsonEditView';
 import { NewslettersListView } from '../components/views/NewslettersListView';
 import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
