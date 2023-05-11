@@ -3,6 +3,7 @@ import { FormDemoView } from '../components/FormDemoView';
 import { NewsletterCreateView } from '../components/views/NewsletterCreateView';
 import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
 import { NewsletterEditView } from '../components/views/NewsletterEditView';
+import { NewsletterJsonEditView } from '../components/views/NewsletterJsonEdit';
 import { NewslettersListView } from '../components/views/NewslettersListView';
 import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
@@ -27,6 +28,11 @@ export const newslettersRoute: RouteObject = {
 		{
 			path: 'edit/:id',
 			element: <NewsletterEditView />,
+			loader: detailLoader,
+		},
+		{
+			path: 'edit-json/:id',
+			element: <NewsletterJsonEditView />,
 			loader: detailLoader,
 		},
 		{
