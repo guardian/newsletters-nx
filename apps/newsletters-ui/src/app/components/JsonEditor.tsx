@@ -3,6 +3,8 @@ import {
 	Box,
 	Button,
 	ButtonGroup,
+	Container,
+	Grid,
 	Stack,
 	TextField,
 } from '@mui/material';
@@ -170,37 +172,58 @@ export const JsonEditor = <T extends ZodRawShape>({
 
 	return (
 		<Box>
-			<TextField
-				spellCheck={false}
-				multiline
-				value={fieldContents}
-				onChange={(event) => handleInput(event)}
-				fullWidth
-			/>
+			<Grid container>
+				<Grid item xs={12} md={3}>
+					<Container>
+						<ButtonGroup sx={{ marginY: 2 }} orientation="vertical" fullWidth>
+							<Button variant="outlined" onClick={reset} color="warning">
+								reset
+							</Button>
+							<Button variant="outlined" onClick={formatContents}>
+								format
+							</Button>
+							<Button variant="outlined" onClick={checkJsonValidity}>
+								check valid
+							</Button>
+							<Button variant="outlined" onClick={checkSchema}>
+								check against schema
+							</Button>
+						</ButtonGroup>
 
-			<ButtonGroup sx={{ marginY: 2 }}>
-				<Button variant="outlined" onClick={reset}>
-					reset
-				</Button>
-				<Button variant="outlined" onClick={formatContents}>
-					format
-				</Button>
-				<Button variant="outlined" onClick={checkJsonValidity}>
-					check valid
-				</Button>
-				<Button variant="outlined" onClick={checkSchema}>
-					check against schema
-				</Button>
-				<Button variant="contained" onClick={handleSubmit}>
+						<Stack spacing={1} marginY={2}>
+							<CheckResultMessage
+								label="IS VALID JSON"
+								result={jsonCheckResult}
+							/>
+							<CheckResultMessage
+								label="passes schema"
+								result={schemaCheckResult}
+							/>
+							<ZodIssuesReport issues={schemaCheckIssues} />
+						</Stack>
+					</Container>
+				</Grid>
+				<Grid item xs={12} md={9}>
+					<TextField
+						spellCheck={false}
+						multiline
+						value={fieldContents}
+						onChange={(event) => handleInput(event)}
+						fullWidth
+					/>
+				</Grid>
+			</Grid>
+
+			<Container maxWidth="md" sx={{ marginTop: 3 }}>
+				<Button
+					variant="contained"
+					onClick={handleSubmit}
+					fullWidth
+					size="large"
+				>
 					submit
 				</Button>
-			</ButtonGroup>
-
-			<Stack maxWidth={'sm'} spacing={1} marginY={2}>
-				<CheckResultMessage label="IS VALID JSON" result={jsonCheckResult} />
-				<CheckResultMessage label="passes schema" result={schemaCheckResult} />
-				<ZodIssuesReport issues={schemaCheckIssues} />
-			</Stack>
+			</Container>
 		</Box>
 	);
 };
