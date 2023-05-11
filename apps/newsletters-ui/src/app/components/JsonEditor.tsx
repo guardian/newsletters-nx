@@ -78,7 +78,7 @@ const CheckResultMessage = (props: {
 	);
 };
 
-export const JsonEdittor = <T extends ZodRawShape>({
+export const JsonEditor = <T extends ZodRawShape>({
 	originalData,
 	schema,
 	submit,

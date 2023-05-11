@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
-import { JsonEdittor } from './JsonEdittor';
+import { JsonEditor } from './JsonEditor';
 
 interface Props {
 	originalItem: NewsletterData;
@@ -50,7 +50,7 @@ export const NewsletterJsonEdit = ({ originalItem }: Props) => {
 					</Typography>
 				</ul>
 			</Alert>
-			<JsonEdittor
+			<JsonEditor
 				originalData={item}
 				schema={newsletterDataSchema}
 				submit={handleSubmission}
