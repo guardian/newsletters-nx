@@ -242,7 +242,7 @@ unzip /tmp/newsletters-api.zip -d /opt/newsletters-api
 chown -R ubuntu /opt/newsletters-api
 export NEWSLETTERS_API_READ=true
 export NEWSLETTERS_API_READ_WRITE=false
-export NEWSLETTERS_UI_SERVE=false}
+export NEWSLETTERS_UI_SERVE=false
 export STAGE=TEST
 export NEWSLETTER_BUCKET_NAME=",
                 {
@@ -375,7 +375,7 @@ unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
 chown -R ubuntu /opt/newsletters-tool
 export NEWSLETTERS_API_READ=false
 export NEWSLETTERS_API_READ_WRITE=true
-export NEWSLETTERS_UI_SERVE=true}
+export NEWSLETTERS_UI_SERVE=true
 export STAGE=TEST
 export NEWSLETTER_BUCKET_NAME=",
                 {
