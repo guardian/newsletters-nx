@@ -236,10 +236,10 @@ aws s3 cp s3://",
                 {
                   "Ref": "DistributionBucketName",
                 },
-                "/newsletters/TEST/newsletters-tool/newsletters-tool.zip /tmp
-mkdir -p /opt/newsletters-tool
-unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
-chown -R ubuntu /opt/newsletters-tool
+                "/newsletters/TEST/newsletters-api/newsletters-api.zip /tmp
+mkdir -p /opt/newsletters-api
+unzip /tmp/newsletters-api.zip -d /opt/newsletters-api
+chown -R ubuntu /opt/newsletters-api
 export NEWSLETTERS_API_READ=true
 export NEWSLETTERS_API_READ_WRITE=false
 export NEWSLETTERS_UI_SERVE=false}
@@ -250,8 +250,8 @@ export NEWSLETTER_BUCKET_NAME=",
                 },
                 "
 export USE_IN_MEMORY_STORAGE=false
-cd /opt/newsletters-tool
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsletters-api/index.cjs'",
+cd /opt/newsletters-api
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api dist/apps/newsletters-api/index.cjs'",
               ],
             ],
           },
@@ -1530,7 +1530,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "newsletterstoolInstancePolicy214EAC72": {
+    "s3accesspolicy28B12BB3": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [

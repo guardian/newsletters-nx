@@ -24,8 +24,8 @@ deployments:
       cloudFormationStackName: newsletters-tool
       amiParametersToTags:
         AMINewsletterstool:
-            BuiltBy: amigo
-            Recipe: newsletters-node
+          BuiltBy: amigo
+          Recipe: newsletters-node
         AMINewsletterstoolapi:
           BuiltBy: amigo
           Recipe: newsletters-node
