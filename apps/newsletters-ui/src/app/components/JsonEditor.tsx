@@ -127,9 +127,10 @@ export const JsonEditor = <T extends ZodRawShape>({
 		setJsonCheckResult(true);
 
 		const result = schema.safeParse(data);
+		console.log(result);
 		if (!result.success) {
-			setSchemaCheckResult(true);
-			setSchemaCheckIssues([]);
+			setSchemaCheckResult(false);
+			setSchemaCheckIssues(result.error.issues);
 			return;
 		}
 
