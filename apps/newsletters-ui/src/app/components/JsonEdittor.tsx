@@ -7,7 +7,8 @@ import {
 	TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
+import { ZodIssuesReport } from './ZodIssuesReport';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -76,6 +77,7 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 	const [schemaCheckResult, setSchemaCheckResult] = useState<
 		boolean | undefined
 	>();
+	const [schemaCheckIssues, setSchemaCheckIssues] = useState<ZodIssue[]>([]);
 
 	useEffect(() => {
 		const stringifyResult = getJsonString(originalData);
@@ -91,6 +93,7 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 	) => {
 		setJsonCheckResult(undefined);
 		setSchemaCheckResult(undefined);
+		setSchemaCheckIssues([]);
 		setFieldContents(event.target.value);
 	};
 
@@ -106,12 +109,14 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 			setJsonCheckResult(true);
 			if (result.success) {
 				setSchemaCheckResult(true);
+				setSchemaCheckIssues([]);
 			} else {
-				console.log(result.error);
 				setSchemaCheckResult(false);
+				setSchemaCheckIssues(result.error.issues);
 			}
 		} catch (err) {
 			setSchemaCheckResult(false);
+			setSchemaCheckIssues([]);
 			setJsonCheckResult(false);
 		}
 	};
@@ -128,6 +133,7 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 			const output = schema.parse(JSON.parse(fieldContents) as JsonRecord);
 			submit(output);
 		} catch (err) {
+			console.warn('submit fail');
 			console.log(err);
 		}
 	};
@@ -141,6 +147,7 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 				onChange={(event) => handleInput(event)}
 				fullWidth
 			/>
+
 			<ButtonGroup sx={{ marginY: 2 }}>
 				<Button variant="outlined" onClick={reset}>
 					reset
@@ -159,6 +166,7 @@ export const JsonEdittor = ({ originalData, schema, submit }: Props) => {
 			<Stack maxWidth={'sm'} spacing={1} marginY={2}>
 				<CheckResultMessage label="IS VALID JSON" result={jsonCheckResult} />
 				<CheckResultMessage label="passes schema" result={schemaCheckResult} />
+				<ZodIssuesReport issues={schemaCheckIssues} />
 			</Stack>
 		</Box>
 	);
