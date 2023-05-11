@@ -33,18 +33,18 @@ new NewslettersTool(app, 'NewslettersTool-PROD', {
 const readOnlyNewslettersApiName = 'read-only-newsletters';
 
 new NewslettersApi(app, 'NewslettersApi-CODE', {
-	stack: 'newsletters-api',
+	...sharedProps,
 	env: { region: 'eu-west-1' },
 	stage: 'CODE',
-	app: newslettersToolAppName,
+	app: 'newsletters-api',
 	domainName: `${readOnlyNewslettersApiName}.code.dev-gutools.co.uk`,
 
 });
 
 new NewslettersApi(app, 'NewslettersApi-PROD', {
-	stack: 'newsletters-api',
+	...sharedProps,
 	env: { region: 'eu-west-1' },
 	stage: 'PROD',
-	app: newslettersToolAppName,
+	app: 'newsletters-api',
 	domainName: `${readOnlyNewslettersApiName}.gutools.co.uk`,
 });
