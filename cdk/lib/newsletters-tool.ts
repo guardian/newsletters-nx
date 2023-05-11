@@ -176,7 +176,7 @@ export class NewslettersTool extends GuStack {
 		 * Sets up CNAME record for domainName specified
 		 * @see https://en.wikipedia.org/wiki/CNAME_record
 		 */
-		new GuCname(this, 'NewslettersToolCname', {
+		new GuCname(this, 'CNAME', {
 			app: toolAppName,
 			domainName: domainNameTool,
 			ttl: Duration.hours(1),

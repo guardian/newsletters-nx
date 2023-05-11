@@ -392,6 +392,23 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
+    "CNAME": {
+      "Properties": {
+        "Name": "newsletters-tool.test.dev-gutools.co.uk",
+        "RecordType": "CNAME",
+        "ResourceRecords": [
+          {
+            "Fn::GetAtt": [
+              "LoadBalancerNewsletterstoolE9AB350F",
+              "DNSName",
+            ],
+          },
+        ],
+        "Stage": "TEST",
+        "TTL": 3600,
+      },
+      "Type": "Guardian::DNS::RecordSet",
+    },
     "CertificateNewslettersapi7A81CAC3": {
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -1261,23 +1278,6 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
           {
             "Fn::GetAtt": [
               "LoadBalancerNewslettersapi605B1E8A",
-              "DNSName",
-            ],
-          },
-        ],
-        "Stage": "TEST",
-        "TTL": 3600,
-      },
-      "Type": "Guardian::DNS::RecordSet",
-    },
-    "NewslettersToolCname": {
-      "Properties": {
-        "Name": "newsletters-tool.test.dev-gutools.co.uk",
-        "RecordType": "CNAME",
-        "ResourceRecords": [
-          {
-            "Fn::GetAtt": [
-              "LoadBalancerNewsletterstoolE9AB350F",
               "DNSName",
             ],
           },
