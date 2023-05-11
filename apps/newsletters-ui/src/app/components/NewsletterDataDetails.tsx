@@ -103,7 +103,11 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				>
 					Back to List
 				</NavigateButton>
-				<RawDataDialog record={newsletter} title={newsletter.identityName} />
+				<RawDataDialog
+					record={newsletter}
+					title={newsletter.identityName}
+					editHref={`../edit-json/${newsletter.identityName}`}
+				/>
 			</Stack>
 		</Box>
 	);
