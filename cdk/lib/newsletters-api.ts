@@ -58,7 +58,7 @@ export class NewslettersApi extends GuStack {
 
 	private setUpNodeEc2 = (props: NewslettersApiProps) => {
 		const { app, domainName } = props;
-		const bucketSSMParameterName = `/${this.stage}/${this.stack}/newsletters-api/s3BucketName`;
+		const bucketSSMParameterName = `/${this.stage}/newsletters/newsletters-api/s3BucketName`;
 		const bucketName = StringParameter.valueForStringParameter(
 			this,
 			bucketSSMParameterName,
