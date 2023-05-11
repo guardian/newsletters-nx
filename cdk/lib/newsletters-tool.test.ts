@@ -10,7 +10,8 @@ describe('The Newsletters stack', () => {
 			...sharedProps,
 			stage: 'TEST',
 			app: 'newsletters-tool',
-			domainName: 'newsletters-tool.test.dev-gutools.co.uk',
+			domainNameTool: 'newsletters-tool.test.dev-gutools.co.uk',
+			domainNameApi: 'readonly-newsletters.test.dev-gutools.co.uk',
 		});
 		const template = Template.fromStack(stack);
 		expect(template.toJSON()).toMatchSnapshot();
