@@ -20,8 +20,8 @@ import { GuPolicy } from '@guardian/cdk/lib/constructs/iam';
 import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
 
 export interface NewslettersToolProps extends GuStackProps {
-	app: string; // Force app to be a required prop
-	domainName: string;
+	domainNameTool: string;
+	domainNameApi: string;
 }
 
 export class NewslettersTool extends GuStack {
@@ -37,8 +37,9 @@ export class NewslettersTool extends GuStack {
 	 * @see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 	 */
 	private getUserData = (
-		app: NewslettersToolProps['app'],
+		app: string,
 		bucketName: string,
+		readOnly: boolean,
 	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
@@ -52,9 +53,9 @@ export class NewslettersTool extends GuStack {
 			`mkdir -p /opt/${app}`, // make more permanent directory for app to be unzipped into
 			`unzip /tmp/${app}.zip -d /opt/${app}`, // unzip the downloaded zip from /tmp into directory in /opt instead
 			`chown -R ubuntu /opt/${app}`, // change ownership of the copied files to ubuntu user
-			`export NEWSLETTERS_API_READ=true`,
-			`export NEWSLETTERS_API_READ_WRITE=true`,
-			`export NEWSLETTERS_UI_SERVE=true`,
+			`export NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}`,
+			`export NEWSLETTERS_API_READ_WRITE=${readOnly ? 'false' : 'true'}`,
+			`export NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}`,
 			`export STAGE=${this.stage}`, // sets the stage environment variable
 			`export NEWSLETTER_BUCKET_NAME=${bucketName}`, // sets the bucket name environment variable
 			`export USE_IN_MEMORY_STORAGE=false`, // use s3 when running on cloud
@@ -64,7 +65,9 @@ export class NewslettersTool extends GuStack {
 	};
 
 	private setUpNodeEc2 = (props: NewslettersToolProps) => {
-		const { app, domainName } = props;
+		const { domainNameTool, domainNameApi } = props;
+		const toolAppName = 'newsletters-tool';
+		const apiAppName = 'newsletters-api';
 
 		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
 		const bucketSSMParameterName = `/${this.stage}/${this.stack}/newsletters-api/s3BucketName`;
@@ -74,11 +77,11 @@ export class NewslettersTool extends GuStack {
 		);
 		const dataStorageBucket = new GuS3Bucket(this, 'DataBucket', {
 			bucketName,
-			app: props.app,
+			app: toolAppName,
 			versioned: true,
 		});
 
-		const s3AccessPolicy = new GuPolicy(this, `${app}-InstancePolicy`, {
+		const s3AccessPolicy = new GuPolicy(this, `s3-access-policy`, {
 			policyName: 'readWriteAccessToDataBucket',
 			statements: [
 				new PolicyStatement({
@@ -102,44 +105,57 @@ export class NewslettersTool extends GuStack {
 		});
 
 		/** Sets up Node app to be run in EC2 */
-		const ec2App = new GuNodeApp(this, {
+		const ec2AppTool = new GuNodeApp(this, {
 			access: { scope: AccessScope.PUBLIC },
-			certificateProps: { domainName },
+			certificateProps: { domainName: domainNameTool },
 			monitoringConfiguration: { noMonitoring: true },
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			// Minimum of 1 EC2 instance running at a time. If one fails, scales up to 2 before dropping back to 1 again
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			// Instructions to set up the environment in the instance
-			userData: this.getUserData(app, bucketName),
+			userData: this.getUserData(toolAppName, bucketName, false),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],
 			},
-			app,
+			app: toolAppName,
 			accessLogging: {
 				enabled: true,
-				prefix: `ELBLogs/${this.stack}/${app}/${this.stage}`,
+				prefix: `ELBLogs/${this.stack}/${toolAppName}/${this.stage}`,
 			},
+		});
+
+		const ec2AppApi = new GuNodeApp(this, {
+			access: { scope: AccessScope.PUBLIC },
+			certificateProps: { domainName: domainNameApi },
+			monitoringConfiguration: { noMonitoring: true },
+			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
+			scaling: { minimumInstances: 1, maximumInstances: 2 },
+			userData: this.getUserData(apiAppName, bucketName, true),
+			roleConfiguration: {
+				additionalPolicies: [s3AccessPolicy],
+			},
+			app: apiAppName,
 		});
 
 		/** Security group to allow load balancer to egress to 443 for OIDC flow using Google auth */
 		const lbEgressSecurityGroup = new GuHttpsEgressSecurityGroup(
 			this,
 			'IdP Access',
-			{ app, vpc: ec2App.vpc },
+			{ app: toolAppName, vpc: ec2AppTool.vpc },
 		);
 
 		/** Add security group to EC2 load balancer */
-		ec2App.loadBalancer.addSecurityGroup(lbEgressSecurityGroup);
+		ec2AppTool.loadBalancer.addSecurityGroup(lbEgressSecurityGroup);
 
 		/** Fetch Google clientId param from SSM */
 		const clientId = new GuStringParameter(this, 'Google Client ID', {
 			description: 'Google OAuth client ID',
-			default: `/${this.stage}/${this.stack}/${props.app}/googleClientId`,
+			default: `/${this.stage}/${this.stack}/${toolAppName}/googleClientId`,
 			fromSSM: true,
 		});
 
 		/** Add Google authentication layer to the EC2 load balancer */
-		ec2App.listener.addAction('Google Auth', {
+		ec2AppTool.listener.addAction('Google Auth', {
 			action: ListenerAction.authenticateOidc({
 				authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
 				issuer: 'https://accounts.google.com',
@@ -152,7 +168,7 @@ export class NewslettersTool extends GuStack {
 				clientSecret: SecretValue.secretsManager(
 					`/${this.stage}/deploy/newsletters/clientSecret`,
 				),
-				next: ListenerAction.forward([ec2App.targetGroup]),
+				next: ListenerAction.forward([ec2AppTool.targetGroup]),
 			}),
 		});
 
@@ -161,10 +177,16 @@ export class NewslettersTool extends GuStack {
 		 * @see https://en.wikipedia.org/wiki/CNAME_record
 		 */
 		new GuCname(this, 'CNAME', {
-			app,
-			domainName,
+			app: toolAppName,
+			domainName: domainNameTool,
 			ttl: Duration.hours(1),
-			resourceRecord: ec2App.loadBalancer.loadBalancerDnsName,
+			resourceRecord: ec2AppTool.loadBalancer.loadBalancerDnsName,
+		});
+		new GuCname(this, 'NewslettersAPICname', {
+			app: apiAppName,
+			domainName: domainNameApi,
+			ttl: Duration.hours(1),
+			resourceRecord: ec2AppApi.loadBalancer.loadBalancerDnsName,
 		});
 	};
 }
