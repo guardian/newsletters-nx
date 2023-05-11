@@ -133,7 +133,7 @@ export class NewslettersTool extends GuStack {
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],
 			},
-			app: `${app}-api`,
+			app: `newsletters-api`,
 		});
 
 		/** Security group to allow load balancer to egress to 443 for OIDC flow using Google auth */

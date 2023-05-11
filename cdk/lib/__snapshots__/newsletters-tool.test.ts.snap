@@ -47,6 +47,15 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
     "gu:cdk:version": "TEST",
   },
   "Outputs": {
+    "LoadBalancerNewslettersapiDnsName": {
+      "Description": "DNS entry for LoadBalancerNewslettersapi",
+      "Value": {
+        "Fn::GetAtt": [
+          "LoadBalancerNewslettersapi605B1E8A",
+          "DNSName",
+        ],
+      },
+    },
     "LoadBalancerNewsletterstoolDnsName": {
       "Description": "DNS entry for LoadBalancerNewsletterstool",
       "Value": {
@@ -56,23 +65,14 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
         ],
       },
     },
-    "LoadBalancerNewsletterstoolapiDnsName": {
-      "Description": "DNS entry for LoadBalancerNewsletterstoolapi",
-      "Value": {
-        "Fn::GetAtt": [
-          "LoadBalancerNewsletterstoolapi72A19492",
-          "DNSName",
-        ],
-      },
-    },
   },
   "Parameters": {
-    "AMINewsletterstool": {
-      "Description": "Amazon Machine Image ID for the app newsletters-tool. Use this in conjunction with AMIgo to keep AMIs up to date.",
+    "AMINewslettersapi": {
+      "Description": "Amazon Machine Image ID for the app newsletters-api. Use this in conjunction with AMIgo to keep AMIs up to date.",
       "Type": "AWS::EC2::Image::Id",
     },
-    "AMINewsletterstoolapi": {
-      "Description": "Amazon Machine Image ID for the app newsletters-tool-api. Use this in conjunction with AMIgo to keep AMIs up to date.",
+    "AMINewsletterstool": {
+      "Description": "Amazon Machine Image ID for the app newsletters-tool. Use this in conjunction with AMIgo to keep AMIs up to date.",
       "Type": "AWS::EC2::Image::Id",
     },
     "AccessLoggingBucket": {
@@ -104,6 +104,16 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Description": "Virtual Private Cloud to run EC2 instances within. Should NOT be the account default VPC.",
       "Type": "AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>",
     },
+    "newslettersapiPrivateSubnets": {
+      "Default": "/account/vpc/primary/subnets/private",
+      "Description": "A list of private subnets",
+      "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
+    },
+    "newslettersapiPublicSubnets": {
+      "Default": "/account/vpc/primary/subnets/public",
+      "Description": "A list of public subnets",
+      "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
+    },
     "newsletterstoolPrivateSubnets": {
       "Default": "/account/vpc/primary/subnets/private",
       "Description": "A list of private subnets",
@@ -114,18 +124,141 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Description": "A list of public subnets",
       "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
     },
-    "newsletterstoolapiPrivateSubnets": {
-      "Default": "/account/vpc/primary/subnets/private",
-      "Description": "A list of private subnets",
-      "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
-    },
-    "newsletterstoolapiPublicSubnets": {
-      "Default": "/account/vpc/primary/subnets/public",
-      "Description": "A list of public subnets",
-      "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
-    },
   },
   "Resources": {
+    "AutoScalingGroupNewslettersapiASG06292ACA": {
+      "Properties": {
+        "HealthCheckGracePeriod": 120,
+        "HealthCheckType": "ELB",
+        "LaunchConfigurationName": {
+          "Ref": "AutoScalingGroupNewslettersapiLaunchConfig6EF45E9F",
+        },
+        "MaxSize": "2",
+        "MinSize": "1",
+        "Tags": [
+          {
+            "Key": "App",
+            "PropagateAtLaunch": true,
+            "Value": "newsletters-api",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "PropagateAtLaunch": true,
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "PropagateAtLaunch": true,
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "LogKinesisStreamName",
+            "PropagateAtLaunch": true,
+            "Value": {
+              "Ref": "LoggingStreamName",
+            },
+          },
+          {
+            "Key": "Name",
+            "PropagateAtLaunch": true,
+            "Value": "NewslettersTool-TEST/AutoScalingGroupNewslettersapi",
+          },
+          {
+            "Key": "Stack",
+            "PropagateAtLaunch": true,
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "PropagateAtLaunch": true,
+            "Value": "TEST",
+          },
+        ],
+        "TargetGroupARNs": [
+          {
+            "Ref": "TargetGroupNewslettersapiDF74F995",
+          },
+        ],
+        "VPCZoneIdentifier": {
+          "Ref": "newslettersapiPrivateSubnets",
+        },
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+    },
+    "AutoScalingGroupNewslettersapiInstanceProfile6DBAC8ED": {
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewslettersapi01755604",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "AutoScalingGroupNewslettersapiLaunchConfig6EF45E9F": {
+      "DependsOn": [
+        "InstanceRoleNewslettersapi01755604",
+      ],
+      "Properties": {
+        "IamInstanceProfile": {
+          "Ref": "AutoScalingGroupNewslettersapiInstanceProfile6DBAC8ED",
+        },
+        "ImageId": {
+          "Ref": "AMINewslettersapi",
+        },
+        "InstanceType": "t4g.small",
+        "MetadataOptions": {
+          "HttpTokens": "required",
+        },
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
+              "GroupId",
+            ],
+          },
+          {
+            "Fn::GetAtt": [
+              "WazuhSecurityGroup",
+              "GroupId",
+            ],
+          },
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash
+set -e
+set +x
+aws s3 cp s3://",
+                {
+                  "Ref": "DistributionBucketName",
+                },
+                "/newsletters/TEST/newsletters-tool/newsletters-tool.zip /tmp
+mkdir -p /opt/newsletters-tool
+unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
+chown -R ubuntu /opt/newsletters-tool
+export NEWSLETTERS_API_READ=true
+export NEWSLETTERS_API_READ_WRITE=false
+export NEWSLETTERS_UI_SERVE=false}
+export STAGE=TEST
+export NEWSLETTER_BUCKET_NAME=",
+                {
+                  "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+                "
+export USE_IN_MEMORY_STORAGE=false
+cd /opt/newsletters-tool
+su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsletters-api/index.cjs'",
+              ],
+            ],
+          },
+        },
+      },
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+    },
     "AutoScalingGroupNewsletterstoolASGDA0D2177": {
       "Properties": {
         "HealthCheckGracePeriod": 120,
@@ -259,138 +392,40 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
-    "AutoScalingGroupNewsletterstoolapiASGDC4C7120": {
+    "CertificateNewslettersapi7A81CAC3": {
+      "DeletionPolicy": "Retain",
       "Properties": {
-        "HealthCheckGracePeriod": 120,
-        "HealthCheckType": "ELB",
-        "LaunchConfigurationName": {
-          "Ref": "AutoScalingGroupNewsletterstoolapiLaunchConfig4B05787F",
-        },
-        "MaxSize": "2",
-        "MinSize": "1",
+        "DomainName": "readonly-newsletters.test.dev-gutools.co.uk",
         "Tags": [
           {
             "Key": "App",
-            "PropagateAtLaunch": true,
-            "Value": "newsletters-tool-api",
+            "Value": "newsletters-api",
           },
           {
             "Key": "gu:cdk:version",
-            "PropagateAtLaunch": true,
             "Value": "TEST",
           },
           {
             "Key": "gu:repo",
-            "PropagateAtLaunch": true,
             "Value": "guardian/newsletters-nx",
           },
           {
-            "Key": "LogKinesisStreamName",
-            "PropagateAtLaunch": true,
-            "Value": {
-              "Ref": "LoggingStreamName",
-            },
-          },
-          {
             "Key": "Name",
-            "PropagateAtLaunch": true,
-            "Value": "NewslettersTool-TEST/AutoScalingGroupNewsletterstoolapi",
+            "Value": "NewslettersTool-TEST/CertificateNewslettersapi",
           },
           {
             "Key": "Stack",
-            "PropagateAtLaunch": true,
             "Value": "newsletters",
           },
           {
             "Key": "Stage",
-            "PropagateAtLaunch": true,
             "Value": "TEST",
           },
         ],
-        "TargetGroupARNs": [
-          {
-            "Ref": "TargetGroupNewsletterstoolapi583BDEB1",
-          },
-        ],
-        "VPCZoneIdentifier": {
-          "Ref": "newsletterstoolapiPrivateSubnets",
-        },
+        "ValidationMethod": "DNS",
       },
-      "Type": "AWS::AutoScaling::AutoScalingGroup",
-    },
-    "AutoScalingGroupNewsletterstoolapiInstanceProfile11217FD0": {
-      "Properties": {
-        "Roles": [
-          {
-            "Ref": "InstanceRoleNewsletterstoolapi0896FE93",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::InstanceProfile",
-    },
-    "AutoScalingGroupNewsletterstoolapiLaunchConfig4B05787F": {
-      "DependsOn": [
-        "InstanceRoleNewsletterstoolapi0896FE93",
-      ],
-      "Properties": {
-        "IamInstanceProfile": {
-          "Ref": "AutoScalingGroupNewsletterstoolapiInstanceProfile11217FD0",
-        },
-        "ImageId": {
-          "Ref": "AMINewsletterstoolapi",
-        },
-        "InstanceType": "t4g.small",
-        "MetadataOptions": {
-          "HttpTokens": "required",
-        },
-        "SecurityGroups": [
-          {
-            "Fn::GetAtt": [
-              "GuHttpsEgressSecurityGroupNewsletterstoolapiCF800E6A",
-              "GroupId",
-            ],
-          },
-          {
-            "Fn::GetAtt": [
-              "WazuhSecurityGroup",
-              "GroupId",
-            ],
-          },
-        ],
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": [
-              "",
-              [
-                "#!/bin/bash
-set -e
-set +x
-aws s3 cp s3://",
-                {
-                  "Ref": "DistributionBucketName",
-                },
-                "/newsletters/TEST/newsletters-tool/newsletters-tool.zip /tmp
-mkdir -p /opt/newsletters-tool
-unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
-chown -R ubuntu /opt/newsletters-tool
-export NEWSLETTERS_API_READ=true
-export NEWSLETTERS_API_READ_WRITE=false
-export NEWSLETTERS_UI_SERVE=false}
-export STAGE=TEST
-export NEWSLETTER_BUCKET_NAME=",
-                {
-                  "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
-                },
-                "
-export USE_IN_MEMORY_STORAGE=false
-cd /opt/newsletters-tool
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsletters-api/index.cjs'",
-              ],
-            ],
-          },
-        },
-      },
-      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Type": "AWS::CertificateManager::Certificate",
+      "UpdateReplacePolicy": "Retain",
     },
     "CertificateNewsletterstoolAB12580B": {
       "DeletionPolicy": "Retain",
@@ -412,41 +447,6 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
           {
             "Key": "Name",
             "Value": "NewslettersTool-TEST/CertificateNewsletterstool",
-          },
-          {
-            "Key": "Stack",
-            "Value": "newsletters",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "ValidationMethod": "DNS",
-      },
-      "Type": "AWS::CertificateManager::Certificate",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "CertificateNewsletterstoolapi83F10CF4": {
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "DomainName": "readonly-newsletters.test.dev-gutools.co.uk",
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "newsletters-tool-api",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/newsletters-nx",
-          },
-          {
-            "Key": "Name",
-            "Value": "NewslettersTool-TEST/CertificateNewsletterstoolapi",
           },
           {
             "Key": "Stack",
@@ -526,7 +526,39 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
             "Ref": "InstanceRoleNewsletterstoolDD0F3665",
           },
           {
-            "Ref": "InstanceRoleNewsletterstoolapi0896FE93",
+            "Ref": "InstanceRoleNewslettersapi01755604",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GetDistributablePolicyNewslettersapi1B9C4AAD": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "DistributionBucketName",
+                    },
+                    "/newsletters/TEST/newsletters-api/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GetDistributablePolicyNewslettersapi1B9C4AAD",
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewslettersapi01755604",
           },
         ],
       },
@@ -564,37 +596,66 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::IAM::Policy",
     },
-    "GetDistributablePolicyNewsletterstoolapi000AF3BF": {
+    "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2": {
       "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:s3:::",
-                    {
-                      "Ref": "DistributionBucketName",
-                    },
-                    "/newsletters/TEST/newsletters-tool-api/*",
-                  ],
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "GetDistributablePolicyNewsletterstoolapi000AF3BF",
-        "Roles": [
+        "GroupDescription": "Allow all outbound HTTPS traffic",
+        "SecurityGroupEgress": [
           {
-            "Ref": "InstanceRoleNewsletterstoolapi0896FE93",
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound HTTPS traffic",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
           },
         ],
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "newsletters-api",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "Stack",
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "VpcId": {
+          "Ref": "VpcId",
+        },
       },
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "GuHttpsEgressSecurityGroupNewslettersapifromNewslettersToolTESTLoadBalancerNewslettersapiSecurityGroup64654FDD3000DFBFCE9F": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerNewslettersapiSecurityGroup874628D3",
+            "GroupId",
+          ],
+        },
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB": {
       "Properties": {
@@ -635,67 +696,6 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
-    },
-    "GuHttpsEgressSecurityGroupNewsletterstoolapiCF800E6A": {
-      "Properties": {
-        "GroupDescription": "Allow all outbound HTTPS traffic",
-        "SecurityGroupEgress": [
-          {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound HTTPS traffic",
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443,
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "newsletters-tool-api",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/newsletters-nx",
-          },
-          {
-            "Key": "Stack",
-            "Value": "newsletters",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "VpcId": {
-          "Ref": "VpcId",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "GuHttpsEgressSecurityGroupNewsletterstoolapifromNewslettersToolTESTLoadBalancerNewsletterstoolapiSecurityGroupC2034F8D3000733C4055": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "FromPort": 3000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupNewsletterstoolapiCF800E6A",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "LoadBalancerNewsletterstoolapiSecurityGroup21F3B3E2",
-            "GroupId",
-          ],
-        },
-        "ToPort": 3000,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "GuHttpsEgressSecurityGroupNewsletterstoolfromNewslettersToolTESTIdPAccessNewsletterstoolD34AC715300055F7D2AB": {
       "Properties": {
@@ -774,7 +774,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
             "Ref": "InstanceRoleNewsletterstoolDD0F3665",
           },
           {
-            "Ref": "InstanceRoleNewsletterstoolapi0896FE93",
+            "Ref": "InstanceRoleNewslettersapi01755604",
           },
         ],
       },
@@ -841,6 +841,60 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
+    "InstanceRoleNewslettersapi01755604": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonSSMManagedInstanceCore",
+              ],
+            ],
+          },
+        ],
+        "Path": "/",
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "newsletters-api",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "Stack",
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
     "InstanceRoleNewsletterstoolDD0F3665": {
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -895,59 +949,30 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::IAM::Role",
     },
-    "InstanceRoleNewsletterstoolapi0896FE93": {
+    "ListenerNewslettersapi696961C0": {
       "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "ec2.amazonaws.com",
-              },
+        "Certificates": [
+          {
+            "CertificateArn": {
+              "Ref": "CertificateNewslettersapi7A81CAC3",
             },
-          ],
-          "Version": "2012-10-17",
+          },
+        ],
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "TargetGroupNewslettersapiDF74F995",
+            },
+            "Type": "forward",
+          },
+        ],
+        "LoadBalancerArn": {
+          "Ref": "LoadBalancerNewslettersapi605B1E8A",
         },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/AmazonSSMManagedInstanceCore",
-              ],
-            ],
-          },
-        ],
-        "Path": "/",
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "newsletters-tool-api",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/newsletters-nx",
-          },
-          {
-            "Key": "Stack",
-            "Value": "newsletters",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
+        "Port": 443,
+        "Protocol": "HTTPS",
       },
-      "Type": "AWS::IAM::Role",
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
     "ListenerNewsletterstoolFF7146AA": {
       "Properties": {
@@ -994,30 +1019,112 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "ListenerNewsletterstoolapiAED5F562": {
+    "LoadBalancerNewslettersapi605B1E8A": {
       "Properties": {
-        "Certificates": [
+        "LoadBalancerAttributes": [
           {
-            "CertificateArn": {
-              "Ref": "CertificateNewsletterstoolapi83F10CF4",
-            },
+            "Key": "deletion_protection.enabled",
+            "Value": "true",
           },
         ],
-        "DefaultActions": [
+        "Scheme": "internet-facing",
+        "SecurityGroups": [
           {
-            "TargetGroupArn": {
-              "Ref": "TargetGroupNewsletterstoolapi583BDEB1",
-            },
-            "Type": "forward",
+            "Fn::GetAtt": [
+              "LoadBalancerNewslettersapiSecurityGroup874628D3",
+              "GroupId",
+            ],
           },
         ],
-        "LoadBalancerArn": {
-          "Ref": "LoadBalancerNewsletterstoolapi72A19492",
+        "Subnets": {
+          "Ref": "newslettersapiPublicSubnets",
         },
-        "Port": 443,
-        "Protocol": "HTTPS",
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "newsletters-api",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "Stack",
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "Type": "application",
       },
-      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    },
+    "LoadBalancerNewslettersapiSecurityGroup874628D3": {
+      "Properties": {
+        "GroupDescription": "Automatically created Security Group for ELB NewslettersToolTESTLoadBalancerNewslettersapiE2FEAA80",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 443",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "newsletters-api",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/newsletters-nx",
+          },
+          {
+            "Key": "Stack",
+            "Value": "newsletters",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "VpcId": {
+          "Ref": "VpcId",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "LoadBalancerNewslettersapiSecurityGrouptoNewslettersToolTESTGuHttpsEgressSecurityGroupNewslettersapi4921DD22300030C48175": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
+            "GroupId",
+          ],
+        },
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerNewslettersapiSecurityGroup874628D3",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
     },
     "LoadBalancerNewsletterstoolE9AB350F": {
       "Properties": {
@@ -1146,113 +1253,6 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "LoadBalancerNewsletterstoolapi72A19492": {
-      "Properties": {
-        "LoadBalancerAttributes": [
-          {
-            "Key": "deletion_protection.enabled",
-            "Value": "true",
-          },
-        ],
-        "Scheme": "internet-facing",
-        "SecurityGroups": [
-          {
-            "Fn::GetAtt": [
-              "LoadBalancerNewsletterstoolapiSecurityGroup21F3B3E2",
-              "GroupId",
-            ],
-          },
-        ],
-        "Subnets": {
-          "Ref": "newsletterstoolapiPublicSubnets",
-        },
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "newsletters-tool-api",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/newsletters-nx",
-          },
-          {
-            "Key": "Stack",
-            "Value": "newsletters",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "Type": "application",
-      },
-      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
-    },
-    "LoadBalancerNewsletterstoolapiSecurityGroup21F3B3E2": {
-      "Properties": {
-        "GroupDescription": "Automatically created Security Group for ELB NewslettersToolTESTLoadBalancerNewsletterstoolapi135BAFC5",
-        "SecurityGroupIngress": [
-          {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow from anyone on port 443",
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443,
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "newsletters-tool-api",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/newsletters-nx",
-          },
-          {
-            "Key": "Stack",
-            "Value": "newsletters",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "VpcId": {
-          "Ref": "VpcId",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "LoadBalancerNewsletterstoolapiSecurityGrouptoNewslettersToolTESTGuHttpsEgressSecurityGroupNewsletterstoolapi167097B0300059D218F6": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": {
-          "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupNewsletterstoolapiCF800E6A",
-            "GroupId",
-          ],
-        },
-        "FromPort": 3000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "LoadBalancerNewsletterstoolapiSecurityGroup21F3B3E2",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "ToPort": 3000,
-      },
-      "Type": "AWS::EC2::SecurityGroupEgress",
-    },
     "NewslettersAPICname": {
       "Properties": {
         "Name": "readonly-newsletters.test.dev-gutools.co.uk",
@@ -1260,7 +1260,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         "ResourceRecords": [
           {
             "Fn::GetAtt": [
-              "LoadBalancerNewsletterstoolapi72A19492",
+              "LoadBalancerNewslettersapi605B1E8A",
               "DNSName",
             ],
           },
@@ -1286,6 +1286,57 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         "TTL": 3600,
       },
       "Type": "Guardian::DNS::RecordSet",
+    },
+    "ParameterStoreReadNewslettersapi37E83AD5": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ssm:GetParametersByPath",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:ssm:eu-west-1:",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/TEST/newsletters/newsletters-api",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "ssm:GetParameters",
+                "ssm:GetParameter",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:ssm:eu-west-1:",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/TEST/newsletters/newsletters-api/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "parameter-store-read-policy",
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewslettersapi01755604",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ParameterStoreReadNewsletterstoolC810365C": {
       "Properties": {
@@ -1338,58 +1389,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ParameterStoreReadNewsletterstoolapi38EC6DE9": {
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "ssm:GetParametersByPath",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:ssm:eu-west-1:",
-                    {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ":parameter/TEST/newsletters/newsletters-tool-api",
-                  ],
-                ],
-              },
-            },
-            {
-              "Action": [
-                "ssm:GetParameters",
-                "ssm:GetParameter",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:ssm:eu-west-1:",
-                    {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ":parameter/TEST/newsletters/newsletters-tool-api/*",
-                  ],
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "parameter-store-read-policy",
-        "Roles": [
-          {
-            "Ref": "InstanceRoleNewsletterstoolapi0896FE93",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "TargetGroupNewsletterstool43BAC68D": {
+    "TargetGroupNewslettersapiDF74F995": {
       "Properties": {
         "HealthCheckIntervalSeconds": 10,
         "HealthCheckPath": "/healthcheck",
@@ -1401,7 +1401,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-tool",
+            "Value": "newsletters-api",
           },
           {
             "Key": "gu:cdk:version",
@@ -1438,7 +1438,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
     },
-    "TargetGroupNewsletterstoolapi583BDEB1": {
+    "TargetGroupNewsletterstool43BAC68D": {
       "Properties": {
         "HealthCheckIntervalSeconds": 10,
         "HealthCheckPath": "/healthcheck",
@@ -1450,7 +1450,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         "Tags": [
           {
             "Key": "App",
-            "Value": "newsletters-tool-api",
+            "Value": "newsletters-tool",
           },
           {
             "Key": "gu:cdk:version",
@@ -1577,7 +1577,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
             "Ref": "InstanceRoleNewsletterstoolDD0F3665",
           },
           {
-            "Ref": "InstanceRoleNewsletterstoolapi0896FE93",
+            "Ref": "InstanceRoleNewslettersapi01755604",
           },
         ],
       },

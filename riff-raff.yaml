@@ -22,12 +22,22 @@ deployments:
     app: newsletters-tool
     parameters:
       cloudFormationStackName: newsletters-tool
-      amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
+      amiParametersToTags:
+        AMINewsletterstool:
+            BuiltBy: amigo
+            Recipe: newsletters-node
+        AMINewsletterstoolapi:
+          BuiltBy: amigo
+          Recipe: newsletters-node
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json
         PROD: NewslettersTool-PROD.template.json
 
   # Newsletters internal tool autoscaling deployment
   newsletters-tool:
+    template: autoscaling-template
+    dependencies: [newsletters-tool-cfn]
+
+  newsletters-api:
     template: autoscaling-template
     dependencies: [newsletters-tool-cfn]
