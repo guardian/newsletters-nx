@@ -15,7 +15,7 @@ export const NewsletterJsonEditView = () => {
 
 	return (
 		<ContentWrapper>
-			<NewsletterJsonEdit newsletter={matchedItem} />
+			<NewsletterJsonEdit originalItem={matchedItem} />
 		</ContentWrapper>
 	);
 };

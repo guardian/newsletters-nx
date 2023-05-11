@@ -15,11 +15,6 @@ export const requestNewsletterEdit = async (
 		body: JSON.stringify(modification),
 	});
 
-	if (!response.ok) {
-		console.log(response);
-		throw response;
-	}
-
 	const responseBody = (await response.json()) as ApiResponse<NewsletterData>;
 	return responseBody;
 };

@@ -1,4 +1,5 @@
-import { Alert, Typography } from '@mui/material';
+import { Alert, Snackbar, Typography } from '@mui/material';
+import { useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
@@ -6,10 +7,16 @@ import type { JsonRecord } from './JsonEdittor';
 import { JsonEdittor } from './JsonEdittor';
 
 interface Props {
-	newsletter: NewsletterData;
+	originalItem: NewsletterData;
 }
 
-export const NewsletterJsonEdit = ({ newsletter }: Props) => {
+export const NewsletterJsonEdit = ({ originalItem }: Props) => {
+	const [item, setItem] = useState(originalItem);
+	const [showConfirmation, setShowConfirmation] = useState(false);
+	const [errorMessage, setErrorMessage] = useState<string | undefined>(
+		undefined,
+	);
+
 	// TO DO - catch errors in the function
 	const handleSubmission = async (record: JsonRecord) => {
 		const parsedSubmission = newsletterDataSchema.parse(
@@ -24,14 +31,17 @@ export const NewsletterJsonEdit = ({ newsletter }: Props) => {
 			parsedSubmission,
 		);
 
-		console.log(apiResonse);
+		if (apiResonse.ok) {
+			setItem(apiResonse.data);
+			setShowConfirmation(true);
+		} else {
+			setErrorMessage(apiResonse.message ?? 'UNKNOWN ERROR');
+		}
 	};
 
 	return (
 		<>
-			<Typography variant="h2">
-				edit json for {newsletter.identityName}
-			</Typography>
+			<Typography variant="h2">edit json for {item.identityName}</Typography>
 			<Alert severity="info">
 				<Typography>
 					This tool is intended for developer use only. Note that:
@@ -48,10 +58,29 @@ export const NewsletterJsonEdit = ({ newsletter }: Props) => {
 				</ul>
 			</Alert>
 			<JsonEdittor
-				originalData={newsletter}
+				originalData={item}
 				schema={newsletterDataSchema}
 				submit={handleSubmission}
 			/>
+
+			<Snackbar
+				open={showConfirmation}
+				autoHideDuration={3000}
+				onClose={() => {
+					setShowConfirmation(false);
+				}}
+			>
+				<Alert severity="success">Updated json for {item.identityName}</Alert>
+			</Snackbar>
+			<Snackbar
+				open={!!errorMessage}
+				autoHideDuration={3000}
+				onClose={() => {
+					setErrorMessage(undefined);
+				}}
+			>
+				<Alert severity="error">Update failed: {errorMessage}</Alert>
+			</Snackbar>
 		</>
 	);
 };
