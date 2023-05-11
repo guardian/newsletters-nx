@@ -95,6 +95,7 @@ export class NewslettersApi extends GuStack {
 		 *  Sets up Node app to be run in EC2
 		 */
 		const ec2App = new GuNodeApp(this, {
+			imageRecipe: 'newsletters-node',
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName },
 			monitoringConfiguration: { noMonitoring: true },

@@ -1,51 +1,98 @@
-$schema: 'https://raw.githubusercontent.com/guardian/riff-raff/master/contrib/riff-raff-yaml-schema.json'
-stacks: [newsletters]
-regions: [eu-west-1]
-allowedStages: [CODE, PROD]
-templates:
-  cloudformation-template:
-    type: cloud-formation
-    app: newsletters-tool
-    parameters:
-      cloudFormationStackByTags: false
-      prependStackToCloudFormationStackName: false
-      amiTags:
-        Recipe: newsletters-node
-        AmigoStage: PROD
-
-  autoscaling-template:
+allowedStages:
+  - CODE
+  - PROD
+deployments:
+  asg-upload-eu-west-1-newsletters-newsletters-tool:
     type: autoscaling
+    actions:
+      - uploadArtifacts
+    regions:
+      - eu-west-1
+    stacks:
+      - newsletters
+    app: newsletters-tool
     parameters:
       bucketSsmLookup: true
-deployments:
-  # Newsletters internal tool cloudformation deployment
-  newsletters-tool-cfn:
-    template: cloudformation-template
+      prefixApp: true
+    contentDirectory: newsletters-tool
+  cfn-eu-west-1-newsletters-newsletters-tool:
+    type: cloud-formation
+    regions:
+      - eu-west-1
+    stacks:
+      - newsletters
     app: newsletters-tool
+    contentDirectory: cdk.out
     parameters:
-      cloudFormationStackName: newsletters-tool
-      amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json
         PROD: NewslettersTool-PROD.template.json
-
-        # Newsletters internal tool cloudformation deployment
-  newsletters-api-cfn:
-    template: cloudformation-template
+      amiParameter: AMINewsletterstool
+      amiTags:
+        BuiltBy: amigo
+        Recipe: newsletters-node
+        AmigoStage: PROD
+    dependencies:
+      - asg-upload-eu-west-1-newsletters-newsletters-tool
+  asg-update-eu-west-1-newsletters-newsletters-tool:
+    type: autoscaling
+    actions:
+      - deploy
+    regions:
+      - eu-west-1
+    stacks:
+      - newsletters
     app: newsletters-tool
     parameters:
-      cloudFormationStackName: newsletters-tool
-      amiParameter: AMINewsletterstool # please don't change this unless you know what you're doing
+      bucketSsmLookup: true
+      prefixApp: true
+    dependencies:
+      - cfn-eu-west-1-newsletters-newsletters-tool
+    contentDirectory: newsletters-tool
+  asg-upload-eu-west-1-newsletters-api-newsletters-tool:
+    type: autoscaling
+    actions:
+      - uploadArtifacts
+    regions:
+      - eu-west-1
+    stacks:
+      - newsletters-api
+    app: newsletters-tool
+    parameters:
+      bucketSsmLookup: true
+      prefixApp: true
+    contentDirectory: newsletters-tool
+  cfn-eu-west-1-newsletters-api-newsletters-api:
+    type: cloud-formation
+    regions:
+      - eu-west-1
+    stacks:
+      - newsletters-api
+    app: newsletters-api
+    contentDirectory: cdk.out
+    parameters:
       templateStagePaths:
         CODE: NewslettersApi-CODE.template.json
         PROD: NewslettersApi-PROD.template.json
-
-  # Newsletters internal tool autoscaling deployment
-  newsletters-tool:
-    template: autoscaling-template
-    dependencies: [newsletters-tool-cfn]
-
-  # Newsletters external API autoscaling deployment
-  newsletters-api:
-    template: autoscaling-template
-    dependencies: [newsletters-api-cfn]
+      amiParameter: AMINewsletterstool
+      amiTags:
+        BuiltBy: amigo
+        Recipe: newsletters-node
+        AmigoStage: PROD
+    dependencies:
+      - asg-upload-eu-west-1-newsletters-api-newsletters-tool
+  asg-update-eu-west-1-newsletters-api-newsletters-tool:
+    type: autoscaling
+    actions:
+      - deploy
+    regions:
+      - eu-west-1
+    stacks:
+      - newsletters-api
+    app: newsletters-tool
+    parameters:
+      bucketSsmLookup: true
+      prefixApp: true
+    dependencies:
+      - cfn-eu-west-1-newsletters-api-newsletters-api
+    contentDirectory: newsletters-tool
