@@ -68,10 +68,6 @@ export function HomeMenu() {
 					color="success"
 					variant="contained"
 				/>
-				<ButtonGridItem
-					path="/newsletters/launch-newsletter"
-					content={'launch newsletter wizard'}
-				/>
 				<ButtonGridItem path="/newsletters/forms" content={'Demo form'} />
 				<ButtonGridItem content={'Update newsletter'} />
 			</Grid>

@@ -81,7 +81,7 @@ export const makeInMemoryStorageInstance = () =>
 		{
 			name: 'Response Academic',
 			identityName: 'response-academic',
-			category: 'article-based',
+			category: 'article-based-legacy',
 			brazeSubscribeEventNamePrefix: 'response_academic',
 			brazeNewsletterName: 'Editorial_ResponseAcademic',
 			brazeSubscribeAttributeName: 'ResponseAcademic_Subscribe_Email',

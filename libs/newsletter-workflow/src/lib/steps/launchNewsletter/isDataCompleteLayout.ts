@@ -1,6 +1,7 @@
 import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import type { LaunchInitialState } from '../../getInitialStateForLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { appendListToMarkdown, isStringArray } from '../../markdown-util';
 import { regExPatterns } from '../../regExPatterns';
@@ -13,8 +14,10 @@ const markdownTemplate = `
 `.trim();
 
 const markdownAnswers = {
-	yes: `Yes! The draft for **{{name}}** has all the necessary information set and is ready to launch.`,
-	no: `No, there is some information for **{{name}}** that is missing or incomplete, as listed below. Please go to [the drafts page](/drafts) to update {{name}}.`,
+	allComplete: `Yes! The draft for **{{name}}** has all the necessary information set and is ready to launch.`,
+	standardCompleteButNotRenderingOptions: `No, The draft for **{{name}}** is 'article-based' and needs the renderingOptions set. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
+	standardNotComplete: `No, there is some information for **{{name}}** that is missing or incomplete, as listed below. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
+	standardAndRenderingOptionsNotComplete: `No, there is some information for **{{name}}** that is missing or incomplete, as listed below. Also, **{{name}}** is 'article-based' and needs the renderingOptions set. Please go to [the drafts page](/drafts/{{listId}}) to update {{name}}.`,
 };
 
 const staticMarkdown = markdownTemplate.replace(
@@ -22,21 +25,39 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
+const getReadinessMessage = (
+	hasAllStandardData?: boolean,
+	hasRenderingOptionsIfNeeded?: boolean,
+) => {
+	if (hasAllStandardData) {
+		return hasRenderingOptionsIfNeeded
+			? markdownAnswers.allComplete
+			: markdownAnswers.standardCompleteButNotRenderingOptions;
+	}
+	return hasRenderingOptionsIfNeeded
+		? markdownAnswers.standardNotComplete
+		: markdownAnswers.standardAndRenderingOptionsNotComplete;
+};
+
 export const isDataCompleteLayout: WizardStepLayout<LaunchService> = {
 	staticMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
 		}
-		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		const isReady = responseData['isReady'] === true;
+
+		const [id = ''] = getStringValuesFromRecord(requestData ?? {}, ['id']);
+		const launchInitialState = responseData as LaunchInitialState;
+
+		const answer = getReadinessMessage(
+			launchInitialState.hasAllStandardData,
+			launchInitialState.hasRenderingOptionsIfNeeded,
+		);
 
 		const populated = markdownTemplate
-			.replace(
-				regExPatterns.answer,
-				isReady ? markdownAnswers.yes : markdownAnswers.no,
-			)
-			.replace(regExPatterns.name, name);
+			.replace(regExPatterns.answer, answer)
+			.replace(regExPatterns.name, launchInitialState.name ?? 'NAME')
+			.replace(regExPatterns.listId, id);
 
 		const { errorMarkdown } = responseData;
 		if (isStringArray(errorMarkdown)) {
@@ -57,9 +78,15 @@ export const isDataCompleteLayout: WizardStepLayout<LaunchService> = {
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate(stepData) {
-				const isReady = stepData.formData?.['isReady'];
-				if (isReady !== true) {
+				const launchInitialState = stepData.formData as
+					| LaunchInitialState
+					| undefined;
+
+				if (launchInitialState?.hasAllStandardData !== true) {
 					return 'The draft is not ready to launch';
+				}
+				if (!launchInitialState.hasRenderingOptionsIfNeeded) {
+					return 'The draft is not ready to launch because it needs rendering options set';
 				}
 				return undefined;
 			},

@@ -43,6 +43,7 @@ const generateNewsletter = () => {
 
 	const category = faker.helpers.arrayElement([
 		'article-based',
+		'article-based-legacy',
 		'fronts-based',
 		'manual-send',
 		'other',
