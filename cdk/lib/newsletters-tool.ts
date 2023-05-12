@@ -11,7 +11,9 @@ import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
 import { type App, Duration, SecretValue } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import {
+	ApplicationListenerRule,
 	ListenerAction,
+	ListenerCondition,
 	UnauthenticatedAction,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
@@ -70,7 +72,7 @@ export class NewslettersTool extends GuStack {
 		const apiAppName = 'newsletters-api';
 
 		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
-		const bucketSSMParameterName = `/${this.stage}/${this.stack}/newsletters-api/s3BucketName`;
+		const bucketSSMParameterName = `/${this.stage}/${this.stack}/${apiAppName}/s3BucketName`;
 		const bucketName = StringParameter.valueForStringParameter(
 			this,
 			bucketSSMParameterName,
@@ -135,6 +137,21 @@ export class NewslettersTool extends GuStack {
 				additionalPolicies: [s3AccessPolicy],
 			},
 			app: apiAppName,
+		});
+
+		const readOnlyEndpointApiKeyParam = `/${this.stage}/${this.stack}/${apiAppName}/readOnlyEndpointApiKey`;
+		const readOnlyEndpointApiKey = StringParameter.valueForStringParameter(
+			this,
+			readOnlyEndpointApiKeyParam,
+		);
+
+		new ApplicationListenerRule(this, 'ReadOnlyApiHeaderRule', {
+			listener: ec2AppApi.listener,
+			priority: 1,
+			conditions: [
+				ListenerCondition.httpHeader('X-Gu-API-Key', [readOnlyEndpointApiKey]),
+			],
+			targetGroups: [ec2AppApi.targetGroup],
 		});
 
 		/** Security group to allow load balancer to egress to 443 for OIDC flow using Google auth */
