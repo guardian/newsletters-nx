@@ -396,6 +396,35 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
+    "BlockRequests2F3FC38F": {
+      "Properties": {
+        "Actions": [
+          {
+            "FixedResponseConfig": {
+              "ContentType": "Application/json",
+              "MessageBody": "{"error": "You are not authorised to access this endpoint"}",
+              "StatusCode": "403",
+            },
+            "Type": "fixed-response",
+          },
+        ],
+        "Conditions": [
+          {
+            "Field": "path-pattern",
+            "PathPatternConfig": {
+              "Values": [
+                "*",
+              ],
+            },
+          },
+        ],
+        "ListenerArn": {
+          "Ref": "ListenerNewslettersapi696961C0",
+        },
+        "Priority": 2,
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+    },
     "CNAME": {
       "Properties": {
         "Name": "newsletters-tool.test.dev-gutools.co.uk",

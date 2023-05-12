@@ -153,6 +153,16 @@ export class NewslettersTool extends GuStack {
 			],
 			targetGroups: [ec2AppApi.targetGroup],
 		});
+		new ApplicationListenerRule(this, 'BlockRequests', {
+			listener: ec2AppApi.listener,
+			priority: 2,
+			conditions: [ListenerCondition.pathPatterns(['*'])],
+			action: ListenerAction.fixedResponse(403, {
+				contentType: 'Application/json',
+				messageBody:
+					'{"error": "You are not authorised to access this endpoint"}',
+			}),
+		});
 
 		/** Security group to allow load balancer to egress to 443 for OIDC flow using Google auth */
 		const lbEgressSecurityGroup = new GuHttpsEgressSecurityGroup(
