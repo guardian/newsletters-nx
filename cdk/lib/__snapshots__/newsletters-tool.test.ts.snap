@@ -401,7 +401,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         "Actions": [
           {
             "FixedResponseConfig": {
-              "ContentType": "Application/json",
+              "ContentType": "application/json",
               "MessageBody": "{"error": "You are not authorised to access this endpoint"}",
               "StatusCode": "403",
             },

@@ -158,7 +158,7 @@ export class NewslettersTool extends GuStack {
 			priority: 2,
 			conditions: [ListenerCondition.pathPatterns(['*'])],
 			action: ListenerAction.fixedResponse(403, {
-				contentType: 'Application/json',
+				contentType: 'application/json',
 				messageBody:
 					'{"error": "You are not authorised to access this endpoint"}',
 			}),
