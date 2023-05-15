@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { emailEmbedSchema } from './emailEmbedSchema';
 import {
 	kebabCasedString,
 	nonEmptyString,
@@ -108,10 +107,6 @@ export const newsletterDataSchema = z.object({
 	frequency: nonEmptyString(),
 	listId: z.number(),
 	listIdV1: z.number(),
-	// TODO - remove emailEmbed from this schema and derive it as part of in deriveLegacyNewsletter
-	emailEmbed: emailEmbedSchema.extend({
-		description: z.string(),
-	}),
 	campaignName: z.string().optional(),
 	campaignCode: z.string().optional(),
 	brazeSubscribeAttributeNameAlternate: z
