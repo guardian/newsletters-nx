@@ -40,6 +40,11 @@ const theme = createTheme({
 			fontFamily: 'monospace, sans-serif',
 			fontSize: '2.25rem',
 		},
+		h3: {
+			fontSize: '1.75rem',
+			fontWeight: 700,
+			marginBottom: '.25rem',
+		},
 	},
 	components: {
 		MuiButton: {
