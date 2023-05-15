@@ -11,13 +11,6 @@ interface Props {
 	originalItem: NewsletterData;
 }
 
-const sleep = async (ms: number) =>
-	await new Promise<void>((resolve) => {
-		setTimeout(() => {
-			return resolve();
-		}, ms);
-	});
-
 export const EditNewsletterForm = ({ originalItem }: Props) => {
 	const [item, setItem] = useState(originalItem);
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
@@ -31,7 +24,6 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			return;
 		}
 		setWaitingForResponse(true);
-		await sleep(500);
 
 		const response = await fetch(`/api/newsletters/${originalItem.listId}`, {
 			method: 'PATCH',
@@ -69,9 +61,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			<SimpleForm
 				title={`Edit ${originalItem.identityName}`}
 				initalData={item}
-				submit={(modification) => {
-					void requestUpdate(modification);
-				}}
+				submit={requestUpdate}
 				schema={newsletterDataSchema.pick({
 					name: true,
 					signUpHeadline: true,
