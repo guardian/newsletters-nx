@@ -24,6 +24,23 @@ const theme = createTheme({
 			contrastText: palette.neutral[97],
 		},
 	},
+
+	typography: {
+		allVariants: {
+			fontFamily: 'roboto, arial, sans-serif',
+		},
+		h1: {
+			fontFamily: 'monospace, sans-serif',
+			fontWeight: 700,
+			letterSpacing: '.3rem',
+			fontSize: '1.25rem',
+			lineHeight: '1.6',
+		},
+		h2: {
+			fontFamily: 'monospace, sans-serif',
+			fontSize: '2.25rem',
+		},
+	},
 	components: {
 		MuiButton: {
 			defaultProps: {
