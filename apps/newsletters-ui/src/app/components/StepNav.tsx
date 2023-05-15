@@ -40,7 +40,7 @@ const CompletionCaption = (props: { completeness: boolean | undefined }) => {
 		case false:
 			return (
 				<Typography variant="caption">
-					incomplete{' '}
+					Incomplete{' '}
 					<span role="img" aria-label="cross">
 						❌
 					</span>
