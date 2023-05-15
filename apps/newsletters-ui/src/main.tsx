@@ -18,6 +18,13 @@ const theme = createTheme({
 			contrastText: palette.neutral[97],
 		},
 	},
+	components: {
+		MuiButton: {
+			defaultProps: {
+				sx: { borderRadius: 0 },
+			},
+		},
+	},
 });
 
 const router = createBrowserRouter([homeRoute, newslettersRoute, draftRoute]);
