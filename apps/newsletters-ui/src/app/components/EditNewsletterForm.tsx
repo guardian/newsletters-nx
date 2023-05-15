@@ -1,12 +1,5 @@
-import {
-	Alert,
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	Snackbar,
-} from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type {
 	ApiResponse,
 	NewsletterData,
@@ -27,7 +20,6 @@ const sleep = async (ms: number) =>
 
 export const EditNewsletterForm = ({ originalItem }: Props) => {
 	const [item, setItem] = useState(originalItem);
-	const navigate = useNavigate();
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [confirmationMessage, setConfirmationMessage] = useState<
@@ -66,7 +58,6 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			setItem(castResponse.data);
 			setWaitingForResponse(false);
 			setConfirmationMessage('newsletter updated!');
-			navigate('../');
 		} else {
 			setWaitingForResponse(false);
 			setErrorMessage(castResponse.message);
@@ -93,18 +84,15 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 					emailConfirmation: true,
 				})}
 				submitButtonText="Update Newsletter"
-			/>
-
-			{waitingForResponse && (
-				<Dialog open>
-					<DialogTitle>Waiting</DialogTitle>
-					<DialogContent>
+				isDisabled={waitingForResponse}
+				message={
+					waitingForResponse ? (
 						<Alert severity="info">
 							making your updates to {item.identityName}
 						</Alert>
-					</DialogContent>
-				</Dialog>
-			)}
+					) : undefined
+				}
+			/>
 
 			<Snackbar
 				open={!!errorMessage}
