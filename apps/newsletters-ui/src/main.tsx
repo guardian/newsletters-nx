@@ -17,6 +17,12 @@ const theme = createTheme({
 			dark: palette.brand[400],
 			contrastText: palette.neutral[97],
 		},
+		secondary: {
+			light: palette.news[800],
+			main: palette.news[500],
+			dark: palette.news[400],
+			contrastText: palette.neutral[97],
+		},
 	},
 	components: {
 		MuiButton: {
