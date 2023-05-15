@@ -20,7 +20,7 @@ interface Props {
 	title?: string;
 }
 
-const sxContainedButton = { borderRadius: 0, bgcolor: '#1C5689' };
+const sxContainedButton = { borderRadius: 0 };
 
 export const RawDataDialog = ({ record, title = 'raw data' }: Props) => {
 	const [showRawData, setShowRawData] = useState(false);

@@ -137,9 +137,8 @@ export const Wizard: React.FC<WizardProps> = ({
 		const variant = primaryActions.includes(button.buttonType)
 			? 'contained'
 			: 'outlined';
-		const styling = primaryActions.includes(button.buttonType)
-			? { ...baseStyle, bgcolor: '#1C5689' }
-			: baseStyle;
+
+		const styling = baseStyle;
 		return (
 			<Button
 				variant={variant}

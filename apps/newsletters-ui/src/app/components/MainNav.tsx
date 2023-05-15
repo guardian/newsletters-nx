@@ -46,7 +46,7 @@ export function MainNav() {
 	};
 
 	return (
-		<AppBar position="static" sx={{ bgcolor: '#1C5689' }}>
+		<AppBar position="static">
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<MailOutlineIcon

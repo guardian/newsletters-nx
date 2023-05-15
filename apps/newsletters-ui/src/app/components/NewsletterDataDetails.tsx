@@ -96,11 +96,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 			</DetailAccordian>
 
 			<Stack direction={'row'} justifyContent={'space-between'} marginTop={3}>
-				<NavigateButton
-					href="../"
-					variant="outlined"
-					sx={{ borderRadius: 0, borderColor: '#1C5689', color: '#1C5689' }}
-				>
+				<NavigateButton href="../" variant="outlined" sx={{ borderRadius: 0 }}>
 					Back to List
 				</NavigateButton>
 				<RawDataDialog record={newsletter} title={newsletter.identityName} />
