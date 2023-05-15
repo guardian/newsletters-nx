@@ -1,10 +1,4 @@
-import {
-	Alert,
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	Snackbar,
-} from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type {
@@ -18,29 +12,15 @@ interface Props {
 	originalItem: NewsletterData;
 }
 
-const sleep = async (ms: number) =>
-	await new Promise<void>((resolve) => {
-		setTimeout(() => {
-			return resolve();
-		}, ms);
-	});
-
 export const EditNewsletterForm = ({ originalItem }: Props) => {
 	const [item, setItem] = useState(originalItem);
 	const navigate = useNavigate();
-	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [confirmationMessage, setConfirmationMessage] = useState<
 		string | undefined
 	>();
 
 	const requestUpdate = async (modification: Partial<NewsletterData>) => {
-		if (waitingForResponse) {
-			return;
-		}
-		setWaitingForResponse(true);
-		await sleep(500);
-
 		const response = await fetch(`/api/newsletters/${originalItem.listId}`, {
 			method: 'PATCH',
 			headers: {
@@ -49,13 +29,11 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			body: JSON.stringify(modification),
 		}).catch((error) => {
 			setErrorMessage('Failed to submit form.');
-			setWaitingForResponse(false);
 			console.log(error);
 			return undefined;
 		});
 
 		if (!response) {
-			setWaitingForResponse(false);
 			return;
 		}
 
@@ -64,11 +42,9 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 
 		if (castResponse.ok) {
 			setItem(castResponse.data);
-			setWaitingForResponse(false);
 			setConfirmationMessage('newsletter updated!');
 			navigate('../');
 		} else {
-			setWaitingForResponse(false);
 			setErrorMessage(castResponse.message);
 		}
 	};
@@ -83,28 +59,12 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 				}}
 				schema={newsletterDataSchema.pick({
 					name: true,
-					signUpHeadline: true,
-					signUpDescription: true,
-					frequency: true,
-					regionFocus: true,
-					theme: true,
 					category: true,
 					status: true,
-					emailConfirmation: true,
+					theme: true,
+					designBriefDoc: true,
 				})}
-				submitButtonText="Update Newsletter"
 			/>
-
-			{waitingForResponse && (
-				<Dialog open>
-					<DialogTitle>Waiting</DialogTitle>
-					<DialogContent>
-						<Alert severity="info">
-							making your updates to {item.identityName}
-						</Alert>
-					</DialogContent>
-				</Dialog>
-			)}
 
 			<Snackbar
 				open={!!errorMessage}

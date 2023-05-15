@@ -44,18 +44,12 @@ export function SimpleForm<T extends z.ZodRawShape>({
 		{},
 	);
 
-	// If data has not already been set and the initial data has not
-	// already been found invalid, parse the initialData.
-	// If initialData is valid, setData to initialData
 	useEffect(() => {
-		if (data || parseInitialDataResult?.success === false) {
-			return;
-		}
 		setParseInitialDataResult(schema.safeParse(initalData));
 		if (parseInitialDataResult?.success) {
 			setData(initalData);
 		}
-	}, [initalData, parseInitialDataResult?.success, schema, data]);
+	}, [initalData, parseInitialDataResult?.success, schema]);
 
 	if (parseInitialDataResult && !parseInitialDataResult.success) {
 		console.warn(parseInitialDataResult.error);
