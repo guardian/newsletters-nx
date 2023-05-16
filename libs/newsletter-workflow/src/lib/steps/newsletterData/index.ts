@@ -14,8 +14,8 @@ import { pillarAndGroupLayout } from './pillarAndGroupLayout';
 import { regionFocusLayout } from './regionFocusLayout';
 import { signUpEmbedLayout } from './signUpEmbedLayout';
 import { signUpPageLayout } from './signUpPageLayout';
+import { thrasherLayout } from './singleThrasherLayout';
 import { tagsLayout } from './tagsLayout';
-import { thrasherLayout } from './thrasherLayout';
 
 export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	cancel: cancelLayout,
