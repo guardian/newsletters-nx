@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftDialog } from './EditDraftDialog';
@@ -66,6 +67,20 @@ export const DraftsTable = ({ drafts }: Props) => {
 				Header: 'Edit',
 				Cell: ({ row: { original } }) => {
 					const draft = original as DraftNewsletterData;
+					const links = getEditDraftWizardLinks(draft);
+
+					if (links.length === 1) {
+						const [link] = links;
+						return (
+							<NavigateButton
+								href={link?.href}
+								startIcon={'⚙'}
+								variant="outlined"
+							>
+								Edit
+							</NavigateButton>
+						);
+					}
 
 					return (
 						<Button

@@ -23,23 +23,15 @@ const SIMPLE_VALID_DRAFT: DraftNewsletterData = {
 
 const VALID_FORM_DATA_WITH_NESTED_OBJECT: FormDataRecord = {
 	name: 'test name',
-	'emailEmbed.name': 'embed name',
-	'emailEmbed.title': 'embed title',
-	'emailEmbed.description': 'embed description',
-	'emailEmbed.successHeadline': 'embed successHeadline',
-	'emailEmbed.successDescription': 'embed successDescription',
-	'emailEmbed.hexCode': 'embed hexCode',
+	'renderingOptions.linkListSubheading': ['frog', 'bird', 'snake'],
+	'renderingOptions.displayStandfirst': true,
 };
 
 const VALID_DRAFT_WITH_NESTED_OBJECT: DraftNewsletterData = {
 	name: 'test name',
-	emailEmbed: {
-		name: 'embed name',
-		title: 'embed title',
-		description: 'embed description',
-		successHeadline: 'embed successHeadline',
-		successDescription: 'embed successDescription',
-		hexCode: 'embed hexCode',
+	renderingOptions: {
+		linkListSubheading: ['frog', 'bird', 'snake'],
+		displayStandfirst: true,
 	},
 };
 

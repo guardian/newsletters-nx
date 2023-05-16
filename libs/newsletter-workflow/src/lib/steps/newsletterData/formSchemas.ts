@@ -59,11 +59,28 @@ export const formSchemas = {
 		})
 		.describe('Edit the Ophan values if required'),
 
-	pillar: newsletterDataSchema
+	pillarAndGroup: newsletterDataSchema
 		.pick({
 			theme: true,
 		})
-		.describe('Choose a theme'),
+		.extend({
+			// 'group' is a string field since there are no external constraint on what we call the groups
+			// but on the formSchema, we can use an enum to allow users to pick from the current list.
+			// In practice, we would not want users to be able to create new groups on the all-newsletters page
+			// for each newsletter.
+			group: z.enum([
+				'News in depth',
+				'News in brief',
+				'Opinion',
+				'Features',
+				'Culture',
+				'Lifestyle',
+				'Sport',
+				'Work',
+				'From the papers',
+			]),
+		})
+		.describe('Choose a theme and a group'),
 
 	signUpPage: newsletterDataSchema
 		.pick({

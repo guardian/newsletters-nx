@@ -43,6 +43,7 @@ const generateNewsletter = () => {
 
 	const category = faker.helpers.arrayElement([
 		'article-based',
+		'article-based-legacy',
 		'fronts-based',
 		'manual-send',
 		'other',
@@ -100,14 +101,6 @@ const generateNewsletter = () => {
 		exampleUrl: `/world/series/series-${newsletterId}/latest/email`,
 		signupPage: `/global/sign-up-for-the-${newsletterId}-newsletter-our-free-email`,
 		signUpEmbedDescription: `We'll send you ${name} ${frequency.toLowerCase()}`,
-		emailEmbed: {
-			name,
-			title: `Sign up for ${name}`,
-			description: initCap(faker.lorem.text()),
-			successHeadline: 'Subscription confirmed',
-			successDescription: `We'll send you ${name} ${frequency.toLowerCase()}`,
-			hexCode: '#DCDCDC',
-		},
 		campaignName: slugConverter(idWithRegion, 'pascal'),
 		campaignCode: `${idWithRegion.replaceAll('-', '')}_email`,
 		brazeSubscribeAttributeNameAlternate: [

@@ -37,7 +37,7 @@ export class LaunchService {
 			return newsletterCreateResponse;
 		}
 
-		// TO DO - should we actually delete the draft or archive it / mark as launched?
+		// TODO - should we actually delete the draft or archive it / mark as launched?
 		const draftDeleteResponse = await draftStorage.deleteDraftNewsletter(
 			draftId,
 		);

@@ -47,6 +47,9 @@ export function eventToString(event: FormEvent, defaultValue = ''): string {
 
 function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	if (field.type === 'ZodEnum') {
+		if (field.optional && typeof value === 'undefined') {
+			return true;
+		}
 		return field.enumOptions?.includes(value as string) ?? false;
 	}
 
@@ -59,7 +62,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	}
 
 	if (field.type === 'ZodArray' && field.arrayItemType === 'record') {
-		// TO DO - use field.recordSchema to validate each item
+		// TODO - use field.recordSchema to validate each item
 		return isPrimitiveRecordArray(value);
 	}
 

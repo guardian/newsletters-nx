@@ -1,9 +1,8 @@
-import { Button, Paper } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { z } from 'zod';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
-import { defaultFieldStyle, defaultFormStyle } from './SchemaForm/styling';
 
 type SchemaObjectType<T extends z.ZodRawShape> = {
 	[k in keyof z.objectUtil.addQuestionMarks<{
@@ -44,12 +43,18 @@ export function SimpleForm<T extends z.ZodRawShape>({
 		{},
 	);
 
+	// If data has not already been set and the initial data has not
+	// already been found invalid, parse the initialData.
+	// If initialData is valid, setData to initialData
 	useEffect(() => {
+		if (data || parseInitialDataResult?.success === false) {
+			return;
+		}
 		setParseInitialDataResult(schema.safeParse(initalData));
 		if (parseInitialDataResult?.success) {
 			setData(initalData);
 		}
-	}, [initalData, parseInitialDataResult?.success, schema]);
+	}, [initalData, parseInitialDataResult?.success, schema, data]);
 
 	if (parseInitialDataResult && !parseInitialDataResult.success) {
 		console.warn(parseInitialDataResult.error);
@@ -107,14 +112,22 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	return (
-		<Paper css={defaultFormStyle} elevation={3}>
-			<legend>{title}</legend>
+		<Box
+			elevation={3}
+			padding={1}
+			component={Paper}
+			maxWidth={'sm'}
+			marginBottom={1.5}
+		>
+			<Typography variant="h3" component={'legend'}>
+				{title}
+			</Typography>
 
-			<div css={defaultFieldStyle}>
+			<Box marginBottom={2}>
 				<Button variant="outlined" onClick={handleReset}>
 					Reset
 				</Button>
-			</div>
+			</Box>
 
 			<SchemaForm
 				schema={schema}
@@ -122,11 +135,11 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				changeValue={manageChange}
 				validationWarnings={warnings}
 			/>
-			<div css={defaultFieldStyle}>
+			<Box marginBottom={2}>
 				<Button variant="contained" onClick={handleSubmit}>
 					{submitButtonText}
 				</Button>
-			</div>
-		</Paper>
+			</Box>
+		</Box>
 	);
 }
