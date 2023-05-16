@@ -3,18 +3,14 @@ import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client';
 export const makeInMemoryStorageInstance = () =>
 	new InMemoryDraftStorage([
 		{
-			identityName: 'avon-recumbent',
 			name: 'Avon Recumbent',
-			category: 'article-based',
+			category: 'fronts-based',
 			signUpDescription:
 				'Quod nobis aperiam aperiam ipsum nobis officiis explicabo molestias quibusdam.',
 			frequency: 'Weekly',
 			status: 'paused',
 			restricted: false,
 			emailConfirmation: false,
-			brazeNewsletterName: 'Editorial_AvonRecumbentUs',
-			brazeSubscribeAttributeName: 'AvonRecumbentUs_Subscribe_Email',
-			brazeSubscribeEventNamePrefix: 'avon_recumbent_US',
 			signUpEmbedDescription: "We'll send you Avon Recumbent weekly",
 			theme: 'culture',
 			group: 'Work',
@@ -23,11 +19,6 @@ export const makeInMemoryStorageInstance = () =>
 			exampleUrl: '/world/series/series-avon-recumbent/latest/email',
 			signupPage:
 				'/global/sign-up-for-the-avon-recumbent-newsletter-our-free-email',
-			campaignName: 'AvonRecumbentUs',
-			campaignCode: 'avonrecumbentUS_email',
-			brazeSubscribeAttributeNameAlternate: [
-				'email_subscribe_avon_recumbent_US',
-			],
 			creationTimeStamp: 1633539258449,
 			figmaIncludesThrashers: false,
 			launchDate: new Date('1970-01-02T00:21:18.876Z'),
@@ -55,31 +46,13 @@ export const makeInMemoryStorageInstance = () =>
 		{
 			listId: 7001,
 			name: 'Other Test draft newsletter',
-			identityName: 'other-test-draft-newsletter',
 			category: 'other',
-			brazeSubscribeEventNamePrefix: 'other_test_draft_newsletter',
-			brazeNewsletterName: 'Editorial_Othertestdraftnewsletter',
-			brazeSubscribeAttributeName: 'Othertestdraftnewsletter_Subscribe_Email',
-			brazeSubscribeAttributeNameAlternate: [
-				'email_subscribe_other_test_draft_newsletter',
-			],
-			campaignName: 'Othertestdraftnewsletter',
-			campaignCode: 'othertestdraftnewsletter_email',
 			theme: 'news',
 			creationTimeStamp: 1633539258449,
 		},
 		{
 			name: 'Response Academic',
-			identityName: 'response-academic',
 			category: 'article-based-legacy',
-			brazeSubscribeEventNamePrefix: 'response_academic',
-			brazeNewsletterName: 'Editorial_ResponseAcademic',
-			brazeSubscribeAttributeName: 'ResponseAcademic_Subscribe_Email',
-			brazeSubscribeAttributeNameAlternate: [
-				'email_subscribe_response_academic',
-			],
-			campaignName: 'ResponseAcademic',
-			campaignCode: 'responseacademic_email',
 			listId: 7002,
 			theme: 'lifestyle',
 			signUpDescription:
@@ -87,29 +60,21 @@ export const makeInMemoryStorageInstance = () =>
 			creationTimeStamp: 1633539258449,
 		},
 		{
-			identityName: 'wagon-automotive',
 			name: 'Wagon Automotive',
 			signUpDescription: 'Mollitia saepe odio',
 			category: 'article-based',
 			frequency: 'Weekly',
-			brazeNewsletterName: 'Editorial_WagonAutomotiveAu',
-			brazeSubscribeAttributeName: 'WagonAutomotiveAu_Subscribe_Email',
-			brazeSubscribeEventNamePrefix: 'wagon_automotive_AU',
 			theme: 'news',
 			group: 'Work',
 			listId: 7009,
 			creationTimeStamp: 1633539258449,
 		},
 		{
-			identityName: 'background-hatchback',
 			name: 'Background Hatchback',
 			category: 'fronts-based',
 			signUpDescription:
 				'Veritatis ipsum asperiores optio sunt eum ab architecto.',
 			frequency: 'Weekly',
-			brazeNewsletterName: 'Editorial_BackgroundHatchbackUk',
-			brazeSubscribeAttributeName: 'BackgroundHatchbackUk_Subscribe_Email',
-			brazeSubscribeEventNamePrefix: 'background_hatchback_UK',
 			theme: 'news',
 			group: 'Opinion',
 			listId: 7010,
