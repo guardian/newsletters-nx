@@ -7,7 +7,10 @@ import {
 	type GuStackProps,
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
-import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
+import {
+	GuHttpsEgressSecurityGroup,
+	GuSecurityGroup,
+} from '@guardian/cdk/lib/constructs/ec2';
 import { type App, Duration, SecretValue } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import {
@@ -137,6 +140,25 @@ export class NewslettersTool extends GuStack {
 			app: apiAppName,
 		});
 
+		const fastlyIngressSecurityGroupId = new GuStringParameter(
+			this,
+			'Fastly Security Group ID',
+			{
+				description:
+					'Fastly Security Group ID to allow ingress from Fastly IP ranges',
+				default: `/${this.stage}/${this.stack}/${apiAppName}/fastlySecurityGroupId`,
+				fromSSM: true,
+			},
+		);
+
+		/** Security group to allow load balancer ingress from Fastly IP ranges */
+		ec2AppApi.loadBalancer.addSecurityGroup(
+			GuSecurityGroup.fromSecurityGroupId(
+				this,
+				'Fastly Security Group',
+				fastlyIngressSecurityGroupId.valueAsString,
+			),
+		);
 		/** Security group to allow load balancer to egress to 443 for OIDC flow using Google auth */
 		const lbEgressSecurityGroup = new GuHttpsEgressSecurityGroup(
 			this,

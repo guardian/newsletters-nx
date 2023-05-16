@@ -39,6 +39,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuApplicationLoadBalancer",
       "GuApplicationTargetGroup",
       "GuHttpsApplicationListener",
+      "GuStringParameter",
       "GuHttpsEgressSecurityGroup",
       "GuStringParameter",
       "GuCname",
@@ -83,6 +84,11 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
     "DistributionBucketName": {
       "Default": "/account/services/artifact.bucket",
       "Description": "SSM parameter containing the S3 bucket name holding distribution artifacts",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "FastlySecurityGroupID": {
+      "Default": "/TEST/newsletters/newsletters-api/fastlySecurityGroupId",
+      "Description": "Fastly Security Group ID to allow ingress from Fastly IP ranges",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "GoogleClientID": {
@@ -653,6 +659,24 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
+    "GuHttpsEgressSecurityGroupNewslettersapifromNewslettersToolTESTFastlySecurityGroupB221EE4E300052E4703F": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Ref": "FastlySecurityGroupID",
+        },
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
     "GuHttpsEgressSecurityGroupNewslettersapifromNewslettersToolTESTLoadBalancerNewslettersapiSecurityGroup64654FDD3000DFBFCE9F": {
       "Properties": {
         "Description": "Load balancer to target",
@@ -1051,6 +1075,9 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
               "LoadBalancerNewslettersapiSecurityGroup874628D3",
               "GroupId",
             ],
+          },
+          {
+            "Ref": "FastlySecurityGroupID",
           },
         ],
         "Subnets": {
