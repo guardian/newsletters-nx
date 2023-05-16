@@ -7,6 +7,9 @@ import { Container } from '@mui/system';
 import type { OverridableStringUnion } from '@mui/types';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router';
+import { useLoaderData } from 'react-router-dom';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { ScrollingMenuButton } from './ScrollingMenuButton';
 
 const ButtonGridItem = ({
 	path,
@@ -50,9 +53,12 @@ const ButtonGridItem = ({
 };
 
 export function HomeMenu() {
+	const list = useLoaderData() as NewsletterData[];
+	const navigate = useNavigate();
+
 	return (
 		<Container maxWidth={'lg'}>
-			<Grid container spacing={3} rowSpacing={6} paddingY={2}>
+			<Grid container spacing={3} rowSpacing={6} paddingY={4}>
 				<ButtonGridItem
 					path="/newsletters"
 					content={'View current newsletters'}
@@ -63,7 +69,22 @@ export function HomeMenu() {
 					content={'Create newsletter wizard'}
 					variant="contained"
 				/>
-				<ButtonGridItem content={'Update newsletter'} />
+
+				<Grid item xs={6} sm={4} display={'flex'}>
+					<ScrollingMenuButton
+						buttonText="update newsletter"
+						buttonProps={{ variant: 'outlined', fullWidth: true }}
+						ariaMenuId="newsletter-update-menu"
+						ariaButtonLabel="select newsletter to update"
+						options={list.map((newsletter) => ({
+							name: newsletter.name,
+							id: newsletter.identityName,
+						}))}
+						handleSelect={(identityName) => {
+							navigate(`/newsletters/edit/${identityName}`);
+						}}
+					/>
+				</Grid>
 			</Grid>
 		</Container>
 	);
