@@ -47,10 +47,35 @@ export const multiThrashersLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
-		finish: {
+		next: {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const multiThrashers = stepData.formData
+					? (stepData.formData[
+							'thrasherOptions.multiThrashers'
+					  ] as unknown as Array<{
+							thrasher1: string;
+							thrasher2: string;
+							thrasher3: string;
+					  }>)
+					: undefined;
+				if (multiThrashers) {
+					if (Array.isArray(multiThrashers)) {
+						const invalidThrashers = multiThrashers.filter(
+							(multiThrasher) =>
+								!multiThrasher.thrasher1 ||
+								!multiThrasher.thrasher2 ||
+								!multiThrasher.thrasher3,
+						);
+						if (invalidThrashers.length > 0) {
+							return 'ALL THREE THRASHERS MUST BE SPECIFIED FOR A CONFIGURATION';
+						}
+					}
+				}
+				return undefined;
+			},
 			executeStep: executeModify,
 		},
 	},
