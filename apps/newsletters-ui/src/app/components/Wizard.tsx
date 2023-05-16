@@ -130,20 +130,14 @@ export const Wizard: React.FC<WizardProps> = ({
 		key: string,
 	) => {
 		const primaryActions: WizardButtonType[] = ['NEXT', 'LAUNCH'];
-		const baseStyle = {
-			borderRadius: '0px',
-		};
 
 		const variant = primaryActions.includes(button.buttonType)
 			? 'contained'
 			: 'outlined';
-		const styling = primaryActions.includes(button.buttonType)
-			? { ...baseStyle, bgcolor: '#1C5689' }
-			: baseStyle;
+
 		return (
 			<Button
 				variant={variant}
-				sx={styling}
 				onClick={() => {
 					onClick(button.id)();
 				}}
