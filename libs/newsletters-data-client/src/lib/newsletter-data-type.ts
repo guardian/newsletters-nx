@@ -71,13 +71,14 @@ export const thrasherOptionsSchema = z.object({
 			z
 				.object({
 					// TODO - these should be drop-downs populated from existing launched newsletters
-					// plus the one currently being created
+					// plus the draft currently being created
 					thrasher1: z.string().optional().describe('left-hand thrasher'),
 					thrasher2: z.string().optional().describe('middle thrasher'),
 					thrasher3: z.string().optional().describe('right-hand-thrasher'),
 				})
 				.describe('multi-thrasher configuration'),
 		)
+		.optional()
 		.describe('The configuration for multi-thrashers'),
 });
 export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
