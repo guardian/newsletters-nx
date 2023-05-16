@@ -6,6 +6,7 @@ import type {
 import {
 	getDraftNotReadyIssues,
 	renderingOptionsSchema,
+	withDefaultNewsletterValuesAndDerivedFields,
 } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
 import { zodIssueToMarkdown } from './markdown-util';
@@ -58,20 +59,32 @@ export const getInitialStateForLaunch = async (
 		};
 	}
 
+	// if the name is undefined, this would be in the 'issues' so the
+	// function would have already returned.
+
+	const derivedFieldValuesOrActualIfSet =
+		withDefaultNewsletterValuesAndDerivedFields(draft);
+
+	// ISSUE - the changed made to the derived fields are saved by the modify function
+	// if the user has changed the values, exited the launch wizard, then gone back
+	// the derived fields are not 'reset'
+
 	return {
 		name,
 		hasAllStandardData: true,
 		hasRenderingOptionsIfNeeded,
 		errorMarkdown: undefined,
 		id: request.id,
-		identityName: draft.identityName,
 		listId: draft.listId,
-		brazeSubscribeEventNamePrefix: draft.brazeSubscribeEventNamePrefix,
-		brazeNewsletterName: draft.brazeNewsletterName,
-		brazeSubscribeAttributeName: draft.brazeSubscribeAttributeName,
+		identityName: derivedFieldValuesOrActualIfSet.identityName,
+		brazeSubscribeEventNamePrefix:
+			derivedFieldValuesOrActualIfSet.brazeSubscribeEventNamePrefix,
+		brazeNewsletterName: derivedFieldValuesOrActualIfSet.brazeNewsletterName,
+		brazeSubscribeAttributeName:
+			derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeName,
 		brazeSubscribeAttributeNameAlternate:
-			draft.brazeSubscribeAttributeNameAlternate,
-		campaignName: draft.campaignName,
-		campaignCode: draft.campaignCode,
+			derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeNameAlternate,
+		campaignName: derivedFieldValuesOrActualIfSet.campaignName,
+		campaignCode: derivedFieldValuesOrActualIfSet.campaignCode,
 	};
 };

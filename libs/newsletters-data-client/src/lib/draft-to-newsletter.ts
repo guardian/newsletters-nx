@@ -1,3 +1,4 @@
+import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
 import type { DraftNewsletterData } from './newsletter-data-type';
 import {
 	newsletterDataSchema,
@@ -13,23 +14,27 @@ const defaultNewsletterValues: DraftNewsletterData = {
 	figmaIncludesThrashers: false,
 } as const;
 
-export const withDefaultNewsletterValues = (
+export const withDefaultNewsletterValuesAndDerivedFields = (
 	draft: DraftNewsletterData,
 ): DraftNewsletterData => {
+	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
+
 	return {
 		...defaultNewsletterValues,
+		...derivedFields,
 		...draft,
 	};
 };
 
 export const hasAllRequiredData = (draft: DraftNewsletterData): boolean => {
-	return newsletterDataSchema.safeParse(withDefaultNewsletterValues(draft))
-		.success;
+	return newsletterDataSchema.safeParse(
+		withDefaultNewsletterValuesAndDerivedFields(draft),
+	).success;
 };
 
 export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 	const report = newsletterDataSchema.safeParse(
-		withDefaultNewsletterValues(draft),
+		withDefaultNewsletterValuesAndDerivedFields(draft),
 	);
 
 	if (!report.success) {
