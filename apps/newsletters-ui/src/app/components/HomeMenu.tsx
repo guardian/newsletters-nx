@@ -59,13 +59,8 @@ export function HomeMenu() {
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 				<ButtonGridItem
-					path="/newsletters/create"
-					content={'Create new newsletter'}
-				/>
-				<ButtonGridItem
 					path="/newsletters/newsletter-data"
 					content={'Create newsletter wizard'}
-					color="success"
 					variant="contained"
 				/>
 				<ButtonGridItem path="/newsletters/forms" content={'Demo form'} />
