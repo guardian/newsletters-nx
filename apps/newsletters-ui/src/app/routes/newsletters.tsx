@@ -1,5 +1,4 @@
 import type { RouteObject } from 'react-router-dom';
-import { FormDemoView } from '../components/FormDemoView';
 import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
 import { NewsletterEditView } from '../components/views/NewsletterEditView';
 import { NewslettersListView } from '../components/views/NewslettersListView';
@@ -27,10 +26,6 @@ export const newslettersRoute: RouteObject = {
 			path: 'edit/:id',
 			element: <NewsletterEditView />,
 			loader: detailLoader,
-		},
-		{
-			path: 'forms',
-			element: <FormDemoView />,
 		},
 		{
 			path: 'newsletter-data/:listId',

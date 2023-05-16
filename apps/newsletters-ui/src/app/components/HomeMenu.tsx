@@ -63,7 +63,6 @@ export function HomeMenu() {
 					content={'Create newsletter wizard'}
 					variant="contained"
 				/>
-				<ButtonGridItem path="/newsletters/forms" content={'Demo form'} />
 				<ButtonGridItem content={'Update newsletter'} />
 			</Grid>
 		</Container>
