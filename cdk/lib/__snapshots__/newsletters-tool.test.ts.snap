@@ -95,6 +95,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Description": "SSM parameter containing the Name (not ARN) on the kinesis stream",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
+    "SsmParameterValueTESTnewslettersnewslettersapireadOnlyEndpointApiKeyC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/TEST/newsletters/newsletters-api/readOnlyEndpointApiKey",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
     "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
       "Default": "/TEST/newsletters/newsletters-api/s3BucketName",
       "Type": "AWS::SSM::Parameter::Value<String>",
@@ -391,6 +395,35 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         },
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",
+    },
+    "BlockRequests2F3FC38F": {
+      "Properties": {
+        "Actions": [
+          {
+            "FixedResponseConfig": {
+              "ContentType": "application/json",
+              "MessageBody": "{"error": "You are not authorised to access this endpoint"}",
+              "StatusCode": "403",
+            },
+            "Type": "fixed-response",
+          },
+        ],
+        "Conditions": [
+          {
+            "Field": "path-pattern",
+            "PathPatternConfig": {
+              "Values": [
+                "*",
+              ],
+            },
+          },
+        ],
+        "ListenerArn": {
+          "Ref": "ListenerNewslettersapi696961C0",
+        },
+        "Priority": 2,
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
     },
     "CNAME": {
       "Properties": {
@@ -1388,6 +1421,36 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ReadOnlyApiHeaderRule9E380666": {
+      "Properties": {
+        "Actions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "TargetGroupNewslettersapiDF74F995",
+            },
+            "Type": "forward",
+          },
+        ],
+        "Conditions": [
+          {
+            "Field": "http-header",
+            "HttpHeaderConfig": {
+              "HttpHeaderName": "X-Gu-API-Key",
+              "Values": [
+                {
+                  "Ref": "SsmParameterValueTESTnewslettersnewslettersapireadOnlyEndpointApiKeyC96584B6F00A464EAD1953AFF4B05118Parameter",
+                },
+              ],
+            },
+          },
+        ],
+        "ListenerArn": {
+          "Ref": "ListenerNewslettersapi696961C0",
+        },
+        "Priority": 1,
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
     },
     "TargetGroupNewslettersapiDF74F995": {
       "Properties": {
