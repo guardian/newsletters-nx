@@ -16,11 +16,12 @@ A multi-thrasher comprises three or more newsletter thrashers.
 
 For each required multi-thrasher please click Add New Item below and type in details of what's required.
 
-For example, for the following triple thrasher you might enter **Five Great Reads, Morning Mail, Afternoon Update**
+For example, for the following triple thrasher you would specify these newsletters:
+ - Five Great Reads
+ - Morning Mail
+ - Afternoon Update
 
 ![Multi-Thrasher](https://i.guim.co.uk/img/uploads/2023/05/04/multi-thrasher.png?quality=85&dpr=2&width=300&s=3bafd0d04fd91b94b8a0fc86efd2160f)
-
-The exact wording isn't critical, as long as it's clear which newsletters you're referring to.
 
 `.trim();
 
