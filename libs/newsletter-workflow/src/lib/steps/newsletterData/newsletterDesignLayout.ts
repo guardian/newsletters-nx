@@ -54,10 +54,10 @@ export const newsletterDesignLayout: WizardStepLayout<DraftStorage> = {
 					: undefined;
 				if (!figmaDesignUrl) return 'NO FIGMA DESIGN URL PROVIDED';
 				const singleThrasher = stepData.formData
-					? stepData.formData['singleThrasher']
+					? stepData.formData['thrasherOptions.singleThrasher']
 					: undefined;
 				const multiThrashers = stepData.formData
-					? stepData.formData['multiThrashers']
+					? stepData.formData['thrasherOptions.multiThrashers']
 					: undefined;
 				if (singleThrasher || multiThrashers) {
 					const figmaIncludesThrashers = stepData.formData
