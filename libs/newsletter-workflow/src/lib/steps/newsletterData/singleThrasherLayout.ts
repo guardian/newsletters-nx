@@ -28,7 +28,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const thrasherLayout: WizardStepLayout<DraftStorage> = {
+export const singleThrasherLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
 	label: 'Single Thrasher',
 	dynamicMarkdown(requestData, responseData) {
@@ -72,7 +72,7 @@ export const thrasherLayout: WizardStepLayout<DraftStorage> = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.thrasher,
+	schema: formSchemas.singleThrasher,
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };

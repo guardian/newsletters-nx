@@ -14,7 +14,7 @@ import { pillarAndGroupLayout } from './pillarAndGroupLayout';
 import { regionFocusLayout } from './regionFocusLayout';
 import { signUpEmbedLayout } from './signUpEmbedLayout';
 import { signUpPageLayout } from './signUpPageLayout';
-import { thrasherLayout } from './singleThrasherLayout';
+import { singleThrasherLayout } from './singleThrasherLayout';
 import { tagsLayout } from './tagsLayout';
 
 export const newsletterDataLayout: WizardLayout<DraftStorage> = {
@@ -28,7 +28,7 @@ export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	frequency: frequencyLayout,
 	onlineArticle: onlineArticleLayout,
 	tags: tagsLayout,
-	thrasher: thrasherLayout,
+	thrasher: singleThrasherLayout,
 	multiThrashers: multiThrashersLayout,
 	newsletterDesign: newsletterDesignLayout,
 	signUpPage: signUpPageLayout,

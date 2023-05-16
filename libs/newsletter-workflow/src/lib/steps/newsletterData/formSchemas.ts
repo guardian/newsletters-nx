@@ -152,9 +152,8 @@ export const formSchemas = {
 		})
 		.describe('Input the tag setup'),
 
-	thrasher: pickAndPrefixThrasherOption([
+	singleThrasher: pickAndPrefixThrasherOption([
 		'singleThrasher',
-		'multiThrasher',
 		'singleThrasherLocation',
 		'thrasherDescription',
 	]).describe('Input the thrasher setup'),
