@@ -1,4 +1,4 @@
-import type { LegacyNewsletter } from './legacy-newsletter-type';
+import type { NewsletterData } from './newsletter-data-type';
 
 const allWhiteSpaceRegEx = new RegExp(/\W/, 'g');
 const replaceWhiteSpace = (input: string, replaceValue = '') =>
@@ -6,7 +6,7 @@ const replaceWhiteSpace = (input: string, replaceValue = '') =>
 
 export const deriveNewsletterFieldsFromName = (
 	name: string,
-): Partial<LegacyNewsletter> => {
+): Partial<NewsletterData> => {
 	const lowerCased = name.toLowerCase();
 	const trimmedLowerCase = lowerCased.trim();
 

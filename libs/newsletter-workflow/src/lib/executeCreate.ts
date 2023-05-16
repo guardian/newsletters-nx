@@ -14,7 +14,6 @@ import type {
 	AsyncExecution,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
-import { calculateFieldsFromName } from './calculateFieldsFromName';
 
 export const executeCreate: AsyncExecution<DraftStorage> = async (
 	stepData,
@@ -45,20 +44,9 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 		}`;
 	}
 
-	// TODO - calculating fields from the Name at this point is not generic
-	// would it be better done somewhere else?
-	const derivedFields =
-		typeof parseResult.data.name === 'string' && !!parseResult.data.name
-			? calculateFieldsFromName(parseResult.data.name)
-			: {};
-
-	const draft: DraftNewsletterData = {
-		...formDataToDraftNewsletterData({
-			...parseResult.data,
-		}),
-		...derivedFields,
-	};
-
+	const draft: DraftNewsletterData = formDataToDraftNewsletterData({
+		...parseResult.data,
+	});
 	const storageResponse = await storageInstance.createDraftNewsletter({
 		...draft,
 		listId: undefined,
