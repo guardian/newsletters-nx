@@ -1,15 +1,15 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getNextStepId } from '@newsletters-nx/state-machine';
-import { executeCreate } from '../../executeCreate';
+import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { formSchemas } from './formSchemas';
 
 export const editDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
-	staticMarkdown: `# Name Your Newsletter
+	staticMarkdown: `# Change Newsletter name
 
-The first step is to enter the name for your newsletter, for example **Down to Earth**.
+You can edit the name of the newsletter.
 
 `,
 	label: 'Change Name',
@@ -23,11 +23,7 @@ The first step is to enter the name for your newsletter, for example **Down to E
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const name = stepData.formData ? stepData.formData['name'] : undefined;
-				return name ? undefined : 'NO NAME PROVIDED';
-			},
-			executeStep: executeCreate,
+			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.startDraftNewsletter,
