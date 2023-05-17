@@ -4,7 +4,7 @@ import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
-import { checkFormInputIsUniqueStringOrUniqueNumber } from '../../check-input-is-unique';
+import { checkFormDataValuesAreUnique } from '../../check-input-is-unique';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
@@ -44,7 +44,7 @@ export const editBrazeLayout: WizardStepLayout<LaunchService> = {
 			stepToMoveTo: getNextStepId,
 			// note - not checking uniqueness of brazeSubscribeAttributeNameAlternate
 			// since it is an array
-			onBeforeStepChangeValidate: checkFormInputIsUniqueStringOrUniqueNumber([
+			onBeforeStepChangeValidate: checkFormDataValuesAreUnique([
 				'brazeNewsletterName',
 				'brazeSubscribeAttributeName',
 				'brazeSubscribeEventNamePrefix',

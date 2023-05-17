@@ -33,7 +33,12 @@ const checkValue = (
 	return undefined;
 };
 
-export const checkFormInputIsUniqueStringOrUniqueNumber =
+/**
+ * Create an AsyncValidator<LaunchService> that returns an error string
+ * if there are any existing launched newsletters with a value for any of the
+ * given propertyKey that is the same as the value for that key on the formData.
+ */
+export const checkFormDataValuesAreUnique =
 	(propertyKeys: Array<keyof NewsletterData>): AsyncValidator<LaunchService> =>
 	async (stepData, stepLayout, launchService) => {
 		if (!launchService) {

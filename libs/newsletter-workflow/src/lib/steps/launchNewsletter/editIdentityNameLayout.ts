@@ -4,7 +4,7 @@ import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
-import { checkFormInputIsUniqueStringOrUniqueNumber } from '../../check-input-is-unique';
+import { checkFormDataValuesAreUnique } from '../../check-input-is-unique';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
@@ -42,7 +42,7 @@ export const editIdentityNameLayout: WizardStepLayout<LaunchService> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: checkFormInputIsUniqueStringOrUniqueNumber([
+			onBeforeStepChangeValidate: checkFormDataValuesAreUnique([
 				'identityName',
 			]),
 		},
