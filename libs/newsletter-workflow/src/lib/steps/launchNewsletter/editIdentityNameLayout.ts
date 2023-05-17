@@ -4,6 +4,7 @@ import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
+import { checkFormInputIsUnique } from '../../check-input-is-unique';
 import { executeModifyWithinLaunch } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
@@ -43,11 +44,8 @@ export const editIdentityNameLayout: WizardStepLayout<LaunchService> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: () => {
-				// TODO - check that identityName does not already exist in other draft or actual newsletter
-				return undefined;
-			},
-			executeStep: executeModifyWithinLaunch,
+			onBeforeStepChangeValidate: checkFormInputIsUnique('identityName'),
+			// executeStep: executeModifyWithinLaunch,
 		},
 	},
 	schema: formSchemas.identityName,
