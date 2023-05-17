@@ -59,15 +59,8 @@ export const getInitialStateForLaunch = async (
 		};
 	}
 
-	// if the name is undefined, this would be in the 'issues' so the
-	// function would have already returned.
-
 	const derivedFieldValuesOrActualIfSet =
 		withDefaultNewsletterValuesAndDerivedFields(draft);
-
-	// ISSUE - the changed made to the derived fields are saved by the modify function
-	// if the user has changed the values, exited the launch wizard, then gone back
-	// the derived fields are not 'reset'
 
 	return {
 		name,
