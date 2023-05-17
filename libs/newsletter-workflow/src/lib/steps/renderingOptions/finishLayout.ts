@@ -18,6 +18,7 @@ You can see the full details of **{{name}}** on the [details page](drafts/{{list
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
 const finishLayout: WizardStepLayout<DraftStorage> = {
+	indicateStepsCompleteOnThisWizard: true,
 	staticMarkdown: staticMarkdown,
 	label: 'Finish',
 	buttons: {

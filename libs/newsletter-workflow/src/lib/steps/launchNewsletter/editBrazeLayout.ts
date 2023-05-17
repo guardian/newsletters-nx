@@ -44,7 +44,7 @@ export const editBrazeLayout: WizardStepLayout<LaunchService> = {
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: () => {
-				// TO DO - check that braze values do not already exist in other draft or actual newsletter
+				// TODO - check that braze values do not already exist in other draft or actual newsletter
 				return undefined;
 			},
 			executeStep: executeModifyWithinLaunch,

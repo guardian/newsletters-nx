@@ -5,7 +5,7 @@ import type {
 } from '../storage-response-types';
 import type { DraftStorage, DraftWithId, DraftWithoutId } from './DraftStorage';
 
-// TO DO - serialise Drafts before returning
+// TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
 export class InMemoryDraftStorage implements DraftStorage {
 	private memory: DraftWithId[];

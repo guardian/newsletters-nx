@@ -7,6 +7,10 @@ import { recursiveUnwrap } from './recursiveUnwrap';
  * NOTE - ZodDates are defaulted to 'undefined'
  * not a problem for the current usage of this function
  * but may need to be revised.
+ *
+ * Enums start undefined so the user is forced to choose a value
+ * rather than having the first item pre-selected. Could add and
+ * extra argument to default enum to the first item when required.
  */
 export const getEmptySchemaData = (
 	schema: z.ZodObject<z.ZodRawShape>,
@@ -26,8 +30,7 @@ export const getEmptySchemaData = (
 		if (zod instanceof ZodString) {
 			mod[key] = '';
 		} else if (zod instanceof ZodEnum) {
-			const [firstOption] = zod.options as string[];
-			mod[key] = firstOption;
+			mod[key] = undefined;
 		} else if (zod instanceof ZodNumber) {
 			mod[key] = 0;
 		} else if (zod instanceof ZodBoolean) {

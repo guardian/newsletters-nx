@@ -100,21 +100,6 @@ export const legacyNewsletterSchema = baseLegacyNewsletterSchema.extend({
 	}),
 });
 
-export const legacyNewsletterSchemaAllowingEmptyStrings =
-	baseLegacyNewsletterSchema.extend({
-		name: z.string(),
-		identityName: z.string(),
-		group: z.string(),
-		description: z.string(),
-		frequency: z.string(),
-		brazeSubscribeAttributeName: z.string(),
-		brazeSubscribeEventNamePrefix: z.string(),
-		brazeNewsletterName: z.string(),
-		emailEmbed: emailEmbedSchema.extend({
-			description: z.string(),
-		}),
-	});
-
 export type LegacyNewsletter = z.infer<typeof legacyNewsletterSchema>;
 
 export function isLegacyNewsletter(

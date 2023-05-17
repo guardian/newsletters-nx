@@ -19,14 +19,6 @@
 		"exampleUrl": "/world/series/series-blue-empowering/latest/email",
 		"signupPage": "/global/sign-up-for-the-blue-empowering-newsletter-our-free-email",
 		"signUpEmbedDescription": "We'll send you Blue Empowering fortnightly",
-		"emailEmbed": {
-			"name": "Blue Empowering",
-			"title": "Sign up for Blue Empowering",
-			"description": "Exercitationem ducimus quas enim dolorem.",
-			"successHeadline": "Subscription confirmed",
-			"successDescription": "We'll send you Blue Empowering fortnightly",
-			"hexCode": "#DCDCDC"
-		},
 		"campaignName": "BlueEmpowering",
 		"campaignCode": "blueempowering_email",
 		"brazeSubscribeAttributeNameAlternate": ["email_subscribe_blue_empowering"],
@@ -58,14 +50,6 @@
 		"exampleUrl": "/world/series/series-sint-denigrate/latest/email",
 		"signupPage": "/global/sign-up-for-the-sint-denigrate-newsletter-our-free-email",
 		"signUpEmbedDescription": "We'll send you Sint Denigrate monthly",
-		"emailEmbed": {
-			"name": "Sint Denigrate",
-			"title": "Sign up for Sint Denigrate",
-			"description": "Voluptatem facilis similique",
-			"successHeadline": "Subscription confirmed",
-			"successDescription": "We'll send you Sint Denigrate monthly",
-			"hexCode": "#DCDCDC"
-		},
 		"campaignName": "SintDenigrateUk",
 		"campaignCode": "sintdenigrateUK_email",
 		"brazeSubscribeAttributeNameAlternate": [
@@ -99,14 +83,6 @@
 		"exampleUrl": "/world/series/series-systems-northeast/latest/email",
 		"signupPage": "/global/sign-up-for-the-systems-northeast-newsletter-our-free-email",
 		"signUpEmbedDescription": "We'll send you Systems Northeast weekly",
-		"emailEmbed": {
-			"name": "Systems Northeast",
-			"title": "Sign up for Systems Northeast",
-			"description": "At totam autem velit numquam saepe alias odit.",
-			"successHeadline": "Subscription confirmed",
-			"successDescription": "We'll send you Systems Northeast weekly",
-			"hexCode": "#DCDCDC"
-		},
 		"campaignName": "SystemsNortheast",
 		"campaignCode": "systemsnortheast_email",
 		"brazeSubscribeAttributeNameAlternate": [
@@ -140,14 +116,6 @@
 		"exampleUrl": "/world/series/series-cambridgeshire-support/latest/email",
 		"signupPage": "/global/sign-up-for-the-cambridgeshire-support-newsletter-our-free-email",
 		"signUpEmbedDescription": "We'll send you Cambridgeshire Support fortnightly",
-		"emailEmbed": {
-			"name": "Cambridgeshire Support",
-			"title": "Sign up for Cambridgeshire Support",
-			"description": "Praesentium cumque ad accusamus deserunt incidunt.",
-			"successHeadline": "Subscription confirmed",
-			"successDescription": "We'll send you Cambridgeshire Support fortnightly",
-			"hexCode": "#DCDCDC"
-		},
 		"campaignName": "CambridgeshireSupport",
 		"campaignCode": "cambridgeshiresupport_email",
 		"brazeSubscribeAttributeNameAlternate": [
