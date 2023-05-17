@@ -1,12 +1,21 @@
 import type { NewsletterData } from './newsletter-data-type';
 
+export type NewsletterFieldsDerivedFromName =
+	| 'identityName'
+	| 'brazeSubscribeEventNamePrefix'
+	| 'brazeNewsletterName'
+	| 'brazeSubscribeAttributeName'
+	| 'brazeSubscribeAttributeNameAlternate'
+	| 'campaignName'
+	| 'campaignCode';
+
 const allWhiteSpaceRegEx = new RegExp(/\W/, 'g');
 const replaceWhiteSpace = (input: string, replaceValue = '') =>
 	input.replace(allWhiteSpaceRegEx, replaceValue);
 
 export const deriveNewsletterFieldsFromName = (
 	name: string,
-): Partial<NewsletterData> => {
+): Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const lowerCased = name.toLowerCase();
 	const trimmedLowerCase = lowerCased.trim();
 
