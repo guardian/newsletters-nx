@@ -6,45 +6,32 @@ import type {
 import type { AsyncExecution } from '@newsletters-nx/state-machine';
 import { parseToNumber } from './util';
 
+const DERIVED_FIELD_KEYS: Array<keyof NewsletterData> = [
+	'identityName',
+	'brazeSubscribeEventNamePrefix',
+	'brazeNewsletterName',
+	'brazeSubscribeAttributeName',
+	'brazeSubscribeAttributeNameAlternate',
+	'campaignName',
+	'campaignCode',
+];
+
 const getExtraValuesFromFormData = (
 	formData: FormDataRecord = {},
 ): Partial<NewsletterData> => {
-	const data: Partial<NewsletterData> = {
-		identityName:
-			typeof formData.identityName === 'string'
-				? formData.identityName
-				: undefined,
-		brazeNewsletterName:
-			typeof formData.brazeNewsletterName === 'string'
-				? formData.brazeNewsletterName
-				: undefined,
-		brazeSubscribeAttributeName:
-			typeof formData.brazeSubscribeAttributeName === 'string'
-				? formData.brazeSubscribeAttributeName
-				: undefined,
-		brazeSubscribeEventNamePrefix:
-			typeof formData.brazeSubscribeEventNamePrefix === 'string'
-				? formData.brazeSubscribeEventNamePrefix
-				: undefined,
-		campaignCode:
-			typeof formData.campaignCode === 'string'
-				? formData.campaignCode
-				: undefined,
-		campaignName:
-			typeof formData.campaignName === 'string'
-				? formData.campaignName
-				: undefined,
-	};
+	const stringValue = (key: string): string | undefined =>
+		typeof formData[key] === 'string' ? (formData[key] as string) : undefined;
 
-	const populatedKeys = Object.keys(data) as Array<keyof NewsletterData>;
-
-	populatedKeys.forEach((key) => {
-		if (typeof data[key] === 'undefined') {
-			delete data[key];
-		}
-	});
-
-	return data;
+	return DERIVED_FIELD_KEYS.reduce<Partial<NewsletterData>>(
+		(previousRecord, key) => {
+			const value = stringValue(key);
+			if (value) {
+				return { ...previousRecord, [key]: value };
+			}
+			return previousRecord;
+		},
+		{},
+	);
 };
 
 export const executeLaunch: AsyncExecution<LaunchService> = async (
