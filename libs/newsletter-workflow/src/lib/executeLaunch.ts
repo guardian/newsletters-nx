@@ -14,6 +14,26 @@ const getExtraValuesFromFormData = (
 			typeof formData.identityName === 'string'
 				? formData.identityName
 				: undefined,
+		brazeNewsletterName:
+			typeof formData.brazeNewsletterName === 'string'
+				? formData.brazeNewsletterName
+				: undefined,
+		brazeSubscribeAttributeName:
+			typeof formData.brazeSubscribeAttributeName === 'string'
+				? formData.brazeSubscribeAttributeName
+				: undefined,
+		brazeSubscribeEventNamePrefix:
+			typeof formData.brazeSubscribeEventNamePrefix === 'string'
+				? formData.brazeSubscribeEventNamePrefix
+				: undefined,
+		campaignCode:
+			typeof formData.campaignCode === 'string'
+				? formData.campaignCode
+				: undefined,
+		campaignName:
+			typeof formData.campaignName === 'string'
+				? formData.campaignName
+				: undefined,
 	};
 
 	const populatedKeys = Object.keys(data) as Array<keyof NewsletterData>;
@@ -24,7 +44,6 @@ const getExtraValuesFromFormData = (
 		}
 	});
 
-	console.log({ data });
 	return data;
 };
 

@@ -5,7 +5,6 @@ import {
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import { checkFormInputIsUniqueStringOrUniqueNumber } from '../../check-input-is-unique';
-import { executeModifyWithinLaunch } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
@@ -38,7 +37,6 @@ export const editIdentityNameLayout: WizardStepLayout<LaunchService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModifyWithinLaunch,
 		},
 		next: {
 			buttonType: 'NEXT',
@@ -47,7 +45,6 @@ export const editIdentityNameLayout: WizardStepLayout<LaunchService> = {
 			onBeforeStepChangeValidate: checkFormInputIsUniqueStringOrUniqueNumber([
 				'identityName',
 			]),
-			// executeStep: executeModifyWithinLaunch,
 		},
 	},
 	schema: formSchemas.identityName,
