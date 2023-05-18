@@ -31,3 +31,37 @@ export const deriveNewsletterFieldsFromName = (
 		campaignCode: replaceWhiteSpace(trimmedLowerCase) + '_email',
 	};
 };
+
+/**
+ * Appends a "-i" to the end of the originalIdentityName if it
+ * is already included in the existingIdentityNames. If
+ * {originalIdentityName}-i is already in existingIdentityNames,
+ * continues to append additional "i"'s until the name is unique.
+ *
+ * This is not ideal - it ensures the suggested derived name is
+ * unqiue, but the user should have the option to replace it with a
+ * more readable name.
+ */
+export const addSuffixToIdentityName = (
+	originalIdentityName: string,
+	existingIdentityNames: string[],
+): string => {
+	// no duplicates, so can use the original name
+	if (!existingIdentityNames.includes(originalIdentityName)) {
+		return originalIdentityName;
+	}
+
+	let suffixNumber = 1;
+	let newIdentityName = '';
+
+	while (newIdentityName === '') {
+		const nextPossibleName = `${originalIdentityName}-${'i'.repeat(
+			suffixNumber,
+		)}`;
+		if (!existingIdentityNames.includes(nextPossibleName)) {
+			newIdentityName = nextPossibleName;
+		}
+		suffixNumber++;
+	}
+	return newIdentityName;
+};

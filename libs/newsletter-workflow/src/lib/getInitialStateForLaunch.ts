@@ -4,6 +4,7 @@ import type {
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
 import {
+	addSuffixToIdentityName,
 	getDraftNotReadyIssues,
 	renderingOptionsSchema,
 	withDefaultNewsletterValuesAndDerivedFields,
@@ -32,6 +33,7 @@ export const getInitialStateForLaunch = async (
 		};
 	}
 	const storageResponse = await launchService.draftStorage.read(id);
+	const allLauchedResponse = await launchService.newsletterStorage.list();
 
 	const draft: DraftNewsletterData = storageResponse.ok
 		? storageResponse.data
@@ -59,6 +61,15 @@ export const getInitialStateForLaunch = async (
 
 	const derivedFieldValuesOrActualIfSet =
 		withDefaultNewsletterValuesAndDerivedFields(draft);
+
+	const existingIdentityNames = allLauchedResponse.ok
+		? allLauchedResponse.data.map((newsletter) => newsletter.identityName)
+		: [];
+
+	derivedFieldValuesOrActualIfSet.identityName = addSuffixToIdentityName(
+		derivedFieldValuesOrActualIfSet.identityName as string,
+		existingIdentityNames,
+	);
 
 	return {
 		name,
