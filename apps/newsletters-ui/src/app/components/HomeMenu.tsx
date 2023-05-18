@@ -61,7 +61,7 @@ export function HomeMenu() {
 			<Grid container spacing={3} rowSpacing={6} paddingY={4}>
 				<ButtonGridItem
 					path="/newsletters"
-					content={'View current newsletters'}
+					content={'View launched newsletters'}
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 				<ButtonGridItem
