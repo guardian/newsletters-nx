@@ -1,6 +1,9 @@
 import type { LegacyNewsletter } from './legacy-newsletter-type';
 import { isLegacyNewsletter } from './legacy-newsletter-type';
-import type { NewsletterData } from './newsletter-data-type';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from './newsletter-data-type';
 import { isNewsletterData } from './newsletter-data-type';
 
 export const TRANSFORM_ERROR_MESSAGE = {
@@ -16,6 +19,36 @@ const deriveBooleansFromStatus = (
 	return {
 		cancelled: status === 'cancelled',
 		paused: status === 'paused',
+	};
+};
+
+const deriveEmailEmbedObject = (
+	draft: DraftNewsletterData,
+): LegacyNewsletter['emailEmbed'] => {
+	const {
+		name = 'newsletter',
+		emailConfirmation = false,
+		frequency,
+		mailSuccessDescription,
+	} = draft;
+
+	const successHeadline = emailConfirmation
+		? 'Check your email inbox and confirm your subscription'
+		: 'Subscription confirmed';
+
+	const successDescription =
+		mailSuccessDescription ??
+		(frequency
+			? `We'll send you ${name} ${frequency.toLowerCase()}`
+			: `We'll send you ${name} every time it comes out`);
+
+	return {
+		description: draft.signUpEmbedDescription ?? ' ',
+		name: name,
+		title: `Sign up for ${name}`,
+		successHeadline,
+		successDescription: successDescription,
+		hexCode: '#DCDCDC',
 	};
 };
 
@@ -53,7 +86,7 @@ const deriveLegacyNewsletter = (
 			illustration: newsletterData.illustrationCircle
 				? { circle: newsletterData.illustrationCircle }
 				: undefined,
-			emailEmbed: newsletterData.emailEmbed,
+			emailEmbed: deriveEmailEmbedObject(newsletterData),
 			campaignName: newsletterData.campaignName,
 			campaignCode: newsletterData.campaignCode,
 			brazeSubscribeAttributeNameAlternate:

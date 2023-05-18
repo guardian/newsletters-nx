@@ -20,8 +20,6 @@ interface Props {
 	title?: string;
 }
 
-const sxContainedButton = { borderRadius: 0, bgcolor: '#1C5689' };
-
 export const RawDataDialog = ({ record, title = 'raw data' }: Props) => {
 	const [showRawData, setShowRawData] = useState(false);
 	const [showClipboardSuccess, setShowClipboardSuccess] = useState(false);
@@ -42,7 +40,6 @@ export const RawDataDialog = ({ record, title = 'raw data' }: Props) => {
 		<>
 			<Button
 				variant="contained"
-				sx={sxContainedButton}
 				onClick={() => {
 					setShowRawData(true);
 				}}
@@ -76,7 +73,6 @@ export const RawDataDialog = ({ record, title = 'raw data' }: Props) => {
 					<Button onClick={copyJson}>copy json</Button>
 					<Button
 						variant="contained"
-						sx={sxContainedButton}
 						onClick={() => {
 							setShowRawData(false);
 						}}

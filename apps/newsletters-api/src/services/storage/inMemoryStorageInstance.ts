@@ -19,20 +19,10 @@ export const makeInMemoryStorageInstance = () =>
 			theme: 'culture',
 			group: 'Work',
 			regionFocus: 'UK',
-			// listIdV1: 3703,
 			listId: 5770,
 			exampleUrl: '/world/series/series-avon-recumbent/latest/email',
 			signupPage:
 				'/global/sign-up-for-the-avon-recumbent-newsletter-our-free-email',
-			emailEmbed: {
-				name: 'Avon Recumbent',
-				title: 'Sign up for Avon Recumbent',
-				description:
-					'Numquam ipsam culpa velit suscipit ratione corrupti. recusandae aliquam repudiandae eaque. error corporis deserunt suscipit dolor consequuntur dolor quaerat dolor. possimus cupiditate in nam. itaque quaerat illum sint quos blanditiis.',
-				successHeadline: 'Subscription confirmed',
-				successDescription: "We'll send you Avon Recumbent weekly",
-				hexCode: '#DCDCDC',
-			},
 			campaignName: 'AvonRecumbentUs',
 			campaignCode: 'avonrecumbentUS_email',
 			brazeSubscribeAttributeNameAlternate: [

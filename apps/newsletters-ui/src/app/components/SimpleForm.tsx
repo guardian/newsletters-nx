@@ -1,10 +1,9 @@
-import { Button, Paper } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import type { z } from 'zod';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
-import { defaultFieldStyle, defaultFormStyle } from './SchemaForm/styling';
 
 type SchemaObjectType<T extends z.ZodRawShape> = {
 	[k in keyof z.objectUtil.addQuestionMarks<{
@@ -121,14 +120,22 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	return (
-		<Paper css={defaultFormStyle} elevation={3}>
-			<legend>{title}</legend>
+		<Box
+			elevation={3}
+			padding={1}
+			component={Paper}
+			maxWidth={'sm'}
+			marginBottom={1.5}
+		>
+			<Typography variant="h3" component={'legend'}>
+				{title}
+			</Typography>
 
-			<div css={defaultFieldStyle}>
+			<Box marginBottom={2}>
 				<Button variant="outlined" onClick={handleReset} disabled={isDisabled}>
 					Reset
 				</Button>
-			</div>
+			</Box>
 
 			<SchemaForm
 				schema={schema}
@@ -137,7 +144,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				validationWarnings={warnings}
 				readOnlyKeys={isDisabled ? Object.keys(schema.shape) : undefined}
 			/>
-			<div css={defaultFieldStyle}>
+			<Box marginBottom={2}>
 				<Button
 					variant="contained"
 					onClick={handleSubmit}
@@ -145,8 +152,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				>
 					{submitButtonText}
 				</Button>
-				{message}
-			</div>
-		</Paper>
+			</Box>
+		</Box>
 	);
 }

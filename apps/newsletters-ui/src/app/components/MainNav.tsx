@@ -46,23 +46,20 @@ export function MainNav() {
 	};
 
 	return (
-		<AppBar position="static" sx={{ bgcolor: '#1C5689' }}>
+		<AppBar position="static">
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<MailOutlineIcon
 						sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
 					/>
 					<Typography
-						variant="h6"
+						variant="h1"
 						noWrap
 						component="a"
 						href="/"
 						sx={{
 							mr: 2,
 							display: { xs: 'none', md: 'flex' },
-							fontFamily: 'monospace',
-							fontWeight: 700,
-							letterSpacing: '.3rem',
 							color: 'inherit',
 							textDecoration: 'none',
 						}}
@@ -117,7 +114,7 @@ export function MainNav() {
 						sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
 					/>
 					<Typography
-						variant="h5"
+						variant="h1"
 						noWrap
 						component="a"
 						href=""
@@ -125,11 +122,10 @@ export function MainNav() {
 							mr: 2,
 							display: { xs: 'flex', md: 'none' },
 							flexGrow: 1,
-							fontFamily: 'monospace',
-							fontWeight: 700,
-							letterSpacing: '.3rem',
 							color: 'inherit',
 							textDecoration: 'none',
+							fontSize: '1.5rem',
+							lineHeight: '1.334',
 						}}
 					>
 						Newsletters
