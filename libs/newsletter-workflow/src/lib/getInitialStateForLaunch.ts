@@ -2,6 +2,8 @@ import type {
 	DraftNewsletterData,
 	FormDataRecord,
 	LaunchService,
+	NewsletterData,
+	NewsletterFieldsDerivedFromName,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	addSuffixToMakeTokenUnique,
@@ -66,39 +68,7 @@ export const getInitialStateForLaunch = async (
 		? allLauchedResponse.data
 		: [];
 
-	derivedFieldValuesOrActualIfSet.identityName = addSuffixToMakeTokenUnique(
-		derivedFieldValuesOrActualIfSet.identityName,
-		existingNewsletters.map((_) => _.identityName),
-	);
-
-	derivedFieldValuesOrActualIfSet.brazeNewsletterName =
-		addSuffixToMakeTokenUnique(
-			derivedFieldValuesOrActualIfSet.brazeNewsletterName,
-			existingNewsletters.map((_) => _.brazeNewsletterName),
-			'_',
-		);
-	derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeName =
-		addSuffixToMakeTokenUnique(
-			derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeName,
-			existingNewsletters.map((_) => _.brazeSubscribeAttributeName),
-			'_',
-		);
-	derivedFieldValuesOrActualIfSet.brazeSubscribeEventNamePrefix =
-		addSuffixToMakeTokenUnique(
-			derivedFieldValuesOrActualIfSet.brazeSubscribeEventNamePrefix,
-			existingNewsletters.map((_) => _.brazeSubscribeEventNamePrefix),
-			'_',
-		);
-	derivedFieldValuesOrActualIfSet.campaignName = addSuffixToMakeTokenUnique(
-		derivedFieldValuesOrActualIfSet.campaignName as string,
-		existingNewsletters.map((_) => _.campaignName),
-		'_',
-	);
-	derivedFieldValuesOrActualIfSet.campaignCode = addSuffixToMakeTokenUnique(
-		derivedFieldValuesOrActualIfSet.campaignCode as string,
-		existingNewsletters.map((_) => _.campaignCode),
-		'_',
-	);
+	suffixDervivedValues(derivedFieldValuesOrActualIfSet, existingNewsletters);
 
 	return {
 		name,
@@ -119,3 +89,39 @@ export const getInitialStateForLaunch = async (
 		campaignCode: derivedFieldValuesOrActualIfSet.campaignCode,
 	};
 };
+
+const keysToSuffixWithDash = ['identityName'] as const;
+const keysToSuffixWithUnderscore = [
+	'brazeNewsletterName',
+	'brazeSubscribeAttributeName',
+	'brazeSubscribeEventNamePrefix',
+	'campaignName',
+	'campaignCode',
+] as const;
+
+function suffixDervivedValues(
+	derivedFieldValuesOrActualIfSet: DraftNewsletterData &
+		Pick<NewsletterData, NewsletterFieldsDerivedFromName>,
+	existingNewsletters: NewsletterData[],
+) {
+	keysToSuffixWithDash.forEach((key) => {
+		const originalToken = derivedFieldValuesOrActualIfSet[key];
+		if (originalToken) {
+			derivedFieldValuesOrActualIfSet[key] = addSuffixToMakeTokenUnique(
+				originalToken,
+				existingNewsletters.map((_) => _[key]),
+				'-',
+			);
+		}
+	});
+	keysToSuffixWithUnderscore.forEach((key) => {
+		const originalToken = derivedFieldValuesOrActualIfSet[key];
+		if (originalToken) {
+			derivedFieldValuesOrActualIfSet[key] = addSuffixToMakeTokenUnique(
+				originalToken,
+				existingNewsletters.map((_) => _[key]),
+				'_',
+			);
+		}
+	});
+}
