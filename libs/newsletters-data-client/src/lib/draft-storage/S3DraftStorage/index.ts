@@ -26,7 +26,7 @@ export class S3DraftStorage extends DraftStorage {
 		this.s3Client = s3Client;
 	}
 
-	async createDraftNewsletter(
+	async create(
 		draft: DraftWithoutId,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
@@ -61,7 +61,7 @@ export class S3DraftStorage extends DraftStorage {
 		}
 	}
 
-	async listDrafts(): Promise<
+	async readAll(): Promise<
 		UnsuccessfulStorageResponse | SuccessfulStorageResponse<DraftWithId[]>
 	> {
 		try {
@@ -86,7 +86,7 @@ export class S3DraftStorage extends DraftStorage {
 		}
 	}
 
-	async getDraftNewsletter(
+	async read(
 		listId: number,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
@@ -113,7 +113,7 @@ export class S3DraftStorage extends DraftStorage {
 		}
 	}
 
-	async modifyDraftNewsletter(
+	async update(
 		draft: DraftWithId,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
@@ -146,7 +146,7 @@ export class S3DraftStorage extends DraftStorage {
 		}
 	}
 
-	async deleteDraftNewsletter(
+	async deleteItem(
 		listId: number,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse

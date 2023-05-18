@@ -152,12 +152,15 @@ export const formSchemas = {
 		})
 		.describe('Input the tag setup'),
 
-	thrasher: pickAndPrefixThrasherOption([
+	singleThrasher: pickAndPrefixThrasherOption([
 		'singleThrasher',
-		'multiThrasher',
 		'singleThrasherLocation',
 		'thrasherDescription',
 	]).describe('Input the thrasher setup'),
+
+	multiThrashers: pickAndPrefixThrasherOption(['multiThrashers']).describe(
+		'Input details of the multi-thrashers',
+	),
 
 	promotionDates: newsletterDataSchema
 		.pick({

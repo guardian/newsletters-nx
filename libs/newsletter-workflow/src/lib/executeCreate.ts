@@ -47,7 +47,7 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 	const draft: DraftNewsletterData = formDataToDraftNewsletterData({
 		...parseResult.data,
 	});
-	const storageResponse = await storageInstance.createDraftNewsletter({
+	const storageResponse = await storageInstance.create({
 		...draft,
 		listId: undefined,
 	});
