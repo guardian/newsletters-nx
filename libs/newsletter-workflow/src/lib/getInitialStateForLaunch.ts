@@ -4,7 +4,7 @@ import type {
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
 import {
-	addSuffixToIdentityName,
+	addSuffixToMakeTokenUnique,
 	getDraftNotReadyIssues,
 	renderingOptionsSchema,
 	withDefaultNewsletterValuesAndDerivedFields,
@@ -62,13 +62,42 @@ export const getInitialStateForLaunch = async (
 	const derivedFieldValuesOrActualIfSet =
 		withDefaultNewsletterValuesAndDerivedFields(draft);
 
-	const existingIdentityNames = allLauchedResponse.ok
-		? allLauchedResponse.data.map((newsletter) => newsletter.identityName)
+	const existingNewsletters = allLauchedResponse.ok
+		? allLauchedResponse.data
 		: [];
 
-	derivedFieldValuesOrActualIfSet.identityName = addSuffixToIdentityName(
-		derivedFieldValuesOrActualIfSet.identityName as string,
-		existingIdentityNames,
+	derivedFieldValuesOrActualIfSet.identityName = addSuffixToMakeTokenUnique(
+		derivedFieldValuesOrActualIfSet.identityName,
+		existingNewsletters.map((_) => _.identityName),
+	);
+
+	derivedFieldValuesOrActualIfSet.brazeNewsletterName =
+		addSuffixToMakeTokenUnique(
+			derivedFieldValuesOrActualIfSet.brazeNewsletterName,
+			existingNewsletters.map((_) => _.brazeNewsletterName),
+			'_',
+		);
+	derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeName =
+		addSuffixToMakeTokenUnique(
+			derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeName,
+			existingNewsletters.map((_) => _.brazeSubscribeAttributeName),
+			'_',
+		);
+	derivedFieldValuesOrActualIfSet.brazeSubscribeEventNamePrefix =
+		addSuffixToMakeTokenUnique(
+			derivedFieldValuesOrActualIfSet.brazeSubscribeEventNamePrefix,
+			existingNewsletters.map((_) => _.brazeSubscribeEventNamePrefix),
+			'_',
+		);
+	derivedFieldValuesOrActualIfSet.campaignName = addSuffixToMakeTokenUnique(
+		derivedFieldValuesOrActualIfSet.campaignName as string,
+		existingNewsletters.map((_) => _.campaignName),
+		'_',
+	);
+	derivedFieldValuesOrActualIfSet.campaignCode = addSuffixToMakeTokenUnique(
+		derivedFieldValuesOrActualIfSet.campaignCode as string,
+		existingNewsletters.map((_) => _.campaignCode),
+		'_',
 	);
 
 	return {

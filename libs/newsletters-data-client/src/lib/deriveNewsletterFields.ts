@@ -33,35 +33,39 @@ export const deriveNewsletterFieldsFromName = (
 };
 
 /**
- * Appends a "-i" to the end of the originalIdentityName if it
- * is already included in the existingIdentityNames. If
- * {originalIdentityName}-i is already in existingIdentityNames,
- * continues to append additional "i"'s until the name is unique.
+ * Appends a delimiter symbol and a series of "i"'s to the original token
+ * if it already included in the existingTokens. Multiple "i"'s are added
+ * if `${original}${delimiter}i` is already an existingToken.
  *
  * This is not ideal - it ensures the suggested derived name is
  * unqiue, but the user should have the option to replace it with a
  * more readable name.
  */
-export const addSuffixToIdentityName = (
-	originalIdentityName: string,
-	existingIdentityNames: string[],
+export const addSuffixToMakeTokenUnique = (
+	originalToken: string,
+	existingTokens: Array<string | undefined>,
+	delimiter = '-',
 ): string => {
-	// no duplicates, so can use the original name
-	if (!existingIdentityNames.includes(originalIdentityName)) {
-		return originalIdentityName;
+	// no duplicates, so can use the token name
+
+	console.log('dedupe', { originalToken, existingTokens });
+
+	if (!existingTokens.includes(originalToken)) {
+		return originalToken;
 	}
 
 	let suffixNumber = 1;
 	let newIdentityName = '';
 
 	while (newIdentityName === '') {
-		const nextPossibleName = `${originalIdentityName}-${'i'.repeat(
+		const nextPossibleName = `${originalToken}${delimiter}${'i'.repeat(
 			suffixNumber,
 		)}`;
-		if (!existingIdentityNames.includes(nextPossibleName)) {
+		if (!existingTokens.includes(nextPossibleName)) {
 			newIdentityName = nextPossibleName;
 		}
 		suffixNumber++;
 	}
+	console.log('change', { newIdentityName });
 	return newIdentityName;
 };

@@ -1,5 +1,9 @@
+import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
 import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
-import type { DraftNewsletterData } from './newsletter-data-type';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from './newsletter-data-type';
 import {
 	newsletterDataSchema,
 	renderingOptionsSchema,
@@ -16,7 +20,8 @@ const defaultNewsletterValues: DraftNewsletterData = {
 
 export const withDefaultNewsletterValuesAndDerivedFields = (
 	draft: DraftNewsletterData,
-): DraftNewsletterData => {
+): DraftNewsletterData &
+	Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
 
 	return {
