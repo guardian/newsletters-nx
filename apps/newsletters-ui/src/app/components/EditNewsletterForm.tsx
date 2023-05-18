@@ -71,7 +71,6 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 					theme: true,
 					category: true,
 					status: true,
-					emailConfirmation: true,
 				})}
 				submitButtonText="Update Newsletter"
 				isDisabled={waitingForResponse}
