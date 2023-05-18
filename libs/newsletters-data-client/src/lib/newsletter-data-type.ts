@@ -62,11 +62,27 @@ export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
 export const thrasherOptionsSchema = z.object({
 	singleThrasher: z.boolean().describe('single thrasher required?'),
-	multiThrasher: z.boolean().describe('multi-thrasher(s) required?'),
 	singleThrasherLocation: singleThrasherLocation.describe(
 		'single thrasher location',
 	),
 	thrasherDescription: z.string().describe('thrasher description'),
+	multiThrashers: z
+		.array(
+			z
+				.object({
+					// TODO - these should be drop-downs populated from existing launched newsletters
+					// plus the draft currently being created
+					// TODO - this has specifically been defined as a triple-thrasher, rather than a
+					// multi-thrasher.  The vast majority of multi-thrashers are triple-thrashers, so
+					// this is suitable for the mvp, but occasionally more than 3 newsletters are required
+					thrasher1: z.string().optional().describe('left-hand thrasher'),
+					thrasher2: z.string().optional().describe('middle thrasher'),
+					thrasher3: z.string().optional().describe('right-hand-thrasher'),
+				})
+				.describe('multi-thrasher configuration'),
+		)
+		.optional()
+		.describe('The configuration for multi-thrashers'),
 });
 export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
 

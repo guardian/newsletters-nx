@@ -1,12 +1,5 @@
-import {
-	Alert,
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	Snackbar,
-} from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type {
 	ApiResponse,
 	NewsletterData,
@@ -18,16 +11,8 @@ interface Props {
 	originalItem: NewsletterData;
 }
 
-const sleep = async (ms: number) =>
-	await new Promise<void>((resolve) => {
-		setTimeout(() => {
-			return resolve();
-		}, ms);
-	});
-
 export const EditNewsletterForm = ({ originalItem }: Props) => {
 	const [item, setItem] = useState(originalItem);
-	const navigate = useNavigate();
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [confirmationMessage, setConfirmationMessage] = useState<
@@ -39,7 +24,6 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			return;
 		}
 		setWaitingForResponse(true);
-		await sleep(500);
 
 		const response = await fetch(`/api/newsletters/${originalItem.listId}`, {
 			method: 'PATCH',
@@ -66,7 +50,6 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			setItem(castResponse.data);
 			setWaitingForResponse(false);
 			setConfirmationMessage('newsletter updated!');
-			navigate('../');
 		} else {
 			setWaitingForResponse(false);
 			setErrorMessage(castResponse.message);
@@ -78,9 +61,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			<SimpleForm
 				title={`Edit ${originalItem.identityName}`}
 				initalData={item}
-				submit={(modification) => {
-					void requestUpdate(modification);
-				}}
+				submit={requestUpdate}
 				schema={newsletterDataSchema.pick({
 					name: true,
 					signUpHeadline: true,
@@ -90,21 +71,17 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 					theme: true,
 					category: true,
 					status: true,
-					emailConfirmation: true,
 				})}
 				submitButtonText="Update Newsletter"
-			/>
-
-			{waitingForResponse && (
-				<Dialog open>
-					<DialogTitle>Waiting</DialogTitle>
-					<DialogContent>
+				isDisabled={waitingForResponse}
+				message={
+					waitingForResponse ? (
 						<Alert severity="info">
 							making your updates to {item.identityName}
 						</Alert>
-					</DialogContent>
-				</Dialog>
-			)}
+					) : undefined
+				}
+			/>
 
 			<Snackbar
 				open={!!errorMessage}

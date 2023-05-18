@@ -1,4 +1,5 @@
 import { Box, Button, Paper, Typography } from '@mui/material';
+import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import type { z } from 'zod';
 import type { FieldDef, FieldValue } from './SchemaForm';
@@ -18,6 +19,8 @@ interface Props<T extends z.ZodRawShape> {
 	schema: z.ZodObject<T>;
 	initalData: SchemaObjectType<T>;
 	submit: { (data: SchemaObjectType<T>): void };
+	isDisabled?: boolean;
+	message?: ReactNode;
 }
 
 /**
@@ -34,6 +37,8 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	schema,
 	initalData,
 	submit,
+	isDisabled,
+	message,
 }: Props<T>) {
 	const [parseInitialDataResult, setParseInitialDataResult] = useState<
 		z.SafeParseReturnType<typeof schema, SchemaObjectType<T>> | undefined
@@ -97,13 +102,16 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	const handleReset = () => {
-		if (!parseInitialDataResult) {
+		if (!parseInitialDataResult || isDisabled) {
 			return;
 		}
 		updateDataAndWarnings(parseInitialDataResult.data);
 	};
 
 	const handleSubmit = () => {
+		if (isDisabled) {
+			return;
+		}
 		const result = schema.safeParse(data);
 		if (result.success) {
 			return submit(result.data);
@@ -124,7 +132,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 			</Typography>
 
 			<Box marginBottom={2}>
-				<Button variant="outlined" onClick={handleReset}>
+				<Button variant="outlined" onClick={handleReset} disabled={isDisabled}>
 					Reset
 				</Button>
 			</Box>
@@ -134,9 +142,14 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				data={data}
 				changeValue={manageChange}
 				validationWarnings={warnings}
+				readOnlyKeys={isDisabled ? Object.keys(schema.shape) : undefined}
 			/>
 			<Box marginBottom={2}>
-				<Button variant="contained" onClick={handleSubmit}>
+				<Button
+					variant="contained"
+					onClick={handleSubmit}
+					disabled={isDisabled}
+				>
 					{submitButtonText}
 				</Button>
 			</Box>
