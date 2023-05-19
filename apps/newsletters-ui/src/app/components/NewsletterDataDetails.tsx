@@ -99,6 +99,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<NavigateButton href="../" variant="outlined">
 					Back to List
 				</NavigateButton>
+				{/* TO DO - restrict the access to the JSON editter based on user role? */}
 				<RawDataDialog
 					record={newsletter}
 					title={newsletter.identityName}
