@@ -59,9 +59,7 @@ const doModify = async (
 				...formDataToDraftNewsletterData(stepData.formData),
 				...listIdEntry,
 			};
-			const storageResponse = await ourDraftService.modifyDraftNewsletter(
-				draftNewsletter,
-			);
+			const storageResponse = await ourDraftService.update(draftNewsletter);
 			if (storageResponse.ok) {
 				return draftNewsletterDataToFormData(storageResponse.data);
 			}

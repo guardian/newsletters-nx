@@ -70,9 +70,7 @@ export const DraftDetails = ({ draft }: Props) => {
 				}}
 			>
 				<CardContent>
-					<Typography sx={{ fontSize: 28, color: palette[100] }}>
-						{draft.name ?? 'UNNAMED DRAFT'}
-					</Typography>
+					<Typography variant="h2">{draft.name ?? 'UNNAMED DRAFT'}</Typography>
 					<Typography sx={{ fontSize: 16 }}>
 						category: {draft.category}
 					</Typography>

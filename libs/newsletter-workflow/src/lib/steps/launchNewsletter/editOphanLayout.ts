@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Modify Ophan Campaign Values
+## Modify Ophan Campaign Values
 
 These are tracking fields used by Ophan.
 

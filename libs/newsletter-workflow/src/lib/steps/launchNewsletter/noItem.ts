@@ -2,7 +2,7 @@ import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 
 export const noItemLayout: WizardStepLayout<LaunchService> = {
-	staticMarkdown: `# Launch a newsletter
+	staticMarkdown: `## Launch a newsletter
 
 This wizard will guide you through the process of launching a new newsletter using email-rendering.
 

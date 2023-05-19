@@ -12,7 +12,7 @@ import {
 
 export function registerDraftsRoutes(app: FastifyInstance) {
 	app.get('/api/drafts', async (req, res) => {
-		const storageResponse = await draftStore.listDrafts();
+		const storageResponse = await draftStore.readAll();
 		if (storageResponse.ok) {
 			return makeSuccessResponse(storageResponse.data);
 		}
@@ -30,7 +30,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 				return makeErrorResponse('Non numerical id passed');
 			}
 
-			const storageResponse = await draftStore.getDraftNewsletter(idAsNumber);
+			const storageResponse = await draftStore.read(idAsNumber);
 			if (storageResponse.ok) {
 				return makeSuccessResponse(storageResponse.data);
 			}
@@ -52,9 +52,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 					.send(makeErrorResponse('Non numerical id passed'));
 			}
 
-			const storageResponse = await draftStore.deleteDraftNewsletter(
-				idAsNumber,
-			);
+			const storageResponse = await draftStore.deleteItem(idAsNumber);
 
 			if (storageResponse.ok) {
 				return makeSuccessResponse(storageResponse.data);
