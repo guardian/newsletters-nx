@@ -24,10 +24,10 @@ export interface WizardStepData {
 	formData?: WizardFormData;
 	currentStepId: string;
 	errorMessage?: string;
-	// ID should be the id of item being editted, as determined by
+	// ID should be the id of item being edited, as determined by
 	// the page URL, rather than from the form data inputted by the user.
 	// It should be undefined for a "create" operation where the page will
-	// not start with an existing item to to be editted.
+	// not start with an existing item to to be edited.
 	id?: string;
 }
 
