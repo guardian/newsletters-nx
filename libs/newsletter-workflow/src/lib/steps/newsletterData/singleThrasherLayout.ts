@@ -11,17 +11,15 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Specify the thrasher setup for {{name}}
+# Specify the single thrasher setup for {{name}}
 
 Do you need a single thrasher?
 
 Should the single thrasher appear on app and web?
 
-Do you need one or more multi-thrashers i.e. sets where the thrasher for **{{name}}** is combined with thrashers for 2 or more other newsletters?
-
 The description will appear on each thrasher e.g.
 
-![Thrasher description](https://i.guim.co.uk/img/uploads/2023/03/15/thrasher.png?quality=85&dpr=2&width=300&s=d11e194cac6fd51bdd84fca862786501)
+![Thrasher description](https://i.guim.co.uk/img/uploads/2023/05/16/single-thrasher.png?quality=85&dpr=2&width=300&s=d30c77a6c732f5e85af3e11318128f2e)
 
 `.trim();
 
@@ -30,9 +28,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const thrasherLayout: WizardStepLayout<DraftStorage> = {
+export const singleThrasherLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Thrashers',
+	label: 'Single Thrasher',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -62,11 +60,6 @@ export const thrasherLayout: WizardStepLayout<DraftStorage> = {
 					if (!singleThrasherLocation) {
 						return 'NO SINGLE THRASHER LOCATION SELECTED';
 					}
-				}
-				const multiThrasher = stepData.formData
-					? stepData.formData['multiThrasher']
-					: undefined;
-				if (singleThrasher || multiThrasher) {
 					const thrasherDescription = stepData.formData
 						? stepData.formData['thrasherDescription']
 						: undefined;
@@ -79,7 +72,7 @@ export const thrasherLayout: WizardStepLayout<DraftStorage> = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.thrasher,
+	schema: formSchemas.singleThrasher,
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };

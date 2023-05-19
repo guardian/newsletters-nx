@@ -29,7 +29,12 @@ export const SelectInput: FunctionComponent<
 				<InputLabel id={`select-input-label-${label}-${options.toString()}`}>
 					{label}
 				</InputLabel>
-				<Select value={valueAsString} label={label} onChange={handleChange}>
+				<Select
+					value={valueAsString}
+					label={label}
+					onChange={handleChange}
+					disabled={props.readOnly}
+				>
 					{optional && <MenuItem value={EMPTY_STRING}>[none]</MenuItem>}
 					{options.map((option) => (
 						<MenuItem key={option} value={option}>

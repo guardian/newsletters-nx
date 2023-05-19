@@ -3,7 +3,6 @@ export * from './lib/deriveNewsletterFields';
 export * from './lib/emailEmbedSchema';
 export * from './lib/legacy-newsletter-type';
 export * from './lib/newsletter-data-type';
-export * from './lib/testQuestionaireSchema';
 export * from './lib/draft-storage';
 export * from './lib/draft-to-newsletter';
 export * from './lib/newsletter-storage';

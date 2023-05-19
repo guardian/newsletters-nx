@@ -22,8 +22,6 @@ interface Props {
 	editHref?: string;
 }
 
-const sxContainedButton = { borderRadius: 0, bgcolor: '#1C5689' };
-
 export const RawDataDialog = ({
 	record,
 	title = 'raw data',
@@ -48,7 +46,6 @@ export const RawDataDialog = ({
 		<>
 			<Button
 				variant="contained"
-				sx={sxContainedButton}
 				onClick={() => {
 					setShowRawData(true);
 				}}
@@ -85,7 +82,6 @@ export const RawDataDialog = ({
 					)}
 					<Button
 						variant="contained"
-						sx={sxContainedButton}
 						onClick={() => {
 							setShowRawData(false);
 						}}

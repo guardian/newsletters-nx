@@ -1,9 +1,9 @@
-import { Button, Paper } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
+import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import type { z } from 'zod';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
-import { defaultFieldStyle, defaultFormStyle } from './SchemaForm/styling';
 
 type SchemaObjectType<T extends z.ZodRawShape> = {
 	[k in keyof z.objectUtil.addQuestionMarks<{
@@ -19,6 +19,8 @@ interface Props<T extends z.ZodRawShape> {
 	schema: z.ZodObject<T>;
 	initalData: SchemaObjectType<T>;
 	submit: { (data: SchemaObjectType<T>): void };
+	isDisabled?: boolean;
+	message?: ReactNode;
 }
 
 /**
@@ -35,6 +37,8 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	schema,
 	initalData,
 	submit,
+	isDisabled,
+	message,
 }: Props<T>) {
 	const [parseInitialDataResult, setParseInitialDataResult] = useState<
 		z.SafeParseReturnType<typeof schema, SchemaObjectType<T>> | undefined
@@ -44,12 +48,18 @@ export function SimpleForm<T extends z.ZodRawShape>({
 		{},
 	);
 
+	// If data has not already been set and the initial data has not
+	// already been found invalid, parse the initialData.
+	// If initialData is valid, setData to initialData
 	useEffect(() => {
+		if (data || parseInitialDataResult?.success === false) {
+			return;
+		}
 		setParseInitialDataResult(schema.safeParse(initalData));
 		if (parseInitialDataResult?.success) {
 			setData(initalData);
 		}
-	}, [initalData, parseInitialDataResult?.success, schema]);
+	}, [initalData, parseInitialDataResult?.success, schema, data]);
 
 	if (parseInitialDataResult && !parseInitialDataResult.success) {
 		console.warn(parseInitialDataResult.error);
@@ -92,13 +102,16 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	const handleReset = () => {
-		if (!parseInitialDataResult) {
+		if (!parseInitialDataResult || isDisabled) {
 			return;
 		}
 		updateDataAndWarnings(parseInitialDataResult.data);
 	};
 
 	const handleSubmit = () => {
+		if (isDisabled) {
+			return;
+		}
 		const result = schema.safeParse(data);
 		if (result.success) {
 			return submit(result.data);
@@ -107,26 +120,39 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	return (
-		<Paper css={defaultFormStyle} elevation={3}>
-			<legend>{title}</legend>
+		<Box
+			elevation={3}
+			padding={1}
+			component={Paper}
+			maxWidth={'sm'}
+			marginBottom={1.5}
+		>
+			<Typography variant="h3" component={'legend'}>
+				{title}
+			</Typography>
 
-			<div css={defaultFieldStyle}>
-				<Button variant="outlined" onClick={handleReset}>
+			<Box marginBottom={2}>
+				<Button variant="outlined" onClick={handleReset} disabled={isDisabled}>
 					Reset
 				</Button>
-			</div>
+			</Box>
 
 			<SchemaForm
 				schema={schema}
 				data={data}
 				changeValue={manageChange}
 				validationWarnings={warnings}
+				readOnlyKeys={isDisabled ? Object.keys(schema.shape) : undefined}
 			/>
-			<div css={defaultFieldStyle}>
-				<Button variant="contained" onClick={handleSubmit}>
+			<Box marginBottom={2}>
+				<Button
+					variant="contained"
+					onClick={handleSubmit}
+					disabled={isDisabled}
+				>
 					{submitButtonText}
 				</Button>
-			</div>
-		</Paper>
+			</Box>
+		</Box>
 	);
 }

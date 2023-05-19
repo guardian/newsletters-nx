@@ -1,10 +1,9 @@
-import { Paper } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import type { z } from 'zod';
 import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
 import type { FieldDef, FieldValue } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
-import { defaultFormStyle } from './SchemaForm/styling';
 
 interface Props {
 	formSchema: z.ZodObject<z.ZodRawShape>;
@@ -24,14 +23,22 @@ export const StateEditForm = ({ formSchema, formData, setFormData }: Props) => {
 	};
 
 	return (
-		<Paper css={defaultFormStyle} elevation={3}>
-			<legend>{formSchema.description}</legend>
+		<Box
+			padding={1}
+			component={Paper}
+			maxWidth={'md'}
+			marginBottom={2.5}
+			elevation={2}
+		>
+			<Typography variant="overline" component={'legend'}>
+				{formSchema.description}
+			</Typography>
 			<SchemaForm
 				schema={formSchema}
 				data={formData}
 				validationWarnings={getValidationWarnings(formData, formSchema)}
 				changeValue={changeFormData}
 			/>
-		</Paper>
+		</Box>
 	);
 };

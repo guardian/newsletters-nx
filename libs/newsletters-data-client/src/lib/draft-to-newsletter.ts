@@ -1,4 +1,3 @@
-import type { EmailEmbed } from './emailEmbedSchema';
 import type { DraftNewsletterData } from './newsletter-data-type';
 import {
 	newsletterDataSchema,
@@ -14,44 +13,12 @@ const defaultNewsletterValues: DraftNewsletterData = {
 	figmaIncludesThrashers: false,
 } as const;
 
-// TODO - the NewsletterData should not have these structure - it's a legacy
-// feature. This should happen in deriveLegacyNewsletter
-const buildEmailEmbedObject = (draft: DraftNewsletterData): EmailEmbed => {
-	const {
-		name = 'newsletter',
-		emailConfirmation = false,
-		frequency,
-		mailSuccessDescription,
-	} = draft;
-
-	const successHeadline = emailConfirmation
-		? 'Check your email inbox and confirm your subscription'
-		: 'Subscription confirmed';
-
-	const successDescription =
-		mailSuccessDescription ??
-		(frequency
-			? `We'll send you ${name} every ${frequency.toLowerCase()}`
-			: `We'll send you ${name} every time it comes out`);
-
-	return {
-		description: draft.signUpEmbedDescription ?? ' ',
-		name: name,
-		title: `Sign up to ${name}`,
-		successHeadline,
-		successDescription: successDescription,
-		hexCode: '#DCDCDC',
-		...draft.emailEmbed,
-	};
-};
-
 export const withDefaultNewsletterValues = (
 	draft: DraftNewsletterData,
 ): DraftNewsletterData => {
 	return {
 		...defaultNewsletterValues,
 		...draft,
-		emailEmbed: buildEmailEmbedObject(draft),
 	};
 };
 

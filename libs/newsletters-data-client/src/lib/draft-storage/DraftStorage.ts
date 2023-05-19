@@ -11,31 +11,31 @@ export type DraftWithId = DraftNewsletterData & { listId: number };
 export const isDraft = isDraftNewsletterData;
 
 export abstract class DraftStorage {
-	abstract createDraftNewsletter(
+	abstract create(
 		draft: DraftWithoutId,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	>;
 
-	abstract getDraftNewsletter(
+	abstract read(
 		listId: number,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	>;
 
-	abstract modifyDraftNewsletter(
+	abstract update(
 		draft: DraftWithId,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	>;
 
-	abstract deleteDraftNewsletter(
+	abstract deleteItem(
 		listId: number,
 	): Promise<
 		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
 	>;
 
-	abstract listDrafts(): Promise<
+	abstract readAll(): Promise<
 		SuccessfulStorageResponse<DraftWithId[]> | UnsuccessfulStorageResponse
 	>;
 }

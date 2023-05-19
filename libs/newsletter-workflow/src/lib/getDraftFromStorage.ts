@@ -25,7 +25,7 @@ export const getDraftFromStorage = async (
 	}
 	const idAsNumber = +existingItemId;
 
-	const storageResponse = await storageInstance.getDraftNewsletter(idAsNumber);
+	const storageResponse = await storageInstance.read(idAsNumber);
 	if (!storageResponse.ok) {
 		throw new StateMachineError(
 			`cannot load draft newsletter with id ${existingItemId}`,
