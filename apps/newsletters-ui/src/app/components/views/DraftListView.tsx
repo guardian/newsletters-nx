@@ -19,7 +19,7 @@ export const DraftListView = () => {
 				<Box paddingX={1} display={'flex'} justifyContent={'flex-end'}>
 					<NavigateFab
 						href="/newsletters/newsletter-data"
-						color="success"
+						color="primary"
 						variant="extended"
 					>
 						create new draft
