@@ -5,7 +5,7 @@ import { executeModify } from '../../executeModify';
 import { getDraftFromStorage } from '../../getDraftFromStorage';
 
 export const startLayout: WizardStepLayout<DraftStorage> = {
-	staticMarkdown: `# Set Rendering Template Options
+	staticMarkdown: `## Set Rendering Template Options
 
 This wizard is to choose the options for how an article-based newsletter will appear in Email-rendering.
 

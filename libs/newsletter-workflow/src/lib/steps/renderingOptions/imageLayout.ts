@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Specify the image caption setup for {{name}}
+## Specify the image caption setup for {{name}}
 
 Would you like captions to be displayed within the newsletter?
 

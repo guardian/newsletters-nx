@@ -14,7 +14,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Will {{name}} be an online article?
+## Will {{name}} be an online article?
 
 Tell us if the newsletter will appear as a web article.
 

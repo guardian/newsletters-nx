@@ -8,7 +8,7 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Ophan Campaign Values
+## Ophan Campaign Values
 
 These are tracking fields used by Ophan.
 

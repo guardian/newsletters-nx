@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Modify Braze Values
+## Modify Braze Values
 
 These are tracking fields used by Braze.
 

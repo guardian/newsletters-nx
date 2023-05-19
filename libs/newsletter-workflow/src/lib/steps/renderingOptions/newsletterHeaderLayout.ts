@@ -10,9 +10,9 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Specify the header setup for {{name}}
+## Specify the header setup for {{name}}
 
-## Date
+### Date
 
 Should the publication date display in each edition?
 
@@ -20,7 +20,7 @@ This is typically shown for daily emails, but not for weekly ones.
 
 ![Date](https://i.guim.co.uk/img/uploads/2023/03/15/Date.png?quality=85&dpr=2&width=300&s=815d857cb40089e47f501bf6d5838c2a)
 
-## Standfirst
+### Standfirst
 
 Would you like this to be displayed?
 

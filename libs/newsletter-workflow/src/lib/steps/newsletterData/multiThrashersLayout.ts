@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Multi-Thrashers for {{name}}
+## Multi-Thrashers for {{name}}
 
 A multi-thrasher comprises three or more newsletter thrashers.
 
