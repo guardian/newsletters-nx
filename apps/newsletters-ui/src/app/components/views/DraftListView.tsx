@@ -21,6 +21,7 @@ export const DraftListView = () => {
 						href="/newsletters/newsletter-data"
 						color="primary"
 						variant="extended"
+						aria-label="open create new draft wizard"
 					>
 						create new draft
 						<AddIcon />
