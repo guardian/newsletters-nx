@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Specify the footer setup for {{name}}
+## Specify the footer setup for {{name}}
 
 What email address would you like to display in the footer of **{{name}}**?
 

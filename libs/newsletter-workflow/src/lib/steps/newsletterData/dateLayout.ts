@@ -11,15 +11,15 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Tell us about your launch date and promotion plans for {{name}}
+## Tell us about your launch date and promotion plans for {{name}}
 
-## Launch
+### Launch
 
 When will the first send of **{{name}}** be?  Please specify the time and date.
 
 This needs to be added in the UK timezone so the system can process this information correctly.
 
-## Promotion
+### Promotion
 
 Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?  If so:
 
@@ -27,7 +27,7 @@ Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?  If s
 
 - What date will the thrashers go live?
 
-## Testing
+### Testing
 
 Please note that we will automatically add a testing period for the newsletter of 1 week before the first send.
 

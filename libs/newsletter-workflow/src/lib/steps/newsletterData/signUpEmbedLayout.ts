@@ -14,7 +14,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Specify the sign up embed copy
+## Specify the sign up embed copy
 
 Please enter the description for the sign up embed for **{{name}}**
 

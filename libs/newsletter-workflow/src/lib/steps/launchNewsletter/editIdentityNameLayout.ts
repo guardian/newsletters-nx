@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Modify Identity Name
+## Modify Identity Name
 
 This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
 
