@@ -139,7 +139,7 @@ EOL`,
 			},
 			applicationLogging: {
 				enabled: true,
-			}
+			},
 		});
 
 		const ec2AppApi = new GuNodeApp(this, {
@@ -155,7 +155,7 @@ EOL`,
 			app: apiAppName,
 			applicationLogging: {
 				enabled: true,
-			}
+			},
 		});
 
 		const readOnlyEndpointApiKeyParam = `/${this.stage}/${this.stack}/${apiAppName}/readOnlyEndpointApiKey`;

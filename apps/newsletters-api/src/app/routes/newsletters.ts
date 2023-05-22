@@ -9,7 +9,7 @@ import {
 	makeSuccessResponse,
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
-import * as process from "process";
+import * as process from 'process';
 
 export function registerNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
