@@ -1,9 +1,11 @@
 import type { RouteObject } from 'react-router-dom';
 import { HomeMenu } from '../components/HomeMenu';
+import { TemplateListView } from '../components/views/TemplateListView';
 import { ContentWrapper } from '../ContentWrapper';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { listLoader } from '../loaders/newsletters';
+import { renderingTemplateListLoader } from '../loaders/rendering-templates';
 
 export const homeRoute: RouteObject = {
 	path: '/',
@@ -18,7 +20,8 @@ export const homeRoute: RouteObject = {
 		},
 		{
 			path: 'templates',
-			element: <ContentWrapper>Coming soon...</ContentWrapper>,
+			element: <TemplateListView />,
+			loader: renderingTemplateListLoader,
 		},
 		{
 			path: 'thrashers',

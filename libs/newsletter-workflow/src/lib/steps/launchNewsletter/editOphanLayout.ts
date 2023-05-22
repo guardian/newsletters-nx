@@ -4,7 +4,7 @@ import {
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModifyWithinLaunch } from '../../executeModify';
+import { checkFormDataValuesAreUnique } from '../../check-input-is-unique';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
@@ -37,17 +37,15 @@ export const editOphanLayout: WizardStepLayout<LaunchService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModifyWithinLaunch,
 		},
 		next: {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: () => {
-				// TODO - check that ophan values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
-			executeStep: executeModifyWithinLaunch,
+			onBeforeStepChangeValidate: checkFormDataValuesAreUnique([
+				'campaignCode',
+				'campaignName',
+			]),
 		},
 	},
 	schema: formSchemas.ophan,
