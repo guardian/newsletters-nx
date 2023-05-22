@@ -255,7 +255,9 @@ export NEWSLETTER_BUCKET_NAME=",
                 "
 export USE_IN_MEMORY_STORAGE=false
 cd /opt/newsletters-api
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-api dist/apps/newsletters-api/index.cjs'",
+cp /opt/newsletters-api/scripts/etc/systemd/system/newsletters-api.service /etc/systemd/system/
+systemctl enable newsletters-api
+systemctl start newsletters-api",
               ],
             ],
           },
@@ -388,7 +390,9 @@ export NEWSLETTER_BUCKET_NAME=",
                 "
 export USE_IN_MEMORY_STORAGE=false
 cd /opt/newsletters-tool
-su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsletters-api/index.cjs'",
+cp /opt/newsletters-tool/scripts/etc/systemd/system/newsletters-api.service /etc/systemd/system/
+systemctl enable newsletters-api
+systemctl start newsletters-api",
               ],
             ],
           },

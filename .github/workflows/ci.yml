@@ -38,7 +38,7 @@ jobs:
         run: |
           npm run bundle:ui
           npm run bundle:api
-          zip -r dist/newsletters-tool.zip dist
+          zip -r dist/newsletters-tool.zip dist scripts
           cp dist/newsletters-tool.zip dist/newsletters-api.zip
 
         # Build Cloudformation definition from CDK

@@ -62,7 +62,10 @@ export class NewslettersTool extends GuStack {
 			`export NEWSLETTER_BUCKET_NAME=${bucketName}`, // sets the bucket name environment variable
 			`export USE_IN_MEMORY_STORAGE=false`, // use s3 when running on cloud
 			`cd /opt/${app}`, // Run from the same folder as when running locally to reduce the difference.
-			`su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/index.cjs'`, // run the main entrypoint file as ubuntu user using pm2
+			`cp /opt/${app}/scripts/etc/systemd/system/newsletters-api.service /etc/systemd/system/`, // copy the service file to the systemd folder
+			`systemctl enable newsletters-api`, // enable the service
+			`systemctl start newsletters-api`, // enable the service
+			// `su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/index.cjs'`, // run the main entrypoint file as ubuntu user using pm2
 		].join('\n');
 	};
 
