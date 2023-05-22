@@ -6,16 +6,20 @@ const Styles = styled.div`
 	font-family: 'roboto';
 
 	.left-aligned-step-button {
-		b {
-			text-decoration: underline;
-		}
-
-		& > .MuiStepLabel-horizontal {
+		.MuiStepLabel-root {
 			flex: 1;
 			text-align: left;
 			min-height: 4rem;
 			transition: background-color 0.5s;
-			&:hover {
+		}
+
+		.MuiStepLabel-label {
+			font-weight: 700;
+			text-decoration: underline;
+		}
+
+		&:hover {
+			.MuiStepLabel-root {
 				background-color: ${appTheme.palette.primary.light};
 			}
 		}

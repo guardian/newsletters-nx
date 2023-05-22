@@ -150,7 +150,7 @@ export const StepNav = ({
 								}}
 								optional={caption}
 							>
-								<b>{step.label ?? step.id}</b>
+								{step.label ?? step.id}
 							</StepButton>
 						) : (
 							<StepLabel optional={caption}> {step.label ?? step.id}</StepLabel>
