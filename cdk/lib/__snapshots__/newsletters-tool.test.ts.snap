@@ -245,27 +245,27 @@ mkdir -p /opt/newsletters-api
 unzip /tmp/newsletters-api.zip -d /opt/newsletters-api
 chown -R ubuntu /opt/newsletters-api
 # write out systemd file
-			cat >/etc/systemd/system/newsletters-api.service <<EOL
-			[Unit]
-			Description=Newsletters API Service
-			After=network.target
-			[Service]
-			Type=simple
-			User=ubuntu
-			ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
-			Restart=on-failure
-			Environment=STAGE=TEST
-			Environment=NEWSLETTERS_API_READ=true
-			Environment=NEWSLETTERS_UI_SERVE=false
-			Environment=NEWSLETTER_BUCKET_NAME=",
+cat >/etc/systemd/system/newsletters-api.service <<EOL
+[Unit]
+Description=Newsletters API Service
+After=network.target
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
+Restart=on-failure
+Environment=STAGE=TEST
+Environment=NEWSLETTERS_API_READ=true
+Environment=NEWSLETTERS_UI_SERVE=false
+Environment=NEWSLETTER_BUCKET_NAME=",
                 {
                   "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
                 },
                 "
-			Environment=USE_IN_MEMORY_STORAGE=false
-			[Install]
-			WantedBy=multi-user.target
-			EOL
+Environment=USE_IN_MEMORY_STORAGE=false
+[Install]
+WantedBy=multi-user.target
+EOL
 systemctl enable newsletters-api
 systemctl start newsletters-api",
               ],
@@ -390,27 +390,27 @@ mkdir -p /opt/newsletters-tool
 unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
 chown -R ubuntu /opt/newsletters-tool
 # write out systemd file
-			cat >/etc/systemd/system/newsletters-api.service <<EOL
-			[Unit]
-			Description=Newsletters API Service
-			After=network.target
-			[Service]
-			Type=simple
-			User=ubuntu
-			ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
-			Restart=on-failure
-			Environment=STAGE=TEST
-			Environment=NEWSLETTERS_API_READ=false
-			Environment=NEWSLETTERS_UI_SERVE=true
-			Environment=NEWSLETTER_BUCKET_NAME=",
+cat >/etc/systemd/system/newsletters-api.service <<EOL
+[Unit]
+Description=Newsletters API Service
+After=network.target
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
+Restart=on-failure
+Environment=STAGE=TEST
+Environment=NEWSLETTERS_API_READ=false
+Environment=NEWSLETTERS_UI_SERVE=true
+Environment=NEWSLETTER_BUCKET_NAME=",
                 {
                   "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
                 },
                 "
-			Environment=USE_IN_MEMORY_STORAGE=false
-			[Install]
-			WantedBy=multi-user.target
-			EOL
+Environment=USE_IN_MEMORY_STORAGE=false
+[Install]
+WantedBy=multi-user.target
+EOL
 systemctl enable newsletters-api
 systemctl start newsletters-api",
               ],
