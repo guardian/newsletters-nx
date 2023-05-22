@@ -16,7 +16,7 @@ import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request'
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
-import { WizardStepButton } from './WizardStepButton';
+import { WizardActionButton } from './WizardActionButton';
 
 /**
  * Interface for the props passed to the `Wizard` component.
@@ -165,7 +165,7 @@ export const Wizard: React.FC<WizardProps> = ({
 			)}
 			<Stack spacing={2} direction="row">
 				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
-					<WizardStepButton
+					<WizardActionButton
 						key={key}
 						button={button}
 						onClick={handleButtonClick}

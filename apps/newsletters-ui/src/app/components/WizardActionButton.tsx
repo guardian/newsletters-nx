@@ -7,7 +7,7 @@ interface Props {
 	onClick: { (buttonId: string): { (): void } };
 }
 
-export const WizardStepButton = ({ button, onClick }: Props) => {
+export const WizardActionButton = ({ button, onClick }: Props) => {
 	const primaryActions: WizardButtonType[] = ['NEXT', 'LAUNCH'];
 
 	const variant = primaryActions.includes(button.buttonType)
