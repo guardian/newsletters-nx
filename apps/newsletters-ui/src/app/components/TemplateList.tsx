@@ -30,7 +30,7 @@ const getChromaticURL = (template: RenderingTemplate): string => {
 export const TemplateList = ({ templates }: Props) => {
 	return (
 		<Container maxWidth="lg">
-			<Typography variant="h2">email-rendering Templates</Typography>
+			<Typography variant="h2">Email Rendering Templates</Typography>
 			<Typography variant="subtitle2">
 				{templates.length} templates implemented in the email-rendering service.
 			</Typography>
