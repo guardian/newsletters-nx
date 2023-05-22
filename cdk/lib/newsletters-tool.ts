@@ -55,14 +55,25 @@ export class NewslettersTool extends GuStack {
 			`mkdir -p /opt/${app}`, // make more permanent directory for app to be unzipped into
 			`unzip /tmp/${app}.zip -d /opt/${app}`, // unzip the downloaded zip from /tmp into directory in /opt instead
 			`chown -R ubuntu /opt/${app}`, // change ownership of the copied files to ubuntu user
-			`export NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}`,
-			`export NEWSLETTERS_API_READ_WRITE=${readOnly ? 'false' : 'true'}`,
-			`export NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}`,
-			`export STAGE=${this.stage}`, // sets the stage environment variable
-			`export NEWSLETTER_BUCKET_NAME=${bucketName}`, // sets the bucket name environment variable
-			`export USE_IN_MEMORY_STORAGE=false`, // use s3 when running on cloud
-			`cd /opt/${app}`, // Run from the same folder as when running locally to reduce the difference.
-			`cp /opt/${app}/scripts/etc/systemd/system/newsletters-api.service /etc/systemd/system/`, // copy the service file to the systemd folder
+
+			`# write out systemd file
+			cat >/etc/systemd/system/newsletters-api.service <<EOL
+			[Unit]
+			Description=Newsletters API Service
+			After=network.target
+			[Service]
+			Type=simple
+			User=ubuntu
+			ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
+			Restart=on-failure
+			Environment=STAGE=${this.stage}
+			Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
+			Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
+			Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
+			Environment=USE_IN_MEMORY_STORAGE=false
+			[Install]
+			WantedBy=multi-user.target
+			EOL`,
 			`systemctl enable newsletters-api`, // enable the service
 			`systemctl start newsletters-api`, // enable the service
 			// `su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/index.cjs'`, // run the main entrypoint file as ubuntu user using pm2
