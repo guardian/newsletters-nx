@@ -10,7 +10,6 @@ import {
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
 
-
 export function registerNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
