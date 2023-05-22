@@ -1,14 +1,14 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Container } from '@mui/material';
-import { useLoaderData } from 'react-router-dom';
+import {Box, Button, Container} from '@mui/material';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { isDraft } from '@newsletters-nx/newsletters-data-client';
 import { DraftsTable } from '../DraftsTable';
-import { NavigateFab } from '../NavigateFab';
 
 export const DraftListView = () => {
 	const list = useLoaderData();
+	const navigate = useNavigate();
 	if (!list || !Array.isArray(list)) {
-		return <nav>NO LIST</nav>;
+		return <nav>No Drafts</nav>;
 	}
 
 	const drafts = list.filter(isDraft);
@@ -16,16 +16,15 @@ export const DraftListView = () => {
 		<>
 			<DraftsTable drafts={drafts} />
 			<Container maxWidth="lg">
-				<Box paddingX={1} display={'flex'} justifyContent={'flex-end'}>
-					<NavigateFab
-						href="/newsletters/newsletter-data"
-						color="primary"
-						variant="extended"
+				<Box paddingX={1} paddingBottom={'8px'} display={'flex'} justifyContent={'flex-end'}>
+					<Button
+						variant="contained"
+						endIcon={<AddIcon />}
+						onClick={() => navigate('/newsletters/newsletter-data')}
 						aria-label="open create new draft wizard"
 					>
-						create new draft
-						<AddIcon />
-					</NavigateFab>
+						New draft
+					</Button>
 				</Box>
 			</Container>
 		</>
