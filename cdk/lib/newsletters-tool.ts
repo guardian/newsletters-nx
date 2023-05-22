@@ -137,6 +137,9 @@ EOL`,
 				enabled: true,
 				prefix: `ELBLogs/${this.stack}/${toolAppName}/${this.stage}`,
 			},
+			applicationLogging: {
+				enabled: true,
+			}
 		});
 
 		const ec2AppApi = new GuNodeApp(this, {
@@ -150,6 +153,9 @@ EOL`,
 				additionalPolicies: [s3AccessPolicy],
 			},
 			app: apiAppName,
+			applicationLogging: {
+				enabled: true,
+			}
 		});
 
 		const readOnlyEndpointApiKeyParam = `/${this.stage}/${this.stack}/${apiAppName}/readOnlyEndpointApiKey`;

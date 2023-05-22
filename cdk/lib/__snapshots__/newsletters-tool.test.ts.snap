@@ -177,6 +177,11 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             "PropagateAtLaunch": true,
             "Value": "TEST",
           },
+          {
+            "Key": "SystemdUnit",
+            "PropagateAtLaunch": true,
+            "Value": "newsletters-api.service",
+          },
         ],
         "TargetGroupARNs": [
           {
@@ -321,6 +326,11 @@ systemctl start newsletters-api",
             "Key": "Stage",
             "PropagateAtLaunch": true,
             "Value": "TEST",
+          },
+          {
+            "Key": "SystemdUnit",
+            "PropagateAtLaunch": true,
+            "Value": "newsletters-tool.service",
           },
         ],
         "TargetGroupARNs": [
