@@ -1,20 +1,9 @@
 import type { LoaderFunction } from 'react-router';
 import type {
-	ApiResponse,
 	DraftNewsletterData,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-
-async function fetchApiData<T>(path: string): Promise<T | undefined> {
-	try {
-		const response = await fetch(path);
-		const data = (await response.json()) as ApiResponse<T>;
-		return data.ok ? data.data : undefined;
-	} catch (err) {
-		console.error(err);
-		return undefined;
-	}
-}
+import { fetchApiData } from '../api-requests/fetch-api-data';
 
 export const listLoader: LoaderFunction = async (): Promise<
 	NewsletterData[]
