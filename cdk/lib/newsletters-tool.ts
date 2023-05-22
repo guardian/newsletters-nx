@@ -63,7 +63,7 @@ After=network.target
 [Service]
 Type=simple
 User=ubuntu
-ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
+ExecStart=/usr/bin/node /opt/${app}/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=${this.stage}
 Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
