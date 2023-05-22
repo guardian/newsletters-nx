@@ -73,7 +73,11 @@ export function HomeMenu() {
 				<Grid item xs={6} sm={4} display={'flex'}>
 					<ScrollingMenuButton
 						buttonText="update newsletter"
-						buttonProps={{ variant: 'outlined', fullWidth: true, size: 'large' }}
+						buttonProps={{
+							variant: 'outlined',
+							fullWidth: true,
+							size: 'large',
+						}}
 						ariaMenuId="newsletter-update-menu"
 						ariaButtonLabel="select newsletter to update"
 						options={list.map((newsletter) => ({
