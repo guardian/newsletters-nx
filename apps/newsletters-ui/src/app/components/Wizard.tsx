@@ -12,6 +12,7 @@ import type {
 	CurrentStepRouteResponse,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
@@ -59,37 +60,27 @@ export const Wizard: React.FC<WizardProps> = ({
 	>();
 
 	const fetchStep = useCallback(
-		(body: CurrentStepRouteRequest) => {
-			return fetch(`/api/currentstep`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(body),
-			})
-				.then((response) => response.json())
-				.then((data: CurrentStepRouteResponse) => {
-					const listIdOnData = data.formData?.listId;
-					if (typeof listIdOnData === 'number') {
-						setListId(listIdOnData);
-					}
+		async (body: CurrentStepRouteRequest) => {
+			try {
+				const data = await makeWizardStepRequest(body);
+				const listIdOnData = data.formData?.listId;
+				if (typeof listIdOnData === 'number') {
+					setListId(listIdOnData);
+				}
 
-					setServerData(data);
+				setServerData(data);
 
-					const schema = getFormSchema(wizardId, data.currentStepId);
-					const blank = schema ? getEmptySchemaData(schema) : undefined;
+				const schema = getFormSchema(wizardId, data.currentStepId);
+				const blank = schema ? getEmptySchemaData(schema) : undefined;
 
-					const populatedForm = {
-						...blank,
-						...data.formData,
-					};
-
-					setFormData(populatedForm as WizardFormData);
-				})
-				.catch((error: unknown /* FIXME! */) => {
-					setServerErrorMessage('Wizard failed');
-					console.error('Error invoking next step of wizard:', error);
+				setFormData({
+					...blank,
+					...data.formData,
 				});
+			} catch (error: unknown /* FIXME! */) {
+				setServerErrorMessage('Wizard failed');
+				console.error('Error invoking next step of wizard:', error);
+			}
 		},
 		[wizardId],
 	);
