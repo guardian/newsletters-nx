@@ -17,6 +17,7 @@ import type {
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
+import { WizardStepButton } from './WizardStepButton';
 
 /**
  * Interface for the props passed to the `Wizard` component.
@@ -124,29 +125,6 @@ export const Wizard: React.FC<WizardProps> = ({
 		);
 	}
 
-	const getWizardButton = (
-		button: WizardButton,
-		onClick: (buttonId: string) => () => void,
-		key: string,
-	) => {
-		const primaryActions: WizardButtonType[] = ['NEXT', 'LAUNCH'];
-
-		const variant = primaryActions.includes(button.buttonType)
-			? 'contained'
-			: 'outlined';
-
-		return (
-			<Button
-				variant={variant}
-				onClick={() => {
-					onClick(button.id)();
-				}}
-				key={`${key}${button.label}`}
-			>
-				{button.label}
-			</Button>
-		);
-	};
 	const handleButtonClick = (buttonId: string) => () => {
 		void fetchStep({
 			wizardId: wizardId,
@@ -197,9 +175,13 @@ export const Wizard: React.FC<WizardProps> = ({
 				</div>
 			)}
 			<Stack spacing={2} direction="row">
-				{Object.entries(serverData.buttons ?? {}).map(([key, button]) =>
-					getWizardButton(button, handleButtonClick, key),
-				)}
+				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
+					<WizardStepButton
+						key={key}
+						button={button}
+						onClick={handleButtonClick}
+					/>
+				))}
 			</Stack>
 		</Box>
 	);
