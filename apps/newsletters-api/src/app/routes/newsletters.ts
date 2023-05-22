@@ -9,6 +9,7 @@ import {
 	makeSuccessResponse,
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
+import * as process from "process";
 
 export function registerNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
@@ -33,6 +34,11 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		}
 
 		return makeSuccessResponse(storageResponse.data);
+	});
+
+	app.get('/api/env', async (req, res) => {
+		console.log(`testing env vars`);
+		return makeSuccessResponse(process.env);
 	});
 
 	app.get<{ Params: { newsletterId: string } }>(
