@@ -11,7 +11,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Add the design brief and Figma design link for {{name}}
+## Add the design brief and Figma design link for {{name}}
 
 Please share the following for **{{name}}**:
 - The design brief Google document URL

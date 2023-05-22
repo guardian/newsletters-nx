@@ -11,7 +11,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Choose the Pillar and Group for {{name}}
+## Choose the Pillar and Group for {{name}}
 
 Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
 

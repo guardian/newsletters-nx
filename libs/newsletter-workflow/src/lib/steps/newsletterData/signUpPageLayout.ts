@@ -14,7 +14,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Specify the sign up page copy
+## Specify the sign up page copy
 
 Please enter the headline and description for the sign up page for **{{name}}**
 
