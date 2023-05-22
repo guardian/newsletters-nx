@@ -24,20 +24,8 @@ export const isServingUI = () => {
 		process.env.NEWSLETTERS_UI_SERVE,
 	);
 	const isUIServe = process.env.NEWSLETTERS_UI_SERVE === 'true';
-	const shouldServerUI = undefinedAndNotProduction || isUIServe;
-	console.log('shouldServerUI', shouldServerUI);
-	console.log(
-		'process.env.NEWSLETTERS_UI_SERVE',
-		process.env.NEWSLETTERS_UI_SERVE,
-	);
-	console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-	console.log(
-		`undefinedAndNotProduction, isUIServe, shouldServerUI`,
-		undefinedAndNotProduction,
-		isUIServe,
-		shouldServerUI,
-	);
-	return shouldServerUI;
+
+	return undefinedAndNotProduction || isUIServe;
 };
 
 export const isServingReadWriteEndpoints = () => {

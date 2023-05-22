@@ -5,9 +5,7 @@ import type { FastifyInstance, RouteHandlerMethod } from 'fastify';
 
 export function registerUIServer(app: FastifyInstance) {
 	const pathToStaticFiles = path.join('./dist/apps/newsletters-ui');
-	console.log(`Serving static files from ${pathToStaticFiles}`);
 	const resolvedPath = path.resolve(pathToStaticFiles);
-	console.log(`Resolved path is ${resolvedPath}`);
 	// Get fastify to serve the static files
 	void app.register(fastifyStatic, {
 		root: resolvedPath,

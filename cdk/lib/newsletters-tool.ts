@@ -61,6 +61,7 @@ cat >/etc/systemd/system/newsletters-api.service <<EOL
 Description=Newsletters API Service
 After=network.target
 [Service]
+WorkingDirectory=/opt/${app}
 Type=simple
 User=ubuntu
 ExecStart=/usr/bin/node /opt/${app}/dist/apps/newsletters-api/index.cjs
