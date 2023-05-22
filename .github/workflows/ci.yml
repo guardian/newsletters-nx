@@ -11,26 +11,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  main:
-    name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.11.3
-    with:
-      number-of-agents: 3
-      init-commands: |
-        npx nx-cloud start-ci-run --stop-agents-after="build" --agent-count=3
-      parallel-commands: |
-        npx nx-cloud record -- npx nx format:check
-      parallel-commands-on-agents: |
-        npx nx affected --target=lint
-        npx nx affected --target=test --ci --code-coverage
-        npx nx affected --target=build --with-deps --configuration=production
-
-  agents:
-    name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.3
-    with:
-      number-of-agents: 3
-
   deploy:
     name: Upload artifacts to riffraff
     runs-on: ubuntu-latest
