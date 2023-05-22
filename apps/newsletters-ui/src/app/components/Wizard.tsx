@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Stack } from '@mui/material';
+import { Alert, Box, Stack } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
@@ -6,12 +6,10 @@ import {
 	getStartStepId,
 	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
-import type { WizardButtonType } from '@newsletters-nx/newsletters-data-client';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
-	WizardButton,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
 import { MarkdownView } from './MarkdownView';
