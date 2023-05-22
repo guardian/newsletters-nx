@@ -124,6 +124,9 @@ export class NewslettersTool extends GuStack {
 				enabled: true,
 				prefix: `ELBLogs/${this.stack}/${toolAppName}/${this.stage}`,
 			},
+			applicationLogging: {
+				enabled: true,
+			}
 		});
 
 		const ec2AppApi = new GuNodeApp(this, {
@@ -137,6 +140,9 @@ export class NewslettersTool extends GuStack {
 				additionalPolicies: [s3AccessPolicy],
 			},
 			app: apiAppName,
+			applicationLogging: {
+				enabled: true,
+			}
 		});
 
 		const readOnlyEndpointApiKeyParam = `/${this.stage}/${this.stack}/${apiAppName}/readOnlyEndpointApiKey`;
