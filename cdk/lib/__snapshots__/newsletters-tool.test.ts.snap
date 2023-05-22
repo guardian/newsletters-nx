@@ -255,6 +255,7 @@ cat >/etc/systemd/system/newsletters-api.service <<EOL
 Description=Newsletters API Service
 After=network.target
 [Service]
+WorkingDirectory=/opt/newsletters-api
 Type=simple
 User=ubuntu
 ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
@@ -405,6 +406,7 @@ cat >/etc/systemd/system/newsletters-api.service <<EOL
 Description=Newsletters API Service
 After=network.target
 [Service]
+WorkingDirectory=/opt/newsletters-tool
 Type=simple
 User=ubuntu
 ExecStart=/usr/bin/node /opt/newsletters-tool/dist/apps/newsletters-api/index.cjs
