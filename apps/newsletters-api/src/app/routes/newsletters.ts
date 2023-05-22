@@ -36,7 +36,7 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		return makeSuccessResponse(storageResponse.data);
 	});
 
-	app.get('/api/env', async () => {
+	app.get('/api/env', () => {
 		console.log(`testing env vars`);
 		return makeSuccessResponse(process.env);
 	});
