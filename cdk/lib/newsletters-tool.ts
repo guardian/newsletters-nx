@@ -58,7 +58,7 @@ export class NewslettersTool extends GuStack {
 			`# write out systemd file
 cat >/etc/systemd/system/newsletters-api.service <<EOL
 [Unit]
-Description=Newsletters API Service
+Description=${app}
 After=network.target
 [Service]
 WorkingDirectory=/opt/${app}

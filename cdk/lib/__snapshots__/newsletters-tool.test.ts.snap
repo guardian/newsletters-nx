@@ -252,7 +252,7 @@ chown -R ubuntu /opt/newsletters-api
 # write out systemd file
 cat >/etc/systemd/system/newsletters-api.service <<EOL
 [Unit]
-Description=Newsletters API Service
+Description=newsletters-api
 After=network.target
 [Service]
 WorkingDirectory=/opt/newsletters-api
@@ -403,7 +403,7 @@ chown -R ubuntu /opt/newsletters-tool
 # write out systemd file
 cat >/etc/systemd/system/newsletters-api.service <<EOL
 [Unit]
-Description=Newsletters API Service
+Description=newsletters-tool
 After=network.target
 [Service]
 WorkingDirectory=/opt/newsletters-tool
