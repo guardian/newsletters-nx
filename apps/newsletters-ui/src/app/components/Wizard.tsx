@@ -165,12 +165,12 @@ export const Wizard: React.FC<WizardProps> = ({
 			)}
 
 			{serverData.errorMessage && (
-				<div style={{ paddingBottom: '12px' }}>
+				<Box paddingBottom={2}>
 					<FailureAlert
 						errorMessage={serverData.errorMessage}
 						isPersistent={serverData.hasPersistentError}
 					/>
-				</div>
+				</Box>
 			)}
 			<Stack spacing={2} direction="row">
 				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
