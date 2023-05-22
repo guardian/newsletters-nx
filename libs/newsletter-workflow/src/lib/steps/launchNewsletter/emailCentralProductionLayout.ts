@@ -4,7 +4,7 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Emailing Central Production
+## Emailing Central Production
 
 ***DEPENDING ON THE DATA ENTERED ON THE TAGS PAGE OF THE WIZARD, RENDER ONE OF THE FOLLOWING***
 

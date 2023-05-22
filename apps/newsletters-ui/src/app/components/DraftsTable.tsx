@@ -139,7 +139,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 	);
 	return (
 		<>
-			<Table data={data} columns={columns} defaultSortId="name" />;
+			<Table data={data} columns={columns} defaultSortId="name" />
 			<EditDraftDialog
 				draft={draftInDialog}
 				close={() => {

@@ -13,7 +13,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# How will {{name}} be produced?
+## How will {{name}} be produced?
 
 Editorial newsletters can be produced in three ways:
 

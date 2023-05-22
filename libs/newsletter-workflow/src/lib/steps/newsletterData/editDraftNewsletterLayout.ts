@@ -7,7 +7,7 @@ import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { formSchemas } from './formSchemas';
 
 export const editDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
-	staticMarkdown: `# Change Newsletter name
+	staticMarkdown: `## Change Newsletter name
 
 You can edit the name of the newsletter.
 

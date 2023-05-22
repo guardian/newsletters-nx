@@ -14,7 +14,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Choose the Geo Focus for {{name}}
+## Choose the Geo Focus for {{name}}
 
 What’s the geo focus of **{{name}}**? UK, US, Australia or International??
 
