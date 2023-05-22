@@ -52,6 +52,12 @@ Run `nx graph` to see a diagram of the dependencies of the projects.
 
 Run `npx nx connect-to-nx-cloud` to enable [remote caching](https://nx.app) and make CI faster.
 
+**NOTE** - we decided to not use remote caching to simplify the set-up and to avoid uncertainty on how to best manange the user account needed to 'claim' the Workspace in nx-cloud. See https://nx.dev/core-features/share-your-cache#connecting-your-workspace-to-your-nx-cloud-account
+
+Remote caching had been set up and was working without 'claiming' the workspace, but an unexpected change in nx policy(?) caused [CI errors](https://github.com/guardian/newsletters-nx/actions/runs/5043176034/jobs/9044634561?pr=136) of:
+
+`"NX Error when connecting to Nx Cloud. Code: 401. Error: This workspace is more than a week old and is unclaimed. Workspaces must be claimed within 7 days of creation.."`
+
 ### Further help
 
 Visit the [Nx Documentation](https://nx.dev) to learn more.
