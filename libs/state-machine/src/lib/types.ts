@@ -31,7 +31,7 @@ export interface WizardStepData {
 	id?: string;
 }
 
-type AsyncValidator<T extends GenericStorageInterface> = (
+export type AsyncValidator<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
