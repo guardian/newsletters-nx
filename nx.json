@@ -3,10 +3,10 @@
 	"npmScope": "newsletters-nx",
 	"tasksRunnerOptions": {
 		"default": {
-			"runner": "@nrwl/nx-cloud",
+			"runner": "nx/tasks-runners/default",
 			"options": {
 				"cacheableOperations": ["build", "lint", "test", "e2e"],
-				"accessToken": "ZjJiM2YxYjMtYTBlZi00ZTdiLThiNzUtMTYwY2Q2MDc4Y2M4fHJlYWQtd3JpdGU="
+				"runtimeCacheInputs": ["node -v"]
 			}
 		}
 	},
