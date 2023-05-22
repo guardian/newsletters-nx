@@ -18,7 +18,7 @@ export const DraftListView = () => {
 			<Container maxWidth="lg">
 				<Box
 					paddingX={1}
-					paddingBottom={'8px'}
+					paddingBottom={1}
 					display={'flex'}
 					justifyContent={'flex-end'}
 				>
