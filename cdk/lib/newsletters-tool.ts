@@ -139,6 +139,7 @@ EOL`,
 			},
 			applicationLogging: {
 				enabled: true,
+				systemdUnitName: 'newsletters-api.service',
 			},
 		});
 
@@ -155,6 +156,7 @@ EOL`,
 			app: apiAppName,
 			applicationLogging: {
 				enabled: true,
+				systemdUnitName: 'newsletters-api.service',
 			},
 		});
 

@@ -180,7 +180,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
           {
             "Key": "SystemdUnit",
             "PropagateAtLaunch": true,
-            "Value": "newsletters-api.service",
+            "Value": "newsletters-api.service.service",
           },
         ],
         "TargetGroupARNs": [
@@ -331,7 +331,7 @@ systemctl start newsletters-api",
           {
             "Key": "SystemdUnit",
             "PropagateAtLaunch": true,
-            "Value": "newsletters-tool.service",
+            "Value": "newsletters-api.service.service",
           },
         ],
         "TargetGroupARNs": [

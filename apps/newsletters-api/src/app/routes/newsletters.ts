@@ -37,7 +37,7 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 
 	app.get('/api/headers', async (req, res) => {
 		console.log('headers', req.headers);
-		console.log('some searchable string like banana');
+		console.log('some searchable string like unusualbanana');
 		return makeSuccessResponse(req.headers);
 	});
 
