@@ -6,9 +6,14 @@ const USE_FAKE_JWT = true as boolean;
 
 const atob = (a: string) => Buffer.from(a, 'base64').toString('binary');
 
-function parseJwt(token: string): Partial<Record<string, string>> {
+function parseJwt(
+	token: string,
+	bodyOrHeader: 'body' | 'headers' = 'body',
+): Partial<Record<string, string>> {
 	try {
-		const base64Url = token.split('.')[1] as string;
+		const base64Url = token.split('.')[
+			bodyOrHeader === 'headers' ? 0 : 1
+		] as string;
 		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
 		const jsonPayload = decodeURIComponent(
 			atob(base64)
@@ -31,7 +36,13 @@ export function registerUserRoute(app: FastifyInstance) {
 			? FAKE_JWT
 			: req.headers['x-amzn-oidc-data'];
 
-		const profile = typeof jwtProfile === 'string' ? parseJwt(jwtProfile) : {};
+		const profile =
+			typeof jwtProfile === 'string'
+				? {
+						body: parseJwt(jwtProfile),
+						headers: parseJwt(jwtProfile, 'headers'),
+				  }
+				: {};
 
 		return res.send(profile);
 	});
