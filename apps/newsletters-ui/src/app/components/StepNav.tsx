@@ -136,8 +136,8 @@ export const StepNav = ({
 				return (
 					<Step
 						sx={{
-							paddingBottom: '0.25rem',
-							flexBasis: '11rem',
+							paddingBottom: 0.5,
+							flexBasis: 176,
 						}}
 						key={step.id}
 						active={isCurrent(step)}
@@ -150,7 +150,7 @@ export const StepNav = ({
 								}}
 								optional={caption}
 							>
-								<b>{step.label ?? step.id}</b>
+								{step.label ?? step.id}
 							</StepButton>
 						) : (
 							<StepLabel optional={caption}> {step.label ?? step.id}</StepLabel>

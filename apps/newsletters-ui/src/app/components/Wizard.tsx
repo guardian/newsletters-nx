@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Stack } from '@mui/material';
+import { Alert, Box, Stack } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
@@ -6,17 +6,17 @@ import {
 	getStartStepId,
 	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
-import type { WizardButtonType } from '@newsletters-nx/newsletters-data-client';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
-	WizardButton,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
+import { WizardActionButton } from './WizardActionButton';
 
 /**
  * Interface for the props passed to the `Wizard` component.
@@ -60,37 +60,27 @@ export const Wizard: React.FC<WizardProps> = ({
 	>();
 
 	const fetchStep = useCallback(
-		(body: CurrentStepRouteRequest) => {
-			return fetch(`/api/currentstep`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(body),
-			})
-				.then((response) => response.json())
-				.then((data: CurrentStepRouteResponse) => {
-					const listIdOnData = data.formData?.listId;
-					if (typeof listIdOnData === 'number') {
-						setListId(listIdOnData);
-					}
+		async (body: CurrentStepRouteRequest) => {
+			try {
+				const data = await makeWizardStepRequest(body);
+				const listIdOnData = data.formData?.listId;
+				if (typeof listIdOnData === 'number') {
+					setListId(listIdOnData);
+				}
 
-					setServerData(data);
+				setServerData(data);
 
-					const schema = getFormSchema(wizardId, data.currentStepId);
-					const blank = schema ? getEmptySchemaData(schema) : undefined;
+				const schema = getFormSchema(wizardId, data.currentStepId);
+				const blank = schema ? getEmptySchemaData(schema) : undefined;
 
-					const populatedForm = {
-						...blank,
-						...data.formData,
-					};
-
-					setFormData(populatedForm as WizardFormData);
-				})
-				.catch((error: unknown /* FIXME! */) => {
-					setServerErrorMessage('Wizard failed');
-					console.error('Error invoking next step of wizard:', error);
+				setFormData({
+					...blank,
+					...data.formData,
 				});
+			} catch (error: unknown /* FIXME! */) {
+				setServerErrorMessage('Wizard failed');
+				console.error('Error invoking next step of wizard:', error);
+			}
 		},
 		[wizardId],
 	);
@@ -124,29 +114,6 @@ export const Wizard: React.FC<WizardProps> = ({
 		);
 	}
 
-	const getWizardButton = (
-		button: WizardButton,
-		onClick: (buttonId: string) => () => void,
-		key: string,
-	) => {
-		const primaryActions: WizardButtonType[] = ['NEXT', 'LAUNCH'];
-
-		const variant = primaryActions.includes(button.buttonType)
-			? 'contained'
-			: 'outlined';
-
-		return (
-			<Button
-				variant={variant}
-				onClick={() => {
-					onClick(button.id)();
-				}}
-				key={`${key}${button.label}`}
-			>
-				{button.label}
-			</Button>
-		);
-	};
 	const handleButtonClick = (buttonId: string) => () => {
 		void fetchStep({
 			wizardId: wizardId,
@@ -189,17 +156,21 @@ export const Wizard: React.FC<WizardProps> = ({
 			)}
 
 			{serverData.errorMessage && (
-				<div style={{ paddingBottom: '12px' }}>
+				<Box paddingBottom={2}>
 					<FailureAlert
 						errorMessage={serverData.errorMessage}
 						isPersistent={serverData.hasPersistentError}
 					/>
-				</div>
+				</Box>
 			)}
 			<Stack spacing={2} direction="row">
-				{Object.entries(serverData.buttons ?? {}).map(([key, button]) =>
-					getWizardButton(button, handleButtonClick, key),
-				)}
+				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
+					<WizardActionButton
+						key={key}
+						button={button}
+						onClick={handleButtonClick}
+					/>
+				))}
 			</Stack>
 		</Box>
 	);
