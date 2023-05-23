@@ -11,8 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   deploy:
-    name: Upload artifacts to riffraff
+    name: Build, test and deploy to riff-raff
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -33,6 +34,9 @@ jobs:
       - name: Install deps
         run: |
           npm ci
+          npm run lint
+          npm run test
+
 
       - name: Bundle and zip
         run: |
