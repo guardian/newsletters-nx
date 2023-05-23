@@ -30,12 +30,14 @@ export const appTheme = createTheme({
 			lineHeight: '1.6',
 		},
 		h2: {
-			fontFamily: 'monospace, sans-serif',
-			fontSize: '2.25rem',
+			fontSize: '2rem',
+			marginBottom: '.25rem',
+			borderBottomWidth: 1,
+			borderBottomColor: 'primary.dark',
+			borderBottomStyle: 'solid',
 		},
 		h3: {
-			fontSize: '1.75rem',
-			fontWeight: 700,
+			fontSize: '1.5rem',
 			marginBottom: '.25rem',
 		},
 	},

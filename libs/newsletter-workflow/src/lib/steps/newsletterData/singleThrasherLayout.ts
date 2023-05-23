@@ -11,7 +11,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Specify the single thrasher setup for {{name}}
+## Specify the single thrasher setup for {{name}}
 
 Do you need a single thrasher?
 

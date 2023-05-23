@@ -1,6 +1,9 @@
 import type { DraftStorage } from '../draft-storage';
-import { withDefaultNewsletterValues } from '../draft-to-newsletter';
-import type { NewsletterData } from '../newsletter-data-type';
+import { withDefaultNewsletterValuesAndDerivedFields } from '../draft-to-newsletter';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '../newsletter-data-type';
 import type { NewsletterStorage } from '../newsletter-storage';
 import type {
 	SuccessfulStorageResponse,
@@ -21,6 +24,7 @@ export class LaunchService {
 
 	async launchDraft(
 		draftId: number,
+		extraValues: Partial<NewsletterData>,
 	): Promise<
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	> {
@@ -30,8 +34,16 @@ export class LaunchService {
 			return draftGetResponse;
 		}
 
+		const draftPopulatedWithDefaults: DraftNewsletterData =
+			withDefaultNewsletterValuesAndDerivedFields(draftGetResponse.data);
+
+		const draftWithDefaultsThenExtraValues: DraftNewsletterData = {
+			...draftPopulatedWithDefaults,
+			...extraValues,
+		};
+
 		const newsletterCreateResponse = await newsletterStorage.create(
-			withDefaultNewsletterValues(draftGetResponse.data),
+			draftWithDefaultsThenExtraValues,
 		);
 		if (!newsletterCreateResponse.ok) {
 			return newsletterCreateResponse;

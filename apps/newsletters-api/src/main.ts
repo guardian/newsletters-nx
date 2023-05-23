@@ -8,6 +8,7 @@ import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import { registerNewsletterRoutes } from './app/routes/newsletters';
+import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
 import { registerUIServer } from './register-ui-server';
 
 const app = Fastify();
@@ -21,6 +22,7 @@ if (isServingReadWriteEndpoints()) {
 if (isServingReadEndpoints()) {
 	registerNewsletterRoutes(app);
 	registerDraftsRoutes(app);
+	registerRenderingTemplatesRoutes(app);
 }
 
 const start = async () => {

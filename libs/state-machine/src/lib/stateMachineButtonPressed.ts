@@ -62,7 +62,11 @@ export async function stateMachineButtonPressed<
 
 	if (buttonPressedDetails.onAfterStepStartValidate) {
 		const validationResult =
-			await buttonPressedDetails.onAfterStepStartValidate(incomingStepData);
+			await buttonPressedDetails.onAfterStepStartValidate(
+				incomingStepData,
+				undefined,
+				storageInstance,
+			);
 		if (validationResult !== undefined) {
 			return makeStepDataWithErrorMessage(
 				validationResult,
@@ -77,6 +81,7 @@ export async function stateMachineButtonPressed<
 			await buttonPressedDetails.onBeforeStepChangeValidate(
 				incomingStepData,
 				currentStepLayout,
+				storageInstance,
 			);
 		if (validationResult !== undefined) {
 			return makeStepDataWithErrorMessage(

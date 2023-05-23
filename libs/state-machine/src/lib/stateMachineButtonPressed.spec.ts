@@ -115,6 +115,7 @@ it('should validate before step change and return error message if there is vali
 		expect(onBeforeStepChangeValidateMock).toHaveBeenCalledWith(
 			mockStepData,
 			mockWizardLayout['step1'],
+			mockStorage,
 		);
 		expect(result.currentStepId).toEqual('step1');
 		expect(result.errorMessage).toEqual('Validation error');
@@ -136,7 +137,11 @@ it('should validate after step start and return error message if there is valida
 			false,
 			mockStorage,
 		);
-		expect(onAfterStepStartValidateMock).toHaveBeenCalledWith(mockStepData);
+		expect(onAfterStepStartValidateMock).toHaveBeenCalledWith(
+			mockStepData,
+			undefined,
+			mockStorage,
+		);
 		expect(result.currentStepId).toEqual('step1');
 		expect(result.errorMessage).toEqual('Validation error');
 	}

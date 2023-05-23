@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Rendering 'Read More' sections in {{name}}
+## Rendering 'Read More' sections in {{name}}
 
 At the end of some sections in **{{name}}** you may wish to have a link encouraging the reader to 'Read more on the Guardian'.
 
@@ -45,10 +45,35 @@ export const readMoreLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
-		finish: {
+		next: {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
+			onBeforeStepChangeValidate: (stepData): string | undefined => {
+				const readMoreDetails = stepData.formData
+					? (stepData.formData[
+							'renderingOptions.readMoreSections'
+					  ] as unknown as Array<{
+							subheading: string;
+							wording: string;
+							url: string;
+					  }>)
+					: undefined;
+				if (readMoreDetails) {
+					if (Array.isArray(readMoreDetails)) {
+						const invalidReadMoreDetails = readMoreDetails.filter(
+							(readMoreEntry) =>
+								!readMoreEntry.subheading ||
+								!readMoreEntry.wording ||
+								!readMoreEntry.url,
+						);
+						if (invalidReadMoreDetails.length > 0) {
+							return 'ALL READ MORE DETAILS MUST BE SPECIFIED FOR A CONFIGURATION';
+						}
+					}
+				}
+				return undefined;
+			},
 			executeStep: executeModify,
 		},
 	},

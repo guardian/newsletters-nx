@@ -2,10 +2,14 @@ import type {
 	DraftNewsletterData,
 	FormDataRecord,
 	LaunchService,
+	NewsletterData,
+	NewsletterFieldsDerivedFromName,
 } from '@newsletters-nx/newsletters-data-client';
 import {
+	addSuffixToMakeTokenUnique,
 	getDraftNotReadyIssues,
 	renderingOptionsSchema,
+	withDefaultNewsletterValuesAndDerivedFields,
 } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
 import { zodIssueToMarkdown } from './markdown-util';
@@ -31,6 +35,7 @@ export const getInitialStateForLaunch = async (
 		};
 	}
 	const storageResponse = await launchService.draftStorage.read(id);
+	const allLauchedResponse = await launchService.newsletterStorage.list();
 
 	const draft: DraftNewsletterData = storageResponse.ok
 		? storageResponse.data
@@ -56,20 +61,67 @@ export const getInitialStateForLaunch = async (
 		};
 	}
 
+	const derivedFieldValuesOrActualIfSet =
+		withDefaultNewsletterValuesAndDerivedFields(draft);
+
+	const existingNewsletters = allLauchedResponse.ok
+		? allLauchedResponse.data
+		: [];
+
+	suffixDervivedValues(derivedFieldValuesOrActualIfSet, existingNewsletters);
+
 	return {
 		name,
 		hasAllStandardData: true,
 		hasRenderingOptionsIfNeeded,
 		errorMarkdown: undefined,
 		id: request.id,
-		identityName: draft.identityName,
 		listId: draft.listId,
-		brazeSubscribeEventNamePrefix: draft.brazeSubscribeEventNamePrefix,
-		brazeNewsletterName: draft.brazeNewsletterName,
-		brazeSubscribeAttributeName: draft.brazeSubscribeAttributeName,
+		identityName: derivedFieldValuesOrActualIfSet.identityName,
+		brazeSubscribeEventNamePrefix:
+			derivedFieldValuesOrActualIfSet.brazeSubscribeEventNamePrefix,
+		brazeNewsletterName: derivedFieldValuesOrActualIfSet.brazeNewsletterName,
+		brazeSubscribeAttributeName:
+			derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeName,
 		brazeSubscribeAttributeNameAlternate:
-			draft.brazeSubscribeAttributeNameAlternate,
-		campaignName: draft.campaignName,
-		campaignCode: draft.campaignCode,
+			derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeNameAlternate,
+		campaignName: derivedFieldValuesOrActualIfSet.campaignName,
+		campaignCode: derivedFieldValuesOrActualIfSet.campaignCode,
 	};
 };
+
+const keysToSuffixWithDash = ['identityName'] as const;
+const keysToSuffixWithUnderscore = [
+	'brazeNewsletterName',
+	'brazeSubscribeAttributeName',
+	'brazeSubscribeEventNamePrefix',
+	'campaignName',
+	'campaignCode',
+] as const;
+
+function suffixDervivedValues(
+	derivedFieldValuesOrActualIfSet: DraftNewsletterData &
+		Pick<NewsletterData, NewsletterFieldsDerivedFromName>,
+	existingNewsletters: NewsletterData[],
+) {
+	keysToSuffixWithDash.forEach((key) => {
+		const originalToken = derivedFieldValuesOrActualIfSet[key];
+		if (originalToken) {
+			derivedFieldValuesOrActualIfSet[key] = addSuffixToMakeTokenUnique(
+				originalToken,
+				existingNewsletters.map((_) => _[key]),
+				'-',
+			);
+		}
+	});
+	keysToSuffixWithUnderscore.forEach((key) => {
+		const originalToken = derivedFieldValuesOrActualIfSet[key];
+		if (originalToken) {
+			derivedFieldValuesOrActualIfSet[key] = addSuffixToMakeTokenUnique(
+				originalToken,
+				existingNewsletters.map((_) => _[key]),
+				'_',
+			);
+		}
+	});
+}

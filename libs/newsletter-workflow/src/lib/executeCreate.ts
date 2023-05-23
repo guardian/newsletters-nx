@@ -14,20 +14,25 @@ import type {
 	AsyncExecution,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
-import { formSchemas } from '../lib/steps/newsletterData/formSchemas';
-import { calculateFieldsFromName } from './calculateFieldsFromName';
-import { executeModify } from './executeModify';
 
 export const executeCreate: AsyncExecution<DraftStorage> = async (
 	stepData,
 	stepLayout,
 	storageInstance,
 ): Promise<WizardFormData | string> => {
-	const schema = formSchemas['startDraftNewsletter']; // TODO - this needs to be generalised
 	if (!storageInstance) {
 		throw new StateMachineError(
 			'no storageInstance',
 			StateMachineErrorCode.StorageAccessError,
+			true,
+		);
+	}
+
+	const schema = stepLayout?.schema;
+	if (!schema) {
+		throw new StateMachineError(
+			'schema not defined',
+			StateMachineErrorCode.StepMethodFailed,
 			true,
 		);
 	}
@@ -39,32 +44,16 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 		}`;
 	}
 
-	const listId = stepData.formData ? stepData.formData['listId'] : undefined;
-	if (!listId) {
-		// TODO - calculating fields from the Name at this point is not generic
-		// would it be better done somewhere else?
-		const derivedFields =
-			typeof parseResult.data.name === 'string' && !!parseResult.data.name
-				? calculateFieldsFromName(parseResult.data.name)
-				: {};
-
-		const draft: DraftNewsletterData = {
-			...formDataToDraftNewsletterData({
-				...parseResult.data,
-			}),
-			...derivedFields,
-		};
-
-		const storageResponse = await storageInstance.create({
-			...draft,
-			listId: undefined,
-		});
-		if (storageResponse.ok) {
-			return draftNewsletterDataToFormData(storageResponse.data);
-		}
-
-		return storageResponse.message;
+	const draft: DraftNewsletterData = formDataToDraftNewsletterData({
+		...parseResult.data,
+	});
+	const storageResponse = await storageInstance.create({
+		...draft,
+		listId: undefined,
+	});
+	if (storageResponse.ok) {
+		return draftNewsletterDataToFormData(storageResponse.data);
 	}
 
-	return executeModify(stepData, stepLayout, storageInstance);
+	return storageResponse.message;
 };

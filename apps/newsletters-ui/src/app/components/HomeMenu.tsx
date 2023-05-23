@@ -61,7 +61,7 @@ export function HomeMenu() {
 			<Grid container spacing={3} rowSpacing={6} paddingY={4}>
 				<ButtonGridItem
 					path="/newsletters"
-					content={'View current newsletters'}
+					content={'View launched newsletters'}
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 				<ButtonGridItem
@@ -73,7 +73,11 @@ export function HomeMenu() {
 				<Grid item xs={6} sm={4} display={'flex'}>
 					<ScrollingMenuButton
 						buttonText="update newsletter"
-						buttonProps={{ variant: 'outlined', fullWidth: true }}
+						buttonProps={{
+							variant: 'outlined',
+							fullWidth: true,
+							size: 'large',
+						}}
 						ariaMenuId="newsletter-update-menu"
 						ariaButtonLabel="select newsletter to update"
 						options={list.map((newsletter) => ({

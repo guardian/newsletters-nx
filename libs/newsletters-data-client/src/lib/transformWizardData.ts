@@ -7,7 +7,7 @@ import { recursiveUnwrap } from './zod-helpers';
 export type PrimitiveRecord = Partial<
 	Record<string, string | number | boolean>
 >;
-type SupportedValue =
+export type SupportedValue =
 	| string
 	| number
 	| boolean
