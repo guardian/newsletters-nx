@@ -24,7 +24,6 @@ export const isServingUI = () => {
 		process.env.NEWSLETTERS_UI_SERVE,
 	);
 	const isUIServe = process.env.NEWSLETTERS_UI_SERVE === 'true';
-
 	return undefinedAndNotProduction || isUIServe;
 };
 
