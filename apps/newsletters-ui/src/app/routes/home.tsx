@@ -20,7 +20,7 @@ export const homeRoute: RouteObject = {
 		},
 		{
 			path: 'templates',
-			element: <TemplateListView />,
+			element: <ContentWrapper><TemplateListView /></ContentWrapper>,
 			loader: renderingTemplateListLoader,
 		},
 		{
