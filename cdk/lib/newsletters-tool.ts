@@ -76,7 +76,6 @@ WantedBy=multi-user.target
 EOL`,
 			`systemctl enable newsletters-api`, // enable the service
 			`systemctl start newsletters-api`, // start the service
-			// `su ubuntu -c '/usr/local/node/pm2 start --name ${app} dist/apps/newsletters-api/index.cjs'`, // run the main entrypoint file as ubuntu user using pm2
 		].join('\n');
 	};
 
