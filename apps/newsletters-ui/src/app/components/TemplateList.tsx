@@ -59,7 +59,7 @@ export const TemplateList = ({ templates }: Props) => {
 				))}
 			</Box>
 
-			<Box maxWidth={'sm'}>
+			<Box maxWidth={'lg'}>
 				<Alert severity="info">
 					<AlertTitle>Please note</AlertTitle>
 					<div>
