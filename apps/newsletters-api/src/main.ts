@@ -9,6 +9,7 @@ import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import { registerNewsletterRoutes } from './app/routes/newsletters';
 import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
+import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
 const app = Fastify();
@@ -18,6 +19,7 @@ if (isServingUI()) {
 }
 if (isServingReadWriteEndpoints()) {
 	registerCurrentStepRoute(app);
+	registerUserRoute(app);
 }
 if (isServingReadEndpoints()) {
 	registerNewsletterRoutes(app);
