@@ -46,3 +46,7 @@ export const isServingReadEndpoints = () => {
 
 export const isUsingInMemoryStorage = () =>
 	process.env.USE_IN_MEMORY_STORAGE === 'true';
+
+export const getTestJwtProfileDataIfUsing = () => {
+	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;
+};

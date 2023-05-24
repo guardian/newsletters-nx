@@ -12,3 +12,4 @@ export * from './lib/wizard-button-type';
 export * from './lib/transformWizardData';
 export * from './lib/storage-response-types';
 export * from './lib/zod-helpers';
+export * from './lib/user-profile';

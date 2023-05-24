@@ -12,7 +12,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
+import { fetchApiData } from '../api-requests/fetch-api-data';
 
 interface NavLink {
 	path: string;
@@ -31,11 +34,23 @@ const menuItemIsSelected = (path: string): boolean => {
 };
 
 export function MainNav() {
-	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-		null,
+	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+
+	const [userProfile, setUserProfile] = useState<UserProfile | undefined>(
+		undefined,
 	);
 
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const getProfile = async () => {
+			const profile = await fetchApiData<UserProfile>('api/user/whoami');
+			setUserProfile(profile);
+		};
+		void getProfile();
+	}, []);
+
+	const userName = userProfile?.name ?? 'Logged in user';
 
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElNav(event.currentTarget);
@@ -149,9 +164,9 @@ export function MainNav() {
 					</Box>
 
 					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip title="Logged in user">
+						<Tooltip title={userName}>
 							<IconButton sx={{ p: 0 }}>
-								<Avatar alt="Logged in user" />
+								<Avatar alt={userName} src={userProfile?.picture} />
 							</IconButton>
 						</Tooltip>
 					</Box>
