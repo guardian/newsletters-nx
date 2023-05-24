@@ -1,10 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 
-const {
-	FAKE_JWT,
-	FAKE_ACCESS_TOKEN = '',
-	FAKE_ACCESS_TOKEN_2 = '',
-} = process.env;
+const { FAKE_JWT } = process.env;
 
 const USE_FAKE_JWT = true as boolean;
 
@@ -34,8 +30,6 @@ function parseJwt(
 	}
 }
 
-const userinfoEndpoint = 'https://www.googleapis.com/oauth2/v2/userinfo';
-
 export function registerUserRoute(app: FastifyInstance) {
 	app.get('/api/user/whoami', async (req, res) => {
 		const jwtProfile = USE_FAKE_JWT
@@ -51,18 +45,5 @@ export function registerUserRoute(app: FastifyInstance) {
 				: {};
 
 		return res.send(decodedJwtProfile);
-	});
-
-	app.get('/api/user/profile', async (req, res) => {
-		console.log({ FAKE_ACCESS_TOKEN, FAKE_ACCESS_TOKEN_2 });
-
-		const userInfoResponse = await fetch(userinfoEndpoint, {
-			headers: new Headers({
-				Authorization: `Bearer ${FAKE_ACCESS_TOKEN}`,
-			}),
-		});
-		const userInfoData = (await userInfoResponse.json()) as unknown;
-
-		return res.send(userInfoData);
 	});
 }
