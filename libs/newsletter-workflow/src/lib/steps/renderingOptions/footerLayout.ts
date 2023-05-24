@@ -46,12 +46,6 @@ export const footerLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const email = stepData.formData
-					? stepData.formData['renderingOptions.contactEmail']
-					: undefined;
-				return email ? undefined : 'NO EMAIL ADDRESS PROVIDED';
-			},
 			executeStep: executeModify,
 		},
 	},
