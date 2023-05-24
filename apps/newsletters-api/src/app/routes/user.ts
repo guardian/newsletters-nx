@@ -1,8 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-
-const { FAKE_JWT } = process.env;
-
-const USE_FAKE_JWT = true as boolean;
+import { getTestJwtProfileDataIfUsing } from '../../apiDeploymentSettings';
 
 const atob = (a: string) => Buffer.from(a, 'base64').toString('binary');
 
@@ -32,17 +29,11 @@ function parseJwt(
 
 export function registerUserRoute(app: FastifyInstance) {
 	app.get('/api/user/whoami', async (req, res) => {
-		const jwtProfile = USE_FAKE_JWT
-			? FAKE_JWT
-			: req.headers['x-amzn-oidc-data'];
+		const jwtProfile =
+			req.headers['x-amzn-oidc-data'] ?? getTestJwtProfileDataIfUsing();
 
 		const decodedJwtProfile =
-			typeof jwtProfile === 'string'
-				? {
-						body: parseJwt(jwtProfile),
-						headers: parseJwt(jwtProfile, 'headers'),
-				  }
-				: {};
+			typeof jwtProfile === 'string' ? parseJwt(jwtProfile) : {};
 
 		return res.send(decodedJwtProfile);
 	});
