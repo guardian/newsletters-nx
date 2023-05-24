@@ -1,12 +1,13 @@
 import type { FastifyInstance } from 'fastify';
 import { getTestJwtProfileDataIfUsing } from '../../apiDeploymentSettings';
+import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 const atob = (a: string) => Buffer.from(a, 'base64').toString('binary');
 
 function parseJwt(
 	token: string,
 	bodyOrHeader: 'body' | 'headers' = 'body',
-): Partial<Record<string, string>> {
+): Partial<Record<string, string>> | undefined {
 	try {
 		const base64Url = token.split('.')[
 			bodyOrHeader === 'headers' ? 0 : 1
@@ -23,7 +24,7 @@ function parseJwt(
 		return JSON.parse(jsonPayload) as Partial<Record<string, string>>;
 	} catch (err: unknown) {
 		console.warn('failed to parseJwt', err);
-		return {};
+		return undefined;
 	}
 }
 
@@ -32,9 +33,18 @@ export function registerUserRoute(app: FastifyInstance) {
 		const jwtProfile =
 			req.headers['x-amzn-oidc-data'] ?? getTestJwtProfileDataIfUsing();
 
-		const decodedJwtProfile =
-			typeof jwtProfile === 'string' ? parseJwt(jwtProfile) : {};
+		if (typeof jwtProfile !== 'string') {
+			return res.status(500).send(makeErrorResponse('No user profile.'));
+		}
 
-		return res.send(decodedJwtProfile);
+		const decodedJwtProfile = parseJwt(jwtProfile);
+
+		if (!decodedJwtProfile) {
+			return res
+				.status(500)
+				.send(makeErrorResponse('Failed to decode user profile.'));
+		}
+
+		return res.send(makeSuccessResponse(decodedJwtProfile));
 	});
 }
