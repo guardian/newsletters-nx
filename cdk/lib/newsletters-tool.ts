@@ -207,7 +207,7 @@ EOL`,
 			action: ListenerAction.authenticateOidc({
 				authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
 				issuer: 'https://accounts.google.com',
-				scope: 'openid',
+				scope: 'openid%20profile%20email',
 				authenticationRequestExtraParams: { hd: 'guardian.co.uk' },
 				onUnauthenticatedRequest: UnauthenticatedAction.AUTHENTICATE,
 				tokenEndpoint: 'https://oauth2.googleapis.com/token',

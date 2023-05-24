@@ -35,6 +35,10 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		return makeSuccessResponse(storageResponse.data);
 	});
 
+	app.get('/api/headers', async (req, _) => {
+		return makeSuccessResponse(req.headers);
+	});
+
 	app.get<{ Params: { newsletterId: string } }>(
 		'/api/newsletters/:newsletterId',
 		async (req, res) => {
