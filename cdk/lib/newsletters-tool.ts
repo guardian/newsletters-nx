@@ -186,7 +186,7 @@ export class NewslettersTool extends GuStack {
 			action: ListenerAction.authenticateOidc({
 				authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
 				issuer: 'https://accounts.google.com',
-				scope: 'openid',
+				scope: 'openid email profile',
 				authenticationRequestExtraParams: { hd: 'guardian.co.uk' },
 				onUnauthenticatedRequest: UnauthenticatedAction.AUTHENTICATE,
 				tokenEndpoint: 'https://oauth2.googleapis.com/token',
