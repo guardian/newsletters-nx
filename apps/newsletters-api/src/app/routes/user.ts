@@ -6,7 +6,7 @@ export function registerUserRoute(app: FastifyInstance) {
 	app.get('/api/user/whoami', async (req, res) => {
 		const maybeUser = getUserProfile(req);
 
-		if (!maybeUser.ok) {
+		if (!maybeUser.profile) {
 			return res.status(500).send(makeErrorResponse(maybeUser.errorMessage));
 		}
 

@@ -30,19 +30,22 @@ function parseJwt(
 
 export const getUserProfile = (
 	req: FastifyRequest,
-): { ok: true; profile: UserProfile } | { ok: false; errorMessage: string } => {
+): { profile: UserProfile } | { errorMessage: string; profile: undefined } => {
 	const jwtProfile =
 		req.headers['x-amzn-oidc-data'] ?? getTestJwtProfileDataIfUsing();
 
 	if (typeof jwtProfile !== 'string') {
-		return { ok: false, errorMessage: 'No user profile.' };
+		return { errorMessage: 'No user profile.', profile: undefined };
 	}
 
 	const decodedJwtProfile = parseJwt(jwtProfile);
 
 	if (!decodedJwtProfile) {
-		return { ok: false, errorMessage: 'Failed to decode user profile.' };
+		return {
+			errorMessage: 'Failed to decode user profile.',
+			profile: undefined,
+		};
 	}
 
-	return { profile: decodedJwtProfile, ok: true };
+	return { profile: decodedJwtProfile };
 };
