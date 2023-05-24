@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import { getTestJwtProfileDataIfUsing } from '../../apiDeploymentSettings';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
@@ -7,7 +8,7 @@ const atob = (a: string) => Buffer.from(a, 'base64').toString('binary');
 function parseJwt(
 	token: string,
 	bodyOrHeader: 'body' | 'headers' = 'body',
-): Partial<Record<string, string>> | undefined {
+): UserProfile | undefined {
 	try {
 		const base64Url = token.split('.')[
 			bodyOrHeader === 'headers' ? 0 : 1
@@ -21,7 +22,7 @@ function parseJwt(
 				})
 				.join(''),
 		);
-		return JSON.parse(jsonPayload) as Partial<Record<string, string>>;
+		return JSON.parse(jsonPayload) as UserProfile;
 	} catch (err: unknown) {
 		console.warn('failed to parseJwt', err);
 		return undefined;
