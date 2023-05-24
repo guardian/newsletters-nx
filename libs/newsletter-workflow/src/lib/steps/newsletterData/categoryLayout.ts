@@ -1,8 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type {
-	WizardStepData,
-	WizardStepLayout,
-} from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
@@ -55,15 +52,6 @@ export const categoryLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const productionCategory = stepData.formData
-					? stepData.formData['category']
-					: undefined;
-				if (!productionCategory || productionCategory === '') {
-					return 'NO PRODUCTION CATEGORY SELECTED';
-				}
-				return undefined;
-			},
 			executeStep: executeModify,
 		},
 	},

@@ -60,12 +60,6 @@ export const frequencyLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const frequency = stepData.formData
-					? stepData.formData['frequency']
-					: undefined;
-				return frequency ? undefined : 'NO FREQUENCY PROVIDED';
-			},
 			executeStep: executeModify,
 		},
 	},
