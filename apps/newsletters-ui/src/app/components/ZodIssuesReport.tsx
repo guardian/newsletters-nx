@@ -47,7 +47,6 @@ const issueToMessage = (issue: ZodIssue): string => {
 };
 
 export const ZodIssuesReport = ({ issues, caption }: Props) => {
-	console.log(issues);
 	return (
 		<TableContainer component={Paper}>
 			<Table size="small">
