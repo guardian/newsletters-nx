@@ -1046,7 +1046,7 @@ su ubuntu -c '/usr/local/node/pm2 start --name newsletters-tool dist/apps/newsle
               "ClientSecret": "{{resolve:secretsmanager:/TEST/deploy/newsletters/clientSecret:SecretString:::}}",
               "Issuer": "https://accounts.google.com",
               "OnUnauthenticatedRequest": "authenticate",
-              "Scope": "openid",
+              "Scope": "openid email profile",
               "TokenEndpoint": "https://oauth2.googleapis.com/token",
               "UserInfoEndpoint": "https://openidconnect.googleapis.com/v1/userinfo",
             },
