@@ -1,5 +1,4 @@
 name: Snyk
-
 on:
   push:
     branches:
