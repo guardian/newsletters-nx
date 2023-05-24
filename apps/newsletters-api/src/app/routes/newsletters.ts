@@ -35,6 +35,11 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		return makeSuccessResponse(storageResponse.data);
 	});
 
+	app.get('/api/boom', async (req, res) => {
+		console.error('Testing failure behaviour');
+		throw new Error('Something terrible happened!');
+	});
+
 	app.get<{ Params: { newsletterId: string } }>(
 		'/api/newsletters/:newsletterId',
 		async (req, res) => {
