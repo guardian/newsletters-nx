@@ -6,6 +6,8 @@ import {
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { ZodObject } from 'zod';
+import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import type {
 	StepListing,
 	StepperConfig,
@@ -20,14 +22,25 @@ interface Props {
 	formData?: WizardFormData;
 }
 
+type Completeness = true | false | undefined | null;
+
 /**
  * completeness=undefined indicates the step has no schema, so is neither
  * complete or incomplete.
  */
-const CompletionCaption = (props: { completeness: boolean | undefined }) => {
+const CompletionCaption = (props: { completeness: Completeness }) => {
 	switch (props.completeness) {
 		case undefined:
 			return null;
+		case null:
+			return (
+				<Typography variant="caption">
+					Optional{' '}
+					<span role="img" aria-label="green-cross">
+						❎
+					</span>
+				</Typography>
+			);
 		case true:
 			return (
 				<Typography variant="caption">
@@ -64,7 +77,7 @@ export const StepNav = ({
 	const [currentStepIdOnLastRender, setCurrenStepIdOnLastRender] =
 		useState(currentStepId);
 	const [completionRecord, setCompletionRecord] = useState<
-		Partial<Record<string, boolean | undefined>>
+		Partial<Record<string, Completeness>>
 	>({});
 
 	const filteredStepList = stepperConfig.steps.filter((step) => {
@@ -86,10 +99,31 @@ export const StepNav = ({
 
 	const updateCompletion = () => {
 		const list = stepperConfig.steps.reduce<
-			Partial<Record<string, boolean | undefined>>
+			Partial<Record<string, Completeness>>
 		>((record, step) => {
+			const areNoFieldForThisStepSet = (): boolean => {
+				if (!step.schema) {
+					return false;
+				}
+				const unwrappedSchema = recursiveUnwrap(step.schema);
+				if (!(unwrappedSchema instanceof ZodObject)) {
+					return false;
+				}
+				const shape = unwrappedSchema.shape as Record<string, unknown>;
+				const fieldsInThisStep = Object.keys(shape);
+
+				const fieldsPopulatedInFormData = Object.keys(formData ?? {});
+				return !fieldsInThisStep.some((key) =>
+					fieldsPopulatedInFormData.includes(key),
+				);
+			};
+
 			const result = step.schema
 				? step.schema.safeParse(formData).success
+					? areNoFieldForThisStepSet()
+						? null
+						: true
+					: false
 				: undefined;
 
 			return { ...record, [step.id]: result };
