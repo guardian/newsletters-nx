@@ -119,11 +119,16 @@ EOL`,
 			],
 		});
 
+		const alarmsTopicName = 'newsletters-alerts';
 		/** Sets up Node app to be run in EC2 */
 		const ec2AppTool = new GuNodeApp(this, {
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName: domainNameTool },
-			monitoringConfiguration: { noMonitoring: true },
+			monitoringConfiguration: {
+				http5xxAlarm: { tolerated5xxPercentage: 5 },
+				snsTopicName: alarmsTopicName,
+				unhealthyInstancesAlarm: true,
+			},
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			// Minimum of 1 EC2 instance running at a time. If one fails, scales up to 2 before dropping back to 1 again
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
@@ -146,7 +151,11 @@ EOL`,
 		const ec2AppApi = new GuNodeApp(this, {
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName: domainNameApi },
-			monitoringConfiguration: { noMonitoring: true },
+			monitoringConfiguration: {
+				http5xxAlarm: { tolerated5xxPercentage: 5 },
+				snsTopicName: alarmsTopicName,
+				unhealthyInstancesAlarm: true,
+			},
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			userData: this.getUserData(apiAppName, bucketName, true),
