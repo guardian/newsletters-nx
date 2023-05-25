@@ -1,13 +1,13 @@
 name: Snyk
 on:
-  push:
+  pull_request:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
   security:
-    uses: guardian/.github/.github/workflows/sbt-node-snyk.yml@main
+    uses: guardian/.github/.github/workflows/sbt-node-snyk-pr.yml@main
     with:
       ORG: guardian
       SKIP_SBT: true # SBT is not used in this project
