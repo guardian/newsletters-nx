@@ -7,7 +7,7 @@ on:
 jobs:
   security:
     with:
-      ORG: guardian-newsletters
+      ORG: guardian-newsletters-b16
       SKIP_SBT: true # SBT is not used in this project
       SKIP_PYTHON: true # Python is not used in this project
       SKIP_GO: true # GO is not used in this project
