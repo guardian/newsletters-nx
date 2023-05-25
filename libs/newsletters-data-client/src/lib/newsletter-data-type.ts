@@ -97,6 +97,14 @@ export const newsletterCategoriesSchema = z
 	.describe('production category');
 export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 
+export const composerTagRelationshipSchema = z.object({
+	composerTag: z.string().describe('composer tag'),
+	composerCampaignTag: z.string().describe('composer campaign tag'),
+});
+export type ComposerTagRelationship = z.infer<
+	typeof composerTagRelationshipSchema
+>;
+
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
  * Edits to this schema would need to be reflected in the transform function.
@@ -141,8 +149,7 @@ export const newsletterDataSchema = z.object({
 	cancellationTimeStamp: z.number().optional(),
 
 	seriesTag: z.string().optional().describe('series tag'),
-	composerTag: z.string().optional().describe('composer tag'),
-	composerCampaignTag: z.string().optional().describe('composer campaign tag'),
+	composerTagRelationship: composerTagRelationshipSchema.optional(),
 
 	launchDate: z.coerce.date().describe('launch date'),
 	signUpPageDate: z.coerce.date().describe('sign up page date'),

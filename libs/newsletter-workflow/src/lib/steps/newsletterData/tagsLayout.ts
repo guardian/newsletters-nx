@@ -59,23 +59,6 @@ export const tagsLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const composerTag = stepData.formData
-					? stepData.formData['composerTag']
-					: undefined;
-				const composerCampaignTag = stepData.formData
-					? stepData.formData['composerCampaignTag']
-					: undefined;
-				if (composerTag || composerCampaignTag) {
-					if (!composerTag) {
-						return 'ENTER AT LEAST ONE COMPOSER TAG IF SPECIFYING COMPOSER CAMPAIGN TAG';
-					}
-					if (!composerCampaignTag) {
-						return 'ENTER COMPOSER CAMPAIGN TAG IF SPECIFYING COMPOSER TAG';
-					}
-				}
-				return undefined;
-			},
 			executeStep: executeModify,
 		},
 	},
