@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { ZodObject } from 'zod';
+import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import type {
 	StepListing,
@@ -29,10 +30,6 @@ enum StepStatus {
 	NoFields,
 }
 
-/**
- * completeness=undefined indicates the step has no schema, so is neither
- * complete or incomplete.
- */
 const CompletionCaption = (props: { completeness: StepStatus | undefined }) => {
 	switch (props.completeness) {
 		case undefined:
@@ -67,6 +64,25 @@ const CompletionCaption = (props: { completeness: StepStatus | undefined }) => {
 			);
 	}
 };
+
+function areNoFieldsInStepSet(
+	step: StepListing,
+	formData: FormDataRecord | undefined,
+) {
+	if (!step.schema) {
+		return false;
+	}
+	const unwrappedSchema = recursiveUnwrap(step.schema);
+	if (!(unwrappedSchema instanceof ZodObject)) {
+		return false;
+	}
+	const shape = unwrappedSchema.shape as Record<string, unknown>;
+	const fieldsInThisStep = Object.keys(shape);
+	const fieldsPopulatedInFormData = Object.keys(formData ?? {});
+	return !fieldsInThisStep.some((key) =>
+		fieldsPopulatedInFormData.includes(key),
+	);
+}
 
 export const StepNav = ({
 	currentStepId,
@@ -107,30 +123,13 @@ export const StepNav = ({
 		const list = stepperConfig.steps.reduce<
 			Partial<Record<string, StepStatus>>
 		>((record, step) => {
-			const areNoFieldForThisStepSet = (): boolean => {
-				if (!step.schema) {
-					return false;
-				}
-				const unwrappedSchema = recursiveUnwrap(step.schema);
-				if (!(unwrappedSchema instanceof ZodObject)) {
-					return false;
-				}
-				const shape = unwrappedSchema.shape as Record<string, unknown>;
-				const fieldsInThisStep = Object.keys(shape);
-
-				const fieldsPopulatedInFormData = Object.keys(formData ?? {});
-				return !fieldsInThisStep.some((key) =>
-					fieldsPopulatedInFormData.includes(key),
-				);
-			};
-
 			const result = step.schema
 				? step.schema.safeParse(formData).success
-					? areNoFieldForThisStepSet()
-						? StepStatus.Optional
-						: StepStatus.Complete
-					: StepStatus.Incomplete
-				: StepStatus.NoFields;
+					? areNoFieldsInStepSet(step, formData)
+						? StepStatus.Optional // parse passed, but no fields are set, so the step must be all optional
+						: StepStatus.Complete // parse passed, so step is complete
+					: StepStatus.Incomplete // parse failed, so step is incomplete
+				: StepStatus.NoFields; // no schema on the step
 
 			return { ...record, [step.id]: result };
 		}, {});
