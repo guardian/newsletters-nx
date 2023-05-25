@@ -2,7 +2,7 @@ name: Snyk
 on:
   push:
     branches:
-      - pb/snyk-integration
+      - main
   workflow_dispatch:
 
 jobs:
