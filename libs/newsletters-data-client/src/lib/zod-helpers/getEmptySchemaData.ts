@@ -1,5 +1,13 @@
 import type { z } from 'zod';
-import { ZodBoolean, ZodDate, ZodEnum, ZodNumber, ZodString } from 'zod';
+import {
+	ZodArray,
+	ZodBoolean,
+	ZodDate,
+	ZodEnum,
+	ZodNumber,
+	ZodOptional,
+	ZodString,
+} from 'zod';
 import type { FormDataRecord } from '../transformWizardData';
 import { recursiveUnwrap } from './recursiveUnwrap';
 
@@ -17,6 +25,8 @@ export const getEmptySchemaData = (
 	unwrapOptionals = false,
 ): FormDataRecord | undefined => {
 	return Object.keys(schema.shape).reduce<FormDataRecord>((formData, key) => {
+		console.log('getEmptySchemaData', key);
+
 		const zodMaybeOptional = schema.shape[key];
 
 		if (!zodMaybeOptional) {
@@ -26,6 +36,8 @@ export const getEmptySchemaData = (
 			? recursiveUnwrap(zodMaybeOptional)
 			: zodMaybeOptional;
 		const mod: FormDataRecord = {};
+
+		console.log(zod);
 
 		if (zod instanceof ZodString) {
 			mod[key] = '';
@@ -37,6 +49,10 @@ export const getEmptySchemaData = (
 			mod[key] = false;
 		} else if (zod instanceof ZodDate) {
 			mod[key] = undefined;
+		} else if (zod instanceof ZodOptional) {
+			if (zod.unwrap() instanceof ZodArray) {
+				mod[key] = [];
+			}
 		}
 
 		return {
