@@ -25,8 +25,6 @@ export const getEmptySchemaData = (
 	unwrapOptionals = false,
 ): FormDataRecord | undefined => {
 	return Object.keys(schema.shape).reduce<FormDataRecord>((formData, key) => {
-		console.log('getEmptySchemaData', key);
-
 		const zodMaybeOptional = schema.shape[key];
 
 		if (!zodMaybeOptional) {
@@ -36,8 +34,6 @@ export const getEmptySchemaData = (
 			? recursiveUnwrap(zodMaybeOptional)
 			: zodMaybeOptional;
 		const mod: FormDataRecord = {};
-
-		console.log(zod);
 
 		if (zod instanceof ZodString) {
 			mod[key] = '';
