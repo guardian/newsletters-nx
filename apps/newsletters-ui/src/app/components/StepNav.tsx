@@ -22,17 +22,23 @@ interface Props {
 	formData?: WizardFormData;
 }
 
-type Completeness = true | false | undefined | null;
+enum StepStatus {
+	Complete,
+	Incomplete,
+	Optional,
+	NoFields,
+}
 
 /**
  * completeness=undefined indicates the step has no schema, so is neither
  * complete or incomplete.
  */
-const CompletionCaption = (props: { completeness: Completeness }) => {
+const CompletionCaption = (props: { completeness: StepStatus | undefined }) => {
 	switch (props.completeness) {
 		case undefined:
+		case StepStatus.NoFields:
 			return null;
-		case null:
+		case StepStatus.Optional:
 			return (
 				<Typography variant="caption">
 					Optional{' '}
@@ -41,7 +47,7 @@ const CompletionCaption = (props: { completeness: Completeness }) => {
 					</span>
 				</Typography>
 			);
-		case true:
+		case StepStatus.Complete:
 			return (
 				<Typography variant="caption">
 					Complete{' '}
@@ -50,7 +56,7 @@ const CompletionCaption = (props: { completeness: Completeness }) => {
 					</span>
 				</Typography>
 			);
-		case false:
+		case StepStatus.Incomplete:
 			return (
 				<Typography variant="caption">
 					Incomplete{' '}
@@ -77,7 +83,7 @@ export const StepNav = ({
 	const [currentStepIdOnLastRender, setCurrenStepIdOnLastRender] =
 		useState(currentStepId);
 	const [completionRecord, setCompletionRecord] = useState<
-		Partial<Record<string, Completeness>>
+		Partial<Record<string, StepStatus>>
 	>({});
 
 	const filteredStepList = stepperConfig.steps.filter((step) => {
@@ -99,7 +105,7 @@ export const StepNav = ({
 
 	const updateCompletion = () => {
 		const list = stepperConfig.steps.reduce<
-			Partial<Record<string, Completeness>>
+			Partial<Record<string, StepStatus>>
 		>((record, step) => {
 			const areNoFieldForThisStepSet = (): boolean => {
 				if (!step.schema) {
@@ -121,10 +127,10 @@ export const StepNav = ({
 			const result = step.schema
 				? step.schema.safeParse(formData).success
 					? areNoFieldForThisStepSet()
-						? null
-						: true
-					: false
-				: undefined;
+						? StepStatus.Optional
+						: StepStatus.Complete
+					: StepStatus.Incomplete
+				: StepStatus.NoFields;
 
 			return { ...record, [step.id]: result };
 		}, {});
