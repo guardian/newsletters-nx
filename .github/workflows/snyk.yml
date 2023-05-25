@@ -1,15 +1,17 @@
-name: Snyk
+name: Snyk PR
+
 on:
   push:
     branches:
       - pb/snyk-integration
-  workflow_dispatch:
-
+    paths:
+      - 'package.json'
 jobs:
   security:
-    uses: guardian/.github/.github/workflows/sbt-node-snyk.yml@main
+    uses: guardian/.github/.github/workflows/sbt-node-snyk-pr.yml@main
     with:
       ORG: guardian
       SKIP_SBT: true
+      SEVERITY_THRESHOLD: critical
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
