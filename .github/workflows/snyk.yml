@@ -9,7 +9,7 @@ jobs:
   security:
     uses: guardian/.github/.github/workflows/sbt-node-snyk-pr.yml@main
     with:
-      ORG: guardian
+      ORG: guardian-newsletters
       SKIP_SBT: true # SBT is not used in this project
       SKIP_PYTHON: true # Python is not used in this project
       SKIP_GO: true # GO is not used in this project
