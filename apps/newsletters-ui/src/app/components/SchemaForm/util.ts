@@ -68,6 +68,9 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	}
 
 	if (field.type === 'ZodObject') {
+		if (field.optional && typeof value === 'undefined') {
+			return true;
+		}
 		return !!field.recordSchema?.safeParse(value).success;
 	}
 

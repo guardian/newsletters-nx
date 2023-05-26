@@ -1,7 +1,10 @@
 import type { ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
-import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
-import { isPrimitiveRecordArray, isStringArray } from '../../util';
+import {
+	isPrimitiveRecord,
+	isPrimitiveRecordArray,
+	isStringArray,
+} from '../../util';
 import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
@@ -152,13 +155,18 @@ export function SchemaField<T extends z.ZodRawShape>({
 			);
 
 		case 'ZodObject': {
-			return (
-				<SchemaRecordInput
-					{...standardProps}
-					recordSchema={field.recordSchema as unknown as ZodObject<ZodRawShape>}
-					value={value as PrimitiveRecord}
-				/>
-			);
+			if (isPrimitiveRecord(value) || typeof value === 'undefined') {
+				return (
+					<SchemaRecordInput
+						{...standardProps}
+						recordSchema={
+							field.recordSchema as unknown as ZodObject<ZodRawShape>
+						}
+						value={value}
+					/>
+				);
+			}
+			return <WrongTypeMessage field={field} />;
 		}
 
 		case 'ZodArray':
