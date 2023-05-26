@@ -6,11 +6,11 @@ import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
-// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
-import { RecordInput } from './RecordInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
+import { SchemaRecordInput } from './SchemaRecordInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
@@ -151,6 +151,16 @@ export function SchemaField<T extends z.ZodRawShape>({
 				/>
 			);
 
+		case 'ZodObject': {
+			return (
+				<SchemaRecordInput
+					{...standardProps}
+					recordSchema={field.recordSchema as unknown as ZodObject<ZodRawShape>}
+					value={value as PrimitiveRecord}
+				/>
+			);
+		}
+
 		case 'ZodArray':
 			switch (field.arrayItemType) {
 				case 'string': {
@@ -182,19 +192,6 @@ export function SchemaField<T extends z.ZodRawShape>({
 				}
 			}
 			break;
-
-		case 'ZodObject': {
-			return (
-				<RecordInput
-					recordSchema={field.recordSchema as unknown as ZodObject<ZodRawShape>}
-					record={value as PrimitiveRecord}
-					editRecord={(newValue) => {
-						return standardProps.inputHandler(newValue);
-					}}
-				/>
-			);
-			break;
-		}
 
 		default:
 			if (showUnsupported) {
