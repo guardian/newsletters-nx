@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { FormGroup, Typography } from '@mui/material';
 import type { FunctionComponent } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
@@ -25,14 +25,16 @@ export const SchemaRecordInput: FunctionComponent<
 
 	return (
 		<div css={defaultFieldStyle}>
-			<Box component={'fieldset'}>
-				<Typography component={'legend'}>{label}</Typography>
+			<FormGroup sx={{ flex: 1, paddingLeft: 3 }}>
+				<Typography component={'legend'} variant="overline" marginBottom={1}>
+					{label}
+				</Typography>
 				<RecordInput
 					recordSchema={recordSchema}
 					record={value}
 					editRecord={sendValue}
 				/>
-			</Box>
+			</FormGroup>
 		</div>
 	);
 };
