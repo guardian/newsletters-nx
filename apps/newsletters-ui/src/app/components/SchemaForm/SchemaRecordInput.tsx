@@ -31,7 +31,7 @@ export const SchemaRecordInput: FunctionComponent<
 	};
 
 	const sendEmpty = () => {
-		const blankData = getEmptySchemaData(recordSchema);
+		const blankData = getEmptySchemaData(recordSchema, false, true);
 		if (!isPrimitiveRecord(blankData)) {
 			console.error(
 				`blank data produced for ${label} schema is not a supported record`,

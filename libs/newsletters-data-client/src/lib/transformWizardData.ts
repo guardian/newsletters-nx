@@ -14,7 +14,8 @@ export type SupportedValue =
 	| undefined
 	| Date
 	| string[]
-	| PrimitiveRecord;
+	| PrimitiveRecord
+	| PrimitiveRecord[];
 export type FormDataRecord = Record<string, SupportedValue>;
 
 /**
