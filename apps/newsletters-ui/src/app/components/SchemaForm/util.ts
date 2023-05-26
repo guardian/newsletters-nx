@@ -1,7 +1,11 @@
 import type { FormEvent } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
-import { isPrimitiveRecordArray, isStringArray } from '../../util';
+import {
+	isPrimitiveRecord,
+	isPrimitiveRecordArray,
+	isStringArray,
+} from '../../util';
 
 export interface FieldDef {
 	key: string;
@@ -63,7 +67,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	}
 
 	if (field.type === 'ZodArray' && field.arrayItemType === 'record') {
-		// TODO - use field.recordSchema to validate each item
+		// TODO - use field.recordSchema to validate each item?
 		return isPrimitiveRecordArray(value);
 	}
 
@@ -71,7 +75,9 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 		if (field.optional && typeof value === 'undefined') {
 			return true;
 		}
-		return !!field.recordSchema?.safeParse(value).success;
+		// TODO - use field.recordSchema to validate item?
+		// But then can'tedit one value unless all the others in the item are valid
+		return isPrimitiveRecord(value);
 	}
 
 	switch (typeof value) {
