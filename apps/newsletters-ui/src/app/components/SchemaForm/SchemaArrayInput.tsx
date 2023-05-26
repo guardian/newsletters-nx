@@ -1,5 +1,5 @@
 import type { FunctionComponent } from 'react';
-import { ArrayInput } from '../ArrayInput';
+import { ArrayInput } from './ArrayInput';
 import { defaultFieldStyle } from './styling';
 import type { FieldProps, FieldValue } from './util';
 
