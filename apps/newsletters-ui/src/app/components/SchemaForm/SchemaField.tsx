@@ -1,9 +1,13 @@
+import type { ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
+import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import { isPrimitiveRecordArray, isStringArray } from '../../util';
 import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
+import { RecordInput } from './RecordInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
@@ -178,6 +182,19 @@ export function SchemaField<T extends z.ZodRawShape>({
 				}
 			}
 			break;
+
+		case 'ZodObject': {
+			return (
+				<RecordInput
+					recordSchema={field.recordSchema as unknown as ZodObject<ZodRawShape>}
+					record={value as PrimitiveRecord}
+					editRecord={(newValue) => {
+						return standardProps.inputHandler(newValue);
+					}}
+				/>
+			);
+			break;
+		}
 
 		default:
 			if (showUnsupported) {

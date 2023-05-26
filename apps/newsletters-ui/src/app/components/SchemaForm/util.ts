@@ -21,7 +21,8 @@ export type FieldValue =
 	| undefined
 	| Date
 	| string[]
-	| PrimitiveRecord[];
+	| PrimitiveRecord[]
+	| PrimitiveRecord;
 
 export type NumberInputSettings = {
 	min?: number;
@@ -64,6 +65,10 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	if (field.type === 'ZodArray' && field.arrayItemType === 'record') {
 		// TODO - use field.recordSchema to validate each item
 		return isPrimitiveRecordArray(value);
+	}
+
+	if (field.type === 'ZodObject') {
+		return !!field.recordSchema?.safeParse(value).success;
 	}
 
 	switch (typeof value) {
