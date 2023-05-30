@@ -1,12 +1,10 @@
 import type { ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
 import type {
-	ComposerTagRelationship,
 	RenderingOptions,
 	ThrasherOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import {
-	composerTagRelationshipSchema,
 	newsletterDataSchema,
 	renderingOptionsSchema,
 	thrasherOptionsSchema,
@@ -28,19 +26,6 @@ const pickAndPrefixThrasherOption = (
 	const shape: ZodRawShape = {};
 	fieldKeys.forEach((key) => {
 		shape[`thrasherOptions.${key}`] = thrasherOptionsSchema.shape[key];
-	});
-	return z.object(shape);
-};
-
-const pickAndPrefixTagRelationshipOption = (
-	fieldKeys: Array<keyof ComposerTagRelationship>,
-): ZodObject<ZodRawShape> => {
-	const shape: ZodRawShape = {
-		seriesTag: newsletterDataSchema.shape.seriesTag,
-	};
-	fieldKeys.forEach((key) => {
-		shape[`composerTagRelationship.${key}`] =
-			composerTagRelationshipSchema.shape[key];
 	});
 	return z.object(shape);
 };
@@ -159,11 +144,12 @@ export const formSchemas = {
 		'Input the Read More setup',
 	),
 
-	tags: pickAndPrefixTagRelationshipOption([
-		'composerTag',
-		'composerCampaignTag',
-	])
-		.extend({ seriesTag: newsletterDataSchema.shape.seriesTag })
+	tags: newsletterDataSchema
+		.pick({
+			seriesTag: true,
+			composerTag: true,
+			composerCampaignTag: true,
+		})
 		.describe('Input the tag setup'),
 
 	singleThrasher: pickAndPrefixThrasherOption([
