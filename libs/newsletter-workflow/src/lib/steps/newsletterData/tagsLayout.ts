@@ -29,8 +29,6 @@ For example, the **Games (video games only)** tag recommends the user adds the *
 
 Which tag(s) would you like to propose the sign up embed for **{{name}}**?
 
-*If you would like to enable this feature, your request will automatically be emailed to Central Production.*
-
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
