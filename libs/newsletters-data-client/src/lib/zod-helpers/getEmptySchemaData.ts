@@ -15,6 +15,7 @@ export const getEmptySchemaData = (
 	schema: z.ZodObject<z.ZodRawShape>,
 	unwrapOptionals = false,
 	setEnumsToFirstValue = false,
+	populateStringsWithMinLength = false,
 ): FormDataRecord | undefined => {
 	return Object.keys(schema.shape).reduce<FormDataRecord>((formData, key) => {
 		const zodMaybeOptional = schema.shape[key];
@@ -28,7 +29,11 @@ export const getEmptySchemaData = (
 		const mod: FormDataRecord = {};
 
 		if (zod instanceof ZodString) {
-			mod[key] = '';
+			const initalString =
+				populateStringsWithMinLength && zod.minLength
+					? '*'.repeat(zod.minLength)
+					: '';
+			mod[key] = initalString;
 		} else if (zod instanceof ZodEnum) {
 			if (setEnumsToFirstValue) {
 				const [firstOption] = zod.options as unknown[];

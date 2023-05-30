@@ -1,24 +1,15 @@
-import {
-	Badge,
-	Box,
-	Button,
-	FormGroup,
-	Stack,
-	Typography,
-} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Badge, Box, Button, FormGroup, Typography } from '@mui/material';
 import type { FunctionComponent } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
-import {
-	getEmptySchemaData,
-	type PrimitiveRecord,
-} from '@newsletters-nx/newsletters-data-client';
+import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
+import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
+import { isPrimitiveRecord } from '../../util';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
 import { RecordInput } from './RecordInput';
 import { defaultFieldStyle } from './styling';
 import type { FieldProps, FieldValue } from './util';
-import { isPrimitiveRecord } from '../../util';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 export const SchemaRecordInput: FunctionComponent<
 	FieldProps & {
@@ -38,10 +29,12 @@ export const SchemaRecordInput: FunctionComponent<
 	};
 
 	const sendEmpty = () => {
-		const blankData = getEmptySchemaData(recordSchema, false, true);
+		const blankData = getEmptySchemaData(recordSchema, false, true, true);
 		if (!isPrimitiveRecord(blankData)) {
 			console.error(
-				`blank data produced for ${label} schema is not a supported record`,
+				`blank data produced for ${
+					label ?? ''
+				} schema is not a supported record`,
 				blankData,
 			);
 			return;
@@ -89,15 +82,13 @@ export const SchemaRecordInput: FunctionComponent<
 					)}
 
 					{!value && (
-						<>
-							<Button
-								variant="outlined"
-								onClick={sendEmpty}
-								endIcon={<AddIcon />}
-							>
-								Define Value
-							</Button>
-						</>
+						<Button
+							variant="outlined"
+							onClick={sendEmpty}
+							endIcon={<AddIcon />}
+						>
+							Define Value
+						</Button>
 					)}
 				</Box>
 			</FormGroup>
