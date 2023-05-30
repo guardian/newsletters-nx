@@ -72,7 +72,7 @@ export const singleThrasherLayout: WizardStepLayout<DraftStorage> = {
 					}
 				}
 
-				if (singleThrasher || multiThrashers) {
+				if (singleThrasher || (multiThrashers && multiThrashers.length > 0)) {
 					const thrasherDescription = stepData.formData
 						? stepData.formData['thrasherOptions.thrasherDescription']
 						: undefined;
