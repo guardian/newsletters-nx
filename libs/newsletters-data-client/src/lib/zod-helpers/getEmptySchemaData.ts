@@ -13,11 +13,18 @@ import { recursiveUnwrap } from './recursiveUnwrap';
  */
 export const getEmptySchemaData = (
 	schema: z.ZodObject<z.ZodRawShape>,
-	unwrapOptionals = false,
-	setEnumsToFirstValue = false,
-	populateStringsWithMinLength = false,
+	options: {
+		unwrapOptionals?: boolean;
+		setEnumsToFirstValue?: boolean;
+		populateStringsWithMinLength?: boolean;
+	} = {},
 ): FormDataRecord | undefined => {
 	return Object.keys(schema.shape).reduce<FormDataRecord>((formData, key) => {
+		const {
+			unwrapOptionals = false,
+			setEnumsToFirstValue = false,
+			populateStringsWithMinLength = false,
+		} = options;
 		const zodMaybeOptional = schema.shape[key];
 
 		if (!zodMaybeOptional) {

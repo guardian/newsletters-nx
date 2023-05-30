@@ -29,7 +29,10 @@ export const SchemaRecordInput: FunctionComponent<
 	};
 
 	const sendEmpty = () => {
-		const blankData = getEmptySchemaData(recordSchema, false, true, true);
+		const blankData = getEmptySchemaData(recordSchema, {
+			setEnumsToFirstValue: true,
+			populateStringsWithMinLength: true,
+		});
 		if (!isPrimitiveRecord(blankData)) {
 			console.error(
 				`blank data produced for ${
