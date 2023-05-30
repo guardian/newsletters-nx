@@ -73,6 +73,12 @@ export const multiThrashersLayout: WizardStepLayout<DraftStorage> = {
 							return 'ALL THREE THRASHERS MUST BE SPECIFIED FOR A CONFIGURATION';
 						}
 					}
+					const thrasherDescription = stepData.formData
+						? stepData.formData['thrasherOptions.thrasherDescription']
+						: undefined;
+					if (!thrasherDescription) {
+						return 'IF MULTI-THRASHERS ARE REQUIRED, MUST ENTER THRASHER DESCRIPTION ON PREVIOUS STEP';
+					}
 				}
 				return undefined;
 			},
