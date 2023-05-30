@@ -1,4 +1,11 @@
-import { Badge, Button, FormGroup, Stack, Typography } from '@mui/material';
+import {
+	Badge,
+	Box,
+	Button,
+	FormGroup,
+	Stack,
+	Typography,
+} from '@mui/material';
 import type { FunctionComponent } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import {
@@ -42,60 +49,57 @@ export const SchemaRecordInput: FunctionComponent<
 		inputHandler(blankData);
 	};
 
+	const badgeText = !value ? 'unset' : optional ? 'optional' : undefined;
+
 	return (
 		<div css={defaultFieldStyle}>
-			<FormGroup sx={{ flex: 1, paddingLeft: 3 }}>
-				<Badge badgeContent={!value ? 'unset' : undefined} color="primary">
-					<Stack
-						direction={'row'}
-						justifyContent={'space-between'}
-						alignItems={'center'}
+			<FormGroup sx={{ flex: 1 }}>
+				<Badge badgeContent={badgeText} color="primary">
+					<Typography
 						flex={1}
+						component={'legend'}
+						variant="subtitle2"
+						marginBottom={1}
 					>
-						<Typography
-							component={'legend'}
-							variant="subtitle2"
-							marginBottom={1}
-						>
-							{label}
-						</Typography>
-						{optional && <Typography variant="overline">(optional)</Typography>}
-					</Stack>
+						{label}
+					</Typography>
 				</Badge>
 
-				{value && (
-					<>
-						<RecordInput
-							recordSchema={recordSchema}
-							record={value}
-							editRecord={sendValue}
-						/>
-						{optional && (
+				<Box paddingLeft={3}>
+					{value && (
+						<>
+							<RecordInput
+								recordSchema={recordSchema}
+								record={value}
+								editRecord={sendValue}
+							/>
+							{optional && (
+								<Button
+									variant="outlined"
+									color="warning"
+									endIcon={<DeleteIcon />}
+									onClick={() => {
+										inputHandler(undefined);
+									}}
+								>
+									Remove Value
+								</Button>
+							)}
+						</>
+					)}
+
+					{!value && (
+						<>
 							<Button
 								variant="outlined"
-								color="warning"
-								endIcon={<DeleteIcon />}
-								onClick={() => {
-									inputHandler(undefined);
-								}}
+								onClick={sendEmpty}
+								endIcon={<AddIcon />}
 							>
-								Remove Value
+								Define Value
 							</Button>
-						)}
-					</>
-				)}
-
-				{!value && (
-					<>
-						<Button
-							variant="outlined"
-							onClick={sendEmpty}
-							endIcon={<AddIcon />}
-						>
-							Define Value
-						</Button>
-					</>
-				)}
+						</>
+					)}
+				</Box>
 			</FormGroup>
 		</div>
 	);
