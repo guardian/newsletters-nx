@@ -51,17 +51,17 @@ export const singleThrasherLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData): string | undefined => {
 				const singleThrasher = stepData.formData
-					? stepData.formData['singleThrasher']
+					? stepData.formData['thrasherOptions.singleThrasher']
 					: undefined;
 				if (singleThrasher) {
 					const singleThrasherLocation = stepData.formData
-						? stepData.formData['singleThrasherLocation']
+						? stepData.formData['thrasherOptions.singleThrasherLocation']
 						: undefined;
 					if (!singleThrasherLocation) {
 						return 'NO SINGLE THRASHER LOCATION SELECTED';
 					}
 					const thrasherDescription = stepData.formData
-						? stepData.formData['thrasherDescription']
+						? stepData.formData['thrasherOptions.thrasherDescription']
 						: undefined;
 					if (!thrasherDescription) {
 						return 'NO THRASHER DESCRIPTION PROVIDED';
