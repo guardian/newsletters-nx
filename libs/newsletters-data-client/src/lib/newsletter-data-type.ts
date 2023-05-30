@@ -25,11 +25,9 @@ export const onlineArticleSchema = z
 	.describe('location of article');
 export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
 
-export const singleThrasherLocation = z.enum([
-	'Web only',
-	'App only',
-	'Web and App',
-]);
+export const singleThrasherLocation = z
+	.enum(['Web only', 'App only', 'Web and App'])
+	.optional();
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
 export const renderingOptionsSchema = z.object({
