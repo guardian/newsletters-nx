@@ -23,10 +23,6 @@ The first step is to enter the name of your newsletter. For example,  **Down to 
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const name = stepData.formData ? stepData.formData['name'] : undefined;
-				return name ? undefined : 'NO NAME PROVIDED';
-			},
 			executeStep: executeCreate,
 		},
 	},

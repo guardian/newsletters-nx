@@ -47,9 +47,6 @@ export const addSuffixToMakeTokenUnique = (
 	delimiter = '-',
 ): string => {
 	// no duplicates, so can use the token name
-
-	console.log('dedupe', { originalToken, existingTokens });
-
 	if (!existingTokens.includes(originalToken)) {
 		return originalToken;
 	}
