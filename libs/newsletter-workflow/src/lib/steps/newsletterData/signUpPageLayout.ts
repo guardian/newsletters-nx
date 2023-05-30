@@ -1,8 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type {
-	WizardStepData,
-	WizardStepLayout,
-} from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
@@ -48,21 +45,6 @@ export const signUpPageLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const headline = stepData.formData
-					? stepData.formData['signUpHeadline']
-					: undefined;
-				if (!headline) {
-					return 'NO HEADLINE PROVIDED';
-				}
-				const description = stepData.formData
-					? stepData.formData['signUpDescription']
-					: undefined;
-				if (!description) {
-					return 'NO DESCRIPTION PROVIDED';
-				}
-				return undefined;
-			},
 			executeStep: executeModify,
 		},
 	},
