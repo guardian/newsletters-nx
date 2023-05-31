@@ -17,6 +17,7 @@ import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
 import { WizardActionButton } from './WizardActionButton';
+import { ZodIssuesReport } from './ZodIssuesReport';
 
 /**
  * Interface for the props passed to the `Wizard` component.
@@ -28,9 +29,11 @@ export interface WizardProps {
 
 const FailureAlert = (props: {
 	errorMessage: string;
+	errorDetails?: CurrentStepRouteResponse['errorDetails'];
 	isPersistent?: boolean;
 }) => {
-	const { errorMessage, isPersistent } = props;
+	const { errorMessage, isPersistent, errorDetails } = props;
+
 	if (isPersistent) {
 		return (
 			<Alert severity="error">
@@ -38,7 +41,15 @@ const FailureAlert = (props: {
 			</Alert>
 		);
 	}
-	return <Alert severity="warning">Please try again: {errorMessage}</Alert>;
+	return (
+		<Alert severity="warning">
+			{' '}
+			Please try again: {errorMessage}
+			{errorDetails?.zodIssues && (
+				<ZodIssuesReport issues={errorDetails.zodIssues} />
+			)}
+		</Alert>
+	);
 };
 
 /**
@@ -109,6 +120,7 @@ export const Wizard: React.FC<WizardProps> = ({
 		return (
 			<FailureAlert
 				errorMessage={serverErrorMessage}
+				errorDetails={serverData.errorDetails}
 				isPersistent={serverData.hasPersistentError}
 			/>
 		);
@@ -159,6 +171,7 @@ export const Wizard: React.FC<WizardProps> = ({
 				<Box paddingBottom={2}>
 					<FailureAlert
 						errorMessage={serverData.errorMessage}
+						errorDetails={serverData.errorDetails}
 						isPersistent={serverData.hasPersistentError}
 					/>
 				</Box>

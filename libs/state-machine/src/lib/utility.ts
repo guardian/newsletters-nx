@@ -39,12 +39,8 @@ export const validateIncomingFormData = (
 
 		const parseResult = formSchemaForIncomingStep.safeParse(formData);
 		if (!parseResult.success) {
-			const issueList = parseResult.error.issues.map((issue) => {
-				const fieldName = issue.path.map((part) => part.toString()).join('/');
-				return `${fieldName}: "${issue.message}"`;
-			});
 			return {
-				message: `VALIDATION ERRORS: ${issueList.join('; ')}`,
+				message: `VALIDATION ERRORS x${parseResult.error.issues.length}`,
 				issues: parseResult.error.issues,
 			};
 		}
