@@ -5,10 +5,7 @@ import type {
 	WizardLayout,
 	WizardStepData,
 } from './types';
-import {
-	isWizardExecutionFailure,
-	makeStepDataWithErrorMessage,
-} from './utility';
+import { makeStepDataWithErrorMessage } from './utility';
 
 export async function stateMachineSkipPressed<
 	T extends GenericStorageInterface,
@@ -68,7 +65,7 @@ export async function stateMachineSkipPressed<
 		storageInstance,
 	);
 
-	if (isWizardExecutionFailure(executeSkipResult)) {
+	if (executeSkipResult.isFailure) {
 		return makeStepDataWithErrorMessage(
 			executeSkipResult.message,
 			requestBody.stepId,
@@ -77,7 +74,7 @@ export async function stateMachineSkipPressed<
 	}
 
 	return {
-		formData: executeSkipResult,
+		formData: executeSkipResult.data,
 		currentStepId: requestBody.stepToSkipToId,
 	};
 }

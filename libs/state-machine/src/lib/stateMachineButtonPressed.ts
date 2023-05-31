@@ -6,7 +6,6 @@ import type {
 	WizardStepLayout,
 } from './types';
 import {
-	isWizardExecutionFailure,
 	makeStepDataWithErrorMessage,
 	validateIncomingFormData,
 } from './utility';
@@ -105,7 +104,8 @@ export async function stateMachineButtonPressed<
 		currentStepLayout,
 		storageInstance,
 	);
-	if (isWizardExecutionFailure(executionResult)) {
+
+	if (executionResult.isFailure) {
 		return makeStepDataWithErrorMessage(
 			executionResult.message,
 			incomingStepData.currentStepId,
@@ -115,6 +115,6 @@ export async function stateMachineButtonPressed<
 
 	return {
 		currentStepId: stepToMoveTo,
-		formData: executionResult,
+		formData: executionResult.data,
 	};
 }

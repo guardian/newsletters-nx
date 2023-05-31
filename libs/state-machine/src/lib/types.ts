@@ -9,8 +9,12 @@ export type GenericStorageInterface = any;
 export type WizardFormData = FormDataRecord;
 
 export type WizardExecutionFailure = {
-	_isWizardFailure: true;
+	isFailure: true;
 	message: string;
+};
+export type WizardExecutionSuccess = {
+	isFailure: false;
+	data: WizardFormData;
 };
 
 /**
@@ -52,13 +56,13 @@ export type AsyncExecution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => Promise<WizardFormData | WizardExecutionFailure>;
+) => Promise<WizardExecutionSuccess | WizardExecutionFailure>;
 
 type Execution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => WizardFormData | WizardExecutionFailure;
+) => WizardExecutionSuccess | WizardExecutionFailure;
 
 export type FindStepIdFunction = {
 	(

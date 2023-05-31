@@ -10,12 +10,13 @@ import {
 import type {
 	AsyncExecution,
 	WizardExecutionFailure,
-	WizardFormData,
+	WizardExecutionSuccess,
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 import {
 	makeWizardExecutionFailure,
+	makeWizardExecutionSuccess,
 	validateIncomingFormData,
 } from '@newsletters-nx/state-machine';
 
@@ -29,7 +30,7 @@ const doModify = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	service?: LaunchService | DraftStorage,
-): Promise<WizardFormData | WizardExecutionFailure> => {
+): Promise<WizardExecutionSuccess | WizardExecutionFailure> => {
 	if (!service) {
 		return makeWizardExecutionFailure('no draft storage instance');
 	}
@@ -67,7 +68,9 @@ const doModify = async (
 			};
 			const storageResponse = await ourDraftService.update(draftNewsletter);
 			if (storageResponse.ok) {
-				return draftNewsletterDataToFormData(storageResponse.data);
+				return makeWizardExecutionSuccess(
+					draftNewsletterDataToFormData(storageResponse.data),
+				);
 			}
 			return makeWizardExecutionFailure(storageResponse.message);
 		}

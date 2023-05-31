@@ -4,7 +4,10 @@ import type {
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import type { AsyncExecution } from '@newsletters-nx/state-machine';
-import { makeWizardExecutionFailure } from '@newsletters-nx/state-machine';
+import {
+	makeWizardExecutionFailure,
+	makeWizardExecutionSuccess,
+} from '@newsletters-nx/state-machine';
 import { parseToNumber } from './util';
 
 const DERIVED_FIELD_KEYS: Array<keyof NewsletterData> = [
@@ -57,9 +60,9 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 		return makeWizardExecutionFailure(response.message);
 	}
 
-	return {
+	return makeWizardExecutionSuccess({
 		newNewsletterListId: response.data.listId,
 		newNewsletterName: response.data.name,
 		newNewsletterIdentityName: response.data.identityName,
-	};
+	});
 };

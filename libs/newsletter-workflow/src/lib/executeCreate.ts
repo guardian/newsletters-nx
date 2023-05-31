@@ -8,6 +8,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	makeWizardExecutionFailure,
+	makeWizardExecutionSuccess,
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
@@ -52,7 +53,9 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 		listId: undefined,
 	});
 	if (storageResponse.ok) {
-		return draftNewsletterDataToFormData(storageResponse.data);
+		return makeWizardExecutionSuccess(
+			draftNewsletterDataToFormData(storageResponse.data),
+		);
 	}
 
 	return makeWizardExecutionFailure(storageResponse.message);

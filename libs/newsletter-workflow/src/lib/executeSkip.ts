@@ -5,7 +5,10 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
-import { makeWizardExecutionFailure } from '@newsletters-nx/state-machine';
+import {
+	makeWizardExecutionFailure,
+	makeWizardExecutionSuccess,
+} from '@newsletters-nx/state-machine';
 
 export const executeSkip: AsyncExecution<DraftStorage> = async (
 	stepData: WizardStepData,
@@ -19,6 +22,6 @@ export const executeSkip: AsyncExecution<DraftStorage> = async (
 		if (!stepData.formData) {
 			reject('missing form data');
 		}
-		resolve(stepData.formData as WizardFormData);
+		resolve(makeWizardExecutionSuccess(stepData.formData as WizardFormData));
 	});
 };
