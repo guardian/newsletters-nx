@@ -1,5 +1,9 @@
 import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
-import type { WizardStepData, WizardStepLayout } from './types';
+import type {
+	WizardExecutionFailure,
+	WizardStepData,
+	WizardStepLayout,
+} from './types';
 
 export const makeStepDataWithErrorMessage = (
 	errorMessage: string,
@@ -39,4 +43,23 @@ export const validateIncomingFormData = (
 	}
 
 	return false;
+};
+
+export const makeWizardExecutionFailure = (
+	message: string,
+): WizardExecutionFailure => {
+	return {
+		_isWizardFailure: true,
+		message,
+	};
+};
+
+export const isWizardExecutionFailure = (
+	value: unknown,
+): value is WizardExecutionFailure => {
+	if (!value || typeof value !== 'object') {
+		return false;
+	}
+	const record = value as Record<string, unknown>;
+	return !!record['_isWizardFailure'];
 };

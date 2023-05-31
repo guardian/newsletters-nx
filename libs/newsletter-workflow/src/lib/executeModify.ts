@@ -9,11 +9,15 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
+	WizardExecutionFailure,
 	WizardFormData,
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
-import { validateIncomingFormData } from '@newsletters-nx/state-machine';
+import {
+	makeWizardExecutionFailure,
+	validateIncomingFormData,
+} from '@newsletters-nx/state-machine';
 
 const isADraftStorage = (
 	service: LaunchService | DraftStorage,
@@ -25,9 +29,9 @@ const doModify = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	service?: LaunchService | DraftStorage,
-): Promise<WizardFormData | string> => {
+): Promise<WizardFormData | WizardExecutionFailure> => {
 	if (!service) {
-		return 'no storage instance';
+		return makeWizardExecutionFailure('no draft storage instance');
 	}
 
 	const serviceIsADraftInstance = isADraftStorage(service);
@@ -39,7 +43,7 @@ const doModify = async (
 	if (stepData.formData) {
 		const { listId } = stepData.formData;
 		if (typeof listId !== 'number') {
-			return 'invalid or missing listId';
+			return makeWizardExecutionFailure('invalid or missing listId');
 		}
 
 		const formValidationError = validateIncomingFormData(
@@ -48,7 +52,9 @@ const doModify = async (
 			stepLayout as WizardStepLayout<unknown>,
 		);
 
-		if (formValidationError) return formValidationError;
+		if (formValidationError) {
+			return makeWizardExecutionFailure(formValidationError);
+		}
 
 		// listId specifically added to draftNewsletter to ensure correct typing
 		if (stepData.formData['listId']) {
@@ -63,17 +69,17 @@ const doModify = async (
 			if (storageResponse.ok) {
 				return draftNewsletterDataToFormData(storageResponse.data);
 			}
-			return storageResponse.message;
+			return makeWizardExecutionFailure(storageResponse.message);
 		}
 	}
-	return 'missing form data';
+	return makeWizardExecutionFailure('missing form data');
 };
 
 export const executeModify: AsyncExecution<DraftStorage> = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<DraftStorage>,
 	draftStorage?: DraftStorage,
-): Promise<WizardFormData | string> => {
+) => {
 	return doModify(stepData, stepLayout as WizardStepLayout, draftStorage);
 };
 
@@ -81,6 +87,6 @@ export const executeModifyWithinLaunch: AsyncExecution<LaunchService> = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<LaunchService>,
 	launchService?: LaunchService,
-): Promise<WizardFormData | string> => {
+) => {
 	return doModify(stepData, stepLayout as WizardStepLayout, launchService);
 };

@@ -4,9 +4,14 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import type { ZodObject, ZodRawShape } from 'zod';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completey generic?
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completely generic?
 export type GenericStorageInterface = any;
 export type WizardFormData = FormDataRecord;
+
+export type WizardExecutionFailure = {
+	_isWizardFailure: true;
+	message: string;
+};
 
 /**
  * Interface for a button displayed in the wizard.
@@ -47,13 +52,13 @@ export type AsyncExecution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => Promise<WizardFormData | string>;
+) => Promise<WizardFormData | WizardExecutionFailure>;
 
 type Execution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => WizardFormData | string;
+) => WizardFormData | WizardExecutionFailure;
 
 export type FindStepIdFunction = {
 	(
