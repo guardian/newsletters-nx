@@ -1,5 +1,9 @@
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
-import type { WizardLayout, WizardStepData } from './types';
+import type {
+	WizardExecutionSuccess,
+	WizardLayout,
+	WizardStepData,
+} from './types';
 
 const initialStep: WizardStepData = {
 	currentStepId: 'step1',
@@ -9,6 +13,11 @@ let mockStepData: WizardStepData;
 beforeEach(() => {
 	mockStepData = Object.assign({}, initialStep);
 });
+
+const mockExecutionSuccess: WizardExecutionSuccess = {
+	isFailure: false,
+	data: {},
+};
 
 const mockWizardLayout: WizardLayout = {
 	step1: {
@@ -76,7 +85,7 @@ describe('stateMachineButtonPressed', () => {
 });
 
 it('should execute step and move to next step if next button is pressed', async () => {
-	const executeStepMock = jest.fn().mockResolvedValue(undefined);
+	const executeStepMock = jest.fn().mockResolvedValue(mockExecutionSuccess);
 	const nextButton = mockWizardLayout['step1']?.buttons['next'];
 	const executeStep = nextButton?.executeStep;
 	if (nextButton && executeStep) {
