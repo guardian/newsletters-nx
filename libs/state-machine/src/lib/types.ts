@@ -2,7 +2,7 @@ import type {
 	FormDataRecord,
 	WizardButtonType,
 } from '@newsletters-nx/newsletters-data-client';
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completely generic?
 export type GenericStorageInterface = any;
@@ -11,6 +11,9 @@ export type WizardFormData = FormDataRecord;
 export type WizardExecutionFailure = {
 	isFailure: true;
 	message: string;
+	details?: {
+		zodIssues?: ZodIssue[];
+	};
 };
 export type WizardExecutionSuccess = {
 	isFailure: false;
@@ -33,6 +36,7 @@ export interface WizardStepData {
 	formData?: WizardFormData;
 	currentStepId: string;
 	errorMessage?: string;
+	errorDetails?: WizardExecutionFailure['details'];
 	// ID should be the id of item being edited, as determined by
 	// the page URL, rather than from the form data inputted by the user.
 	// It should be undefined for a "create" operation where the page will
@@ -141,6 +145,8 @@ export interface CurrentStepRouteResponse {
 
 	/** a user-friendly error message */
 	errorMessage?: string;
+
+	errorDetails?: WizardExecutionFailure['details'];
 
 	/** Whether the request resulted in a persistent error (as a opposed temporary connectivity error
 	 *  or validation error on the user input), so the user should not be prompted to try again */

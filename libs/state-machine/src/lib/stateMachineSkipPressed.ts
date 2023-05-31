@@ -70,6 +70,7 @@ export async function stateMachineSkipPressed<
 			executeSkipResult.message,
 			requestBody.stepId,
 			requestBody.formData,
+			executeSkipResult.details,
 		);
 	}
 

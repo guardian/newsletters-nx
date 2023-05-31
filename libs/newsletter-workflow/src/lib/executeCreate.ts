@@ -42,6 +42,7 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 			`Form data is invalid for schema: ${
 				schema.description ?? '[no description]'
 			}`,
+			{ zodIssues: parseResult.error.issues },
 		);
 	}
 

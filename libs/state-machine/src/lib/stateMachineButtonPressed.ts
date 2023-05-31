@@ -54,9 +54,10 @@ export async function stateMachineButtonPressed<
 	);
 	if (incomingDataError) {
 		return makeStepDataWithErrorMessage(
-			incomingDataError,
+			incomingDataError.message,
 			incomingStepData.currentStepId,
 			incomingStepData.formData,
+			{ zodIssues: incomingDataError.issues },
 		);
 	}
 
@@ -110,6 +111,7 @@ export async function stateMachineButtonPressed<
 			executionResult.message,
 			incomingStepData.currentStepId,
 			incomingStepData.formData,
+			executionResult.details,
 		);
 	}
 

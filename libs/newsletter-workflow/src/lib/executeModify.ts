@@ -54,7 +54,9 @@ const doModify = async (
 		);
 
 		if (formValidationError) {
-			return makeWizardExecutionFailure(formValidationError);
+			return makeWizardExecutionFailure(formValidationError.message, {
+				zodIssues: formValidationError.issues,
+			});
 		}
 
 		// listId specifically added to draftNewsletter to ensure correct typing
