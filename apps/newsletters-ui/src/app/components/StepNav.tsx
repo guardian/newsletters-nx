@@ -6,9 +6,8 @@ import {
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { ZodObject } from 'zod';
 import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
-import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
+import { getFieldKeyNames } from '@newsletters-nx/newsletters-data-client';
 import type {
 	StepListing,
 	StepperConfig,
@@ -65,24 +64,46 @@ const CompletionCaption = (props: { completeness: StepStatus | undefined }) => {
 	}
 };
 
-function areNoFieldsInStepSet(
+function areAllFieldsUnset(
 	step: StepListing,
 	formData: FormDataRecord | undefined,
 ) {
-	if (!step.schema) {
-		return false;
+	if (!step.schema || !formData) {
+		return true;
 	}
-	const unwrappedSchema = recursiveUnwrap(step.schema);
-	if (!(unwrappedSchema instanceof ZodObject)) {
-		return false;
+	const fieldsInThisStep = getFieldKeyNames(step.schema);
+	if (!fieldsInThisStep) {
+		return true;
 	}
-	const shape = unwrappedSchema.shape as Record<string, unknown>;
-	const fieldsInThisStep = Object.keys(shape);
-	const fieldsPopulatedInFormData = Object.keys(formData ?? {});
+	const fieldsPopulatedInFormData = Object.keys(formData);
 	return !fieldsInThisStep.some((key) =>
 		fieldsPopulatedInFormData.includes(key),
 	);
 }
+
+const isOptionalStep = (step: StepListing): boolean => {
+	if (!step.schema) {
+		return true;
+	}
+	return step.schema.safeParse({}).success;
+};
+
+const resolveStepStatus = (
+	step: StepListing,
+	formData: FormDataRecord | undefined,
+): StepStatus => {
+	if (!step.schema) {
+		return StepStatus.NoFields;
+	}
+	const parseResult = step.schema.safeParse(formData);
+	if (!parseResult.success) {
+		return StepStatus.Incomplete;
+	}
+	if (isOptionalStep(step) && areAllFieldsUnset(step, formData)) {
+		return StepStatus.Optional;
+	}
+	return StepStatus.Complete;
+};
 
 export const StepNav = ({
 	currentStepId,
@@ -120,21 +141,15 @@ export const StepNav = ({
 	});
 
 	const updateCompletion = () => {
-		const list = stepperConfig.steps.reduce<
-			Partial<Record<string, StepStatus>>
-		>((record, step) => {
-			const result = step.schema
-				? step.schema.safeParse(formData).success
-					? areNoFieldsInStepSet(step, formData)
-						? StepStatus.Optional // parse passed, but no fields are set, so the step must be all optional
-						: StepStatus.Complete // parse passed, so step is complete
-					: StepStatus.Incomplete // parse failed, so step is incomplete
-				: StepStatus.NoFields; // no schema on the step
+		const completionRecord: Partial<Record<string, StepStatus>> = {};
+		stepperConfig.steps.forEach((stepListing) => {
+			completionRecord[stepListing.id] = resolveStepStatus(
+				stepListing,
+				formData,
+			);
+		});
 
-			return { ...record, [step.id]: result };
-		}, {});
-
-		setCompletionRecord(list);
+		setCompletionRecord(completionRecord);
 	};
 
 	// On the initial render, the completionRecord is set to {}
