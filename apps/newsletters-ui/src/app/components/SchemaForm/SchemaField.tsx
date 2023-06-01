@@ -4,6 +4,7 @@ import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
+import { RadioSelectInput } from './RadioSelectInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
@@ -93,6 +94,15 @@ export function SchemaField<T extends z.ZodRawShape>({
 			}
 
 			if (options) {
+				if (options.length <= 5) {
+					return (
+						<RadioSelectInput
+							{...standardProps}
+							value={value}
+							options={options}
+						/>
+					);
+				}
 				return (
 					<SelectInput {...standardProps} value={value} options={options} />
 				);
@@ -139,6 +149,17 @@ export function SchemaField<T extends z.ZodRawShape>({
 			if (typeof value !== 'string' && typeof value !== 'undefined') {
 				return <WrongTypeMessage field={field} />;
 			}
+
+			if (field.enumOptions && field.enumOptions.length <= 5) {
+				return (
+					<RadioSelectInput
+						{...standardProps}
+						value={value}
+						options={field.enumOptions}
+					/>
+				);
+			}
+
 			return (
 				<SelectInput
 					{...standardProps}
