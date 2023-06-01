@@ -26,13 +26,6 @@ const areAllFieldsUnset = (
 	);
 };
 
-const isOptionalStep = (step: StepListing): boolean => {
-	if (!step.schema) {
-		return true;
-	}
-	return step.schema.safeParse({}).success;
-};
-
 export const resolveStepStatus = (
 	step: StepListing,
 	formData: FormDataRecord | undefined,
@@ -44,7 +37,7 @@ export const resolveStepStatus = (
 	if (!parseResult.success) {
 		return StepStatus.Incomplete;
 	}
-	if (isOptionalStep(step) && areAllFieldsUnset(step, formData)) {
+	if (step.isOptional && areAllFieldsUnset(step, formData)) {
 		return StepStatus.Optional;
 	}
 	return StepStatus.Complete;
