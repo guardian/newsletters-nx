@@ -1,4 +1,4 @@
-import { Alert, Box, Stack } from '@mui/material';
+import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
@@ -47,6 +47,15 @@ const FailureAlert = (props: {
 			Please try again: {errorMessage}
 			{errorDetails?.zodIssues && (
 				<ZodIssuesReport issues={errorDetails.zodIssues} />
+			)}
+			{errorDetails?.problemList && (
+				<Stack spacing={1} component={'ul'}>
+					{errorDetails.problemList.map((problem, index) => (
+						<Typography key={index} component={'li'}>
+							{problem}
+						</Typography>
+					))}
+				</Stack>
 			)}
 		</Alert>
 	);

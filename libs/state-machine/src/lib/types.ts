@@ -10,8 +10,14 @@ export type WizardFormData = FormDataRecord;
 
 export type FailureDetails = {
 	zodIssues?: ZodIssue[];
+	/** array of user-friendly messages describing a set of problems that make the failure */
+	problemList?: string[];
 };
 
+export type ValidationFailure = {
+	message: string;
+	details?: FailureDetails;
+};
 export type WizardExecutionFailure = {
 	isFailure: true;
 	message: string;
@@ -50,13 +56,13 @@ export type AsyncValidator<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => Promise<string | undefined>;
+) => Promise<ValidationFailure | undefined>;
 
 type Validator<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => string | undefined;
+) => ValidationFailure | undefined;
 
 export type AsyncExecution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,

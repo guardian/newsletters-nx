@@ -62,33 +62,35 @@ export async function stateMachineButtonPressed<
 	}
 
 	if (buttonPressedDetails.onAfterStepStartValidate) {
-		const validationResult =
+		const validationFailure =
 			await buttonPressedDetails.onAfterStepStartValidate(
 				incomingStepData,
 				undefined,
 				storageInstance,
 			);
-		if (validationResult !== undefined) {
+		if (validationFailure) {
 			return makeStepDataWithErrorMessage(
-				validationResult,
+				validationFailure.message,
 				incomingStepData.currentStepId,
 				incomingStepData.formData,
+				validationFailure.details,
 			);
 		}
 	}
 
 	if (buttonPressedDetails.onBeforeStepChangeValidate) {
-		const validationResult =
+		const validationFailure =
 			await buttonPressedDetails.onBeforeStepChangeValidate(
 				incomingStepData,
 				currentStepLayout,
 				storageInstance,
 			);
-		if (validationResult !== undefined) {
+		if (validationFailure) {
 			return makeStepDataWithErrorMessage(
-				validationResult,
+				validationFailure.message,
 				incomingStepData.currentStepId,
 				incomingStepData.formData,
+				validationFailure.details,
 			);
 		}
 	}

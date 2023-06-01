@@ -44,15 +44,19 @@ export const newsletterDesignLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
+			onBeforeStepChangeValidate: (stepData) => {
 				const newsletterDesignDoc = stepData.formData
 					? stepData.formData['designBriefDoc']
 					: undefined;
-				if (!newsletterDesignDoc) return 'NO DESIGN BRIEF DOC PROVIDED';
+				if (!newsletterDesignDoc) {
+					return { message: 'NO DESIGN BRIEF DOC PROVIDED' };
+				}
 				const figmaDesignUrl = stepData.formData
 					? stepData.formData['figmaDesignUrl']
 					: undefined;
-				if (!figmaDesignUrl) return 'NO FIGMA DESIGN URL PROVIDED';
+				if (!figmaDesignUrl) {
+					return { message: 'NO FIGMA DESIGN URL PROVIDED' };
+				}
 				const singleThrasher = stepData.formData
 					? stepData.formData['thrasherOptions.singleThrasher']
 					: undefined;
@@ -64,7 +68,10 @@ export const newsletterDesignLayout: WizardStepLayout<DraftStorage> = {
 						? stepData.formData['figmaIncludesThrashers']
 						: undefined;
 					if (!figmaIncludesThrashers) {
-						return 'FIGMA DESIGN MUST INCLUDE THRASHERS IF SINGLE/MULTI THRASHERS ARE REQUIRED';
+						return {
+							message:
+								'FIGMA DESIGN MUST INCLUDE THRASHERS IF SINGLE/MULTI THRASHERS ARE REQUIRED',
+						};
 					}
 				}
 				return undefined;
