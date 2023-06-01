@@ -1,9 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import {
+	getPermissions,
 	isPartialNewsletterData,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
 import { newsletterStore } from '../../services/storage';
+import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,
 	makeSuccessResponse,
@@ -55,6 +57,21 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		Params: { newsletterId: string };
 		Body: unknown;
 	}>('/api/newsletters/:newsletterId', async (req, res) => {
+		const user = getUserProfile(req);
+		const permissions = getPermissions(user.profile);
+
+		if (!permissions.editNewsletters) {
+			return res
+				.status(403)
+				.send(
+					makeErrorResponse(
+						`You don't have permission to do that, ${
+							user.profile?.given_name ?? 'ANONYMOUS_USER'
+						}`,
+					),
+				);
+		}
+
 		const { newsletterId } = req.params;
 		const { body: modifications } = req;
 		const newsletterIdAsNumber = Number(newsletterId);
