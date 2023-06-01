@@ -6,13 +6,12 @@ import {
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
-import { getFieldKeyNames } from '@newsletters-nx/newsletters-data-client';
 import type {
 	StepListing,
 	StepperConfig,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { resolveStepStatus, StepStatus } from '../resolve-step-status';
 
 interface Props {
 	currentStepId?: string;
@@ -22,15 +21,8 @@ interface Props {
 	formData?: WizardFormData;
 }
 
-enum StepStatus {
-	Complete,
-	Incomplete,
-	Optional,
-	NoFields,
-}
-
-const CompletionCaption = (props: { completeness: StepStatus | undefined }) => {
-	switch (props.completeness) {
+const CompletionCaption = (props: { status: StepStatus | undefined }) => {
+	switch (props.status) {
 		case undefined:
 		case StepStatus.NoFields:
 			return null;
@@ -62,47 +54,6 @@ const CompletionCaption = (props: { completeness: StepStatus | undefined }) => {
 				</Typography>
 			);
 	}
-};
-
-function areAllFieldsUnset(
-	step: StepListing,
-	formData: FormDataRecord | undefined,
-) {
-	if (!step.schema || !formData) {
-		return true;
-	}
-	const fieldsInThisStep = getFieldKeyNames(step.schema);
-	if (!fieldsInThisStep) {
-		return true;
-	}
-	const fieldsPopulatedInFormData = Object.keys(formData);
-	return !fieldsInThisStep.some((key) =>
-		fieldsPopulatedInFormData.includes(key),
-	);
-}
-
-const isOptionalStep = (step: StepListing): boolean => {
-	if (!step.schema) {
-		return true;
-	}
-	return step.schema.safeParse({}).success;
-};
-
-const resolveStepStatus = (
-	step: StepListing,
-	formData: FormDataRecord | undefined,
-): StepStatus => {
-	if (!step.schema) {
-		return StepStatus.NoFields;
-	}
-	const parseResult = step.schema.safeParse(formData);
-	if (!parseResult.success) {
-		return StepStatus.Incomplete;
-	}
-	if (isOptionalStep(step) && areAllFieldsUnset(step, formData)) {
-		return StepStatus.Optional;
-	}
-	return StepStatus.Complete;
 };
 
 export const StepNav = ({
@@ -184,7 +135,7 @@ export const StepNav = ({
 		>
 			{filteredStepList.map((step) => {
 				const caption = stepperConfig.indicateStepsComplete ? (
-					<CompletionCaption completeness={completionRecord[step.id]} />
+					<CompletionCaption status={completionRecord[step.id]} />
 				) : undefined;
 
 				return (
