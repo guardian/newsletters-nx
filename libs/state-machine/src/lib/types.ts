@@ -8,12 +8,14 @@ import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
 export type GenericStorageInterface = any;
 export type WizardFormData = FormDataRecord;
 
+export type FailureDetails = {
+	zodIssues?: ZodIssue[];
+};
+
 export type WizardExecutionFailure = {
 	isFailure: true;
 	message: string;
-	details?: {
-		zodIssues?: ZodIssue[];
-	};
+	details?: FailureDetails;
 };
 export type WizardExecutionSuccess = {
 	isFailure?: false;
@@ -36,7 +38,7 @@ export interface WizardStepData {
 	formData?: WizardFormData;
 	currentStepId: string;
 	errorMessage?: string;
-	errorDetails?: WizardExecutionFailure['details'];
+	errorDetails?: FailureDetails;
 	// ID should be the id of item being edited, as determined by
 	// the page URL, rather than from the form data inputted by the user.
 	// It should be undefined for a "create" operation where the page will
@@ -146,7 +148,7 @@ export interface CurrentStepRouteResponse {
 	/** a user-friendly error message */
 	errorMessage?: string;
 
-	errorDetails?: WizardExecutionFailure['details'];
+	errorDetails?: FailureDetails;
 
 	/** Whether the request resulted in a persistent error (as a opposed temporary connectivity error
 	 *  or validation error on the user input), so the user should not be prompted to try again */

@@ -1,16 +1,12 @@
 import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
 import type { ZodIssue } from 'zod';
-import type {
-	WizardExecutionFailure,
-	WizardStepData,
-	WizardStepLayout,
-} from './types';
+import type { FailureDetails, WizardStepData, WizardStepLayout } from './types';
 
 export const makeStepDataWithErrorMessage = (
 	errorMessage: string,
 	stepId: string,
 	formData?: FormDataRecord,
-	errorDetails?: WizardExecutionFailure['details'],
+	errorDetails?: FailureDetails,
 ): WizardStepData => {
 	return {
 		...{
