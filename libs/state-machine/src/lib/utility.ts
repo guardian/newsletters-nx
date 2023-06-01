@@ -2,8 +2,6 @@ import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
 import type { ZodIssue } from 'zod';
 import type {
 	WizardExecutionFailure,
-	WizardExecutionSuccess,
-	WizardFormData,
 	WizardStepData,
 	WizardStepLayout,
 } from './types';
