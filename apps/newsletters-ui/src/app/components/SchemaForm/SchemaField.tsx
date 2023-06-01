@@ -24,6 +24,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	showUnsupported?: boolean;
 	numberInputSettings?: NumberInputSettings;
 	validationWarning?: string;
+	maxOptionsForRadioButtons: number;
 }
 
 const WrongTypeMessage = (props: { field: FieldDef }) => (
@@ -41,6 +42,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	showUnsupported = false,
 	numberInputSettings = {},
 	validationWarning,
+	maxOptionsForRadioButtons,
 }: SchemaFieldProps<T>) {
 	const { key, type, value } = field;
 
@@ -94,7 +96,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			}
 
 			if (options) {
-				if (options.length <= 5) {
+				if (options.length <= maxOptionsForRadioButtons) {
 					return (
 						<RadioSelectInput
 							{...standardProps}
@@ -150,7 +152,10 @@ export function SchemaField<T extends z.ZodRawShape>({
 				return <WrongTypeMessage field={field} />;
 			}
 
-			if (field.enumOptions && field.enumOptions.length <= 5) {
+			if (
+				field.enumOptions &&
+				field.enumOptions.length <= maxOptionsForRadioButtons
+			) {
 				return (
 					<RadioSelectInput
 						{...standardProps}
@@ -187,6 +192,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 								{...standardProps}
 								value={value ?? []}
 								recordSchema={field.recordSchema}
+								maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 							/>
 						);
 					} else {
