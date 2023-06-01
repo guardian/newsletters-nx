@@ -6,6 +6,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
 import type {
 	StepListing,
 	StepperConfig,
@@ -20,15 +21,21 @@ interface Props {
 	formData?: WizardFormData;
 }
 
-/**
- * completeness=undefined indicates the step has no schema, so is neither
- * complete or incomplete.
- */
-const CompletionCaption = (props: { completeness: boolean | undefined }) => {
-	switch (props.completeness) {
+const CompletionCaption = (props: { status: StepStatus | undefined }) => {
+	switch (props.status) {
 		case undefined:
+		case StepStatus.NoFields:
 			return null;
-		case true:
+		case StepStatus.Optional:
+			return (
+				<Typography variant="caption">
+					Optional{' '}
+					<span role="img" aria-label="green-cross">
+						❎
+					</span>
+				</Typography>
+			);
+		case StepStatus.Complete:
 			return (
 				<Typography variant="caption">
 					Complete{' '}
@@ -37,7 +44,7 @@ const CompletionCaption = (props: { completeness: boolean | undefined }) => {
 					</span>
 				</Typography>
 			);
-		case false:
+		case StepStatus.Incomplete:
 			return (
 				<Typography variant="caption">
 					Incomplete{' '}
@@ -64,7 +71,7 @@ export const StepNav = ({
 	const [currentStepIdOnLastRender, setCurrenStepIdOnLastRender] =
 		useState(currentStepId);
 	const [completionRecord, setCompletionRecord] = useState<
-		Partial<Record<string, boolean | undefined>>
+		Partial<Record<string, StepStatus>>
 	>({});
 
 	const filteredStepList = stepperConfig.steps.filter((step) => {
@@ -85,17 +92,15 @@ export const StepNav = ({
 	});
 
 	const updateCompletion = () => {
-		const list = stepperConfig.steps.reduce<
-			Partial<Record<string, boolean | undefined>>
-		>((record, step) => {
-			const result = step.schema
-				? step.schema.safeParse(formData).success
-				: undefined;
+		const completionRecord: Partial<Record<string, StepStatus>> = {};
+		stepperConfig.steps.forEach((stepListing) => {
+			completionRecord[stepListing.id] = resolveStepStatus(
+				stepListing,
+				formData,
+			);
+		});
 
-			return { ...record, [step.id]: result };
-		}, {});
-
-		setCompletionRecord(list);
+		setCompletionRecord(completionRecord);
 	};
 
 	// On the initial render, the completionRecord is set to {}
@@ -130,7 +135,7 @@ export const StepNav = ({
 		>
 			{filteredStepList.map((step) => {
 				const caption = stepperConfig.indicateStepsComplete ? (
-					<CompletionCaption completeness={completionRecord[step.id]} />
+					<CompletionCaption status={completionRecord[step.id]} />
 				) : undefined;
 
 				return (

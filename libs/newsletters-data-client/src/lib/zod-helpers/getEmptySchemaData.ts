@@ -1,5 +1,13 @@
 import type { z } from 'zod';
-import { ZodBoolean, ZodDate, ZodEnum, ZodNumber, ZodString } from 'zod';
+import {
+	ZodArray,
+	ZodBoolean,
+	ZodDate,
+	ZodEnum,
+	ZodNumber,
+	ZodOptional,
+	ZodString,
+} from 'zod';
 import type { FormDataRecord } from '../transformWizardData';
 import { recursiveUnwrap } from './recursiveUnwrap';
 
@@ -37,6 +45,10 @@ export const getEmptySchemaData = (
 			mod[key] = false;
 		} else if (zod instanceof ZodDate) {
 			mod[key] = undefined;
+		} else if (zod instanceof ZodOptional) {
+			if (zod.unwrap() instanceof ZodArray) {
+				mod[key] = [];
+			}
 		}
 
 		return {
