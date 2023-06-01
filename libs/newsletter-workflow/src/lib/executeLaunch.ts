@@ -4,10 +4,6 @@ import type {
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import type { AsyncExecution } from '@newsletters-nx/state-machine';
-import {
-	makeWizardExecutionFailure,
-	makeWizardExecutionSuccess,
-} from '@newsletters-nx/state-machine';
 import { parseToNumber } from './util';
 
 const DERIVED_FIELD_KEYS: Array<keyof NewsletterData> = [
@@ -45,11 +41,11 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 ) => {
 	const draftId = parseToNumber(stepData['id']);
 	if (draftId === undefined) {
-		return makeWizardExecutionFailure('ERROR: invalid id.');
+		return { isFailure: true, message: 'ERROR: invalid id.' };
 	}
 
 	if (!launchService) {
-		return makeWizardExecutionFailure('ERROR: no launch service available');
+		return { isFailure: true, message: 'ERROR: no launch service available' };
 	}
 
 	const response = await launchService.launchDraft(
@@ -57,12 +53,14 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 		getExtraValuesFromFormData(stepData.formData),
 	);
 	if (!response.ok) {
-		return makeWizardExecutionFailure(response.message);
+		return { isFailure: true, message: response.message };
 	}
 
-	return makeWizardExecutionSuccess({
-		newNewsletterListId: response.data.listId,
-		newNewsletterName: response.data.name,
-		newNewsletterIdentityName: response.data.identityName,
-	});
+	return {
+		data: {
+			newNewsletterListId: response.data.listId,
+			newNewsletterName: response.data.name,
+			newNewsletterIdentityName: response.data.identityName,
+		},
+	};
 };

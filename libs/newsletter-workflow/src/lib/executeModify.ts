@@ -14,11 +14,7 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
-import {
-	makeWizardExecutionFailure,
-	makeWizardExecutionSuccess,
-	validateIncomingFormData,
-} from '@newsletters-nx/state-machine';
+import { validateIncomingFormData } from '@newsletters-nx/state-machine';
 
 const isADraftStorage = (
 	service: LaunchService | DraftStorage,
@@ -32,7 +28,10 @@ const doModify = async (
 	service?: LaunchService | DraftStorage,
 ): Promise<WizardExecutionSuccess | WizardExecutionFailure> => {
 	if (!service) {
-		return makeWizardExecutionFailure('no draft storage instance');
+		return {
+			isFailure: true,
+			message: 'no draft storage instance',
+		};
 	}
 
 	const serviceIsADraftInstance = isADraftStorage(service);
@@ -44,7 +43,10 @@ const doModify = async (
 	if (stepData.formData) {
 		const { listId } = stepData.formData;
 		if (typeof listId !== 'number') {
-			return makeWizardExecutionFailure('invalid or missing listId');
+			return {
+				isFailure: true,
+				message: 'invalid or missing listId',
+			};
 		}
 
 		const formValidationError = validateIncomingFormData(
@@ -54,9 +56,13 @@ const doModify = async (
 		);
 
 		if (formValidationError) {
-			return makeWizardExecutionFailure(formValidationError.message, {
-				zodIssues: formValidationError.issues,
-			});
+			return {
+				isFailure: true,
+				message: formValidationError.message,
+				details: {
+					zodIssues: formValidationError.issues,
+				},
+			};
 		}
 
 		// listId specifically added to draftNewsletter to ensure correct typing
@@ -70,14 +76,20 @@ const doModify = async (
 			};
 			const storageResponse = await ourDraftService.update(draftNewsletter);
 			if (storageResponse.ok) {
-				return makeWizardExecutionSuccess(
-					draftNewsletterDataToFormData(storageResponse.data),
-				);
+				return {
+					data: draftNewsletterDataToFormData(storageResponse.data),
+				};
 			}
-			return makeWizardExecutionFailure(storageResponse.message);
+			return {
+				isFailure: true,
+				message: storageResponse.message,
+			};
 		}
 	}
-	return makeWizardExecutionFailure('missing form data');
+	return {
+		isFailure: true,
+		message: 'missing form data',
+	};
 };
 
 export const executeModify: AsyncExecution<DraftStorage> = async (

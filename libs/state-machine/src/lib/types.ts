@@ -16,7 +16,7 @@ export type WizardExecutionFailure = {
 	};
 };
 export type WizardExecutionSuccess = {
-	isFailure: false;
+	isFailure?: false;
 	data: WizardFormData;
 };
 

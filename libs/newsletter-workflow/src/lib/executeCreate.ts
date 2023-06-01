@@ -7,8 +7,6 @@ import {
 	formDataToDraftNewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import {
-	makeWizardExecutionFailure,
-	makeWizardExecutionSuccess,
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
@@ -38,12 +36,13 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 
 	const parseResult = schema.safeParse(stepData.formData);
 	if (!parseResult.success) {
-		return makeWizardExecutionFailure(
-			`Form data is invalid for schema: ${
+		return {
+			isFailure: true,
+			message: `Form data is invalid for schema: ${
 				schema.description ?? '[no description]'
 			}`,
-			{ zodIssues: parseResult.error.issues },
-		);
+			details: { zodIssues: parseResult.error.issues },
+		};
 	}
 
 	const draft: DraftNewsletterData = formDataToDraftNewsletterData({
@@ -54,10 +53,13 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 		listId: undefined,
 	});
 	if (storageResponse.ok) {
-		return makeWizardExecutionSuccess(
-			draftNewsletterDataToFormData(storageResponse.data),
-		);
+		return {
+			data: draftNewsletterDataToFormData(storageResponse.data),
+		};
 	}
 
-	return makeWizardExecutionFailure(storageResponse.message);
+	return {
+		isFailure: true,
+		message: storageResponse.message,
+	};
 };

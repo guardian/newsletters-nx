@@ -48,23 +48,3 @@ export const validateIncomingFormData = (
 
 	return undefined;
 };
-
-export const makeWizardExecutionFailure = (
-	message: string,
-	details?: WizardExecutionFailure['details'],
-): WizardExecutionFailure => {
-	return {
-		isFailure: true,
-		message,
-		details,
-	};
-};
-
-export const makeWizardExecutionSuccess = (
-	data: WizardFormData,
-): WizardExecutionSuccess => {
-	return {
-		isFailure: false,
-		data,
-	};
-};
