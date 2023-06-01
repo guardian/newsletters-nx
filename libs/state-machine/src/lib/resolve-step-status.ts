@@ -1,6 +1,6 @@
 import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
 import { getFieldKeyNames } from '@newsletters-nx/newsletters-data-client';
-import type { StepListing } from '@newsletters-nx/state-machine';
+import type { StepListing } from './getStepList';
 
 export enum StepStatus {
 	Complete,
