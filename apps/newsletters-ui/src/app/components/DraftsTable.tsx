@@ -5,7 +5,6 @@ import type { Column } from 'react-table';
 import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
-import { usePermissions } from '../hooks/user-hooks';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftDialog } from './EditDraftDialog';
@@ -20,8 +19,6 @@ export const DraftsTable = ({ drafts }: Props) => {
 	const [draftInDialog, setDraftInDialog] = useState<
 		DraftNewsletterData | undefined
 	>(undefined);
-	const permissions = usePermissions();
-	const userCanLauch = permissions?.launchNewsletters;
 	const [data, setData] = useState(
 		drafts.map((draft) => ({
 			...draft,
@@ -129,7 +126,6 @@ export const DraftsTable = ({ drafts }: Props) => {
 							href={`/newsletters/launch-newsletter/${draft.listId}`}
 							variant="outlined"
 							color="success"
-							disabled={!userCanLauch}
 						>
 							<span role="img" aria-label="rocket">
 								🚀
@@ -139,7 +135,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				},
 			},
 		],
-		[data, userCanLauch],
+		[data],
 	);
 	return (
 		<>

@@ -16,7 +16,6 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { usePermissions } from '../hooks/user-hooks';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
@@ -56,8 +55,6 @@ const propertyToNode = (
 
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
-	const permissions = usePermissions();
-	const userCanLauch = permissions?.launchNewsletters;
 
 	const palette = getPalette(draft.theme ?? '');
 	const issues = getDraftNotReadyIssues(draft);
@@ -113,7 +110,6 @@ export const DraftDetails = ({ draft }: Props) => {
 										</span>
 									}
 									color="success"
-									disabled={!userCanLauch}
 								>
 									Launch
 								</NavigateButton>
