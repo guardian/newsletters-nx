@@ -10,6 +10,7 @@ export enum UserAccessLevel {
 export type UserPermissions = {
 	editNewsletters: boolean;
 	launchNewsletters: boolean;
+	writeToDrafts: boolean;
 };
 
 const STATIC_USERS = {
@@ -43,6 +44,11 @@ export const getPermissions = async (
 		launchNewsletters: [
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
+		].includes(accessLevel),
+		writeToDrafts: [
+			UserAccessLevel.Developer,
+			UserAccessLevel.Editor,
+			UserAccessLevel.Drafter,
 		].includes(accessLevel),
 	};
 };

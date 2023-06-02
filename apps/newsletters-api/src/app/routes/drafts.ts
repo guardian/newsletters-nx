@@ -3,7 +3,9 @@ import type {
 	ApiResponse,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
+import { getPermissions } from '@newsletters-nx/newsletters-data-client';
 import { draftStore } from '../../services/storage';
+import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,
 	makeSuccessResponse,
@@ -43,6 +45,17 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 	app.delete<{ Params: { listId: string } }>(
 		'/api/drafts/:listId',
 		async (req, res): Promise<ApiResponse<DraftWithId>> => {
+			const user = getUserProfile(req);
+			const permissions = await getPermissions(user.profile);
+
+			if (!permissions.writeToDrafts) {
+				return res
+					.status(403)
+					.send(
+						makeErrorResponse(`You don't have permission to delete drafts.`),
+					);
+			}
+
 			const { listId } = req.params;
 			const idAsNumber = Number(listId);
 

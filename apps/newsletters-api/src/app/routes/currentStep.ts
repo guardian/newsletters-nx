@@ -36,12 +36,27 @@ const getAccessDeniedError = async (
 	const permissions = await getPermissions(user.profile);
 	const { wizardId, stepId } = requestBody;
 
-	if (!permissions.launchNewsletters && wizardId === 'LAUNCH_NEWSLETTER') {
-		return {
-			errorMessage: 'You do not have permissions to launch a newsletter',
-			currentStepId: stepId,
-			hasPersistentError: true,
-		};
+	switch (wizardId) {
+		case 'LAUNCH_NEWSLETTER':
+			if (!permissions.launchNewsletters) {
+				return {
+					errorMessage: 'You do not have permissions to launch a newsletter',
+					currentStepId: stepId,
+					hasPersistentError: true,
+				};
+			}
+			break;
+
+		case 'NEWSLETTER_DATA':
+		case 'RENDERING_OPTIONS':
+			if (!permissions.writeToDrafts) {
+				return {
+					errorMessage: 'You do not have permissions to create or edit drafts.',
+					currentStepId: stepId,
+					hasPersistentError: true,
+				};
+			}
+			break;
 	}
 
 	return undefined;
