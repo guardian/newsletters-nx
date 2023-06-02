@@ -74,6 +74,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 				})}
 				submitButtonText="Update Newsletter"
 				isDisabled={waitingForResponse}
+				maxOptionsForRadioButtons={5}
 				message={
 					waitingForResponse ? (
 						<Alert severity="info">
