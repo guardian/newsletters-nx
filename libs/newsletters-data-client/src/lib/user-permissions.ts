@@ -7,8 +7,9 @@ export enum UserAccessLevel {
 	Viewer,
 }
 
-type Permissions = {
+export type UserPermissions = {
 	editNewsletters: boolean;
+	launchNewsletters: boolean;
 };
 
 const STATIC_USERS: Partial<Record<string, UserAccessLevel>> = {
@@ -21,10 +22,14 @@ export const getUserAccessLevel = (user?: UserProfile): UserAccessLevel => {
 		: UserAccessLevel.Viewer;
 };
 
-export const getPermissions = (user?: UserProfile): Permissions => {
+export const getPermissions = (user?: UserProfile): UserPermissions => {
 	const accessLevel = getUserAccessLevel(user);
 	return {
 		editNewsletters: [
+			UserAccessLevel.Developer,
+			UserAccessLevel.Editor,
+		].includes(accessLevel),
+		launchNewsletters: [
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
 		].includes(accessLevel),
