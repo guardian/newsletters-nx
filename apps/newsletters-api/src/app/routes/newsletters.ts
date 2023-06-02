@@ -58,7 +58,7 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		Body: unknown;
 	}>('/api/newsletters/:newsletterId', async (req, res) => {
 		const user = getUserProfile(req);
-		const permissions = getPermissions(user.profile);
+		const permissions = await getPermissions(user.profile);
 
 		if (!permissions.editNewsletters) {
 			return res

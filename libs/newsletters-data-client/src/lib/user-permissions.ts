@@ -12,18 +12,29 @@ export type UserPermissions = {
 	launchNewsletters: boolean;
 };
 
-const STATIC_USERS: Partial<Record<string, UserAccessLevel>> = {
+const STATIC_USERS = {
 	'david.blatcher@guardian.co.uk': UserAccessLevel.Viewer,
 };
 
-export const getUserAccessLevel = (user?: UserProfile): UserAccessLevel => {
+/**
+ * Placeholder function usering static user data. Async to
+ * simulate a call to the google groups API (or similar)
+ */
+export const getUserAccessLevel = async (
+	user?: UserProfile,
+): Promise<UserAccessLevel> => {
+	const userList: Partial<Record<string, UserAccessLevel>> =
+		await Promise.resolve(STATIC_USERS);
+
 	return user?.email
-		? STATIC_USERS[user.email] ?? UserAccessLevel.Viewer
+		? userList[user.email] ?? UserAccessLevel.Viewer
 		: UserAccessLevel.Viewer;
 };
 
-export const getPermissions = (user?: UserProfile): UserPermissions => {
-	const accessLevel = getUserAccessLevel(user);
+export const getPermissions = async (
+	user?: UserProfile,
+): Promise<UserPermissions> => {
+	const accessLevel = await getUserAccessLevel(user);
 	return {
 		editNewsletters: [
 			UserAccessLevel.Developer,
