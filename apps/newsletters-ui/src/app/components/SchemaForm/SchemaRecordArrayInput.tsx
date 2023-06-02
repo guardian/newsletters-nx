@@ -22,9 +22,16 @@ export const SchemaRecordArrayInput: FunctionComponent<
 		value: PrimitiveRecord[];
 		inputHandler: { (newValue: FieldValue): void };
 		recordSchema: ZodObject<ZodRawShape>;
+		maxOptionsForRadioButtons?: number;
 	}
 > = (props) => {
-	const { value, label, inputHandler, recordSchema } = props;
+	const {
+		value,
+		label,
+		inputHandler,
+		recordSchema,
+		maxOptionsForRadioButtons,
+	} = props;
 
 	const addNew = () => {
 		const newRecord = getEmptySchemaData(recordSchema, true);
@@ -76,6 +83,7 @@ export const SchemaRecordArrayInput: FunctionComponent<
 									editRecord={(record) => {
 										editRecordIndex(index, record);
 									}}
+									maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 								/>
 							</Grid>
 							<Grid item xs={2} pb={1.5}>

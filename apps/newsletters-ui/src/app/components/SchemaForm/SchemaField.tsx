@@ -4,6 +4,7 @@ import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
+import { RadioSelectInput } from './RadioSelectInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
@@ -23,6 +24,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	showUnsupported?: boolean;
 	numberInputSettings?: NumberInputSettings;
 	validationWarning?: string;
+	maxOptionsForRadioButtons: number;
 }
 
 const WrongTypeMessage = (props: { field: FieldDef }) => (
@@ -40,6 +42,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	showUnsupported = false,
 	numberInputSettings = {},
 	validationWarning,
+	maxOptionsForRadioButtons,
 }: SchemaFieldProps<T>) {
 	const { key, type, value } = field;
 
@@ -93,6 +96,15 @@ export function SchemaField<T extends z.ZodRawShape>({
 			}
 
 			if (options) {
+				if (options.length <= maxOptionsForRadioButtons) {
+					return (
+						<RadioSelectInput
+							{...standardProps}
+							value={value}
+							options={options}
+						/>
+					);
+				}
 				return (
 					<SelectInput {...standardProps} value={value} options={options} />
 				);
@@ -139,6 +151,20 @@ export function SchemaField<T extends z.ZodRawShape>({
 			if (typeof value !== 'string' && typeof value !== 'undefined') {
 				return <WrongTypeMessage field={field} />;
 			}
+
+			if (
+				field.enumOptions &&
+				field.enumOptions.length <= maxOptionsForRadioButtons
+			) {
+				return (
+					<RadioSelectInput
+						{...standardProps}
+						value={value}
+						options={field.enumOptions}
+					/>
+				);
+			}
+
 			return (
 				<SelectInput
 					{...standardProps}
@@ -166,6 +192,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 								{...standardProps}
 								value={value ?? []}
 								recordSchema={field.recordSchema}
+								maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 							/>
 						);
 					} else {

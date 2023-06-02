@@ -152,6 +152,7 @@ export const Wizard: React.FC<WizardProps> = ({
 					formSchema={formSchema}
 					formData={formData}
 					setFormData={setFormData}
+					maxOptionsForRadioButtons={5}
 				/>
 			)}
 
