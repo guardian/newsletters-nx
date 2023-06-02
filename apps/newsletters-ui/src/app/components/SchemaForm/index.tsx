@@ -17,6 +17,7 @@ interface Props<T extends z.ZodRawShape> {
 	excludedKeys?: string[];
 	readOnlyKeys?: string[];
 	validationWarnings: Partial<Record<keyof T, string>>;
+	maxOptionsForRadioButtons?: number;
 }
 
 const getArrayItemTypeAndRecordSchema = (
@@ -50,6 +51,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	excludedKeys = [],
 	readOnlyKeys = [],
 	validationWarnings,
+	maxOptionsForRadioButtons = 0,
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
@@ -97,6 +99,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 					showUnsupported={showUnsupported}
 					stringInputType={field.key === 'text' ? 'textArea' : undefined}
 					validationWarning={validationWarnings[field.key]}
+					maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 				/>
 			))}
 		</article>
