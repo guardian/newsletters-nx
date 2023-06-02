@@ -1,5 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
+import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
+import { getPermissions } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
@@ -10,6 +12,7 @@ import {
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
 import { draftStore, launchService } from '../../services/storage';
+import { getUserProfile } from '../get-user-profile';
 
 const getHttpCode = (error: StateMachineError): number => {
 	switch (error.code) {
@@ -26,6 +29,24 @@ const getHttpCode = (error: StateMachineError): number => {
 	}
 };
 
+const getAccessDeniedError = async (
+	user: { profile?: UserProfile },
+	requestBody: CurrentStepRouteRequest,
+): Promise<CurrentStepRouteResponse | undefined> => {
+	const permissions = await getPermissions(user.profile);
+	const { wizardId, stepId } = requestBody;
+
+	if (!permissions.launchNewsletters && wizardId === 'LAUNCH_NEWSLETTER') {
+		return {
+			errorMessage: 'You do not have permissions to launch a newsletter',
+			currentStepId: stepId,
+			hasPersistentError: true,
+		};
+	}
+
+	return undefined;
+};
+
 /**
  * Register the current step route for the newsletter wizard
  * TODO: This is a placeholder that will be changed to a state machine
@@ -35,6 +56,12 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 	app.post<{ Body: CurrentStepRouteRequest }>(
 		'/api/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
+			const user = getUserProfile(req);
+			const accessDeniedError = await getAccessDeniedError(user, req.body);
+			if (accessDeniedError) {
+				return res.status(403).send(accessDeniedError);
+			}
+
 			const requestBody: CurrentStepRouteRequest = req.body;
 			const layout = newslettersWorkflowStepLayout[requestBody.wizardId];
 
