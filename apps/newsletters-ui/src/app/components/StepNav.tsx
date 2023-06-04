@@ -63,7 +63,7 @@ export const StepNav = ({
 	handleStepClick,
 	formData,
 }: Props) => {
-	// Validating formData aginst the schema for every step to see if the
+	// Validating formData against the schema for every step to see if the
 	// step is complete is potentially a fairly expensive operation.
 	// The state logic is so this is done only when the step changes,
 	// not every time the user changes the formData (which includes every
