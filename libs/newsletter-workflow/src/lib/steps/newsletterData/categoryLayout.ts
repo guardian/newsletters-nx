@@ -5,6 +5,7 @@ import {
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -57,5 +58,5 @@ export const categoryLayout: WizardStepLayout<DraftStorage> = {
 	},
 	schema: formSchemas.category,
 	canSkipTo: true,
-	executeSkip: executeModify,
+	executeSkip,
 };
