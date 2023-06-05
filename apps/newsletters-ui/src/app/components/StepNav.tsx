@@ -56,6 +56,30 @@ const CompletionCaption = (props: { status: StepStatus | undefined }) => {
 	}
 };
 
+const ariaLabelForNonButtonStep = (
+	description: string,
+	active: boolean,
+	status?: StepStatus,
+): string => {
+	if (active) {
+		return `${description} (current step)`;
+	}
+
+	let statusDecription = '';
+	switch (status) {
+		case StepStatus.Complete:
+			statusDecription = '(complete)';
+			break;
+		case StepStatus.Incomplete:
+			statusDecription = '(incomplete)';
+			break;
+		case StepStatus.Optional:
+			statusDecription = '(optional)';
+	}
+
+	return `${description} ${statusDecription}`;
+};
+
 export const StepNav = ({
 	currentStepId,
 	stepperConfig,
@@ -132,10 +156,15 @@ export const StepNav = ({
 			sx={{ flexWrap: 'wrap' }}
 			nonLinear={stepperConfig.isNonLinear}
 			connector={null}
+			component={'nav'}
 		>
 			{filteredStepList.map((step) => {
+				const stepStatus = completionRecord[step.id];
+				const description = step.label ?? step.id;
+				const isButton = shouldRenderAsButton(step);
+
 				const caption = stepperConfig.indicateStepsComplete ? (
-					<CompletionCaption status={completionRecord[step.id]} />
+					<CompletionCaption status={stepStatus} />
 				) : undefined;
 
 				return (
@@ -146,19 +175,31 @@ export const StepNav = ({
 						}}
 						key={step.id}
 						active={isCurrent(step)}
+						component={isButton ? 'div' : 'section'}
+						aria-label={
+							isButton
+								? undefined
+								: ariaLabelForNonButtonStep(
+										description,
+										isCurrent(step),
+										stepStatus,
+								  )
+						}
+						aria-live="polite"
 					>
-						{shouldRenderAsButton(step) ? (
+						{isButton ? (
 							<StepButton
+								aria-label={`skip to "${description}" step`}
 								className="left-aligned-step-button"
 								onClick={() => {
 									handleStepClick(step.id);
 								}}
 								optional={caption}
 							>
-								{step.label ?? step.id}
+								{description}
 							</StepButton>
 						) : (
-							<StepLabel optional={caption}> {step.label ?? step.id}</StepLabel>
+							<StepLabel optional={caption}> {description}</StepLabel>
 						)}
 					</Step>
 				);
