@@ -9,9 +9,15 @@ interface Props {
 	formSchema: z.ZodObject<z.ZodRawShape>;
 	formData: WizardFormData;
 	setFormData: { (newData: WizardFormData): void };
+	maxOptionsForRadioButtons?: number;
 }
 
-export const StateEditForm = ({ formSchema, formData, setFormData }: Props) => {
+export const StateEditForm = ({
+	formSchema,
+	formData,
+	setFormData,
+	maxOptionsForRadioButtons,
+}: Props) => {
 	const changeFormData = (value: FieldValue, field: FieldDef) => {
 		const mod = getModification(value, field);
 		const revisedData = {
@@ -38,6 +44,7 @@ export const StateEditForm = ({ formSchema, formData, setFormData }: Props) => {
 				data={formData}
 				validationWarnings={getValidationWarnings(formData, formSchema)}
 				changeValue={changeFormData}
+				maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 			/>
 		</Box>
 	);
