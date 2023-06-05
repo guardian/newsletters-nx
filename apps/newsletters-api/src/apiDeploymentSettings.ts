@@ -61,7 +61,11 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 	try {
 		const data = JSON.parse(json) as Record<string, unknown> | unknown[];
 		if (Array.isArray(data)) {
-			console.warn('USER PRFILE PARSE FAILED', data as unknown);
+			console.warn(
+				'USER PROFILE PARSE FAILED - data was array',
+				data as unknown,
+			);
+			console.warn(`LOCAL_PERMISSIONS=${process.env.LOCAL_PERMISSIONS ?? ''}`);
 			return {};
 		}
 
@@ -80,7 +84,8 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 		}
 		return output;
 	} catch (err) {
-		console.warn('USER PRFILE PARSE FAILED', err as unknown);
+		console.warn('USER PROFILE PARSE FAILED - JSON error', err as unknown);
+		console.warn(`LOCAL_PERMISSIONS=${process.env.LOCAL_PERMISSIONS ?? ''}`);
 		return {};
 	}
 };
