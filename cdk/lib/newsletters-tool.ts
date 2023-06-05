@@ -42,6 +42,7 @@ export class NewslettersTool extends GuStack {
 		app: string,
 		bucketName: string,
 		readOnly: boolean,
+		userPermissions: string,
 	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
@@ -71,6 +72,7 @@ Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
+Environment=LOCAL_PERMISSIONS=${userPermissions}
 [Install]
 WantedBy=multi-user.target
 EOL`,
@@ -119,6 +121,12 @@ EOL`,
 			],
 		});
 
+		const userPermissions = new GuStringParameter(this, 'User Permissions', {
+			description: 'The JSON string of user permissions',
+			default: `/${this.stage}/${this.stack}/${toolAppName}/userPermissions`,
+			fromSSM: true,
+		});
+
 		const alarmsTopicName = 'newsletters-alerts';
 		/** Sets up Node app to be run in EC2 */
 		const ec2AppTool = new GuNodeApp(this, {
@@ -133,7 +141,12 @@ EOL`,
 			// Minimum of 1 EC2 instance running at a time. If one fails, scales up to 2 before dropping back to 1 again
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			// Instructions to set up the environment in the instance
-			userData: this.getUserData(toolAppName, bucketName, false),
+			userData: this.getUserData(
+				toolAppName,
+				bucketName,
+				false,
+				userPermissions.valueAsString,
+			),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],
 			},
@@ -158,7 +171,12 @@ EOL`,
 			},
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
-			userData: this.getUserData(apiAppName, bucketName, true),
+			userData: this.getUserData(
+				apiAppName,
+				bucketName,
+				true,
+				userPermissions.valueAsString,
+			),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],
 			},
@@ -204,7 +222,7 @@ EOL`,
 		/** Add security group to EC2 load balancer */
 		ec2AppTool.loadBalancer.addSecurityGroup(lbEgressSecurityGroup);
 
-		/** Fetch Google clientId param from SSM */
+		/** Fetch params from SSM */
 		const clientId = new GuStringParameter(this, 'Google Client ID', {
 			description: 'Google OAuth client ID',
 			default: `/${this.stage}/${this.stack}/${toolAppName}/googleClientId`,
