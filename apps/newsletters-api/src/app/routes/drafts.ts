@@ -3,8 +3,8 @@ import type {
 	ApiResponse,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
+import { permissionService } from '../../services/permissions';
 import { draftStore } from '../../services/storage';
-import { getPermissions } from '../get-user-permissions';
 import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,
@@ -46,7 +46,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 		'/api/drafts/:listId',
 		async (req, res): Promise<ApiResponse<DraftWithId>> => {
 			const user = getUserProfile(req);
-			const permissions = await getPermissions(user.profile);
+			const permissions = await permissionService.get(user.profile);
 
 			if (!permissions.writeToDrafts) {
 				return res

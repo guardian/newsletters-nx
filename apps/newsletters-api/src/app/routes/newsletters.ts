@@ -3,8 +3,8 @@ import {
 	isPartialNewsletterData,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
+import { permissionService } from '../../services/permissions';
 import { newsletterStore } from '../../services/storage';
-import { getPermissions } from '../get-user-permissions';
 import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,
@@ -58,7 +58,7 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		Body: unknown;
 	}>('/api/newsletters/:newsletterId', async (req, res) => {
 		const user = getUserProfile(req);
-		const permissions = await getPermissions(user.profile);
+		const permissions = await permissionService.get(user.profile);
 
 		if (!permissions.editNewsletters) {
 			return res

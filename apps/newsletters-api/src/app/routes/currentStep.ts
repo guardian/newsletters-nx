@@ -10,8 +10,8 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
+import { permissionService } from '../../services/permissions';
 import { draftStore, launchService } from '../../services/storage';
-import { getPermissions } from '../get-user-permissions';
 import { getUserProfile } from '../get-user-profile';
 
 const getHttpCode = (error: StateMachineError): number => {
@@ -33,7 +33,7 @@ const getAccessDeniedError = async (
 	user: { profile?: UserProfile },
 	requestBody: CurrentStepRouteRequest,
 ): Promise<CurrentStepRouteResponse | undefined> => {
-	const permissions = await getPermissions(user.profile);
+	const permissions = await permissionService.get(user.profile);
 	const { wizardId, stepId } = requestBody;
 
 	switch (wizardId) {

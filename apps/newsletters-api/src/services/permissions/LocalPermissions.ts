@@ -1,11 +1,9 @@
-import type {
-	UserPermissions,
-	UserProfile,
-} from '@newsletters-nx/newsletters-data-client';
+import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import {
 	levelToPermissions,
 	UserAccessLevel,
 } from '@newsletters-nx/newsletters-data-client';
+import type { PermissionsService } from './abstract-class';
 
 const STATIC_USERS = {
 	'david.blatcher@guardian.co.uk': UserAccessLevel.Viewer,
@@ -26,9 +24,9 @@ const getUserAccessLevel = async (
 		: UserAccessLevel.Viewer;
 };
 
-export const getPermissions = async (
-	user?: UserProfile,
-): Promise<UserPermissions> => {
-	const accessLevel = await getUserAccessLevel(user);
-	return levelToPermissions(accessLevel);
-};
+export class LocalPermissionService implements PermissionsService {
+	get = async (user?: UserProfile) => {
+		const accessLevel = await getUserAccessLevel(user);
+		return levelToPermissions(accessLevel);
+	};
+}
