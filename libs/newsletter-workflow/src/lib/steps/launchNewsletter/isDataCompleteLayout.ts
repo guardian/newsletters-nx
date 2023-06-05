@@ -83,10 +83,13 @@ export const isDataCompleteLayout: WizardStepLayout<LaunchService> = {
 					| undefined;
 
 				if (launchInitialState?.hasAllStandardData !== true) {
-					return 'The draft is not ready to launch';
+					return { message: 'The draft is not ready to launch' };
 				}
 				if (!launchInitialState.hasRenderingOptionsIfNeeded) {
-					return 'The draft is not ready to launch because it needs rendering options set';
+					return {
+						message:
+							'The draft is not ready to launch because it needs rendering options set',
+					};
 				}
 				return undefined;
 			},

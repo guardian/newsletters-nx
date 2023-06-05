@@ -26,6 +26,24 @@ const areAllFieldsUnset = (
 	);
 };
 
+const isPartiallyComplete = (
+	step: StepListing,
+	formData: FormDataRecord | undefined,
+) => {
+	if (!step.schema || !formData) {
+		return false;
+	}
+	const fieldsInThisStep = getFieldKeyNames(step.schema);
+	if (!fieldsInThisStep) {
+		return false;
+	}
+
+	const fieldsPopulatedInFormData = Object.keys(formData);
+	return !fieldsInThisStep.every((key) =>
+		fieldsPopulatedInFormData.includes(key),
+	);
+};
+
 export const resolveStepStatus = (
 	step: StepListing,
 	formData: FormDataRecord | undefined,
@@ -34,6 +52,9 @@ export const resolveStepStatus = (
 		return StepStatus.NoFields;
 	}
 	const parseResult = step.schema.safeParse(formData);
+	if (step.isOptional && isPartiallyComplete(step, formData)) {
+		return StepStatus.Optional;
+	}
 	if (!parseResult.success) {
 		return StepStatus.Incomplete;
 	}

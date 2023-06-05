@@ -56,6 +56,7 @@ export const makeResponse = (
 			nextWizardStepLayout.buttons,
 		),
 		errorMessage: state.errorMessage,
+		errorDetails: state.errorDetails,
 		formData: state.formData,
 	};
 

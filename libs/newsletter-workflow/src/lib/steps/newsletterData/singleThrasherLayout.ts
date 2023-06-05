@@ -49,7 +49,7 @@ export const singleThrasherLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
+			onBeforeStepChangeValidate: (stepData) => {
 				const singleThrasher = stepData.formData
 					? stepData.formData['thrasherOptions.singleThrasher']
 					: undefined;
@@ -68,7 +68,7 @@ export const singleThrasherLayout: WizardStepLayout<DraftStorage> = {
 						? stepData.formData['thrasherOptions.singleThrasherLocation']
 						: undefined;
 					if (!singleThrasherLocation) {
-						return 'NO SINGLE THRASHER LOCATION SELECTED';
+						return { message: 'NO SINGLE THRASHER LOCATION SELECTED' };
 					}
 				}
 
@@ -77,7 +77,7 @@ export const singleThrasherLayout: WizardStepLayout<DraftStorage> = {
 						? stepData.formData['thrasherOptions.thrasherDescription']
 						: undefined;
 					if (!thrasherDescription) {
-						return 'NO THRASHER DESCRIPTION PROVIDED';
+						return { message: 'NO THRASHER DESCRIPTION PROVIDED' };
 					}
 				}
 				return undefined;

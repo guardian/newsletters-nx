@@ -10,16 +10,13 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
-import type {
-	AsyncExecution,
-	WizardFormData,
-} from '@newsletters-nx/state-machine';
+import type { AsyncExecution } from '@newsletters-nx/state-machine';
 
 export const executeCreate: AsyncExecution<DraftStorage> = async (
 	stepData,
 	stepLayout,
 	storageInstance,
-): Promise<WizardFormData | string> => {
+) => {
 	if (!storageInstance) {
 		throw new StateMachineError(
 			'no storageInstance',
@@ -39,9 +36,13 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 
 	const parseResult = schema.safeParse(stepData.formData);
 	if (!parseResult.success) {
-		return `Form data is invalid for schema: ${
-			schema.description ?? '[no description]'
-		}`;
+		return {
+			isFailure: true,
+			message: `Form data is invalid for schema: ${
+				schema.description ?? '[no description]'
+			}`,
+			details: { zodIssues: parseResult.error.issues },
+		};
 	}
 
 	const draft: DraftNewsletterData = formDataToDraftNewsletterData({
@@ -52,8 +53,13 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 		listId: undefined,
 	});
 	if (storageResponse.ok) {
-		return draftNewsletterDataToFormData(storageResponse.data);
+		return {
+			data: draftNewsletterDataToFormData(storageResponse.data),
+		};
 	}
 
-	return storageResponse.message;
+	return {
+		isFailure: true,
+		message: storageResponse.message,
+	};
 };

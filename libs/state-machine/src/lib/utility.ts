@@ -1,10 +1,12 @@
 import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
-import type { WizardStepData, WizardStepLayout } from './types';
+import type { ZodIssue } from 'zod';
+import type { FailureDetails, WizardStepData, WizardStepLayout } from './types';
 
 export const makeStepDataWithErrorMessage = (
 	errorMessage: string,
 	stepId: string,
 	formData?: FormDataRecord,
+	errorDetails?: FailureDetails,
 ): WizardStepData => {
 	return {
 		...{
@@ -13,6 +15,7 @@ export const makeStepDataWithErrorMessage = (
 		},
 		currentStepId: stepId,
 		errorMessage,
+		errorDetails,
 	};
 };
 
@@ -20,23 +23,22 @@ export const validateIncomingFormData = (
 	stepId: string,
 	formData: FormDataRecord | undefined,
 	wizardStepLayout: WizardStepLayout<unknown>,
-) => {
+): { message: string; issues?: ZodIssue[] } | undefined => {
 	const formSchemaForIncomingStep = wizardStepLayout.schema;
 
 	if (formSchemaForIncomingStep) {
 		if (!formData) {
-			return 'MISSING FORM DATA';
+			return { message: 'MISSING FORM DATA' };
 		}
 
 		const parseResult = formSchemaForIncomingStep.safeParse(formData);
 		if (!parseResult.success) {
-			const issueList = parseResult.error.issues.map((issue) => {
-				const fieldName = issue.path.map((part) => part.toString()).join('/');
-				return `${fieldName}: "${issue.message}"`;
-			});
-			return `VALIDATION ERRORS: ${issueList.join('; ')}`;
+			return {
+				message: `VALIDATION ERRORS x${parseResult.error.issues.length}`,
+				issues: parseResult.error.issues,
+			};
 		}
 	}
 
-	return false;
+	return undefined;
 };

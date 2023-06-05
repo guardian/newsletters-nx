@@ -2,11 +2,31 @@ import type {
 	FormDataRecord,
 	WizardButtonType,
 } from '@newsletters-nx/newsletters-data-client';
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completey generic?
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completely generic?
 export type GenericStorageInterface = any;
 export type WizardFormData = FormDataRecord;
+
+export type FailureDetails = {
+	zodIssues?: ZodIssue[];
+	/** array of user-friendly messages describing a set of problems that make the failure */
+	problemList?: string[];
+};
+
+export type ValidationFailure = {
+	message: string;
+	details?: FailureDetails;
+};
+export type WizardExecutionFailure = {
+	isFailure: true;
+	message: string;
+	details?: FailureDetails;
+};
+export type WizardExecutionSuccess = {
+	isFailure?: false;
+	data: WizardFormData;
+};
 
 /**
  * Interface for a button displayed in the wizard.
@@ -24,6 +44,7 @@ export interface WizardStepData {
 	formData?: WizardFormData;
 	currentStepId: string;
 	errorMessage?: string;
+	errorDetails?: FailureDetails;
 	// ID should be the id of item being edited, as determined by
 	// the page URL, rather than from the form data inputted by the user.
 	// It should be undefined for a "create" operation where the page will
@@ -35,25 +56,25 @@ export type AsyncValidator<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => Promise<string | undefined>;
+) => Promise<ValidationFailure | undefined>;
 
 type Validator<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => string | undefined;
+) => ValidationFailure | undefined;
 
 export type AsyncExecution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => Promise<WizardFormData | string>;
+) => Promise<WizardExecutionSuccess | WizardExecutionFailure>;
 
 type Execution<T extends GenericStorageInterface> = (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<T>,
 	storageInstance?: T,
-) => WizardFormData | string;
+) => WizardExecutionSuccess | WizardExecutionFailure;
 
 export type FindStepIdFunction = {
 	(
@@ -132,6 +153,8 @@ export interface CurrentStepRouteResponse {
 
 	/** a user-friendly error message */
 	errorMessage?: string;
+
+	errorDetails?: FailureDetails;
 
 	/** Whether the request resulted in a persistent error (as a opposed temporary connectivity error
 	 *  or validation error on the user input), so the user should not be prompted to try again */

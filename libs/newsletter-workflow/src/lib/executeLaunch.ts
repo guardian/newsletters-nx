@@ -41,11 +41,11 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 ) => {
 	const draftId = parseToNumber(stepData['id']);
 	if (draftId === undefined) {
-		return `ERROR: invalid id.`;
+		return { isFailure: true, message: 'ERROR: invalid id.' };
 	}
 
 	if (!launchService) {
-		return 'ERROR: no launch service available';
+		return { isFailure: true, message: 'ERROR: no launch service available' };
 	}
 
 	const response = await launchService.launchDraft(
@@ -53,12 +53,14 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 		getExtraValuesFromFormData(stepData.formData),
 	);
 	if (!response.ok) {
-		return response.message;
+		return { isFailure: true, message: response.message };
 	}
 
 	return {
-		newNewsletterListId: response.data.listId,
-		newNewsletterName: response.data.name,
-		newNewsletterIdentityName: response.data.identityName,
+		data: {
+			newNewsletterListId: response.data.listId,
+			newNewsletterName: response.data.name,
+			newNewsletterIdentityName: response.data.identityName,
+		},
 	};
 };
