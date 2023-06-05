@@ -3,11 +3,10 @@ import {
 	levelToPermissions,
 	UserAccessLevel,
 } from '@newsletters-nx/newsletters-data-client';
+import { getLocalUserProfiles } from '../../apiDeploymentSettings';
 import type { PermissionsService } from './abstract-class';
 
-const STATIC_USERS = {
-	'david.blatcher@guardian.co.uk': UserAccessLevel.Viewer,
-};
+const localUsers = getLocalUserProfiles();
 
 /**
  * Placeholder function usering static user data. Async to
@@ -17,7 +16,7 @@ const getUserAccessLevel = async (
 	user?: UserProfile,
 ): Promise<UserAccessLevel> => {
 	const userList: Partial<Record<string, UserAccessLevel>> =
-		await Promise.resolve(STATIC_USERS);
+		await Promise.resolve(localUsers);
 
 	return user?.email
 		? userList[user.email] ?? UserAccessLevel.Viewer
