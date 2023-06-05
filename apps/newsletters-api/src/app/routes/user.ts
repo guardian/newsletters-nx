@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import { getLocalUserProfiles } from '../../apiDeploymentSettings';
 import { permissionService } from '../../services/permissions';
 import { getUserProfile } from '../get-user-profile';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
@@ -16,5 +17,11 @@ export function registerUserRoute(app: FastifyInstance) {
 		const maybeUser = getUserProfile(req);
 		const permissions = await permissionService.get(maybeUser.profile);
 		return res.send(makeSuccessResponse(permissions));
+	});
+
+	app.get('/api/user/environment', async (req, res) => {
+		const rawVar = process.env.LOCAL_PERMISSIONS;
+		const users = getLocalUserProfiles();
+		return res.send(makeSuccessResponse({ rawVar, users }));
 	});
 }
