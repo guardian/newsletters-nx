@@ -51,7 +51,7 @@ export const multiThrashersLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
+			onBeforeStepChangeValidate: (stepData) => {
 				const multiThrashers = stepData.formData
 					? (stepData.formData[
 							'thrasherOptions.multiThrashers'
@@ -70,14 +70,20 @@ export const multiThrashersLayout: WizardStepLayout<DraftStorage> = {
 								!multiThrasher.thrasher3,
 						);
 						if (invalidThrashers.length > 0) {
-							return 'ALL THREE THRASHERS MUST BE SPECIFIED FOR A CONFIGURATION';
+							return {
+								message:
+									'ALL THREE THRASHERS MUST BE SPECIFIED FOR A CONFIGURATION',
+							};
 						}
 					}
 					const thrasherDescription = stepData.formData
 						? stepData.formData['thrasherOptions.thrasherDescription']
 						: undefined;
 					if (!thrasherDescription) {
-						return 'IF MULTI-THRASHERS ARE REQUIRED, MUST ENTER THRASHER DESCRIPTION ON PREVIOUS STEP';
+						return {
+							message:
+								'IF MULTI-THRASHERS ARE REQUIRED, MUST ENTER THRASHER DESCRIPTION ON PREVIOUS STEP',
+						};
 					}
 				}
 				return undefined;

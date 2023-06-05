@@ -54,40 +54,43 @@ export async function stateMachineButtonPressed<
 	);
 	if (incomingDataError) {
 		return makeStepDataWithErrorMessage(
-			incomingDataError,
+			incomingDataError.message,
 			incomingStepData.currentStepId,
 			incomingStepData.formData,
+			{ zodIssues: incomingDataError.issues },
 		);
 	}
 
 	if (buttonPressedDetails.onAfterStepStartValidate) {
-		const validationResult =
+		const validationFailure =
 			await buttonPressedDetails.onAfterStepStartValidate(
 				incomingStepData,
 				undefined,
 				storageInstance,
 			);
-		if (validationResult !== undefined) {
+		if (validationFailure) {
 			return makeStepDataWithErrorMessage(
-				validationResult,
+				validationFailure.message,
 				incomingStepData.currentStepId,
 				incomingStepData.formData,
+				validationFailure.details,
 			);
 		}
 	}
 
 	if (buttonPressedDetails.onBeforeStepChangeValidate) {
-		const validationResult =
+		const validationFailure =
 			await buttonPressedDetails.onBeforeStepChangeValidate(
 				incomingStepData,
 				currentStepLayout,
 				storageInstance,
 			);
-		if (validationResult !== undefined) {
+		if (validationFailure) {
 			return makeStepDataWithErrorMessage(
-				validationResult,
+				validationFailure.message,
 				incomingStepData.currentStepId,
 				incomingStepData.formData,
+				validationFailure.details,
 			);
 		}
 	}
@@ -104,16 +107,18 @@ export async function stateMachineButtonPressed<
 		currentStepLayout,
 		storageInstance,
 	);
-	if (typeof executionResult === 'string') {
+
+	if (executionResult.isFailure) {
 		return makeStepDataWithErrorMessage(
-			executionResult,
+			executionResult.message,
 			incomingStepData.currentStepId,
 			incomingStepData.formData,
+			executionResult.details,
 		);
 	}
 
 	return {
 		currentStepId: stepToMoveTo,
-		formData: executionResult,
+		formData: executionResult.data,
 	};
 }
