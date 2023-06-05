@@ -3,8 +3,8 @@ import type {
 	ApiResponse,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
-import { getPermissions } from '@newsletters-nx/newsletters-data-client';
 import { draftStore } from '../../services/storage';
+import { getPermissions } from '../get-user-permissions';
 import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,

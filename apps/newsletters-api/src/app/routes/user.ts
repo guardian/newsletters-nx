@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { getPermissions } from '@newsletters-nx/newsletters-data-client';
+import { getPermissions } from '../get-user-permissions';
 import { getUserProfile } from '../get-user-profile';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 

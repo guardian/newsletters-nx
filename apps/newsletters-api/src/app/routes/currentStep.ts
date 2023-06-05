@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
-import { getPermissions } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
@@ -12,6 +11,7 @@ import {
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
 import { draftStore, launchService } from '../../services/storage';
+import { getPermissions } from '../get-user-permissions';
 import { getUserProfile } from '../get-user-profile';
 
 const getHttpCode = (error: StateMachineError): number => {

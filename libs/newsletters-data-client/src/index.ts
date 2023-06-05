@@ -13,4 +13,3 @@ export * from './lib/transformWizardData';
 export * from './lib/storage-response-types';
 export * from './lib/zod-helpers';
 export * from './lib/user-profile';
-export * from './lib/user-permissions';

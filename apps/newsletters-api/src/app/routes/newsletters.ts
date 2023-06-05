@@ -1,10 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import {
-	getPermissions,
 	isPartialNewsletterData,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
 import { newsletterStore } from '../../services/storage';
+import { getPermissions } from '../get-user-permissions';
 import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,
