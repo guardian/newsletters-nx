@@ -279,11 +279,11 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                 },
                 "
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=LOCAL_PERMISSIONS='"",
+Environment=LOCAL_PERMISSIONS='",
                 {
                   "Ref": "UserPermissions",
                 },
-                ""'
+                "'
 [Install]
 WantedBy=multi-user.target
 EOL
@@ -435,11 +435,11 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                 },
                 "
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=LOCAL_PERMISSIONS='"",
+Environment=LOCAL_PERMISSIONS='",
                 {
                   "Ref": "UserPermissions",
                 },
-                ""'
+                "'
 [Install]
 WantedBy=multi-user.target
 EOL

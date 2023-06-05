@@ -26,6 +26,12 @@ export interface NewslettersToolProps extends GuStackProps {
 	domainNameApi: string;
 }
 
+const processJSONString = (jsonParam: string): string => {
+	const escapedAndWrapped = JSON.stringify(jsonParam);
+	const escaped = escapedAndWrapped.substring(1, escapedAndWrapped.length - 1);
+	return escaped;
+};
+
 export class NewslettersTool extends GuStack {
 	constructor(scope: App, id: string, props: NewslettersToolProps) {
 		super(scope, id, props);
@@ -72,7 +78,7 @@ Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=LOCAL_PERMISSIONS='${JSON.stringify(userPermissions)}'
+Environment=LOCAL_PERMISSIONS='${processJSONString(userPermissions)}'
 [Install]
 WantedBy=multi-user.target
 EOL`,
