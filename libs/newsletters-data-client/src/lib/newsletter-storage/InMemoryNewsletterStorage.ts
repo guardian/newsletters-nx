@@ -135,9 +135,9 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		}
 
 		this.memory.splice(this.memory.indexOf(match), 1);
-		const response: SuccessfulStorageResponse<NewsletterData> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
 			ok: true,
-			data: match,
+			data: this.stripMeta(match),
 		};
 		return Promise.resolve(response);
 	}
