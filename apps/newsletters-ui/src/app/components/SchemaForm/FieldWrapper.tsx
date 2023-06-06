@@ -1,17 +1,18 @@
-import { css } from '@mui/material';
+import { Box } from '@mui/material';
+import type { BoxProps } from '@mui/material';
 import type { ReactNode } from 'react';
-
-export const defaultFieldStyle = css`
-	margin-bottom: 0.75rem;
-	max-width: 24rem;
-	display: flex;
-	justify-content: space-between;
-`;
 
 interface Props {
 	children: ReactNode;
 }
 
+export const defaultBoxProps: BoxProps = {
+	display: 'flex',
+	justifyContent: 'space-between',
+	marginBottom: 3,
+	maxWidth: 400,
+};
+
 export const FieldWrapper = ({ children }: Props) => (
-	<div css={defaultFieldStyle}>{children}</div>
+	<Box {...defaultBoxProps}>{children}</Box>
 );
