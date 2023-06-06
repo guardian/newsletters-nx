@@ -15,7 +15,7 @@ const markdownTemplate = `
 
 ### Launch
 
-When will the first send of **{{name}}** be?  Please specify the time and date.
+When will the first send of **{{name}}** be?  Please specify date.
 
 This needs to be added in the UK timezone so the system can process this information correctly.
 
