@@ -265,4 +265,6 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	getModificationError = NewsletterStorage.prototype.getModificationError;
 	buildNoItemError = NewsletterStorage.prototype.buildNoItemError;
 	stripMeta = NewsletterStorage.prototype.stripMeta;
+	createNewMeta = NewsletterStorage.prototype.createNewMeta;
+	updateMeta = NewsletterStorage.prototype.updateMeta;
 }

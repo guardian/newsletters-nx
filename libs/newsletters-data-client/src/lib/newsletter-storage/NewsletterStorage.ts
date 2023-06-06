@@ -1,6 +1,7 @@
 import { isPartialNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
+	MetaData,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
@@ -10,6 +11,7 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
+import type { UserProfile } from '../user-profile';
 
 export const IMMUTABLE_PROPERTIES: Readonly<string[]> = [
 	'listId',
@@ -113,6 +115,25 @@ export abstract class NewsletterStorage {
 		return {
 			...data,
 			meta: undefined,
+		};
+	}
+
+	createNewMeta(user: UserProfile): MetaData {
+		const now = Date.now();
+		return {
+			creationTimestamp: now,
+			createdBy: user.email ?? '[unknown]',
+			updatedTimestamp: now,
+			updatedBy: user.email ?? '[unknown]',
+		};
+	}
+
+	updateMeta(meta: MetaData, user: UserProfile): MetaData {
+		const now = Date.now();
+		return {
+			...meta,
+			updatedTimestamp: now,
+			updatedBy: user.email ?? '[unknown]',
 		};
 	}
 }
