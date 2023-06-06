@@ -4,6 +4,7 @@ import {
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
 import { newsletterStore } from '../../services/storage';
+import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,
 	makeSuccessResponse,
@@ -68,10 +69,15 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 				.status(400)
 				.send(makeErrorResponse(`Not a valid partial newsletter`));
 		}
+		const user = getUserProfile(req);
+		if (!user.profile) {
+			return res.status(400).send(makeErrorResponse(`No user profile.`));
+		}
 
 		const storageResponse = await newsletterStore.update(
 			newsletterIdAsNumber,
 			modifications,
+			user.profile,
 		);
 
 		if (!storageResponse.ok) {

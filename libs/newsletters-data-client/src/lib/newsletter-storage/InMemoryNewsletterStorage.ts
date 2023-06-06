@@ -90,6 +90,21 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
+	readWithMeta(listId: number) {
+		const match = this.memory.find(
+			(newsletter) => newsletter.listId === listId,
+		);
+
+		if (!match) {
+			return Promise.resolve(this.buildNoItemError(listId));
+		}
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
+			ok: true,
+			data: match,
+		};
+		return Promise.resolve(response);
+	}
+
 	readByName(identityName: string) {
 		const match = this.memory.find(
 			(newsletter) => newsletter.identityName === identityName,
@@ -104,7 +119,11 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
-	update(listId: number, modifications: Partial<NewsletterDataWithoutMeta>) {
+	update(
+		listId: number,
+		modifications: Partial<NewsletterDataWithoutMeta>,
+		user: UserProfile,
+	) {
 		const modificationError = this.getModificationError(modifications);
 		if (modificationError) {
 			return Promise.resolve(modificationError);
@@ -118,7 +137,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		const updatedItem: NewsletterDataWithMeta = {
 			...match,
 			...modifications,
-			meta: MOCK_META,
+			meta: this.updateMeta(match.meta, user),
 		};
 		this.memory.splice(this.memory.indexOf(match), 1, updatedItem);
 		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {

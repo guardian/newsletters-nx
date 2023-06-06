@@ -1,9 +1,11 @@
 import type { S3Client } from '@aws-sdk/client-s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { isNewsletterData } from '../newsletter-data-type';
+import {
+	isNewsletterData,
+	isNewsletterDataWithMeta,
+} from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
-	MetaData,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
@@ -23,13 +25,6 @@ import {
 	objectExists,
 	putObject,
 } from './s3-functions';
-
-const MOCK_META: MetaData = {
-	updatedBy: 'system',
-	creationTimestamp: 0,
-	createdBy: 'system',
-	updatedTimestamp: 0,
-};
 
 export class S3NewsletterStorage implements NewsletterStorage {
 	readonly s3Client: S3Client;
@@ -186,6 +181,41 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		};
 	}
 
+	// TO DO - reduce duplication
+	async readWithMeta(
+		listId: number,
+	): Promise<
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
+		| UnsuccessfulStorageResponse
+	> {
+		const listOfObjectsKeys = await this.getListOfObjectsKeys();
+		const matchingKey = listOfObjectsKeys.find((key) => {
+			const keyParts = key.split(':').pop();
+			const id = keyParts?.split('.')[0];
+			return id === listId.toString();
+		});
+		if (matchingKey) {
+			const s3Object = await this.fetchObject(matchingKey);
+			const responseAsNewsletter = await objectToNewsletter(s3Object);
+
+			if (!isNewsletterDataWithMeta(responseAsNewsletter)) {
+				return {
+					ok: false,
+					message: `newsletter with id ${listId} was missing meta data`,
+				};
+			}
+
+			return {
+				ok: true,
+				data: responseAsNewsletter,
+			};
+		}
+		return {
+			ok: false,
+			message: `failed to read newsletter with id ${listId}`,
+		};
+	}
+
 	async readByName(
 		identityName: string,
 	): Promise<
@@ -218,6 +248,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	async update(
 		listId: number,
 		modifications: Partial<NewsletterData>,
+		user: UserProfile,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse
@@ -226,7 +257,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		if (modificationError) {
 			modificationError;
 		}
-		const newsletterToUpdate = await this.read(listId);
+		const newsletterToUpdate = await this.readWithMeta(listId);
 
 		if (!newsletterToUpdate.ok) {
 			return newsletterToUpdate;
@@ -234,7 +265,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const updatedNewsletter: NewsletterDataWithMeta = {
 			...newsletterToUpdate.data,
 			...modifications,
-			meta: MOCK_META,
+			meta: this.updateMeta(newsletterToUpdate.data.meta, user),
 		};
 
 		const updateNewsletterCommand = new PutObjectCommand({

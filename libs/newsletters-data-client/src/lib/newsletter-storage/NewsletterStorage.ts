@@ -34,6 +34,13 @@ export abstract class NewsletterStorage {
 		| UnsuccessfulStorageResponse
 	>;
 
+	abstract readWithMeta(
+		listId: number,
+	): Promise<
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
+		| UnsuccessfulStorageResponse
+	>;
+
 	abstract readByName(
 		identityName: string,
 	): Promise<
@@ -44,6 +51,7 @@ export abstract class NewsletterStorage {
 	abstract update(
 		listId: number,
 		modifications: Partial<NewsletterData>,
+		user: UserProfile,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse

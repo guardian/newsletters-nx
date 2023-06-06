@@ -186,3 +186,11 @@ export type MetaData = z.infer<typeof metaDataSchema>;
 
 export type NewsletterDataWithMeta = NewsletterData & { meta: MetaData };
 export type NewsletterDataWithoutMeta = NewsletterData & { meta: undefined };
+
+export function isNewsletterDataWithMeta(
+	subject: unknown,
+): subject is NewsletterDataWithMeta {
+	return newsletterDataSchema
+		.extend({ meta: metaDataSchema })
+		.safeParse(subject).success;
+}
