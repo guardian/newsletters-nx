@@ -20,7 +20,8 @@ export abstract class NewsletterStorage {
 	abstract create(
 		draft: DraftNewsletterData,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract read(

@@ -67,9 +67,9 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		};
 		this.memory.push(newNewsletterWithNewId);
 
-		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
 			ok: true,
-			data: newNewsletterWithNewId,
+			data: this.stripMeta(newNewsletterWithNewId),
 		};
 		return Promise.resolve(response);
 	}

@@ -43,7 +43,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	async create(
 		draft: DraftNewsletterData,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		const draftReady = isNewsletterData(draft);
 
@@ -86,9 +87,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			};
 		}
 
-		const newNewsletter: NewsletterData = {
+		const newNewsletter: NewsletterDataWithMeta = {
 			...draft,
 			listId: nextId,
+			meta: MOCK_META,
 		};
 
 		try {
@@ -103,7 +105,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 		return {
 			ok: true,
-			data: newNewsletter,
+			data: this.stripMeta(newNewsletter),
 		};
 	}
 
