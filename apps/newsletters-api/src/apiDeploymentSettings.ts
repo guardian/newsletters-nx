@@ -13,6 +13,8 @@
  * or by creating a .env.local file in the root folder for the newsletters-api project
  */
 
+import { UserAccessLevel } from '@newsletters-nx/newsletters-data-client';
+
 export function isUndefinedAndNotProduction(
 	envVar: string | undefined,
 ): boolean {
@@ -49,4 +51,41 @@ export const isUsingInMemoryStorage = () =>
 
 export const getTestJwtProfileDataIfUsing = () => {
 	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;
+};
+
+export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
+	const json = process.env.USER_PERMISSIONS;
+	if (!json) {
+		return {};
+	}
+	try {
+		const data = JSON.parse(json) as Record<string, unknown> | unknown[];
+		if (Array.isArray(data)) {
+			console.warn(
+				'USER PROFILE PARSE FAILED - data was array',
+				data as unknown,
+			);
+			console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
+			return {};
+		}
+
+		const output: Record<string, UserAccessLevel> = {};
+
+		for (const key in data) {
+			const value = data[key];
+			switch (value) {
+				case UserAccessLevel.Developer:
+				case UserAccessLevel.Editor:
+				case UserAccessLevel.Drafter:
+				case UserAccessLevel.Viewer:
+					output[key] = value;
+					break;
+			}
+		}
+		return output;
+	} catch (err) {
+		console.warn('USER PROFILE PARSE FAILED - JSON error', err as unknown);
+		console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
+		return {};
+	}
 };
