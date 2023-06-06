@@ -54,7 +54,7 @@ export const getTestJwtProfileDataIfUsing = () => {
 };
 
 export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
-	const json = process.env.LOCAL_PERMISSIONS;
+	const json = process.env.USER_PERMISSIONS;
 	if (!json) {
 		return {};
 	}
@@ -65,7 +65,7 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 				'USER PROFILE PARSE FAILED - data was array',
 				data as unknown,
 			);
-			console.warn(`LOCAL_PERMISSIONS=${process.env.LOCAL_PERMISSIONS ?? ''}`);
+			console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
 			return {};
 		}
 
@@ -85,7 +85,7 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 		return output;
 	} catch (err) {
 		console.warn('USER PROFILE PARSE FAILED - JSON error', err as unknown);
-		console.warn(`LOCAL_PERMISSIONS=${process.env.LOCAL_PERMISSIONS ?? ''}`);
+		console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
 		return {};
 	}
 };

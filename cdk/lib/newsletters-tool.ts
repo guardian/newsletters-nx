@@ -78,7 +78,7 @@ Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=LOCAL_PERMISSIONS='${processJSONString(userPermissions)}'
+Environment=USER_PERMISSIONS='${processJSONString(userPermissions)}'
 [Install]
 WantedBy=multi-user.target
 EOL`,
