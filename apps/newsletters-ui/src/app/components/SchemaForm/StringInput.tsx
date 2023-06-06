@@ -1,6 +1,5 @@
 import { TextField } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
-import { FieldWrapper } from './FieldWrapper';
 import type { FieldProps } from './util';
 import { eventToString } from './util';
 
@@ -18,18 +17,16 @@ export const StringInput: FunctionComponent<
 	};
 
 	return (
-		<FieldWrapper>
-			<TextField
-				fullWidth
-				label={props.label}
-				type={type}
-				value={props.value}
-				onInput={sendValue}
-				helperText={props.error}
-				error={!!props.error}
-				required={!props.optional}
-				disabled={props.readOnly}
-			/>
-		</FieldWrapper>
+		<TextField
+			fullWidth
+			label={props.label}
+			type={type}
+			value={props.value}
+			onInput={sendValue}
+			helperText={props.error}
+			error={!!props.error}
+			required={!props.optional}
+			disabled={props.readOnly}
+		/>
 	);
 };

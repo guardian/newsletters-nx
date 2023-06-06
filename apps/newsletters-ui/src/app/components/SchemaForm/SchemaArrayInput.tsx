@@ -1,6 +1,5 @@
 import type { FunctionComponent } from 'react';
 import { ArrayInput } from '../ArrayInput';
-import { FieldWrapper } from './FieldWrapper';
 import type { FieldProps, FieldValue } from './util';
 
 export const SchemaArrayInput: FunctionComponent<
@@ -15,13 +14,11 @@ export const SchemaArrayInput: FunctionComponent<
 	};
 
 	return (
-		<FieldWrapper>
-			<ArrayInput
-				data={value}
-				label={label ?? ''}
-				change={sendValue}
-				validationWarning={props.error}
-			/>
-		</FieldWrapper>
+		<ArrayInput
+			data={value}
+			label={label ?? ''}
+			change={sendValue}
+			validationWarning={props.error}
+		/>
 	);
 };
