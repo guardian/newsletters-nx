@@ -159,60 +159,42 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse
 	> {
-		const listOfObjectsKeys = await this.getListOfObjectsKeys();
-		const matchingKey = listOfObjectsKeys.find((key) => {
-			const keyParts = key.split(':').pop();
-			const id = keyParts?.split('.')[0];
-			return id === listId.toString();
-		});
-		if (matchingKey) {
-			const s3Object = await this.fetchObject(matchingKey);
-			const responseAsNewsletter = await objectToNewsletter(s3Object);
-			if (responseAsNewsletter) {
-				return {
-					ok: true,
-					data: this.stripMeta(responseAsNewsletter),
-				};
-			}
+		const newsletter = await this.fetchNewsletter(listId);
+
+		if (!newsletter) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with id ${listId}`,
+			};
 		}
 		return {
-			ok: false,
-			message: `failed to read newsletter with id ${listId}`,
+			ok: true,
+			data: this.stripMeta(newsletter),
 		};
 	}
 
-	// TO DO - reduce duplication
 	async readWithMeta(
 		listId: number,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithMeta>
 		| UnsuccessfulStorageResponse
 	> {
-		const listOfObjectsKeys = await this.getListOfObjectsKeys();
-		const matchingKey = listOfObjectsKeys.find((key) => {
-			const keyParts = key.split(':').pop();
-			const id = keyParts?.split('.')[0];
-			return id === listId.toString();
-		});
-		if (matchingKey) {
-			const s3Object = await this.fetchObject(matchingKey);
-			const responseAsNewsletter = await objectToNewsletter(s3Object);
-
-			if (!isNewsletterDataWithMeta(responseAsNewsletter)) {
-				return {
-					ok: false,
-					message: `newsletter with id ${listId} was missing meta data`,
-				};
-			}
-
+		const newsletter = await this.fetchNewsletter(listId);
+		if (!newsletter) {
 			return {
-				ok: true,
-				data: responseAsNewsletter,
+				ok: false,
+				message: `failed to read newsletter with id ${listId}`,
+			};
+		}
+		if (!isNewsletterDataWithMeta(newsletter)) {
+			return {
+				ok: false,
+				message: `newsletter with id ${listId} was missing meta data`,
 			};
 		}
 		return {
-			ok: false,
-			message: `failed to read newsletter with id ${listId}`,
+			ok: true,
+			data: newsletter,
 		};
 	}
 
@@ -288,6 +270,25 @@ export class S3NewsletterStorage implements NewsletterStorage {
 				reason: StorageRequestFailureReason.S3Failure,
 			};
 		}
+	}
+
+	private async fetchNewsletter(
+		listId: number,
+	): Promise<NewsletterData | undefined> {
+		const listOfObjectsKeys = await this.getListOfObjectsKeys();
+		const matchingKey = listOfObjectsKeys.find((key) => {
+			const keyParts = key.split(':').pop();
+			const id = keyParts?.split('.')[0];
+			return id === listId.toString();
+		});
+
+		if (!matchingKey) {
+			return undefined;
+		}
+		const s3Object = await this.fetchObject(matchingKey);
+		const responseAsNewsletter: NewsletterData | undefined =
+			await objectToNewsletter(s3Object);
+		return responseAsNewsletter;
 	}
 
 	private fetchObject = fetchObject(this);
