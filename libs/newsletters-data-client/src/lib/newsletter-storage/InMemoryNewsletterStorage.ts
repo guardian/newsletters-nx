@@ -1,6 +1,9 @@
 import type {
 	DraftNewsletterData,
+	MetaData,
 	NewsletterData,
+	NewsletterDataWithMeta,
+	NewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
 import { isNewsletterData } from '../newsletter-data-type';
 import { StorageRequestFailureReason } from '../storage-response-types';
@@ -10,13 +13,25 @@ import type {
 } from '../storage-response-types';
 import { NewsletterStorage } from './NewsletterStorage';
 
+const MOCK_META: MetaData = {
+	updatedBy: 'system',
+	creationTimestamp: 0,
+	createdBy: 'system',
+	updatedTimestamp: 0,
+};
+
 // TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
 export class InMemoryNewsletterStorage implements NewsletterStorage {
-	private memory: NewsletterData[];
+	private memory: NewsletterDataWithMeta[];
 
 	constructor(newsletters?: NewsletterData[]) {
-		this.memory = newsletters ?? [];
+		this.memory = newsletters
+			? newsletters.map((n) => ({
+					...n,
+					meta: MOCK_META,
+			  }))
+			: [];
 	}
 
 	create(draft: DraftNewsletterData) {
@@ -45,13 +60,14 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			return Promise.resolve(error);
 		}
 
-		const newNewsletterWithNewId: NewsletterData = {
+		const newNewsletterWithNewId: NewsletterDataWithMeta = {
 			...draft,
 			listId: this.getNextId(),
+			meta: MOCK_META,
 		};
 		this.memory.push(newNewsletterWithNewId);
 
-		const response: SuccessfulStorageResponse<NewsletterData> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
 			ok: true,
 			data: newNewsletterWithNewId,
 		};
@@ -66,9 +82,9 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		if (!match) {
 			return Promise.resolve(this.buildNoItemError(listId));
 		}
-		const response: SuccessfulStorageResponse<NewsletterData> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
 			ok: true,
-			data: match,
+			data: this.stripMeta(match),
 		};
 		return Promise.resolve(response);
 	}
@@ -80,14 +96,14 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		if (!match) {
 			return Promise.resolve(this.buildNoItemError(identityName));
 		}
-		const response: SuccessfulStorageResponse<NewsletterData> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
 			ok: true,
-			data: match,
+			data: this.stripMeta(match),
 		};
 		return Promise.resolve(response);
 	}
 
-	update(listId: number, modifications: Partial<NewsletterData>) {
+	update(listId: number, modifications: Partial<NewsletterDataWithoutMeta>) {
 		const modificationError = this.getModificationError(modifications);
 		if (modificationError) {
 			return Promise.resolve(modificationError);
@@ -98,14 +114,15 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			return Promise.resolve(this.buildNoItemError(listId));
 		}
 
-		const updatedItem = {
+		const updatedItem: NewsletterDataWithMeta = {
 			...match,
 			...modifications,
+			meta: MOCK_META,
 		};
 		this.memory.splice(this.memory.indexOf(match), 1, updatedItem);
-		const response: SuccessfulStorageResponse<NewsletterData> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
 			ok: true,
-			data: updatedItem,
+			data: this.stripMeta(updatedItem),
 		};
 		return Promise.resolve(response);
 	}
@@ -126,9 +143,9 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	}
 
 	list() {
-		const response: SuccessfulStorageResponse<NewsletterData[]> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta[]> = {
 			ok: true,
-			data: [...this.memory].map((item) => ({ ...item })),
+			data: [...this.memory].map(this.stripMeta).map((item) => ({ ...item })),
 		};
 		return Promise.resolve(response);
 	}
@@ -146,4 +163,5 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 
 	getModificationError = NewsletterStorage.prototype.getModificationError;
 	buildNoItemError = NewsletterStorage.prototype.buildNoItemError;
+	stripMeta = NewsletterStorage.prototype.stripMeta;
 }

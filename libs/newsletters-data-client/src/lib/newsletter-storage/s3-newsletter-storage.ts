@@ -3,7 +3,10 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { isNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
+	MetaData,
 	NewsletterData,
+	NewsletterDataWithMeta,
+	NewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
@@ -19,6 +22,13 @@ import {
 	objectExists,
 	putObject,
 } from './s3-functions';
+
+const MOCK_META: MetaData = {
+	updatedBy: 'system',
+	creationTimestamp: 0,
+	createdBy: 'system',
+	updatedTimestamp: 0,
+};
 
 export class S3NewsletterStorage implements NewsletterStorage {
 	readonly s3Client: S3Client;
@@ -112,7 +122,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	}
 
 	async list(): Promise<
-		SuccessfulStorageResponse<NewsletterData[]> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
+		| UnsuccessfulStorageResponse
 	> {
 		try {
 			const listOfObjectsKeys = await this.getListOfObjectsKeys();
@@ -126,9 +137,12 @@ export class S3NewsletterStorage implements NewsletterStorage {
 					}
 				}),
 			);
+
+			const listWithoutMeta = data.map(this.stripMeta);
+
 			return {
 				ok: true,
-				data,
+				data: listWithoutMeta,
 			};
 		} catch (error) {
 			return {
@@ -142,7 +156,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	async read(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		const listOfObjectsKeys = await this.getListOfObjectsKeys();
 		const matchingKey = listOfObjectsKeys.find((key) => {
@@ -156,7 +171,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			if (responseAsNewsletter) {
 				return {
 					ok: true,
-					data: responseAsNewsletter,
+					data: this.stripMeta(responseAsNewsletter),
 				};
 			}
 		}
@@ -169,7 +184,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	async readByName(
 		identityName: string,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		const listOfObjectsKeys = await this.getListOfObjectsKeys();
 		const matchingKey = listOfObjectsKeys.find((key) => {
@@ -183,7 +199,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			if (responseAsNewsletter) {
 				return {
 					ok: true,
-					data: responseAsNewsletter,
+					data: this.stripMeta(responseAsNewsletter),
 				};
 			}
 		}
@@ -198,7 +214,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		listId: number,
 		modifications: Partial<NewsletterData>,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		const modificationError = this.getModificationError(modifications);
 		if (modificationError) {
@@ -209,9 +226,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		if (!newsletterToUpdate.ok) {
 			return newsletterToUpdate;
 		}
-		const updatedNewsletter = {
+		const updatedNewsletter: NewsletterDataWithMeta = {
 			...newsletterToUpdate.data,
 			...modifications,
+			meta: MOCK_META,
 		};
 
 		const updateNewsletterCommand = new PutObjectCommand({
@@ -225,7 +243,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			await this.s3Client.send(updateNewsletterCommand);
 			return {
 				ok: true,
-				data: updatedNewsletter,
+				data: this.stripMeta(updatedNewsletter),
 			};
 		} catch (err) {
 			return {
@@ -243,4 +261,5 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 	getModificationError = NewsletterStorage.prototype.getModificationError;
 	buildNoItemError = NewsletterStorage.prototype.buildNoItemError;
+	stripMeta = NewsletterStorage.prototype.stripMeta;
 }

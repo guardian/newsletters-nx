@@ -2,6 +2,8 @@ import { isPartialNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
 	NewsletterData,
+	NewsletterDataWithMeta,
+	NewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
@@ -24,20 +26,23 @@ export abstract class NewsletterStorage {
 	abstract read(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract readByName(
 		identityName: string,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract update(
 		listId: number,
 		modifications: Partial<NewsletterData>,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract delete(
@@ -47,7 +52,8 @@ export abstract class NewsletterStorage {
 	>;
 
 	abstract list(): Promise<
-		SuccessfulStorageResponse<NewsletterData[]> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
+		| UnsuccessfulStorageResponse
 	>;
 
 	getModificationError(
@@ -96,6 +102,15 @@ export abstract class NewsletterStorage {
 			ok: false,
 			message,
 			reason: StorageRequestFailureReason.NotFound,
+		};
+	}
+
+	stripMeta(
+		data: NewsletterDataWithMeta | NewsletterData,
+	): NewsletterDataWithoutMeta {
+		return {
+			...data,
+			meta: undefined,
 		};
 	}
 }
