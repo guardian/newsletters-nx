@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
+import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
@@ -9,6 +10,7 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
+import { permissionService } from '../../services/permissions';
 import { draftStore, makelaunchServiceForUser } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
 
@@ -27,6 +29,39 @@ const getHttpCode = (error: StateMachineError): number => {
 	}
 };
 
+const getAccessDeniedError = async (
+	user: { profile?: UserProfile },
+	requestBody: CurrentStepRouteRequest,
+): Promise<CurrentStepRouteResponse | undefined> => {
+	const permissions = await permissionService.get(user.profile);
+	const { wizardId, stepId } = requestBody;
+
+	switch (wizardId) {
+		case 'LAUNCH_NEWSLETTER':
+			if (!permissions.launchNewsletters) {
+				return {
+					errorMessage: 'You do not have permissions to launch a newsletter',
+					currentStepId: stepId,
+					hasPersistentError: true,
+				};
+			}
+			break;
+
+		case 'NEWSLETTER_DATA':
+		case 'RENDERING_OPTIONS':
+			if (!permissions.writeToDrafts) {
+				return {
+					errorMessage: 'You do not have permissions to create or edit drafts.',
+					currentStepId: stepId,
+					hasPersistentError: true,
+				};
+			}
+			break;
+	}
+
+	return undefined;
+};
+
 /**
  * Register the current step route for the newsletter wizard
  * TODO: This is a placeholder that will be changed to a state machine
@@ -36,6 +71,12 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 	app.post<{ Body: CurrentStepRouteRequest }>(
 		'/api/currentstep',
 		async (req, res): Promise<CurrentStepRouteResponse> => {
+			const user = getUserProfile(req);
+			const accessDeniedError = await getAccessDeniedError(user, req.body);
+			if (accessDeniedError) {
+				return res.status(403).send(accessDeniedError);
+			}
+
 			const requestBody: CurrentStepRouteRequest = req.body;
 			const layout = newslettersWorkflowStepLayout[requestBody.wizardId];
 
@@ -48,12 +89,10 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				return res.status(400).send(errorResponse);
 			}
 
-			const userProfile = getUserProfile(req);
-
 			const serviceInterface =
 				requestBody.wizardId === 'LAUNCH_NEWSLETTER'
-					? userProfile.profile
-						? makelaunchServiceForUser(userProfile.profile)
+					? user.profile
+						? makelaunchServiceForUser(user.profile)
 						: undefined
 					: draftStore;
 
