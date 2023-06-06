@@ -58,6 +58,9 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		Body: unknown;
 	}>('/api/newsletters/:newsletterId', async (req, res) => {
 		const user = getUserProfile(req);
+		if (!user.profile) {
+			return res.status(400).send(makeErrorResponse(`No user profile.`));
+		}
 		const permissions = await permissionService.get(user.profile);
 
 		if (!permissions.editNewsletters) {
@@ -66,7 +69,7 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 				.send(
 					makeErrorResponse(
 						`You don't have permission to do that, ${
-							user.profile?.given_name ?? 'ANONYMOUS_USER'
+							user.profile.given_name ?? 'ANONYMOUS_USER'
 						}`,
 					),
 				);
@@ -84,10 +87,6 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 			return res
 				.status(400)
 				.send(makeErrorResponse(`Not a valid partial newsletter`));
-		}
-		const user = getUserProfile(req);
-		if (!user.profile) {
-			return res.status(400).send(makeErrorResponse(`No user profile.`));
 		}
 
 		const storageResponse = await newsletterStore.update(
