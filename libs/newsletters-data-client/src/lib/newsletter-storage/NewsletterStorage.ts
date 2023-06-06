@@ -21,6 +21,7 @@ export const IMMUTABLE_PROPERTIES: Readonly<string[]> = [
 export abstract class NewsletterStorage {
 	abstract create(
 		draft: DraftNewsletterData,
+		user: UserProfile,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse

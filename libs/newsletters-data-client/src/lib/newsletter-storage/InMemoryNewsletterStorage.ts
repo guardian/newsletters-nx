@@ -11,6 +11,7 @@ import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
+import type { UserProfile } from '../user-profile';
 import { NewsletterStorage } from './NewsletterStorage';
 
 const MOCK_META: MetaData = {
@@ -34,7 +35,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			: [];
 	}
 
-	create(draft: DraftNewsletterData) {
+	create(draft: DraftNewsletterData, user: UserProfile) {
 		// TODO - use the schema.safeParse and if the test fails,
 		// use the list of issues to generate a message with the
 		// wrong/missing fields listed.
@@ -63,7 +64,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		const newNewsletterWithNewId: NewsletterDataWithMeta = {
 			...draft,
 			listId: this.getNextId(),
-			meta: MOCK_META,
+			meta: this.createNewMeta(user),
 		};
 		this.memory.push(newNewsletterWithNewId);
 

@@ -9,7 +9,8 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
-import { draftStore, launchService } from '../../services/storage';
+import { draftStore, makelaunchServiceForUser } from '../../services/storage';
+import { getUserProfile } from '../get-user-profile';
 
 const getHttpCode = (error: StateMachineError): number => {
 	switch (error.code) {
@@ -47,10 +48,23 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				return res.status(400).send(errorResponse);
 			}
 
+			const userProfile = getUserProfile(req);
+
 			const serviceInterface =
 				requestBody.wizardId === 'LAUNCH_NEWSLETTER'
-					? launchService
+					? userProfile.profile
+						? makelaunchServiceForUser(userProfile.profile)
+						: undefined
 					: draftStore;
+
+			if (!serviceInterface) {
+				const errorResponse: CurrentStepRouteResponse = {
+					errorMessage: 'FAILED to CONSTRUCT SERVICE',
+					currentStepId: requestBody.stepId,
+					hasPersistentError: true,
+				};
+				return res.status(500).send(errorResponse);
+			}
 
 			try {
 				return await handleWizardRequestAndReturnWizardResponse(

@@ -13,6 +13,7 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
+import type { UserProfile } from '../user-profile';
 import { NewsletterStorage } from './NewsletterStorage';
 import { objectToNewsletter } from './objectToNewsletter';
 import {
@@ -42,6 +43,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 	async create(
 		draft: DraftNewsletterData,
+		user: UserProfile,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse
@@ -90,7 +92,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const newNewsletter: NewsletterDataWithMeta = {
 			...draft,
 			listId: nextId,
-			meta: MOCK_META,
+			meta: this.createNewMeta(user),
 		};
 
 		try {
