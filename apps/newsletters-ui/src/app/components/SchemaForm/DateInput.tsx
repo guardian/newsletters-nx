@@ -24,9 +24,9 @@ export const DateInput: FunctionComponent<
 					label={props.label}
 					value={value}
 					disabled={props.readOnly}
-					onChange={(date, error) => {
-						if (date) {
-							props.inputHandler(date.toDate());
+					onChange={(date) => {
+						if (date && date.toString() !== 'Invalid Date') {
+								props.inputHandler(date.toDate());
 						}
 					}}
 					readOnly={props.readOnly}
