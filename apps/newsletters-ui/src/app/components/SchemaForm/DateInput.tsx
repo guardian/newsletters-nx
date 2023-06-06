@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
-import { defaultFieldStyle } from './styling';
+import { FieldWrapper } from './FieldWrapper';
 import type { FieldProps } from './util';
 import { eventToString } from './util';
 
@@ -30,7 +30,7 @@ export const DateInput: FunctionComponent<
 	const formattedDate = props.value ? formatDate(props.value) : '';
 
 	return (
-		<div css={defaultFieldStyle}>
+		<FieldWrapper>
 			<TextField
 				fullWidth
 				label={props.label}
@@ -42,6 +42,6 @@ export const DateInput: FunctionComponent<
 				required={!props.optional}
 				disabled={props.readOnly}
 			/>
-		</div>
+		</FieldWrapper>
 	);
 };

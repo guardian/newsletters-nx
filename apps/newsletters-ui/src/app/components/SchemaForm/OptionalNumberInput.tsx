@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
 import { useState } from 'react';
-import { defaultFieldStyle } from './styling';
+import { FieldWrapper } from './FieldWrapper';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
@@ -50,7 +50,7 @@ export const OptionalNumberInput: FunctionComponent<
 	};
 
 	return (
-		<div css={defaultFieldStyle}>
+		<FieldWrapper>
 			<TextField
 				label={label}
 				type={'number'}
@@ -72,6 +72,6 @@ export const OptionalNumberInput: FunctionComponent<
 					label={`${label ?? ''} undefined`}
 				/>
 			</FormGroup>
-		</div>
+		</FieldWrapper>
 	);
 };

@@ -7,7 +7,7 @@ import {
 	RadioGroup,
 } from '@mui/material';
 import type { FunctionComponent } from 'react';
-import { defaultFieldStyle } from './styling';
+import { FieldWrapper } from './FieldWrapper';
 import type { FieldProps } from './util';
 
 const EMPTY_STRING = '';
@@ -30,7 +30,7 @@ export const RadioSelectInput: FunctionComponent<
 	const valueAsString = value ?? EMPTY_STRING;
 
 	return (
-		<div css={defaultFieldStyle}>
+		<FieldWrapper>
 			<FormControl fullWidth>
 				<FormLabel id={`radio-input-label-${label}-${options.toString()}`}>
 					{label}
@@ -59,6 +59,6 @@ export const RadioSelectInput: FunctionComponent<
 					))}
 				</RadioGroup>
 			</FormControl>
-		</div>
+		</FieldWrapper>
 	);
 };
