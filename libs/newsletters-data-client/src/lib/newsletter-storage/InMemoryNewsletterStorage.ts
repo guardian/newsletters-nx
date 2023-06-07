@@ -119,6 +119,20 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
+	readByNameWithMeta(identityName: string) {
+		const match = this.memory.find(
+			(newsletter) => newsletter.identityName === identityName,
+		);
+		if (!match) {
+			return Promise.resolve(this.buildNoItemError(identityName));
+		}
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
+			ok: true,
+			data: match,
+		};
+		return Promise.resolve(response);
+	}
+
 	update(
 		listId: number,
 		modifications: Partial<NewsletterDataWithoutMeta>,
