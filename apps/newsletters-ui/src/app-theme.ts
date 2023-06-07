@@ -31,7 +31,7 @@ export const appTheme = createTheme({
 		},
 		h2: {
 			fontSize: '2rem',
-			marginBottom: '.25rem',
+			marginBottom: '1.5rem',
 			borderBottomWidth: 1,
 			borderBottomColor: 'primary.dark',
 			borderBottomStyle: 'solid',
