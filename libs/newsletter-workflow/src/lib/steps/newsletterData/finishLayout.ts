@@ -8,10 +8,14 @@ const markdownTemplate = `# You're finished!
 
 Congratulations, you have reached the end of the wizard for newsletter **{{name}}**.
 
-You can see your draft on the [details page](drafts/{{listId}}), which includes the options to edit the data you have provided and provide additional details.
+You can see your draft on the [details page](/drafts/{{listId}}), which includes the options to edit the data you have provided and provide additional details.
 
-Once all the data required to create **{{name}}** has been specified, the newsletter [can be launched](/newsletters/launch-newsletter/{{listId}}).
+{{answer}}
+
+Once all the data required to create **{{name}}** has been specified, [use the launch wizard](/newsletters/launch-newsletter/{{listId}}) to launch your new newsletter.
 `;
+
+const messageAboutRenderingOptions = `You will need to set the [rendering options](/newsletters/newsletter-data-rendering/{{listId}}) for your newsletter, since it is article-based.`;
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
@@ -24,11 +28,14 @@ const finishLayout: WizardStepLayout<DraftStorage> = {
 		if (!responseData) {
 			return staticMarkdown;
 		}
-		const [name = 'NAME', listId = ''] = getStringValuesFromRecord(
-			responseData,
-			['name', 'listId'],
-		);
+		const [name = 'NAME', listId = '', category = ''] =
+			getStringValuesFromRecord(responseData, ['name', 'listId', 'category']);
+
+		const infoAboutCategory =
+			category === 'article-based' ? messageAboutRenderingOptions : '';
+
 		return markdownTemplate
+			.replace(regExPatterns.answer, infoAboutCategory)
 			.replace(regExPatterns.name, name)
 			.replace(regExPatterns.listId, listId);
 	},
