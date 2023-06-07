@@ -3,10 +3,10 @@ import {
 	isPartialNewsletterData,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
-import { permissionService } from '../../services/permissions';
 import { newsletterStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
 import {
+	makeAccessDeniedApiResponse,
 	makeErrorResponse,
 	makeSuccessResponse,
 	mapStorageFailureReasonToStatusCode,
@@ -57,15 +57,12 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		'/api/newsletters/meta/:newsletterId',
 		async (req, res) => {
 			const user = getUserProfile(req);
-			if (!user.profile) {
-				return res.status(400).send(makeErrorResponse(`No user profile.`));
-			}
-			const permissions = await permissionService.get(user.profile);
-
-			if (!permissions.viewMetaData) {
-				return res
-					.status(403)
-					.send(makeErrorResponse(`You don't have permission to viewMetaData`));
+			const accessDeniedError = await makeAccessDeniedApiResponse(
+				user.profile,
+				'viewMetaData',
+			);
+			if (accessDeniedError) {
+				return res.status(403).send(accessDeniedError);
 			}
 
 			const { newsletterId } = req.params;
@@ -88,21 +85,12 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		Body: unknown;
 	}>('/api/newsletters/:newsletterId', async (req, res) => {
 		const user = getUserProfile(req);
-		if (!user.profile) {
-			return res.status(400).send(makeErrorResponse(`No user profile.`));
-		}
-		const permissions = await permissionService.get(user.profile);
-
-		if (!permissions.editNewsletters) {
-			return res
-				.status(403)
-				.send(
-					makeErrorResponse(
-						`You don't have permission to do that, ${
-							user.profile.given_name ?? 'ANONYMOUS_USER'
-						}`,
-					),
-				);
+		const accessDeniedError = await makeAccessDeniedApiResponse(
+			user.profile,
+			'editNewsletters',
+		);
+		if (accessDeniedError) {
+			return res.status(403).send(accessDeniedError);
 		}
 
 		const { newsletterId } = req.params;
@@ -119,6 +107,12 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 				.send(makeErrorResponse(`Not a valid partial newsletter`));
 		}
 
+		// This test would never fail on the current implementation since
+		// user.profile must be defined or there would be an accessDeniedError.
+		// Kept in to preserve type-safety.
+		if (!user.profile) {
+			return res.status(403).send(makeErrorResponse('No user profile.'));
+		}
 		const storageResponse = await newsletterStore.update(
 			newsletterIdAsNumber,
 			modifications,
