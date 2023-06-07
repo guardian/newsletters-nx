@@ -13,11 +13,9 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 ## How will {{name}} be produced?
 
-Editorial newsletters can be produced in four ways:
+Editorial newsletters can be produced in three ways:
 
-- **article-based**: Each chapter of the newsletter is written as a composer article and published using "email-rendering".
-
-- **article-based-legacy**: Each chapter of the newsletter is written as a composer article and published using the legacy "frontend" email template (not recommended!).
+- **article-based**: Each chapter of the newsletter is written as a composer article.
 
 - **fronts-based**: The newsletters are generated from a fronts page.
 
