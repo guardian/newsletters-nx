@@ -1,5 +1,4 @@
 import type { S3Client } from '@aws-sdk/client-s3';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
 import {
 	isNewsletterData,
 	isNewsletterDataWithMeta,
@@ -268,16 +267,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			...modifications,
 			meta: this.updateMeta(newsletterToUpdate.meta ?? makeBlankMeta(), user),
 		};
-
-		const updateNewsletterCommand = new PutObjectCommand({
-			Bucket: this.bucketName,
-			Key: `${this.OBJECT_PREFIX}${updatedNewsletter.identityName}:${updatedNewsletter.listId}.json`,
-			Body: JSON.stringify(updatedNewsletter),
-			ContentType: 'application/json',
-		});
+		const identifier = `${updatedNewsletter.identityName}:${updatedNewsletter.listId}.json`;
 
 		try {
-			await this.s3Client.send(updateNewsletterCommand);
+			await this.putObject(updatedNewsletter, identifier);
 			return {
 				ok: true,
 				data: this.stripMeta(updatedNewsletter),
