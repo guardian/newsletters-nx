@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { formatCellBoolean, formatCellDate } from './Cell';
+import { formatCellDate } from './Cell';
 import { ExternalLinkButton } from './ExternalLinkButton';
 import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
@@ -58,12 +58,6 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Header: 'Status',
 				accessor: 'status',
 				sortType: 'basic',
-			},
-			{
-				Header: 'Restricted',
-				accessor: 'restricted',
-				sortType: 'basic',
-				Cell: formatCellBoolean,
 			},
 			{
 				Header: 'Edit',
