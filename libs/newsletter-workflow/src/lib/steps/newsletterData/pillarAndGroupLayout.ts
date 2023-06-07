@@ -17,7 +17,7 @@ Select a pillar for the newsletter e.g. **Football Daily** sits under the **Spor
 
 ![Pillars](https://i.guim.co.uk/img/uploads/2023/02/21/pillarScreenshot.png?quality=85&dpr=2&width=300&s=0692a8714eaf66313fc599cb3462befd)
 
-Select a group for the {{name}} to be listed under on the [All Newsletters Page](https://www.theguardian.com/email-newsletters). The current groups are:
+Select a group for {{name}} to be listed under on the [All Newsletters Page](https://www.theguardian.com/email-newsletters). The current groups are:
  - News in depth
  - News in brief
  - Opinion

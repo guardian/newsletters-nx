@@ -132,7 +132,7 @@ export const newsletterDataSchema = z.object({
 	figmaDesignUrl: z.string().url().optional().describe('figma design url'),
 	figmaIncludesThrashers: z
 		.boolean()
-		.describe('figma design includes thrashers?'),
+		.describe('Does the figma design include thrashers?'),
 	illustrationCircle: z.string().optional(),
 
 	creationTimeStamp: z.number(),
