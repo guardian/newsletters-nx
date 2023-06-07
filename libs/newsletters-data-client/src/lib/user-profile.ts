@@ -35,6 +35,7 @@ export type UserPermissions = {
 	editNewsletters: boolean;
 	launchNewsletters: boolean;
 	writeToDrafts: boolean;
+	viewMetaData: boolean;
 };
 
 export const levelToPermissions = (
@@ -54,5 +55,6 @@ export const levelToPermissions = (
 			UserAccessLevel.Editor,
 			UserAccessLevel.Drafter,
 		].includes(accessLevel),
+		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
 	};
 };

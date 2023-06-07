@@ -53,6 +53,36 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		},
 	);
 
+	app.get<{ Params: { newsletterId: string } }>(
+		'/api/newsletters/meta/:newsletterId',
+		async (req, res) => {
+			const user = getUserProfile(req);
+			if (!user.profile) {
+				return res.status(400).send(makeErrorResponse(`No user profile.`));
+			}
+			const permissions = await permissionService.get(user.profile);
+
+			if (!permissions.viewMetaData) {
+				return res
+					.status(403)
+					.send(makeErrorResponse(`You don't have permission to viewMetaData`));
+			}
+
+			const { newsletterId } = req.params;
+			const storageResponse = await newsletterStore.readByNameWithMeta(
+				newsletterId,
+			);
+
+			if (!storageResponse.ok) {
+				return res
+					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+					.send(makeErrorResponse(storageResponse.message));
+			}
+
+			return makeSuccessResponse(storageResponse.data);
+		},
+	);
+
 	app.patch<{
 		Params: { newsletterId: string };
 		Body: unknown;
