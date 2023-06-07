@@ -85,15 +85,24 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			/>
 
 			<Snackbar
+				sx={{ position: 'static' }}
 				open={!!errorMessage}
 				onClose={() => {
 					setErrorMessage(undefined);
 				}}
 			>
-				<Alert severity="error">{errorMessage}</Alert>
+				<Alert
+					onClose={() => {
+						setErrorMessage(undefined);
+					}}
+					severity="error"
+				>
+					{errorMessage}
+				</Alert>
 			</Snackbar>
 
 			<Snackbar
+				sx={{ position: 'static' }}
 				open={!!confirmationMessage}
 				onClose={() => {
 					setConfirmationMessage(undefined);

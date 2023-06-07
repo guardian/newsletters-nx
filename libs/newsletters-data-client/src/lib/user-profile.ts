@@ -23,3 +23,36 @@ export type UserProfile = Partial<{
 	/** the issuer of the profile data - should be https://accounts.google.com */
 	iss: string;
 }>;
+
+export enum UserAccessLevel {
+	Developer,
+	Editor,
+	Drafter,
+	Viewer,
+}
+
+export type UserPermissions = {
+	editNewsletters: boolean;
+	launchNewsletters: boolean;
+	writeToDrafts: boolean;
+};
+
+export const levelToPermissions = (
+	accessLevel: UserAccessLevel,
+): UserPermissions => {
+	return {
+		editNewsletters: [
+			UserAccessLevel.Developer,
+			UserAccessLevel.Editor,
+		].includes(accessLevel),
+		launchNewsletters: [
+			UserAccessLevel.Developer,
+			UserAccessLevel.Editor,
+		].includes(accessLevel),
+		writeToDrafts: [
+			UserAccessLevel.Developer,
+			UserAccessLevel.Editor,
+			UserAccessLevel.Drafter,
+		].includes(accessLevel),
+	};
+};
