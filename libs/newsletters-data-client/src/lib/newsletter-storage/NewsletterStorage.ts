@@ -18,6 +18,13 @@ export const IMMUTABLE_PROPERTIES: Readonly<string[]> = [
 	'identityName',
 ];
 
+export const makeBlankMeta = (): MetaData => ({
+	creationTimestamp: 0,
+	createdBy: 'unknown',
+	updatedTimestamp: 0,
+	updatedBy: 'unknown',
+});
+
 export abstract class NewsletterStorage {
 	abstract create(
 		draft: DraftNewsletterData,

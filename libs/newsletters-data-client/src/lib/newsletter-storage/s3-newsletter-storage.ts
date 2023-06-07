@@ -16,7 +16,7 @@ import type {
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
-import { NewsletterStorage } from './NewsletterStorage';
+import { makeBlankMeta, NewsletterStorage } from './NewsletterStorage';
 import { objectToNewsletter } from './objectToNewsletter';
 import {
 	fetchObject,
@@ -255,15 +255,18 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		if (modificationError) {
 			modificationError;
 		}
-		const newsletterToUpdate = await this.readWithMeta(listId);
 
-		if (!newsletterToUpdate.ok) {
-			return newsletterToUpdate;
+		const newsletterToUpdate = await this.fetchNewsletter(listId);
+		if (!newsletterToUpdate) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with id ${listId}`,
+			};
 		}
 		const updatedNewsletter: NewsletterDataWithMeta = {
-			...newsletterToUpdate.data,
+			...newsletterToUpdate,
 			...modifications,
-			meta: this.updateMeta(newsletterToUpdate.data.meta, user),
+			meta: this.updateMeta(newsletterToUpdate.meta ?? makeBlankMeta(), user),
 		};
 
 		const updateNewsletterCommand = new PutObjectCommand({
@@ -290,7 +293,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 	private async fetchNewsletter(
 		listId: number,
-	): Promise<NewsletterData | undefined> {
+	): Promise<NewsletterDataWithMeta | NewsletterDataWithoutMeta | undefined> {
 		const listOfObjectsKeys = await this.getListOfObjectsKeys();
 		const matchingKey = listOfObjectsKeys.find((key) => {
 			const keyParts = key.split(':').pop();
@@ -304,12 +307,15 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const s3Object = await this.fetchObject(matchingKey);
 		const responseAsNewsletter: NewsletterData | undefined =
 			await objectToNewsletter(s3Object);
-		return responseAsNewsletter;
+		return responseAsNewsletter as
+			| NewsletterDataWithMeta
+			| NewsletterDataWithoutMeta
+			| undefined;
 	}
 
 	private async fetchNewsletterByName(
 		identityName: string,
-	): Promise<NewsletterData | undefined> {
+	): Promise<NewsletterDataWithMeta | NewsletterDataWithoutMeta | undefined> {
 		const listOfObjectsKeys = await this.getListOfObjectsKeys();
 		const matchingKey = listOfObjectsKeys.find((key) => {
 			const keyParts = key.split('/').pop();
@@ -323,7 +329,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const s3Object = await this.fetchObject(matchingKey);
 		const responseAsNewsletter: NewsletterData | undefined =
 			await objectToNewsletter(s3Object);
-		return responseAsNewsletter;
+		return responseAsNewsletter as
+			| NewsletterDataWithMeta
+			| NewsletterDataWithoutMeta
+			| undefined;
 	}
 
 	private fetchObject = fetchObject(this);

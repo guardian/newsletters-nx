@@ -1,6 +1,5 @@
 import type {
 	DraftNewsletterData,
-	MetaData,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
@@ -12,14 +11,7 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
-import { NewsletterStorage } from './NewsletterStorage';
-
-const MOCK_META: MetaData = {
-	updatedBy: 'system',
-	creationTimestamp: 0,
-	createdBy: 'system',
-	updatedTimestamp: 0,
-};
+import { makeBlankMeta, NewsletterStorage } from './NewsletterStorage';
 
 // TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
@@ -30,7 +22,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		this.memory = newsletters
 			? newsletters.map((n) => ({
 					...n,
-					meta: MOCK_META,
+					meta: makeBlankMeta(),
 			  }))
 			: [];
 	}
