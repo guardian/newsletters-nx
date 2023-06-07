@@ -8,9 +8,16 @@ import type { PermissionsService } from './abstract-class';
 
 const localUsers = getLocalUserProfiles();
 
+const getDefaultUserAccessLevel = (): UserAccessLevel => {
+	const { DEFAULT_USER_ACCESS_LEVEL } = process.env;
+	if (DEFAULT_USER_ACCESS_LEVEL) {
+		return parseInt(DEFAULT_USER_ACCESS_LEVEL, 10) as UserAccessLevel;
+	}
+	return UserAccessLevel.Viewer;
+};
 /**
- * Placeholder function usering static user data. Async to
- * simulate a call to the google groups API (or similar)
+ * Placeholder function using static user data. Async to
+ * simulate a call to the Google Groups API (or similar)
  */
 const getUserAccessLevel = async (
 	user?: UserProfile,
@@ -20,7 +27,7 @@ const getUserAccessLevel = async (
 
 	return user?.email
 		? userList[user.email] ?? UserAccessLevel.Viewer
-		: UserAccessLevel.Viewer;
+		: getDefaultUserAccessLevel();
 };
 
 export class LocalPermissionService implements PermissionsService {
