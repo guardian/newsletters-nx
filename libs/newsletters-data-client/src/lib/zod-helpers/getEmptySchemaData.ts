@@ -16,15 +16,23 @@ import { recursiveUnwrap } from './recursiveUnwrap';
  * not a problem for the current usage of this function
  * but may need to be revised.
  *
- * Enums start undefined so the user is forced to choose a value
- * rather than having the first item pre-selected. Could add and
- * extra argument to default enum to the first item when required.
+ * Enums start undefined by default so the user is forced to choose a value
+ * rather than having the first item pre-selected.
  */
 export const getEmptySchemaData = (
 	schema: z.ZodObject<z.ZodRawShape>,
-	unwrapOptionals = false,
+	options: {
+		unwrapOptionals?: boolean;
+		setEnumsToFirstValue?: boolean;
+		populateStringsWithMinLength?: boolean;
+	} = {},
 ): FormDataRecord | undefined => {
 	return Object.keys(schema.shape).reduce<FormDataRecord>((formData, key) => {
+		const {
+			unwrapOptionals = false,
+			setEnumsToFirstValue = false,
+			populateStringsWithMinLength = false,
+		} = options;
 		const zodMaybeOptional = schema.shape[key];
 
 		if (!zodMaybeOptional) {
@@ -36,9 +44,20 @@ export const getEmptySchemaData = (
 		const mod: FormDataRecord = {};
 
 		if (zod instanceof ZodString) {
-			mod[key] = '';
+			const initalString =
+				populateStringsWithMinLength && zod.minLength
+					? '*'.repeat(zod.minLength)
+					: '';
+			mod[key] = initalString;
 		} else if (zod instanceof ZodEnum) {
-			mod[key] = undefined;
+			if (setEnumsToFirstValue) {
+				const [firstOption] = zod.options as unknown[];
+				if (typeof firstOption === 'string') {
+					mod[key] = firstOption;
+				}
+			} else {
+				mod[key] = undefined;
+			}
 		} else if (zod instanceof ZodNumber) {
 			mod[key] = 0;
 		} else if (zod instanceof ZodBoolean) {

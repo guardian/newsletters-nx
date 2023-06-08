@@ -1,5 +1,10 @@
+import type { ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
-import { isPrimitiveRecordArray, isStringArray } from '../../util';
+import {
+	isPrimitiveRecord,
+	isPrimitiveRecordArray,
+	isStringArray,
+} from '../../util';
 import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
 import { FieldWrapper } from './FieldWrapper';
@@ -9,6 +14,8 @@ import { RadioSelectInput } from './RadioSelectInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
+import { SchemaRecordInput } from './SchemaRecordInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
@@ -209,6 +216,23 @@ export function SchemaField<T extends z.ZodRawShape>({
 					/>
 				</FieldWrapper>
 			);
+
+		case 'ZodObject': {
+			if (isPrimitiveRecord(value) || typeof value === 'undefined') {
+				return (
+					<FieldWrapper>
+						<SchemaRecordInput
+							{...standardProps}
+							recordSchema={
+								field.recordSchema as unknown as ZodObject<ZodRawShape>
+							}
+							value={value}
+						/>
+					</FieldWrapper>
+				);
+			}
+			return <WrongTypeMessage field={field} />;
+		}
 
 		case 'ZodArray':
 			switch (field.arrayItemType) {
