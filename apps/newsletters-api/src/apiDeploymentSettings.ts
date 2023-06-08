@@ -89,3 +89,12 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 		return {};
 	}
 };
+
+export const getEmailServiceType = (): 'noop' | 'local-file' => {
+	switch (process.env.EMAIL_SERVICE) {
+		case 'local-file':
+			return 'local-file';
+		default:
+			return 'noop';
+	}
+};

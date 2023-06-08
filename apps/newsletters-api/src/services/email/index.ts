@@ -1,6 +1,16 @@
-import { LocalFileEmailService } from '@newsletters-nx/email-service';
+import {
+	LocalFileEmailService,
+	NoopEmailService,
+} from '@newsletters-nx/email-service';
+import { getEmailServiceType } from '../../apiDeploymentSettings';
 
-const emailService = new LocalFileEmailService();
+const serviceType = getEmailServiceType();
+
+const emailService =
+	serviceType === 'local-file'
+		? new LocalFileEmailService()
+		: new NoopEmailService();
+
 emailService
 	.init()
 	.then((report) => {
