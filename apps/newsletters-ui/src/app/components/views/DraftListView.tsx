@@ -1,7 +1,8 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, Container } from '@mui/material';
+import { Box, Button, Container, Typography } from '@mui/material';
 import { useLoaderData } from 'react-router-dom';
 import { isDraft } from '@newsletters-nx/newsletters-data-client';
+import { ContentWrapper } from '../../ContentWrapper';
 import { DraftsTable } from '../DraftsTable';
 
 export const DraftListView = () => {
@@ -12,7 +13,11 @@ export const DraftListView = () => {
 
 	const drafts = list.filter(isDraft);
 	return (
-		<>
+		<ContentWrapper>
+			<Typography variant="h2">View draft newsletters</Typography>
+			<Typography>
+				Please find below a list of draft newsletters in progress.
+			</Typography>
 			<DraftsTable drafts={drafts} />
 			<Container maxWidth="lg">
 				<Box
@@ -31,6 +36,6 @@ export const DraftListView = () => {
 					</Button>
 				</Box>
 			</Container>
-		</>
+		</ContentWrapper>
 	);
 };

@@ -40,8 +40,17 @@ export const formSchemas = {
 		.pick({ identityName: true })
 		.describe('Edit the identity name if required'),
 
-	category: newsletterDataSchema
-		.pick({ category: true })
+	// Exclude 'article-based-legacy' from the options presented:
+	// needs to be supported in the schema for existing data, but
+	// not an option to present for new newsletters.
+	category: z
+		.object({
+			category: z.enum(
+				newsletterDataSchema.shape['category'].options.filter(
+					(option) => option !== 'article-based-legacy',
+				) as [string, ...string[]],
+			),
+		})
 		.describe('Pick a category'),
 
 	braze: newsletterDataSchema
