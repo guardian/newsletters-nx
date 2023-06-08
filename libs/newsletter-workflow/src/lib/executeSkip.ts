@@ -1,7 +1,5 @@
-import {
-	draftNewsletterDataToFormData,
-	type DraftStorage,
-} from '@newsletters-nx/newsletters-data-client';
+import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
+import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
 	WizardStepData,
