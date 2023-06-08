@@ -1,6 +1,5 @@
 import { TextField } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
-import { defaultFieldStyle } from './styling';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
@@ -33,18 +32,16 @@ export const NumberInput: FunctionComponent<
 	};
 
 	return (
-		<div css={defaultFieldStyle}>
-			<TextField
-				fullWidth
-				label={props.label}
-				type={'number'}
-				value={props.value}
-				onInput={sendValue}
-				helperText={props.error}
-				error={!!props.error}
-				required={!props.optional}
-				disabled={props.readOnly}
-			/>
-		</div>
+		<TextField
+			fullWidth
+			label={props.label}
+			type={'number'}
+			value={props.value}
+			onInput={sendValue}
+			helperText={props.error}
+			error={!!props.error}
+			required={!props.optional}
+			disabled={props.readOnly}
+		/>
 	);
 };

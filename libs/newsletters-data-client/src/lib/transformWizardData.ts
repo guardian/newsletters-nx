@@ -1,6 +1,9 @@
 import type { ZodRawShape, ZodTypeAny } from 'zod';
 import { ZodObject, ZodOptional } from 'zod';
-import type { DraftNewsletterData } from './newsletter-data-type';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from './newsletter-data-type';
 import { draftNewsletterDataSchema } from './newsletter-data-type';
 import { recursiveUnwrap } from './zod-helpers';
 
@@ -14,10 +17,32 @@ export type SupportedValue =
 	| undefined
 	| Date
 	| string[]
-	| PrimitiveRecord;
+	| PrimitiveRecord
+	| PrimitiveRecord[];
 export type FormDataRecord = Record<string, SupportedValue>;
 
+const OBJECT_FIELDS_USING_RECORD_INPUT: Array<keyof NewsletterData> = [];
+
+const isPrimitiveRecord = (value: unknown): value is PrimitiveRecord => {
+	if (!value || typeof value !== 'object') {
+		return false;
+	}
+	if (Array.isArray(value)) {
+		return false;
+	}
+	return Object.keys(value).every(
+		(propertyValue) =>
+			typeof propertyValue === 'boolean' ||
+			typeof propertyValue === 'number' ||
+			typeof propertyValue === 'string',
+	);
+};
+
 /**
+ * If The **formData** already contains a value for **fieldKey** in the
+ * correct format, and that field is expected to be using the
+ * record input returns that value as is.
+ *
  * Finds all key/value pairs on the **formData** where the key starts with
  * the given **fieldKey** and builds a record of using those key/value pairs,
  * but with the prefix removed from the key e.g. for the fieldKey "person"
@@ -35,6 +60,14 @@ const buildObjectValue = (
 	objectSchema: ZodObject<ZodRawShape>,
 	formData: FormDataRecord,
 ): Record<string, unknown> | undefined => {
+	if (
+		fieldKey in formData &&
+		OBJECT_FIELDS_USING_RECORD_INPUT.includes(fieldKey)
+	) {
+		const parseResult = objectSchema.safeParse(formData[fieldKey]);
+		return parseResult.success ? parseResult.data : undefined;
+	}
+
 	if (!Object.keys(formData).some((key) => key.startsWith(`${fieldKey}.`))) {
 		return undefined;
 	}
@@ -159,7 +192,13 @@ export const draftNewsletterDataToFormData = (
 				) {
 					output[castkey] = [...valueOnPartial];
 				} else {
-					addDestructuredObjectValues(castkey, partialNewsletter, output);
+					if (OBJECT_FIELDS_USING_RECORD_INPUT.includes(castkey)) {
+						if (isPrimitiveRecord(valueOnPartial)) {
+							output[castkey] = valueOnPartial;
+						}
+					} else {
+						addDestructuredObjectValues(castkey, partialNewsletter, output);
+					}
 				}
 				break;
 			}
