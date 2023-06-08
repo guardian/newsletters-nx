@@ -1,3 +1,4 @@
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
 	Alert,
 	Badge,
@@ -86,9 +87,13 @@ export const SchemaRecordArrayInput: FunctionComponent<
 									maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 								/>
 							</Grid>
-							<Grid item xs={2} pb={1.5}>
+							<Grid
+								item
+								xs={2}
+								sx={{ display: 'flex', alignItems: 'center' }}
+								direction={'row'}
+							>
 								<Button
-									sx={{ height: '100%' }}
 									size="small"
 									color="error"
 									variant="outlined"
@@ -96,8 +101,9 @@ export const SchemaRecordArrayInput: FunctionComponent<
 									onClick={() => {
 										deleteRecordIndex(index);
 									}}
+									startIcon={<DeleteIcon />}
 								>
-									x
+									Delete
 								</Button>
 							</Grid>
 						</Fragment>
