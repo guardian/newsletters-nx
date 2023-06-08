@@ -1,14 +1,6 @@
-type EmailReport = {
-	success: boolean;
-	message?: string;
-};
+import type { Email, EmailReport } from './types';
 
 export abstract class EmailServiceAbstract {
-	abstract send(
-		recipients: string[],
-		subject: string,
-		body: string,
-	): Promise<EmailReport>;
-
+	abstract send(message: Email): Promise<EmailReport>;
 	abstract init(): Promise<EmailReport>;
 }
