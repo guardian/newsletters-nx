@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Rendering 'Link List' sections in {{name}}
+## Rendering 'Link List' sections in {{name}}
 
 You may want to display some sections in **{{name}}** with LinkList styling.
 

@@ -9,6 +9,7 @@ export type StepListing = {
 	canSkipTo?: boolean;
 	canSkipFrom?: boolean;
 	schema?: ZodObject<ZodRawShape>;
+	isOptional: boolean;
 };
 
 export type StepperConfig = {
@@ -30,13 +31,14 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 					canSkipTo: step.canSkipTo,
 					canSkipFrom: !!step.executeSkip,
 					schema: step.schema,
+					isOptional: !step.schema || step.schema.safeParse({}).success,
 				},
 			];
 		},
 		[],
 	);
 
-	// TO DO - these should really be properties of the WizardLayout, rather than
+	// TODO - these should really be properties of the WizardLayout, rather than
 	// a WizardStepLayout in the WizardLayout.
 	// Since WizardLayout is defined as a record of WizardLayouts, we can't add
 	// any additional "meta" properties to it, without changing that definition.

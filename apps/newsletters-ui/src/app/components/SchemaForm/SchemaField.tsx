@@ -1,12 +1,21 @@
+import type { ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
-import { isPrimitiveRecordArray, isStringArray } from '../../util';
+import {
+	isPrimitiveRecord,
+	isPrimitiveRecordArray,
+	isStringArray,
+} from '../../util';
 import { BooleanInput } from './BooleanInput';
 import { DateInput } from './DateInput';
+import { FieldWrapper } from './FieldWrapper';
 import { NumberInput } from './NumberInput';
 import { OptionalNumberInput } from './OptionalNumberInput';
+import { RadioSelectInput } from './RadioSelectInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
+// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
+import { SchemaRecordInput } from './SchemaRecordInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';
 import type { FieldDef, FieldValue, NumberInputSettings } from './util';
@@ -23,6 +32,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	showUnsupported?: boolean;
 	numberInputSettings?: NumberInputSettings;
 	validationWarning?: string;
+	maxOptionsForRadioButtons: number;
 }
 
 const WrongTypeMessage = (props: { field: FieldDef }) => (
@@ -40,6 +50,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	showUnsupported = false,
 	numberInputSettings = {},
 	validationWarning,
+	maxOptionsForRadioButtons,
 }: SchemaFieldProps<T>) {
 	const { key, type, value } = field;
 
@@ -65,7 +76,13 @@ export function SchemaField<T extends z.ZodRawShape>({
 		case 'ZodDate':
 			if (typeof value === 'undefined') {
 				return (
-					<DateInput {...standardProps} value={value} type={stringInputType} />
+					<FieldWrapper>
+						<DateInput
+							{...standardProps}
+							value={value}
+							type={stringInputType}
+						/>
+					</FieldWrapper>
 				);
 			}
 			if (typeof value === 'string') {
@@ -74,7 +91,13 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 				if (coerceCheck.success) {
 					return (
-						<DateInput {...standardProps} value={date} type={stringInputType} />
+						<FieldWrapper>
+							<DateInput
+								{...standardProps}
+								value={date}
+								type={stringInputType}
+							/>
+						</FieldWrapper>
 					);
 				}
 				return <WrongTypeMessage field={field} />;
@@ -82,7 +105,13 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 			if (value instanceof Date) {
 				return (
-					<DateInput {...standardProps} value={value} type={stringInputType} />
+					<FieldWrapper>
+						<DateInput
+							{...standardProps}
+							value={value}
+							type={stringInputType}
+						/>
+					</FieldWrapper>
 				);
 			}
 			return <WrongTypeMessage field={field} />;
@@ -93,24 +122,43 @@ export function SchemaField<T extends z.ZodRawShape>({
 			}
 
 			if (options) {
+				if (options.length <= maxOptionsForRadioButtons) {
+					return (
+						<FieldWrapper>
+							<RadioSelectInput
+								{...standardProps}
+								value={value}
+								options={options}
+							/>
+						</FieldWrapper>
+					);
+				}
 				return (
-					<SelectInput {...standardProps} value={value} options={options} />
+					<FieldWrapper>
+						<SelectInput {...standardProps} value={value} options={options} />
+					</FieldWrapper>
 				);
 			}
 
 			return (
-				<StringInput
-					{...standardProps}
-					value={value ?? ''}
-					type={stringInputType}
-				/>
+				<FieldWrapper>
+					<StringInput
+						{...standardProps}
+						value={value ?? ''}
+						type={stringInputType}
+					/>
+				</FieldWrapper>
 			);
 
 		case 'ZodBoolean':
 			if (typeof value !== 'boolean' && typeof value !== 'undefined') {
 				return <WrongTypeMessage field={field} />;
 			}
-			return <BooleanInput {...standardProps} value={value ?? false} />;
+			return (
+				<FieldWrapper>
+					<BooleanInput {...standardProps} value={value ?? false} />
+				</FieldWrapper>
+			);
 
 		case 'ZodNumber':
 			if (typeof value !== 'number' && typeof value !== 'undefined') {
@@ -119,39 +167,82 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 			if (field.optional) {
 				return (
-					<OptionalNumberInput
-						{...standardProps}
-						{...numberInputSettings}
-						value={value}
-					/>
+					<FieldWrapper>
+						<OptionalNumberInput
+							{...standardProps}
+							{...numberInputSettings}
+							value={value}
+						/>
+					</FieldWrapper>
 				);
 			}
 
 			return (
-				<NumberInput
-					{...standardProps}
-					{...numberInputSettings}
-					value={value ?? 0}
-				/>
+				<FieldWrapper>
+					<NumberInput
+						{...standardProps}
+						{...numberInputSettings}
+						value={value ?? 0}
+					/>
+				</FieldWrapper>
 			);
 
 		case 'ZodEnum':
 			if (typeof value !== 'string' && typeof value !== 'undefined') {
 				return <WrongTypeMessage field={field} />;
 			}
+
+			if (
+				field.enumOptions &&
+				field.enumOptions.length <= maxOptionsForRadioButtons
+			) {
+				return (
+					<FieldWrapper>
+						<RadioSelectInput
+							{...standardProps}
+							value={value}
+							options={field.enumOptions}
+						/>
+					</FieldWrapper>
+				);
+			}
+
 			return (
-				<SelectInput
-					{...standardProps}
-					value={value}
-					options={field.enumOptions ?? []}
-				/>
+				<FieldWrapper>
+					<SelectInput
+						{...standardProps}
+						value={value}
+						options={field.enumOptions ?? []}
+					/>
+				</FieldWrapper>
 			);
+
+		case 'ZodObject': {
+			if (isPrimitiveRecord(value) || typeof value === 'undefined') {
+				return (
+					<FieldWrapper>
+						<SchemaRecordInput
+							{...standardProps}
+							recordSchema={
+								field.recordSchema as unknown as ZodObject<ZodRawShape>
+							}
+							value={value}
+						/>
+					</FieldWrapper>
+				);
+			}
+			return <WrongTypeMessage field={field} />;
+		}
 
 		case 'ZodArray':
 			switch (field.arrayItemType) {
 				case 'string': {
 					if (isStringArray(value) || typeof value === 'undefined') {
-						return <SchemaArrayInput {...standardProps} value={value ?? []} />;
+						return (
+							<FieldWrapper>
+								<SchemaArrayInput {...standardProps} value={value ?? []} />;
+							</FieldWrapper>
+						);
 					}
 					return <WrongTypeMessage field={field} />;
 				}
@@ -162,11 +253,14 @@ export function SchemaField<T extends z.ZodRawShape>({
 							return <p>MISSING SCHEMA</p>;
 						}
 						return (
-							<SchemaRecordArrayInput
-								{...standardProps}
-								value={value ?? []}
-								recordSchema={field.recordSchema}
-							/>
+							<FieldWrapper>
+								<SchemaRecordArrayInput
+									{...standardProps}
+									value={value ?? []}
+									recordSchema={field.recordSchema}
+									maxOptionsForRadioButtons={maxOptionsForRadioButtons}
+								/>
+							</FieldWrapper>
 						);
 					} else {
 						return <WrongTypeMessage field={field} />;

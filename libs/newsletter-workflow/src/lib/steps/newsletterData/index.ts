@@ -7,14 +7,15 @@ import { dateLayout } from './dateLayout';
 import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
 import { finishLayout } from './finishLayout';
 import { frequencyLayout } from './frequencyLayout';
+import { multiThrashersLayout } from './multiThrashersLayout';
 import { newsletterDesignLayout } from './newsletterDesignLayout';
 import { onlineArticleLayout } from './onlineArticleLayout';
-import { pillarLayout } from './pillarLayout';
+import { pillarAndGroupLayout } from './pillarAndGroupLayout';
 import { regionFocusLayout } from './regionFocusLayout';
 import { signUpEmbedLayout } from './signUpEmbedLayout';
 import { signUpPageLayout } from './signUpPageLayout';
+import { singleThrasherLayout } from './singleThrasherLayout';
 import { tagsLayout } from './tagsLayout';
-import { thrasherLayout } from './thrasherLayout';
 
 export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	cancel: cancelLayout,
@@ -22,12 +23,13 @@ export const newsletterDataLayout: WizardLayout<DraftStorage> = {
 	editDraftNewsletter: editDraftNewsletterLayout,
 	category: categoryLayout,
 	dates: dateLayout,
-	pillar: pillarLayout,
+	pillarAndGroup: pillarAndGroupLayout,
 	regionFocus: regionFocusLayout,
 	frequency: frequencyLayout,
 	onlineArticle: onlineArticleLayout,
 	tags: tagsLayout,
-	thrasher: thrasherLayout,
+	thrasher: singleThrasherLayout,
+	multiThrashers: multiThrashersLayout,
 	newsletterDesign: newsletterDesignLayout,
 	signUpPage: signUpPageLayout,
 	signUpEmbed: signUpEmbedLayout,

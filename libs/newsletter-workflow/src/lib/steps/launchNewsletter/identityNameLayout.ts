@@ -5,7 +5,7 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Identity Name
+## Identity Name
 
 This is a unique identifier for the newsletter, used internally by the system and not displayed to newsletter readers.
 

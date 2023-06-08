@@ -11,30 +11,22 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Tell us about your launch date and promotion plans for {{name}}
+## Tell us about your launch date and promotion plans for {{name}}
 
-## Launch
+### Launch
 
-When will the first send of **{{name}}** be?  Please specify the time and date.
+When will the first send of **{{name}}** be? Please specify date. This needs to be in the UK timezone for the system.
 
-This needs to be added in the UK timezone so the system can process this information correctly.
+We will automatically add a testing period for the newsletter of 1 week before the first send so you can try out the template in Composer. Please also mark if the newsletter should be private if it’s confidential.
 
-## Promotion
+### Promotion
 
-Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?  If so:
+Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?
+If so:
 
 - What date will the sign up page go live?
 
 - What date will the thrashers go live?
-
-## Testing
-
-Please note that we will automatically add a testing period for the newsletter of 1 week before the first send.
-
-This will give you an opportunity to try out the newsletter template in Composer.
-
-Does the newsletter need to be private e.g. in the case of it being confidential?
-
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(

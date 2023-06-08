@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { emailEmbedSchema } from './emailEmbedSchema';
 import {
 	kebabCasedString,
 	nonEmptyString,
@@ -26,11 +25,9 @@ export const onlineArticleSchema = z
 	.describe('location of article');
 export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
 
-export const singleThrasherLocation = z.enum([
-	'Web only',
-	'App only',
-	'Web and App',
-]);
+export const singleThrasherLocation = z
+	.enum(['Web only', 'App only', 'Web and App'])
+	.optional();
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
 export const renderingOptionsSchema = z.object({
@@ -50,9 +47,9 @@ export const renderingOptionsSchema = z.object({
 		.array(
 			z
 				.object({
-					subheading: z.string().optional().describe('read more subheading'),
-					wording: z.string().optional().describe('read more wording'),
-					url: z.string().url().optional().describe('read more url'),
+					subheading: nonEmptyString().describe('read more subheading'),
+					wording: nonEmptyString().describe('read more wording'),
+					url: z.string().url().describe('read more url'),
 				})
 				.describe('read more section configuration'),
 		)
@@ -63,16 +60,38 @@ export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
 export const thrasherOptionsSchema = z.object({
 	singleThrasher: z.boolean().describe('single thrasher required?'),
-	multiThrasher: z.boolean().describe('multi-thrasher(s) required?'),
 	singleThrasherLocation: singleThrasherLocation.describe(
 		'single thrasher location',
 	),
 	thrasherDescription: z.string().describe('thrasher description'),
+	multiThrashers: z
+		.array(
+			z
+				.object({
+					// TODO - these should be drop-downs populated from existing launched newsletters
+					// plus the draft currently being created
+					// TODO - this has specifically been defined as a triple-thrasher, rather than a
+					// multi-thrasher.  The vast majority of multi-thrashers are triple-thrashers, so
+					// this is suitable for the mvp, but occasionally more than 3 newsletters are required
+					thrasher1: z.string().optional().describe('left-hand thrasher'),
+					thrasher2: z.string().optional().describe('middle thrasher'),
+					thrasher3: z.string().optional().describe('right-hand-thrasher'),
+				})
+				.describe('multi-thrasher configuration'),
+		)
+		.optional()
+		.describe('The configuration for multi-thrashers'),
 });
 export type ThrasherOptions = z.infer<typeof thrasherOptionsSchema>;
 
 export const newsletterCategoriesSchema = z
-	.enum(['article-based', 'fronts-based', 'manual-send', 'other'])
+	.enum([
+		'article-based',
+		'article-based-legacy',
+		'fronts-based',
+		'manual-send',
+		'other',
+	])
 	.describe('production category');
 export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 
@@ -102,10 +121,6 @@ export const newsletterDataSchema = z.object({
 	frequency: nonEmptyString(),
 	listId: z.number(),
 	listIdV1: z.number(),
-	// TO DO - remove emailEmbed from this schema and derive it as part of in deriveLegacyNewsletter
-	emailEmbed: emailEmbedSchema.extend({
-		description: z.string(),
-	}),
 	campaignName: z.string().optional(),
 	campaignCode: z.string().optional(),
 	brazeSubscribeAttributeNameAlternate: z
@@ -117,14 +132,14 @@ export const newsletterDataSchema = z.object({
 	figmaDesignUrl: z.string().url().optional().describe('figma design url'),
 	figmaIncludesThrashers: z
 		.boolean()
-		.describe('figma design includes thrashers?'),
+		.describe('Does the figma design include thrashers?'),
 	illustrationCircle: z.string().optional(),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
 
 	seriesTag: z.string().optional().describe('series tag'),
-	composerTag: z.string().optional().describe('composer tag'),
+	composerTag: z.string().optional().describe('composer tag(s)'),
 	composerCampaignTag: z.string().optional().describe('composer campaign tag'),
 
 	launchDate: z.coerce.date().describe('launch date'),

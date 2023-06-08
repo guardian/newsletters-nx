@@ -8,7 +8,7 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-# Braze Values
+## Braze Values
 
 These are tracking fields used by Braze.
 

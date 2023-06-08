@@ -12,7 +12,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useProfile } from '../hooks/user-hooks';
 
 interface NavLink {
 	path: string;
@@ -31,11 +33,10 @@ const menuItemIsSelected = (path: string): boolean => {
 };
 
 export function MainNav() {
-	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-		null,
-	);
-
+	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
+	const userProfile = useProfile();
+	const userName = userProfile?.name ?? 'Logged in user';
 
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElNav(event.currentTarget);
@@ -46,30 +47,26 @@ export function MainNav() {
 	};
 
 	return (
-		<AppBar position="static" sx={{ bgcolor: '#1C5689' }}>
+		<AppBar position="static">
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<MailOutlineIcon
 						sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
 					/>
 					<Typography
-						variant="h6"
+						variant="h1"
 						noWrap
 						component="a"
 						href="/"
 						sx={{
 							mr: 2,
 							display: { xs: 'none', md: 'flex' },
-							fontFamily: 'monospace',
-							fontWeight: 700,
-							letterSpacing: '.3rem',
 							color: 'inherit',
 							textDecoration: 'none',
 						}}
 					>
 						Newsletters
 					</Typography>
-
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
 							size="large"
@@ -117,7 +114,7 @@ export function MainNav() {
 						sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
 					/>
 					<Typography
-						variant="h5"
+						variant="h1"
 						noWrap
 						component="a"
 						href=""
@@ -125,11 +122,10 @@ export function MainNav() {
 							mr: 2,
 							display: { xs: 'flex', md: 'none' },
 							flexGrow: 1,
-							fontFamily: 'monospace',
-							fontWeight: 700,
-							letterSpacing: '.3rem',
 							color: 'inherit',
 							textDecoration: 'none',
+							fontSize: '1.5rem',
+							lineHeight: '1.334',
 						}}
 					>
 						Newsletters
@@ -153,9 +149,9 @@ export function MainNav() {
 					</Box>
 
 					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip title="Logged in user">
+						<Tooltip title={userName}>
 							<IconButton sx={{ p: 0 }}>
-								<Avatar alt="Logged in user" />
+								<Avatar alt={userName} src={userProfile?.picture} />
 							</IconButton>
 						</Tooltip>
 					</Box>

@@ -10,20 +10,13 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
-import type {
-	AsyncExecution,
-	WizardFormData,
-} from '@newsletters-nx/state-machine';
-import { formSchemas } from '../lib/steps/newsletterData/formSchemas';
-import { calculateFieldsFromName } from './calculateFieldsFromName';
-import { executeModify } from './executeModify';
+import type { AsyncExecution } from '@newsletters-nx/state-machine';
 
 export const executeCreate: AsyncExecution<DraftStorage> = async (
 	stepData,
 	stepLayout,
 	storageInstance,
-): Promise<WizardFormData | string> => {
-	const schema = formSchemas['startDraftNewsletter']; // TODO - this needs to be generalised
+) => {
 	if (!storageInstance) {
 		throw new StateMachineError(
 			'no storageInstance',
@@ -32,39 +25,41 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 		);
 	}
 
+	const schema = stepLayout?.schema;
+	if (!schema) {
+		throw new StateMachineError(
+			'schema not defined',
+			StateMachineErrorCode.StepMethodFailed,
+			true,
+		);
+	}
+
 	const parseResult = schema.safeParse(stepData.formData);
 	if (!parseResult.success) {
-		return `Form data is invalid for schema: ${
-			schema.description ?? '[no description]'
-		}`;
-	}
-
-	const listId = stepData.formData ? stepData.formData['listId'] : undefined;
-	if (!listId) {
-		// TO DO - calculating fields from the Name at this point is not generic
-		// would it be better done somewhere else?
-		const derivedFields =
-			typeof parseResult.data.name === 'string' && !!parseResult.data.name
-				? calculateFieldsFromName(parseResult.data.name)
-				: {};
-
-		const draft: DraftNewsletterData = {
-			...formDataToDraftNewsletterData({
-				...parseResult.data,
-			}),
-			...derivedFields,
+		return {
+			isFailure: true,
+			message: `Form data is invalid for schema: ${
+				schema.description ?? '[no description]'
+			}`,
+			details: { zodIssues: parseResult.error.issues },
 		};
-
-		const storageResponse = await storageInstance.createDraftNewsletter({
-			...draft,
-			listId: undefined,
-		});
-		if (storageResponse.ok) {
-			return draftNewsletterDataToFormData(storageResponse.data);
-		}
-
-		return storageResponse.message;
 	}
 
-	return executeModify(stepData, stepLayout, storageInstance);
+	const draft: DraftNewsletterData = formDataToDraftNewsletterData({
+		...parseResult.data,
+	});
+	const storageResponse = await storageInstance.create({
+		...draft,
+		listId: undefined,
+	});
+	if (storageResponse.ok) {
+		return {
+			data: draftNewsletterDataToFormData(storageResponse.data),
+		};
+	}
+
+	return {
+		isFailure: true,
+		message: storageResponse.message,
+	};
 };

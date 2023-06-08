@@ -2,15 +2,23 @@ import type {
 	DraftNewsletterData,
 	FormDataRecord,
 	LaunchService,
+	NewsletterData,
+	NewsletterFieldsDerivedFromName,
 } from '@newsletters-nx/newsletters-data-client';
-import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
+import {
+	addSuffixToMakeTokenUnique,
+	getDraftNotReadyIssues,
+	renderingOptionsSchema,
+	withDefaultNewsletterValuesAndDerivedFields,
+} from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
 import { zodIssueToMarkdown } from './markdown-util';
 import { parseToNumber } from './util';
 
-type LaunchInitialState = FormDataRecord & {
+export type LaunchInitialState = FormDataRecord & {
 	name?: string;
-	isReady: boolean;
+	hasAllStandardData: boolean;
+	hasRenderingOptionsIfNeeded: boolean;
 	errorMarkdown?: string[];
 	id?: string;
 };
@@ -22,12 +30,12 @@ export const getInitialStateForLaunch = async (
 	const id = parseToNumber(request.id);
 	if (id === undefined) {
 		return {
-			isReady: false,
+			hasRenderingOptionsIfNeeded: false,
+			hasAllStandardData: false,
 		};
 	}
-	const storageResponse = await launchService.draftStorage.getDraftNewsletter(
-		id,
-	);
+	const storageResponse = await launchService.draftStorage.read(id);
+	const allLaunchedResponse = await launchService.newsletterStorage.list();
 
 	const draft: DraftNewsletterData = storageResponse.ok
 		? storageResponse.data
@@ -35,29 +43,85 @@ export const getInitialStateForLaunch = async (
 	const name = draft.name;
 	const issues = getDraftNotReadyIssues(draft);
 
+	const hasRenderingOptionsIfNeeded =
+		draft.category === 'article-based'
+			? draft.renderingOptions
+				? renderingOptionsSchema.safeParse(draft.renderingOptions).success
+				: false
+			: true;
+
 	if (issues.length > 0) {
 		const errorMarkdown = zodIssueToMarkdown(issues);
 		return {
 			name,
-			isReady: false,
+			hasAllStandardData: false,
+			hasRenderingOptionsIfNeeded,
 			errorMarkdown,
 			id: request.id,
 		};
 	}
 
+	const derivedFieldValuesOrActualIfSet =
+		withDefaultNewsletterValuesAndDerivedFields(draft);
+
+	const existingNewsletters = allLaunchedResponse.ok
+		? allLaunchedResponse.data
+		: [];
+
+	suffixDervivedValues(derivedFieldValuesOrActualIfSet, existingNewsletters);
+
 	return {
 		name,
-		isReady: true,
+		hasAllStandardData: true,
+		hasRenderingOptionsIfNeeded,
 		errorMarkdown: undefined,
 		id: request.id,
-		identityName: draft.identityName,
 		listId: draft.listId,
-		brazeSubscribeEventNamePrefix: draft.brazeSubscribeEventNamePrefix,
-		brazeNewsletterName: draft.brazeNewsletterName,
-		brazeSubscribeAttributeName: draft.brazeSubscribeAttributeName,
+		identityName: derivedFieldValuesOrActualIfSet.identityName,
+		brazeSubscribeEventNamePrefix:
+			derivedFieldValuesOrActualIfSet.brazeSubscribeEventNamePrefix,
+		brazeNewsletterName: derivedFieldValuesOrActualIfSet.brazeNewsletterName,
+		brazeSubscribeAttributeName:
+			derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeName,
 		brazeSubscribeAttributeNameAlternate:
-			draft.brazeSubscribeAttributeNameAlternate,
-		campaignName: draft.campaignName,
-		campaignCode: draft.campaignCode,
+			derivedFieldValuesOrActualIfSet.brazeSubscribeAttributeNameAlternate,
+		campaignName: derivedFieldValuesOrActualIfSet.campaignName,
+		campaignCode: derivedFieldValuesOrActualIfSet.campaignCode,
 	};
 };
+
+const keysToSuffixWithDash = ['identityName'] as const;
+const keysToSuffixWithUnderscore = [
+	'brazeNewsletterName',
+	'brazeSubscribeAttributeName',
+	'brazeSubscribeEventNamePrefix',
+	'campaignName',
+	'campaignCode',
+] as const;
+
+function suffixDervivedValues(
+	derivedFieldValuesOrActualIfSet: DraftNewsletterData &
+		Pick<NewsletterData, NewsletterFieldsDerivedFromName>,
+	existingNewsletters: NewsletterData[],
+) {
+	keysToSuffixWithDash.forEach((key) => {
+		const originalToken = derivedFieldValuesOrActualIfSet[key];
+		if (originalToken) {
+			derivedFieldValuesOrActualIfSet[key] = addSuffixToMakeTokenUnique(
+				originalToken,
+				existingNewsletters.map((_) => _[key]),
+				'-',
+			);
+		}
+	});
+	keysToSuffixWithUnderscore.forEach((key) => {
+		const originalToken = derivedFieldValuesOrActualIfSet[key];
+		if (originalToken) {
+			derivedFieldValuesOrActualIfSet[key] = addSuffixToMakeTokenUnique(
+				originalToken,
+				existingNewsletters.map((_) => _[key]),
+				'_',
+			);
+		}
+	});
+}

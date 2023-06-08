@@ -5,7 +5,7 @@ import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
-const markdownTemplate = `# Finished
+const markdownTemplate = `## Finished
 
 You have reached the end of the wizard.
 

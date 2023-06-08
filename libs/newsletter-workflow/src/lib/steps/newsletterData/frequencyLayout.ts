@@ -8,7 +8,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Specify the send frequency of {{name}}
+## Specify the send frequency of {{name}}
 
 Specify how regularly the newsletter will be sent e.g.
 - Every day
@@ -60,12 +60,6 @@ export const frequencyLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const frequency = stepData.formData
-					? stepData.formData['frequency']
-					: undefined;
-				return frequency ? undefined : 'NO FREQUENCY PROVIDED';
-			},
 			executeStep: executeModify,
 		},
 	},

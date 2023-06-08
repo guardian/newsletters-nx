@@ -6,6 +6,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
 import type {
 	StepListing,
 	StepperConfig,
@@ -20,15 +21,21 @@ interface Props {
 	formData?: WizardFormData;
 }
 
-/**
- * completeness=undefined indicates the step has no schema, so is neither
- * complete or incomplete.
- */
-const CompletionCaption = (props: { completeness: boolean | undefined }) => {
-	switch (props.completeness) {
+const CompletionCaption = (props: { status: StepStatus | undefined }) => {
+	switch (props.status) {
 		case undefined:
+		case StepStatus.NoFields:
 			return null;
-		case true:
+		case StepStatus.Optional:
+			return (
+				<Typography variant="caption">
+					Optional{' '}
+					<span role="img" aria-label="green-cross">
+						❎
+					</span>
+				</Typography>
+			);
+		case StepStatus.Complete:
 			return (
 				<Typography variant="caption">
 					Complete{' '}
@@ -37,16 +44,40 @@ const CompletionCaption = (props: { completeness: boolean | undefined }) => {
 					</span>
 				</Typography>
 			);
-		case false:
+		case StepStatus.Incomplete:
 			return (
 				<Typography variant="caption">
-					incomplete{' '}
+					Incomplete{' '}
 					<span role="img" aria-label="cross">
 						❌
 					</span>
 				</Typography>
 			);
 	}
+};
+
+const ariaLabelForNonButtonStep = (
+	description: string,
+	active: boolean,
+	status?: StepStatus,
+): string => {
+	if (active) {
+		return `${description} (current step)`;
+	}
+
+	let statusDecription = '';
+	switch (status) {
+		case StepStatus.Complete:
+			statusDecription = '(complete)';
+			break;
+		case StepStatus.Incomplete:
+			statusDecription = '(incomplete)';
+			break;
+		case StepStatus.Optional:
+			statusDecription = '(optional)';
+	}
+
+	return `${description} ${statusDecription}`;
 };
 
 export const StepNav = ({
@@ -56,7 +87,7 @@ export const StepNav = ({
 	handleStepClick,
 	formData,
 }: Props) => {
-	// Validating formData aginst the schema for every step to see if the
+	// Validating formData against the schema for every step to see if the
 	// step is complete is potentially a fairly expensive operation.
 	// The state logic is so this is done only when the step changes,
 	// not every time the user changes the formData (which includes every
@@ -64,7 +95,7 @@ export const StepNav = ({
 	const [currentStepIdOnLastRender, setCurrenStepIdOnLastRender] =
 		useState(currentStepId);
 	const [completionRecord, setCompletionRecord] = useState<
-		Partial<Record<string, boolean | undefined>>
+		Partial<Record<string, StepStatus>>
 	>({});
 
 	const filteredStepList = stepperConfig.steps.filter((step) => {
@@ -85,17 +116,15 @@ export const StepNav = ({
 	});
 
 	const updateCompletion = () => {
-		const list = stepperConfig.steps.reduce<
-			Partial<Record<string, boolean | undefined>>
-		>((record, step) => {
-			const result = step.schema
-				? step.schema.safeParse(formData).success
-				: undefined;
+		const completionRecord: Partial<Record<string, StepStatus>> = {};
+		stepperConfig.steps.forEach((stepListing) => {
+			completionRecord[stepListing.id] = resolveStepStatus(
+				stepListing,
+				formData,
+			);
+		});
 
-			return { ...record, [step.id]: result };
-		}, {});
-
-		setCompletionRecord(list);
+		setCompletionRecord(completionRecord);
 	};
 
 	// On the initial render, the completionRecord is set to {}
@@ -123,34 +152,54 @@ export const StepNav = ({
 		!isCurrent(step);
 
 	return (
-		<Stepper sx={{ flexWrap: 'wrap' }} nonLinear={stepperConfig.isNonLinear}>
+		<Stepper
+			sx={{ flexWrap: 'wrap' }}
+			nonLinear={stepperConfig.isNonLinear}
+			connector={null}
+			component={'nav'}
+		>
 			{filteredStepList.map((step) => {
+				const stepStatus = completionRecord[step.id];
+				const description = step.label ?? step.id;
+				const isButton = shouldRenderAsButton(step);
+
 				const caption = stepperConfig.indicateStepsComplete ? (
-					<CompletionCaption completeness={completionRecord[step.id]} />
+					<CompletionCaption status={stepStatus} />
 				) : undefined;
 
 				return (
 					<Step
 						sx={{
-							paddingBottom: '0.75rem',
-							paddingTop: '0.75rem',
+							paddingBottom: 0.5,
+							flexBasis: 176,
 						}}
 						key={step.id}
 						active={isCurrent(step)}
+						component={isButton ? 'div' : 'section'}
+						aria-label={
+							isButton
+								? undefined
+								: ariaLabelForNonButtonStep(
+										description,
+										isCurrent(step),
+										stepStatus,
+								  )
+						}
+						aria-live="polite"
 					>
-						{shouldRenderAsButton(step) ? (
+						{isButton ? (
 							<StepButton
+								aria-label={`skip to "${description}" step`}
+								className="left-aligned-step-button"
 								onClick={() => {
 									handleStepClick(step.id);
 								}}
 								optional={caption}
 							>
-								<b css={{ textDecoration: 'underline' }}>
-									{step.label ?? step.id}
-								</b>
+								{description}
 							</StepButton>
 						) : (
-							<StepLabel optional={caption}> {step.label ?? step.id}</StepLabel>
+							<StepLabel optional={caption}> {description}</StepLabel>
 						)}
 					</Step>
 				);

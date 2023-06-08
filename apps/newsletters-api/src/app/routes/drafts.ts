@@ -3,7 +3,9 @@ import type {
 	ApiResponse,
 	DraftWithId,
 } from '@newsletters-nx/newsletters-data-client';
+import { permissionService } from '../../services/permissions';
 import { draftStore } from '../../services/storage';
+import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,
 	makeSuccessResponse,
@@ -12,7 +14,7 @@ import {
 
 export function registerDraftsRoutes(app: FastifyInstance) {
 	app.get('/api/drafts', async (req, res) => {
-		const storageResponse = await draftStore.listDrafts();
+		const storageResponse = await draftStore.readAll();
 		if (storageResponse.ok) {
 			return makeSuccessResponse(storageResponse.data);
 		}
@@ -30,7 +32,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 				return makeErrorResponse('Non numerical id passed');
 			}
 
-			const storageResponse = await draftStore.getDraftNewsletter(idAsNumber);
+			const storageResponse = await draftStore.read(idAsNumber);
 			if (storageResponse.ok) {
 				return makeSuccessResponse(storageResponse.data);
 			}
@@ -43,6 +45,17 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 	app.delete<{ Params: { listId: string } }>(
 		'/api/drafts/:listId',
 		async (req, res): Promise<ApiResponse<DraftWithId>> => {
+			const user = getUserProfile(req);
+			const permissions = await permissionService.get(user.profile);
+
+			if (!permissions.writeToDrafts) {
+				return res
+					.status(403)
+					.send(
+						makeErrorResponse(`You don't have permission to delete drafts.`),
+					);
+			}
+
 			const { listId } = req.params;
 			const idAsNumber = Number(listId);
 
@@ -52,9 +65,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 					.send(makeErrorResponse('Non numerical id passed'));
 			}
 
-			const storageResponse = await draftStore.deleteDraftNewsletter(
-				idAsNumber,
-			);
+			const storageResponse = await draftStore.deleteItem(idAsNumber);
 
 			if (storageResponse.ok) {
 				return makeSuccessResponse(storageResponse.data);

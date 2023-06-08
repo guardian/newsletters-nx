@@ -10,7 +10,7 @@ Congratulations, you have reached the end of the wizard for newsletter **{{name}
 
 You can see your draft on the [details page](drafts/{{listId}}), which includes the options to edit the data you have provided and provide additional details.
 
-Once all the data required to create **{{name}}** has been specified, the newsletter [can be launched](/demo/launch-newsletter/{{listId}}).
+Once all the data required to create **{{name}}** has been specified, the newsletter [can be launched](/newsletters/launch-newsletter/{{listId}}).
 `;
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');

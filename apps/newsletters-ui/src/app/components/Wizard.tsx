@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Stack } from '@mui/material';
+import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
@@ -6,17 +6,18 @@ import {
 	getStartStepId,
 	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
-import type { WizardButtonType } from '@newsletters-nx/newsletters-data-client';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
-	WizardButton,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import { MarkdownView } from './MarkdownView';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
+import { WizardActionButton } from './WizardActionButton';
+import { ZodIssuesReport } from './ZodIssuesReport';
 
 /**
  * Interface for the props passed to the `Wizard` component.
@@ -28,9 +29,11 @@ export interface WizardProps {
 
 const FailureAlert = (props: {
 	errorMessage: string;
+	errorDetails?: CurrentStepRouteResponse['errorDetails'];
 	isPersistent?: boolean;
 }) => {
-	const { errorMessage, isPersistent } = props;
+	const { errorMessage, isPersistent, errorDetails } = props;
+
 	if (isPersistent) {
 		return (
 			<Alert severity="error">
@@ -38,7 +41,24 @@ const FailureAlert = (props: {
 			</Alert>
 		);
 	}
-	return <Alert severity="warning">Please try again: {errorMessage}</Alert>;
+	return (
+		<Alert severity="warning">
+			{' '}
+			Please try again: {errorMessage}
+			{errorDetails?.zodIssues && (
+				<ZodIssuesReport issues={errorDetails.zodIssues} />
+			)}
+			{errorDetails?.problemList && (
+				<Stack spacing={1} component={'ul'}>
+					{errorDetails.problemList.map((problem, index) => (
+						<Typography key={index} component={'li'}>
+							{problem}
+						</Typography>
+					))}
+				</Stack>
+			)}
+		</Alert>
+	);
 };
 
 /**
@@ -60,37 +80,27 @@ export const Wizard: React.FC<WizardProps> = ({
 	>();
 
 	const fetchStep = useCallback(
-		(body: CurrentStepRouteRequest) => {
-			return fetch(`/api/currentstep`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(body),
-			})
-				.then((response) => response.json())
-				.then((data: CurrentStepRouteResponse) => {
-					const listIdOnData = data.formData?.listId;
-					if (typeof listIdOnData === 'number') {
-						setListId(listIdOnData);
-					}
+		async (body: CurrentStepRouteRequest) => {
+			try {
+				const data = await makeWizardStepRequest(body);
+				const listIdOnData = data.formData?.listId;
+				if (typeof listIdOnData === 'number') {
+					setListId(listIdOnData);
+				}
 
-					setServerData(data);
+				setServerData(data);
 
-					const schema = getFormSchema(wizardId, data.currentStepId);
-					const blank = schema ? getEmptySchemaData(schema) : undefined;
+				const schema = getFormSchema(wizardId, data.currentStepId);
+				const blank = schema ? getEmptySchemaData(schema) : undefined;
 
-					const populatedForm = {
-						...blank,
-						...data.formData,
-					};
-
-					setFormData(populatedForm as WizardFormData);
-				})
-				.catch((error: unknown /* FIXME! */) => {
-					setServerErrorMessage('Wizard failed');
-					console.error('Error invoking next step of wizard:', error);
+				setFormData({
+					...blank,
+					...data.formData,
 				});
+			} catch (error: unknown /* FIXME! */) {
+				setServerErrorMessage('Wizard failed');
+				console.error('Error invoking next step of wizard:', error);
+			}
 		},
 		[wizardId],
 	);
@@ -119,40 +129,12 @@ export const Wizard: React.FC<WizardProps> = ({
 		return (
 			<FailureAlert
 				errorMessage={serverErrorMessage}
+				errorDetails={serverData.errorDetails}
 				isPersistent={serverData.hasPersistentError}
 			/>
 		);
 	}
 
-	const getWizardButton = (
-		button: WizardButton,
-		onClick: (buttonId: string) => () => void,
-		key: string,
-	) => {
-		const primaryActions: WizardButtonType[] = ['NEXT', 'LAUNCH'];
-		const baseStyle = {
-			borderRadius: '0px',
-		};
-
-		const variant = primaryActions.includes(button.buttonType)
-			? 'contained'
-			: 'outlined';
-		const styling = primaryActions.includes(button.buttonType)
-			? { ...baseStyle, bgcolor: '#1C5689' }
-			: baseStyle;
-		return (
-			<Button
-				variant={variant}
-				sx={styling}
-				onClick={() => {
-					onClick(button.id)();
-				}}
-				key={`${key}${button.label}`}
-			>
-				{button.label}
-			</Button>
-		);
-	};
 	const handleButtonClick = (buttonId: string) => () => {
 		void fetchStep({
 			wizardId: wizardId,
@@ -191,21 +173,27 @@ export const Wizard: React.FC<WizardProps> = ({
 					formSchema={formSchema}
 					formData={formData}
 					setFormData={setFormData}
+					maxOptionsForRadioButtons={5}
 				/>
 			)}
 
 			{serverData.errorMessage && (
-				<div style={{ paddingBottom: '12px' }}>
+				<Box paddingBottom={2}>
 					<FailureAlert
 						errorMessage={serverData.errorMessage}
+						errorDetails={serverData.errorDetails}
 						isPersistent={serverData.hasPersistentError}
 					/>
-				</div>
+				</Box>
 			)}
 			<Stack spacing={2} direction="row">
-				{Object.entries(serverData.buttons ?? {}).map(([key, button]) =>
-					getWizardButton(button, handleButtonClick, key),
-				)}
+				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
+					<WizardActionButton
+						key={key}
+						button={button}
+						onClick={handleButtonClick}
+					/>
+				))}
 			</Stack>
 		</Box>
 	);

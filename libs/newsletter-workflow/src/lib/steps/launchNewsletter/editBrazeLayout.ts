@@ -4,13 +4,13 @@ import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
-import { executeModifyWithinLaunch } from '../../executeModify';
+import { checkFormDataValuesAreUnique } from '../../check-input-is-unique';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Modify Braze Values
+## Modify Braze Values
 
 These are tracking fields used by Braze.
 
@@ -37,17 +37,18 @@ export const editBrazeLayout: WizardStepLayout<LaunchService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModifyWithinLaunch,
 		},
 		next: {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: () => {
-				// TO DO - check that braze values do not already exist in other draft or actual newsletter
-				return undefined;
-			},
-			executeStep: executeModifyWithinLaunch,
+			// note - not checking uniqueness of brazeSubscribeAttributeNameAlternate
+			// since it is an array
+			onBeforeStepChangeValidate: checkFormDataValuesAreUnique([
+				'brazeNewsletterName',
+				'brazeSubscribeAttributeName',
+				'brazeSubscribeEventNamePrefix',
+			]),
 		},
 	},
 	schema: formSchemas.braze,

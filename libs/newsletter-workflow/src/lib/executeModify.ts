@@ -9,7 +9,8 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
-	WizardFormData,
+	WizardExecutionFailure,
+	WizardExecutionSuccess,
 	WizardStepData,
 	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
@@ -25,9 +26,12 @@ const doModify = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
 	service?: LaunchService | DraftStorage,
-): Promise<WizardFormData | string> => {
+): Promise<WizardExecutionSuccess | WizardExecutionFailure> => {
 	if (!service) {
-		return 'no storage instance';
+		return {
+			isFailure: true,
+			message: 'no draft storage instance',
+		};
 	}
 
 	const serviceIsADraftInstance = isADraftStorage(service);
@@ -39,7 +43,10 @@ const doModify = async (
 	if (stepData.formData) {
 		const { listId } = stepData.formData;
 		if (typeof listId !== 'number') {
-			return 'invalid or missing listId';
+			return {
+				isFailure: true,
+				message: 'invalid or missing listId',
+			};
 		}
 
 		const formValidationError = validateIncomingFormData(
@@ -48,7 +55,15 @@ const doModify = async (
 			stepLayout as WizardStepLayout<unknown>,
 		);
 
-		if (formValidationError) return formValidationError;
+		if (formValidationError) {
+			return {
+				isFailure: true,
+				message: formValidationError.message,
+				details: {
+					zodIssues: formValidationError.issues,
+				},
+			};
+		}
 
 		// listId specifically added to draftNewsletter to ensure correct typing
 		if (stepData.formData['listId']) {
@@ -59,23 +74,29 @@ const doModify = async (
 				...formDataToDraftNewsletterData(stepData.formData),
 				...listIdEntry,
 			};
-			const storageResponse = await ourDraftService.modifyDraftNewsletter(
-				draftNewsletter,
-			);
+			const storageResponse = await ourDraftService.update(draftNewsletter);
 			if (storageResponse.ok) {
-				return draftNewsletterDataToFormData(storageResponse.data);
+				return {
+					data: draftNewsletterDataToFormData(storageResponse.data),
+				};
 			}
-			return storageResponse.message;
+			return {
+				isFailure: true,
+				message: storageResponse.message,
+			};
 		}
 	}
-	return 'missing form data';
+	return {
+		isFailure: true,
+		message: 'missing form data',
+	};
 };
 
 export const executeModify: AsyncExecution<DraftStorage> = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<DraftStorage>,
 	draftStorage?: DraftStorage,
-): Promise<WizardFormData | string> => {
+) => {
 	return doModify(stepData, stepLayout as WizardStepLayout, draftStorage);
 };
 
@@ -83,6 +104,6 @@ export const executeModifyWithinLaunch: AsyncExecution<LaunchService> = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout<LaunchService>,
 	launchService?: LaunchService,
-): Promise<WizardFormData | string> => {
+) => {
 	return doModify(stepData, stepLayout as WizardStepLayout, launchService);
 };

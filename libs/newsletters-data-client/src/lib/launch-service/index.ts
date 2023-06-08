@@ -1,6 +1,9 @@
 import type { DraftStorage } from '../draft-storage';
-import { withDefaultNewsletterValues } from '../draft-to-newsletter';
-import type { NewsletterData } from '../newsletter-data-type';
+import { withDefaultNewsletterValuesAndDerivedFields } from '../draft-to-newsletter';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '../newsletter-data-type';
 import type { NewsletterStorage } from '../newsletter-storage';
 import type {
 	SuccessfulStorageResponse,
@@ -21,26 +24,33 @@ export class LaunchService {
 
 	async launchDraft(
 		draftId: number,
+		extraValues: Partial<NewsletterData>,
 	): Promise<
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	> {
 		const { draftStorage, newsletterStorage } = this;
-		const draftGetResponse = await draftStorage.getDraftNewsletter(draftId);
+		const draftGetResponse = await draftStorage.read(draftId);
 		if (!draftGetResponse.ok) {
 			return draftGetResponse;
 		}
 
+		const draftPopulatedWithDefaults: DraftNewsletterData =
+			withDefaultNewsletterValuesAndDerivedFields(draftGetResponse.data);
+
+		const draftWithDefaultsThenExtraValues: DraftNewsletterData = {
+			...draftPopulatedWithDefaults,
+			...extraValues,
+		};
+
 		const newsletterCreateResponse = await newsletterStorage.create(
-			withDefaultNewsletterValues(draftGetResponse.data),
+			draftWithDefaultsThenExtraValues,
 		);
 		if (!newsletterCreateResponse.ok) {
 			return newsletterCreateResponse;
 		}
 
 		// TO DO - should we actually delete the draft or archive it / mark as launched?
-		const draftDeleteResponse = await draftStorage.deleteDraftNewsletter(
-			draftId,
-		);
+		const draftDeleteResponse = await draftStorage.deleteItem(draftId);
 		if (!draftDeleteResponse.ok) {
 			console.warn(
 				`created newsletter: ${newsletterCreateResponse.data.identityName} with listId #${newsletterCreateResponse.data.listId}, but failed to delete the draft.`,

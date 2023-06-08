@@ -5,7 +5,7 @@ import type {
 } from '../storage-response-types';
 import type { DraftStorage, DraftWithId, DraftWithoutId } from './DraftStorage';
 
-// TO DO - serialise Drafts before returning
+// TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
 export class InMemoryDraftStorage implements DraftStorage {
 	private memory: DraftWithId[];
@@ -14,7 +14,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 		this.memory = drafts ?? [];
 	}
 
-	createDraftNewsletter(draft: DraftWithoutId) {
+	create(draft: DraftWithoutId) {
 		const newDraftWithListId: DraftWithId = {
 			...draft,
 			listId: this.getNextId(),
@@ -28,7 +28,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 		return Promise.resolve(response);
 	}
 
-	getDraftNewsletter(listId: number) {
+	read(listId: number) {
 		const match = this.memory.find((draft) => draft.listId === listId);
 
 		if (!match) {
@@ -46,7 +46,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 		return Promise.resolve(response);
 	}
 
-	modifyDraftNewsletter(changeToDraft: DraftWithId) {
+	update(changeToDraft: DraftWithId) {
 		const match = this.memory.find(
 			(existingDraft) => existingDraft.listId === changeToDraft.listId,
 		);
@@ -73,7 +73,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 		return Promise.resolve(response);
 	}
 
-	deleteDraftNewsletter(listId: number) {
+	deleteItem(listId: number) {
 		const match = this.memory.find((draft) => draft.listId === listId);
 
 		if (!match) {
@@ -93,7 +93,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 		return Promise.resolve(response);
 	}
 
-	listDrafts() {
+	readAll() {
 		const response: SuccessfulStorageResponse<DraftWithId[]> = {
 			ok: true,
 			data: [...this.memory],

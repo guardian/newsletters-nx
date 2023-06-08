@@ -6,6 +6,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	newsletterDataSchema,
+	nonEmptyString,
 	renderingOptionsSchema,
 	thrasherOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
@@ -59,16 +60,34 @@ export const formSchemas = {
 		})
 		.describe('Edit the Ophan values if required'),
 
-	pillar: newsletterDataSchema
+	pillarAndGroup: newsletterDataSchema
 		.pick({
 			theme: true,
 		})
-		.describe('Choose a theme'),
+		.extend({
+			// 'group' is a string field since there are no external constraint on what we call the groups
+			// but on the formSchema, we can use an enum to allow users to pick from the current list.
+			// In practice, we would not want users to be able to create new groups on the all-newsletters page
+			// for each newsletter.
+			group: z.enum([
+				'News in depth',
+				'News in brief',
+				'Opinion',
+				'Features',
+				'Culture',
+				'Lifestyle',
+				'Sport',
+				'Work',
+				'From the papers',
+			]),
+		})
+		.describe('Choose a theme and a group'),
 
-	signUpPage: newsletterDataSchema
-		.pick({
-			signUpHeadline: true,
-			signUpDescription: true,
+	// manually creating the object so both values are required and non-empty
+	signUpPage: z
+		.object({
+			signUpHeadline: nonEmptyString(),
+			signUpDescription: nonEmptyString(),
 		})
 		.describe('Input the Sign Up page copy'),
 
@@ -76,10 +95,12 @@ export const formSchemas = {
 		.pick({ signUpEmbedDescription: true })
 		.describe('Input the Sign Up embed copy'),
 
+	// TO DO - check with editorial if regionFocus should be required for new newsletters
 	regionFocus: newsletterDataSchema
 		.pick({
 			regionFocus: true,
 		})
+		.required() // regionFocus is not required in the newsletterDataSchema, but we want it set for new newsletters
 		.describe('Select from the drop-down list'),
 
 	newsletterDesign: newsletterDataSchema
@@ -113,6 +134,7 @@ export const formSchemas = {
 		.pick({
 			onlineArticle: true,
 		})
+		.required() // onlineArticle is not required in the newsletterDataSchema, but we want it set for new newsletters
 		.describe('Select from the drop-down list'),
 
 	linkList: pickAndPrefixRenderingOption(['linkListSubheading']).describe(
@@ -135,12 +157,15 @@ export const formSchemas = {
 		})
 		.describe('Input the tag setup'),
 
-	thrasher: pickAndPrefixThrasherOption([
+	singleThrasher: pickAndPrefixThrasherOption([
 		'singleThrasher',
-		'multiThrasher',
 		'singleThrasherLocation',
 		'thrasherDescription',
 	]).describe('Input the thrasher setup'),
+
+	multiThrashers: pickAndPrefixThrasherOption(['multiThrashers']).describe(
+		'Input details of the multi-thrashers',
+	),
 
 	promotionDates: newsletterDataSchema
 		.pick({

@@ -3,10 +3,7 @@ import {
 	getNextStepId,
 	getPreviousOrStartStepId,
 } from '@newsletters-nx/state-machine';
-import type {
-	WizardStepData,
-	WizardStepLayout,
-} from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -14,11 +11,22 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-# Choose the Pillar for {{name}}
+## Choose the Pillar and Group for {{name}}
 
 Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
 
 ![Pillars](https://i.guim.co.uk/img/uploads/2023/02/21/pillarScreenshot.png?quality=85&dpr=2&width=300&s=0692a8714eaf66313fc599cb3462befd)
+
+Select a group for {{name}} to be listed under on the [All Newsletters Page](https://www.theguardian.com/email-newsletters). The current groups are:
+ - News in depth
+ - News in brief
+ - Opinion
+ - Features
+ - Culture
+ - Lifestyle
+ - Sport
+ - Work
+ - From the papers
 
 `.trim();
 
@@ -27,9 +35,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const pillarLayout: WizardStepLayout<DraftStorage> = {
+export const pillarAndGroupLayout: WizardStepLayout<DraftStorage> = {
 	staticMarkdown,
-	label: 'Pillar',
+	label: 'Pillar and Group',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -48,19 +56,10 @@ export const pillarLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const theme = stepData.formData
-					? stepData.formData['theme']
-					: undefined;
-				if (!theme || theme === '') {
-					return 'NO THEME SELECTED';
-				}
-				return undefined;
-			},
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.pillar,
+	schema: formSchemas.pillarAndGroup,
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };

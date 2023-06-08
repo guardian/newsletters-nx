@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Specify the footer setup for {{name}}
+## Specify the footer setup for {{name}}
 
 What email address would you like to display in the footer of **{{name}}**?
 
@@ -46,12 +46,6 @@ export const footerLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
-				const email = stepData.formData
-					? stepData.formData['renderingOptions.contactEmail']
-					: undefined;
-				return email ? undefined : 'NO EMAIL ADDRESS PROVIDED';
-			},
 			executeStep: executeModify,
 		},
 	},

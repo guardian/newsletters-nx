@@ -8,7 +8,7 @@ import { linkListLayout } from './linkListLayout';
 import { newsletterHeaderLayout } from './newsletterHeaderLayout';
 import { podcastLayout } from './podcastLayout';
 import { readMoreLayout } from './readMoreLayout';
-import { startLayout } from './start';
+import { startLayout } from './startLayout';
 
 export const renderingOptionsLayout: WizardLayout<DraftStorage> = {
 	start: startLayout,

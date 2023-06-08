@@ -1,3 +1,4 @@
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
 	Alert,
 	Badge,
@@ -22,12 +23,21 @@ export const SchemaRecordArrayInput: FunctionComponent<
 		value: PrimitiveRecord[];
 		inputHandler: { (newValue: FieldValue): void };
 		recordSchema: ZodObject<ZodRawShape>;
+		maxOptionsForRadioButtons?: number;
 	}
 > = (props) => {
-	const { value, label, inputHandler, recordSchema } = props;
+	const {
+		value,
+		label,
+		inputHandler,
+		recordSchema,
+		maxOptionsForRadioButtons,
+	} = props;
 
 	const addNew = () => {
-		const newRecord = getEmptySchemaData(recordSchema, true);
+		const newRecord = getEmptySchemaData(recordSchema, {
+			unwrapOptionals: true,
+		});
 		if (!isPrimitiveRecord(newRecord)) {
 			console.warn(newRecord);
 			return;
@@ -76,11 +86,16 @@ export const SchemaRecordArrayInput: FunctionComponent<
 									editRecord={(record) => {
 										editRecordIndex(index, record);
 									}}
+									maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 								/>
 							</Grid>
-							<Grid item xs={2} pb={1.5}>
+							<Grid
+								item
+								xs={2}
+								sx={{ display: 'flex', alignItems: 'center' }}
+								direction={'row'}
+							>
 								<Button
-									sx={{ height: '100%' }}
 									size="small"
 									color="error"
 									variant="outlined"
@@ -88,8 +103,9 @@ export const SchemaRecordArrayInput: FunctionComponent<
 									onClick={() => {
 										deleteRecordIndex(index);
 									}}
+									startIcon={<DeleteIcon />}
 								>
-									x
+									Delete
 								</Button>
 							</Grid>
 						</Fragment>

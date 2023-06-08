@@ -10,7 +10,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-# Rendering 'Read More' sections in {{name}}
+## Rendering 'Read More' sections in {{name}}
 
 At the end of some sections in **{{name}}** you may wish to have a link encouraging the reader to 'Read more on the Guardian'.
 
@@ -45,7 +45,7 @@ export const readMoreLayout: WizardStepLayout<DraftStorage> = {
 			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeModify,
 		},
-		finish: {
+		next: {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
