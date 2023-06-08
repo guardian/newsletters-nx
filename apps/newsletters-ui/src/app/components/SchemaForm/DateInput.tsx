@@ -1,17 +1,10 @@
-import { TextField } from '@mui/material';
-import type { FormEventHandler, FunctionComponent } from 'react';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs, { locale } from 'dayjs';
+import type { FunctionComponent } from 'react';
 import type { FieldProps } from './util';
-import { eventToString } from './util';
-
-const formatDate = (date: Date) => {
-	const month = date.getUTCMonth() + 1;
-	const paddedMonth = month < 10 ? `0${month.toString()}` : month.toString();
-	const dayOfMonth = date.getUTCDate();
-	const paddedDayOfMonth =
-		dayOfMonth < 10 ? `0${dayOfMonth.toString()}` : dayOfMonth.toString();
-
-	return `${date.getUTCFullYear()}-${paddedMonth}-${paddedDayOfMonth}`;
-};
+import 'dayjs/locale/en-gb';
 
 export const DateInput: FunctionComponent<
 	FieldProps & {
@@ -20,25 +13,22 @@ export const DateInput: FunctionComponent<
 		type?: HTMLInputElement['type'];
 	}
 > = (props) => {
-	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
-		const stringValue = eventToString(event);
-		const dateValue = new Date(stringValue);
-		props.inputHandler(dateValue);
-	};
-
-	const formattedDate = props.value ? formatDate(props.value) : '';
-
+	const value =
+		props.value instanceof Date ? dayjs(props.value.toDateString()) : null;
+	void locale('en-gb');
 	return (
-		<TextField
-			fullWidth
-			label={props.label}
-			type={'date'}
-			value={formattedDate}
-			onInput={sendValue}
-			helperText={props.error}
-			error={!!props.error}
-			required={!props.optional}
-			disabled={props.readOnly}
-		/>
+		<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+			<DatePicker
+				label={props.label}
+				value={value}
+				disabled={props.readOnly}
+				onChange={(date) => {
+					if (date && date.toString() !== 'Invalid Date') {
+						props.inputHandler(date.toDate());
+					}
+				}}
+				readOnly={props.readOnly}
+			/>
+		</LocalizationProvider>
 	);
 };
