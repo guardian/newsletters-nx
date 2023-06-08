@@ -65,16 +65,17 @@ export async function stateMachineSkipPressed<
 		storageInstance,
 	);
 
-	if (typeof executeSkipResult === 'string') {
+	if (executeSkipResult.isFailure) {
 		return makeStepDataWithErrorMessage(
-			executeSkipResult,
+			executeSkipResult.message,
 			requestBody.stepId,
 			requestBody.formData,
+			executeSkipResult.details,
 		);
 	}
 
 	return {
-		formData: executeSkipResult,
+		formData: executeSkipResult.data,
 		currentStepId: requestBody.stepToSkipToId,
 	};
 }

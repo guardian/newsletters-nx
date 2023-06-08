@@ -35,7 +35,7 @@ export const getInitialStateForLaunch = async (
 		};
 	}
 	const storageResponse = await launchService.draftStorage.read(id);
-	const allLauchedResponse = await launchService.newsletterStorage.list();
+	const allLaunchedResponse = await launchService.newsletterStorage.list();
 
 	const draft: DraftNewsletterData = storageResponse.ok
 		? storageResponse.data
@@ -64,8 +64,8 @@ export const getInitialStateForLaunch = async (
 	const derivedFieldValuesOrActualIfSet =
 		withDefaultNewsletterValuesAndDerivedFields(draft);
 
-	const existingNewsletters = allLauchedResponse.ok
-		? allLauchedResponse.data
+	const existingNewsletters = allLaunchedResponse.ok
+		? allLaunchedResponse.data
 		: [];
 
 	suffixDervivedValues(derivedFieldValuesOrActualIfSet, existingNewsletters);

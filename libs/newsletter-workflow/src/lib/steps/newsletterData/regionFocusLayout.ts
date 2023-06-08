@@ -3,10 +3,7 @@ import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
-import type {
-	WizardStepData,
-	WizardStepLayout,
-} from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -16,7 +13,7 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 ## Choose the Geo Focus for {{name}}
 
-What’s the geo focus of **{{name}}**? UK, US, Australia or International??
+What’s the geo focus of **{{name}}**? UK, US, Australia or International?
 
 `.trim();
 
@@ -46,15 +43,6 @@ export const regionFocusLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const regionFocus = stepData.formData
-					? stepData.formData['regionFocus']
-					: undefined;
-				if (!regionFocus || regionFocus === '') {
-					return 'NO REGION FOCUS SELECTED';
-				}
-				return undefined;
-			},
 			executeStep: executeModify,
 		},
 	},

@@ -12,10 +12,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
-import { fetchApiData } from '../api-requests/fetch-api-data';
+import { useProfile } from '../hooks/user-hooks';
 
 interface NavLink {
 	path: string;
@@ -35,21 +34,8 @@ const menuItemIsSelected = (path: string): boolean => {
 
 export function MainNav() {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-
-	const [userProfile, setUserProfile] = useState<UserProfile | undefined>(
-		undefined,
-	);
-
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		const getProfile = async () => {
-			const profile = await fetchApiData<UserProfile>('api/user/whoami');
-			setUserProfile(profile);
-		};
-		void getProfile();
-	}, []);
-
+	const userProfile = useProfile();
 	const userName = userProfile?.name ?? 'Logged in user';
 
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -81,7 +67,6 @@ export function MainNav() {
 					>
 						Newsletters
 					</Typography>
-
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
 							size="large"

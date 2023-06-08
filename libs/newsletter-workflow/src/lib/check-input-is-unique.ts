@@ -5,7 +5,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import type { AsyncValidator } from '@newsletters-nx/state-machine';
 
-const checkValue = (
+const getUndefinedOrNotUniqueProblem = (
 	input: SupportedValue,
 	propertyKey: keyof NewsletterData,
 	existingNewsletters: NewsletterData[],
@@ -27,7 +27,7 @@ const checkValue = (
 	);
 
 	if (duplicateExists) {
-		return `Please choose another value - the is already a newsletters with the ${propertyKey} "${input}".`;
+		return `There is already a newsletter with the ${propertyKey} "${input}".`;
 	}
 
 	return undefined;
@@ -42,29 +42,35 @@ export const checkFormDataValuesAreUnique =
 	(propertyKeys: Array<keyof NewsletterData>): AsyncValidator<LaunchService> =>
 	async (stepData, stepLayout, launchService) => {
 		if (!launchService) {
-			return 'no launch service';
+			return { message: 'no launch service' };
 		}
 		const newsletterListResponse = await launchService.newsletterStorage.list();
 		if (!newsletterListResponse.ok) {
-			return 'failed to get list of current newsletters to check input is unique.';
+			return {
+				message:
+					'failed to get list of current newsletters to check input is unique.',
+			};
 		}
 
-		const checkResults: string[] = [];
+		const problemList: string[] = [];
 
 		propertyKeys.forEach((propertyKey) => {
-			const result = checkValue(
+			const problem = getUndefinedOrNotUniqueProblem(
 				stepData.formData?.[propertyKey],
 				propertyKey,
 				newsletterListResponse.data,
 			);
 
-			if (result) {
-				checkResults.push(result);
+			if (problem) {
+				problemList.push(problem);
 			}
 		});
 
-		if (checkResults.length > 0) {
-			return checkResults.join('; ');
+		if (problemList.length > 0) {
+			return {
+				message: `There are ${problemList.length} values that need to be unique and non-empty:`,
+				details: { problemList },
+			};
 		}
 
 		return undefined;

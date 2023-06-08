@@ -1,8 +1,5 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type {
-	WizardStepData,
-	WizardStepLayout,
-} from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
@@ -50,15 +47,6 @@ export const onlineArticleLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const onlineArticle = stepData.formData
-					? stepData.formData['onlineArticle']
-					: undefined;
-				if (!onlineArticle || onlineArticle === '') {
-					return 'NO ONLINE ARTICLE SETUP SELECTED';
-				}
-				return undefined;
-			},
 			executeStep: executeModify,
 		},
 	},

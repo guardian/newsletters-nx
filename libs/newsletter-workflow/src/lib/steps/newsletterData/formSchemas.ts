@@ -6,6 +6,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	newsletterDataSchema,
+	nonEmptyString,
 	renderingOptionsSchema,
 	thrasherOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
@@ -82,10 +83,11 @@ export const formSchemas = {
 		})
 		.describe('Choose a theme and a group'),
 
-	signUpPage: newsletterDataSchema
-		.pick({
-			signUpHeadline: true,
-			signUpDescription: true,
+	// manually creating the object so both values are required and non-empty
+	signUpPage: z
+		.object({
+			signUpHeadline: nonEmptyString(),
+			signUpDescription: nonEmptyString(),
 		})
 		.describe('Input the Sign Up page copy'),
 
@@ -93,10 +95,12 @@ export const formSchemas = {
 		.pick({ signUpEmbedDescription: true })
 		.describe('Input the Sign Up embed copy'),
 
+	// TO DO - check with editorial if regionFocus should be required for new newsletters
 	regionFocus: newsletterDataSchema
 		.pick({
 			regionFocus: true,
 		})
+		.required() // regionFocus is not required in the newsletterDataSchema, but we want it set for new newsletters
 		.describe('Select from the drop-down list'),
 
 	newsletterDesign: newsletterDataSchema
@@ -130,6 +134,7 @@ export const formSchemas = {
 		.pick({
 			onlineArticle: true,
 		})
+		.required() // onlineArticle is not required in the newsletterDataSchema, but we want it set for new newsletters
 		.describe('Select from the drop-down list'),
 
 	linkList: pickAndPrefixRenderingOption(['linkListSubheading']).describe(

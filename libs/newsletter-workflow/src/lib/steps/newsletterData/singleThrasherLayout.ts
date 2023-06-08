@@ -49,22 +49,35 @@ export const singleThrasherLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData): string | undefined => {
+			onBeforeStepChangeValidate: (stepData) => {
 				const singleThrasher = stepData.formData
-					? stepData.formData['singleThrasher']
+					? stepData.formData['thrasherOptions.singleThrasher']
 					: undefined;
+				const multiThrashers = stepData.formData
+					? (stepData.formData[
+							'thrasherOptions.multiThrashers'
+					  ] as unknown as Array<{
+							thrasher1: string;
+							thrasher2: string;
+							thrasher3: string;
+					  }>)
+					: undefined;
+
 				if (singleThrasher) {
 					const singleThrasherLocation = stepData.formData
-						? stepData.formData['singleThrasherLocation']
+						? stepData.formData['thrasherOptions.singleThrasherLocation']
 						: undefined;
 					if (!singleThrasherLocation) {
-						return 'NO SINGLE THRASHER LOCATION SELECTED';
+						return { message: 'NO SINGLE THRASHER LOCATION SELECTED' };
 					}
+				}
+
+				if (singleThrasher || (multiThrashers && multiThrashers.length > 0)) {
 					const thrasherDescription = stepData.formData
-						? stepData.formData['thrasherDescription']
+						? stepData.formData['thrasherOptions.thrasherDescription']
 						: undefined;
 					if (!thrasherDescription) {
-						return 'NO THRASHER DESCRIPTION PROVIDED';
+						return { message: 'NO THRASHER DESCRIPTION PROVIDED' };
 					}
 				}
 				return undefined;

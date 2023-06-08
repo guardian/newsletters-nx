@@ -17,10 +17,11 @@ interface Props<T extends z.ZodRawShape> {
 	title: string;
 	submitButtonText?: string;
 	schema: z.ZodObject<T>;
-	initalData: SchemaObjectType<T>;
+	initialData: SchemaObjectType<T>;
 	submit: { (data: SchemaObjectType<T>): void };
 	isDisabled?: boolean;
 	message?: ReactNode;
+	maxOptionsForRadioButtons?: number;
 }
 
 /**
@@ -35,10 +36,11 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	title,
 	submitButtonText = 'SUBMIT FORM',
 	schema,
-	initalData,
+	initialData,
 	submit,
 	isDisabled,
 	message,
+	maxOptionsForRadioButtons,
 }: Props<T>) {
 	const [parseInitialDataResult, setParseInitialDataResult] = useState<
 		z.SafeParseReturnType<typeof schema, SchemaObjectType<T>> | undefined
@@ -55,11 +57,11 @@ export function SimpleForm<T extends z.ZodRawShape>({
 		if (data || parseInitialDataResult?.success === false) {
 			return;
 		}
-		setParseInitialDataResult(schema.safeParse(initalData));
+		setParseInitialDataResult(schema.safeParse(initialData));
 		if (parseInitialDataResult?.success) {
-			setData(initalData);
+			setData(initialData);
 		}
-	}, [initalData, parseInitialDataResult?.success, schema, data]);
+	}, [initialData, parseInitialDataResult?.success, schema, data]);
 
 	if (parseInitialDataResult && !parseInitialDataResult.success) {
 		console.warn(parseInitialDataResult.error);
@@ -143,6 +145,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				changeValue={manageChange}
 				validationWarnings={warnings}
 				readOnlyKeys={isDisabled ? Object.keys(schema.shape) : undefined}
+				maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 			/>
 			<Box marginBottom={2}>
 				<Button

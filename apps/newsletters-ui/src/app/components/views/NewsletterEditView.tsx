@@ -1,7 +1,9 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { Box } from '@mui/material';
+import { useLoaderData } from 'react-router-dom';
 import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
 import { EditNewsletterForm } from '../EditNewsletterForm';
+import { NavigateButton } from '../NavigateButton';
 
 export const NewsletterEditView = () => {
 	const matchedItem = useLoaderData();
@@ -15,8 +17,12 @@ export const NewsletterEditView = () => {
 
 	return (
 		<ContentWrapper>
+			<Box marginBottom={2}>
+				<NavigateButton href="../" variant="outlined">
+					Back to List
+				</NavigateButton>
+			</Box>
 			<EditNewsletterForm originalItem={matchedItem} />
-			<Link to="/newsletters/">Back to List</Link>
 		</ContentWrapper>
 	);
 };

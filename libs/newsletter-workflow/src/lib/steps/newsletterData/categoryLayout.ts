@@ -1,13 +1,11 @@
 import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
-import type {
-	WizardStepData,
-	WizardStepLayout,
-} from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -15,7 +13,7 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 ## How will {{name}} be produced?
 
-Editorial newsletters can be produced in three ways:
+Editorial newsletters can be produced in four ways:
 
 - **article-based**: Each chapter of the newsletter is written as a composer article and published using "email-rendering".
 
@@ -24,8 +22,6 @@ Editorial newsletters can be produced in three ways:
 - **fronts-based**: The newsletters are generated from a fronts page.
 
 - **manual-send**: The content of the email are generated manually or with an external tool.
-
-If you aren't sure or none of the above fit, please select "other".
 
 `.trim();
 
@@ -55,19 +51,10 @@ export const categoryLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			onBeforeStepChangeValidate: (stepData: WizardStepData) => {
-				const productionCategory = stepData.formData
-					? stepData.formData['category']
-					: undefined;
-				if (!productionCategory || productionCategory === '') {
-					return 'NO PRODUCTION CATEGORY SELECTED';
-				}
-				return undefined;
-			},
 			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.category,
 	canSkipTo: true,
-	executeSkip: executeModify,
+	executeSkip,
 };

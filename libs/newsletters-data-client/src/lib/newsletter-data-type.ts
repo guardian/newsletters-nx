@@ -25,11 +25,9 @@ export const onlineArticleSchema = z
 	.describe('location of article');
 export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
 
-export const singleThrasherLocation = z.enum([
-	'Web only',
-	'App only',
-	'Web and App',
-]);
+export const singleThrasherLocation = z
+	.enum(['Web only', 'App only', 'Web and App'])
+	.optional();
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
 export const renderingOptionsSchema = z.object({
@@ -49,9 +47,9 @@ export const renderingOptionsSchema = z.object({
 		.array(
 			z
 				.object({
-					subheading: z.string().optional().describe('read more subheading'),
-					wording: z.string().optional().describe('read more wording'),
-					url: z.string().url().optional().describe('read more url'),
+					subheading: nonEmptyString().describe('read more subheading'),
+					wording: nonEmptyString().describe('read more wording'),
+					url: z.string().url().describe('read more url'),
 				})
 				.describe('read more section configuration'),
 		)
@@ -134,14 +132,14 @@ export const newsletterDataSchema = z.object({
 	figmaDesignUrl: z.string().url().optional().describe('figma design url'),
 	figmaIncludesThrashers: z
 		.boolean()
-		.describe('figma design includes thrashers?'),
+		.describe('Does the figma design include thrashers?'),
 	illustrationCircle: z.string().optional(),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
 
 	seriesTag: z.string().optional().describe('series tag'),
-	composerTag: z.string().optional().describe('composer tag'),
+	composerTag: z.string().optional().describe('composer tag(s)'),
 	composerCampaignTag: z.string().optional().describe('composer campaign tag'),
 
 	launchDate: z.coerce.date().describe('launch date'),

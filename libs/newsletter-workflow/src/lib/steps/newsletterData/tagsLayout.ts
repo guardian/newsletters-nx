@@ -29,8 +29,6 @@ For example, the **Games (video games only)** tag recommends the user adds the *
 
 Which tag(s) would you like to propose the sign up embed for **{{name}}**?
 
-*If you would like to enable this feature, your request will automatically be emailed to Central Production.*
-
 `.trim();
 
 const staticMarkdown = markdownTemplate.replace(
@@ -59,6 +57,28 @@ export const tagsLayout: WizardStepLayout<DraftStorage> = {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
+			onBeforeStepChangeValidate: (stepData) => {
+				const composerTag = stepData.formData
+					? stepData.formData['composerTag']
+					: undefined;
+				const composerCampaignTag = stepData.formData
+					? stepData.formData['composerCampaignTag']
+					: undefined;
+				if (composerTag || composerCampaignTag) {
+					if (!composerTag) {
+						return {
+							message:
+								'ENTER AT LEAST ONE COMPOSER TAG IF SPECIFYING COMPOSER CAMPAIGN TAG',
+						};
+					}
+					if (!composerCampaignTag) {
+						return {
+							message: 'ENTER COMPOSER CAMPAIGN TAG IF SPECIFYING COMPOSER TAG',
+						};
+					}
+				}
+				return undefined;
+			},
 			executeStep: executeModify,
 		},
 	},
