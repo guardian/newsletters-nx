@@ -1,6 +1,7 @@
 import type { FastifyRequest } from 'fastify/types/request';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import { getTestJwtProfileDataIfUsing } from '../apiDeploymentSettings';
+import { getDeveloperProfile } from "../services/permissions/developer-profile-service";
 
 const atob = (a: string) => Buffer.from(a, 'base64').toString('binary');
 
@@ -11,7 +12,7 @@ function parseJwt(
 	try {
 		const base64Url = token.split('.')[
 			bodyOrHeader === 'headers' ? 0 : 1
-		] as string;
+			] as string;
 		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
 		const jsonPayload = decodeURIComponent(
 			atob(base64)
@@ -31,8 +32,14 @@ function parseJwt(
 export const getUserProfile = (
 	req: FastifyRequest,
 ): { profile: UserProfile } | { errorMessage: string; profile: undefined } => {
+	const { USE_DEVELOPER_PROFILE } = process.env;
 	const jwtProfile =
 		req.headers['x-amzn-oidc-data'] ?? getTestJwtProfileDataIfUsing();
+
+	if ( USE_DEVELOPER_PROFILE && USE_DEVELOPER_PROFILE === "true" ) {
+		console.info('getUserProfile: USE_DEVELOPER_PROFILE is true, returning developer profile.');
+		return getDeveloperProfile();
+	}
 
 	if (typeof jwtProfile !== 'string') {
 		return { errorMessage: 'No user profile.', profile: undefined };
