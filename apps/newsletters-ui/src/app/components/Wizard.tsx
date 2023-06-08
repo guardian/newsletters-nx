@@ -254,9 +254,10 @@ export const Wizard: React.FC<WizardProps> = ({
 
 			<SkipConfirmationDialog
 				currentStepId={serverData.currentStepId}
-				showSkipModalFor={showSkipModalFor}
+				targetStepId={showSkipModalFor}
 				handleCancelSkip={handleCancelSkip}
 				handleConfirmSkip={handleConfirmSkip}
+				stepperConfig={stepperConfig}
 			/>
 		</Box>
 	);
