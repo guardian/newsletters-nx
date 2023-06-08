@@ -1,4 +1,14 @@
-import { Alert, Box, Stack, Typography } from '@mui/material';
+import {
+	Alert,
+	Box,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Stack,
+	Typography,
+} from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
@@ -76,16 +86,13 @@ export const Wizard: React.FC<WizardProps> = ({
 	);
 	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
 		useState(false);
+	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
+		undefined,
+	);
 	const [listId, setListId] = useState<number | undefined>(undefined);
 	const [serverErrorMessage, setServerErrorMessage] = useState<
 		string | undefined
 	>();
-
-	const handleFormChange = (updatedLocalState: WizardFormData): void => {
-		console.log('CHANGE MADE!');
-		setCurrentStepHasBeenChanged(true);
-		return setFormData(updatedLocalState);
-	};
 
 	const fetchStep = useCallback(
 		async (body: CurrentStepRouteRequest) => {
@@ -107,6 +114,7 @@ export const Wizard: React.FC<WizardProps> = ({
 				});
 				console.log('new data - setCurrentStepHasBeenChanged = false ');
 				setCurrentStepHasBeenChanged(false);
+				setShowSkipModalFor(undefined);
 			} catch (error: unknown /* FIXME! */) {
 				setServerErrorMessage('Wizard failed');
 				console.error('Error invoking next step of wizard:', error);
@@ -145,7 +153,21 @@ export const Wizard: React.FC<WizardProps> = ({
 		);
 	}
 
+	const handleFormChange = (updatedLocalState: WizardFormData): void => {
+		if (showSkipModalFor) {
+			console.log('UI BLOCKED FOR MODAL');
+			return;
+		}
+		console.log('CHANGE MADE!');
+		setCurrentStepHasBeenChanged(true);
+		return setFormData(updatedLocalState);
+	};
+
 	const handleButtonClick = (buttonId: string) => () => {
+		if (showSkipModalFor) {
+			console.log('UI BLOCKED FOR MODAL');
+			return;
+		}
 		void fetchStep({
 			wizardId: wizardId,
 			id: id,
@@ -156,11 +178,38 @@ export const Wizard: React.FC<WizardProps> = ({
 	};
 
 	const handleStepClick = (stepToSkipToId: string) => {
-		void fetchStep({
+		if (showSkipModalFor) {
+			console.log('UI BLOCKED FOR MODAL');
+			return;
+		}
+
+		// TO DO - we should only show the modal if skipping will discard the
+		// steps's executeSkip function will actually discard the local form data
+		// rather than persisting it.
+		// May need another property on the WizardStepLayout.
+		if (!currentStepHasBeenChanged) {
+			return void fetchStep({
+				wizardId: wizardId,
+				id: id,
+				stepId: serverData.currentStepId,
+				stepToSkipToId: stepToSkipToId,
+				formData: { ...formData, listId },
+			});
+		}
+
+		setShowSkipModalFor(stepToSkipToId);
+	};
+
+	const handleCancelSkip = () => {
+		return setShowSkipModalFor(undefined);
+	};
+
+	const handleConfirmSkip = () => {
+		return void fetchStep({
 			wizardId: wizardId,
 			id: id,
 			stepId: serverData.currentStepId,
-			stepToSkipToId: stepToSkipToId,
+			stepToSkipToId: showSkipModalFor,
 			formData: { ...formData, listId },
 		});
 	};
@@ -205,11 +254,20 @@ export const Wizard: React.FC<WizardProps> = ({
 					/>
 				))}
 			</Stack>
-			<Box>
-				<Typography>
-					{currentStepHasBeenChanged ? 'CHANGED' : 'NOT CHANGED'}
-				</Typography>
-			</Box>
+
+			{showSkipModalFor && (
+				<Dialog open>
+					<DialogTitle>Skip modal</DialogTitle>
+					<DialogContent>
+						Do you want to cancel the changes you have made to "
+						{serverData.currentStepId}" skip to "{showSkipModalFor}"?
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleCancelSkip}>no</Button>
+						<Button onClick={handleConfirmSkip}>yes</Button>
+					</DialogActions>
+				</Dialog>
+			)}
 		</Box>
 	);
 };
