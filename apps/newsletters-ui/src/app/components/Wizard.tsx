@@ -1,14 +1,4 @@
-import {
-	Alert,
-	Box,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Stack,
-	Typography,
-} from '@mui/material';
+import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
@@ -24,6 +14,7 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import { MarkdownView } from './MarkdownView';
+import { SkipConfirmationDialog } from './SkipConfirmationDialog';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
 import { WizardActionButton } from './WizardActionButton';
@@ -209,11 +200,11 @@ export const Wizard: React.FC<WizardProps> = ({
 	};
 
 	const handleCancelSkip = () => {
-		return setShowSkipModalFor(undefined);
+		setShowSkipModalFor(undefined);
 	};
 
 	const handleConfirmSkip = () => {
-		return void fetchStep({
+		void fetchStep({
 			wizardId: wizardId,
 			id: id,
 			stepId: serverData.currentStepId,
@@ -261,19 +252,12 @@ export const Wizard: React.FC<WizardProps> = ({
 				))}
 			</Stack>
 
-			{showSkipModalFor && (
-				<Dialog open>
-					<DialogTitle>Skip modal</DialogTitle>
-					<DialogContent>
-						Do you want to cancel the changes you have made to "
-						{serverData.currentStepId}" skip to "{showSkipModalFor}"?
-					</DialogContent>
-					<DialogActions>
-						<Button onClick={handleCancelSkip}>no</Button>
-						<Button onClick={handleConfirmSkip}>yes</Button>
-					</DialogActions>
-				</Dialog>
-			)}
+			<SkipConfirmationDialog
+				currentStepId={serverData.currentStepId}
+				showSkipModalFor={showSkipModalFor}
+				handleCancelSkip={handleCancelSkip}
+				handleConfirmSkip={handleConfirmSkip}
+			/>
 		</Box>
 	);
 };
