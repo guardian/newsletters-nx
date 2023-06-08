@@ -3,7 +3,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { locale } from 'dayjs';
 import type { FunctionComponent } from 'react';
-import { defaultFieldStyle } from './styling';
 import type { FieldProps } from './util';
 import 'dayjs/locale/en-gb';
 
@@ -18,20 +17,18 @@ export const DateInput: FunctionComponent<
 		props.value instanceof Date ? dayjs(props.value.toDateString()) : null;
 	void locale('en-gb');
 	return (
-		<div css={defaultFieldStyle}>
-			<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-				<DatePicker
-					label={props.label}
-					value={value}
-					disabled={props.readOnly}
-					onChange={(date) => {
-						if (date && date.toString() !== 'Invalid Date') {
-								props.inputHandler(date.toDate());
-						}
-					}}
-					readOnly={props.readOnly}
-				/>
-			</LocalizationProvider>
-		</div>
+		<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+			<DatePicker
+				label={props.label}
+				value={value}
+				disabled={props.readOnly}
+				onChange={(date) => {
+					if (date && date.toString() !== 'Invalid Date') {
+						props.inputHandler(date.toDate());
+					}
+				}}
+				readOnly={props.readOnly}
+			/>
+		</LocalizationProvider>
 	);
 };
