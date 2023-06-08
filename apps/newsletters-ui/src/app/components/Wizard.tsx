@@ -95,7 +95,6 @@ export const Wizard: React.FC<WizardProps> = ({
 				}
 
 				setServerData(data);
-
 				const schema = getFormSchema(wizardId, data.currentStepId);
 				const blank = schema ? getEmptySchemaData(schema) : undefined;
 
@@ -103,7 +102,6 @@ export const Wizard: React.FC<WizardProps> = ({
 					...blank,
 					...data.formData,
 				});
-				console.log('new data - setCurrentStepHasBeenChanged = false ');
 				setCurrentStepHasBeenChanged(false);
 				setShowSkipModalFor(undefined);
 			} catch (error: unknown /* FIXME! */) {
@@ -152,17 +150,14 @@ export const Wizard: React.FC<WizardProps> = ({
 
 	const handleFormChange = (updatedLocalState: WizardFormData): void => {
 		if (showSkipModalFor) {
-			console.log('UI BLOCKED FOR MODAL');
 			return;
 		}
-		console.log('CHANGE MADE!');
 		setCurrentStepHasBeenChanged(true);
 		return setFormData(updatedLocalState);
 	};
 
 	const handleButtonClick = (buttonId: string) => () => {
 		if (showSkipModalFor) {
-			console.log('UI BLOCKED FOR MODAL');
 			return;
 		}
 		void fetchStep({
@@ -176,7 +171,6 @@ export const Wizard: React.FC<WizardProps> = ({
 
 	const handleStepClick = (stepToSkipToId: string) => {
 		if (showSkipModalFor) {
-			console.log('UI BLOCKED FOR MODAL');
 			return;
 		}
 
