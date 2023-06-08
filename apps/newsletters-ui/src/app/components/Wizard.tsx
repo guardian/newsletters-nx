@@ -74,10 +74,18 @@ export const Wizard: React.FC<WizardProps> = ({
 	const [formData, setFormData] = useState<WizardFormData | undefined>(
 		undefined,
 	);
+	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
+		useState(false);
 	const [listId, setListId] = useState<number | undefined>(undefined);
 	const [serverErrorMessage, setServerErrorMessage] = useState<
 		string | undefined
 	>();
+
+	const handleFormChange = (updatedLocalState: WizardFormData): void => {
+		console.log('CHANGE MADE!');
+		setCurrentStepHasBeenChanged(true);
+		return setFormData(updatedLocalState);
+	};
 
 	const fetchStep = useCallback(
 		async (body: CurrentStepRouteRequest) => {
@@ -97,6 +105,8 @@ export const Wizard: React.FC<WizardProps> = ({
 					...blank,
 					...data.formData,
 				});
+				console.log('new data - setCurrentStepHasBeenChanged = false ');
+				setCurrentStepHasBeenChanged(false);
 			} catch (error: unknown /* FIXME! */) {
 				setServerErrorMessage('Wizard failed');
 				console.error('Error invoking next step of wizard:', error);
@@ -172,7 +182,7 @@ export const Wizard: React.FC<WizardProps> = ({
 				<StateEditForm
 					formSchema={formSchema}
 					formData={formData}
-					setFormData={setFormData}
+					setFormData={handleFormChange}
 					maxOptionsForRadioButtons={5}
 				/>
 			)}
@@ -195,6 +205,11 @@ export const Wizard: React.FC<WizardProps> = ({
 					/>
 				))}
 			</Stack>
+			<Box>
+				<Typography>
+					{currentStepHasBeenChanged ? 'CHANGED' : 'NOT CHANGED'}
+				</Typography>
+			</Box>
 		</Box>
 	);
 };
