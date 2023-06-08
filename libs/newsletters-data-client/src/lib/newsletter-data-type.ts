@@ -174,3 +174,23 @@ export function isDraftNewsletterData(
 ): subject is DraftNewsletterData {
 	return draftNewsletterDataSchema.safeParse(subject).success;
 }
+
+export const metaDataSchema = z.object({
+	creationTimestamp: z.number(),
+	updatedTimestamp: z.number(),
+	createdBy: z.string(),
+	updatedBy: z.string(),
+});
+
+export type MetaData = z.infer<typeof metaDataSchema>;
+
+export type NewsletterDataWithMeta = NewsletterData & { meta: MetaData };
+export type NewsletterDataWithoutMeta = NewsletterData & { meta: undefined };
+
+export function isNewsletterDataWithMeta(
+	subject: unknown,
+): subject is NewsletterDataWithMeta {
+	return newsletterDataSchema
+		.extend({ meta: metaDataSchema })
+		.safeParse(subject).success;
+}

@@ -7,6 +7,7 @@ import type {
 	DraftStorage,
 	NewsletterData,
 	NewsletterStorage,
+	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
 import newslettersData from '../../../static/newsletters.local.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
@@ -30,6 +31,8 @@ const newsletterStore: NewsletterStorage = isUsingInMemoryStore
 			validNewsletters as unknown as NewsletterData[],
 	  )
 	: getS3NewsletterStore();
-const launchService = new LaunchService(draftStore, newsletterStore);
 
-export { draftStore, newsletterStore, launchService };
+const makelaunchServiceForUser = (userProfile: UserProfile) =>
+	new LaunchService(draftStore, newsletterStore, userProfile);
+
+export { draftStore, newsletterStore, makelaunchServiceForUser };
