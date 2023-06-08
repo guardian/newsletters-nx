@@ -1,3 +1,4 @@
+import type { EmailServiceAbstract } from '@newsletters-nx/services';
 import type { DraftStorage } from '../draft-storage';
 import { withDefaultNewsletterValuesAndDerivedFields } from '../draft-to-newsletter';
 import type {
@@ -15,15 +16,18 @@ export class LaunchService {
 	draftStorage: DraftStorage;
 	newsletterStorage: NewsletterStorage;
 	userProfile: UserProfile;
+	emailService: EmailServiceAbstract;
 
 	constructor(
 		draftStorage: DraftStorage,
 		newsletterStorage: NewsletterStorage,
 		userProfile: UserProfile,
+		emailService: EmailServiceAbstract,
 	) {
 		this.draftStorage = draftStorage;
 		this.newsletterStorage = newsletterStorage;
 		this.userProfile = userProfile;
+		this.emailService = emailService;
 	}
 
 	async launchDraft(
@@ -53,6 +57,23 @@ export class LaunchService {
 		if (!newsletterCreateResponse.ok) {
 			return newsletterCreateResponse;
 		}
+
+		const emailReport = await this.emailService.send(
+			['newsletterPeeps@Grauniad.org', 'central-production@Grauniad.org'],
+			`New newsletters launch: ${newsletterCreateResponse.data.name}`,
+			`Deer all,
+
+			Pleeze noot that a new newsletter has been created:
+			 - identityName = ${newsletterCreateResponse.data.identityName}
+
+			 It will need some tags created.
+
+			regards
+			the newsleters tool.
+			`,
+		);
+
+		console.log(emailReport);
 
 		// TO DO - should we actually delete the draft or archive it / mark as launched?
 		const draftDeleteResponse = await draftStorage.deleteItem(draftId);
