@@ -14,6 +14,7 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import { MarkdownView } from './MarkdownView';
+import { SkipConfirmationDialog } from './SkipConfirmationDialog';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
 import { WizardActionButton } from './WizardActionButton';
@@ -74,6 +75,11 @@ export const Wizard: React.FC<WizardProps> = ({
 	const [formData, setFormData] = useState<WizardFormData | undefined>(
 		undefined,
 	);
+	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
+		useState(false);
+	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
+		undefined,
+	);
 	const [listId, setListId] = useState<number | undefined>(undefined);
 	const [serverErrorMessage, setServerErrorMessage] = useState<
 		string | undefined
@@ -89,7 +95,6 @@ export const Wizard: React.FC<WizardProps> = ({
 				}
 
 				setServerData(data);
-
 				const schema = getFormSchema(wizardId, data.currentStepId);
 				const blank = schema ? getEmptySchemaData(schema) : undefined;
 
@@ -97,6 +102,8 @@ export const Wizard: React.FC<WizardProps> = ({
 					...blank,
 					...data.formData,
 				});
+				setCurrentStepHasBeenChanged(false);
+				setShowSkipModalFor(undefined);
 			} catch (error: unknown /* FIXME! */) {
 				setServerErrorMessage('Wizard failed');
 				console.error('Error invoking next step of wizard:', error);
@@ -135,7 +142,24 @@ export const Wizard: React.FC<WizardProps> = ({
 		);
 	}
 
+	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
+	const stepperConfig = getStepperConfig(wizardId);
+	const currentStepListing = stepperConfig.steps.find(
+		(step) => step.id === serverData.currentStepId,
+	);
+
+	const handleFormChange = (updatedLocalState: WizardFormData): void => {
+		if (showSkipModalFor) {
+			return;
+		}
+		setCurrentStepHasBeenChanged(true);
+		return setFormData(updatedLocalState);
+	};
+
 	const handleButtonClick = (buttonId: string) => () => {
+		if (showSkipModalFor) {
+			return;
+		}
 		void fetchStep({
 			wizardId: wizardId,
 			id: id,
@@ -146,7 +170,21 @@ export const Wizard: React.FC<WizardProps> = ({
 	};
 
 	const handleStepClick = (stepToSkipToId: string) => {
-		void fetchStep({
+		if (showSkipModalFor) {
+			return;
+		}
+
+		// If the user has changed the local data on the current step
+		// and skipping will cause those changes to be discarded,
+		// show the confirmation modal before fetching the new step.
+		if (
+			currentStepHasBeenChanged &&
+			!currentStepListing?.skippingWillPersistLocalChanges
+		) {
+			setShowSkipModalFor(stepToSkipToId);
+			return;
+		}
+		return void fetchStep({
 			wizardId: wizardId,
 			id: id,
 			stepId: serverData.currentStepId,
@@ -155,13 +193,25 @@ export const Wizard: React.FC<WizardProps> = ({
 		});
 	};
 
-	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
+	const handleCancelSkip = () => {
+		setShowSkipModalFor(undefined);
+	};
+
+	const handleConfirmSkip = () => {
+		void fetchStep({
+			wizardId: wizardId,
+			id: id,
+			stepId: serverData.currentStepId,
+			stepToSkipToId: showSkipModalFor,
+			formData: { ...formData, listId },
+		});
+	};
 
 	return (
 		<Box paddingY={2}>
 			<StepNav
 				currentStepId={serverData.currentStepId}
-				stepperConfig={getStepperConfig(wizardId)}
+				stepperConfig={stepperConfig}
 				onEditTrack={typeof id !== 'undefined'}
 				handleStepClick={handleStepClick}
 				formData={formData}
@@ -172,7 +222,7 @@ export const Wizard: React.FC<WizardProps> = ({
 				<StateEditForm
 					formSchema={formSchema}
 					formData={formData}
-					setFormData={setFormData}
+					setFormData={handleFormChange}
 					maxOptionsForRadioButtons={5}
 				/>
 			)}
@@ -195,6 +245,14 @@ export const Wizard: React.FC<WizardProps> = ({
 					/>
 				))}
 			</Stack>
+
+			<SkipConfirmationDialog
+				currentStepId={serverData.currentStepId}
+				targetStepId={showSkipModalFor}
+				handleCancelSkip={handleCancelSkip}
+				handleConfirmSkip={handleConfirmSkip}
+				stepperConfig={stepperConfig}
+			/>
 		</Box>
 	);
 };
