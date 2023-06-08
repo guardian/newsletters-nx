@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import type { EmailServiceAbstract } from './abstract';
+import type { EmailServiceAbstract } from './abstract-email-service';
 import type { Email } from './types';
 
 const emailsFolder = join(__dirname, 'emails');
