@@ -220,13 +220,15 @@ export function SchemaField<T extends z.ZodRawShape>({
 		case 'ZodObject': {
 			if (isPrimitiveRecord(value) || typeof value === 'undefined') {
 				return (
-					<SchemaRecordInput
-						{...standardProps}
-						recordSchema={
-							field.recordSchema as unknown as ZodObject<ZodRawShape>
-						}
-						value={value}
-					/>
+					<FieldWrapper>
+						<SchemaRecordInput
+							{...standardProps}
+							recordSchema={
+								field.recordSchema as unknown as ZodObject<ZodRawShape>
+							}
+							value={value}
+						/>
+					</FieldWrapper>
 				);
 			}
 			return <WrongTypeMessage field={field} />;

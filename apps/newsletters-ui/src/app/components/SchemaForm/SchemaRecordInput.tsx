@@ -8,7 +8,6 @@ import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import { isPrimitiveRecord } from '../../util';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
 import { RecordInput } from './RecordInput';
-import { defaultFieldStyle } from './styling';
 import type { FieldProps, FieldValue } from './util';
 
 export const SchemaRecordInput: FunctionComponent<
@@ -48,53 +47,47 @@ export const SchemaRecordInput: FunctionComponent<
 	const badgeText = !value ? 'unset' : optional ? 'optional' : undefined;
 
 	return (
-		<div css={defaultFieldStyle}>
-			<FormGroup sx={{ flex: 1 }}>
-				<Badge badgeContent={badgeText} color="primary">
-					<Typography
-						flex={1}
-						component={'legend'}
-						variant="subtitle2"
-						marginBottom={1}
-					>
-						{label}
-					</Typography>
-				</Badge>
+		<FormGroup sx={{ flex: 1 }}>
+			<Badge badgeContent={badgeText} color="primary">
+				<Typography
+					flex={1}
+					component={'legend'}
+					variant="subtitle2"
+					marginBottom={1}
+				>
+					{label}
+				</Typography>
+			</Badge>
 
-				<Box paddingLeft={3}>
-					{value && (
-						<>
-							<RecordInput
-								recordSchema={recordSchema}
-								record={value}
-								editRecord={sendValue}
-							/>
-							{optional && (
-								<Button
-									variant="outlined"
-									color="warning"
-									endIcon={<DeleteIcon />}
-									onClick={() => {
-										inputHandler(undefined);
-									}}
-								>
-									Remove Value
-								</Button>
-							)}
-						</>
-					)}
+			<Box paddingLeft={3}>
+				{value && (
+					<>
+						<RecordInput
+							recordSchema={recordSchema}
+							record={value}
+							editRecord={sendValue}
+						/>
+						{optional && (
+							<Button
+								variant="outlined"
+								color="warning"
+								endIcon={<DeleteIcon />}
+								onClick={() => {
+									inputHandler(undefined);
+								}}
+							>
+								Remove Value
+							</Button>
+						)}
+					</>
+				)}
 
-					{!value && (
-						<Button
-							variant="outlined"
-							onClick={sendEmpty}
-							endIcon={<AddIcon />}
-						>
-							Define Value
-						</Button>
-					)}
-				</Box>
-			</FormGroup>
-		</div>
+				{!value && (
+					<Button variant="outlined" onClick={sendEmpty} endIcon={<AddIcon />}>
+						Define Value
+					</Button>
+				)}
+			</Box>
+		</FormGroup>
 	);
 };
