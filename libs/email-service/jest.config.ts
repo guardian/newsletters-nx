@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable -- nx default*/
 export default {
 	displayName: 'email-service',
 	preset: '../../jest.preset.js',
