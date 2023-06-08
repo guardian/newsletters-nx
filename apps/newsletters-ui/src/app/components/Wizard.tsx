@@ -153,6 +153,12 @@ export const Wizard: React.FC<WizardProps> = ({
 		);
 	}
 
+	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
+	const stepperConfig = getStepperConfig(wizardId);
+	const currentStepListing = stepperConfig.steps.find(
+		(step) => step.id === serverData.currentStepId,
+	);
+
 	const handleFormChange = (updatedLocalState: WizardFormData): void => {
 		if (showSkipModalFor) {
 			console.log('UI BLOCKED FOR MODAL');
@@ -183,21 +189,23 @@ export const Wizard: React.FC<WizardProps> = ({
 			return;
 		}
 
-		// TO DO - we should only show the modal if skipping will discard the
-		// steps's executeSkip function will actually discard the local form data
-		// rather than persisting it.
-		// May need another property on the WizardStepLayout.
-		if (!currentStepHasBeenChanged) {
-			return void fetchStep({
-				wizardId: wizardId,
-				id: id,
-				stepId: serverData.currentStepId,
-				stepToSkipToId: stepToSkipToId,
-				formData: { ...formData, listId },
-			});
+		// If the user has changed the local data on the current step
+		// and skipping will cause those changes to be discarded,
+		// show the confirmation modal before fetching the new step.
+		if (
+			currentStepHasBeenChanged &&
+			!currentStepListing?.skippingWillPersistLocalChanges
+		) {
+			setShowSkipModalFor(stepToSkipToId);
+			return;
 		}
-
-		setShowSkipModalFor(stepToSkipToId);
+		return void fetchStep({
+			wizardId: wizardId,
+			id: id,
+			stepId: serverData.currentStepId,
+			stepToSkipToId: stepToSkipToId,
+			formData: { ...formData, listId },
+		});
 	};
 
 	const handleCancelSkip = () => {
@@ -214,13 +222,11 @@ export const Wizard: React.FC<WizardProps> = ({
 		});
 	};
 
-	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
-
 	return (
 		<Box paddingY={2}>
 			<StepNav
 				currentStepId={serverData.currentStepId}
-				stepperConfig={getStepperConfig(wizardId)}
+				stepperConfig={stepperConfig}
 				onEditTrack={typeof id !== 'undefined'}
 				handleStepClick={handleStepClick}
 				formData={formData}

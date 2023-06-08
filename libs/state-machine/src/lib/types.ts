@@ -107,6 +107,7 @@ export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
 	buttons: Record<string, WizardStepLayoutButton<T>>;
 	schema?: ZodObject<ZodRawShape>;
 	canSkipTo?: boolean;
+	skippingWillPersistLocalChanges?: boolean;
 	executeSkip?: AsyncExecution<T> | Execution<T>;
 	getInitialFormData?: {
 		(
