@@ -1,4 +1,4 @@
-import type { EmailServiceAbstract } from '@newsletters-nx/services';
+import type { EmailServiceAbstract } from '@newsletters-nx/email-service';
 import type { DraftStorage } from '../draft-storage';
 import { withDefaultNewsletterValuesAndDerivedFields } from '../draft-to-newsletter';
 import type {

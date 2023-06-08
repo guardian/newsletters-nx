@@ -1,4 +1,4 @@
-import { LocalFileEmailService } from '@newsletters-nx/services';
+import { LocalFileEmailService } from '@newsletters-nx/email-service';
 
 const emailService = new LocalFileEmailService();
 emailService
