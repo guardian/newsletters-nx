@@ -36,7 +36,7 @@ export const useProfile = () => {
 
 	useEffect(() => {
 		void fetchAndSet();
-	});
+	}, []);
 
 	return userProfile;
 };
