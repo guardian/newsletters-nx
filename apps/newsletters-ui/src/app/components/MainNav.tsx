@@ -26,6 +26,7 @@ const navLinks: NavLink[] = [
 	{ path: '/drafts', label: 'Drafts' },
 	{ path: '/templates', label: 'Email Templates' },
 	{ path: '/thrashers', label: 'Thrashers' },
+	{ path: '/newsletters/new/newsletter-data', label: 'form' },
 ];
 
 const menuItemIsSelected = (path: string): boolean => {
