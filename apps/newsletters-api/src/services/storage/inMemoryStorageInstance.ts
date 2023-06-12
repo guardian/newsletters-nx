@@ -26,6 +26,8 @@ export const makeInMemoryStorageInstance = () =>
 			thrasherDate: new Date('1970-01-02T00:21:18.876Z'),
 			privateUntilLaunch: false,
 			onlineArticle: 'Web for all sends',
+			designBriefDoc: 'Its on google drive somewhere.',
+			figmaDesignUrl: 'https://example.com/',
 		},
 		{
 			name: 'blue empowering',
