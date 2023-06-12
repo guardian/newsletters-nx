@@ -4,6 +4,7 @@ import {
 	space,
 	textSansObjectStyles,
 } from '@guardian/source-foundations';
+import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
 
@@ -46,7 +47,9 @@ export function Layout(props: IRootRoute) {
 			<header>
 				<MainNav />
 			</header>
-			<main>{props.outlet ? props.outlet : <Outlet />}</main>
+			<Box pt={8}>
+				<main>{props.outlet ? props.outlet : <Outlet />}</main>
+			</Box>
 		</Frame>
 	);
 }

@@ -1,4 +1,7 @@
-import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
+import type {
+	FormDataRecord,
+	SupportedValue,
+} from '@newsletters-nx/newsletters-data-client';
 import { getFieldKeyNames } from '@newsletters-nx/newsletters-data-client';
 import type { StepListing } from './getStepList';
 
@@ -9,7 +12,14 @@ export enum StepStatus {
 	NoFields,
 }
 
-const areAllFieldsUnset = (
+function isPopulatedAndNotEmpty(value: SupportedValue): boolean {
+	if (Array.isArray(value) && value.length === 0) {
+		return false;
+	}
+	return value ? true : false;
+}
+
+const areAllFieldsUnsetOrEmpty = (
 	step: StepListing,
 	formData: FormDataRecord | undefined,
 ) => {
@@ -20,10 +30,10 @@ const areAllFieldsUnset = (
 	if (!fieldsInThisStep) {
 		return true;
 	}
-	const fieldsPopulatedInFormData = Object.keys(formData);
-	return !fieldsInThisStep.some((key) =>
-		fieldsPopulatedInFormData.includes(key),
-	);
+
+	return !fieldsInThisStep.some((key) => {
+		return isPopulatedAndNotEmpty(formData[key]);
+	});
 };
 
 const isPartiallyComplete = (
@@ -58,7 +68,7 @@ export const resolveStepStatus = (
 	if (!parseResult.success) {
 		return StepStatus.Incomplete;
 	}
-	if (step.isOptional && areAllFieldsUnset(step, formData)) {
+	if (step.isOptional && areAllFieldsUnsetOrEmpty(step, formData)) {
 		return StepStatus.Optional;
 	}
 	return StepStatus.Complete;

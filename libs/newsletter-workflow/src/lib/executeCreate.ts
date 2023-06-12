@@ -5,6 +5,8 @@ import type {
 import {
 	draftNewsletterDataToFormData,
 	formDataToDraftNewsletterData,
+	getEmptySchemaData,
+	newsletterDataSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	StateMachineError,
@@ -46,8 +48,10 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 	}
 
 	const draft: DraftNewsletterData = formDataToDraftNewsletterData({
+		...getEmptySchemaData(newsletterDataSchema),
 		...parseResult.data,
 	});
+
 	const storageResponse = await storageInstance.create({
 		...draft,
 		listId: undefined,
