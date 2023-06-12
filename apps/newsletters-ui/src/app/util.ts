@@ -7,7 +7,11 @@ import {
 	specialReport,
 	sport,
 } from '@guardian/source-foundations';
-import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
+
+export {
+	isPrimitiveRecord,
+	isArrayOfPrimitiveRecords as isPrimitiveRecordArray,
+} from '@newsletters-nx/newsletters-data-client';
 
 export type SourcePalette =
 	| typeof culture
@@ -47,22 +51,3 @@ export const renderYesNo = (value: boolean): string =>
 
 export const isStringArray = (value: unknown): value is string[] =>
 	Array.isArray(value) && value.every((item) => typeof item === 'string');
-
-export const isPrimitiveRecord = (value: unknown): value is PrimitiveRecord => {
-	if (!value || typeof value !== 'object') {
-		return false;
-	}
-	if (Array.isArray(value)) {
-		return false;
-	}
-	return Object.keys(value).every(
-		(propertyValue) =>
-			typeof propertyValue === 'boolean' ||
-			typeof propertyValue === 'number' ||
-			typeof propertyValue === 'string',
-	);
-};
-export const isPrimitiveRecordArray = (
-	value: unknown,
-): value is PrimitiveRecord[] =>
-	Array.isArray(value) && value.every(isPrimitiveRecord);

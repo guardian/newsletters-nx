@@ -10,6 +10,7 @@ import type {
 	WizardLayout,
 	WizardStepLayout,
 } from './types';
+import { replaceNullWithUndefined } from './utility';
 
 /**
  * Execute the changes to state (if any) in response to a
@@ -33,6 +34,10 @@ export async function handleWizardRequestAndReturnWizardResponse<
 	serviceInterface: T,
 ): Promise<CurrentStepRouteResponse> {
 	try {
+		if (requestBody.formData) {
+			replaceNullWithUndefined(requestBody.formData);
+		}
+
 		const stepData =
 			requestBody.stepToSkipToId !== undefined
 				? await stateMachineSkipPressed(

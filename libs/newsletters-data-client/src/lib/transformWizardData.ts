@@ -13,6 +13,7 @@ export type PrimitiveRecord = Partial<
 export type SupportedValue =
 	| string
 	| number
+	| null
 	| boolean
 	| undefined
 	| Date
@@ -23,19 +24,28 @@ export type FormDataRecord = Record<string, SupportedValue>;
 
 const OBJECT_FIELDS_USING_RECORD_INPUT: Array<keyof NewsletterData> = [];
 
-const isPrimitiveRecord = (value: unknown): value is PrimitiveRecord => {
+export const isPrimitiveRecord = (value: unknown): value is PrimitiveRecord => {
 	if (!value || typeof value !== 'object') {
 		return false;
 	}
 	if (Array.isArray(value)) {
 		return false;
 	}
-	return Object.keys(value).every(
+	return Object.values(value).every(
 		(propertyValue) =>
 			typeof propertyValue === 'boolean' ||
 			typeof propertyValue === 'number' ||
 			typeof propertyValue === 'string',
 	);
+};
+
+export const isArrayOfPrimitiveRecords = (
+	value: unknown,
+): value is PrimitiveRecord[] => {
+	if (!Array.isArray(value)) {
+		return false;
+	}
+	return value.every(isPrimitiveRecord);
 };
 
 /**
@@ -113,6 +123,7 @@ export const formDataToDraftNewsletterData = (
 	formData: FormDataRecord,
 ): DraftNewsletterData => {
 	const output: Record<string, unknown> = {};
+	const setKeys = Object.keys(formData);
 
 	for (const key in draftNewsletterDataSchema.shape) {
 		const castKey = key as keyof DraftNewsletterData;
@@ -127,7 +138,16 @@ export const formDataToDraftNewsletterData = (
 			continue;
 		}
 
+		// any propery can be undefined on the draftSchema,
+		// but in practise, if a listId is set, it should
+		// never be unset by the form data from the user.
 		if (typeof recordValue === 'undefined') {
+			if (castKey === 'listId') {
+				continue;
+			}
+			if (setKeys.includes(castKey)) {
+				output[castKey] = undefined;
+			}
 			continue;
 		}
 

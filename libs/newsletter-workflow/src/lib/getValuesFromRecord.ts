@@ -6,7 +6,7 @@ export const getStringValuesFromRecord = (
 ): string[] => {
 	return keys.map((key) => {
 		const value = record[key];
-		if (typeof value === 'undefined') {
+		if (typeof value === 'undefined' || value == null) {
 			return '';
 		}
 		return value.toString();
