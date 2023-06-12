@@ -19,7 +19,7 @@ export const IMMUTABLE_PROPERTIES: Readonly<string[]> = [
 ];
 
 export const makeBlankMeta = (): MetaData => ({
-	creationTimestamp: 0,
+	createdTimestamp: 0,
 	createdBy: 'unknown',
 	updatedTimestamp: 0,
 	updatedBy: 'unknown',
@@ -144,7 +144,7 @@ export abstract class NewsletterStorage {
 	createNewMeta(user: UserProfile): MetaData {
 		const now = Date.now();
 		return {
-			creationTimestamp: now,
+			createdTimestamp: now,
 			createdBy: user.email ?? '[unknown]',
 			updatedTimestamp: now,
 			updatedBy: user.email ?? '[unknown]',

@@ -176,7 +176,7 @@ export function isDraftNewsletterData(
 }
 
 export const metaDataSchema = z.object({
-	creationTimestamp: z.number(),
+	createdTimestamp: z.number(),
 	updatedTimestamp: z.number(),
 	createdBy: z.string(),
 	updatedBy: z.string(),
