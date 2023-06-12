@@ -1,8 +1,4 @@
 import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
-import {
-	isArrayOfPrimitiveRecords,
-	isPrimitiveRecord,
-} from '@newsletters-nx/newsletters-data-client';
 import type { ZodIssue } from 'zod';
 import type {
 	FailureDetails,
@@ -10,6 +6,36 @@ import type {
 	WizardStepData,
 	WizardStepLayout,
 } from './types';
+
+type PrimitiveRecordWithNull = Partial<
+	Record<string, string | number | boolean | null>
+>;
+const isPrimitiveRecordAllowingNull = (
+	value: unknown,
+): value is PrimitiveRecordWithNull => {
+	if (!value || typeof value !== 'object') {
+		return false;
+	}
+	if (Array.isArray(value)) {
+		return false;
+	}
+	return Object.values(value).every(
+		(propertyValue) =>
+			typeof propertyValue === 'boolean' ||
+			typeof propertyValue === 'number' ||
+			typeof propertyValue === 'string' ||
+			(typeof propertyValue === 'object' && !propertyValue),
+	);
+};
+
+const isArrayOfPrimitiveRecordsAllowingNull = (
+	value: unknown,
+): value is PrimitiveRecordWithNull[] => {
+	if (!Array.isArray(value)) {
+		return false;
+	}
+	return value.every(isPrimitiveRecordAllowingNull);
+};
 
 export const makeStepDataWithErrorMessage = (
 	errorMessage: string,
@@ -63,7 +89,7 @@ export const replaceNullWithUndefined = (
 			formData[key] = undefined;
 		}
 
-		if (isPrimitiveRecord(value)) {
+		if (isPrimitiveRecordAllowingNull(value)) {
 			Object.keys(value).forEach((nestedkey) => {
 				const nestedValue = value[nestedkey];
 				if ((nestedValue as unknown) === null) {
@@ -72,7 +98,7 @@ export const replaceNullWithUndefined = (
 			});
 		}
 
-		if (isArrayOfPrimitiveRecords(value)) {
+		if (isArrayOfPrimitiveRecordsAllowingNull(value)) {
 			value.forEach((objectInArray) => {
 				Object.keys(objectInArray).forEach((keyOfObjectInArray) => {
 					const valueOfObjectInArray = objectInArray[keyOfObjectInArray];

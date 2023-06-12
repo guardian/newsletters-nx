@@ -31,7 +31,7 @@ export const isPrimitiveRecord = (value: unknown): value is PrimitiveRecord => {
 	if (Array.isArray(value)) {
 		return false;
 	}
-	return Object.keys(value).every(
+	return Object.values(value).every(
 		(propertyValue) =>
 			typeof propertyValue === 'boolean' ||
 			typeof propertyValue === 'number' ||
