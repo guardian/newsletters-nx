@@ -60,7 +60,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		<>
 			<SimpleForm
 				title={`Edit ${originalItem.identityName}`}
-				initalData={item}
+				initialData={item}
 				submit={requestUpdate}
 				schema={newsletterDataSchema.pick({
 					name: true,

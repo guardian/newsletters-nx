@@ -29,5 +29,6 @@ The first step is to enter the name of your newsletter. For example,  **Down to 
 	schema: formSchemas.startDraftNewsletter,
 	role: 'CREATE_START',
 	canSkipTo: true,
+	skippingWillPersistLocalChanges: true,
 	executeSkip: executeCreate,
 };

@@ -24,6 +24,11 @@ const getArrayItemTypeAndRecordSchema = (
 	zod: ZodTypeAny,
 ): [FieldDef['arrayItemType'], ZodObject<ZodRawShape> | undefined] => {
 	const unwrappedZod = recursiveUnwrap(zod);
+
+	if (unwrappedZod instanceof ZodObject) {
+		return [undefined, unwrappedZod];
+	}
+
 	if (!(unwrappedZod instanceof ZodArray)) {
 		return [undefined, undefined];
 	}

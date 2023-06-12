@@ -1,3 +1,4 @@
+import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { WizardLayout, WizardStepLayout } from './types';
 
@@ -8,6 +9,7 @@ export type StepListing = {
 	parentStepId?: WizardStepLayout['parentStepId'];
 	canSkipTo?: boolean;
 	canSkipFrom?: boolean;
+	skippingWillPersistLocalChanges?: boolean;
 	schema?: ZodObject<ZodRawShape>;
 	isOptional: boolean;
 };
@@ -30,8 +32,12 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 					parentStepId: step.parentStepId,
 					canSkipTo: step.canSkipTo,
 					canSkipFrom: !!step.executeSkip,
+					skippingWillPersistLocalChanges: step.skippingWillPersistLocalChanges,
 					schema: step.schema,
-					isOptional: !step.schema || step.schema.safeParse({}).success,
+					isOptional:
+						!step.schema ||
+						step.schema.safeParse({}).success ||
+						step.schema.safeParse(getEmptySchemaData(step.schema)).success,
 				},
 			];
 		},

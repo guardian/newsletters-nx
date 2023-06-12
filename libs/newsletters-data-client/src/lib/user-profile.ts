@@ -2,7 +2,7 @@
  * The fields expected in user data obtained by the Ec2
  * load balancer when authenticating user via google auth,
  * based on the scopes requested in ''Google Auth' action
- * defined the the cdk config.
+ * defined the cdk config.
  */
 export type UserProfile = Partial<{
 	/** the unique user id used by the auth provider (in our case, google) */
