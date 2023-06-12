@@ -15,7 +15,7 @@ export const NewslettersListView = () => {
 		<ContentWrapper>
 			<Typography variant="h2">View launched newsletters</Typography>
 			<Typography>Please find below a list of existing newsletters.</Typography>
-			<NewslettersTable newsletters={newsLetters} />;
+			<NewslettersTable newsletters={newsLetters} />
 		</ContentWrapper>
 	);
 };
