@@ -48,6 +48,15 @@ const DRAFT_WITH_DATES: DraftNewsletterData = {
 	thrasherDate: new Date('10-10-2021'),
 };
 
+const FORM_DATA_WITH_UNDEFINED: FormDataRecord = {
+	name: 'test name',
+	designBriefDoc: undefined,
+};
+const DRAFT_WITH_UNDEFINED: DraftNewsletterData = {
+	name: 'test name',
+	designBriefDoc: undefined,
+};
+
 describe('formDataToDraftNewsletterData', () => {
 	it('will convert valid simple values', () => {
 		const output = formDataToDraftNewsletterData(SIMPLE_VALID_FORM_DATA);
@@ -123,6 +132,15 @@ describe('formDataToDraftNewsletterData', () => {
 	it('manages Date conversions, for dates stored as strings or Date objects', () => {
 		const output = formDataToDraftNewsletterData(FORM_DATA_WITH_DATES);
 		expect(output).toEqual(DRAFT_WITH_DATES);
+	});
+
+	it('preserves undefined values', () => {
+		const output = formDataToDraftNewsletterData(FORM_DATA_WITH_UNDEFINED);
+		expect(output).toEqual(DRAFT_WITH_UNDEFINED);
+
+		expect(Object.entries(output)).toEqual(
+			Object.entries(DRAFT_WITH_UNDEFINED),
+		);
 	});
 });
 

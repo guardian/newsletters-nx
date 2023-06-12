@@ -1,6 +1,15 @@
 import type { FormDataRecord } from '@newsletters-nx/newsletters-data-client';
+import {
+	isArrayOfPrimitiveRecords,
+	isPrimitiveRecord,
+} from '@newsletters-nx/newsletters-data-client';
 import type { ZodIssue } from 'zod';
-import type { FailureDetails, WizardStepData, WizardStepLayout } from './types';
+import type {
+	FailureDetails,
+	WizardFormData,
+	WizardStepData,
+	WizardStepLayout,
+} from './types';
 
 export const makeStepDataWithErrorMessage = (
 	errorMessage: string,
@@ -41,4 +50,38 @@ export const validateIncomingFormData = (
 	}
 
 	return undefined;
+};
+
+/** recursively replace any `null` with `undefined` */
+export const replaceNullWithUndefined = (
+	formData: WizardFormData,
+): WizardFormData => {
+	Object.keys(formData).forEach((key) => {
+		const value = formData[key];
+
+		if (value === null) {
+			formData[key] = undefined;
+		}
+
+		if (isPrimitiveRecord(value)) {
+			Object.keys(value).forEach((nestedkey) => {
+				const nestedValue = value[nestedkey];
+				if ((nestedValue as unknown) === null) {
+					value[nestedkey] = undefined;
+				}
+			});
+		}
+
+		if (isArrayOfPrimitiveRecords(value)) {
+			value.forEach((objectInArray) => {
+				Object.keys(objectInArray).forEach((keyOfObjectInArray) => {
+					const valueOfObjectInArray = objectInArray[keyOfObjectInArray];
+					if ((valueOfObjectInArray as unknown) === null) {
+						objectInArray[keyOfObjectInArray] = undefined;
+					}
+				});
+			});
+		}
+	});
+	return formData;
 };
