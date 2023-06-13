@@ -9,17 +9,21 @@ import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
+import type { UserProfile } from '../user-profile';
 
 export class LaunchService {
 	draftStorage: DraftStorage;
 	newsletterStorage: NewsletterStorage;
+	userProfile: UserProfile;
 
 	constructor(
 		draftStorage: DraftStorage,
 		newsletterStorage: NewsletterStorage,
+		userProfile: UserProfile,
 	) {
 		this.draftStorage = draftStorage;
 		this.newsletterStorage = newsletterStorage;
+		this.userProfile = userProfile;
 	}
 
 	async launchDraft(
@@ -44,6 +48,7 @@ export class LaunchService {
 
 		const newsletterCreateResponse = await newsletterStorage.create(
 			draftWithDefaultsThenExtraValues,
+			this.userProfile,
 		);
 		if (!newsletterCreateResponse.ok) {
 			return newsletterCreateResponse;

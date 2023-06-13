@@ -1,53 +1,86 @@
 import { isPartialNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
+	MetaData,
 	NewsletterData,
+	NewsletterDataWithMeta,
+	NewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
+import type { UserProfile } from '../user-profile';
 
 export const IMMUTABLE_PROPERTIES: Readonly<string[]> = [
 	'listId',
 	'identityName',
 ];
 
+export const makeBlankMeta = (): MetaData => ({
+	createdTimestamp: 0,
+	createdBy: 'unknown',
+	updatedTimestamp: 0,
+	updatedBy: 'unknown',
+});
+
 export abstract class NewsletterStorage {
 	abstract create(
 		draft: DraftNewsletterData,
+		user: UserProfile,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract read(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
+	>;
+
+	abstract readWithMeta(
+		listId: number,
+	): Promise<
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract readByName(
 		identityName: string,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
+	>;
+
+	abstract readByNameWithMeta(
+		identityName: string,
+	): Promise<
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract update(
 		listId: number,
 		modifications: Partial<NewsletterData>,
+		user: UserProfile,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract delete(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	>;
 
 	abstract list(): Promise<
-		SuccessfulStorageResponse<NewsletterData[]> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
+		| UnsuccessfulStorageResponse
 	>;
 
 	getModificationError(
@@ -96,6 +129,34 @@ export abstract class NewsletterStorage {
 			ok: false,
 			message,
 			reason: StorageRequestFailureReason.NotFound,
+		};
+	}
+
+	stripMeta(
+		data: NewsletterDataWithMeta | NewsletterData,
+	): NewsletterDataWithoutMeta {
+		return {
+			...data,
+			meta: undefined,
+		};
+	}
+
+	createNewMeta(user: UserProfile): MetaData {
+		const now = Date.now();
+		return {
+			createdTimestamp: now,
+			createdBy: user.email ?? '[unknown]',
+			updatedTimestamp: now,
+			updatedBy: user.email ?? '[unknown]',
+		};
+	}
+
+	updateMeta(meta: MetaData, user: UserProfile): MetaData {
+		const now = Date.now();
+		return {
+			...meta,
+			updatedTimestamp: now,
+			updatedBy: user.email ?? '[unknown]',
 		};
 	}
 }

@@ -1,16 +1,21 @@
 import type { S3Client } from '@aws-sdk/client-s3';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { isNewsletterData } from '../newsletter-data-type';
+import {
+	isNewsletterData,
+	isNewsletterDataWithMeta,
+} from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
 	NewsletterData,
+	NewsletterDataWithMeta,
+	NewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
-import { NewsletterStorage } from './NewsletterStorage';
+import type { UserProfile } from '../user-profile';
+import { makeBlankMeta, NewsletterStorage } from './NewsletterStorage';
 import { objectToNewsletter } from './objectToNewsletter';
 import {
 	fetchObject,
@@ -32,8 +37,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 	async create(
 		draft: DraftNewsletterData,
+		user: UserProfile,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		const draftReady = isNewsletterData(draft);
 
@@ -76,9 +83,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			};
 		}
 
-		const newNewsletter: NewsletterData = {
+		const newNewsletter: NewsletterDataWithMeta = {
 			...draft,
 			listId: nextId,
+			meta: this.createNewMeta(user),
 		};
 
 		try {
@@ -93,14 +101,15 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 		return {
 			ok: true,
-			data: newNewsletter,
+			data: this.stripMeta(newNewsletter),
 		};
 	}
 
 	delete(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		// todo - implement this. We don't want to delete published newsletters - we will probably move them to a deleted folder
 		//  this function is not exposed in the API layer; not required for MVP. Deletion will be an engineering task where required.
@@ -112,7 +121,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	}
 
 	async list(): Promise<
-		SuccessfulStorageResponse<NewsletterData[]> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
+		| UnsuccessfulStorageResponse
 	> {
 		try {
 			const listOfObjectsKeys = await this.getListOfObjectsKeys();
@@ -126,9 +136,12 @@ export class S3NewsletterStorage implements NewsletterStorage {
 					}
 				}),
 			);
+
+			const listWithoutMeta = data.map(this.stripMeta);
+
 			return {
 				ok: true,
-				data,
+				data: listWithoutMeta,
 			};
 		} catch (error) {
 			return {
@@ -142,90 +155,125 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	async read(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
-		const listOfObjectsKeys = await this.getListOfObjectsKeys();
-		const matchingKey = listOfObjectsKeys.find((key) => {
-			const keyParts = key.split(':').pop();
-			const id = keyParts?.split('.')[0];
-			return id === listId.toString();
-		});
-		if (matchingKey) {
-			const s3Object = await this.fetchObject(matchingKey);
-			const responseAsNewsletter = await objectToNewsletter(s3Object);
-			if (responseAsNewsletter) {
-				return {
-					ok: true,
-					data: responseAsNewsletter,
-				};
-			}
+		const newsletter = await this.fetchNewsletter(listId);
+
+		if (!newsletter) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with id ${listId}`,
+			};
 		}
 		return {
-			ok: false,
-			message: `failed to read newsletter with id ${listId}`,
+			ok: true,
+			data: this.stripMeta(newsletter),
+		};
+	}
+
+	async readWithMeta(
+		listId: number,
+	): Promise<
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
+		| UnsuccessfulStorageResponse
+	> {
+		const newsletter = await this.fetchNewsletter(listId);
+		if (!newsletter) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with id ${listId}`,
+			};
+		}
+		if (!isNewsletterDataWithMeta(newsletter)) {
+			return {
+				ok: false,
+				message: `newsletter with id ${listId} was missing meta data`,
+			};
+		}
+		return {
+			ok: true,
+			data: newsletter,
 		};
 	}
 
 	async readByName(
 		identityName: string,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
-		const listOfObjectsKeys = await this.getListOfObjectsKeys();
-		const matchingKey = listOfObjectsKeys.find((key) => {
-			const keyParts = key.split('/').pop();
-			const name = keyParts?.split(':')[0];
-			return name === identityName;
-		});
-		if (matchingKey) {
-			const s3Object = await this.fetchObject(matchingKey);
-			const responseAsNewsletter = await objectToNewsletter(s3Object);
-			if (responseAsNewsletter) {
-				return {
-					ok: true,
-					data: responseAsNewsletter,
-				};
-			}
+		const newsletter = await this.fetchNewsletterByName(identityName);
+		if (!newsletter) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with name '${identityName}'`,
+			};
+		}
+
+		return {
+			ok: true,
+			data: this.stripMeta(newsletter),
+		};
+	}
+
+	async readByNameWithMeta(
+		identityName: string,
+	): Promise<
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
+		| UnsuccessfulStorageResponse
+	> {
+		const newsletter = await this.fetchNewsletterByName(identityName);
+		if (!newsletter) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with name '${identityName}'`,
+			};
+		}
+		if (!isNewsletterDataWithMeta(newsletter)) {
+			return {
+				ok: false,
+				message: `newsletter with name '${identityName}' was missing meta data`,
+			};
 		}
 		return {
-			ok: false,
-			message: `failed to read newsletter with name ${identityName}`,
-			reason: undefined, // add an appropriate type here
+			ok: true,
+			data: newsletter,
 		};
 	}
 
 	async update(
 		listId: number,
 		modifications: Partial<NewsletterData>,
+		user: UserProfile,
 	): Promise<
-		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		const modificationError = this.getModificationError(modifications);
 		if (modificationError) {
 			modificationError;
 		}
-		const newsletterToUpdate = await this.read(listId);
 
-		if (!newsletterToUpdate.ok) {
-			return newsletterToUpdate;
+		const newsletterToUpdate = await this.fetchNewsletter(listId);
+		if (!newsletterToUpdate) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with id ${listId}`,
+			};
 		}
-		const updatedNewsletter = {
-			...newsletterToUpdate.data,
+		const updatedNewsletter: NewsletterDataWithMeta = {
+			...newsletterToUpdate,
 			...modifications,
+			meta: this.updateMeta(newsletterToUpdate.meta ?? makeBlankMeta(), user),
 		};
-
-		const updateNewsletterCommand = new PutObjectCommand({
-			Bucket: this.bucketName,
-			Key: `${this.OBJECT_PREFIX}${updatedNewsletter.identityName}:${updatedNewsletter.listId}.json`,
-			Body: JSON.stringify(updatedNewsletter),
-			ContentType: 'application/json',
-		});
+		const identifier = `${updatedNewsletter.identityName}:${updatedNewsletter.listId}.json`;
 
 		try {
-			await this.s3Client.send(updateNewsletterCommand);
+			await this.putObject(updatedNewsletter, identifier);
 			return {
 				ok: true,
-				data: updatedNewsletter,
+				data: this.stripMeta(updatedNewsletter),
 			};
 		} catch (err) {
 			return {
@@ -236,6 +284,50 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		}
 	}
 
+	private async fetchNewsletter(
+		listId: number,
+	): Promise<NewsletterDataWithMeta | NewsletterDataWithoutMeta | undefined> {
+		const listOfObjectsKeys = await this.getListOfObjectsKeys();
+		const matchingKey = listOfObjectsKeys.find((key) => {
+			const keyParts = key.split(':').pop();
+			const id = keyParts?.split('.')[0];
+			return id === listId.toString();
+		});
+
+		if (!matchingKey) {
+			return undefined;
+		}
+		const s3Object = await this.fetchObject(matchingKey);
+		const responseAsNewsletter: NewsletterData | undefined =
+			await objectToNewsletter(s3Object);
+		return responseAsNewsletter as
+			| NewsletterDataWithMeta
+			| NewsletterDataWithoutMeta
+			| undefined;
+	}
+
+	private async fetchNewsletterByName(
+		identityName: string,
+	): Promise<NewsletterDataWithMeta | NewsletterDataWithoutMeta | undefined> {
+		const listOfObjectsKeys = await this.getListOfObjectsKeys();
+		const matchingKey = listOfObjectsKeys.find((key) => {
+			const keyParts = key.split('/').pop();
+			const name = keyParts?.split(':')[0];
+			return name === identityName;
+		});
+
+		if (!matchingKey) {
+			return undefined;
+		}
+		const s3Object = await this.fetchObject(matchingKey);
+		const responseAsNewsletter: NewsletterData | undefined =
+			await objectToNewsletter(s3Object);
+		return responseAsNewsletter as
+			| NewsletterDataWithMeta
+			| NewsletterDataWithoutMeta
+			| undefined;
+	}
+
 	private fetchObject = fetchObject(this);
 	private putObject = putObject(this);
 	private objectExists = objectExists(this);
@@ -243,4 +335,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 	getModificationError = NewsletterStorage.prototype.getModificationError;
 	buildNoItemError = NewsletterStorage.prototype.buildNoItemError;
+	stripMeta = NewsletterStorage.prototype.stripMeta;
+	createNewMeta = NewsletterStorage.prototype.createNewMeta;
+	updateMeta = NewsletterStorage.prototype.updateMeta;
 }

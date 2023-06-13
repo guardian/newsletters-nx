@@ -1,5 +1,10 @@
 import { StorageRequestFailureReason } from '@newsletters-nx/newsletters-data-client';
-import type { ApiResponse } from '@newsletters-nx/newsletters-data-client';
+import type {
+	ApiResponse,
+	UserPermissions,
+	UserProfile,
+} from '@newsletters-nx/newsletters-data-client';
+import { permissionService } from '../services/permissions';
 
 // TODO - make the error response type generic
 export const makeErrorResponse = (message: string): ApiResponse => ({
@@ -30,4 +35,19 @@ export const mapStorageFailureReasonToStatusCode = (
 		default:
 			return 500;
 	}
+};
+
+export const makeAccessDeniedApiResponse = async (
+	profile: UserProfile | undefined,
+	permission: keyof UserPermissions,
+): Promise<ApiResponse | undefined> => {
+	if (!profile) {
+		return makeErrorResponse(`No user profile.`);
+	}
+	const permissions = await permissionService.get(profile);
+
+	if (!permissions[permission]) {
+		return makeErrorResponse(`User does not have permission to ${permission}`);
+	}
+	return undefined;
 };
