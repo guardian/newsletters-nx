@@ -18,3 +18,12 @@ export const underscoreCasedString = () =>
 			/^[a-zA-Z]+(_[a-zA-z]+)*$/,
 			'Must contain only words(upper or lower case letters) connected by underscores',
 		);
+
+
+export const kebabOrUnderscoreCasedString = () =>
+	z
+		.string()
+		.regex(
+			/^[a-z]+(?:[-_][a-z]+)*$/,
+			'Must be in lower case only, separated by dashes or underscores',
+		);
