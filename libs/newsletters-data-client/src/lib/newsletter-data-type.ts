@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import {
-	kebabCasedString,
+	kebabOrUnderscoreCasedString,
 	nonEmptyString,
 	underscoreCasedString,
-} from './zod-helpers/schema-helpers';
+} from './zod-helpers';
 
 export const themeEnumSchema = z.enum([
 	'news',
@@ -101,14 +101,14 @@ export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
  * The actual data model is TBC.
  */
 export const newsletterDataSchema = z.object({
-	identityName: kebabCasedString().describe('identity name'),
+	identityName: kebabOrUnderscoreCasedString().describe('identity name'),
 	name: nonEmptyString(),
 	category: newsletterCategoriesSchema,
 	restricted: z.boolean(),
 	status: z.enum(['paused', 'cancelled', 'live']),
 	emailConfirmation: z.boolean().describe('email confirmation'),
 	brazeSubscribeAttributeName: underscoreCasedString(),
-	brazeSubscribeEventNamePrefix: underscoreCasedString(),
+	brazeSubscribeEventNamePrefix: kebabOrUnderscoreCasedString(),
 	brazeNewsletterName: underscoreCasedString(),
 	theme: themeEnumSchema,
 	group: nonEmptyString(),

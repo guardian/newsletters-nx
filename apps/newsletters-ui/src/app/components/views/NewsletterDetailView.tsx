@@ -6,11 +6,19 @@ import { NewsletterDataDetails } from '../NewsletterDataDetails';
 export const NewsletterDetailView = () => {
 	const matchedItem = useLoaderData();
 	if (!matchedItem) {
-		return <article>NOT FOUND!</article>;
+		return (
+			<ContentWrapper>
+				<article>NOT FOUND!</article>
+			</ContentWrapper>
+		);
 	}
 
 	if (!isNewsletterData(matchedItem)) {
-		return <article>NOT VALID DATA!</article>;
+		return (
+			<ContentWrapper>
+				<article>NOT VALID DATA!</article>;
+			</ContentWrapper>
+		);
 	}
 
 	return (
