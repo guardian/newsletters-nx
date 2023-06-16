@@ -19,12 +19,3 @@ export const kebabOrUnderscoreCasedString = () =>
 			/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/,
 			'Must numbers or lower-case letters only, separated by dashes or underscores',
 		);
-
-
-export const kebabOrUnderscoreCasedString = () =>
-	z
-		.string()
-		.regex(
-			/^[a-z]+(?:[-_][a-z]+)*$/,
-			'Must be in lower case only, separated by dashes or underscores',
-		);
