@@ -3,7 +3,7 @@ import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
 	underscoreCasedString,
-} from './zod-helpers/schema-helpers';
+} from './zod-helpers';
 
 export const themeEnumSchema = z.enum([
 	'news',
@@ -108,7 +108,7 @@ export const newsletterDataSchema = z.object({
 	status: z.enum(['paused', 'cancelled', 'live']),
 	emailConfirmation: z.boolean().describe('email confirmation'),
 	brazeSubscribeAttributeName: underscoreCasedString(),
-	brazeSubscribeEventNamePrefix: underscoreCasedString(),
+	brazeSubscribeEventNamePrefix: kebabOrUnderscoreCasedString(),
 	brazeNewsletterName: underscoreCasedString(),
 	theme: themeEnumSchema,
 	group: nonEmptyString(),
