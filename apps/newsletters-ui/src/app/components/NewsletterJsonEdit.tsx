@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { usePermissions } from '../hooks/user-hooks';
 import { JsonEditor } from './JsonEditor';
 
 interface Props {
@@ -15,6 +16,8 @@ export const NewsletterJsonEdit = ({ originalItem }: Props) => {
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(
 		undefined,
 	);
+
+	const permissions = usePermissions();
 
 	const handleSubmission = async (record: NewsletterData) => {
 		const partial = {
@@ -31,6 +34,24 @@ export const NewsletterJsonEdit = ({ originalItem }: Props) => {
 			setErrorMessage(apiResonse.message ?? 'UNKNOWN ERROR');
 		}
 	};
+
+	if (!permissions) {
+		return null;
+	}
+
+	if (!permissions.useJsonEditor) {
+		return (
+			<>
+				<Typography variant="h2">Edit json for {item.identityName}</Typography>
+				<Alert severity="error">
+					<Typography>
+						This tool is intended for developer use only and you do not have
+						access.
+					</Typography>
+				</Alert>
+			</>
+		);
+	}
 
 	return (
 		<>
