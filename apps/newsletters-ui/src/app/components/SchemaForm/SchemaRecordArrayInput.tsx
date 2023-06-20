@@ -79,7 +79,7 @@ export const SchemaRecordArrayInput: FunctionComponent<
 									</Typography>
 								</Divider>
 							</Grid>
-							<Grid item xs={10}>
+							<Grid item xs={8}>
 								<RecordInput
 									record={propertyValue}
 									recordSchema={recordSchema}
@@ -91,8 +91,12 @@ export const SchemaRecordArrayInput: FunctionComponent<
 							</Grid>
 							<Grid
 								item
-								xs={2}
-								sx={{ display: 'flex', alignItems: 'center' }}
+								xs={4}
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									marginBottom: '22px',
+								}}
 								direction={'row'}
 							>
 								<Button
