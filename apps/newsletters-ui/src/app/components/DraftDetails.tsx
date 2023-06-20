@@ -16,7 +16,6 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
 import { NavigateButton } from './NavigateButton';
@@ -56,7 +55,6 @@ const propertyToNode = (
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
 
-	const palette = getPalette(draft.theme ?? '');
 	const issues = getDraftNotReadyIssues(draft);
 	const readyToLaunch = issues.length === 0;
 
@@ -64,7 +62,6 @@ export const DraftDetails = ({ draft }: Props) => {
 		<Container maxWidth="lg">
 			<Card
 				sx={{
-					backgroundColor: palette[800],
 					marginBottom: space[2],
 					marginTop: space[1],
 				}}
@@ -131,7 +128,7 @@ export const DraftDetails = ({ draft }: Props) => {
 					<TableContainer
 						component={Paper}
 						sx={{
-							backgroundColor: hasBeenDeleted ? 'pink' : undefined,
+							backgroundColor: hasBeenDeleted ? 'error.light' : 'primary.light',
 						}}
 					>
 						<Table size="small">
