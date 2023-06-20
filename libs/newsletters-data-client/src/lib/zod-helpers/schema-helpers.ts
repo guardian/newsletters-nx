@@ -7,7 +7,7 @@ export const underscoreCasedString = () =>
 	z
 		.string()
 		.regex(
-			/^[a-zA-Z0-9]+(_[a-zA-z0-9]+)*$/,
+			/^[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*$/,
 			'Must contain letters or numbers, connected by underscores',
 		);
 
