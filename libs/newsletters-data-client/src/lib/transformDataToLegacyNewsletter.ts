@@ -61,14 +61,16 @@ const deriveLegacyNewsletter = (
 	newsletterData: NewsletterData,
 ): LegacyNewsletter | undefined => {
 	try {
-		const statusBooleans = deriveBooleansFromStatus(newsletterData.status);
+		const { cancelled, paused } = deriveBooleansFromStatus(
+			newsletterData.status,
+		);
 
-		const legacyFormat: LegacyNewsletter = {
+		return {
 			identityName: newsletterData.identityName,
 			name: newsletterData.name,
-			cancelled: statusBooleans.cancelled,
+			cancelled,
 			restricted: newsletterData.restricted,
-			paused: statusBooleans.paused,
+			paused,
 			emailConfirmation: newsletterData.emailConfirmation,
 			brazeNewsletterName: newsletterData.brazeNewsletterName,
 			brazeSubscribeAttributeName: newsletterData.brazeSubscribeAttributeName,
@@ -92,8 +94,6 @@ const deriveLegacyNewsletter = (
 			brazeSubscribeAttributeNameAlternate:
 				newsletterData.brazeSubscribeAttributeNameAlternate,
 		};
-
-		return legacyFormat;
 	} catch (err) {
 		console.error(err);
 		return undefined;
