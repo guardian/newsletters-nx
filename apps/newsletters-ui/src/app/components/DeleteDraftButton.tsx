@@ -7,7 +7,10 @@ import {
 	Tooltip,
 } from '@mui/material';
 import { useState } from 'react';
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	noPermissionMessage,
+	type DraftNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
 import { usePermissions } from '../hooks/user-hooks';
 
@@ -53,7 +56,7 @@ export const DeleteDraftButton = ({
 					<Tooltip
 						title={
 							!userCanWriteToDrafts
-								? 'you do not have permission to delete'
+								? noPermissionMessage('writeToDrafts')
 								: undefined
 						}
 					>

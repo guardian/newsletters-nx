@@ -1,4 +1,5 @@
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { noPermissionMessage } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
 import { usePermissions } from '../hooks/user-hooks';
 import { NavigateButton } from './NavigateButton';
@@ -17,9 +18,7 @@ export const EditDraftNavigateButtons = ({ draft }: Props) => {
 					href={link.href}
 					disabled={!userCanEditDraft}
 					toolTip={
-						!userCanEditDraft
-							? 'you do not have permissions to edit drafts'
-							: undefined
+						!userCanEditDraft ? noPermissionMessage('writeToDrafts') : undefined
 					}
 				>
 					{link.label}

@@ -1,7 +1,10 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { useLoaderData } from 'react-router-dom';
-import { isDraft } from '@newsletters-nx/newsletters-data-client';
+import {
+	isDraft,
+	noPermissionMessage,
+} from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
 import { usePermissions } from '../../hooks/user-hooks';
 import { DraftsTable } from '../DraftsTable';
@@ -31,7 +34,7 @@ export const DraftListView = () => {
 					alignItems={'center'}
 				>
 					{!userCanWriteToDrafts && (
-						<Typography>You don't have permission to create drafts</Typography>
+						<Typography>{noPermissionMessage('writeToDrafts')}</Typography>
 					)}
 					<Button
 						disabled={!userCanWriteToDrafts}

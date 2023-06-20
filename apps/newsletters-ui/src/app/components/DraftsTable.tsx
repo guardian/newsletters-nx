@@ -2,7 +2,10 @@ import { Button, Tooltip } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
+import {
+	calculateProgress,
+	noPermissionMessage,
+} from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
 import { usePermissions } from '../hooks/user-hooks';
@@ -28,7 +31,10 @@ export const DraftsTable = ({ drafts }: Props) => {
 		})),
 	);
 
-	const { writeToDrafts: userCanWriteToDrafts } = usePermissions() ?? {};
+	const {
+		writeToDrafts: userCanWriteToDrafts,
+		launchNewsletters: userCanLaunch,
+	} = usePermissions() ?? {};
 
 	const columns = useMemo<Column[]>(
 		() => [
@@ -83,7 +89,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 								disabled={!userCanWriteToDrafts}
 								toolTip={
 									!userCanWriteToDrafts
-										? 'You do not have permission to edit'
+										? noPermissionMessage('writeToDrafts')
 										: ''
 								}
 							>
@@ -96,7 +102,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 						<Tooltip
 							title={
 								!userCanWriteToDrafts
-									? 'You do not have permission to edit'
+									? noPermissionMessage('writeToDrafts')
 									: ''
 							}
 						>
@@ -147,11 +153,11 @@ export const DraftsTable = ({ drafts }: Props) => {
 							href={`/newsletters/launch-newsletter/${draft.listId}`}
 							variant="outlined"
 							color="success"
-							disabled={!userCanWriteToDrafts}
+							disabled={!userCanLaunch}
 							toolTip={
-								!userCanWriteToDrafts
-									? 'You do not have permission to launch'
-									: ''
+								!userCanLaunch
+									? noPermissionMessage('launchNewsletters')
+									: undefined
 							}
 						>
 							<span role="img" aria-label="rocket">

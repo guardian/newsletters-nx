@@ -15,7 +15,10 @@ import {
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
+import {
+	getDraftNotReadyIssues,
+	noPermissionMessage,
+} from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
@@ -56,7 +59,7 @@ const propertyToNode = (
 
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
-	const { writeToDrafts: userCanEditDraft } = usePermissions() ?? {};
+	const { launchNewsletters: useCanLaunchNewsletter } = usePermissions() ?? {};
 	const palette = getPalette(draft.theme ?? '');
 	const issues = getDraftNotReadyIssues(draft);
 	const readyToLaunch = issues.length === 0;
@@ -104,10 +107,10 @@ export const DraftDetails = ({ draft }: Props) => {
 
 							{readyToLaunch && (
 								<NavigateButton
-									disabled={!userCanEditDraft}
+									disabled={!useCanLaunchNewsletter}
 									toolTip={
-										!userCanEditDraft
-											? 'you do not have permission to launch'
+										!useCanLaunchNewsletter
+											? noPermissionMessage('launchNewsletters')
 											: undefined
 									}
 									href={`/newsletters/launch-newsletter/${draft.listId}`}
