@@ -7,10 +7,8 @@ import {
 	Tooltip,
 } from '@mui/material';
 import { useState } from 'react';
-import {
-	noPermissionMessage,
-	type DraftNewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import { noPermissionMessage } from '@newsletters-nx/newsletters-data-client';
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
 import { usePermissions } from '../hooks/user-hooks';
 
