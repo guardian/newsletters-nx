@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { usePermissions } from '../hooks/user-hooks';
 import { formatCellDate } from './Cell';
 import { ExternalLinkButton } from './ExternalLinkButton';
 import { NavigateButton } from './NavigateButton';
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const NewslettersTable = ({ newsletters }: Props) => {
+	const { editNewsletters } = usePermissions() ?? {};
 	const data = newsletters;
 	const columns = useMemo<Column[]>(
 		() => [
@@ -63,9 +65,18 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Header: 'Edit',
 				Cell: ({ row: { original } }) => {
 					const newsletter = original as NewsletterData;
+
 					return (
 						<NavigateButton
-							href={`/newsletters/edit/${newsletter.identityName}`}
+							toolTip={
+								editNewsletters ? undefined : 'You do not have access to this'
+							}
+							href={
+								editNewsletters
+									? `/newsletters/edit/${newsletter.identityName}`
+									: undefined
+							}
+							disabled={!editNewsletters}
 						>
 							Edit
 						</NavigateButton>

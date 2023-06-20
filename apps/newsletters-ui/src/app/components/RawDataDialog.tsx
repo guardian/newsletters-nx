@@ -13,6 +13,7 @@ import {
 	TableRow,
 } from '@mui/material';
 import { useState } from 'react';
+import { usePermissions } from '../hooks/user-hooks';
 import { propertyToNode } from '../render-newsletter-properties';
 import { NavigateButton } from './NavigateButton';
 
@@ -30,6 +31,7 @@ export const RawDataDialog = ({
 	const [showRawData, setShowRawData] = useState(false);
 	const [showClipboardSuccess, setShowClipboardSuccess] = useState(false);
 	const [showClipboardFail, setShowClipboardFail] = useState(false);
+	const { useJsonEditor } = usePermissions() ?? {};
 
 	const copyJson = async () => {
 		try {
@@ -78,7 +80,15 @@ export const RawDataDialog = ({
 				<DialogActions>
 					<Button onClick={copyJson}>copy json</Button>
 					{editHref && (
-						<NavigateButton href={editHref}>edit json</NavigateButton>
+						<NavigateButton
+							href={editHref}
+							disabled={!useJsonEditor}
+							toolTip={
+								!useJsonEditor ? "You don't have access to that" : undefined
+							}
+						>
+							edit json
+						</NavigateButton>
 					)}
 					<Button
 						variant="contained"
