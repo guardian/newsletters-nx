@@ -1,4 +1,5 @@
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { Button } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -75,7 +76,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 						return (
 							<NavigateButton
 								href={link?.href}
-								startIcon={'⚙'}
+								startIcon={<SettingsIcon />}
 								variant="outlined"
 							>
 								Edit
@@ -88,7 +89,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 							onClick={() => {
 								setDraftInDialog(draft);
 							}}
-							startIcon={'⚙'}
+							startIcon={<SettingsIcon />}
 							variant="outlined"
 						>
 							Edit
