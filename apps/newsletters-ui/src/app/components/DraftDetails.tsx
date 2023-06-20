@@ -1,4 +1,5 @@
 import { space } from '@guardian/source-foundations';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import {
 	ButtonGroup,
 	Card,
@@ -101,11 +102,7 @@ export const DraftDetails = ({ draft }: Props) => {
 							{readyToLaunch && (
 								<NavigateButton
 									href={`/newsletters/launch-newsletter/${draft.listId}`}
-									endIcon={
-										<span role="img" aria-label="rocket">
-											🚀
-										</span>
-									}
+									startIcon={<RocketLaunchIcon />}
 									color="success"
 								>
 									Launch
