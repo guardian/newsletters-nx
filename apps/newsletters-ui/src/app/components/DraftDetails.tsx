@@ -14,8 +14,9 @@ import {
 } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
+import { usePermissions } from '../hooks/user-hooks';
 import { getPalette } from '../util';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
@@ -55,7 +56,7 @@ const propertyToNode = (
 
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
-
+	const { writeToDrafts: userCanEditDraft } = usePermissions() ?? {};
 	const palette = getPalette(draft.theme ?? '');
 	const issues = getDraftNotReadyIssues(draft);
 	const readyToLaunch = issues.length === 0;
@@ -103,6 +104,12 @@ export const DraftDetails = ({ draft }: Props) => {
 
 							{readyToLaunch && (
 								<NavigateButton
+									disabled={!userCanEditDraft}
+									toolTip={
+										!userCanEditDraft
+											? 'you do not have permission to launch'
+											: undefined
+									}
 									href={`/newsletters/launch-newsletter/${draft.listId}`}
 									endIcon={
 										<span role="img" aria-label="rocket">
