@@ -92,7 +92,11 @@ export const SchemaRecordArrayInput: FunctionComponent<
 							<Grid
 								item
 								xs={4}
-								sx={{ display: 'flex', alignItems: 'center', marginBottom: "22px" }}
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									marginBottom: '22px',
+								}}
 								direction={'row'}
 							>
 								<Button

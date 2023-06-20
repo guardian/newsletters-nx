@@ -11,7 +11,6 @@ export const underscoreCasedString = () =>
 			'Must contain letters or numbers, connected by underscores',
 		);
 
-
 export const kebabOrUnderscoreCasedString = () =>
 	z
 		.string()

@@ -61,7 +61,9 @@ const deriveLegacyNewsletter = (
 	newsletterData: NewsletterData,
 ): LegacyNewsletter | undefined => {
 	try {
-		const { cancelled, paused } = deriveBooleansFromStatus(newsletterData.status);
+		const { cancelled, paused } = deriveBooleansFromStatus(
+			newsletterData.status,
+		);
 
 		return {
 			identityName: newsletterData.identityName,
