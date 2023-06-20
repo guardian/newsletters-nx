@@ -1,12 +1,14 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Button, Container, Stack, Typography } from '@mui/material';
 import { useLoaderData } from 'react-router-dom';
 import { isDraft } from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
+import { usePermissions } from '../../hooks/user-hooks';
 import { DraftsTable } from '../DraftsTable';
 
 export const DraftListView = () => {
 	const list = useLoaderData();
+	const { writeToDrafts: userCanWriteToDrafts } = usePermissions() ?? {};
 	if (!list || !Array.isArray(list)) {
 		return <nav>No Drafts</nav>;
 	}
@@ -20,13 +22,19 @@ export const DraftListView = () => {
 			</Typography>
 			<DraftsTable drafts={drafts} />
 			<Container maxWidth="lg">
-				<Box
+				<Stack
 					paddingX={1}
 					paddingBottom={1}
-					display={'flex'}
+					spacing={2}
+					direction={'row'}
 					justifyContent={'flex-end'}
+					alignItems={'center'}
 				>
+					{!userCanWriteToDrafts && (
+						<Typography>You don't have permission to create drafts</Typography>
+					)}
 					<Button
+						disabled={!userCanWriteToDrafts}
 						variant="contained"
 						endIcon={<AddIcon />}
 						href={'/newsletters/newsletter-data'}
@@ -34,7 +42,7 @@ export const DraftListView = () => {
 					>
 						New draft
 					</Button>
-				</Box>
+				</Stack>
 			</Container>
 		</ContentWrapper>
 	);
