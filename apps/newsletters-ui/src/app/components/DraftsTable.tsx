@@ -1,10 +1,11 @@
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
+import { usePermissions } from '../hooks/user-hooks';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftDialog } from './EditDraftDialog';
@@ -26,6 +27,9 @@ export const DraftsTable = ({ drafts }: Props) => {
 			progress: calculateProgress(draft),
 		})),
 	);
+
+	const { writeToDrafts: userCanWriteToDrafts } = usePermissions() ?? {};
+
 	const columns = useMemo<Column[]>(
 		() => [
 			{
@@ -76,6 +80,12 @@ export const DraftsTable = ({ drafts }: Props) => {
 								href={link?.href}
 								startIcon={'⚙'}
 								variant="outlined"
+								disabled={!userCanWriteToDrafts}
+								toolTip={
+									!userCanWriteToDrafts
+										? 'You do not have permission to edit'
+										: ''
+								}
 							>
 								Edit
 							</NavigateButton>
@@ -83,15 +93,26 @@ export const DraftsTable = ({ drafts }: Props) => {
 					}
 
 					return (
-						<Button
-							onClick={() => {
-								setDraftInDialog(draft);
-							}}
-							startIcon={'⚙'}
-							variant="outlined"
+						<Tooltip
+							title={
+								!userCanWriteToDrafts
+									? 'You do not have permission to edit'
+									: ''
+							}
 						>
-							Edit
-						</Button>
+							<span>
+								<Button
+									disabled={!userCanWriteToDrafts}
+									onClick={() => {
+										setDraftInDialog(draft);
+									}}
+									startIcon={'⚙'}
+									variant="outlined"
+								>
+									Edit
+								</Button>
+							</span>
+						</Tooltip>
 					);
 				},
 			},
@@ -126,6 +147,12 @@ export const DraftsTable = ({ drafts }: Props) => {
 							href={`/newsletters/launch-newsletter/${draft.listId}`}
 							variant="outlined"
 							color="success"
+							disabled={!userCanWriteToDrafts}
+							toolTip={
+								!userCanWriteToDrafts
+									? 'You do not have permission to launch'
+									: ''
+							}
 						>
 							<span role="img" aria-label="rocket">
 								🚀
@@ -135,7 +162,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 				},
 			},
 		],
-		[data],
+		[data, userCanWriteToDrafts],
 	);
 	return (
 		<>

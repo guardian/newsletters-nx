@@ -1,7 +1,15 @@
-import { Alert, AlertTitle, Box, Button, ButtonGroup } from '@mui/material';
+import {
+	Alert,
+	AlertTitle,
+	Box,
+	Button,
+	ButtonGroup,
+	Tooltip,
+} from '@mui/material';
 import { useState } from 'react';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
+import { usePermissions } from '../hooks/user-hooks';
 
 interface Props {
 	draft: DraftNewsletterData;
@@ -20,6 +28,7 @@ export const DeleteDraftButton = ({
 	const [deleteErrorMessage, setDeleteErrorMessage] = useState<
 		string | undefined
 	>(undefined);
+	const { writeToDrafts: userCanWriteToDrafts } = usePermissions() ?? {};
 
 	const sendDeleteRequest = async () => {
 		setShowConfirmationButton(false);
@@ -41,16 +50,27 @@ export const DeleteDraftButton = ({
 		<Box marginTop={margin} marginBottom={margin}>
 			{!hasBeenDeleted && !showConfirmationButton && (
 				<ButtonGroup>
-					<Button
-						color="error"
-						variant="outlined"
-						onClick={() => {
-							setDeleteErrorMessage(undefined);
-							setShowConfirmationButton(true);
-						}}
+					<Tooltip
+						title={
+							!userCanWriteToDrafts
+								? 'you do not have permission to delete'
+								: undefined
+						}
 					>
-						delete
-					</Button>
+						<span>
+							<Button
+								color="error"
+								variant="outlined"
+								disabled={!userCanWriteToDrafts}
+								onClick={() => {
+									setDeleteErrorMessage(undefined);
+									setShowConfirmationButton(true);
+								}}
+							>
+								delete
+							</Button>
+						</span>
+					</Tooltip>
 				</ButtonGroup>
 			)}
 			{!hasBeenDeleted && showConfirmationButton && (
