@@ -1,9 +1,4 @@
 import styled from '@emotion/styled';
-import {
-	brand,
-	space,
-	textSansObjectStyles,
-} from '@guardian/source-foundations';
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
@@ -15,25 +10,10 @@ const Frame = styled.div`
 	box-sizing: border-box;
 	align-items: stretch;
 
-	>
-		h1 {
-			${textSansObjectStyles.xlarge({ fontStyle: 'italic' })};
-			margin: 0;
-			color: ${brand[300]};
-		}
-	}
-
 	> main {
 		box-sizing: border-box;
 		flex: 1;
 		overflow: auto;
-	}
-
-	> footer {
-		box-sizing: border-box;
-		padding: ${space[1]}px;
-		border-top: 2px solid ${brand[300]};
-		background-color: ${brand[800]};
 	}
 `;
 
