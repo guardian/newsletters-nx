@@ -21,8 +21,8 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuParameterStoreReadPolicy",
       "GuAmiParameter",
       "GuHttpsEgressSecurityGroup",
-      "GuAutoScalingGroup",
       "GuWazuhAccess",
+      "GuAutoScalingGroup",
       "GuApplicationLoadBalancer",
       "GuStringParameter",
       "GuApplicationTargetGroup",
@@ -144,8 +144,16 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Properties": {
         "HealthCheckGracePeriod": 120,
         "HealthCheckType": "ELB",
-        "LaunchConfigurationName": {
-          "Ref": "AutoScalingGroupNewslettersapiLaunchConfig6EF45E9F",
+        "LaunchTemplate": {
+          "LaunchTemplateId": {
+            "Ref": "newslettersTESTnewslettersapi5AF64B53",
+          },
+          "Version": {
+            "Fn::GetAtt": [
+              "newslettersTESTnewslettersapi5AF64B53",
+              "LatestVersionNumber",
+            ],
+          },
         },
         "MaxSize": "2",
         "MinSize": "1",
@@ -171,11 +179,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             "Value": {
               "Ref": "LoggingStreamName",
             },
-          },
-          {
-            "Key": "Name",
-            "PropagateAtLaunch": true,
-            "Value": "NewslettersTool-TEST/AutoScalingGroupNewslettersapi",
           },
           {
             "Key": "Stack",
@@ -204,104 +207,20 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
     },
-    "AutoScalingGroupNewslettersapiInstanceProfile6DBAC8ED": {
-      "Properties": {
-        "Roles": [
-          {
-            "Ref": "InstanceRoleNewslettersapi01755604",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::InstanceProfile",
-    },
-    "AutoScalingGroupNewslettersapiLaunchConfig6EF45E9F": {
-      "DependsOn": [
-        "InstanceRoleNewslettersapi01755604",
-      ],
-      "Properties": {
-        "IamInstanceProfile": {
-          "Ref": "AutoScalingGroupNewslettersapiInstanceProfile6DBAC8ED",
-        },
-        "ImageId": {
-          "Ref": "AMINewslettersapi",
-        },
-        "InstanceType": "t4g.small",
-        "MetadataOptions": {
-          "HttpTokens": "required",
-        },
-        "SecurityGroups": [
-          {
-            "Fn::GetAtt": [
-              "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
-              "GroupId",
-            ],
-          },
-          {
-            "Fn::GetAtt": [
-              "WazuhSecurityGroup",
-              "GroupId",
-            ],
-          },
-        ],
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": [
-              "",
-              [
-                "#!/bin/bash
-set -e
-set +x
-aws s3 cp s3://",
-                {
-                  "Ref": "DistributionBucketName",
-                },
-                "/newsletters/TEST/newsletters-api/newsletters-api.zip /tmp
-mkdir -p /opt/newsletters-api
-unzip /tmp/newsletters-api.zip -d /opt/newsletters-api
-chown -R ubuntu /opt/newsletters-api
-# write out systemd file
-cat >/etc/systemd/system/newsletters-api.service <<EOL
-[Unit]
-Description=newsletters-api
-After=network.target
-[Service]
-WorkingDirectory=/opt/newsletters-api
-Type=simple
-User=ubuntu
-ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
-Restart=on-failure
-Environment=STAGE=TEST
-Environment=NEWSLETTERS_API_READ=true
-Environment=NEWSLETTERS_UI_SERVE=false
-Environment=NEWSLETTER_BUCKET_NAME=",
-                {
-                  "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
-                },
-                "
-Environment=USE_IN_MEMORY_STORAGE=false
-Environment=USER_PERMISSIONS='",
-                {
-                  "Ref": "UserPermissions",
-                },
-                "'
-[Install]
-WantedBy=multi-user.target
-EOL
-systemctl enable newsletters-api
-systemctl start newsletters-api",
-              ],
-            ],
-          },
-        },
-      },
-      "Type": "AWS::AutoScaling::LaunchConfiguration",
-    },
     "AutoScalingGroupNewsletterstoolASGDA0D2177": {
       "Properties": {
         "HealthCheckGracePeriod": 120,
         "HealthCheckType": "ELB",
-        "LaunchConfigurationName": {
-          "Ref": "AutoScalingGroupNewsletterstoolLaunchConfigBEDFBC1D",
+        "LaunchTemplate": {
+          "LaunchTemplateId": {
+            "Ref": "newslettersTESTnewsletterstool0AA07DA3",
+          },
+          "Version": {
+            "Fn::GetAtt": [
+              "newslettersTESTnewsletterstool0AA07DA3",
+              "LatestVersionNumber",
+            ],
+          },
         },
         "MaxSize": "2",
         "MinSize": "1",
@@ -329,11 +248,6 @@ systemctl start newsletters-api",
             },
           },
           {
-            "Key": "Name",
-            "PropagateAtLaunch": true,
-            "Value": "NewslettersTool-TEST/AutoScalingGroupNewsletterstool",
-          },
-          {
             "Key": "Stack",
             "PropagateAtLaunch": true,
             "Value": "newsletters",
@@ -359,98 +273,6 @@ systemctl start newsletters-api",
         },
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
-    },
-    "AutoScalingGroupNewsletterstoolInstanceProfile8E2BABCD": {
-      "Properties": {
-        "Roles": [
-          {
-            "Ref": "InstanceRoleNewsletterstoolDD0F3665",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::InstanceProfile",
-    },
-    "AutoScalingGroupNewsletterstoolLaunchConfigBEDFBC1D": {
-      "DependsOn": [
-        "InstanceRoleNewsletterstoolDD0F3665",
-      ],
-      "Properties": {
-        "IamInstanceProfile": {
-          "Ref": "AutoScalingGroupNewsletterstoolInstanceProfile8E2BABCD",
-        },
-        "ImageId": {
-          "Ref": "AMINewsletterstool",
-        },
-        "InstanceType": "t4g.small",
-        "MetadataOptions": {
-          "HttpTokens": "required",
-        },
-        "SecurityGroups": [
-          {
-            "Fn::GetAtt": [
-              "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
-              "GroupId",
-            ],
-          },
-          {
-            "Fn::GetAtt": [
-              "WazuhSecurityGroup",
-              "GroupId",
-            ],
-          },
-        ],
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": [
-              "",
-              [
-                "#!/bin/bash
-set -e
-set +x
-aws s3 cp s3://",
-                {
-                  "Ref": "DistributionBucketName",
-                },
-                "/newsletters/TEST/newsletters-tool/newsletters-tool.zip /tmp
-mkdir -p /opt/newsletters-tool
-unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
-chown -R ubuntu /opt/newsletters-tool
-# write out systemd file
-cat >/etc/systemd/system/newsletters-api.service <<EOL
-[Unit]
-Description=newsletters-tool
-After=network.target
-[Service]
-WorkingDirectory=/opt/newsletters-tool
-Type=simple
-User=ubuntu
-ExecStart=/usr/bin/node /opt/newsletters-tool/dist/apps/newsletters-api/index.cjs
-Restart=on-failure
-Environment=STAGE=TEST
-Environment=NEWSLETTERS_API_READ=false
-Environment=NEWSLETTERS_UI_SERVE=true
-Environment=NEWSLETTER_BUCKET_NAME=",
-                {
-                  "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
-                },
-                "
-Environment=USE_IN_MEMORY_STORAGE=false
-Environment=USER_PERMISSIONS='",
-                {
-                  "Ref": "UserPermissions",
-                },
-                "'
-[Install]
-WantedBy=multi-user.target
-EOL
-systemctl enable newsletters-api
-systemctl start newsletters-api",
-              ],
-            ],
-          },
-        },
-      },
-      "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
     "BlockRequests2F3FC38F": {
       "Properties": {
@@ -1151,6 +973,27 @@ systemctl start newsletters-api",
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
+    "IdPAccessNewsletterstooltoNewslettersToolTESTWazuhSecurityGroupEA935F8930007A9D4FC2": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
+            "GroupId",
+          ],
+        },
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "IdPAccessNewsletterstoolCB424E42",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
     "InstanceRoleNewslettersapi01755604": {
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -1436,6 +1279,27 @@ systemctl start newsletters-api",
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
+    "LoadBalancerNewslettersapiSecurityGrouptoNewslettersToolTESTWazuhSecurityGroupEA935F893000A18CA20B": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
+            "GroupId",
+          ],
+        },
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerNewslettersapiSecurityGroup874628D3",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
     "LoadBalancerNewsletterstoolE9AB350F": {
       "Properties": {
         "LoadBalancerAttributes": [
@@ -1548,6 +1412,27 @@ systemctl start newsletters-api",
         "DestinationSecurityGroupId": {
           "Fn::GetAtt": [
             "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
+            "GroupId",
+          ],
+        },
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerNewsletterstoolSecurityGroup5FD4AD1C",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "LoadBalancerNewsletterstoolSecurityGrouptoNewslettersToolTESTWazuhSecurityGroupEA935F8930004A24C1D0": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
             "GroupId",
           ],
         },
@@ -2046,6 +1931,419 @@ systemctl start newsletters-api",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
+    },
+    "WazuhSecurityGroupfromNewslettersToolTESTIdPAccessNewsletterstoolD34AC7153000D1520231": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "IdPAccessNewsletterstoolCB424E42",
+            "GroupId",
+          ],
+        },
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "WazuhSecurityGroupfromNewslettersToolTESTLoadBalancerNewslettersapiSecurityGroup64654FDD3000F10683F0": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerNewslettersapiSecurityGroup874628D3",
+            "GroupId",
+          ],
+        },
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "WazuhSecurityGroupfromNewslettersToolTESTLoadBalancerNewsletterstoolSecurityGroup304BBB8030003C984338": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 3000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerNewsletterstoolSecurityGroup5FD4AD1C",
+            "GroupId",
+          ],
+        },
+        "ToPort": 3000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "newslettersTESTnewslettersapi5AF64B53": {
+      "Properties": {
+        "LaunchTemplateData": {
+          "IamInstanceProfile": {
+            "Arn": {
+              "Fn::GetAtt": [
+                "newslettersTESTnewslettersapiProfile1FE4092A",
+                "Arn",
+              ],
+            },
+          },
+          "ImageId": {
+            "Ref": "AMINewslettersapi",
+          },
+          "InstanceType": "t4g.small",
+          "MetadataOptions": {
+            "HttpTokens": "required",
+          },
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "GuHttpsEgressSecurityGroupNewslettersapiE3C8E8F2",
+                "GroupId",
+              ],
+            },
+            {
+              "Fn::GetAtt": [
+                "WazuhSecurityGroup",
+                "GroupId",
+              ],
+            },
+          ],
+          "TagSpecifications": [
+            {
+              "ResourceType": "instance",
+              "Tags": [
+                {
+                  "Key": "gu:cdk:version",
+                  "Value": "TEST",
+                },
+                {
+                  "Key": "gu:repo",
+                  "Value": "guardian/newsletters-nx",
+                },
+                {
+                  "Key": "Name",
+                  "Value": "NewslettersTool-TEST/newsletters-TEST-newsletters-api",
+                },
+                {
+                  "Key": "Stack",
+                  "Value": "newsletters",
+                },
+                {
+                  "Key": "Stage",
+                  "Value": "TEST",
+                },
+              ],
+            },
+            {
+              "ResourceType": "volume",
+              "Tags": [
+                {
+                  "Key": "gu:cdk:version",
+                  "Value": "TEST",
+                },
+                {
+                  "Key": "gu:repo",
+                  "Value": "guardian/newsletters-nx",
+                },
+                {
+                  "Key": "Name",
+                  "Value": "NewslettersTool-TEST/newsletters-TEST-newsletters-api",
+                },
+                {
+                  "Key": "Stack",
+                  "Value": "newsletters",
+                },
+                {
+                  "Key": "Stage",
+                  "Value": "TEST",
+                },
+              ],
+            },
+          ],
+          "UserData": {
+            "Fn::Base64": {
+              "Fn::Join": [
+                "",
+                [
+                  "#!/bin/bash
+set -e
+set +x
+aws s3 cp s3://",
+                  {
+                    "Ref": "DistributionBucketName",
+                  },
+                  "/newsletters/TEST/newsletters-api/newsletters-api.zip /tmp
+mkdir -p /opt/newsletters-api
+unzip /tmp/newsletters-api.zip -d /opt/newsletters-api
+chown -R ubuntu /opt/newsletters-api
+# write out systemd file
+cat >/etc/systemd/system/newsletters-api.service <<EOL
+[Unit]
+Description=newsletters-api
+After=network.target
+[Service]
+WorkingDirectory=/opt/newsletters-api
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
+Restart=on-failure
+Environment=STAGE=TEST
+Environment=NEWSLETTERS_API_READ=true
+Environment=NEWSLETTERS_UI_SERVE=false
+Environment=NEWSLETTER_BUCKET_NAME=",
+                  {
+                    "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                  "
+Environment=USE_IN_MEMORY_STORAGE=false
+Environment=USER_PERMISSIONS='",
+                  {
+                    "Ref": "UserPermissions",
+                  },
+                  "'
+[Install]
+WantedBy=multi-user.target
+EOL
+systemctl enable newsletters-api
+systemctl start newsletters-api",
+                ],
+              ],
+            },
+          },
+        },
+        "TagSpecifications": [
+          {
+            "ResourceType": "launch-template",
+            "Tags": [
+              {
+                "Key": "gu:cdk:version",
+                "Value": "TEST",
+              },
+              {
+                "Key": "gu:repo",
+                "Value": "guardian/newsletters-nx",
+              },
+              {
+                "Key": "Name",
+                "Value": "NewslettersTool-TEST/newsletters-TEST-newsletters-api",
+              },
+              {
+                "Key": "Stack",
+                "Value": "newsletters",
+              },
+              {
+                "Key": "Stage",
+                "Value": "TEST",
+              },
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::EC2::LaunchTemplate",
+    },
+    "newslettersTESTnewslettersapiProfile1FE4092A": {
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewslettersapi01755604",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "newslettersTESTnewsletterstool0AA07DA3": {
+      "Properties": {
+        "LaunchTemplateData": {
+          "IamInstanceProfile": {
+            "Arn": {
+              "Fn::GetAtt": [
+                "newslettersTESTnewsletterstoolProfile5B560273",
+                "Arn",
+              ],
+            },
+          },
+          "ImageId": {
+            "Ref": "AMINewsletterstool",
+          },
+          "InstanceType": "t4g.small",
+          "MetadataOptions": {
+            "HttpTokens": "required",
+          },
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "GuHttpsEgressSecurityGroupNewsletterstoolA988BFEB",
+                "GroupId",
+              ],
+            },
+            {
+              "Fn::GetAtt": [
+                "WazuhSecurityGroup",
+                "GroupId",
+              ],
+            },
+          ],
+          "TagSpecifications": [
+            {
+              "ResourceType": "instance",
+              "Tags": [
+                {
+                  "Key": "gu:cdk:version",
+                  "Value": "TEST",
+                },
+                {
+                  "Key": "gu:repo",
+                  "Value": "guardian/newsletters-nx",
+                },
+                {
+                  "Key": "Name",
+                  "Value": "NewslettersTool-TEST/newsletters-TEST-newsletters-tool",
+                },
+                {
+                  "Key": "Stack",
+                  "Value": "newsletters",
+                },
+                {
+                  "Key": "Stage",
+                  "Value": "TEST",
+                },
+              ],
+            },
+            {
+              "ResourceType": "volume",
+              "Tags": [
+                {
+                  "Key": "gu:cdk:version",
+                  "Value": "TEST",
+                },
+                {
+                  "Key": "gu:repo",
+                  "Value": "guardian/newsletters-nx",
+                },
+                {
+                  "Key": "Name",
+                  "Value": "NewslettersTool-TEST/newsletters-TEST-newsletters-tool",
+                },
+                {
+                  "Key": "Stack",
+                  "Value": "newsletters",
+                },
+                {
+                  "Key": "Stage",
+                  "Value": "TEST",
+                },
+              ],
+            },
+          ],
+          "UserData": {
+            "Fn::Base64": {
+              "Fn::Join": [
+                "",
+                [
+                  "#!/bin/bash
+set -e
+set +x
+aws s3 cp s3://",
+                  {
+                    "Ref": "DistributionBucketName",
+                  },
+                  "/newsletters/TEST/newsletters-tool/newsletters-tool.zip /tmp
+mkdir -p /opt/newsletters-tool
+unzip /tmp/newsletters-tool.zip -d /opt/newsletters-tool
+chown -R ubuntu /opt/newsletters-tool
+# write out systemd file
+cat >/etc/systemd/system/newsletters-api.service <<EOL
+[Unit]
+Description=newsletters-tool
+After=network.target
+[Service]
+WorkingDirectory=/opt/newsletters-tool
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/node /opt/newsletters-tool/dist/apps/newsletters-api/index.cjs
+Restart=on-failure
+Environment=STAGE=TEST
+Environment=NEWSLETTERS_API_READ=false
+Environment=NEWSLETTERS_UI_SERVE=true
+Environment=NEWSLETTER_BUCKET_NAME=",
+                  {
+                    "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                  "
+Environment=USE_IN_MEMORY_STORAGE=false
+Environment=USER_PERMISSIONS='",
+                  {
+                    "Ref": "UserPermissions",
+                  },
+                  "'
+[Install]
+WantedBy=multi-user.target
+EOL
+systemctl enable newsletters-api
+systemctl start newsletters-api",
+                ],
+              ],
+            },
+          },
+        },
+        "TagSpecifications": [
+          {
+            "ResourceType": "launch-template",
+            "Tags": [
+              {
+                "Key": "gu:cdk:version",
+                "Value": "TEST",
+              },
+              {
+                "Key": "gu:repo",
+                "Value": "guardian/newsletters-nx",
+              },
+              {
+                "Key": "Name",
+                "Value": "NewslettersTool-TEST/newsletters-TEST-newsletters-tool",
+              },
+              {
+                "Key": "Stack",
+                "Value": "newsletters",
+              },
+              {
+                "Key": "Stage",
+                "Value": "TEST",
+              },
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::EC2::LaunchTemplate",
+    },
+    "newslettersTESTnewsletterstoolProfile5B560273": {
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewsletterstoolDD0F3665",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
     },
     "s3accesspolicy28B12BB3": {
       "Properties": {
