@@ -1,4 +1,4 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -19,7 +19,7 @@ const messageAboutRenderingOptions = `You will need to set the [rendering option
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
-const finishLayout: WizardStepLayout<DraftStorage> = {
+const finishLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown: staticMarkdown,
 	indicateStepsCompleteOnThisWizard: true,
 	label: 'Finish',
