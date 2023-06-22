@@ -10,14 +10,11 @@ import type { UserProfile } from '../user-profile';
 export type DraftWithoutId = DraftNewsletterData & { listId: undefined };
 export type DraftWithId = DraftNewsletterData & { listId: number };
 
-export type DraftWithMetaAndId = DraftNewsletterData & {
+export type DraftWithIdAndMeta = DraftNewsletterData & {
 	listId: number;
 	meta: MetaData;
 };
-export type DraftWithMetaButNoId = DraftNewsletterData & {
-	listId: undefined;
-	meta: MetaData;
-};
+
 export type DraftWithIdButNoMeta = DraftNewsletterData & {
 	listId: number;
 	meta: undefined;
@@ -59,7 +56,7 @@ export abstract class DraftStorage {
 		| UnsuccessfulStorageResponse
 	>;
 
-	stripMeta(data: DraftWithMetaAndId): DraftWithIdButNoMeta {
+	stripMeta(data: DraftWithIdAndMeta): DraftWithIdButNoMeta {
 		return stripMeta(data);
 	}
 

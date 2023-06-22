@@ -4,7 +4,7 @@ import {
 	ListObjectsCommand,
 	PutObjectCommand,
 } from '@aws-sdk/client-s3';
-import type { DraftWithMetaAndId } from '../DraftStorage';
+import type { DraftWithIdAndMeta } from '../DraftStorage';
 import type { S3DraftStorage } from '.';
 
 export const deleteObject =
@@ -45,7 +45,7 @@ export const getListOfObjectsKeys =
 	};
 
 export const putDraftObject =
-	(s3DraftStorage: S3DraftStorage) => async (draft: DraftWithMetaAndId) => {
+	(s3DraftStorage: S3DraftStorage) => async (draft: DraftWithIdAndMeta) => {
 		const key = s3DraftStorage.listIdToKey(draft.listId);
 		const body = JSON.stringify(draft);
 

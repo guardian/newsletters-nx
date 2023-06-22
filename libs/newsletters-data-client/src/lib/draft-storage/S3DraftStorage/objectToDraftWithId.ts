@@ -1,10 +1,10 @@
 import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import { isDraftNewsletterDataWithMeta } from '../../newsletter-data-type';
-import type { DraftWithMetaAndId } from '../DraftStorage';
+import type { DraftWithIdAndMeta } from '../DraftStorage';
 
 export const objectToDraftWithMetaAndId = async (
 	getObjectOutput: GetObjectCommandOutput,
-): Promise<DraftWithMetaAndId | undefined> => {
+): Promise<DraftWithIdAndMeta | undefined> => {
 	try {
 		const { Body } = getObjectOutput;
 		const content = await Body?.transformToString();
@@ -19,7 +19,7 @@ export const objectToDraftWithMetaAndId = async (
 			return undefined;
 		}
 
-		return parsedContent as DraftWithMetaAndId;
+		return parsedContent as DraftWithIdAndMeta;
 	} catch (err) {
 		console.warn('objectToDraft failed');
 		console.warn(err);

@@ -8,8 +8,8 @@ import { StorageRequestFailureReason } from '../../storage-response-types';
 import type { UserProfile } from '../../user-profile';
 import type {
 	DraftWithId,
+	DraftWithIdAndMeta,
 	DraftWithIdButNoMeta,
-	DraftWithMetaAndId,
 	DraftWithoutId,
 } from '../DraftStorage';
 import { DraftStorage } from '../DraftStorage';
@@ -144,7 +144,7 @@ export class S3DraftStorage extends DraftStorage {
 				);
 			}
 
-			const draftWithMetaAndId: DraftWithMetaAndId = {
+			const draftWithMetaAndId: DraftWithIdAndMeta = {
 				...draft,
 				meta: this.updateMeta(existingDraft?.meta ?? makeBlankMeta(), user),
 			};

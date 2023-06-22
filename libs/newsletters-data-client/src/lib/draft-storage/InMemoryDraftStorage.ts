@@ -8,15 +8,15 @@ import type { UserProfile } from '../user-profile';
 import { DraftStorage } from './DraftStorage';
 import type {
 	DraftWithId,
+	DraftWithIdAndMeta,
 	DraftWithIdButNoMeta,
-	DraftWithMetaAndId,
 	DraftWithoutId,
 } from './DraftStorage';
 
 // TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
 export class InMemoryDraftStorage implements DraftStorage {
-	private memory: DraftWithMetaAndId[];
+	private memory: DraftWithIdAndMeta[];
 
 	constructor(drafts?: DraftWithId[]) {
 		this.memory = drafts
@@ -35,7 +35,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 			meta: undefined,
 		};
 
-		const newDraftWithListIdAndMeta: DraftWithMetaAndId = {
+		const newDraftWithListIdAndMeta: DraftWithIdAndMeta = {
 			...newDraftWithListId,
 			meta: this.createNewMeta(user),
 		};
@@ -80,7 +80,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 			return Promise.resolve(response);
 		}
 
-		const updatedDraft: DraftWithMetaAndId = {
+		const updatedDraft: DraftWithIdAndMeta = {
 			...match,
 			...changeToDraft,
 			meta: this.updateMeta(match.meta, user),
