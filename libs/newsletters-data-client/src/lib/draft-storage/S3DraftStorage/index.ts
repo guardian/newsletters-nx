@@ -215,4 +215,8 @@ export class S3DraftStorage extends DraftStorage {
 	private getListOfObjectsKeys = getListOfObjectsKeys(this);
 	private fetchObject = fetchObject(this);
 	private deleteObject = deleteObject(this);
+
+	stripMeta = DraftStorage.prototype.stripMeta;
+	createNewMeta = DraftStorage.prototype.createNewMeta;
+	updateMeta = DraftStorage.prototype.updateMeta;
 }

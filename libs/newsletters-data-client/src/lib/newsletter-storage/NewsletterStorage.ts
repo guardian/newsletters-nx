@@ -1,4 +1,5 @@
 import type { MetaData } from '../meta-data-type';
+import { createNewMeta, stripMeta, updateMeta } from '../meta-data-type';
 import { isPartialNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
@@ -135,28 +136,14 @@ export abstract class NewsletterStorage {
 	stripMeta(
 		data: NewsletterDataWithMeta | NewsletterData,
 	): NewsletterDataWithoutMeta {
-		return {
-			...data,
-			meta: undefined,
-		};
+		return stripMeta(data);
 	}
 
 	createNewMeta(user: UserProfile): MetaData {
-		const now = Date.now();
-		return {
-			createdTimestamp: now,
-			createdBy: user.email ?? '[unknown]',
-			updatedTimestamp: now,
-			updatedBy: user.email ?? '[unknown]',
-		};
+		return createNewMeta(user);
 	}
 
 	updateMeta(meta: MetaData, user: UserProfile): MetaData {
-		const now = Date.now();
-		return {
-			...meta,
-			updatedTimestamp: now,
-			updatedBy: user.email ?? '[unknown]',
-		};
+		return updateMeta(meta, user);
 	}
 }

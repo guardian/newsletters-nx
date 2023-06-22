@@ -3,7 +3,8 @@ import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
-import type { DraftStorage, DraftWithId, DraftWithoutId } from './DraftStorage';
+import { DraftStorage } from './DraftStorage';
+import type { DraftWithId, DraftWithoutId } from './DraftStorage';
 
 // TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
@@ -111,4 +112,8 @@ export class InMemoryDraftStorage implements DraftStorage {
 		);
 		return currentHighestListId + 1;
 	}
+
+	stripMeta = DraftStorage.prototype.stripMeta;
+	createNewMeta = DraftStorage.prototype.createNewMeta;
+	updateMeta = DraftStorage.prototype.updateMeta;
 }
