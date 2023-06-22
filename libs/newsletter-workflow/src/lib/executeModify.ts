@@ -36,7 +36,7 @@ const doModify = async (
 
 	const serviceIsADraftInstance = isADraftStorage(service);
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- linting bug?
-	const ourDraftService: DraftStorage = serviceIsADraftInstance
+	const ourDraftStorage: DraftStorage = serviceIsADraftInstance
 		? service
 		: service.draftStorage;
 
@@ -74,7 +74,7 @@ const doModify = async (
 				...formDataToDraftNewsletterData(stepData.formData),
 				...listIdEntry,
 			};
-			const storageResponse = await ourDraftService.update(draftNewsletter);
+			const storageResponse = await ourDraftStorage.update(draftNewsletter);
 			if (storageResponse.ok) {
 				return {
 					data: draftNewsletterDataToFormData(storageResponse.data),
