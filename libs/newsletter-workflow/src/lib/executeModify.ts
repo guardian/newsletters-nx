@@ -64,6 +64,7 @@ const doModify = async (
 			};
 			const storageResponse = await service.draftStorage.update(
 				draftNewsletter,
+				service.userProfile,
 			);
 			if (storageResponse.ok) {
 				return {

@@ -1,28 +1,46 @@
+import { makeBlankMeta } from '../meta-data-type';
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
+import type { UserProfile } from '../user-profile';
 import { DraftStorage } from './DraftStorage';
-import type { DraftWithId, DraftWithoutId } from './DraftStorage';
+import type {
+	DraftWithId,
+	DraftWithIdButNoMeta,
+	DraftWithMetaAndId,
+	DraftWithoutId,
+} from './DraftStorage';
 
 // TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
 export class InMemoryDraftStorage implements DraftStorage {
-	private memory: DraftWithId[];
+	private memory: DraftWithMetaAndId[];
 
 	constructor(drafts?: DraftWithId[]) {
-		this.memory = drafts ?? [];
+		this.memory = drafts
+			? drafts.map((n) => ({
+					...n,
+					meta: makeBlankMeta(),
+			  }))
+			: [];
 	}
 
-	create(draft: DraftWithoutId) {
-		const newDraftWithListId: DraftWithId = {
+	create(draft: DraftWithoutId, user: UserProfile) {
+		const newDraftWithListId: DraftWithIdButNoMeta = {
 			...draft,
 			listId: this.getNextId(),
 			creationTimeStamp: Date.now(),
+			meta: undefined,
 		};
-		this.memory.push(newDraftWithListId);
-		const response: SuccessfulStorageResponse<DraftWithId> = {
+
+		const newDraftWithListIdAndMeta: DraftWithMetaAndId = {
+			...newDraftWithListId,
+			meta: this.createNewMeta(user),
+		};
+		this.memory.push(newDraftWithListIdAndMeta);
+		const response: SuccessfulStorageResponse<DraftWithIdButNoMeta> = {
 			ok: true,
 			data: newDraftWithListId,
 		};
@@ -40,14 +58,15 @@ export class InMemoryDraftStorage implements DraftStorage {
 			};
 			return Promise.resolve(response);
 		}
-		const response: SuccessfulStorageResponse<DraftWithId> = {
+
+		const response: SuccessfulStorageResponse<DraftWithIdButNoMeta> = {
 			ok: true,
-			data: match,
+			data: this.stripMeta(match),
 		};
 		return Promise.resolve(response);
 	}
 
-	update(changeToDraft: DraftWithId) {
+	update(changeToDraft: DraftWithId, user: UserProfile) {
 		const match = this.memory.find(
 			(existingDraft) => existingDraft.listId === changeToDraft.listId,
 		);
@@ -61,15 +80,16 @@ export class InMemoryDraftStorage implements DraftStorage {
 			return Promise.resolve(response);
 		}
 
-		const updatedDraft = {
+		const updatedDraft: DraftWithMetaAndId = {
 			...match,
 			...changeToDraft,
+			meta: this.updateMeta(match.meta, user),
 		};
 
 		this.memory.splice(this.memory.indexOf(match), 1, updatedDraft);
-		const response: SuccessfulStorageResponse<DraftWithId> = {
+		const response: SuccessfulStorageResponse<DraftWithIdButNoMeta> = {
 			ok: true,
-			data: updatedDraft,
+			data: this.stripMeta(updatedDraft),
 		};
 		return Promise.resolve(response);
 	}
@@ -87,17 +107,17 @@ export class InMemoryDraftStorage implements DraftStorage {
 		}
 
 		this.memory.splice(this.memory.indexOf(match), 1);
-		const response: SuccessfulStorageResponse<DraftWithId> = {
+		const response: SuccessfulStorageResponse<DraftWithIdButNoMeta> = {
 			ok: true,
-			data: match,
+			data: this.stripMeta(match),
 		};
 		return Promise.resolve(response);
 	}
 
 	readAll() {
-		const response: SuccessfulStorageResponse<DraftWithId[]> = {
+		const response: SuccessfulStorageResponse<DraftWithIdButNoMeta[]> = {
 			ok: true,
-			data: [...this.memory],
+			data: this.memory.map(this.stripMeta),
 		};
 		return Promise.resolve(response);
 	}

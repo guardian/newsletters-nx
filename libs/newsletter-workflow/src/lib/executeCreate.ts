@@ -52,10 +52,13 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 		...parseResult.data,
 	});
 
-	const storageResponse = await draftService.draftStorage.create({
-		...draft,
-		listId: undefined,
-	});
+	const storageResponse = await draftService.draftStorage.create(
+		{
+			...draft,
+			listId: undefined,
+		},
+		draftService.userProfile,
+	);
 	if (storageResponse.ok) {
 		return {
 			data: draftNewsletterDataToFormData(storageResponse.data),
