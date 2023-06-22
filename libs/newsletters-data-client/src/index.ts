@@ -7,6 +7,7 @@ export * from './lib/draft-storage';
 export * from './lib/draft-to-newsletter';
 export * from './lib/newsletter-storage';
 export * from './lib/launch-service';
+export * from './lib/draft-service';
 export * from './lib/transformDataToLegacyNewsletter';
 export * from './lib/wizard-button-type';
 export * from './lib/transformWizardData';
