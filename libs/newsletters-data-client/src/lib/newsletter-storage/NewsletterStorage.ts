@@ -1,7 +1,7 @@
+import type { MetaData } from '../meta-data-type';
 import { isPartialNewsletterData } from '../newsletter-data-type';
 import type {
 	DraftNewsletterData,
-	MetaData,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
