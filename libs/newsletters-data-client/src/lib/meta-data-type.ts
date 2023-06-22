@@ -1,4 +1,4 @@
-import { unknown, z } from 'zod';
+import { z } from 'zod';
 import type { UserProfile } from './user-profile';
 
 export const metaDataSchema = z.object({
