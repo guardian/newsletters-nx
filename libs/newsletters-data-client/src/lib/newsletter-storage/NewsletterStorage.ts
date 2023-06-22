@@ -139,4 +139,7 @@ export abstract class NewsletterStorage {
 	updateMeta(meta: MetaData, user: UserProfile): MetaData {
 		return updateMeta(meta, user);
 	}
+	updateMetaForLaunch(meta: MetaData, user: UserProfile): MetaData {
+		return updateMeta(meta, user, true);
+	}
 }

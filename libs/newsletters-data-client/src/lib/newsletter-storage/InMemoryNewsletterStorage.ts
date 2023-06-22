@@ -57,7 +57,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		const newNewsletterWithNewId: NewsletterDataWithMeta = {
 			...draft,
 			listId: this.getNextId(),
-			meta: this.updateMeta(draft.meta, user),
+			meta: this.updateMetaForLaunch(draft.meta, user),
 		};
 		this.memory.push(newNewsletterWithNewId);
 
@@ -193,4 +193,5 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	stripMeta = NewsletterStorage.prototype.stripMeta;
 	createNewMeta = NewsletterStorage.prototype.createNewMeta;
 	updateMeta = NewsletterStorage.prototype.updateMeta;
+	updateMetaForLaunch = NewsletterStorage.prototype.updateMetaForLaunch;
 }

@@ -84,7 +84,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const newNewsletter: NewsletterDataWithMeta = {
 			...draft,
 			listId: nextId,
-			meta: this.updateMeta(draft.meta, user),
+			meta: this.updateMetaForLaunch(draft.meta, user),
 		};
 
 		try {
@@ -336,4 +336,5 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	stripMeta = NewsletterStorage.prototype.stripMeta;
 	createNewMeta = NewsletterStorage.prototype.createNewMeta;
 	updateMeta = NewsletterStorage.prototype.updateMeta;
+	updateMetaForLaunch = NewsletterStorage.prototype.updateMetaForLaunch;
 }

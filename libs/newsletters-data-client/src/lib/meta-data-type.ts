@@ -4,8 +4,10 @@ import type { UserProfile } from './user-profile';
 export const metaDataSchema = z.object({
 	createdTimestamp: z.number(),
 	updatedTimestamp: z.number(),
+	launchTimestamp: z.number().optional(),
 	createdBy: z.string(),
 	updatedBy: z.string(),
+	launchedBy: z.string().optional(),
 });
 
 export type MetaData = z.infer<typeof metaDataSchema>;
@@ -20,8 +22,23 @@ export const createNewMeta = (user: UserProfile): MetaData => {
 	};
 };
 
-export const updateMeta = (meta: MetaData, user: UserProfile): MetaData => {
+export const updateMeta = (
+	meta: MetaData,
+	user: UserProfile,
+	isLaunch = false,
+): MetaData => {
 	const now = Date.now();
+
+	if (isLaunch) {
+		return {
+			...meta,
+			updatedTimestamp: now,
+			updatedBy: user.email ?? '[unknown]',
+			launchTimestamp: now,
+			launchedBy: user.email ?? '[unknown]',
+		};
+	}
+
 	return {
 		...meta,
 		updatedTimestamp: now,
