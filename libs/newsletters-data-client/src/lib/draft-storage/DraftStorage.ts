@@ -5,7 +5,6 @@ import type {
 	DraftNewsletterDataWithMeta,
 	DraftNewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
-import { isDraftNewsletterData } from '../newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
@@ -14,8 +13,6 @@ import type { UserProfile } from '../user-profile';
 
 export type DraftWithoutId = DraftNewsletterData & { listId: undefined };
 export type DraftWithId = DraftNewsletterData & { listId: number };
-
-export const isDraft = isDraftNewsletterData;
 
 export abstract class DraftStorage {
 	abstract create(

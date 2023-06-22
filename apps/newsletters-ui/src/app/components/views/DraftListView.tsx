@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { useLoaderData } from 'react-router-dom';
-import { isDraft } from '@newsletters-nx/newsletters-data-client';
+import { isDraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
 import { DraftsTable } from '../DraftsTable';
 
@@ -11,7 +11,7 @@ export const DraftListView = () => {
 		return <nav>No Drafts</nav>;
 	}
 
-	const drafts = list.filter(isDraft);
+	const drafts = list.filter(isDraftNewsletterData);
 	return (
 		<ContentWrapper>
 			<Typography variant="h2">View draft newsletters</Typography>
