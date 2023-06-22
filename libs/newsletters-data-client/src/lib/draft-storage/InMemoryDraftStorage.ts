@@ -66,6 +66,25 @@ export class InMemoryDraftStorage implements DraftStorage {
 		return Promise.resolve(response);
 	}
 
+	readWithMeta(listId: number) {
+		const match = this.memory.find((draft) => draft.listId === listId);
+
+		if (!match) {
+			const response: UnsuccessfulStorageResponse = {
+				ok: false,
+				message: `No draft with listId ${listId} found.`,
+				reason: StorageRequestFailureReason.NotFound,
+			};
+			return Promise.resolve(response);
+		}
+
+		const response: SuccessfulStorageResponse<DraftWithIdAndMeta> = {
+			ok: true,
+			data: match,
+		};
+		return Promise.resolve(response);
+	}
+
 	update(changeToDraft: DraftWithId, user: UserProfile) {
 		const match = this.memory.find(
 			(existingDraft) => existingDraft.listId === changeToDraft.listId,

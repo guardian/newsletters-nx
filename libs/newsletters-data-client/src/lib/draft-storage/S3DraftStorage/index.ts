@@ -50,8 +50,8 @@ export class S3DraftStorage extends DraftStorage {
 			});
 
 			//fetching the data from s3 again to make sure the put worked. Is this necessary?
-			const getObjectOutput = await this.fetchObject(this.listIdToKey(nextId));
-			const newDraft = await objectToDraftWithMetaAndId(getObjectOutput);
+			const newDraft = await this.fetchDraft(nextId);
+
 			if (!newDraft) {
 				return {
 					ok: false,
@@ -104,14 +104,12 @@ export class S3DraftStorage extends DraftStorage {
 		| UnsuccessfulStorageResponse
 	> {
 		try {
-			const key = this.listIdToKey(listId);
-			const object = await this.fetchObject(key);
-			const draft = await objectToDraftWithMetaAndId(object);
+			const draft = await this.fetchDraft(listId);
 
 			if (!draft) {
 				return {
 					ok: false,
-					message: `file ${key} was not a valid draft.`,
+					message: `file ${this.listIdToKey(listId)} was not a valid draft.`,
 					reason: StorageRequestFailureReason.DataInStoreNotValid,
 				};
 			}
@@ -119,6 +117,31 @@ export class S3DraftStorage extends DraftStorage {
 			return {
 				ok: true,
 				data: this.stripMeta(draft),
+			};
+		} catch (err) {
+			return errorToResponse(err, listId);
+		}
+	}
+
+	async readWithMeta(
+		listId: number,
+	): Promise<
+		SuccessfulStorageResponse<DraftWithIdAndMeta> | UnsuccessfulStorageResponse
+	> {
+		try {
+			const draft = await this.fetchDraft(listId);
+
+			if (!draft) {
+				return {
+					ok: false,
+					message: `file ${this.listIdToKey(listId)} was not a valid draft.`,
+					reason: StorageRequestFailureReason.DataInStoreNotValid,
+				};
+			}
+
+			return {
+				ok: true,
+				data: draft,
 			};
 		} catch (err) {
 			return errorToResponse(err, listId);
@@ -133,14 +156,13 @@ export class S3DraftStorage extends DraftStorage {
 		| UnsuccessfulStorageResponse
 	> {
 		try {
-			// fetch the exsting draft in order to read the meta data
-			const key = this.listIdToKey(draft.listId);
-			const object = await this.fetchObject(key);
-			const existingDraft = await objectToDraftWithMetaAndId(object);
+			const existingDraft = await this.fetchDraft(draft.listId);
 
 			if (!existingDraft?.meta) {
 				console.warn(
-					`Did not get valid meta data for ${key} - creating new meta data`,
+					`Did not get valid meta data for ${this.listIdToKey(
+						draft.listId,
+					)} - creating new meta data`,
 				);
 			}
 
@@ -152,10 +174,7 @@ export class S3DraftStorage extends DraftStorage {
 			await this.putDraftObject(draftWithMetaAndId);
 
 			//fetching the data from s3 again to make sure the put worked. Is this necessary?
-			const getObjectOutput = await this.fetchObject(
-				this.listIdToKey(draft.listId),
-			);
-			const updatedDraft = await objectToDraftWithMetaAndId(getObjectOutput);
+			const updatedDraft = await this.fetchDraft(draft.listId);
 
 			if (!updatedDraft) {
 				return {
@@ -183,9 +202,8 @@ export class S3DraftStorage extends DraftStorage {
 		| UnsuccessfulStorageResponse
 	> {
 		try {
+			const draftToDelete = await this.fetchDraft(listId);
 			const key = this.listIdToKey(listId);
-			const getObjectOutput = await this.fetchObject(key);
-			const draftToDelete = await objectToDraftWithMetaAndId(getObjectOutput);
 
 			if (!draftToDelete) {
 				return {
@@ -240,6 +258,15 @@ export class S3DraftStorage extends DraftStorage {
 			return undefined;
 		}
 		return listId;
+	}
+
+	private async fetchDraft(
+		listId: number,
+	): Promise<DraftWithIdAndMeta | undefined> {
+		const key = this.listIdToKey(listId);
+		const getObjectOutput = await this.fetchObject(key);
+		const maybeDraft = await objectToDraftWithMetaAndId(getObjectOutput);
+		return maybeDraft;
 	}
 
 	private putDraftObject = putDraftObject(this);

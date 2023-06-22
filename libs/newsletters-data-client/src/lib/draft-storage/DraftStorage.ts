@@ -36,6 +36,12 @@ export abstract class DraftStorage {
 		| UnsuccessfulStorageResponse
 	>;
 
+	abstract readWithMeta(
+		listId: number,
+	): Promise<
+		SuccessfulStorageResponse<DraftWithIdAndMeta> | UnsuccessfulStorageResponse
+	>;
+
 	abstract update(
 		draft: DraftWithId,
 		user: UserProfile,
