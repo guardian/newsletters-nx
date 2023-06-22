@@ -37,3 +37,10 @@ export const stripMeta = <T extends Partial<Record<string, unknown>>>(
 		meta: undefined,
 	};
 };
+
+export const makeBlankMeta = (): MetaData => ({
+	createdTimestamp: 0,
+	createdBy: 'unknown',
+	updatedTimestamp: 0,
+	updatedBy: 'unknown',
+});

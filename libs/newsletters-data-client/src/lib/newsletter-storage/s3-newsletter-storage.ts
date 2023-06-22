@@ -1,4 +1,5 @@
 import type { S3Client } from '@aws-sdk/client-s3';
+import { makeBlankMeta } from '../meta-data-type';
 import {
 	isNewsletterData,
 	isNewsletterDataWithMeta,
@@ -15,7 +16,7 @@ import type {
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
-import { makeBlankMeta, NewsletterStorage } from './NewsletterStorage';
+import { NewsletterStorage } from './NewsletterStorage';
 import { objectToNewsletter } from './objectToNewsletter';
 import {
 	fetchObject,

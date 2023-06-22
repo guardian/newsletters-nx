@@ -1,3 +1,4 @@
+import { makeBlankMeta } from '../meta-data-type';
 import type {
 	DraftNewsletterData,
 	NewsletterData,
@@ -11,7 +12,7 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
-import { makeBlankMeta, NewsletterStorage } from './NewsletterStorage';
+import { NewsletterStorage } from './NewsletterStorage';
 
 // TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
