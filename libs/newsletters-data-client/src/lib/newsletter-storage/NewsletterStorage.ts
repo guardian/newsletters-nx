@@ -2,7 +2,7 @@ import type { MetaData } from '../meta-data-type';
 import { createNewMeta, stripMeta, updateMeta } from '../meta-data-type';
 import { isPartialNewsletterData } from '../newsletter-data-type';
 import type {
-	DraftNewsletterData,
+	DraftNewsletterDataWithMeta,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
@@ -21,7 +21,7 @@ export const IMMUTABLE_PROPERTIES: Readonly<string[]> = [
 
 export abstract class NewsletterStorage {
 	abstract create(
-		draft: DraftNewsletterData,
+		draft: DraftNewsletterDataWithMeta,
 		user: UserProfile,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>

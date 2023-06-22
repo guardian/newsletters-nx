@@ -1,11 +1,11 @@
 import { makeBlankMeta } from '../meta-data-type';
 import type {
-	DraftNewsletterData,
+	DraftNewsletterDataWithMeta,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
-import { isNewsletterData } from '../newsletter-data-type';
+import { isNewsletterDataWithMeta } from '../newsletter-data-type';
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type {
 	SuccessfulStorageResponse,
@@ -28,11 +28,11 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			: [];
 	}
 
-	create(draft: DraftNewsletterData, user: UserProfile) {
+	create(draft: DraftNewsletterDataWithMeta, user: UserProfile) {
 		// TODO - use the schema.safeParse and if the test fails,
 		// use the list of issues to generate a message with the
 		// wrong/missing fields listed.
-		const draftReady = isNewsletterData(draft);
+		const draftReady = isNewsletterDataWithMeta(draft);
 		if (!draftReady) {
 			const error: UnsuccessfulStorageResponse = {
 				ok: false,
@@ -57,7 +57,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		const newNewsletterWithNewId: NewsletterDataWithMeta = {
 			...draft,
 			listId: this.getNextId(),
-			meta: this.createNewMeta(user),
+			meta: this.updateMeta(draft.meta, user),
 		};
 		this.memory.push(newNewsletterWithNewId);
 

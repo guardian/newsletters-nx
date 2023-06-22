@@ -1,15 +1,12 @@
 import type { S3Client } from '@aws-sdk/client-s3';
 import { makeBlankMeta } from '../meta-data-type';
-import {
-	isNewsletterData,
-	isNewsletterDataWithMeta,
-} from '../newsletter-data-type';
 import type {
-	DraftNewsletterData,
+	DraftNewsletterDataWithMeta,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
+import { isNewsletterDataWithMeta } from '../newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
@@ -37,13 +34,13 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	}
 
 	async create(
-		draft: DraftNewsletterData,
+		draft: DraftNewsletterDataWithMeta,
 		user: UserProfile,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse
 	> {
-		const draftReady = isNewsletterData(draft);
+		const draftReady = isNewsletterDataWithMeta(draft);
 
 		if (!draftReady) {
 			const error: UnsuccessfulStorageResponse = {
@@ -87,7 +84,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const newNewsletter: NewsletterDataWithMeta = {
 			...draft,
 			listId: nextId,
-			meta: this.createNewMeta(user),
+			meta: this.updateMeta(draft.meta, user),
 		};
 
 		try {
