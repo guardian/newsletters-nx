@@ -4,6 +4,7 @@ import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
 import type {
 	DraftNewsletterData,
 	NewsletterData,
+	RenderingOptions,
 } from './newsletter-data-type';
 import {
 	newsletterDataSchema,
@@ -19,23 +20,35 @@ const defaultNewsletterValues: DraftNewsletterData = {
 	figmaIncludesThrashers: false,
 } as const;
 
+export const defaultRenderingOptionsValues: Partial<RenderingOptions> = {
+	displayDate: false,
+	displayImageCaptions: false,
+	displayStandfirst: false,
+} as const;
+
 export const withDefaultNewsletterValuesAndDerivedFields = (
 	draft: DraftNewsletterData,
 ): DraftNewsletterData &
 	Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
 
+	if (draft.renderingOptions) {
+		return {
+			...defaultNewsletterValues,
+			...derivedFields,
+			...draft,
+			renderingOptions: {
+				...defaultRenderingOptionsValues,
+				...draft.renderingOptions,
+			},
+		};
+	}
+
 	return {
 		...defaultNewsletterValues,
 		...derivedFields,
 		...draft,
 	};
-};
-
-export const hasAllRequiredData = (draft: DraftNewsletterData): boolean => {
-	return newsletterDataSchema.safeParse(
-		withDefaultNewsletterValuesAndDerivedFields(draft),
-	).success;
 };
 
 export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
@@ -56,7 +69,7 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 
 const TOTAL_FIELD_COUNT = getDraftNotReadyIssues({}).length;
 
-export const renderingOptionsNotReadyIssues = (record: unknown) => {
+const renderingOptionsNotReadyIssues = (record: unknown) => {
 	const report = renderingOptionsSchema.safeParse(record);
 	if (!report.success) {
 		return report.error.issues;

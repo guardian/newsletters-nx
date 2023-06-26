@@ -7,6 +7,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	addSuffixToMakeTokenUnique,
+	defaultRenderingOptionsValues,
 	getDraftNotReadyIssues,
 	renderingOptionsSchema,
 	withDefaultNewsletterValuesAndDerivedFields,
@@ -46,7 +47,10 @@ export const getInitialStateForLaunch = async (
 	const hasRenderingOptionsIfNeeded =
 		draft.category === 'article-based'
 			? draft.renderingOptions
-				? renderingOptionsSchema.safeParse(draft.renderingOptions).success
+				? renderingOptionsSchema.safeParse({
+						...defaultRenderingOptionsValues,
+						...draft.renderingOptions,
+				  }).success
 				: false
 			: true;
 
