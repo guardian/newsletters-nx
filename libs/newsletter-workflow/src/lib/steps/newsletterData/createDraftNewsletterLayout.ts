@@ -1,10 +1,10 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
 
-export const createDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
+export const createDraftNewsletterLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown: `# Start creating a newsletter
 
 Welcome!  This wizard will guide you through the process of creating a newsletter using email-rendering.

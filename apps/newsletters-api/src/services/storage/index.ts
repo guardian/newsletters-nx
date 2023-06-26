@@ -1,4 +1,5 @@
 import {
+	DraftService,
 	InMemoryNewsletterStorage,
 	isNewsletterData,
 	LaunchService,
@@ -35,4 +36,12 @@ const newsletterStore: NewsletterStorage = isUsingInMemoryStore
 const makelaunchServiceForUser = (userProfile: UserProfile) =>
 	new LaunchService(draftStore, newsletterStore, userProfile);
 
-export { draftStore, newsletterStore, makelaunchServiceForUser };
+const makeDraftServiceForUser = (userProfile: UserProfile) =>
+	new DraftService(draftStore, userProfile);
+
+export {
+	draftStore,
+	newsletterStore,
+	makelaunchServiceForUser,
+	makeDraftServiceForUser,
+};

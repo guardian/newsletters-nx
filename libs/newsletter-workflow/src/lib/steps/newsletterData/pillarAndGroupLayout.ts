@@ -1,4 +1,4 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import {
 	getNextStepId,
 	getPreviousOrStartStepId,
@@ -35,7 +35,7 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const pillarAndGroupLayout: WizardStepLayout<DraftStorage> = {
+export const pillarAndGroupLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
 	label: 'Pillar and Group',
 	dynamicMarkdown(requestData, responseData) {

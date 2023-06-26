@@ -1,5 +1,5 @@
 import type {
-	DraftStorage,
+	DraftService,
 	DraftWithId,
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
@@ -16,16 +16,10 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { validateIncomingFormData } from '@newsletters-nx/state-machine';
 
-const isADraftStorage = (
-	service: LaunchService | DraftStorage,
-): service is DraftStorage => {
-	return typeof (service as LaunchService).launchDraft === 'undefined';
-};
-
 const doModify = async (
 	stepData: WizardStepData,
 	stepLayout?: WizardStepLayout,
-	service?: LaunchService | DraftStorage,
+	service?: LaunchService | DraftService,
 ): Promise<WizardExecutionSuccess | WizardExecutionFailure> => {
 	if (!service) {
 		return {
@@ -33,12 +27,6 @@ const doModify = async (
 			message: 'no draft storage instance',
 		};
 	}
-
-	const serviceIsADraftInstance = isADraftStorage(service);
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- linting bug?
-	const ourDraftService: DraftStorage = serviceIsADraftInstance
-		? service
-		: service.draftStorage;
 
 	if (stepData.formData) {
 		const { listId } = stepData.formData;
@@ -74,7 +62,10 @@ const doModify = async (
 				...formDataToDraftNewsletterData(stepData.formData),
 				...listIdEntry,
 			};
-			const storageResponse = await ourDraftService.update(draftNewsletter);
+			const storageResponse = await service.draftStorage.update(
+				draftNewsletter,
+				service.userProfile,
+			);
 			if (storageResponse.ok) {
 				return {
 					data: draftNewsletterDataToFormData(storageResponse.data),
@@ -92,12 +83,12 @@ const doModify = async (
 	};
 };
 
-export const executeModify: AsyncExecution<DraftStorage> = async (
+export const executeModify: AsyncExecution<DraftService> = async (
 	stepData: WizardStepData,
-	stepLayout?: WizardStepLayout<DraftStorage>,
-	draftStorage?: DraftStorage,
+	stepLayout?: WizardStepLayout<DraftService>,
+	draftService?: DraftService,
 ) => {
-	return doModify(stepData, stepLayout as WizardStepLayout, draftStorage);
+	return doModify(stepData, stepLayout as WizardStepLayout, draftService);
 };
 
 export const executeModifyWithinLaunch: AsyncExecution<LaunchService> = async (

@@ -1,4 +1,4 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import { getPreviousOrEditStartStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
@@ -17,7 +17,7 @@ You can see the full details of **{{name}}** on the [details page](drafts/{{list
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
-const finishLayout: WizardStepLayout<DraftStorage> = {
+const finishLayout: WizardStepLayout<DraftService> = {
 	indicateStepsCompleteOnThisWizard: true,
 	staticMarkdown: staticMarkdown,
 	label: 'Finish',

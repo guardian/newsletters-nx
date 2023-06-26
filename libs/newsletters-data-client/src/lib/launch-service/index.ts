@@ -1,7 +1,7 @@
 import type { DraftStorage } from '../draft-storage';
 import { withDefaultNewsletterValuesAndDerivedFields } from '../draft-to-newsletter';
 import type {
-	DraftNewsletterData,
+	DraftNewsletterDataWithMeta,
 	NewsletterData,
 } from '../newsletter-data-type';
 import type { NewsletterStorage } from '../newsletter-storage';
@@ -33,15 +33,17 @@ export class LaunchService {
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	> {
 		const { draftStorage, newsletterStorage } = this;
-		const draftGetResponse = await draftStorage.read(draftId);
+		const draftGetResponse = await draftStorage.readWithMeta(draftId);
 		if (!draftGetResponse.ok) {
 			return draftGetResponse;
 		}
 
-		const draftPopulatedWithDefaults: DraftNewsletterData =
-			withDefaultNewsletterValuesAndDerivedFields(draftGetResponse.data);
+		const draftPopulatedWithDefaults: DraftNewsletterDataWithMeta = {
+			...withDefaultNewsletterValuesAndDerivedFields(draftGetResponse.data),
+			meta: draftGetResponse.data.meta,
+		};
 
-		const draftWithDefaultsThenExtraValues: DraftNewsletterData = {
+		const draftWithDefaultsThenExtraValues: DraftNewsletterDataWithMeta = {
 			...draftPopulatedWithDefaults,
 			...extraValues,
 		};

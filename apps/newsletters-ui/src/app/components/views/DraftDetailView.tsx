@@ -1,5 +1,5 @@
 import { useLoaderData } from 'react-router-dom';
-import { isDraft } from '@newsletters-nx/newsletters-data-client';
+import { isDraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
 import { DraftDetails } from '../DraftDetails';
 
@@ -13,7 +13,7 @@ export const DraftDetailView = () => {
 		);
 	}
 
-	if (!isDraft(matchedItem)) {
+	if (!isDraftNewsletterData(matchedItem)) {
 		return <article>INVALID DATA</article>;
 	}
 

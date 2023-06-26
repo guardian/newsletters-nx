@@ -11,7 +11,10 @@ import {
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
 import { permissionService } from '../../services/permissions';
-import { draftStore, makelaunchServiceForUser } from '../../services/storage';
+import {
+	makeDraftServiceForUser,
+	makelaunchServiceForUser,
+} from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
 
 const getHttpCode = (error: StateMachineError): number => {
@@ -89,12 +92,11 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				return res.status(400).send(errorResponse);
 			}
 
-			const serviceInterface =
-				requestBody.wizardId === 'LAUNCH_NEWSLETTER'
-					? user.profile
-						? makelaunchServiceForUser(user.profile)
-						: undefined
-					: draftStore;
+			const serviceInterface = user.profile
+				? requestBody.wizardId === 'LAUNCH_NEWSLETTER'
+					? makelaunchServiceForUser(user.profile)
+					: makeDraftServiceForUser(user.profile)
+				: undefined;
 
 			if (!serviceInterface) {
 				const errorResponse: CurrentStepRouteResponse = {
