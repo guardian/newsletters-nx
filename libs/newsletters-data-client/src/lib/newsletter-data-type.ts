@@ -198,7 +198,7 @@ export type DraftNewsletterDataWithoutMeta = DraftNewsletterData & {
 export function isDraftNewsletterDataWithMeta(
 	subject: unknown,
 ): subject is DraftNewsletterDataWithMeta {
-	return newsletterDataSchema
+	return draftNewsletterDataSchema
 		.extend({ meta: metaDataSchema })
 		.safeParse(subject).success;
 }
