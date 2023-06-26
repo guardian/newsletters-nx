@@ -69,8 +69,11 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 
 const TOTAL_FIELD_COUNT = getDraftNotReadyIssues({}).length;
 
-const renderingOptionsNotReadyIssues = (record: unknown) => {
-	const report = renderingOptionsSchema.safeParse(record);
+const renderingOptionsNotReadyIssues = (record: Record<string, unknown>) => {
+	const report = renderingOptionsSchema.safeParse({
+		...defaultRenderingOptionsValues,
+		...record,
+	});
 	if (!report.success) {
 		return report.error.issues;
 	}
@@ -109,7 +112,7 @@ export const calculateProgress = (draft: DraftNewsletterData): number => {
 		(RENDERING_OPTIONS_FIELD_COUNT - renderingOptionsIssuesCount) /
 		RENDERING_OPTIONS_FIELD_COUNT;
 
-	// Arbitrary calculation - wieght the basic data as 2/3's of the total score
-	const combined = (basicDataRatio * 2 + renderingOptionsDataRatio) / 3;
+	// Arbitrary calculation - wieght the basic data as 1/4's of the total score
+	const combined = (basicDataRatio * 3 + renderingOptionsDataRatio) / 4;
 	return Math.floor(combined * 100);
 };
