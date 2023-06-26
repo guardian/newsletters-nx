@@ -1,7 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import {Grid, TextField} from "@mui/material";
+import {Grid, Select, TextField} from "@mui/material";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -9,8 +7,8 @@ import CardHeader from '@mui/material/CardHeader';
 import Collapse from '@mui/material/Collapse';
 import type {IconButtonProps} from '@mui/material/IconButton';
 import IconButton from '@mui/material/IconButton';
+import MenuItem from "@mui/material/MenuItem";
 import {styled} from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import type {ReactNode} from "react";
 import {useState} from "react";
 import {useLoaderData} from "react-router-dom";
@@ -33,13 +31,13 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 	}),
 }));
 
-interface RecipeReviewCardProps {
+interface ItemCardProps {
 	title: string;
 	formContent: ReactNode;
 }
 
-const RecipeReviewCard = ({title, formContent}: RecipeReviewCardProps) => {
-	const [expanded, setExpanded] = useState(false);
+const ItemCard = ({title, formContent}: ItemCardProps) => {
+	const [expanded, setExpanded] = useState(true);
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -60,25 +58,12 @@ const RecipeReviewCard = ({title, formContent}: RecipeReviewCardProps) => {
 				}
 				title={title}
 			/>
-			{/*<CardContent>*/}
-			{/*	<Typography variant="body2" color="text.secondary">*/}
-			{/*		This impressive paella is a perfect party dish and a fun meal to cook*/}
-			{/*		together with your guests. Add 1 cup of frozen peas along with the mussels,*/}
-			{/*		if you like.*/}
-			{/*	</Typography>*/}
-			{/*</CardContent>*/}
 			<Collapse in={expanded} timeout="auto" unmountOnExit>
 				<CardContent>
 					{formContent}
 				</CardContent>
 			</Collapse>
 			<CardActions disableSpacing>
-				{/*<IconButton aria-label="add to favorites">*/}
-				{/*	<FavoriteIcon/>*/}
-				{/*</IconButton>*/}
-				{/*<IconButton aria-label="share">*/}
-				{/*	<ShareIcon/>*/}
-				{/*</IconButton>*/}
 			</CardActions>
 		</Card>
 	);
@@ -86,15 +71,82 @@ const RecipeReviewCard = ({title, formContent}: RecipeReviewCardProps) => {
 
 interface BasicDetailsFormProps {
 	data: NewsletterData;
+	itemLabel: string;
 }
 
-const BasicDetailsForm = ({data: {name}}: BasicDetailsFormProps) => {
+const BasicDetailsForm = ({data, itemLabel}: BasicDetailsFormProps) => {
+	const [formState, setFormState] = useState<NewsletterData>(data);
+
+	const {listId, name, theme, status, category, emailConfirmation, group, frequency, identityName} = formState;
+
+
+	const categoriesMap: {
+		"article-based-legacy": string;
+		"fronts-based": string;
+		other: string;
+		"manual-send": string;
+		"article-based": string;
+	} = {
+		'article-based': 'Article Based',
+		'article-based-legacy': 'Article Based (Legacy)',
+		'fronts-based': 'Fronts Based',
+		'manual-send': 'Manual Send',
+		'other': 'Other',
+	}
+
+	const themeMap = {
+		news: "News",
+		opinion: "Opinion",
+		culture: "Culture",
+		sport: 'Sport',
+		lifestyle: 'Lifestyle',
+		features: 'Features',
+	};
+
 	return (<Grid
 		component="form"
 		container spacing={2}
 	>
 		<Grid item xs={12}>
-			<TextField id="name" label="Name" variant="outlined" value={name}/>
+			<TextField id="name" label="name" variant="outlined" defaultValue={name}/>
+		</Grid>
+		<Grid item xs={12}>
+			<TextField
+				error
+				id="outlined-error-helper-text"
+				label="Error"
+				defaultValue="Hello World"
+				helperText="Incorrect entry."
+			/>
+		</Grid>
+		<Grid item xs={12}>
+			<TextField id="theme" label="theme" variant="outlined" defaultValue={theme}/>
+		</Grid>
+		<Grid item xs={12}>
+			<Select
+				labelId="category"
+				id="category"
+				value={category}
+				label="Age"
+				onChange={({target: {value: category}}) => {
+					setFormState({...formState, category})
+				}}
+			>
+				{Object.keys(categoriesMap).map((key) => <MenuItem key={key} value={key}>{categoriesMap[key]}</MenuItem>)}
+			</Select>
+		</Grid>
+		<Grid item xs={12}>
+			<Select
+				labelId="theme"
+				id="theme"
+				value={theme}
+				label="Age"
+				onChange={({target: {value: theme}}) => {
+					setFormState({...formState, theme})
+				}}
+			>
+				{Object.keys(themeMap).map((key) => <MenuItem key={key} value={key}>{themeMap[key]}</MenuItem>)}
+			</Select>
 		</Grid>
 	</Grid>);
 }
@@ -102,14 +154,11 @@ const BasicDetailsForm = ({data: {name}}: BasicDetailsFormProps) => {
 
 export const NewsletterForm = () => {
 	const newsletterData = useLoaderData();
-	const [item, setItem] = useState(newsletterData);
+	// const [item, setItem] = useState(newsletterData);
 	return (<div style={{flexDirection: 'row', display: 'flex'}}>
 		<ContentWrapper>
-			{['Name', 'Production Category', 'Promotions', 'Pillar & Group'].map((title, key) => <RecipeReviewCard key={key}
-																																																						 title={title}
-																																																						 formContent={
-																																																							 <BasicDetailsForm
-																																																								 data={newsletterData as NewsletterData}/>}/>)}
+			<ItemCard title="Basic Details"
+								formContent={<BasicDetailsForm data={newsletterData as NewsletterData} itemLabel="Basic Details"/>}/>
 		</ContentWrapper>
 		<SideNav/>
 	</div>)
