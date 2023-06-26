@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
 import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
 import type {
@@ -38,14 +39,19 @@ export const hasAllRequiredData = (draft: DraftNewsletterData): boolean => {
 };
 
 export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
-	const report = newsletterDataSchema.safeParse(
+	const schemaToUse =
+		draft.category === 'article-based'
+			? newsletterDataSchema.merge(
+					z.object({
+						renderingOptions: renderingOptionsSchema,
+					}),
+			  )
+			: newsletterDataSchema;
+
+	const report = schemaToUse.safeParse(
 		withDefaultNewsletterValuesAndDerivedFields(draft),
 	);
-
-	if (!report.success) {
-		return report.error.issues;
-	}
-	return [];
+	return report.success ? [] : report.error.issues;
 };
 
 const TOTAL_FIELD_COUNT = getDraftNotReadyIssues({}).length;
