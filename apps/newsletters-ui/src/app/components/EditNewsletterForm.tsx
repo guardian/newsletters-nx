@@ -64,12 +64,10 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 				submit={requestUpdate}
 				schema={newsletterDataSchema.pick({
 					name: true,
-					signUpHeadline: true,
 					signUpDescription: true,
 					frequency: true,
 					regionFocus: true,
 					theme: true,
-					category: true,
 					status: true,
 				})}
 				submitButtonText="Update Newsletter"
