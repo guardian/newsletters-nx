@@ -60,20 +60,3 @@ export const levelToPermissions = (
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
 	};
 };
-
-export const noPermissionMessage = (
-	permission: keyof UserPermissions,
-): string => {
-	switch (permission) {
-		case 'editNewsletters':
-			return 'You do not have permission to edit newsletters.';
-		case 'launchNewsletters':
-			return 'You do not have permission to launch newsletters.';
-		case 'writeToDrafts':
-			return 'You do not have permission to change or create drafts.';
-		case 'useJsonEditor':
-		case 'viewMetaData':
-		default:
-			return 'You lack the necessary permissions.';
-	}
-};
