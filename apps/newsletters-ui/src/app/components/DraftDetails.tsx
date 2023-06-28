@@ -54,7 +54,10 @@ const propertyToNode = (
 
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
-	const { launchNewsletters: userCanLaunchNewsletter } = usePermissions() ?? {};
+	const {
+		launchNewsletters: userCanLaunchNewsletter,
+		writeToDrafts: userCanWriteToDrafts,
+	} = usePermissions() ?? {};
 	const issues = getDraftNotReadyIssues(draft);
 	const readyToLaunch = issues.length === 0;
 
@@ -68,12 +71,14 @@ export const DraftDetails = ({ draft }: Props) => {
 				created: {draft.creationTimeStamp}
 			</Typography>
 
-			<DeleteDraftButton
-				draft={draft}
-				hasBeenDeleted={hasBeenDeleted}
-				setHasBeenDeleted={setHasBeenDeleted}
-				margin={1}
-			/>
+			{userCanWriteToDrafts && (
+				<DeleteDraftButton
+					draft={draft}
+					hasBeenDeleted={hasBeenDeleted}
+					setHasBeenDeleted={setHasBeenDeleted}
+					margin={1}
+				/>
+			)}
 
 			{draft.listId && (
 				<ButtonGroup>
@@ -84,12 +89,10 @@ export const DraftDetails = ({ draft }: Props) => {
 					>
 						back to list
 					</NavigateButton>
-					<EditDraftNavigateButtons draft={draft} />
+					{userCanWriteToDrafts && <EditDraftNavigateButtons draft={draft} />}
 
-					{readyToLaunch && (
+					{readyToLaunch && userCanLaunchNewsletter && (
 						<NavigateButton
-							toolTip={userCanLaunchNewsletter ? undefined : 'cannot'}
-							disabled={!userCanLaunchNewsletter}
 							href={`/newsletters/launch-newsletter/${draft.listId}`}
 							startIcon={<RocketLaunchIcon />}
 							color="success"
