@@ -9,6 +9,7 @@ import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { useLoaderData } from 'react-router-dom';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { usePermissions } from '../hooks/user-hooks';
 import { ScrollingMenuButton } from './ScrollingMenuButton';
 
 const ButtonGridItem = ({
@@ -54,6 +55,7 @@ const ButtonGridItem = ({
 
 export function HomeMenu() {
 	const list = useLoaderData() as NewsletterData[];
+	const permissions = usePermissions();
 	const navigate = useNavigate();
 
 	return (
@@ -64,31 +66,36 @@ export function HomeMenu() {
 					content={'View launched newsletters'}
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
-				<ButtonGridItem
-					path="/newsletters/newsletter-data"
-					content={'Create newsletter wizard'}
-					variant="contained"
-				/>
 
-				<Grid item xs={6} sm={4} display={'flex'}>
-					<ScrollingMenuButton
-						buttonText="update newsletter"
-						buttonProps={{
-							variant: 'outlined',
-							fullWidth: true,
-							size: 'large',
-						}}
-						ariaMenuId="newsletter-update-menu"
-						ariaButtonLabel="select newsletter to update"
-						options={list.map((newsletter) => ({
-							name: newsletter.name,
-							id: newsletter.identityName,
-						}))}
-						handleSelect={(identityName) => {
-							navigate(`/newsletters/edit/${identityName}`);
-						}}
+				{permissions?.writeToDrafts && (
+					<ButtonGridItem
+						path="/newsletters/newsletter-data"
+						content={'Create newsletter wizard'}
+						variant="contained"
 					/>
-				</Grid>
+				)}
+
+				{permissions?.editNewsletters && (
+					<Grid item xs={6} sm={4} display={'flex'}>
+						<ScrollingMenuButton
+							buttonText="update newsletter"
+							buttonProps={{
+								variant: 'outlined',
+								fullWidth: true,
+								size: 'large',
+							}}
+							ariaMenuId="newsletter-update-menu"
+							ariaButtonLabel="select newsletter to update"
+							options={list.map((newsletter) => ({
+								name: newsletter.name,
+								id: newsletter.identityName,
+							}))}
+							handleSelect={(identityName) => {
+								navigate(`/newsletters/edit/${identityName}`);
+							}}
+						/>
+					</Grid>
+				)}
 			</Grid>
 		</Container>
 	);

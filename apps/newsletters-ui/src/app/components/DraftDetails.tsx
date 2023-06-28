@@ -13,8 +13,9 @@ import {
 } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { getDraftNotReadyIssues } from '@newsletters-nx/newsletters-data-client';
+import { usePermissions } from '../hooks/user-hooks';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftNavigateButtons } from './EditDraftNavigateButtons';
 import { NavigateButton } from './NavigateButton';
@@ -53,7 +54,10 @@ const propertyToNode = (
 
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
-
+	const {
+		launchNewsletters: userCanLaunchNewsletter,
+		writeToDrafts: userCanWriteToDrafts,
+	} = usePermissions() ?? {};
 	const issues = getDraftNotReadyIssues(draft);
 	const readyToLaunch = issues.length === 0;
 
@@ -67,12 +71,14 @@ export const DraftDetails = ({ draft }: Props) => {
 				created: {draft.creationTimeStamp}
 			</Typography>
 
-			<DeleteDraftButton
-				draft={draft}
-				hasBeenDeleted={hasBeenDeleted}
-				setHasBeenDeleted={setHasBeenDeleted}
-				margin={1}
-			/>
+			{userCanWriteToDrafts && (
+				<DeleteDraftButton
+					draft={draft}
+					hasBeenDeleted={hasBeenDeleted}
+					setHasBeenDeleted={setHasBeenDeleted}
+					margin={1}
+				/>
+			)}
 
 			{draft.listId && (
 				<ButtonGroup>
@@ -83,9 +89,9 @@ export const DraftDetails = ({ draft }: Props) => {
 					>
 						back to list
 					</NavigateButton>
-					<EditDraftNavigateButtons draft={draft} />
+					{userCanWriteToDrafts && <EditDraftNavigateButtons draft={draft} />}
 
-					{readyToLaunch && (
+					{readyToLaunch && userCanLaunchNewsletter && (
 						<NavigateButton
 							href={`/newsletters/launch-newsletter/${draft.listId}`}
 							startIcon={<RocketLaunchIcon />}

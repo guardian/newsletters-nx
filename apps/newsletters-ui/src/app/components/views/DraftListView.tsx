@@ -1,12 +1,14 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Button, Container, Stack, Typography } from '@mui/material';
 import { useLoaderData } from 'react-router-dom';
 import { isDraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
+import { usePermissions } from '../../hooks/user-hooks';
 import { DraftsTable } from '../DraftsTable';
 
 export const DraftListView = () => {
 	const list = useLoaderData();
+	const { writeToDrafts: userCanWriteToDrafts } = usePermissions() ?? {};
 	if (!list || !Array.isArray(list)) {
 		return <nav>No Drafts</nav>;
 	}
@@ -19,23 +21,28 @@ export const DraftListView = () => {
 				Please find below a list of draft newsletters in progress.
 			</Typography>
 			<DraftsTable drafts={drafts} />
-			<Container maxWidth="lg">
-				<Box
-					paddingX={1}
-					paddingBottom={1}
-					display={'flex'}
-					justifyContent={'flex-end'}
-				>
-					<Button
-						variant="contained"
-						endIcon={<AddIcon />}
-						href={'/newsletters/newsletter-data'}
-						aria-label="open create new draft wizard"
+
+			{userCanWriteToDrafts && (
+				<Container maxWidth="lg">
+					<Stack
+						paddingX={1}
+						paddingBottom={1}
+						spacing={2}
+						direction={'row'}
+						justifyContent={'flex-end'}
+						alignItems={'center'}
 					>
-						New draft
-					</Button>
-				</Box>
-			</Container>
+						<Button
+							variant="contained"
+							endIcon={<AddIcon />}
+							href={'/newsletters/newsletter-data'}
+							aria-label="open create new draft wizard"
+						>
+							New draft
+						</Button>
+					</Stack>
+				</Container>
+			)}
 		</ContentWrapper>
 	);
 };

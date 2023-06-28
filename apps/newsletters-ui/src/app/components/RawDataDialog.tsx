@@ -13,6 +13,7 @@ import {
 	TableRow,
 } from '@mui/material';
 import { useState } from 'react';
+import { usePermissions } from '../hooks/user-hooks';
 import { propertyToNode } from '../render-newsletter-properties';
 import { NavigateButton } from './NavigateButton';
 
@@ -30,6 +31,7 @@ export const RawDataDialog = ({
 	const [showRawData, setShowRawData] = useState(false);
 	const [showClipboardSuccess, setShowClipboardSuccess] = useState(false);
 	const [showClipboardFail, setShowClipboardFail] = useState(false);
+	const permissions = usePermissions();
 
 	const copyJson = async () => {
 		try {
@@ -77,7 +79,7 @@ export const RawDataDialog = ({
 				</TableContainer>
 				<DialogActions>
 					<Button onClick={copyJson}>copy json</Button>
-					{editHref && (
+					{editHref && permissions?.useJsonEditor && (
 						<NavigateButton href={editHref}>edit json</NavigateButton>
 					)}
 					<Button

@@ -33,6 +33,7 @@ export enum UserAccessLevel {
 
 export type UserPermissions = {
 	editNewsletters: boolean;
+	useJsonEditor: boolean;
 	launchNewsletters: boolean;
 	writeToDrafts: boolean;
 	viewMetaData: boolean;
@@ -56,5 +57,6 @@ export const levelToPermissions = (
 			UserAccessLevel.Drafter,
 		].includes(accessLevel),
 		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
+		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
 	};
 };

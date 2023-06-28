@@ -7,6 +7,7 @@ import type { Column } from 'react-table';
 import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
+import { usePermissions } from '../hooks/user-hooks';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftDialog } from './EditDraftDialog';
@@ -28,8 +29,14 @@ export const DraftsTable = ({ drafts }: Props) => {
 			progress: calculateProgress(draft),
 		})),
 	);
-	const columns = useMemo<Column[]>(
-		() => [
+
+	const {
+		writeToDrafts: userCanWriteToDrafts,
+		launchNewsletters: userCanLaunch,
+	} = usePermissions() ?? {};
+
+	const columns = useMemo<Column[]>(() => {
+		const infoColumns: Column[] = [
 			{
 				Header: 'Draft ID number',
 				accessor: 'listId',
@@ -65,6 +72,9 @@ export const DraftsTable = ({ drafts }: Props) => {
 					<CircularProgressWithLabel value={value as number} />
 				),
 			},
+		];
+
+		const editColumns: Column[] = [
 			{
 				Header: 'Edit',
 				Cell: ({ row: { original } }) => {
@@ -115,6 +125,9 @@ export const DraftsTable = ({ drafts }: Props) => {
 					);
 				},
 			},
+		];
+
+		const launchColumns: Column[] = [
 			{
 				Header: 'Launch',
 				Cell: ({ row: { original } }) => {
@@ -135,9 +148,14 @@ export const DraftsTable = ({ drafts }: Props) => {
 					);
 				},
 			},
-		],
-		[data],
-	);
+		];
+
+		return [
+			...infoColumns,
+			...(userCanWriteToDrafts ? editColumns : []),
+			...(userCanLaunch ? launchColumns : []),
+		];
+	}, [data, userCanLaunch, userCanWriteToDrafts]);
 	return (
 		<>
 			<Table data={data} columns={columns} defaultSortId="name" />
