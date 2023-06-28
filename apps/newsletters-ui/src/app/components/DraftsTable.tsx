@@ -38,8 +38,8 @@ export const DraftsTable = ({ drafts }: Props) => {
 		launchNewsletters: userCanLaunch,
 	} = usePermissions() ?? {};
 
-	const columns = useMemo<Column[]>(
-		() => [
+	const columns = useMemo<Column[]>(() => {
+		const infoColumns: Column[] = [
 			{
 				Header: 'Draft ID number',
 				accessor: 'listId',
@@ -75,6 +75,9 @@ export const DraftsTable = ({ drafts }: Props) => {
 					<CircularProgressWithLabel value={value as number} />
 				),
 			},
+		];
+
+		const editColumns: Column[] = [
 			{
 				Header: 'Edit',
 				Cell: ({ row: { original } }) => {
@@ -88,12 +91,6 @@ export const DraftsTable = ({ drafts }: Props) => {
 								href={link?.href}
 								startIcon={<SettingsIcon />}
 								variant="outlined"
-								disabled={!userCanWriteToDrafts}
-								toolTip={
-									!userCanWriteToDrafts
-										? noPermissionMessage('writeToDrafts')
-										: ''
-								}
 							>
 								Edit
 							</NavigateButton>
@@ -101,26 +98,15 @@ export const DraftsTable = ({ drafts }: Props) => {
 					}
 
 					return (
-						<Tooltip
-							title={
-								!userCanWriteToDrafts
-									? noPermissionMessage('writeToDrafts')
-									: ''
-							}
+						<Button
+							onClick={() => {
+								setDraftInDialog(draft);
+							}}
+							startIcon={<SettingsIcon />}
+							variant="outlined"
 						>
-							<span>
-								<Button
-									disabled={!userCanWriteToDrafts}
-									onClick={() => {
-										setDraftInDialog(draft);
-									}}
-									startIcon={<SettingsIcon />}
-									variant="outlined"
-								>
-									Edit
-								</Button>
-							</span>
-						</Tooltip>
+							Edit
+						</Button>
 					);
 				},
 			},
@@ -142,6 +128,9 @@ export const DraftsTable = ({ drafts }: Props) => {
 					);
 				},
 			},
+		];
+
+		const launchColumns: Column[] = [
 			{
 				Header: 'Launch',
 				Cell: ({ row: { original } }) => {
@@ -155,12 +144,6 @@ export const DraftsTable = ({ drafts }: Props) => {
 							href={`/newsletters/launch-newsletter/${draft.listId}`}
 							variant="outlined"
 							color="success"
-							disabled={!userCanLaunch}
-							toolTip={
-								!userCanLaunch
-									? noPermissionMessage('launchNewsletters')
-									: undefined
-							}
 							startIcon={<RocketLaunchIcon />}
 						>
 							launch
@@ -168,9 +151,14 @@ export const DraftsTable = ({ drafts }: Props) => {
 					);
 				},
 			},
-		],
-		[data, userCanWriteToDrafts],
-	);
+		];
+
+		return [
+			...infoColumns,
+			...(userCanWriteToDrafts ? editColumns : []),
+			...(userCanLaunch ? launchColumns : []),
+		];
+	}, [data, userCanLaunch, userCanWriteToDrafts]);
 	return (
 		<>
 			<Table data={data} columns={columns} defaultSortId="name" />
