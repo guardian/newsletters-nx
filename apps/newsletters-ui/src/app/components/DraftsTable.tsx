@@ -1,13 +1,10 @@
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Button, Tooltip } from '@mui/material';
+import { Button } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import {
-	calculateProgress,
-	noPermissionMessage,
-} from '@newsletters-nx/newsletters-data-client';
+import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
 import { usePermissions } from '../hooks/user-hooks';
