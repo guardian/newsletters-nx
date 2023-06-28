@@ -1,6 +1,6 @@
 import type {
 	DraftNewsletterData,
-	DraftStorage,
+	DraftService,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	draftNewsletterDataToFormData,
@@ -14,14 +14,14 @@ import {
 } from '@newsletters-nx/state-machine';
 import type { AsyncExecution } from '@newsletters-nx/state-machine';
 
-export const executeCreate: AsyncExecution<DraftStorage> = async (
+export const executeCreate: AsyncExecution<DraftService> = async (
 	stepData,
 	stepLayout,
-	storageInstance,
+	draftService,
 ) => {
-	if (!storageInstance) {
+	if (!draftService) {
 		throw new StateMachineError(
-			'no storageInstance',
+			'no draft service',
 			StateMachineErrorCode.StorageAccessError,
 			true,
 		);
@@ -52,10 +52,13 @@ export const executeCreate: AsyncExecution<DraftStorage> = async (
 		...parseResult.data,
 	});
 
-	const storageResponse = await storageInstance.create({
-		...draft,
-		listId: undefined,
-	});
+	const storageResponse = await draftService.draftStorage.create(
+		{
+			...draft,
+			listId: undefined,
+		},
+		draftService.userProfile,
+	);
 	if (storageResponse.ok) {
 		return {
 			data: draftNewsletterDataToFormData(storageResponse.data),

@@ -1,21 +1,19 @@
 import type { S3Client } from '@aws-sdk/client-s3';
-import {
-	isNewsletterData,
-	isNewsletterDataWithMeta,
-} from '../newsletter-data-type';
+import { makeBlankMeta } from '../meta-data-type';
 import type {
-	DraftNewsletterData,
+	DraftNewsletterDataWithMeta,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
 } from '../newsletter-data-type';
+import { isNewsletterDataWithMeta } from '../newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
-import { makeBlankMeta, NewsletterStorage } from './NewsletterStorage';
+import { NewsletterStorage } from './NewsletterStorage';
 import { objectToNewsletter } from './objectToNewsletter';
 import {
 	fetchObject,
@@ -36,13 +34,13 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	}
 
 	async create(
-		draft: DraftNewsletterData,
+		draft: DraftNewsletterDataWithMeta,
 		user: UserProfile,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse
 	> {
-		const draftReady = isNewsletterData(draft);
+		const draftReady = isNewsletterDataWithMeta(draft);
 
 		if (!draftReady) {
 			const error: UnsuccessfulStorageResponse = {
@@ -86,7 +84,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const newNewsletter: NewsletterDataWithMeta = {
 			...draft,
 			listId: nextId,
-			meta: this.createNewMeta(user),
+			meta: this.updateMetaForLaunch(draft.meta, user),
 		};
 
 		try {
@@ -338,4 +336,5 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	stripMeta = NewsletterStorage.prototype.stripMeta;
 	createNewMeta = NewsletterStorage.prototype.createNewMeta;
 	updateMeta = NewsletterStorage.prototype.updateMeta;
+	updateMetaForLaunch = NewsletterStorage.prototype.updateMetaForLaunch;
 }

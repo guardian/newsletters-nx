@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { MetaData } from './meta-data-type';
+import { metaDataSchema } from './meta-data-type';
 import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
@@ -160,6 +162,17 @@ export function isNewsletterData(subject: unknown): subject is NewsletterData {
 	return newsletterDataSchema.safeParse(subject).success;
 }
 
+export type NewsletterDataWithMeta = NewsletterData & { meta: MetaData };
+export type NewsletterDataWithoutMeta = NewsletterData & { meta: undefined };
+
+export function isNewsletterDataWithMeta(
+	subject: unknown,
+): subject is NewsletterDataWithMeta {
+	return newsletterDataSchema
+		.extend({ meta: metaDataSchema })
+		.safeParse(subject).success;
+}
+
 export function isPartialNewsletterData(
 	subject: unknown,
 ): subject is Partial<NewsletterData> {
@@ -175,22 +188,17 @@ export function isDraftNewsletterData(
 	return draftNewsletterDataSchema.safeParse(subject).success;
 }
 
-export const metaDataSchema = z.object({
-	createdTimestamp: z.number(),
-	updatedTimestamp: z.number(),
-	createdBy: z.string(),
-	updatedBy: z.string(),
-});
+export type DraftNewsletterDataWithMeta = DraftNewsletterData & {
+	meta: MetaData;
+};
+export type DraftNewsletterDataWithoutMeta = DraftNewsletterData & {
+	meta: undefined;
+};
 
-export type MetaData = z.infer<typeof metaDataSchema>;
-
-export type NewsletterDataWithMeta = NewsletterData & { meta: MetaData };
-export type NewsletterDataWithoutMeta = NewsletterData & { meta: undefined };
-
-export function isNewsletterDataWithMeta(
+export function isDraftNewsletterDataWithMeta(
 	subject: unknown,
-): subject is NewsletterDataWithMeta {
-	return newsletterDataSchema
+): subject is DraftNewsletterDataWithMeta {
+	return draftNewsletterDataSchema
 		.extend({ meta: metaDataSchema })
 		.safeParse(subject).success;
 }

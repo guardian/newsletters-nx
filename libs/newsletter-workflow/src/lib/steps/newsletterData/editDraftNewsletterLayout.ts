@@ -1,4 +1,4 @@
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
@@ -6,7 +6,7 @@ import { executeSkip } from '../../executeSkip';
 import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { formSchemas } from './formSchemas';
 
-export const editDraftNewsletterLayout: WizardStepLayout<DraftStorage> = {
+export const editDraftNewsletterLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown: `## Change Newsletter name
 
 You can edit the name of the newsletter.

@@ -1,8 +1,10 @@
+import { z } from 'zod';
 import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
 import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
 import type {
 	DraftNewsletterData,
 	NewsletterData,
+	RenderingOptions,
 } from './newsletter-data-type';
 import {
 	newsletterDataSchema,
@@ -18,11 +20,29 @@ const defaultNewsletterValues: DraftNewsletterData = {
 	figmaIncludesThrashers: false,
 } as const;
 
+export const defaultRenderingOptionsValues: Partial<RenderingOptions> = {
+	displayDate: false,
+	displayImageCaptions: false,
+	displayStandfirst: false,
+} as const;
+
 export const withDefaultNewsletterValuesAndDerivedFields = (
 	draft: DraftNewsletterData,
 ): DraftNewsletterData &
 	Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
+
+	if (draft.renderingOptions) {
+		return {
+			...defaultNewsletterValues,
+			...derivedFields,
+			...draft,
+			renderingOptions: {
+				...defaultRenderingOptionsValues,
+				...draft.renderingOptions,
+			},
+		};
+	}
 
 	return {
 		...defaultNewsletterValues,
@@ -31,27 +51,29 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 	};
 };
 
-export const hasAllRequiredData = (draft: DraftNewsletterData): boolean => {
-	return newsletterDataSchema.safeParse(
-		withDefaultNewsletterValuesAndDerivedFields(draft),
-	).success;
-};
-
 export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
-	const report = newsletterDataSchema.safeParse(
+	const schemaToUse =
+		draft.category === 'article-based'
+			? newsletterDataSchema.merge(
+					z.object({
+						renderingOptions: renderingOptionsSchema,
+					}),
+			  )
+			: newsletterDataSchema;
+
+	const report = schemaToUse.safeParse(
 		withDefaultNewsletterValuesAndDerivedFields(draft),
 	);
-
-	if (!report.success) {
-		return report.error.issues;
-	}
-	return [];
+	return report.success ? [] : report.error.issues;
 };
 
 const TOTAL_FIELD_COUNT = getDraftNotReadyIssues({}).length;
 
-export const renderingOptionsNotReadyIssues = (record: unknown) => {
-	const report = renderingOptionsSchema.safeParse(record);
+const renderingOptionsNotReadyIssues = (record: Record<string, unknown>) => {
+	const report = renderingOptionsSchema.safeParse({
+		...defaultRenderingOptionsValues,
+		...record,
+	});
 	if (!report.success) {
 		return report.error.issues;
 	}
@@ -90,7 +112,7 @@ export const calculateProgress = (draft: DraftNewsletterData): number => {
 		(RENDERING_OPTIONS_FIELD_COUNT - renderingOptionsIssuesCount) /
 		RENDERING_OPTIONS_FIELD_COUNT;
 
-	// Arbitrary calculation - wieght the basic data as 2/3's of the total score
-	const combined = (basicDataRatio * 2 + renderingOptionsDataRatio) / 3;
+	// Arbitrary calculation - wieght the basic data as 1/4's of the total score
+	const combined = (basicDataRatio * 3 + renderingOptionsDataRatio) / 4;
 	return Math.floor(combined * 100);
 };

@@ -1,3 +1,4 @@
+import SettingsIcon from '@mui/icons-material/Settings';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { noPermissionMessage } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
@@ -20,6 +21,7 @@ export const EditDraftNavigateButtons = ({ draft }: Props) => {
 					toolTip={
 						!userCanEditDraft ? noPermissionMessage('writeToDrafts') : undefined
 					}
+					startIcon={<SettingsIcon />}
 				>
 					{link.label}
 				</NavigateButton>

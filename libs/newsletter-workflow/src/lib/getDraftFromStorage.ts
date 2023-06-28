@@ -1,6 +1,6 @@
 import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
 import type {
-	DraftStorage,
+	DraftService,
 	FormDataRecord,
 } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
@@ -11,7 +11,7 @@ import {
 
 export const getDraftFromStorage = async (
 	requestBody: CurrentStepRouteRequest,
-	storageInstance: DraftStorage,
+	draftService: DraftService,
 ): Promise<FormDataRecord> => {
 	const listId =
 		typeof requestBody.formData?.['listId'] === 'number'
@@ -25,7 +25,7 @@ export const getDraftFromStorage = async (
 	}
 	const idAsNumber = +existingItemId;
 
-	const storageResponse = await storageInstance.read(idAsNumber);
+	const storageResponse = await draftService.draftStorage.read(idAsNumber);
 	if (!storageResponse.ok) {
 		throw new StateMachineError(
 			`cannot load draft newsletter with id ${existingItemId}`,

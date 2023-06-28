@@ -1,13 +1,20 @@
 import type { S3Client } from '@aws-sdk/client-s3';
+import { makeBlankMeta } from '../../meta-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../../storage-response-types';
 import { StorageRequestFailureReason } from '../../storage-response-types';
-import type { DraftWithId, DraftWithoutId } from '../DraftStorage';
+import type { UserProfile } from '../../user-profile';
+import type {
+	DraftWithId,
+	DraftWithIdAndMeta,
+	DraftWithIdButNoMeta,
+	DraftWithoutId,
+} from '../DraftStorage';
 import { DraftStorage } from '../DraftStorage';
 import { errorToResponse } from './errorToResponse';
-import { objectToDraftWithId } from './objectToDraftWithId';
+import { objectToDraftWithMetaAndId } from './objectToDraftWithId';
 import {
 	deleteObject,
 	fetchObject,
@@ -28,8 +35,10 @@ export class S3DraftStorage extends DraftStorage {
 
 	async create(
 		draft: DraftWithoutId,
+		user: UserProfile,
 	): Promise<
-		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		try {
 			const nextId = await this.getNextId();
@@ -37,11 +46,12 @@ export class S3DraftStorage extends DraftStorage {
 				...draft,
 				creationTimeStamp: Date.now(),
 				listId: nextId,
+				meta: this.createNewMeta(user),
 			});
 
 			//fetching the data from s3 again to make sure the put worked. Is this necessary?
-			const getObjectOutput = await this.fetchObject(this.listIdToKey(nextId));
-			const newDraft = await objectToDraftWithId(getObjectOutput);
+			const newDraft = await this.fetchDraft(nextId);
+
 			if (!newDraft) {
 				return {
 					ok: false,
@@ -54,7 +64,7 @@ export class S3DraftStorage extends DraftStorage {
 
 			return {
 				ok: true,
-				data: newDraft,
+				data: this.stripMeta(newDraft),
 			};
 		} catch (err) {
 			return errorToResponse(err, draft.listId);
@@ -62,17 +72,18 @@ export class S3DraftStorage extends DraftStorage {
 	}
 
 	async readAll(): Promise<
-		UnsuccessfulStorageResponse | SuccessfulStorageResponse<DraftWithId[]>
+		| UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<DraftWithIdButNoMeta[]>
 	> {
 		try {
 			const listOfKeys = await this.getListOfObjectsKeys();
-			const data: DraftWithId[] = [];
+			const data: DraftWithIdButNoMeta[] = [];
 			await Promise.all(
 				listOfKeys.map(async (key) => {
 					const output = await this.fetchObject(key);
-					const draft = await objectToDraftWithId(output);
+					const draft = await objectToDraftWithMetaAndId(output);
 					if (draft) {
-						data.push(draft);
+						data.push(this.stripMeta(draft));
 					}
 				}),
 			);
@@ -89,17 +100,41 @@ export class S3DraftStorage extends DraftStorage {
 	async read(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		try {
-			const key = this.listIdToKey(listId);
-			const object = await this.fetchObject(key);
-			const draft = await objectToDraftWithId(object);
+			const draft = await this.fetchDraft(listId);
 
 			if (!draft) {
 				return {
 					ok: false,
-					message: `file ${key} was not a valid draft.`,
+					message: `file ${this.listIdToKey(listId)} was not a valid draft.`,
+					reason: StorageRequestFailureReason.DataInStoreNotValid,
+				};
+			}
+
+			return {
+				ok: true,
+				data: this.stripMeta(draft),
+			};
+		} catch (err) {
+			return errorToResponse(err, listId);
+		}
+	}
+
+	async readWithMeta(
+		listId: number,
+	): Promise<
+		SuccessfulStorageResponse<DraftWithIdAndMeta> | UnsuccessfulStorageResponse
+	> {
+		try {
+			const draft = await this.fetchDraft(listId);
+
+			if (!draft) {
+				return {
+					ok: false,
+					message: `file ${this.listIdToKey(listId)} was not a valid draft.`,
 					reason: StorageRequestFailureReason.DataInStoreNotValid,
 				};
 			}
@@ -115,17 +150,31 @@ export class S3DraftStorage extends DraftStorage {
 
 	async update(
 		draft: DraftWithId,
+		user: UserProfile,
 	): Promise<
-		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		try {
-			await this.putDraftObject(draft);
+			const existingDraft = await this.fetchDraft(draft.listId);
+
+			if (!existingDraft?.meta) {
+				console.warn(
+					`Did not get valid meta data for ${this.listIdToKey(
+						draft.listId,
+					)} - creating new meta data`,
+				);
+			}
+
+			const draftWithMetaAndId: DraftWithIdAndMeta = {
+				...draft,
+				meta: this.updateMeta(existingDraft?.meta ?? makeBlankMeta(), user),
+			};
+
+			await this.putDraftObject(draftWithMetaAndId);
 
 			//fetching the data from s3 again to make sure the put worked. Is this necessary?
-			const getObjectOutput = await this.fetchObject(
-				this.listIdToKey(draft.listId),
-			);
-			const updatedDraft = await objectToDraftWithId(getObjectOutput);
+			const updatedDraft = await this.fetchDraft(draft.listId);
 
 			if (!updatedDraft) {
 				return {
@@ -139,7 +188,7 @@ export class S3DraftStorage extends DraftStorage {
 
 			return {
 				ok: true,
-				data: updatedDraft,
+				data: this.stripMeta(updatedDraft),
 			};
 		} catch (err) {
 			return errorToResponse(err, draft.listId);
@@ -149,12 +198,12 @@ export class S3DraftStorage extends DraftStorage {
 	async deleteItem(
 		listId: number,
 	): Promise<
-		SuccessfulStorageResponse<DraftWithId> | UnsuccessfulStorageResponse
+		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| UnsuccessfulStorageResponse
 	> {
 		try {
+			const draftToDelete = await this.fetchDraft(listId);
 			const key = this.listIdToKey(listId);
-			const getObjectOutput = await this.fetchObject(key);
-			const draftToDelete = await objectToDraftWithId(getObjectOutput);
 
 			if (!draftToDelete) {
 				return {
@@ -168,7 +217,7 @@ export class S3DraftStorage extends DraftStorage {
 
 			return {
 				ok: true,
-				data: draftToDelete,
+				data: this.stripMeta(draftToDelete),
 			};
 		} catch (err) {
 			return errorToResponse(err, listId);
@@ -211,8 +260,21 @@ export class S3DraftStorage extends DraftStorage {
 		return listId;
 	}
 
+	private async fetchDraft(
+		listId: number,
+	): Promise<DraftWithIdAndMeta | undefined> {
+		const key = this.listIdToKey(listId);
+		const getObjectOutput = await this.fetchObject(key);
+		const maybeDraft = await objectToDraftWithMetaAndId(getObjectOutput);
+		return maybeDraft;
+	}
+
 	private putDraftObject = putDraftObject(this);
 	private getListOfObjectsKeys = getListOfObjectsKeys(this);
 	private fetchObject = fetchObject(this);
 	private deleteObject = deleteObject(this);
+
+	stripMeta = DraftStorage.prototype.stripMeta;
+	createNewMeta = DraftStorage.prototype.createNewMeta;
+	updateMeta = DraftStorage.prototype.updateMeta;
 }

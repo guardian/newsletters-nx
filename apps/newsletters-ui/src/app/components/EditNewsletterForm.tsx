@@ -1,10 +1,8 @@
 import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
-import type {
-	ApiResponse,
-	NewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { SimpleForm } from './SimpleForm';
 
 interface Props {
@@ -25,13 +23,10 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		}
 		setWaitingForResponse(true);
 
-		const response = await fetch(`/api/newsletters/${originalItem.listId}`, {
-			method: 'PATCH',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(modification),
-		}).catch((error) => {
+		const response = await requestNewsletterEdit(
+			originalItem.listId,
+			modification,
+		).catch((error: unknown) => {
 			setErrorMessage('Failed to submit form.');
 			setWaitingForResponse(false);
 			console.log(error);
@@ -43,16 +38,13 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			return;
 		}
 
-		const responseBody = (await response.json()) as unknown;
-		const castResponse = responseBody as ApiResponse<NewsletterData>;
-
-		if (castResponse.ok) {
-			setItem(castResponse.data);
+		if (response.ok) {
+			setItem(response.data);
 			setWaitingForResponse(false);
 			setConfirmationMessage('newsletter updated!');
 		} else {
 			setWaitingForResponse(false);
-			setErrorMessage(castResponse.message);
+			setErrorMessage(response.message);
 		}
 	};
 
@@ -64,12 +56,10 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 				submit={requestUpdate}
 				schema={newsletterDataSchema.pick({
 					name: true,
-					signUpHeadline: true,
 					signUpDescription: true,
 					frequency: true,
 					regionFocus: true,
 					theme: true,
-					category: true,
 					status: true,
 				})}
 				submitButtonText="Update Newsletter"

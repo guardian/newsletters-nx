@@ -1,5 +1,5 @@
 import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
-import type { DraftStorage } from '@newsletters-nx/newsletters-data-client';
+import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
 	WizardStepData,
@@ -22,13 +22,13 @@ const getListId = (stepData: WizardStepData): number | undefined => {
 	return undefined;
 };
 
-export const executeSkip: AsyncExecution<DraftStorage> = async (
+export const executeSkip: AsyncExecution<DraftService> = async (
 	stepData: WizardStepData,
-	stepLayout?: WizardStepLayout<DraftStorage>,
-	storageInstance?: DraftStorage,
+	stepLayout?: WizardStepLayout<DraftService>,
+	draftService?: DraftService,
 ) => {
-	if (!storageInstance) {
-		return { isFailure: true, message: 'no storage instance' };
+	if (!draftService) {
+		return { isFailure: true, message: 'no draft service instance' };
 	}
 
 	const listId = getListId(stepData);
@@ -38,7 +38,7 @@ export const executeSkip: AsyncExecution<DraftStorage> = async (
 			message: 'incoming data did not include the listId',
 		};
 	}
-	const storageResponse = await storageInstance.read(listId);
+	const storageResponse = await draftService.draftStorage.read(listId);
 
 	if (!storageResponse.ok) {
 		return {
