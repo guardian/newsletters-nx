@@ -15,8 +15,9 @@ interface Props {
 export const NewslettersTable = ({ newsletters }: Props) => {
 	const { editNewsletters } = usePermissions() ?? {};
 	const data = newsletters;
-	const columns = useMemo<Column[]>(
-		() => [
+
+	const columns = useMemo<Column[]>(() => {
+		const infoColumns: Column[] = [
 			{
 				Header: 'Newsletter ID',
 				accessor: 'identityName',
@@ -61,30 +62,32 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				accessor: 'status',
 				sortType: 'basic',
 			},
-			{
-				Header: 'Edit',
-				Cell: ({ row: { original } }) => {
-					const newsletter = original as NewsletterData;
+		];
 
-					return (
-						<NavigateButton
-							toolTip={
-								editNewsletters ? undefined : 'You do not have access to this'
-							}
-							href={
-								editNewsletters
-									? `/newsletters/edit/${newsletter.identityName}`
-									: undefined
-							}
-							disabled={!editNewsletters}
-						>
-							Edit
-						</NavigateButton>
-					);
-				},
+		const editColumn: Column = {
+			Header: 'Edit',
+			Cell: ({ row: { original } }) => {
+				const newsletter = original as NewsletterData;
+
+				return (
+					<NavigateButton
+						toolTip={
+							editNewsletters ? undefined : 'You do not have access to this'
+						}
+						href={
+							editNewsletters
+								? `/newsletters/edit/${newsletter.identityName}`
+								: undefined
+						}
+						disabled={!editNewsletters}
+					>
+						Edit
+					</NavigateButton>
+				);
 			},
-		],
-		[],
-	);
+		};
+
+		return editNewsletters ? [...infoColumns, editColumn] : infoColumns;
+	}, [editNewsletters]);
 	return <Table data={data} columns={columns} defaultSortId="identityName" />;
 };
