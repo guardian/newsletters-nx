@@ -1,27 +1,22 @@
 import type { ButtonTypeMap } from '@mui/material';
-import { Button, Tooltip } from '@mui/material';
+import { Button } from '@mui/material';
 import type { MouseEventHandler, ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 
 type Props = ButtonTypeMap['props'] & {
 	href?: string;
-	toolTip?: string;
 	children: ReactNode;
 };
 
 export const NavigateButton = (props: Props) => {
 	const navigate = useNavigate();
-	const { children, href, toolTip } = props;
+	const { children, href } = props;
 
 	if (!href) {
 		return (
-			<Tooltip title={toolTip}>
-				<span>
-					<Button {...props} disabled>
-						{children}
-					</Button>
-				</span>
-			</Tooltip>
+			<Button {...props} disabled>
+				{children}
+			</Button>
 		);
 	}
 
@@ -31,12 +26,8 @@ export const NavigateButton = (props: Props) => {
 	};
 
 	return (
-		<Tooltip title={toolTip}>
-			<span>
-				<Button {...props} onClick={onClick}>
-					{children}
-				</Button>
-			</span>
-		</Tooltip>
+		<Button {...props} onClick={onClick}>
+			{children}
+		</Button>
 	);
 };

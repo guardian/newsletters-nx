@@ -71,15 +71,11 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 
 				return (
 					<NavigateButton
-						toolTip={
-							editNewsletters ? undefined : 'You do not have access to this'
-						}
 						href={
 							editNewsletters
 								? `/newsletters/edit/${newsletter.identityName}`
 								: undefined
 						}
-						disabled={!editNewsletters}
 					>
 						Edit
 					</NavigateButton>
