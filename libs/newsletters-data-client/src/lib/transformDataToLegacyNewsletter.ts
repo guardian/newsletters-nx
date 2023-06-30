@@ -1,10 +1,8 @@
+import type { DraftNewsletterData } from './draft-newsletter-data-type';
 import type { LegacyNewsletter } from './legacy-newsletter-type';
 import { isLegacyNewsletter } from './legacy-newsletter-type';
-import type {
-	DraftNewsletterData,
-	NewsletterData,
-} from './newsletter-data-type';
 import { isNewsletterData } from './newsletter-data-type';
+import type { NewsletterData } from './newsletter-data-type';
 
 export const TRANSFORM_ERROR_MESSAGE = {
 	input: '[transformDataToLegacyNewsletter] invalid input',

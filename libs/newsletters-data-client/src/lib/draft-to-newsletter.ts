@@ -1,11 +1,8 @@
 import { z } from 'zod';
 import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
 import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
-import type {
-	DraftNewsletterData,
-	NewsletterData,
-	RenderingOptions,
-} from './newsletter-data-type';
+import type { DraftNewsletterData } from './draft-newsletter-data-type';
+import type { NewsletterData, RenderingOptions } from './newsletter-data-type';
 import {
 	newsletterDataSchema,
 	renderingOptionsSchema,

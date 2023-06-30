@@ -1,7 +1,7 @@
 import type { S3Client } from '@aws-sdk/client-s3';
+import type { DraftNewsletterDataWithMeta } from '../draft-newsletter-data-type';
 import { makeBlankMeta } from '../meta-data-type';
 import type {
-	DraftNewsletterDataWithMeta,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
