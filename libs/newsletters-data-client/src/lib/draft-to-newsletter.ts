@@ -10,6 +10,7 @@ import {
 	newsletterDataSchema,
 	renderingOptionsSchema,
 } from './newsletter-data-type';
+import { nonEmptyString } from './zod-helpers';
 
 const defaultNewsletterValues: DraftNewsletterData = {
 	listIdV1: -1,
@@ -57,9 +58,26 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 			? newsletterDataSchema.merge(
 					z.object({
 						renderingOptions: renderingOptionsSchema,
+						signUpHeadline: nonEmptyString(),
+						signUpDescription: nonEmptyString(),
+						regionFocus: newsletterDataSchema
+							.pick({
+								regionFocus: true,
+							})
+							.required(),
 					}),
 			  )
-			: newsletterDataSchema;
+			: newsletterDataSchema.merge(
+					z.object({
+						signUpHeadline: nonEmptyString(),
+						signUpDescription: nonEmptyString(),
+						regionFocus: newsletterDataSchema
+							.pick({
+								regionFocus: true,
+							})
+							.required(),
+					}),
+			  );
 
 	const report = schemaToUse.safeParse(
 		withDefaultNewsletterValuesAndDerivedFields(draft),
