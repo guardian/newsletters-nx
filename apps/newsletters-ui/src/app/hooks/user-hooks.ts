@@ -19,7 +19,7 @@ export const usePermissions = () => {
 
 	useEffect(() => {
 		void fetchAndSet();
-	});
+	}, []);
 
 	return userPermissions;
 };
