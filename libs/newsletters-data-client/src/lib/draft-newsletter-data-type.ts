@@ -35,14 +35,13 @@ export function isDraftNewsletterDataWithMeta(
 /**
  * The schema for collecting data for new drafts.
  *
- * This is more strict that the draft schema so we can enforce
+ * This is more strict than the NewsletterSchema so we can enforce
  * rules in the UI which aren't required for the data model to
- * work, but are desired for new newsletters.
+ * work, but are desired for new Newsletters.
  */
 export const dataCollectionSchema = newsletterDataSchema.merge(
 	z.object({
 		onlineArticle: onlineArticleSchema,
-
 		signUpHeadline: nonEmptyString(),
 		signUpDescription: nonEmptyString(),
 		regionFocus: regionFocusEnumSchema.unwrap(),

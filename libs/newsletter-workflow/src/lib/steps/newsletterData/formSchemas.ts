@@ -5,8 +5,7 @@ import type {
 	ThrasherOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import {
-	newsletterDataSchema,
-	nonEmptyString,
+	dataCollectionSchema,
 	renderingOptionsSchema,
 	thrasherOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
@@ -32,11 +31,11 @@ const pickAndPrefixThrasherOption = (
 };
 
 export const formSchemas = {
-	startDraftNewsletter: newsletterDataSchema
+	startDraftNewsletter: dataCollectionSchema
 		.pick({ name: true })
 		.describe('Input the name for the new newsletter'),
 
-	identityName: newsletterDataSchema
+	identityName: dataCollectionSchema
 		.pick({ identityName: true })
 		.describe('Edit the identity name if required'),
 
@@ -46,14 +45,14 @@ export const formSchemas = {
 	category: z
 		.object({
 			category: z.enum(
-				newsletterDataSchema.shape['category'].options.filter(
+				dataCollectionSchema.shape['category'].options.filter(
 					(option) => option !== 'article-based-legacy',
 				) as [string, ...string[]],
 			),
 		})
 		.describe('Pick a category'),
 
-	braze: newsletterDataSchema
+	braze: dataCollectionSchema
 		.pick({
 			brazeSubscribeEventNamePrefix: true,
 			brazeNewsletterName: true,
@@ -62,14 +61,14 @@ export const formSchemas = {
 		})
 		.describe('Edit the Braze values if required'),
 
-	ophan: newsletterDataSchema
+	ophan: dataCollectionSchema
 		.pick({
 			campaignName: true,
 			campaignCode: true,
 		})
 		.describe('Edit the Ophan values if required'),
 
-	pillarAndGroup: newsletterDataSchema
+	pillarAndGroup: dataCollectionSchema
 		.pick({
 			theme: true,
 		})
@@ -92,27 +91,24 @@ export const formSchemas = {
 		})
 		.describe('Choose a theme and a group'),
 
-	// manually creating the object so both values are required and non-empty
-	signUpPage: z
-		.object({
-			signUpHeadline: nonEmptyString(),
-			signUpDescription: nonEmptyString(),
+	signUpPage: dataCollectionSchema
+		.pick({
+			signUpHeadline: true,
+			signUpDescription: true,
 		})
 		.describe('Input the Sign Up page copy'),
 
-	signUpEmbed: newsletterDataSchema
+	signUpEmbed: dataCollectionSchema
 		.pick({ signUpEmbedDescription: true })
 		.describe('Input the Sign Up embed copy'),
 
-	// TO DO - check with editorial if regionFocus should be required for new newsletters
-	regionFocus: newsletterDataSchema
+	regionFocus: dataCollectionSchema
 		.pick({
 			regionFocus: true,
 		})
-		.required() // regionFocus is not required in the newsletterDataSchema, but we want it set for new newsletters
 		.describe('Select from the drop-down list'),
 
-	newsletterDesign: newsletterDataSchema
+	newsletterDesign: dataCollectionSchema
 		.pick({
 			designBriefDoc: true,
 			figmaDesignUrl: true,
@@ -129,7 +125,7 @@ export const formSchemas = {
 		'Input the footer setup',
 	),
 
-	frequency: newsletterDataSchema
+	frequency: dataCollectionSchema
 		.pick({
 			frequency: true,
 		})
@@ -139,11 +135,10 @@ export const formSchemas = {
 		'Specify the image setup',
 	),
 
-	onlineArticle: newsletterDataSchema
+	onlineArticle: dataCollectionSchema
 		.pick({
 			onlineArticle: true,
 		})
-		.required() // onlineArticle is not required in the newsletterDataSchema, but we want it set for new newsletters
 		.describe('Select from the drop-down list'),
 
 	linkList: pickAndPrefixRenderingOption(['linkListSubheading']).describe(
@@ -158,7 +153,7 @@ export const formSchemas = {
 		'Input the Read More setup',
 	),
 
-	tags: newsletterDataSchema
+	tags: dataCollectionSchema
 		.pick({
 			seriesTag: true,
 			composerTag: true,
@@ -176,7 +171,7 @@ export const formSchemas = {
 		'Input details of the multi-thrashers',
 	),
 
-	promotionDates: newsletterDataSchema
+	promotionDates: dataCollectionSchema
 		.pick({
 			launchDate: true,
 			signUpPageDate: true,
