@@ -31,7 +31,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<Grid item>
 					<Illustration
 						name={newsletter.name}
-						url={newsletter.illustrationCircle}
+						url={newsletter.illustrationCard ?? newsletter.illustrationCircle}
 					/>
 				</Grid>
 			</Grid>
