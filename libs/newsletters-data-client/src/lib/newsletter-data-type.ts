@@ -57,6 +57,22 @@ export const renderingOptionsSchema = z.object({
 		)
 		.optional()
 		.describe('The configuration for read more sections'),
+
+	mainBannerUrl: z
+		.string()
+		.url()
+		.optional()
+		.describe('asset url for main banner'),
+	subheadingBannerUrl: z
+		.string()
+		.url()
+		.optional()
+		.describe('asset url for standard subheading banner'),
+	darksubheadingBannerUrl: z
+		.string()
+		.url()
+		.optional()
+		.describe('asset url for dark subheading banner'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
