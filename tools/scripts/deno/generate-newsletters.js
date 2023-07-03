@@ -22,6 +22,28 @@ const slugConverter = (text, resultCase) => {
 	}
 };
 
+const generateRenderingOptions = () => {
+	return {
+		displayDate: faker.datatype.boolean(),
+		displayStandfirst: faker.datatype.boolean(),
+		contactEmail: `${faker.lorem.word()}@example.com`,
+		displayImageCaptions: faker.datatype.boolean(),
+		mainBannerUrl: faker.helpers.arrayElement([
+			'https://assets.guim.co.uk/images/email/banners/3aaee2fd94b67953a15b4e7a795c09b8/generic.png',
+			'https://i.guim.co.uk/img/uploads/2022/10/21/default-newsletter-main-banner.png?dpr=2&quality=100&width=600&s=618cf82b457a343bf56650ad7acaad59',
+		]),
+		subheadingBannerUrl: faker.helpers.arrayElement([
+			undefined,
+			'https://i.guim.co.uk/img/uploads/2023/06/02/moving-the-goalposts-sub-heading.png?quality=100&dpr=2&width=650&s=f3bbf75a71f4a16c22d0dd6e12b5188d',
+			'https://i.guim.co.uk/img/uploads/2022/10/21/default-template-sub-banner.png?dpr=2&quality=100&width=600&s=41c1744d1559a535e7b7cc77f8c6e037',
+		]),
+		darksubheadingBannerUrl: faker.helpers.arrayElement([
+			undefined,
+			'https://i.guim.co.uk/img/uploads/2022/10/21/default-template-sub-banner.png?dpr=2&quality=100&width=600&s=41c1744d1559a535e7b7cc77f8c6e037',
+		]),
+	};
+};
+
 const generateNewsletter = () => {
 	const name = `${initCap(faker.random.word())} ${initCap(
 		faker.random.word(),
@@ -136,6 +158,8 @@ const generateNewsletter = () => {
 		privateUntilLaunch: false,
 		onlineArticle: 'Web for all sends',
 		illustrationCard,
+		renderingOptions:
+			category === 'article-based' ? generateRenderingOptions() : undefined,
 	};
 	return newsletter;
 };
