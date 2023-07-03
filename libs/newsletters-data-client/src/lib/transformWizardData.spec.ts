@@ -1,6 +1,6 @@
 import { TECHSCAPE_IN_NEW_FORMAT } from '../fixtures/newsletter-fixtures';
-import type { DraftNewsletterData } from './newsletter-data-type';
-import { isDraftNewsletterData } from './newsletter-data-type';
+import type { DraftNewsletterData } from './draft-newsletter-data-type';
+import { isDraftNewsletterData } from './draft-newsletter-data-type';
 import type { FormDataRecord } from './transformWizardData';
 import {
 	draftNewsletterDataToFormData,

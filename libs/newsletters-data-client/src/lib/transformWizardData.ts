@@ -1,10 +1,8 @@
 import type { ZodRawShape, ZodTypeAny } from 'zod';
 import { ZodObject, ZodOptional } from 'zod';
-import type {
-	DraftNewsletterData,
-	NewsletterData,
-} from './newsletter-data-type';
-import { draftNewsletterDataSchema } from './newsletter-data-type';
+import type { DraftNewsletterData } from './draft-newsletter-data-type';
+import { draftNewsletterDataSchema } from './draft-newsletter-data-type';
+import type { NewsletterData } from './newsletter-data-type';
 import { recursiveUnwrap } from './zod-helpers';
 
 export type PrimitiveRecord = Partial<

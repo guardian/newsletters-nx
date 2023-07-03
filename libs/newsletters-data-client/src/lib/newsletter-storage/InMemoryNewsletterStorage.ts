@@ -1,6 +1,6 @@
+import type { DraftNewsletterDataWithMeta } from '../draft-newsletter-data-type';
 import { makeBlankMeta } from '../meta-data-type';
 import type {
-	DraftNewsletterDataWithMeta,
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,

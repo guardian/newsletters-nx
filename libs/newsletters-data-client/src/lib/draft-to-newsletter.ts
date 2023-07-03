@@ -1,15 +1,10 @@
 import { z } from 'zod';
 import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
 import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
-import type {
-	DraftNewsletterData,
-	NewsletterData,
-	RenderingOptions,
-} from './newsletter-data-type';
-import {
-	newsletterDataSchema,
-	renderingOptionsSchema,
-} from './newsletter-data-type';
+import type { DraftNewsletterData } from './draft-newsletter-data-type';
+import { dataCollectionSchema } from './draft-newsletter-data-type';
+import type { NewsletterData, RenderingOptions } from './newsletter-data-type';
+import { renderingOptionsSchema } from './newsletter-data-type';
 
 const defaultNewsletterValues: DraftNewsletterData = {
 	listIdV1: -1,
@@ -54,13 +49,12 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 	const schemaToUse =
 		draft.category === 'article-based'
-			? newsletterDataSchema.merge(
+			? dataCollectionSchema.merge(
 					z.object({
 						renderingOptions: renderingOptionsSchema,
 					}),
 			  )
-			: newsletterDataSchema;
-
+			: dataCollectionSchema;
 	const report = schemaToUse.safeParse(
 		withDefaultNewsletterValuesAndDerivedFields(draft),
 	);

@@ -14,7 +14,6 @@ export const makeInMemoryStorageInstance = () =>
 			signUpEmbedDescription: "We'll send you Avon Recumbent weekly",
 			theme: 'culture',
 			group: 'Work',
-			regionFocus: 'UK',
 			listId: 5770,
 			exampleUrl: '/world/series/series-avon-recumbent/latest/email',
 			signupPage:

@@ -1,5 +1,5 @@
 import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
-import { isDraftNewsletterDataWithMeta } from '../../newsletter-data-type';
+import { isDraftNewsletterDataWithMeta } from '../../draft-newsletter-data-type';
 import type { DraftWithIdAndMeta } from '../DraftStorage';
 
 export const objectToDraftWithMetaAndId = async (
