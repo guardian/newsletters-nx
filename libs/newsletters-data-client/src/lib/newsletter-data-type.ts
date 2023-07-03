@@ -136,6 +136,11 @@ export const newsletterDataSchema = z.object({
 		.boolean()
 		.describe('Does the figma design include thrashers?'),
 	illustrationCircle: z.string().optional(),
+	illustrationCard: z
+		.string()
+		.url()
+		.optional()
+		.describe('url for 5:3 image to use on the newsletters page'),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
