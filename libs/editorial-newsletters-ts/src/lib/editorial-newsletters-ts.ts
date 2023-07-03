@@ -1,3 +1,13 @@
-export function editorialNewslettersTs(): string {
-	return 'editorial-newsletters-ts';
-}
+export {
+	NewsletterData,
+	isNewsletterData,
+	Theme,
+	RegionFocus,
+	OnlineArticle,
+	RenderingOptions,
+	NewsletterCategory,
+	LegacyNewsletter,
+	isLegacyNewsletter,
+	LegacyCancelledNewsletter,
+	isLegacyCancelledNewsletter,
+} from '@newsletters-nx/newsletters-data-client';
