@@ -1,0 +1,41 @@
+{
+	"name": "editorial-newsletters-ts",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "libs/editorial-newsletters-ts/src",
+	"projectType": "library",
+	"targets": {
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["libs/editorial-newsletters-ts/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+			"options": {
+				"jestConfig": "libs/editorial-newsletters-ts/jest.config.ts",
+				"passWithNoTests": true
+			},
+			"configurations": {
+				"ci": {
+					"ci": true,
+					"codeCoverage": true
+				}
+			}
+		},
+		"build": {
+			"executor": "@nrwl/js:tsc",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/libs/editorial-newsletters-ts",
+				"tsConfig": "libs/editorial-newsletters-ts/tsconfig.lib.json",
+				"packageJson": "libs/editorial-newsletters-ts/package.json",
+				"main": "libs/editorial-newsletters-ts/src/index.ts",
+				"assets": ["libs/editorial-newsletters-ts/*.md"]
+			}
+		}
+	},
+	"tags": []
+}
