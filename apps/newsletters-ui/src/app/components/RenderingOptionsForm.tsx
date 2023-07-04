@@ -1,8 +1,10 @@
 import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
+import { Stack } from '@mui/system';
 import { useState } from 'react';
 import type {
 	FormDataRecord,
 	NewsletterData,
+	RenderingOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import { renderingOptionsSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
@@ -15,6 +17,9 @@ interface Props {
 export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	const [renderingOptions, setRenderingOptions] = useState<
 		FormDataRecord | undefined
+	>(originalItem.renderingOptions);
+	const [renderingOptionsFromServer, setRenderingOptionsFromServer] = useState<
+		RenderingOptions | undefined
 	>(originalItem.renderingOptions);
 
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
@@ -54,6 +59,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 		if (response.ok) {
 			setRenderingOptions(response.data.renderingOptions);
+			setRenderingOptionsFromServer(response.data.renderingOptions);
 			setWaitingForResponse(false);
 			setConfirmationMessage('rendering options updated!');
 		} else {
@@ -62,55 +68,57 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		}
 	};
 
+	const reset = () => {
+		setRenderingOptions(renderingOptionsFromServer);
+	};
+
 	return (
 		<>
 			{!renderingOptions && <Typography>No options set</Typography>}
 
 			{renderingOptions && (
-				<StateEditForm
-					formSchema={renderingOptionsSchema}
-					formData={renderingOptions}
-					setFormData={setRenderingOptions}
-				/>
+				<>
+					<StateEditForm
+						formSchema={renderingOptionsSchema}
+						formData={renderingOptions}
+						setFormData={setRenderingOptions}
+					/>
+					<Stack maxWidth={'md'} direction={'row'} spacing={2} marginBottom={2}>
+						<Button variant="outlined" size="large" onClick={reset}>
+							reset
+						</Button>
+						<Button variant="contained" size="large" onClick={requestUpdate}>
+							submit
+						</Button>
+						<Snackbar
+							sx={{ position: 'static' }}
+							open={!!errorMessage}
+							onClose={() => {
+								setErrorMessage(undefined);
+							}}
+						>
+							<Alert
+								onClose={() => {
+									setErrorMessage(undefined);
+								}}
+								severity="error"
+							>
+								{errorMessage}
+							</Alert>
+						</Snackbar>
+
+						<Snackbar
+							sx={{ position: 'static' }}
+							open={!!confirmationMessage}
+							onClose={() => {
+								setConfirmationMessage(undefined);
+							}}
+						>
+							<Alert severity="info">{confirmationMessage}</Alert>
+						</Snackbar>
+					</Stack>
+				</>
 			)}
-
-			<Box maxWidth={'md'}>
-				<Button
-					variant="contained"
-					size="large"
-					fullWidth
-					onClick={requestUpdate}
-				>
-					submit
-				</Button>
-			</Box>
-
-			<Snackbar
-				sx={{ position: 'static' }}
-				open={!!errorMessage}
-				onClose={() => {
-					setErrorMessage(undefined);
-				}}
-			>
-				<Alert
-					onClose={() => {
-						setErrorMessage(undefined);
-					}}
-					severity="error"
-				>
-					{errorMessage}
-				</Alert>
-			</Snackbar>
-
-			<Snackbar
-				sx={{ position: 'static' }}
-				open={!!confirmationMessage}
-				onClose={() => {
-					setConfirmationMessage(undefined);
-				}}
-			>
-				<Alert severity="info">{confirmationMessage}</Alert>
-			</Snackbar>
 		</>
 	);
 };
