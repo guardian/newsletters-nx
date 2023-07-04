@@ -1,29 +1,41 @@
-import { Alert, Snackbar, Typography } from '@mui/material';
+import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import type {
+	FormDataRecord,
 	NewsletterData,
-	RenderingOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import { renderingOptionsSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
-import { SimpleForm } from './SimpleForm';
+import { StateEditForm } from './StateEditForm';
 
 interface Props {
 	originalItem: NewsletterData;
 }
 
 export const RenderingOptionsForm = ({ originalItem }: Props) => {
-	const [item, setItem] = useState(originalItem);
+	const [renderingOptions, setRenderingOptions] = useState<
+		FormDataRecord | undefined
+	>(originalItem.renderingOptions);
+
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [confirmationMessage, setConfirmationMessage] = useState<
 		string | undefined
 	>();
 
-	const requestUpdate = async (modification: RenderingOptions) => {
+	const requestUpdate = async () => {
 		if (waitingForResponse) {
 			return;
 		}
+
+		const parseResult = renderingOptionsSchema.safeParse(renderingOptions);
+		if (!parseResult.success) {
+			setErrorMessage('Cannot submit with validation errors');
+			return;
+		}
+
+		const modification = parseResult.data;
+
 		setWaitingForResponse(true);
 
 		const response = await requestNewsletterEdit(originalItem.listId, {
@@ -41,7 +53,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		}
 
 		if (response.ok) {
-			setItem(response.data);
+			setRenderingOptions(response.data.renderingOptions);
 			setWaitingForResponse(false);
 			setConfirmationMessage('rendering options updated!');
 		} else {
@@ -50,30 +62,28 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		}
 	};
 
-	const { renderingOptions } = item;
-
 	return (
 		<>
 			{!renderingOptions && <Typography>No options set</Typography>}
 
 			{renderingOptions && (
-				<SimpleForm
-					title={`${originalItem.identityName} Rendering Options`}
-					initialData={renderingOptions}
-					submit={requestUpdate}
-					schema={renderingOptionsSchema}
-					submitButtonText="Update Rendering Options"
-					isDisabled={waitingForResponse}
-					maxOptionsForRadioButtons={5}
-					message={
-						waitingForResponse ? (
-							<Alert severity="info">
-								making your updates to {item.identityName}
-							</Alert>
-						) : undefined
-					}
+				<StateEditForm
+					formSchema={renderingOptionsSchema}
+					formData={renderingOptions}
+					setFormData={setRenderingOptions}
 				/>
 			)}
+
+			<Box maxWidth={'md'}>
+				<Button
+					variant="contained"
+					size="large"
+					fullWidth
+					onClick={requestUpdate}
+				>
+					submit
+				</Button>
+			</Box>
 
 			<Snackbar
 				sx={{ position: 'static' }}
