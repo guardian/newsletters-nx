@@ -8,9 +8,9 @@ interface Props {
 
 export const Illustration = ({ name, url }: Props) => {
 	const image = url ? (
-		<img src={url} alt="" height={100} />
+		<img src={url} alt="" height={200} />
 	) : (
-		<ImageNotSupportedIcon color="primary" sx={{ height: 100, width: 100 }} />
+		<ImageNotSupportedIcon color="primary" sx={{ height: 200, width: 200 }} />
 	);
 
 	const captionText = url

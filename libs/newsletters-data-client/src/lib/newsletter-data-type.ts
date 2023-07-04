@@ -57,6 +57,22 @@ export const renderingOptionsSchema = z.object({
 		)
 		.optional()
 		.describe('The configuration for read more sections'),
+
+	mainBannerUrl: z
+		.string()
+		.url()
+		.optional()
+		.describe('asset url for main banner'),
+	subheadingBannerUrl: z
+		.string()
+		.url()
+		.optional()
+		.describe('asset url for standard subheading banner'),
+	darksubheadingBannerUrl: z
+		.string()
+		.url()
+		.optional()
+		.describe('asset url for dark subheading banner'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
@@ -136,6 +152,11 @@ export const newsletterDataSchema = z.object({
 		.boolean()
 		.describe('Does the figma design include thrashers?'),
 	illustrationCircle: z.string().optional(),
+	illustrationCard: z
+		.string()
+		.url()
+		.optional()
+		.describe('url for 5:3 image to use on the newsletters page'),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
