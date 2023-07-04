@@ -1,6 +1,6 @@
 import { Alert, Button, Snackbar, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type {
 	FormDataRecord,
 	NewsletterData,
@@ -33,6 +33,13 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	const [confirmationMessage, setConfirmationMessage] = useState<
 		string | undefined
 	>();
+
+	const resetValue =
+		renderingOptionsFromServer ?? getEmptySchemaData(renderingOptionsSchema);
+
+	const noChangesMade = useMemo(() => {
+		return JSON.stringify(resetValue) === JSON.stringify(renderingOptions);
+	}, [renderingOptions, resetValue]);
 
 	const handleSubmit = () => {
 		if (waitingForResponse) {
@@ -102,7 +109,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 							variant="outlined"
 							size="large"
 							onClick={reset}
-							disabled={waitingForResponse}
+							disabled={waitingForResponse || noChangesMade}
 						>
 							reset
 						</Button>
