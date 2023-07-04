@@ -24,9 +24,8 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	>(
 		originalItem.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
 	);
-	const [renderingOptionsFromServer, setRenderingOptionsFromServer] = useState<
-		RenderingOptions | undefined
-	>(originalItem.renderingOptions);
+
+	const [item, setItem] = useState<NewsletterData>(originalItem);
 
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -35,7 +34,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	>();
 
 	const resetValue =
-		renderingOptionsFromServer ?? getEmptySchemaData(renderingOptionsSchema);
+		item.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema);
 
 	const noChangesMade = useMemo(() => {
 		return JSON.stringify(resetValue) === JSON.stringify(renderingOptions);
@@ -72,7 +71,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 		if (response.ok) {
 			setRenderingOptions(response.data.renderingOptions);
-			setRenderingOptionsFromServer(response.data.renderingOptions);
+			setItem(response.data);
 			setWaitingForResponse(false);
 			setConfirmationMessage('rendering options updated!');
 		} else {
@@ -83,7 +82,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 	const reset = () => {
 		setRenderingOptions(
-			renderingOptionsFromServer ?? getEmptySchemaData(renderingOptionsSchema),
+			item.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
 		);
 	};
 
@@ -93,8 +92,9 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				Rendering Options: {originalItem.name}
 			</Typography>
 
+			<Typography>Category: {item.category}</Typography>
 			<Typography>
-				Options set on server: {renderYesNo(!!renderingOptionsFromServer)}
+				Rendering Options defined: {renderYesNo(!!item.renderingOptions)}
 			</Typography>
 
 			{renderingOptions && (
