@@ -1,0 +1,105 @@
+import { Alert, Snackbar } from '@mui/material';
+import { useState } from 'react';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { SimpleForm } from './SimpleForm';
+
+interface Props {
+	originalItem: NewsletterData;
+}
+
+export const RenderingOptionsForm = ({ originalItem }: Props) => {
+	const [item, setItem] = useState(originalItem);
+	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
+	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+	const [confirmationMessage, setConfirmationMessage] = useState<
+		string | undefined
+	>();
+
+	const requestUpdate = async (modification: Partial<NewsletterData>) => {
+		if (waitingForResponse) {
+			return;
+		}
+		setWaitingForResponse(true);
+
+		const response = await requestNewsletterEdit(
+			originalItem.listId,
+			modification,
+		).catch((error: unknown) => {
+			setErrorMessage('Failed to submit form.');
+			setWaitingForResponse(false);
+			console.log(error);
+			return undefined;
+		});
+
+		if (!response) {
+			setWaitingForResponse(false);
+			return;
+		}
+
+		if (response.ok) {
+			setItem(response.data);
+			setWaitingForResponse(false);
+			setConfirmationMessage('newsletter updated!');
+		} else {
+			setWaitingForResponse(false);
+			setErrorMessage(response.message);
+		}
+	};
+
+	return (
+		<>
+			<SimpleForm
+				title={`${originalItem.identityName} Rendering Options`}
+				initialData={item}
+				submit={requestUpdate}
+				schema={newsletterDataSchema.pick({
+					name: true,
+					signUpDescription: true,
+					frequency: true,
+					regionFocus: true,
+					theme: true,
+					status: true,
+				})}
+				submitButtonText="Update Newsletter"
+				isDisabled={waitingForResponse}
+				maxOptionsForRadioButtons={5}
+				message={
+					waitingForResponse ? (
+						<Alert severity="info">
+							making your updates to {item.identityName}
+						</Alert>
+					) : undefined
+				}
+			/>
+
+			<Snackbar
+				sx={{ position: 'static' }}
+				open={!!errorMessage}
+				onClose={() => {
+					setErrorMessage(undefined);
+				}}
+			>
+				<Alert
+					onClose={() => {
+						setErrorMessage(undefined);
+					}}
+					severity="error"
+				>
+					{errorMessage}
+				</Alert>
+			</Snackbar>
+
+			<Snackbar
+				sx={{ position: 'static' }}
+				open={!!confirmationMessage}
+				onClose={() => {
+					setConfirmationMessage(undefined);
+				}}
+			>
+				<Alert severity="info">{confirmationMessage}</Alert>
+			</Snackbar>
+		</>
+	);
+};

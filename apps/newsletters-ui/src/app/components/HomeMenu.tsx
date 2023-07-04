@@ -96,6 +96,28 @@ export function HomeMenu() {
 						/>
 					</Grid>
 				)}
+
+				{permissions?.editNewsletters && (
+					<Grid item xs={6} sm={4} display={'flex'}>
+						<ScrollingMenuButton
+							buttonText="set rendering options"
+							buttonProps={{
+								variant: 'outlined',
+								fullWidth: true,
+								size: 'large',
+							}}
+							ariaMenuId="rendering-options-menu"
+							ariaButtonLabel="select newsletter to set rendering options for"
+							options={list.map((newsletter) => ({
+								name: newsletter.name,
+								id: newsletter.identityName,
+							}))}
+							handleSelect={(identityName) => {
+								navigate(`/newsletters/rendering-options/${identityName}`);
+							}}
+						/>
+					</Grid>
+				)}
 			</Grid>
 		</Container>
 	);
