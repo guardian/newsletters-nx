@@ -1,7 +1,10 @@
-import { Alert, Snackbar } from '@mui/material';
+import { Alert, Snackbar, Typography } from '@mui/material';
 import { useState } from 'react';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import type {
+	NewsletterData,
+	RenderingOptions,
+} from '@newsletters-nx/newsletters-data-client';
+import { renderingOptionsSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { SimpleForm } from './SimpleForm';
 
@@ -17,16 +20,15 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		string | undefined
 	>();
 
-	const requestUpdate = async (modification: Partial<NewsletterData>) => {
+	const requestUpdate = async (modification: RenderingOptions) => {
 		if (waitingForResponse) {
 			return;
 		}
 		setWaitingForResponse(true);
 
-		const response = await requestNewsletterEdit(
-			originalItem.listId,
-			modification,
-		).catch((error: unknown) => {
+		const response = await requestNewsletterEdit(originalItem.listId, {
+			renderingOptions: modification,
+		}).catch((error: unknown) => {
 			setErrorMessage('Failed to submit form.');
 			setWaitingForResponse(false);
 			console.log(error);
@@ -41,38 +43,37 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		if (response.ok) {
 			setItem(response.data);
 			setWaitingForResponse(false);
-			setConfirmationMessage('newsletter updated!');
+			setConfirmationMessage('rendering options updated!');
 		} else {
 			setWaitingForResponse(false);
 			setErrorMessage(response.message);
 		}
 	};
 
+	const { renderingOptions } = item;
+
 	return (
 		<>
-			<SimpleForm
-				title={`${originalItem.identityName} Rendering Options`}
-				initialData={item}
-				submit={requestUpdate}
-				schema={newsletterDataSchema.pick({
-					name: true,
-					signUpDescription: true,
-					frequency: true,
-					regionFocus: true,
-					theme: true,
-					status: true,
-				})}
-				submitButtonText="Update Newsletter"
-				isDisabled={waitingForResponse}
-				maxOptionsForRadioButtons={5}
-				message={
-					waitingForResponse ? (
-						<Alert severity="info">
-							making your updates to {item.identityName}
-						</Alert>
-					) : undefined
-				}
-			/>
+			{!renderingOptions && <Typography>No options set</Typography>}
+
+			{renderingOptions && (
+				<SimpleForm
+					title={`${originalItem.identityName} Rendering Options`}
+					initialData={renderingOptions}
+					submit={requestUpdate}
+					schema={renderingOptionsSchema}
+					submitButtonText="Update Rendering Options"
+					isDisabled={waitingForResponse}
+					maxOptionsForRadioButtons={5}
+					message={
+						waitingForResponse ? (
+							<Alert severity="info">
+								making your updates to {item.identityName}
+							</Alert>
+						) : undefined
+					}
+				/>
+			)}
 
 			<Snackbar
 				sx={{ position: 'static' }}
