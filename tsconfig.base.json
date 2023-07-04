@@ -16,6 +16,9 @@
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
+			"@guardian/editorial-newsletters-ts": [
+				"libs/editorial-newsletters-ts/src/index.ts"
+			],
 			"@newsletters-nx/newsletter-workflow": [
 				"libs/newsletter-workflow/src/index.ts"
 			],
