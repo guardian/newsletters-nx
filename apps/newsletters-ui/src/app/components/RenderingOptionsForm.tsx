@@ -1,8 +1,18 @@
-import { Alert, Button, Snackbar, Typography } from '@mui/material';
+import {
+	Alert,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	Snackbar,
+	Typography,
+} from '@mui/material';
 import { Stack } from '@mui/system';
 import { useMemo, useState } from 'react';
 import type {
 	FormDataRecord,
+	NewsletterCategory,
 	NewsletterData,
 	RenderingOptions,
 } from '@newsletters-nx/newsletters-data-client';
@@ -26,6 +36,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	);
 
 	const [item, setItem] = useState<NewsletterData>(originalItem);
+	const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
 
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -49,14 +60,36 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 			setErrorMessage('Cannot submit with validation errors');
 			return;
 		}
-		void requestUpdate(parseResult.data);
+
+		if (item.category === 'article-based') {
+			void requestUpdate(parseResult.data);
+		} else {
+			setCategoryDialogOpen(true);
+		}
 	};
 
-	const requestUpdate = async (modification: RenderingOptions) => {
+	const handleSetCategoryDialog = (changeToArticleBased: boolean) => {
+		const parseResult = renderingOptionsSchema.safeParse(renderingOptions);
+		if (!parseResult.success) {
+			setErrorMessage('Cannot submit with validation errors');
+			return;
+		}
+		void requestUpdate(
+			parseResult.data,
+			changeToArticleBased ? 'article-based' : undefined,
+		);
+		setCategoryDialogOpen(false);
+	};
+
+	const requestUpdate = async (
+		renderingOptions: RenderingOptions,
+		category?: NewsletterCategory,
+	) => {
 		setWaitingForResponse(true);
 
 		const response = await requestNewsletterEdit(originalItem.listId, {
-			renderingOptions: modification,
+			renderingOptions: renderingOptions,
+			category,
 		}).catch((error: unknown) => {
 			setErrorMessage('Failed to submit form.');
 			setWaitingForResponse(false);
@@ -93,6 +126,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 			</Typography>
 
 			<Typography>Category: {item.category}</Typography>
+			<Typography>series tag: {item.seriesTag}</Typography>
 			<Typography>
 				Rendering Options defined: {renderYesNo(!!item.renderingOptions)}
 			</Typography>
@@ -150,6 +184,30 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 					</Stack>
 				</>
 			)}
+
+			<Dialog open={categoryDialogOpen}>
+				<DialogContent>
+					<DialogContentText>
+						Change category to "article-based"?
+					</DialogContentText>
+					<DialogActions>
+						<Button
+							onClick={() => {
+								handleSetCategoryDialog(true);
+							}}
+						>
+							Yes
+						</Button>
+						<Button
+							onClick={() => {
+								handleSetCategoryDialog(false);
+							}}
+						>
+							No
+						</Button>
+					</DialogActions>
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 };
