@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
+import { Alert, Button, Snackbar, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useState } from 'react';
 import type {
@@ -6,8 +6,12 @@ import type {
 	NewsletterData,
 	RenderingOptions,
 } from '@newsletters-nx/newsletters-data-client';
-import { renderingOptionsSchema } from '@newsletters-nx/newsletters-data-client';
+import {
+	getEmptySchemaData,
+	renderingOptionsSchema,
+} from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { renderYesNo } from '../util';
 import { StateEditForm } from './StateEditForm';
 
 interface Props {
@@ -17,7 +21,9 @@ interface Props {
 export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	const [renderingOptions, setRenderingOptions] = useState<
 		FormDataRecord | undefined
-	>(originalItem.renderingOptions);
+	>(
+		originalItem.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
+	);
 	const [renderingOptionsFromServer, setRenderingOptionsFromServer] = useState<
 		RenderingOptions | undefined
 	>(originalItem.renderingOptions);
@@ -28,19 +34,19 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		string | undefined
 	>();
 
-	const requestUpdate = async () => {
+	const handleSubmit = () => {
 		if (waitingForResponse) {
 			return;
 		}
-
 		const parseResult = renderingOptionsSchema.safeParse(renderingOptions);
 		if (!parseResult.success) {
 			setErrorMessage('Cannot submit with validation errors');
 			return;
 		}
+		void requestUpdate(parseResult.data);
+	};
 
-		const modification = parseResult.data;
-
+	const requestUpdate = async (modification: RenderingOptions) => {
 		setWaitingForResponse(true);
 
 		const response = await requestNewsletterEdit(originalItem.listId, {
@@ -69,12 +75,20 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	};
 
 	const reset = () => {
-		setRenderingOptions(renderingOptionsFromServer);
+		setRenderingOptions(
+			renderingOptionsFromServer ?? getEmptySchemaData(renderingOptionsSchema),
+		);
 	};
 
 	return (
 		<>
-			{!renderingOptions && <Typography>No options set</Typography>}
+			<Typography variant="h2">
+				Rendering Options: {originalItem.name}
+			</Typography>
+
+			<Typography>
+				Options set on server: {renderYesNo(!!renderingOptionsFromServer)}
+			</Typography>
 
 			{renderingOptions && (
 				<>
@@ -84,10 +98,20 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 						setFormData={setRenderingOptions}
 					/>
 					<Stack maxWidth={'md'} direction={'row'} spacing={2} marginBottom={2}>
-						<Button variant="outlined" size="large" onClick={reset}>
+						<Button
+							variant="outlined"
+							size="large"
+							onClick={reset}
+							disabled={waitingForResponse}
+						>
 							reset
 						</Button>
-						<Button variant="contained" size="large" onClick={requestUpdate}>
+						<Button
+							variant="contained"
+							size="large"
+							onClick={handleSubmit}
+							disabled={waitingForResponse}
+						>
 							submit
 						</Button>
 						<Snackbar
