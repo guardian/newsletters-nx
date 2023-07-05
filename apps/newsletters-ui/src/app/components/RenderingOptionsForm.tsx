@@ -1,4 +1,4 @@
-import { Alert, Button, Snackbar, Typography } from '@mui/material';
+import { Alert, AlertTitle, Button, Snackbar, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useMemo, useState } from 'react';
 import type {
@@ -95,8 +95,8 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 			setItem(response.data);
 			setRenderingOptions(response.data.renderingOptions);
 			setSubset({
-				category: item.category,
-				seriesTag: item.seriesTag,
+				category: response.data.category,
+				seriesTag: response.data.seriesTag,
 			});
 			setWaitingForResponse(false);
 			setConfirmationMessage('rendering options updated!');
@@ -118,9 +118,8 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 	return (
 		<>
-			<Typography variant="h2">
-				Rendering Options: {originalItem.name}
-			</Typography>
+			<Typography variant="h2">{item.name}</Typography>
+			<Typography variant="subtitle1">email-rendering settings</Typography>
 
 			<Typography variant="h3">Category and series tag</Typography>
 			<StateEditForm
@@ -131,6 +130,19 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				formData={subset}
 				setFormData={setSubset}
 			/>
+
+			<Alert severity={item.seriesTag ? 'info' : 'warning'}>
+				<AlertTitle>Series Tags</AlertTitle>
+				<Typography>
+					The email-rendering service will the rendering options below when
+					asked to render an article that has the specified series tag.{' '}
+				</Typography>
+				<Typography>
+					If no valid series tag is specified, email-rendering service cannot
+					tell that an article belongs to the series for this newsletter an will
+					use the generic template.
+				</Typography>
+			</Alert>
 
 			{renderingOptions && (
 				<>
