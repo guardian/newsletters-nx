@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import type {
 	FormDataRecord,
 	NewsletterData,
+	RenderingOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	getEmptySchemaData,
@@ -23,7 +24,6 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	>(
 		originalItem.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
 	);
-
 	const [item, setItem] = useState<NewsletterData>(originalItem);
 	const [subset, setSubset] = useState<FormDataRecord>({
 		category: item.category,
@@ -40,8 +40,10 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		item.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema);
 
 	const noChangesMade = useMemo(() => {
-		const renderingOptionsMatch =
-			JSON.stringify(resetValue) === JSON.stringify(renderingOptions);
+		const renderingOptionsMatch = Object.keys(resetValue ?? {}).every(
+			(key) =>
+				resetValue?.[key as keyof RenderingOptions] === renderingOptions?.[key],
+		);
 
 		return (
 			renderingOptionsMatch &&
