@@ -1,3 +1,5 @@
+import type { FormDataRecord } from './transformWizardData';
+
 /**
  * Replacer function for JSON,stringify - recursively changes values explictly set
  * to `undefined` with `null` values.
@@ -18,4 +20,68 @@ export const replaceUndefinedWithNull = (
 		return null;
 	}
 	return value;
+};
+
+type PrimitiveRecordWithNull = Partial<
+	Record<string, string | number | boolean | null>
+>;
+const isPrimitiveRecordAllowingNull = (
+	value: unknown,
+): value is PrimitiveRecordWithNull => {
+	if (!value || typeof value !== 'object') {
+		return false;
+	}
+	if (Array.isArray(value)) {
+		return false;
+	}
+	return Object.values(value).every(
+		(propertyValue) =>
+			typeof propertyValue === 'boolean' ||
+			typeof propertyValue === 'number' ||
+			typeof propertyValue === 'string' ||
+			(typeof propertyValue === 'object' && !propertyValue),
+	);
+};
+
+const isArrayOfPrimitiveRecordsAllowingNull = (
+	value: unknown,
+): value is PrimitiveRecordWithNull[] => {
+	if (!Array.isArray(value)) {
+		return false;
+	}
+	return value.every(isPrimitiveRecordAllowingNull);
+};
+
+/** recursively replace any `null` with `undefined` */
+export const replaceNullWithUndefined = (
+	formData: FormDataRecord,
+): FormDataRecord => {
+	Object.keys(formData).forEach((key) => {
+		const value = formData[key];
+
+		if (value === null) {
+			formData[key] = undefined;
+		}
+
+		if (isPrimitiveRecordAllowingNull(value)) {
+			Object.keys(value).forEach((nestedkey) => {
+				const nestedValue = value[nestedkey];
+				if ((nestedValue as unknown) === null) {
+					value[nestedkey] = undefined;
+				}
+			});
+		}
+
+		if (isArrayOfPrimitiveRecordsAllowingNull(value)) {
+			value.forEach((objectInArray) => {
+				Object.keys(objectInArray).forEach((keyOfObjectInArray) => {
+					const valueOfObjectInArray = objectInArray[keyOfObjectInArray];
+					if ((valueOfObjectInArray as unknown) === null) {
+						objectInArray[keyOfObjectInArray] = undefined;
+					}
+				});
+			});
+		}
+	});
+	return formData;
 };

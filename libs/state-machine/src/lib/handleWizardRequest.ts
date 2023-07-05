@@ -1,3 +1,4 @@
+import { replaceNullWithUndefined } from '@newsletters-nx/newsletters-data-client';
 import { makeResponse } from './makeResponse';
 import { setupInitialState } from './setupInitialState';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
@@ -10,7 +11,6 @@ import type {
 	WizardLayout,
 	WizardStepLayout,
 } from './types';
-import { replaceNullWithUndefined } from './utility';
 
 /**
  * Execute the changes to state (if any) in response to a

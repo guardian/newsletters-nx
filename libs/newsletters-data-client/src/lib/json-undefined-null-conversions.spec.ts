@@ -1,30 +1,30 @@
-import type { WizardFormData } from './types';
-import { replaceNullWithUndefined } from './utility';
+import { replaceNullWithUndefined } from './json-undefined-null-conversions';
+import type { FormDataRecord } from './transformWizardData';
 
-const SIMPLE_IN: WizardFormData = {
+const SIMPLE_IN: FormDataRecord = {
 	name: 'Bill',
 	petsName: null,
 };
-const SIMPLE_OUT: WizardFormData = {
+const SIMPLE_OUT: FormDataRecord = {
 	name: 'Bill',
 	petsName: undefined,
 };
 
-const OBJECT_IN: WizardFormData = {
+const OBJECT_IN: FormDataRecord = {
 	name: 'Bill',
 	pet: {
 		name: 'Marvin the fish',
 		collarSize: null as unknown as undefined,
 	},
 };
-const OBJECT_OUT: WizardFormData = {
+const OBJECT_OUT: FormDataRecord = {
 	name: 'Bill',
 	pet: {
 		name: 'Marvin the fish',
 		collarSize: undefined,
 	},
 };
-const OBJECT_ARRAY_IN: WizardFormData = {
+const OBJECT_ARRAY_IN: FormDataRecord = {
 	name: 'Bill',
 	children: [
 		{
@@ -39,7 +39,7 @@ const OBJECT_ARRAY_IN: WizardFormData = {
 		},
 	],
 };
-const OBJECT_ARRAY_OUT: WizardFormData = {
+const OBJECT_ARRAY_OUT: FormDataRecord = {
 	name: 'Bill',
 	children: [
 		{
