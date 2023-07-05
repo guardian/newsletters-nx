@@ -1,4 +1,5 @@
 import type { FormDataRecord } from './transformWizardData';
+import { isStringRecord } from './zod-helpers';
 
 /**
  * Replacer function for JSON,stringify - recursively changes values explictly set
@@ -53,7 +54,7 @@ const isArrayOfPrimitiveRecordsAllowingNull = (
 };
 
 /** replace any value of `null` in a FormDataRecord with `undefined` */
-export const replaceNullWithUndefined = (
+export const replaceNullWithUndefinedInFormDataRecord = (
 	formData: FormDataRecord,
 ): FormDataRecord => {
 	Object.keys(formData).forEach((key) => {
@@ -87,35 +88,27 @@ export const replaceNullWithUndefined = (
 };
 
 /** replace any value of `null` in a string record with `undefined` */
-export const replaceNullWithUndefinedForRecord = (
+const replaceNullWithUndefinedForRecord = (
 	record: Record<string, unknown>,
 ): Record<string, unknown> => {
 	Object.keys(record).forEach((key) => {
-		const value = record[key];
-
-		if (value === null) {
-			record[key] = undefined;
-		}
-
-		if (isPrimitiveRecordAllowingNull(value)) {
-			Object.keys(value).forEach((nestedkey) => {
-				const nestedValue = value[nestedkey];
-				if ((nestedValue as unknown) === null) {
-					value[nestedkey] = undefined;
-				}
-			});
-		}
-
-		if (isArrayOfPrimitiveRecordsAllowingNull(value)) {
-			value.forEach((objectInArray) => {
-				Object.keys(objectInArray).forEach((keyOfObjectInArray) => {
-					const valueOfObjectInArray = objectInArray[keyOfObjectInArray];
-					if ((valueOfObjectInArray as unknown) === null) {
-						objectInArray[keyOfObjectInArray] = undefined;
-					}
-				});
-			});
-		}
+		record[key] = replaceNullWithUndefinedForUnknown(record[key]);
 	});
 	return record;
+};
+
+/** Recursively replace any null propery with `undefined` */
+export const replaceNullWithUndefinedForUnknown = (value: unknown): unknown => {
+	if (value === null) {
+		return undefined;
+	}
+
+	if (Array.isArray(value)) {
+		return value.map(replaceNullWithUndefinedForUnknown);
+	}
+
+	if (isStringRecord(value)) {
+		return replaceNullWithUndefinedForRecord(value);
+	}
+	return value;
 };

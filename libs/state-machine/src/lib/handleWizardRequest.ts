@@ -1,4 +1,4 @@
-import { replaceNullWithUndefined } from '@newsletters-nx/newsletters-data-client';
+import { replaceNullWithUndefinedInFormDataRecord } from '@newsletters-nx/newsletters-data-client';
 import { makeResponse } from './makeResponse';
 import { setupInitialState } from './setupInitialState';
 import { stateMachineButtonPressed } from './stateMachineButtonPressed';
@@ -35,7 +35,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 ): Promise<CurrentStepRouteResponse> {
 	try {
 		if (requestBody.formData) {
-			replaceNullWithUndefined(requestBody.formData);
+			replaceNullWithUndefinedInFormDataRecord(requestBody.formData);
 		}
 
 		const stepData =
