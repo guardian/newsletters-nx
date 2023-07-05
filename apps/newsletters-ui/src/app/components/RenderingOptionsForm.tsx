@@ -120,70 +120,71 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				Rendering Options: {originalItem.name}
 			</Typography>
 
+			<Typography variant="h3">Category and series tag</Typography>
+			<StateEditForm
+				formSchema={newsletterDataSchema.pick({
+					category: true,
+					seriesTag: true,
+				})}
+				formData={subset}
+				setFormData={setSubset}
+			/>
+
 			{renderingOptions && (
 				<>
-					<Typography variant="h3">Category and series tag</Typography>
-					<StateEditForm
-						formSchema={newsletterDataSchema.pick({
-							category: true,
-							seriesTag: true,
-						})}
-						formData={subset}
-						setFormData={setSubset}
-					/>
-
 					<Typography variant="h3">Rendering options</Typography>
 					<StateEditForm
 						formSchema={renderingOptionsSchema}
 						formData={renderingOptions}
 						setFormData={setRenderingOptions}
 					/>
-					<Stack maxWidth={'md'} direction={'row'} spacing={2} marginBottom={2}>
-						<Button
-							variant="outlined"
-							size="large"
-							onClick={reset}
-							disabled={waitingForResponse || noChangesMade}
-						>
-							reset
-						</Button>
-						<Button
-							variant="contained"
-							size="large"
-							onClick={handleSubmit}
-							disabled={waitingForResponse}
-						>
-							submit
-						</Button>
-						<Snackbar
-							sx={{ position: 'static' }}
-							open={!!errorMessage}
-							onClose={() => {
-								setErrorMessage(undefined);
-							}}
-						>
-							<Alert
-								onClose={() => {
-									setErrorMessage(undefined);
-								}}
-								severity="error"
-							>
-								{errorMessage}
-							</Alert>
-						</Snackbar>
-
-						<Snackbar
-							sx={{ position: 'static' }}
-							open={!!confirmationMessage}
-							onClose={() => {
-								setConfirmationMessage(undefined);
-							}}
-						>
-							<Alert severity="info">{confirmationMessage}</Alert>
-						</Snackbar>
-					</Stack>
 				</>
 			)}
+
+			<Stack maxWidth={'md'} direction={'row'} spacing={2} marginBottom={2}>
+				<Button
+					variant="outlined"
+					size="large"
+					onClick={reset}
+					disabled={waitingForResponse || noChangesMade}
+				>
+					reset
+				</Button>
+				<Button
+					variant="contained"
+					size="large"
+					onClick={handleSubmit}
+					disabled={waitingForResponse}
+				>
+					submit
+				</Button>
+				<Snackbar
+					sx={{ position: 'static' }}
+					open={!!errorMessage}
+					onClose={() => {
+						setErrorMessage(undefined);
+					}}
+				>
+					<Alert
+						onClose={() => {
+							setErrorMessage(undefined);
+						}}
+						severity="error"
+					>
+						{errorMessage}
+					</Alert>
+				</Snackbar>
+
+				<Snackbar
+					sx={{ position: 'static' }}
+					open={!!confirmationMessage}
+					onClose={() => {
+						setConfirmationMessage(undefined);
+					}}
+				>
+					<Alert severity="info">{confirmationMessage}</Alert>
+				</Snackbar>
+			</Stack>
 		</>
 	);
 };
