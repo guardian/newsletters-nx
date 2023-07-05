@@ -1,27 +1,16 @@
-import {
-	Alert,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	Snackbar,
-	Typography,
-} from '@mui/material';
+import { Alert, Button, Snackbar, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useMemo, useState } from 'react';
 import type {
 	FormDataRecord,
-	NewsletterCategory,
 	NewsletterData,
-	RenderingOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	getEmptySchemaData,
+	newsletterDataSchema,
 	renderingOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
-import { renderYesNo } from '../util';
 import { StateEditForm } from './StateEditForm';
 
 interface Props {
@@ -36,7 +25,10 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	);
 
 	const [item, setItem] = useState<NewsletterData>(originalItem);
-	const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+	const [subset, setSubset] = useState<FormDataRecord>({
+		category: item.category,
+		seriesTag: item.seriesTag,
+	});
 
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -48,8 +40,15 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		item.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema);
 
 	const noChangesMade = useMemo(() => {
-		return JSON.stringify(resetValue) === JSON.stringify(renderingOptions);
-	}, [renderingOptions, resetValue]);
+		const renderingOptionsMatch =
+			JSON.stringify(resetValue) === JSON.stringify(renderingOptions);
+
+		return (
+			renderingOptionsMatch &&
+			item.category === subset['category'] &&
+			item.seriesTag === subset['seriesTag']
+		);
+	}, [renderingOptions, resetValue, item, subset]);
 
 	const handleSubmit = () => {
 		if (waitingForResponse) {
@@ -61,35 +60,23 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 			return;
 		}
 
-		if (item.category === 'article-based') {
-			void requestUpdate(parseResult.data);
-		} else {
-			setCategoryDialogOpen(true);
-		}
+		void requestUpdate();
 	};
 
-	const handleSetCategoryDialog = (changeToArticleBased: boolean) => {
-		const parseResult = renderingOptionsSchema.safeParse(renderingOptions);
-		if (!parseResult.success) {
+	const requestUpdate = async () => {
+		const renderingOptionsparseResult =
+			renderingOptionsSchema.safeParse(renderingOptions);
+		if (!renderingOptionsparseResult.success) {
 			setErrorMessage('Cannot submit with validation errors');
 			return;
 		}
-		void requestUpdate(
-			parseResult.data,
-			changeToArticleBased ? 'article-based' : undefined,
-		);
-		setCategoryDialogOpen(false);
-	};
+		const parsedRenderingOptions = renderingOptionsparseResult.data;
 
-	const requestUpdate = async (
-		renderingOptions: RenderingOptions,
-		category?: NewsletterCategory,
-	) => {
 		setWaitingForResponse(true);
 
 		const response = await requestNewsletterEdit(originalItem.listId, {
-			renderingOptions: renderingOptions,
-			category,
+			renderingOptions: parsedRenderingOptions,
+			...subset,
 		}).catch((error: unknown) => {
 			setErrorMessage('Failed to submit form.');
 			setWaitingForResponse(false);
@@ -103,8 +90,12 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		}
 
 		if (response.ok) {
-			setRenderingOptions(response.data.renderingOptions);
 			setItem(response.data);
+			setRenderingOptions(response.data.renderingOptions);
+			setSubset({
+				category: item.category,
+				seriesTag: item.seriesTag,
+			});
 			setWaitingForResponse(false);
 			setConfirmationMessage('rendering options updated!');
 		} else {
@@ -117,6 +108,10 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		setRenderingOptions(
 			item.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
 		);
+		setSubset({
+			category: item.category,
+			seriesTag: item.seriesTag,
+		});
 	};
 
 	return (
@@ -125,14 +120,19 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				Rendering Options: {originalItem.name}
 			</Typography>
 
-			<Typography>Category: {item.category}</Typography>
-			<Typography>series tag: {item.seriesTag}</Typography>
-			<Typography>
-				Rendering Options defined: {renderYesNo(!!item.renderingOptions)}
-			</Typography>
-
 			{renderingOptions && (
 				<>
+					<Typography variant="h3">Category and series tag</Typography>
+					<StateEditForm
+						formSchema={newsletterDataSchema.pick({
+							category: true,
+							seriesTag: true,
+						})}
+						formData={subset}
+						setFormData={setSubset}
+					/>
+
+					<Typography variant="h3">Rendering options</Typography>
 					<StateEditForm
 						formSchema={renderingOptionsSchema}
 						formData={renderingOptions}
@@ -184,30 +184,6 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 					</Stack>
 				</>
 			)}
-
-			<Dialog open={categoryDialogOpen}>
-				<DialogContent>
-					<DialogContentText>
-						Change category to "article-based"?
-					</DialogContentText>
-					<DialogActions>
-						<Button
-							onClick={() => {
-								handleSetCategoryDialog(true);
-							}}
-						>
-							Yes
-						</Button>
-						<Button
-							onClick={() => {
-								handleSetCategoryDialog(false);
-							}}
-						>
-							No
-						</Button>
-					</DialogActions>
-				</DialogContent>
-			</Dialog>
 		</>
 	);
 };
