@@ -118,7 +118,9 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		});
 	}
 
-	async list(): Promise<
+	async list(
+		includeCancelled: boolean,
+	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
 		| UnsuccessfulStorageResponse
 	> {
@@ -139,7 +141,11 @@ export class S3NewsletterStorage implements NewsletterStorage {
 
 			return {
 				ok: true,
-				data: listWithoutMeta,
+				data: includeCancelled
+					? listWithoutMeta
+					: listWithoutMeta.filter(
+							(newsletter) => newsletter.status !== 'cancelled',
+					  ),
 			};
 		} catch (error) {
 			return {

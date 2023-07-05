@@ -5,12 +5,10 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { fetchApiData } from '../api-requests/fetch-api-data';
 
-export const listLoader: LoaderFunction = async (): Promise<
-	NewsletterData[]
-> => {
-	const list = (await fetchApiData<NewsletterData[]>(`api/newsletters`)) ?? [];
-	return list;
-};
+export const listLoader: LoaderFunction = async (): Promise<NewsletterData[]> =>
+	(await fetchApiData<NewsletterData[]>(
+		`api/newsletters?includeCancelled=true`,
+	)) ?? [];
 
 export const detailLoader: LoaderFunction = async ({
 	params,

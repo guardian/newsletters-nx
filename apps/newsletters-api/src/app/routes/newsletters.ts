@@ -12,30 +12,45 @@ import {
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
 
+interface IListNewslettersQuerystring {
+	includeCancelled?: string;
+}
 export function registerNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
-	app.get('/api/legacy/newsletters', async (req, res) => {
-		const storageResponse = await newsletterStore.list();
-		if (!storageResponse.ok) {
-			return res
-				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-				.send(makeErrorResponse(storageResponse.message));
-		}
+	app.get<{ Querystring: IListNewslettersQuerystring }>(
+		'/api/legacy/newsletters',
+		async (req, res) => {
+			const { includeCancelled } = req.query;
+			const storageResponse = await newsletterStore.list(
+				includeCancelled === 'true',
+			);
+			if (!storageResponse.ok) {
+				return res
+					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+					.send(makeErrorResponse(storageResponse.message));
+			}
 
-		return storageResponse.data.map(transformDataToLegacyNewsletter);
-	});
+			return storageResponse.data.map(transformDataToLegacyNewsletter);
+		},
+	);
 
-	app.get('/api/newsletters', async (req, res) => {
-		const storageResponse = await newsletterStore.list();
-		if (!storageResponse.ok) {
-			return res
-				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-				.send(makeErrorResponse(storageResponse.message));
-		}
+	app.get<{ Querystring: IListNewslettersQuerystring }>(
+		'/api/newsletters',
+		async (req, res) => {
+			const { includeCancelled } = req.query;
+			const storageResponse = await newsletterStore.list(
+				includeCancelled === 'true',
+			);
+			if (!storageResponse.ok) {
+				return res
+					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+					.send(makeErrorResponse(storageResponse.message));
+			}
 
-		return makeSuccessResponse(storageResponse.data);
-	});
+			return makeSuccessResponse(storageResponse.data);
+		},
+	);
 
 	app.get<{ Params: { newsletterId: string } }>(
 		'/api/newsletters/:newsletterId',

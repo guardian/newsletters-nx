@@ -169,10 +169,17 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
-	list() {
+	list(includeCancelled: boolean) {
+		const allNewsletters = [...this.memory]
+			.map(this.stripMeta)
+			.map((item) => ({ ...item }));
 		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta[]> = {
 			ok: true,
-			data: [...this.memory].map(this.stripMeta).map((item) => ({ ...item })),
+			data: includeCancelled
+				? allNewsletters
+				: allNewsletters.filter(
+						(newsletter) => newsletter.status !== 'cancelled',
+				  ),
 		};
 		return Promise.resolve(response);
 	}

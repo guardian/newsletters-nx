@@ -36,7 +36,7 @@ export const getInitialStateForLaunch = async (
 		};
 	}
 	const storageResponse = await launchService.draftStorage.read(id);
-	const allLaunchedResponse = await launchService.newsletterStorage.list();
+	const allLaunchedResponse = await launchService.newsletterStorage.list(true);
 
 	const draft: DraftNewsletterData = storageResponse.ok
 		? storageResponse.data

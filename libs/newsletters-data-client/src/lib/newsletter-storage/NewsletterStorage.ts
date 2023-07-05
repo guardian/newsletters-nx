@@ -72,7 +72,9 @@ export abstract class NewsletterStorage {
 		| UnsuccessfulStorageResponse
 	>;
 
-	abstract list(): Promise<
+	abstract list(
+		includeCancelled: boolean,
+	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
 		| UnsuccessfulStorageResponse
 	>;

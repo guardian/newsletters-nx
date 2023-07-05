@@ -44,7 +44,9 @@ export const checkFormDataValuesAreUnique =
 		if (!launchService) {
 			return { message: 'no launch service' };
 		}
-		const newsletterListResponse = await launchService.newsletterStorage.list();
+		const newsletterListResponse = await launchService.newsletterStorage.list(
+			true,
+		);
 		if (!newsletterListResponse.ok) {
 			return {
 				message:
