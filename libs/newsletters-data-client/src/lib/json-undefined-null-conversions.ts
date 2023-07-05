@@ -87,16 +87,6 @@ export const replaceNullWithUndefinedInFormDataRecord = (
 	return formData;
 };
 
-/** replace any value of `null` in a string record with `undefined` */
-const replaceNullWithUndefinedForRecord = (
-	record: Record<string, unknown>,
-): Record<string, unknown> => {
-	Object.keys(record).forEach((key) => {
-		record[key] = replaceNullWithUndefinedForUnknown(record[key]);
-	});
-	return record;
-};
-
 /** Recursively replace any null propery with `undefined` */
 export const replaceNullWithUndefinedForUnknown = (value: unknown): unknown => {
 	if (value === null) {
@@ -108,7 +98,10 @@ export const replaceNullWithUndefinedForUnknown = (value: unknown): unknown => {
 	}
 
 	if (isStringRecord(value)) {
-		return replaceNullWithUndefinedForRecord(value);
+		Object.keys(value).forEach((key) => {
+			value[key] = replaceNullWithUndefinedForUnknown(value[key]);
+		});
+		return value;
 	}
 	return value;
 };
