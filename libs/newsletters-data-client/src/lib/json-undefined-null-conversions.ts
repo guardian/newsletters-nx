@@ -52,7 +52,7 @@ const isArrayOfPrimitiveRecordsAllowingNull = (
 	return value.every(isPrimitiveRecordAllowingNull);
 };
 
-/** recursively replace any `null` with `undefined` */
+/** replace any value of `null` in a FormDataRecord with `undefined` */
 export const replaceNullWithUndefined = (
 	formData: FormDataRecord,
 ): FormDataRecord => {
@@ -84,4 +84,38 @@ export const replaceNullWithUndefined = (
 		}
 	});
 	return formData;
+};
+
+/** replace any value of `null` in a string record with `undefined` */
+export const replaceNullWithUndefinedForRecord = (
+	record: Record<string, unknown>,
+): Record<string, unknown> => {
+	Object.keys(record).forEach((key) => {
+		const value = record[key];
+
+		if (value === null) {
+			record[key] = undefined;
+		}
+
+		if (isPrimitiveRecordAllowingNull(value)) {
+			Object.keys(value).forEach((nestedkey) => {
+				const nestedValue = value[nestedkey];
+				if ((nestedValue as unknown) === null) {
+					value[nestedkey] = undefined;
+				}
+			});
+		}
+
+		if (isArrayOfPrimitiveRecordsAllowingNull(value)) {
+			value.forEach((objectInArray) => {
+				Object.keys(objectInArray).forEach((keyOfObjectInArray) => {
+					const valueOfObjectInArray = objectInArray[keyOfObjectInArray];
+					if ((valueOfObjectInArray as unknown) === null) {
+						objectInArray[keyOfObjectInArray] = undefined;
+					}
+				});
+			});
+		}
+	});
+	return record;
 };

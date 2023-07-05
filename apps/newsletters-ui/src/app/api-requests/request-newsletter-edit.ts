@@ -2,6 +2,7 @@ import type {
 	ApiResponse,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { replaceUndefinedWithNull } from '@newsletters-nx/newsletters-data-client';
 
 export const requestNewsletterEdit = async (
 	listId: number,
@@ -12,7 +13,7 @@ export const requestNewsletterEdit = async (
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(modification),
+		body: JSON.stringify(modification, replaceUndefinedWithNull),
 	});
 
 	const responseBody = (await response.json()) as ApiResponse<NewsletterData>;
