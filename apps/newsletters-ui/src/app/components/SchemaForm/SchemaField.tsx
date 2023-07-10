@@ -18,7 +18,12 @@ import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
 import { SchemaRecordInput } from './SchemaRecordInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';
-import type { FieldDef, FieldValue, NumberInputSettings } from './util';
+import type {
+	FieldDef,
+	FieldValue,
+	NumberInputSettings,
+	StringInputSettings,
+} from './util';
 import { fieldValueAsDisplayString } from './util';
 
 // T is the shape of the schema passed as a prop to the `SchemaForm`
@@ -28,9 +33,9 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	field: FieldDef;
 	change: { (value: FieldValue, field: FieldDef): void };
 	options?: string[];
-	stringInputType?: string;
 	showUnsupported?: boolean;
 	numberInputSettings?: NumberInputSettings;
+	stringInputSettings?: StringInputSettings;
 	validationWarning?: string;
 	maxOptionsForRadioButtons: number;
 }
@@ -46,9 +51,9 @@ export function SchemaField<T extends z.ZodRawShape>({
 	field,
 	change,
 	options,
-	stringInputType,
 	showUnsupported = false,
 	numberInputSettings = {},
+	stringInputSettings = {},
 	validationWarning,
 	maxOptionsForRadioButtons,
 }: SchemaFieldProps<T>) {
@@ -80,7 +85,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 						<DateInput
 							{...standardProps}
 							value={value}
-							type={stringInputType}
+							type={stringInputSettings.type}
 						/>
 					</FieldWrapper>
 				);
@@ -95,7 +100,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 							<DateInput
 								{...standardProps}
 								value={date}
-								type={stringInputType}
+								type={stringInputSettings.type}
 							/>
 						</FieldWrapper>
 					);
@@ -109,7 +114,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 						<DateInput
 							{...standardProps}
 							value={value}
-							type={stringInputType}
+							type={stringInputSettings.type}
 						/>
 					</FieldWrapper>
 				);
@@ -145,7 +150,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					<StringInput
 						{...standardProps}
 						value={value ?? ''}
-						type={stringInputType}
+						type={stringInputSettings.type}
 					/>
 				</FieldWrapper>
 			);

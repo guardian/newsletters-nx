@@ -72,6 +72,11 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 						</Alert>
 					) : undefined
 				}
+				stringConfig={{
+					signUpDescription: {
+						type: 'textArea',
+					},
+				}}
 			/>
 
 			<Snackbar

@@ -18,6 +18,7 @@ export const StringInput: FunctionComponent<
 
 	return (
 		<TextField
+			multiline={type === 'textArea'}
 			fullWidth
 			label={props.label}
 			type={type}

@@ -34,6 +34,10 @@ export type NumberInputSettings = {
 	step?: number;
 };
 
+export type StringInputSettings = {
+	type?: 'text' | 'textArea';
+};
+
 export function eventToNumber(event: FormEvent, defaultValue = 0): number {
 	const numericalValue = Number((event.target as HTMLInputElement).value);
 	return isNaN(numericalValue) ? defaultValue : numericalValue;
