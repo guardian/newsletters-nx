@@ -15,7 +15,9 @@
 		"postinstall": "npm install --prefix cdk",
 		"bundle:api": "npx nx build newsletters-api --configuration=production --outputFileName=index.js",
 		"bundle:ui": "npx nx build newsletters-ui --configuration=production",
-		"upgrade-nx": "nx migrate latest && nx migrate --run-migrations"
+		"upgrade-nx": "nx migrate latest && nx migrate --run-migrations",
+		"type-library-changeset": "./scripts/add-change-set.sh",
+		"type-library-publish": "./scripts/publish-types.sh"
 	},
 	"engines": {
 		"node": ">=16.19.0",
