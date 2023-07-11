@@ -49,6 +49,11 @@ export const signUpPageLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.signUpPage,
+	fieldDisplayOptions: {
+		signUpDescription: {
+			textArea: true,
+		},
+	},
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };

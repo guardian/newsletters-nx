@@ -86,6 +86,11 @@ export const singleThrasherLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.singleThrasher,
+	fieldDisplayOptions: {
+		'thrasherOptions.thrasherDescription': {
+			textArea: true,
+		},
+	},
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };
