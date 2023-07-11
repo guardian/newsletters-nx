@@ -53,6 +53,9 @@ export const signUpPageLayout: WizardStepLayout<DraftService> = {
 		signUpDescription: {
 			textArea: true,
 		},
+		signUpHeadline: {
+			textArea: true,
+		},
 	},
 	canSkipTo: true,
 	executeSkip: executeSkip,
