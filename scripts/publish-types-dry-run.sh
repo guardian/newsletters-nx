@@ -2,12 +2,9 @@
 
 # MOVING BACK TO SOURCE FOLDER
 cd ./libs/editorial-newsletters-ts
-echo ""
-echo "**"
-echo "Changing editorial-newsletters-ts version:"
-npm version minor
-echo "**"
-echo ""
+
+npx changeset
+npx changeset version
 
 # MOVING BACK TO ROOT
 cd ../../
