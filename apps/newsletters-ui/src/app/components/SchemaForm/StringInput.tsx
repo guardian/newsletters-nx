@@ -1,19 +1,30 @@
 import { TextField } from '@mui/material';
-import type { FormEventHandler, FunctionComponent } from 'react';
+import type { FormEventHandler } from 'react';
 import type { FieldProps } from './util';
 import { eventToString } from './util';
 
-export const StringInput: FunctionComponent<
-	FieldProps & {
-		value: string;
-		inputHandler: { (value: string): void };
-		inputType?: 'textInput' | 'textArea';
-	}
-> = (props) => {
+// TO DO - add allowTabAndCr prop, if we ever need
+// to collect multiline/formatted text.
+
+// Would involve extending the StringInputSettings type
+// and the WizardStepLayout type so it can be configured
+// from the layout and passed down from SchemaForm.
+
+const tabAndCrPattern = /["\n"|"\t"]/g;
+
+type Props = FieldProps & {
+	value: string;
+	inputHandler: { (value: string): void };
+	inputType?: 'textInput' | 'textArea';
+};
+
+export const StringInput = (props: Props) => {
 	const { inputType = 'textInput' } = props;
 
 	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
-		props.inputHandler(eventToString(event));
+		const inputValue = eventToString(event);
+		const processedValue = inputValue.replace(tabAndCrPattern, '');
+		props.inputHandler(processedValue);
 	};
 
 	return (
