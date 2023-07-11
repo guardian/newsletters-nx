@@ -35,7 +35,7 @@ export type NumberInputSettings = {
 };
 
 export type StringInputSettings = {
-	type?: 'text' | 'textArea';
+	inputType?: 'textInput' | 'textArea';
 };
 
 export function eventToNumber(event: FormEvent, defaultValue = 0): number {

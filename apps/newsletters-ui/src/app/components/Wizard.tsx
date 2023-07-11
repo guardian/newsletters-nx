@@ -160,7 +160,7 @@ export const Wizard: React.FC<WizardProps> = ({
 		const [key, value] = nextEntry;
 		if (value.textArea) {
 			config[key] = {
-				type: 'textArea',
+				inputType: 'textArea',
 			};
 		}
 		return config;

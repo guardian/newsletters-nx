@@ -85,7 +85,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 						<DateInput
 							{...standardProps}
 							value={value}
-							type={stringInputSettings.type}
+							type={stringInputSettings.inputType}
 						/>
 					</FieldWrapper>
 				);
@@ -100,7 +100,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 							<DateInput
 								{...standardProps}
 								value={date}
-								type={stringInputSettings.type}
+								type={stringInputSettings.inputType}
 							/>
 						</FieldWrapper>
 					);
@@ -114,7 +114,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 						<DateInput
 							{...standardProps}
 							value={value}
-							type={stringInputSettings.type}
+							type={stringInputSettings.inputType}
 						/>
 					</FieldWrapper>
 				);
@@ -150,7 +150,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					<StringInput
 						{...standardProps}
 						value={value ?? ''}
-						type={stringInputSettings.type}
+						inputType={stringInputSettings.inputType}
 					/>
 				</FieldWrapper>
 			);

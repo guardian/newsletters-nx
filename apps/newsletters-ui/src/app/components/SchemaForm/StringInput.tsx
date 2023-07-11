@@ -7,10 +7,10 @@ export const StringInput: FunctionComponent<
 	FieldProps & {
 		value: string;
 		inputHandler: { (value: string): void };
-		type?: HTMLInputElement['type'];
+		inputType?: 'textInput' | 'textArea';
 	}
 > = (props) => {
-	const { type = 'text' } = props;
+	const { inputType = 'textInput' } = props;
 
 	const sendValue: FormEventHandler<HTMLInputElement> = (event) => {
 		props.inputHandler(eventToString(event));
@@ -18,10 +18,11 @@ export const StringInput: FunctionComponent<
 
 	return (
 		<TextField
-			multiline={type === 'textArea'}
+			multiline={inputType === 'textArea'}
+			minRows={2}
 			fullWidth
 			label={props.label}
-			type={type}
+			type={inputType}
 			value={props.value}
 			onInput={sendValue}
 			helperText={props.error}

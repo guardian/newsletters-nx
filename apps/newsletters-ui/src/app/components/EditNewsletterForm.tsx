@@ -74,7 +74,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 				}
 				stringConfig={{
 					signUpDescription: {
-						type: 'textArea',
+						inputType: 'textArea',
 					},
 				}}
 			/>
