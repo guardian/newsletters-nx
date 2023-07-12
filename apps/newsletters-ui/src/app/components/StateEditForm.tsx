@@ -2,7 +2,7 @@ import { Box, Paper, Typography } from '@mui/material';
 import type { z } from 'zod';
 import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
-import type { FieldDef, FieldValue } from './SchemaForm';
+import type { FieldDef, FieldValue, StringInputSettings } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 	formData: WizardFormData;
 	setFormData: { (newData: WizardFormData): void };
 	maxOptionsForRadioButtons?: number;
+	stringConfig?: Partial<Record<string, StringInputSettings>>;
 }
 
 export const StateEditForm = ({
@@ -17,6 +18,7 @@ export const StateEditForm = ({
 	formData,
 	setFormData,
 	maxOptionsForRadioButtons,
+	stringConfig = {},
 }: Props) => {
 	const changeFormData = (value: FieldValue, field: FieldDef) => {
 		const mod = getModification(value, field);
@@ -45,6 +47,7 @@ export const StateEditForm = ({
 				validationWarnings={getValidationWarnings(formData, formSchema)}
 				changeValue={changeFormData}
 				maxOptionsForRadioButtons={maxOptionsForRadioButtons}
+				stringConfig={stringConfig}
 			/>
 		</Box>
 	);

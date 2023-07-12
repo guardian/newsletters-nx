@@ -2,7 +2,7 @@ import { Box, Button, Paper, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import type { z } from 'zod';
-import type { FieldDef, FieldValue } from './SchemaForm';
+import type { FieldDef, FieldValue, StringInputSettings } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
 
 type SchemaObjectType<T extends z.ZodRawShape> = {
@@ -22,6 +22,7 @@ interface Props<T extends z.ZodRawShape> {
 	isDisabled?: boolean;
 	message?: ReactNode;
 	maxOptionsForRadioButtons?: number;
+	stringConfig?: Partial<Record<keyof T, StringInputSettings>>;
 }
 
 /**
@@ -41,6 +42,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	isDisabled,
 	message,
 	maxOptionsForRadioButtons,
+	stringConfig = {},
 }: Props<T>) {
 	const [parseInitialDataResult, setParseInitialDataResult] = useState<
 		z.SafeParseReturnType<typeof schema, SchemaObjectType<T>> | undefined
@@ -146,6 +148,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				validationWarnings={warnings}
 				readOnlyKeys={isDisabled ? Object.keys(schema.shape) : undefined}
 				maxOptionsForRadioButtons={maxOptionsForRadioButtons}
+				stringConfig={stringConfig}
 			/>
 			<Box marginBottom={2}>
 				<Button

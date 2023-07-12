@@ -1,6 +1,7 @@
 import type {
 	StepperConfig,
 	WizardLayout,
+	WizardStepLayout,
 } from '@newsletters-nx/state-machine';
 import {
 	getStartStepAndId,
@@ -50,4 +51,16 @@ export const getStartStepId = (
 		return undefined;
 	}
 	return getStartStepAndId(layout, isEdit).id;
+};
+
+export const getFieldDisplayOptions = (
+	wizardId: keyof typeof newslettersWorkflowStepLayout,
+	stepId: string,
+): WizardStepLayout['fieldDisplayOptions'] => {
+	const wizard = newslettersWorkflowStepLayout[wizardId];
+	if (!wizard) {
+		return undefined;
+	}
+	const step = wizard[stepId];
+	return step?.fieldDisplayOptions;
 };
