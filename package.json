@@ -18,8 +18,7 @@
 		"upgrade-nx": "nx migrate latest && nx migrate --run-migrations",
 		"type-library-build": "nx run editorial-newsletters-ts:build",
 		"type-library-changeset": "./scripts/type-library-changeset.sh",
-		"type-library-version": "./scripts/type-library-version.sh",
-		"type-library-publish": "./scripts/publish-types.sh"
+		"type-library-version": "./scripts/type-library-version.sh"
 	},
 	"engines": {
 		"node": ">=16.19.0",
