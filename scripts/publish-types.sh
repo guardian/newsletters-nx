@@ -25,6 +25,9 @@ nx run editorial-newsletters-ts:build
 cd ./dist/libs/editorial-newsletters-ts
 echo "publishing package"
 npx changeset publish
+# https://github.com/guardian/recommendations/blob/main/npm-packages.md#publishing
+# For this to work, need the NPM_TOKEN secret
+
 
 # MOVING BACK TO ROOT
 cd ../../
