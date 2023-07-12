@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - publish-test-branch
   pull_request:
 
 concurrency:
