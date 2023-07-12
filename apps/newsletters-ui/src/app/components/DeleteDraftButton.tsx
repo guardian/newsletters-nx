@@ -1,4 +1,5 @@
-import { Alert, AlertTitle, Box, Button, ButtonGroup } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Alert, AlertTitle, Button, ButtonGroup } from '@mui/material';
 import { useState } from 'react';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
@@ -7,14 +8,12 @@ interface Props {
 	draft: DraftNewsletterData;
 	hasBeenDeleted: boolean;
 	setHasBeenDeleted: { (value: boolean): void };
-	margin?: number;
 }
 
 export const DeleteDraftButton = ({
 	draft,
 	hasBeenDeleted,
 	setHasBeenDeleted,
-	margin = 0,
 }: Props) => {
 	const [showConfirmationButton, setShowConfirmationButton] = useState(false);
 	const [deleteErrorMessage, setDeleteErrorMessage] = useState<
@@ -38,7 +37,7 @@ export const DeleteDraftButton = ({
 	};
 
 	return (
-		<Box marginTop={margin} marginBottom={margin}>
+		<>
 			{!hasBeenDeleted && !showConfirmationButton && (
 				<ButtonGroup>
 					<Button
@@ -48,6 +47,7 @@ export const DeleteDraftButton = ({
 							setDeleteErrorMessage(undefined);
 							setShowConfirmationButton(true);
 						}}
+						startIcon={<DeleteIcon />}
 					>
 						delete
 					</Button>
@@ -76,6 +76,6 @@ export const DeleteDraftButton = ({
 					<span>{deleteErrorMessage}</span>
 				</Alert>
 			)}
-		</Box>
+		</>
 	);
 };
