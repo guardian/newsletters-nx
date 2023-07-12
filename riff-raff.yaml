@@ -8,9 +8,6 @@ templates:
     parameters:
       cloudFormationStackByTags: false
       prependStackToCloudFormationStackName: false
-      amiTags:
-        Recipe: newsletters-node
-        AmigoStage: PROD
   autoscaling-template:
     type: autoscaling
     parameters:
