@@ -2,6 +2,7 @@ import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
+	getFieldDisplayOptions,
 	getFormSchema,
 	getStartStepId,
 	getStepperConfig,
@@ -14,6 +15,7 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import { MarkdownView } from './MarkdownView';
+import type { StringInputSettings } from './SchemaForm';
 import { SkipConfirmationDialog } from './SkipConfirmationDialog';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
@@ -147,6 +149,22 @@ export const Wizard: React.FC<WizardProps> = ({
 	const currentStepListing = stepperConfig.steps.find(
 		(step) => step.id === serverData.currentStepId,
 	);
+	const fieldDisplayOptions = getFieldDisplayOptions(
+		wizardId,
+		serverData.currentStepId,
+	);
+
+	const stringConfig = Object.entries(fieldDisplayOptions ?? {}).reduce<
+		Record<string, StringInputSettings>
+	>((config, nextEntry) => {
+		const [key, value] = nextEntry;
+		if (value.textArea) {
+			config[key] = {
+				inputType: 'textArea',
+			};
+		}
+		return config;
+	}, {});
 
 	const handleFormChange = (updatedLocalState: WizardFormData): void => {
 		if (showSkipModalFor) {
@@ -224,6 +242,7 @@ export const Wizard: React.FC<WizardProps> = ({
 					formData={formData}
 					setFormData={handleFormChange}
 					maxOptionsForRadioButtons={5}
+					stringConfig={stringConfig}
 				/>
 			)}
 

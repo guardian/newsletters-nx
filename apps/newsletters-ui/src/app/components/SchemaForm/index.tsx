@@ -3,7 +3,12 @@ import { ZodArray, ZodEnum, ZodObject, ZodString } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
-import type { FieldDef, FieldValue, NumberInputSettings } from './util';
+import type {
+	FieldDef,
+	FieldValue,
+	NumberInputSettings,
+	StringInputSettings,
+} from './util';
 
 export * from './util';
 
@@ -13,6 +18,7 @@ interface Props<T extends z.ZodRawShape> {
 	changeValue: { (value: FieldValue, field: FieldDef): void };
 	options?: Partial<Record<keyof T, string[]>>;
 	numberConfig?: Partial<Record<keyof T, NumberInputSettings>>;
+	stringConfig?: Partial<Record<keyof T, StringInputSettings>>;
 	showUnsupported?: boolean;
 	excludedKeys?: string[];
 	readOnlyKeys?: string[];
@@ -52,6 +58,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	changeValue,
 	options = {},
 	numberConfig = {},
+	stringConfig = {},
 	showUnsupported = false,
 	excludedKeys = [],
 	readOnlyKeys = [],
@@ -99,10 +106,10 @@ export function SchemaForm<T extends z.ZodRawShape>({
 					key={field.key}
 					options={options[field.key]}
 					numberInputSettings={numberConfig[field.key]}
+					stringInputSettings={stringConfig[field.key]}
 					change={changeValue}
 					field={field}
 					showUnsupported={showUnsupported}
-					stringInputType={field.key === 'text' ? 'textArea' : undefined}
 					validationWarning={validationWarnings[field.key]}
 					maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 				/>

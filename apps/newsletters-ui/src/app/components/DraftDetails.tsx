@@ -71,15 +71,6 @@ export const DraftDetails = ({ draft }: Props) => {
 				created: {draft.creationTimeStamp}
 			</Typography>
 
-			{userCanWriteToDrafts && (
-				<DeleteDraftButton
-					draft={draft}
-					hasBeenDeleted={hasBeenDeleted}
-					setHasBeenDeleted={setHasBeenDeleted}
-					margin={1}
-				/>
-			)}
-
 			{draft.listId && (
 				<ButtonGroup>
 					<NavigateButton
@@ -99,6 +90,13 @@ export const DraftDetails = ({ draft }: Props) => {
 						>
 							Launch
 						</NavigateButton>
+					)}
+					{userCanWriteToDrafts && (
+						<DeleteDraftButton
+							draft={draft}
+							hasBeenDeleted={hasBeenDeleted}
+							setHasBeenDeleted={setHasBeenDeleted}
+						/>
 					)}
 				</ButtonGroup>
 			)}

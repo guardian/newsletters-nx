@@ -49,6 +49,11 @@ export const signUpEmbedLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.signUpEmbed,
+	fieldDisplayOptions: {
+		signUpEmbedDescription: {
+			textArea: true,
+		},
+	},
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };
