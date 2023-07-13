@@ -1,7 +1,7 @@
 {
 	"name": "@guardian/editorial-newsletters-ts",
-	"version": "0.1.0",
-	"dependencies": {
+	"version": "0.0.2",
+	"devDependencies": {
 		"@changesets/cli": "^2.26.2"
 	}
 }
