@@ -28,11 +28,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # SECRETS: ${{ secrets }}
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        #   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
         # Install then build production-ready bundled files
       - name: Install deps
