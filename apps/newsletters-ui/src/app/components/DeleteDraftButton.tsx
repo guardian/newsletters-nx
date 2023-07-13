@@ -1,5 +1,15 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Alert, AlertTitle, Button, ButtonGroup } from '@mui/material';
+import {
+	Alert,
+	AlertTitle,
+	Button,
+	ButtonGroup,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+} from '@mui/material';
 import { useState } from 'react';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
@@ -38,7 +48,7 @@ export const DeleteDraftButton = ({
 
 	return (
 		<>
-			{!hasBeenDeleted && !showConfirmationButton && (
+			{!hasBeenDeleted && (
 				<ButtonGroup>
 					<Button
 						color="error"
@@ -53,23 +63,28 @@ export const DeleteDraftButton = ({
 					</Button>
 				</ButtonGroup>
 			)}
-			{!hasBeenDeleted && showConfirmationButton && (
-				<Alert severity="warning">
-					<AlertTitle>Are you sure you want to delete this draft?</AlertTitle>
-					<ButtonGroup variant="contained">
-						<Button
-							onClick={() => {
-								setShowConfirmationButton(false);
-							}}
-						>
-							CANCEL
-						</Button>
-						<Button color="error" onClick={sendDeleteRequest}>
-							CONFIRM DELETE
-						</Button>
-					</ButtonGroup>
-				</Alert>
-			)}
+
+			<Dialog open={!hasBeenDeleted && showConfirmationButton}>
+				<DialogTitle>Are you sure you want to delete this draft?</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						Deleted drafts cannot be recovered.
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={() => {
+							setShowConfirmationButton(false);
+						}}
+					>
+						CANCEL
+					</Button>
+					<Button color="error" onClick={sendDeleteRequest}>
+						CONFIRM DELETE
+					</Button>
+				</DialogActions>
+			</Dialog>
+
 			{!!deleteErrorMessage && (
 				<Alert severity="error">
 					<AlertTitle>Delete request failed</AlertTitle>
