@@ -96,8 +96,8 @@ export const SchemaRecordArrayInput: FunctionComponent<
 									display: 'flex',
 									alignItems: 'center',
 									marginBottom: '22px',
+									flexDirection: 'row',
 								}}
-								direction={'row'}
 							>
 								<Button
 									size="small"

@@ -3,3 +3,4 @@ export * from './recursiveUnwrap';
 export * from './schema-helpers';
 export * from './validation';
 export * from './getFieldKeyNames';
+export * from './isRecord';

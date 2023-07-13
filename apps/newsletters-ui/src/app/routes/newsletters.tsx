@@ -3,6 +3,7 @@ import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
 import { NewsletterEditView } from '../components/views/NewsletterEditView';
 import { NewsletterJsonEditView } from '../components/views/NewsletterJsonEditView';
 import { NewslettersListView } from '../components/views/NewslettersListView';
+import { RenderingOptionsView } from '../components/views/RenderingOptionsView';
 import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
@@ -26,6 +27,11 @@ export const newslettersRoute: RouteObject = {
 		{
 			path: 'edit/:id',
 			element: <NewsletterEditView />,
+			loader: detailLoader,
+		},
+		{
+			path: 'rendering-options/:id',
+			element: <RenderingOptionsView />,
 			loader: detailLoader,
 		},
 		{

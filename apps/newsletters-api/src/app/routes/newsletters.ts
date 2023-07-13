@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import {
 	isPartialNewsletterData,
+	replaceNullWithUndefinedForUnknown,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
 import { newsletterStore } from '../../services/storage';
@@ -100,6 +101,8 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 		if (isNaN(newsletterIdAsNumber)) {
 			return res.status(400).send(makeErrorResponse(`Non numeric id provided`));
 		}
+
+		replaceNullWithUndefinedForUnknown(modifications);
 
 		if (!isPartialNewsletterData(modifications)) {
 			return res
