@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          registry-url: "https://registry.npmjs.org"
+          registry-url: 'https://registry.npmjs.org'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -78,7 +78,7 @@ jobs:
         run: npm run type-library-build
 
       - name: Publish type library - error handling
-        working-directory: ./dist/libs/editorial-newsletters-ts
+        # working-directory: ./dist/libs/editorial-newsletters-ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
