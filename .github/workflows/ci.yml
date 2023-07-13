@@ -77,7 +77,7 @@ jobs:
       - name: Build type library
         run: npm run type-library-build
 
-      - name: Publish type library
+      - name: Publish type library - error handling
         working-directory: ./dist/libs/editorial-newsletters-ts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
