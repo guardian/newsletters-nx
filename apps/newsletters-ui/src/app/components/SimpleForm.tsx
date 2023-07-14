@@ -124,13 +124,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	return (
-		<Box
-			elevation={3}
-			padding={1}
-			component={Paper}
-			maxWidth={'sm'}
-			marginBottom={1.5}
-		>
+		<Box elevation={3} padding={2} component={Paper} marginBottom={1.5}>
 			<Typography variant="h3" component={'legend'}>
 				{title}
 			</Typography>

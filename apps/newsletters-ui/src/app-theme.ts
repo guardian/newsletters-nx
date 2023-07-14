@@ -39,8 +39,7 @@ export const appTheme = createTheme({
 		},
 		h3: {
 			fontSize: '1.5rem',
-			marginBottom: '.25rem',
-			marginTop: '1.5rem',
+			marginBottom: '.5rem',
 		},
 	},
 	components: {
