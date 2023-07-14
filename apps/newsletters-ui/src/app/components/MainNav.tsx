@@ -52,20 +52,27 @@ export function MainNav() {
 					<MailOutlineIcon
 						sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
 					/>
-					<Typography
-						variant="h1"
-						noWrap
-						component="a"
-						href="/"
-						sx={{
-							mr: 2,
-							display: { xs: 'none', md: 'flex' },
-							color: 'inherit',
-							textDecoration: 'none',
-						}}
+					<div
+						role={'link'}
+						onClick={() => navigate('/')}
+						style={{
+								cursor: 'pointer',
+							}}
 					>
-						Newsletters
-					</Typography>
+						<Typography
+							variant="h1"
+							noWrap
+							component="a"
+							sx={{
+								mr: 2,
+								display: { xs: 'none', md: 'flex' },
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>
+							Newsletters
+						</Typography>
+					</div>
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
 							size="large"

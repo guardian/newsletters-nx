@@ -34,7 +34,6 @@ export const StateEditForm = ({
 		<Box
 			padding={1}
 			component={Paper}
-			maxWidth={'md'}
 			marginBottom={2.5}
 			elevation={2}
 		>
