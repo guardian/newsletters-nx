@@ -52,7 +52,7 @@ const ToolBarIcon = (props: {
 	</Box>
 );
 
-export function MainNav({ isOnCode }: Props) {
+export function MainNav({ isOnCode, isOnLocal }: Props) {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
 	const userProfile = useProfile();
@@ -67,11 +67,7 @@ export function MainNav({ isOnCode }: Props) {
 	};
 
 	return (
-		<AppBar
-			position="fixed"
-			component={'header'}
-			color={isOnCode ? 'secondary' : 'primary'}
-		>
+		<AppBar position="fixed" component={'header'}>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<MailOutlineIcon
@@ -172,11 +168,11 @@ export function MainNav({ isOnCode }: Props) {
 						))}
 					</Box>
 
-					{isOnCode || (
+					{isOnCode && (
 						<ToolBarIcon
 							tooltip="This is the test version of the newsletters tool - changes will not impact https://www.theguardian.com/"
 							avatarProps={{
-								sx: { bgcolor: 'primary.dark' },
+								sx: { bgcolor: 'secondary.dark' },
 							}}
 						>
 							<CodeIcon />
