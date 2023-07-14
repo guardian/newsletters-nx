@@ -21,6 +21,12 @@ export const NewsletterEditView = () => {
 				<NavigateButton href="../" variant="outlined">
 					Back to List
 				</NavigateButton>
+				<NavigateButton
+					href={`/newsletters/rendering-options/${matchedItem.identityName}`}
+					variant="outlined"
+				>
+					Edit Rendering Options
+				</NavigateButton>
 			</Box>
 			<EditNewsletterForm originalItem={matchedItem} />
 		</ContentWrapper>
