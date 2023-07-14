@@ -1,3 +1,4 @@
+import CodeIcon from '@mui/icons-material/Code';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
@@ -51,7 +52,11 @@ export function MainNav({ isOnCode, isOnLocal }: Props) {
 	};
 
 	return (
-		<AppBar position="fixed" component={'header'}>
+		<AppBar
+			position="fixed"
+			component={'header'}
+			color={isOnCode || isOnLocal ? 'secondary' : 'primary'}
+		>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<MailOutlineIcon
@@ -70,8 +75,6 @@ export function MainNav({ isOnCode, isOnLocal }: Props) {
 						}}
 					>
 						Newsletters
-						{isOnCode && '_CODE_'}
-						{isOnLocal && '_LOCAL_'}
 					</Typography>
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
@@ -154,7 +157,24 @@ export function MainNav({ isOnCode, isOnLocal }: Props) {
 						))}
 					</Box>
 
-					<Box sx={{ flexGrow: 0 }}>
+					{isOnCode ||
+						(isOnLocal && (
+							<Box sx={{ flexGrow: 0, marginLeft: 2 }}>
+								<Tooltip
+									title={
+										'This is the test version of the newsletters tool - changes will not impact https://www.theguardian.com/'
+									}
+								>
+									<IconButton sx={{ p: 0 }}>
+										<Avatar sx={{ bgcolor: 'primary.dark' }}>
+											<CodeIcon />
+										</Avatar>
+									</IconButton>
+								</Tooltip>
+							</Box>
+						))}
+
+					<Box sx={{ flexGrow: 0, marginLeft: 2 }}>
 						<Tooltip title={userName}>
 							<IconButton sx={{ p: 0 }}>
 								<Avatar alt={userName} src={userProfile?.picture} />

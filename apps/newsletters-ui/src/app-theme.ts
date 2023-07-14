@@ -12,8 +12,8 @@ export const appTheme = createTheme({
 		},
 		secondary: {
 			light: palette.news[800],
-			main: palette.news[500],
-			dark: palette.news[400],
+			main: palette.news[400],
+			dark: palette.news[300],
 			contrastText: palette.neutral[97],
 		},
 	},
