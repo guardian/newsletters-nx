@@ -1,0 +1,48 @@
+name: Publish Types Package
+
+on:
+  push:
+    branches:
+      - publish-test-branch
+  pull_request:
+#
+#concurrency:
+#  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+#  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build, test and publish
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+        # Install then build production-ready bundled files
+      - name: Install deps
+        run: |
+          npm ci
+          npm run lint
+          npm run test
+
+      - name: Build type library
+        run: npm run type-library-build
+
+      - name: Publish type library
+        # working-directory: ./dist/libs/editorial-newsletters-ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm run type-library-publish
