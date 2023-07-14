@@ -2,6 +2,7 @@ import CodeIcon from '@mui/icons-material/Code';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
+import type { AvatarProps } from '@mui/material/Avatar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -37,7 +38,21 @@ const menuItemIsSelected = (path: string): boolean => {
 	return window.location.pathname.startsWith(path);
 };
 
-export function MainNav({ isOnCode, isOnLocal }: Props) {
+const ToolBarIcon = (props: {
+	tooltip: string;
+	avatarProps: AvatarProps;
+	children?: React.ReactNode;
+}) => (
+	<Box sx={{ flexGrow: 0, marginLeft: 2 }}>
+		<Tooltip title={props.tooltip}>
+			<IconButton sx={{ p: 0 }}>
+				<Avatar {...props.avatarProps}>{props.children}</Avatar>
+			</IconButton>
+		</Tooltip>
+	</Box>
+);
+
+export function MainNav({ isOnCode }: Props) {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
 	const userProfile = useProfile();
@@ -55,7 +70,7 @@ export function MainNav({ isOnCode, isOnLocal }: Props) {
 		<AppBar
 			position="fixed"
 			component={'header'}
-			color={isOnCode || isOnLocal ? 'secondary' : 'primary'}
+			color={isOnCode ? 'secondary' : 'primary'}
 		>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
@@ -157,30 +172,24 @@ export function MainNav({ isOnCode, isOnLocal }: Props) {
 						))}
 					</Box>
 
-					{isOnCode ||
-						(isOnLocal && (
-							<Box sx={{ flexGrow: 0, marginLeft: 2 }}>
-								<Tooltip
-									title={
-										'This is the test version of the newsletters tool - changes will not impact https://www.theguardian.com/'
-									}
-								>
-									<IconButton sx={{ p: 0 }}>
-										<Avatar sx={{ bgcolor: 'primary.dark' }}>
-											<CodeIcon />
-										</Avatar>
-									</IconButton>
-								</Tooltip>
-							</Box>
-						))}
+					{isOnCode || (
+						<ToolBarIcon
+							tooltip="This is the test version of the newsletters tool - changes will not impact https://www.theguardian.com/"
+							avatarProps={{
+								sx: { bgcolor: 'primary.dark' },
+							}}
+						>
+							<CodeIcon />
+						</ToolBarIcon>
+					)}
 
-					<Box sx={{ flexGrow: 0, marginLeft: 2 }}>
-						<Tooltip title={userName}>
-							<IconButton sx={{ p: 0 }}>
-								<Avatar alt={userName} src={userProfile?.picture} />
-							</IconButton>
-						</Tooltip>
-					</Box>
+					<ToolBarIcon
+						tooltip={userName}
+						avatarProps={{
+							alt: userName,
+							src: userProfile?.picture,
+						}}
+					/>
 				</Toolbar>
 			</Container>
 		</AppBar>
