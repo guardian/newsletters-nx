@@ -22,13 +22,18 @@ interface IRootRoute {
 }
 
 export function Layout(props: IRootRoute) {
+	// Not ideal to use the host name to determine environment.
+	// Could also use a hook to query the API on a route that exposes the
+	// process.env.STAGE value, but taht seems unnecessary.
+	const host = typeof window !== 'undefined' ? window.location.host : undefined;
+	const isOnCode = !!host?.toLowerCase().split('.').includes('code');
+	const isOnLocal = !!host?.toLowerCase().split(':').includes('localhost');
+
 	return (
 		<Frame>
-			<header>
-				<MainNav />
-			</header>
-			<Box pt={8}>
-				<main>{props.outlet ? props.outlet : <Outlet />}</main>
+			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+			<Box pt={8} component={'main'}>
+				{props.outlet ? props.outlet : <Outlet />}
 			</Box>
 		</Frame>
 	);

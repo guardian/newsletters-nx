@@ -1,6 +1,8 @@
+import CodeIcon from '@mui/icons-material/Code';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
+import type { AvatarProps } from '@mui/material/Avatar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,6 +17,11 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../hooks/user-hooks';
+
+interface Props {
+	isOnCode: boolean;
+	isOnLocal: boolean;
+}
 
 interface NavLink {
 	path: string;
@@ -31,7 +38,21 @@ const menuItemIsSelected = (path: string): boolean => {
 	return window.location.pathname.startsWith(path);
 };
 
-export function MainNav() {
+const ToolBarIcon = (props: {
+	tooltip: string;
+	avatarProps: AvatarProps;
+	children?: React.ReactNode;
+}) => (
+	<Box sx={{ flexGrow: 0, marginLeft: 2 }}>
+		<Tooltip title={props.tooltip}>
+			<IconButton sx={{ p: 0 }}>
+				<Avatar {...props.avatarProps}>{props.children}</Avatar>
+			</IconButton>
+		</Tooltip>
+	</Box>
+);
+
+export function MainNav({ isOnCode, isOnLocal }: Props) {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
 	const userProfile = useProfile();
@@ -46,7 +67,7 @@ export function MainNav() {
 	};
 
 	return (
-		<AppBar position="fixed">
+		<AppBar position="fixed" component={'header'}>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<MailOutlineIcon
@@ -154,13 +175,24 @@ export function MainNav() {
 						))}
 					</Box>
 
-					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip title={userName}>
-							<IconButton sx={{ p: 0 }}>
-								<Avatar alt={userName} src={userProfile?.picture} />
-							</IconButton>
-						</Tooltip>
-					</Box>
+					{isOnCode && (
+						<ToolBarIcon
+							tooltip="This is the test version of the newsletters tool - changes will not impact https://www.theguardian.com/"
+							avatarProps={{
+								sx: { bgcolor: 'secondary.dark' },
+							}}
+						>
+							<CodeIcon />
+						</ToolBarIcon>
+					)}
+
+					<ToolBarIcon
+						tooltip={userName}
+						avatarProps={{
+							alt: userName,
+							src: userProfile?.picture,
+						}}
+					/>
 				</Toolbar>
 			</Container>
 		</AppBar>
