@@ -28,11 +28,9 @@ export function Layout(props: IRootRoute) {
 
 	return (
 		<Frame>
-			<header>
-				<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
-			</header>
-			<Box pt={8}>
-				<main>{props.outlet ? props.outlet : <Outlet />}</main>
+			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+			<Box pt={8} component={'main'}>
+				{props.outlet ? props.outlet : <Outlet />}
 			</Box>
 		</Frame>
 	);

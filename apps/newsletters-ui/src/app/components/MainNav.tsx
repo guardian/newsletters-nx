@@ -51,7 +51,7 @@ export function MainNav({ isOnCode, isOnLocal }: Props) {
 	};
 
 	return (
-		<AppBar position="fixed">
+		<AppBar position="fixed" component={'header'}>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<MailOutlineIcon
