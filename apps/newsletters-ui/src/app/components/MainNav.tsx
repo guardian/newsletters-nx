@@ -16,6 +16,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../hooks/user-hooks';
 
+interface Props {
+	isOnCode: boolean;
+	isOnLocal: boolean;
+}
+
 interface NavLink {
 	path: string;
 	label: string;
@@ -31,7 +36,7 @@ const menuItemIsSelected = (path: string): boolean => {
 	return window.location.pathname.startsWith(path);
 };
 
-export function MainNav() {
+export function MainNav({ isOnCode, isOnLocal }: Props) {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
 	const userProfile = useProfile();
@@ -65,6 +70,8 @@ export function MainNav() {
 						}}
 					>
 						Newsletters
+						{isOnCode && '_CODE_'}
+						{isOnLocal && '_LOCAL_'}
 					</Typography>
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton

@@ -22,10 +22,14 @@ interface IRootRoute {
 }
 
 export function Layout(props: IRootRoute) {
+	const host = typeof window !== 'undefined' ? window.location.host : undefined;
+	const isOnCode = !!host?.toLowerCase().split('.').includes('code');
+	const isOnLocal = !!host?.toLowerCase().split(':').includes('localhost');
+
 	return (
 		<Frame>
 			<header>
-				<MainNav />
+				<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
 			</header>
 			<Box pt={8}>
 				<main>{props.outlet ? props.outlet : <Outlet />}</main>
