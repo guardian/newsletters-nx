@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pushd libs/editorial-newsletters-ts || exit
+
 npm publish --access public
 
 exit_code=$?
@@ -14,3 +16,5 @@ if [[ $exit_code -eq 1 ]]; then
 else
     echo "Success: Package published successfully."
 fi
+
+popd || exit
