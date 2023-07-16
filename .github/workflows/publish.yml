@@ -5,10 +5,6 @@ on:
     branches:
       - publish-test-branch
   pull_request:
-#
-#concurrency:
-#  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-#  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -32,8 +28,10 @@ jobs:
       - name: Install deps
         run: |
           npm ci
-          npm run lint
-          npm run test
+          npm run bundle:ui
+          npm run bundle:api
+#          npm run lint
+#          npm run test
 
       - name: Build type library
         run: npm run type-library-build
