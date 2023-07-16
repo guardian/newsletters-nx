@@ -1,5 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Grid, Select, TextField} from "@mui/material";
+import {FormControlLabel, Grid, Radio, Select, TextField} from "@mui/material";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -8,6 +8,7 @@ import Collapse from '@mui/material/Collapse';
 import type {IconButtonProps} from '@mui/material/IconButton';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from "@mui/material/MenuItem";
+import RadioGroup from '@mui/material/RadioGroup';
 import {styled} from '@mui/material/styles';
 import type {ReactNode} from "react";
 import {useState} from "react";
@@ -74,35 +75,29 @@ interface BasicDetailsFormProps {
 	itemLabel: string;
 }
 
-const BasicDetailsForm = ({data, itemLabel}: BasicDetailsFormProps) => {
+const categoriesMap: Record<string,string> = {
+	'article-based': 'Article Based',
+	'article-based-legacy': 'Article Based (Legacy)',
+	'fronts-based': 'Fronts Based',
+	'manual-send': 'Manual Send',
+	'other': 'Other',
+}
+
+const themeMap : Record<string,string> = {
+	news: "News",
+	opinion: "Opinion",
+	culture: "Culture",
+	sport: 'Sport',
+	lifestyle: 'Lifestyle',
+	features: 'Features',
+};
+
+const BasicDetailsForm = ({data}: BasicDetailsFormProps) => {
 	const [formState, setFormState] = useState<NewsletterData>(data);
 
 	const {listId, name, theme, status, category, emailConfirmation, group, frequency, identityName} = formState;
 
-
-	const categoriesMap: {
-		"article-based-legacy": string;
-		"fronts-based": string;
-		other: string;
-		"manual-send": string;
-		"article-based": string;
-	} = {
-		'article-based': 'Article Based',
-		'article-based-legacy': 'Article Based (Legacy)',
-		'fronts-based': 'Fronts Based',
-		'manual-send': 'Manual Send',
-		'other': 'Other',
-	}
-
-	const themeMap = {
-		news: "News",
-		opinion: "Opinion",
-		culture: "Culture",
-		sport: 'Sport',
-		lifestyle: 'Lifestyle',
-		features: 'Features',
-	};
-
+	console.log('staus', status)
 	return (<Grid
 		component="form"
 		container spacing={2}
@@ -111,17 +106,23 @@ const BasicDetailsForm = ({data, itemLabel}: BasicDetailsFormProps) => {
 			<TextField id="name" label="name" variant="outlined" defaultValue={name}/>
 		</Grid>
 		<Grid item xs={12}>
-			<TextField
-				error
-				id="outlined-error-helper-text"
-				label="Error"
-				defaultValue="Hello World"
-				helperText="Incorrect entry."
-			/>
-		</Grid>
-		<Grid item xs={12}>
 			<TextField id="theme" label="theme" variant="outlined" defaultValue={theme}/>
 		</Grid>
+		<Grid item xs={12}>
+			<TextField id="frequency" label="theme" variant="outlined" defaultValue={frequency}/>
+		</Grid>
+		<Grid item xs={12}>
+			<RadioGroup
+				aria-labelledby="demo-radio-buttons-group-label"
+				defaultValue={status}
+				name="radio-buttons-group"
+			>
+				<FormControlLabel value="paused" control={<Radio />} label="Paused" />
+				<FormControlLabel value="cancelled" control={<Radio />} label="Cancelled" />
+				<FormControlLabel value="live" control={<Radio />} label="Live" />
+			</RadioGroup>
+		</Grid>
+
 		<Grid item xs={12}>
 			<Select
 				labelId="category"
@@ -135,12 +136,19 @@ const BasicDetailsForm = ({data, itemLabel}: BasicDetailsFormProps) => {
 				{Object.keys(categoriesMap).map((key) => <MenuItem key={key} value={key}>{categoriesMap[key]}</MenuItem>)}
 			</Select>
 		</Grid>
+		{category === 'article-based' &&
+			<Grid item xs={12}>
+
+				SET ALL THE RENDERING OPTIONS
+			</Grid>
+		}
+
 		<Grid item xs={12}>
 			<Select
-				labelId="theme"
+				labelId="pillar"
 				id="theme"
 				value={theme}
-				label="Age"
+				label="pillar"
 				onChange={({target: {value: theme}}) => {
 					setFormState({...formState, theme})
 				}}
