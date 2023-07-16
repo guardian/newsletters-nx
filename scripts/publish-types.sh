@@ -7,6 +7,7 @@ npm publish --access public
 exit_code=$?
 
 if [[ $exit_code -eq 1 ]]; then
+	# swallow failure if package already exists
     if [[ $(npm publish 2>&1) == *"403"* ]]; then
         echo "Error: Publishing failed due to a 403 Forbidden error. Package may not have required an update"
     else
