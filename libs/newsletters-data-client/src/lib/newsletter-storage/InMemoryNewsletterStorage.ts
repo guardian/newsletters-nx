@@ -154,7 +154,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
-	replace(
+	async replace(
 		listId: number,
 		newsletter: NewsletterDataWithoutMeta,
 		user: UserProfile,

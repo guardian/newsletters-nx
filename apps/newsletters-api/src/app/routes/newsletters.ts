@@ -7,7 +7,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	isNewsletterData,
-	isPartialNewsletterData, NewsletterStorage,
+	isPartialNewsletterData,
 	replaceNullWithUndefinedForUnknown,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
@@ -145,6 +145,7 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 			return res.status(403).send(makeErrorResponse('No user profile'));
 		}
 
+		//todo - figure out why the compiler does not know the response type
 		const storageResponse = await newsletterStore.replace(
 			newsletterIdAsNumber,
 			newsletterData,
