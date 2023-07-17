@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterStore } from '../../services/storage';
 import {
 	makeErrorResponse,
@@ -53,6 +54,22 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify(storageResponse.data),
+			});
+
+			const content = await emailRenderingResponse.text();
+			return makeSuccessResponse({ content });
+		},
+	);
+
+	app.post<{ Body: NewsletterData }>(
+		'/api/rendering-templates/preview',
+		async (req) => {
+			const emailRenderingResponse = await fetch(NEWSLETTER_RENDER_URL, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(req.body),
 			});
 
 			const content = await emailRenderingResponse.text();
