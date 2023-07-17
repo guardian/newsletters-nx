@@ -1,9 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type {
 	NewsletterData,
-	NewsletterDataWithoutMeta,
-	SuccessfulStorageResponse,
-	UnsuccessfulStorageResponse,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	isNewsletterData,
@@ -145,14 +142,11 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 			return res.status(403).send(makeErrorResponse('No user profile'));
 		}
 
-		//todo - figure out why the compiler does not know the response type
 		const storageResponse = await newsletterStore.replace(
 			newsletterIdAsNumber,
 			newsletterData,
 			user.profile,
-		) as
-			| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
-			| UnsuccessfulStorageResponse;
+		) ;
 
 		if (!storageResponse.ok) {
 			return res
