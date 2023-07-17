@@ -121,6 +121,10 @@ export const formSchemas = {
 		'displayStandfirst',
 	]).describe('Input the header setup'),
 
+	newsletterPaletteOverride: pickAndPrefixRenderingOption([
+		'paletteOverride',
+	]).describe('Select a palette theme'),
+
 	footer: pickAndPrefixRenderingOption(['contactEmail']).describe(
 		'Input the footer setup',
 	),
