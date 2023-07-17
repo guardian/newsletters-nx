@@ -1,4 +1,11 @@
-import { Alert, AlertTitle, Button, Snackbar, Typography } from '@mui/material';
+import {
+	Alert,
+	AlertTitle,
+	Button,
+	Grid,
+	Snackbar,
+	Typography,
+} from '@mui/material';
 import { Stack } from '@mui/system';
 import { useMemo, useState } from 'react';
 import type {
@@ -13,6 +20,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { StateEditForm } from './StateEditForm';
+import { TemplatePreview } from './TemplatePreview';
 
 interface Props {
 	originalItem: NewsletterData;
@@ -121,16 +129,6 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 			<Typography variant="h2">{item.name}</Typography>
 			<Typography variant="subtitle1">email-rendering settings</Typography>
 
-			<Typography variant="h3">Category and series tag</Typography>
-			<StateEditForm
-				formSchema={newsletterDataSchema.pick({
-					category: true,
-					seriesTag: true,
-				})}
-				formData={subset}
-				setFormData={setSubset}
-			/>
-
 			<Alert severity={item.seriesTag ? 'info' : 'warning'}>
 				<AlertTitle>Series Tags</AlertTitle>
 				<Typography>
@@ -144,16 +142,40 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				</Typography>
 			</Alert>
 
-			{renderingOptions && (
-				<>
-					<Typography variant="h3">Rendering options</Typography>
+			<Grid container>
+				<Grid item xs={4}>
+					<Typography variant="h3">Category and series tag</Typography>
 					<StateEditForm
-						formSchema={renderingOptionsSchema}
-						formData={renderingOptions}
-						setFormData={setRenderingOptions}
+						formSchema={newsletterDataSchema.pick({
+							category: true,
+							seriesTag: true,
+						})}
+						formData={subset}
+						setFormData={setSubset}
 					/>
-				</>
-			)}
+
+					{renderingOptions && (
+						<>
+							<Typography variant="h3">Rendering options</Typography>
+							<StateEditForm
+								formSchema={renderingOptionsSchema}
+								formData={renderingOptions}
+								setFormData={setRenderingOptions}
+							/>
+						</>
+					)}
+				</Grid>
+
+				<Grid item xs={8}>
+					<TemplatePreview
+						newsletterData={{
+							...originalItem,
+							...subset,
+							renderingOptions: (renderingOptions ?? {}) as RenderingOptions,
+						}}
+					/>
+				</Grid>
+			</Grid>
 
 			<Stack maxWidth={'md'} direction={'row'} spacing={2} marginBottom={2}>
 				<Button

@@ -1,31 +1,45 @@
 import { Box, Button, ButtonGroup, Container } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { fetchApiData } from '../api-requests/fetch-api-data';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { fetchApiData, fetchPostApiData } from '../api-requests/fetch-api-data';
 
 interface Props {
 	identityName?: string;
+	newsletterData?: NewsletterData;
 }
 
-export const TemplatePreview = ({ identityName }: Props) => {
+export const TemplatePreview = ({ identityName, newsletterData }: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
 	const [frameWidth, setFrameWidth] = useState(360);
 
 	useEffect(() => {
 		const fetchData = async () => {
-			if (!identityName) {
+			if (!identityName && !newsletterData) {
 				return setContent(undefined);
 			}
 
-			const data = await fetchApiData<{ content: string }>(
-				`/api/rendering-templates/preview/${identityName}`,
-			);
-			if (data) {
-				setContent(data.content);
+			if (identityName) {
+				const data = await fetchApiData<{ content: string }>(
+					`/api/rendering-templates/preview/${identityName}`,
+				);
+				if (data) {
+					setContent(data.content);
+				}
+			}
+
+			if (newsletterData) {
+				const data = await fetchPostApiData<{ content: string }>(
+					`/api/rendering-templates/preview`,
+					newsletterData,
+				);
+				if (data) {
+					setContent(data.content);
+				}
 			}
 		};
 
 		void fetchData();
-	}, [content, identityName]);
+	}, [content, identityName, newsletterData]);
 
 	const WidthButton = (props: { width: number }) => (
 		<Button
