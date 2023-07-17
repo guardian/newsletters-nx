@@ -1,6 +1,13 @@
 import type { FastifyInstance } from 'fastify';
+import type {
+	NewsletterData,
+	NewsletterDataWithoutMeta,
+	SuccessfulStorageResponse,
+	UnsuccessfulStorageResponse,
+} from '@newsletters-nx/newsletters-data-client';
 import {
-	isPartialNewsletterData,
+	isNewsletterData,
+	isPartialNewsletterData, NewsletterStorage,
 	replaceNullWithUndefinedForUnknown,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
@@ -96,6 +103,55 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 			modifications,
 			user.profile,
 		);
+
+		if (!storageResponse.ok) {
+			return res
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
+		}
+
+		return makeSuccessResponse(storageResponse.data);
+	});
+
+	app.post<{
+		Params: { newsletterId: string };
+		Body: unknown;
+	}>('/api/newsletters/:newsletterId', async (req, res) => {
+		const user = getUserProfile(req); //Todo: create middleware to get user profile
+		const accessDeniedError = await makeAccessDeniedApiResponse(
+			user.profile,
+			'editNewsletters',
+		);
+		if (accessDeniedError) {
+			return res.status(403).send(accessDeniedError);
+		}
+
+		const { newsletterId } = req.params;
+		const { body: newsletter } = req;
+		const newsletterIdAsNumber = Number(newsletterId);
+		const newsletterData = newsletter as NewsletterData;
+
+		if (isNaN(newsletterIdAsNumber)) {
+			return res.status(400).send(makeErrorResponse(`Non numeric id provided`));
+		}
+
+		replaceNullWithUndefinedForUnknown(newsletterData);
+
+		if (!isNewsletterData(newsletterData)) {
+			return res.status(400).send(makeErrorResponse(`Not a valid newsletter`));
+		}
+
+		if (!user.profile) {
+			return res.status(403).send(makeErrorResponse('No user profile'));
+		}
+
+		const storageResponse = await newsletterStore.replace(
+			newsletterIdAsNumber,
+			newsletterData,
+			user.profile,
+		) as
+			| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+			| UnsuccessfulStorageResponse;
 
 		if (!storageResponse.ok) {
 			return res

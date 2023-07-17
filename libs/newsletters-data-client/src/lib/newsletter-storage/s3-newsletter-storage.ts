@@ -249,9 +249,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		| UnsuccessfulStorageResponse
 	> {
 		const modificationError = this.getModificationError(modifications);
-		if (modificationError) {
-			modificationError;
-		}
+
+		if (modificationError) return modificationError;
 
 		const newsletterToUpdate = await this.fetchNewsletter(listId);
 		if (!newsletterToUpdate) {
@@ -279,6 +278,42 @@ export class S3NewsletterStorage implements NewsletterStorage {
 				message: `failed to update newsletter with id ${listId}`,
 				reason: StorageRequestFailureReason.S3Failure,
 			};
+		}
+	}
+
+	async replace(
+		listId: number,
+		newsletter: NewsletterData,
+		user: UserProfile,
+	): Promise<
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
+	> {
+		const newsletterToUpdate = await this.fetchNewsletter(listId);
+		if (!newsletterToUpdate) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with id ${listId}`,
+			} as UnsuccessfulStorageResponse;
+		}
+		const updatedNewsletter: NewsletterDataWithMeta = {
+			...newsletter,
+			meta: this.updateMeta(newsletterToUpdate.meta ?? makeBlankMeta(), user),
+		};
+		const identifier = `${updatedNewsletter.identityName}:${updatedNewsletter.listId}.json`;
+
+		try {
+			await this.putObject(updatedNewsletter, identifier);
+			return {
+				ok: true,
+				data: this.stripMeta(updatedNewsletter),
+			} as SuccessfulStorageResponse<NewsletterDataWithoutMeta>;
+		} catch (err) {
+			return {
+				ok: false,
+				message: `failed to update newsletter with id ${listId}`,
+				reason: StorageRequestFailureReason.S3Failure,
+			} as UnsuccessfulStorageResponse;
 		}
 	}
 

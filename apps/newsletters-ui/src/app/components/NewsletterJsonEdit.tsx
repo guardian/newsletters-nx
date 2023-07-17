@@ -2,7 +2,7 @@ import { Alert, Snackbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
-import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { replaceNewsletter } from '../api-requests/replace-newsletter';
 import { usePermissions } from '../hooks/user-hooks';
 import { JsonEditor } from './JsonEditor';
 
@@ -20,18 +20,13 @@ export const NewsletterJsonEdit = ({ originalItem }: Props) => {
 	const permissions = usePermissions();
 
 	const handleSubmission = async (record: NewsletterData) => {
-		const partial = {
-			...record,
-			listId: undefined,
-			identityName: undefined,
-		} as Partial<NewsletterData>;
-		const apiResonse = await requestNewsletterEdit(record.listId, partial);
-
-		if (apiResonse.ok) {
-			setItem(apiResonse.data);
+		console.log('handleSubmission', record);
+		const apiResponse = await replaceNewsletter(record.listId, record);
+		if (apiResponse.ok) {
+			setItem(apiResponse.data);
 			setShowConfirmation(true);
 		} else {
-			setErrorMessage(apiResonse.message ?? 'UNKNOWN ERROR');
+			setErrorMessage(apiResponse.message ?? 'UNKNOWN ERROR');
 		}
 	};
 
