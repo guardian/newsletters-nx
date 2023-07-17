@@ -6,9 +6,14 @@ import { fetchApiData, fetchPostApiData } from '../api-requests/fetch-api-data';
 interface Props {
 	identityName?: string;
 	newsletterData?: NewsletterData;
+	minHeight?: number;
 }
 
-export const TemplatePreview = ({ identityName, newsletterData }: Props) => {
+export const TemplatePreview = ({
+	identityName,
+	newsletterData,
+	minHeight = 800,
+}: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
 	const [frameWidth, setFrameWidth] = useState(360);
 
@@ -53,21 +58,22 @@ export const TemplatePreview = ({ identityName, newsletterData }: Props) => {
 	);
 
 	return (
-		<Container>
+		<Container
+			sx={{ paddingTop: 1, borderStyle: 'solid', borderColor: 'primary.dark' }}
+		>
 			<ButtonGroup>
 				<WidthButton width={320} />
 				<WidthButton width={375} />
 				<WidthButton width={425} />
-				<WidthButton width={768} />
+				<WidthButton width={650} />
 			</ButtonGroup>
 
 			<Box
 				width={'100%'}
-				minHeight={800}
+				minHeight={minHeight}
 				display={'flex'}
 				justifyContent={'center'}
 				paddingY={2}
-				sx={{ width: '100%', backgroundColor: 'primary.light' }}
 			>
 				{content && (
 					<iframe

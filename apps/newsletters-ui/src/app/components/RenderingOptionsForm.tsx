@@ -173,6 +173,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 							...subset,
 							renderingOptions: (renderingOptions ?? {}) as RenderingOptions,
 						}}
+						minHeight={1400}
 					/>
 				</Grid>
 			</Grid>
