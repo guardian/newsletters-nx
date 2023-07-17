@@ -10,56 +10,89 @@ interface Props {
 	minHeight?: number;
 }
 
-const sleep = (time: number) =>
-	new Promise((resolve) => {
-		setTimeout(resolve, time);
-	});
-
 export const TemplatePreview = ({
 	identityName,
 	newsletterData,
 	minHeight = 800,
 }: Props) => {
-	const [content, setContent] = useState<string | undefined>(undefined);
-	const [waitingForUpdate, setWaitingForUpdate] = useState(false);
 	const [frameWidth, setFrameWidth] = useState(360);
+	const [content, setContent] = useState<string | undefined>(undefined);
+	const [fetchInProgress, setFetchInProgress] = useState(false);
+	const [madeInitialFetch, setMadeInitalFetch] = useState(false);
+	const [gotInitalContent, setGotInitialContent] = useState(false);
+	const [hasChangedSinceLastRequest, setHasChangeSinceLastRequest] =
+		useState(false);
 
-	const fetchData = useCallback(async () => {
-		if (!identityName && !newsletterData) {
-			setWaitingForUpdate(false);
-			setContent(undefined);
+	const fetchData = useCallback(
+		async (isInitial: boolean) => {
+			setFetchInProgress(true);
+			if (!identityName && !newsletterData) {
+				setFetchInProgress(false);
+				setContent(undefined);
+				return;
+			}
+
+			if (identityName) {
+				const data = await fetchApiData<{ content: string }>(
+					`/api/rendering-templates/preview/${identityName}`,
+				);
+				setFetchInProgress(false);
+				if (isInitial) {
+					setGotInitialContent(true);
+				}
+				if (data) {
+					setContent(data.content);
+				}
+			}
+
+			if (newsletterData) {
+				const data = await fetchPostApiData<{ content: string }>(
+					`/api/rendering-templates/preview`,
+					newsletterData,
+				);
+				setFetchInProgress(false);
+				if (isInitial) {
+					setGotInitialContent(true);
+				}
+				if (data) {
+					setContent(data.content);
+				}
+			}
+		},
+		[identityName, newsletterData],
+	);
+
+	// fetch on initial render
+	useEffect(() => {
+		if (madeInitialFetch) {
 			return;
 		}
+		setMadeInitalFetch(true);
+		void fetchData(true);
+	}, [fetchData, madeInitialFetch]);
 
-		const delay = 100 + 100 * Math.floor(Math.random() * 10);
-		await sleep(delay);
-
-		if (identityName) {
-			const data = await fetchApiData<{ content: string }>(
-				`/api/rendering-templates/preview/${identityName}`,
-			);
-			setWaitingForUpdate(false);
-			if (data) {
-				setContent(data.content);
-			}
-		}
-
-		if (newsletterData) {
-			const data = await fetchPostApiData<{ content: string }>(
-				`/api/rendering-templates/preview`,
-				newsletterData,
-			);
-			setWaitingForUpdate(false);
-			if (data) {
-				setContent(data.content);
-			}
-		}
-	}, [identityName, newsletterData]);
-
+	// set the flag to mark changes to the data
 	useEffect(() => {
-		setWaitingForUpdate(true);
-		void fetchData();
-	}, [fetchData]);
+		if (!gotInitalContent) {
+			return;
+		}
+		setHasChangeSinceLastRequest(true);
+	}, [newsletterData, gotInitalContent]);
+
+	// every five seconds, fetch data if there have been any changes
+	// since the last fetch
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (hasChangedSinceLastRequest) {
+				setHasChangeSinceLastRequest(false);
+				void fetchData(false);
+			}
+		}, 5000);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [hasChangedSinceLastRequest, fetchData]);
 
 	const WidthButton = (props: { width: number }) => (
 		<Button
@@ -88,9 +121,12 @@ export const TemplatePreview = ({
 				<WidthButton width={650} />
 			</ButtonGroup>
 
-			{waitingForUpdate && (
+			{(fetchInProgress || hasChangedSinceLastRequest) && (
 				<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
-					<RefreshIcon sx={{ fontSize: 160 }} color="secondary" />
+					<RefreshIcon
+						sx={{ fontSize: 160 }}
+						color={fetchInProgress ? 'success' : 'warning'}
+					/>
 				</Box>
 			)}
 
