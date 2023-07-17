@@ -37,6 +37,7 @@ export const renderingOptionsSchema = z.object({
 	displayStandfirst: z.boolean().describe('display standfirst?'),
 	contactEmail: z.string().email().describe('contact email'),
 	displayImageCaptions: z.boolean().describe('display image captions?'),
+	paletteOverride: themeEnumSchema.optional().describe('palette override'),
 	linkListSubheading: z
 		.array(z.string())
 		.optional()
