@@ -3,6 +3,7 @@ import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
 import { NewsletterEditView } from '../components/views/NewsletterEditView';
 import { NewsletterJsonEditView } from '../components/views/NewsletterJsonEditView';
 import { NewslettersListView } from '../components/views/NewslettersListView';
+import { PreviewView } from '../components/views/PreviewView';
 import { RenderingOptionsView } from '../components/views/RenderingOptionsView';
 import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
@@ -58,6 +59,12 @@ export const newslettersRoute: RouteObject = {
 		{
 			path: 'launch-newsletter',
 			element: <WizardContainer wizardId="LAUNCH_NEWSLETTER" />,
+		},
+
+		{
+			path: 'preview/:id',
+			element: <PreviewView />,
+			loader: detailLoader,
 		},
 	],
 };

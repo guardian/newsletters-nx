@@ -1,10 +1,11 @@
 import type { RouteObject } from 'react-router-dom';
 import { HomeMenu } from '../components/HomeMenu';
+import { PreviewView } from '../components/views/PreviewView';
 import { TemplateListView } from '../components/views/TemplateListView';
 import { ContentWrapper } from '../ContentWrapper';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
-import { listLoader } from '../loaders/newsletters';
+import { detailLoader, listLoader } from '../loaders/newsletters';
 import { renderingTemplateListLoader } from '../loaders/rendering-templates';
 
 export const homeRoute: RouteObject = {

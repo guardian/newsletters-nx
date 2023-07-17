@@ -8,6 +8,7 @@ import {
 	Typography,
 } from '@mui/material';
 import type { RenderingTemplate } from '../loaders/rendering-templates';
+import { TemplatePreview } from './TemplatePreview';
 
 interface Props {
 	templates: RenderingTemplate[];
@@ -70,6 +71,8 @@ export const TemplateList = ({ templates }: Props) => {
 					<div>If in doubt, please contact the dev team.</div>
 				</Alert>
 			</Box>
+
+			<TemplatePreview />
 		</Container>
 	);
 };
