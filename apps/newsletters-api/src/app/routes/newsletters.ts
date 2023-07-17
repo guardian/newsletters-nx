@@ -13,7 +13,7 @@ import {
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
 
-export function registerNewsletterRoutes(app: FastifyInstance) {
+export function registerReadNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
 	app.get('/api/legacy/newsletters', async (req, res) => {
@@ -53,34 +53,9 @@ export function registerNewsletterRoutes(app: FastifyInstance) {
 			return makeSuccessResponse(storageResponse.data);
 		},
 	);
+}
 
-	app.get<{ Params: { newsletterId: string } }>(
-		'/api/newsletters/meta/:newsletterId',
-		async (req, res) => {
-			const user = getUserProfile(req);
-			const accessDeniedError = await makeAccessDeniedApiResponse(
-				user.profile,
-				'viewMetaData',
-			);
-			if (accessDeniedError) {
-				return res.status(403).send(accessDeniedError);
-			}
-
-			const { newsletterId } = req.params;
-			const storageResponse = await newsletterStore.readByNameWithMeta(
-				newsletterId,
-			);
-
-			if (!storageResponse.ok) {
-				return res
-					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-					.send(makeErrorResponse(storageResponse.message));
-			}
-
-			return makeSuccessResponse(storageResponse.data);
-		},
-	);
-
+export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 	app.patch<{
 		Params: { newsletterId: string };
 		Body: unknown;

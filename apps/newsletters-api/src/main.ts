@@ -7,7 +7,10 @@ import {
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
-import { registerNewsletterRoutes } from './app/routes/newsletters';
+import {
+	registerReadNewsletterRoutes,
+	registerReadWriteNewsletterRoutes,
+} from './app/routes/newsletters';
 import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
@@ -20,9 +23,10 @@ if (isServingUI()) {
 if (isServingReadWriteEndpoints()) {
 	registerCurrentStepRoute(app);
 	registerUserRoute(app);
+	registerReadWriteNewsletterRoutes(app);
 }
 if (isServingReadEndpoints()) {
-	registerNewsletterRoutes(app);
+	registerReadNewsletterRoutes(app);
 	registerDraftsRoutes(app);
 	registerRenderingTemplatesRoutes(app);
 }
