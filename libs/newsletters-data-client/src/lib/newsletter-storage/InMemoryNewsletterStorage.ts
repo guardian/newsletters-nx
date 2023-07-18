@@ -154,6 +154,40 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
+	async replace(
+		listId: number,
+		newsletter: NewsletterDataWithoutMeta,
+		user: UserProfile,
+	) {
+		const match = this.memory.find((item) => item.listId === listId);
+		if (!match) {
+			return Promise.resolve(this.buildNoItemError(listId));
+		}
+
+		if (
+			newsletter.identityName !== match.identityName ||
+			newsletter.listId !== match.listId
+		) {
+			console.error(
+				`newsletter identityName or listId mismatch for newsletter with id ${listId}`,
+			);
+			throw new Error(
+				`newsletter identityName or listId mismatch for newsletter with id ${listId}`,
+			);
+		}
+
+		const updatedItem: NewsletterDataWithMeta = {
+			...newsletter,
+			meta: this.updateMeta(match.meta, user),
+		};
+		this.memory.splice(this.memory.indexOf(match), 1, updatedItem);
+		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
+			ok: true,
+			data: this.stripMeta(updatedItem),
+		};
+		return Promise.resolve(response);
+	}
+
 	delete(listId: number) {
 		const match = this.memory.find((item) => item.listId === listId);
 

@@ -249,9 +249,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		| UnsuccessfulStorageResponse
 	> {
 		const modificationError = this.getModificationError(modifications);
-		if (modificationError) {
-			modificationError;
-		}
+
+		if (modificationError) return modificationError;
 
 		const newsletterToUpdate = await this.fetchNewsletter(listId);
 		if (!newsletterToUpdate) {
@@ -266,6 +265,59 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			meta: this.updateMeta(newsletterToUpdate.meta ?? makeBlankMeta(), user),
 		};
 		const identifier = `${updatedNewsletter.identityName}:${updatedNewsletter.listId}.json`;
+
+		try {
+			await this.putObject(updatedNewsletter, identifier);
+			return {
+				ok: true,
+				data: this.stripMeta(updatedNewsletter),
+			};
+		} catch (err) {
+			return {
+				ok: false,
+				message: `failed to update newsletter with id ${listId}`,
+				reason: StorageRequestFailureReason.S3Failure,
+			};
+		}
+	}
+
+	async replace(
+		listId: number,
+		newsletter: NewsletterData,
+		user: UserProfile,
+	): Promise<
+		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| UnsuccessfulStorageResponse
+	> {
+		const newsletterToUpdate = await this.fetchNewsletter(listId);
+		if (!newsletterToUpdate) {
+			return {
+				ok: false,
+				message: `failed to read newsletter with id ${listId}`,
+			};
+		}
+
+		if (
+			newsletter.identityName !== newsletterToUpdate.identityName ||
+			newsletter.listId !== newsletterToUpdate.listId
+		) {
+			console.error(
+				`newsletter identityName or listId mismatch for newsletter with id ${listId}`,
+			);
+			throw new Error(
+				`newsletter identityName or listId mismatch for newsletter with id ${listId}`,
+			);
+		}
+
+		const { identityName } = newsletterToUpdate;
+		const updatedNewsletter: NewsletterDataWithMeta = {
+			...newsletter,
+			identityName,
+			listId,
+			meta: this.updateMeta(newsletterToUpdate.meta ?? makeBlankMeta(), user),
+		};
+
+		const identifier = `${identityName}:${listId}.json`;
 
 		try {
 			await this.putObject(updatedNewsletter, identifier);

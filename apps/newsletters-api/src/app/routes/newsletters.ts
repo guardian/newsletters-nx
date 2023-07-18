@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import {
+	isNewsletterData,
 	isPartialNewsletterData,
 	replaceNullWithUndefinedForUnknown,
 	transformDataToLegacyNewsletter,
@@ -94,6 +95,52 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 		const storageResponse = await newsletterStore.update(
 			newsletterIdAsNumber,
 			modifications,
+			user.profile,
+		);
+
+		if (!storageResponse.ok) {
+			return res
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
+		}
+
+		return makeSuccessResponse(storageResponse.data);
+	});
+
+	app.post<{
+		Params: { newsletterId: string };
+		Body: unknown;
+	}>('/api/newsletters/:newsletterId', async (req, res) => {
+		const user = getUserProfile(req); //Todo: create middleware to get user profile
+		const accessDeniedError = await makeAccessDeniedApiResponse(
+			user.profile,
+			'editNewsletters',
+		);
+		if (accessDeniedError) {
+			return res.status(403).send(accessDeniedError);
+		}
+
+		const { newsletterId } = req.params;
+		const { body: newsletter } = req;
+		const newsletterIdAsNumber = Number(newsletterId);
+
+		if (isNaN(newsletterIdAsNumber)) {
+			return res.status(400).send(makeErrorResponse(`Non numeric id provided`));
+		}
+
+		replaceNullWithUndefinedForUnknown(newsletter);
+
+		if (!isNewsletterData(newsletter)) {
+			return res.status(400).send(makeErrorResponse(`Not a valid newsletter`));
+		}
+
+		if (!user.profile) {
+			return res.status(403).send(makeErrorResponse('No user profile'));
+		}
+
+		const storageResponse = await newsletterStore.replace(
+			newsletterIdAsNumber,
+			newsletter,
 			user.profile,
 		);
 
