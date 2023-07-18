@@ -46,6 +46,10 @@ export const renderingOptionsSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('podcast subheading'),
+	darkThemeSubheading: z
+		.array(z.string())
+		.optional()
+		.describe('dark theme subheading'),
 	readMoreSections: z
 		.array(
 			z
