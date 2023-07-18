@@ -73,7 +73,7 @@ export const renderingOptionsSchema = z.object({
 		.url()
 		.optional()
 		.describe('asset url for standard subheading banner'),
-	darksubheadingBannerUrl: z
+	darkSubheadingBannerUrl: z
 		.string()
 		.url()
 		.optional()
