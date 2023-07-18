@@ -1,16 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { fetchApiData, fetchPostApiData } from '../api-requests/fetch-api-data';
+import { fetchPostApiData } from '../api-requests/fetch-api-data';
 import { TemplatePreview } from './TemplatePreview';
 
 interface Props {
-	identityName?: string;
-	newsletterData?: NewsletterData;
+	newsletterData: NewsletterData;
 	minHeight?: number;
 }
 
 export const TemplatePreviewLoader = ({
-	identityName,
 	newsletterData,
 	minHeight = 800,
 }: Props) => {
@@ -24,40 +22,20 @@ export const TemplatePreviewLoader = ({
 	const fetchData = useCallback(
 		async (isInitial: boolean) => {
 			setFetchInProgress(true);
-			if (!identityName && !newsletterData) {
-				setFetchInProgress(false);
-				setContent(undefined);
-				return;
-			}
 
-			if (identityName) {
-				const data = await fetchApiData<{ content: string }>(
-					`/api/rendering-templates/preview/${identityName}`,
-				);
-				setFetchInProgress(false);
-				if (isInitial) {
-					setGotInitialContent(true);
-				}
-				if (data) {
-					setContent(data.content);
-				}
+			const data = await fetchPostApiData<{ content: string }>(
+				`/api/rendering-templates/preview`,
+				newsletterData,
+			);
+			setFetchInProgress(false);
+			if (isInitial) {
+				setGotInitialContent(true);
 			}
-
-			if (newsletterData) {
-				const data = await fetchPostApiData<{ content: string }>(
-					`/api/rendering-templates/preview`,
-					newsletterData,
-				);
-				setFetchInProgress(false);
-				if (isInitial) {
-					setGotInitialContent(true);
-				}
-				if (data) {
-					setContent(data.content);
-				}
+			if (data) {
+				setContent(data.content);
 			}
 		},
-		[identityName, newsletterData],
+		[newsletterData],
 	);
 
 	// fetch on initial render

@@ -4,7 +4,6 @@ import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { fetchApiData } from '../api-requests/fetch-api-data';
 import { NavigateButton } from './NavigateButton';
 import { TemplatePreview } from './TemplatePreview';
-import { TemplatePreviewLoader } from './TemplatePreviewLoader';
 
 interface Props {
 	newsletter: NewsletterData;
@@ -23,7 +22,6 @@ export const RenderingPreviewPage = ({ newsletter }: Props) => {
 	}, [newsletter]);
 
 	useEffect(() => {
-		console.log('fetch');
 		void fetchData();
 	}, [fetchData]);
 
