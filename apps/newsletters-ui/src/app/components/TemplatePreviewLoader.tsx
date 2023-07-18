@@ -37,6 +37,10 @@ export const TemplatePreviewLoader = ({
 		}
 	}, [newsletterData]);
 
+	// Schedule a fetchData at a time 5 seconds
+	// after the time of the last update, or right
+	// away if the last update was more than 5 seconds
+	// ago.
 	const scheduleUpdate = useCallback(() => {
 		setFetchScheduled(true);
 		const now = Date.now();
@@ -47,7 +51,7 @@ export const TemplatePreviewLoader = ({
 		}, delay);
 	}, [fetchData, fetchTime]);
 
-	// fetch on initial render
+	// fetch once immediately on initial render
 	useEffect(() => {
 		if (madeInitialFetch) {
 			return;
@@ -56,16 +60,15 @@ export const TemplatePreviewLoader = ({
 		void fetchData();
 	}, [fetchData, madeInitialFetch]);
 
-	// Schedule an update if the data changes
-	// and and update is not already scheduled
+	// When the newsletterData changes, if there
+	// is not already a fetch scheduled and the
+	// data is not the data already posed,
+	// schedule an update.
 	useEffect(() => {
-		if (!madeInitialFetch) {
+		if (!madeInitialFetch || fetchScheduled) {
 			return;
 		}
 		if (newsletterData === dataLastPosted) {
-			return;
-		}
-		if (fetchScheduled) {
 			return;
 		}
 		scheduleUpdate();
