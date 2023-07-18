@@ -1,7 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import type {
-	NewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	isNewsletterData,
 	isPartialNewsletterData,
@@ -146,7 +144,7 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 			newsletterIdAsNumber,
 			newsletterData,
 			user.profile,
-		) ;
+		);
 
 		if (!storageResponse.ok) {
 			return res

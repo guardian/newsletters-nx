@@ -294,26 +294,30 @@ export class S3NewsletterStorage implements NewsletterStorage {
 			return {
 				ok: false,
 				message: `failed to read newsletter with id ${listId}`,
-			} as UnsuccessfulStorageResponse;
+			};
 		}
+		const { identityName } = newsletterToUpdate;
 		const updatedNewsletter: NewsletterDataWithMeta = {
 			...newsletter,
+			identityName,
+			listId,
 			meta: this.updateMeta(newsletterToUpdate.meta ?? makeBlankMeta(), user),
 		};
-		const identifier = `${updatedNewsletter.identityName}:${updatedNewsletter.listId}.json`;
+
+		const identifier = `${identityName}:${listId}.json`;
 
 		try {
 			await this.putObject(updatedNewsletter, identifier);
 			return {
 				ok: true,
 				data: this.stripMeta(updatedNewsletter),
-			} as SuccessfulStorageResponse<NewsletterDataWithoutMeta>;
+			};
 		} catch (err) {
 			return {
 				ok: false,
 				message: `failed to update newsletter with id ${listId}`,
 				reason: StorageRequestFailureReason.S3Failure,
-			} as UnsuccessfulStorageResponse;
+			};
 		}
 	}
 
