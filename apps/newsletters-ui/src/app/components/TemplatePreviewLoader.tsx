@@ -18,15 +18,15 @@ export const TemplatePreviewLoader = ({
 		NewsletterData | undefined
 	>(undefined);
 
+	const [fetchTime, setFetchTime] = useState(0);
+	const [fetchScheduled, setFetchScheduled] = useState(false);
 	const [fetchInProgress, setFetchInProgress] = useState(false);
 	const [madeInitialFetch, setMadeInitalFetch] = useState(false);
-	const [hasChangedSinceLastRequest, setHasChangeSinceLastRequest] =
-		useState(false);
 
 	const fetchData = useCallback(async () => {
 		setFetchInProgress(true);
+		setFetchTime(Date.now());
 		setDataLastPosted(newsletterData);
-
 		const data = await fetchPostApiData<{ content: string }>(
 			`/api/rendering-templates/preview`,
 			newsletterData,
@@ -37,6 +37,16 @@ export const TemplatePreviewLoader = ({
 		}
 	}, [newsletterData]);
 
+	const scheduleUpdate = useCallback(() => {
+		setFetchScheduled(true);
+		const now = Date.now();
+		const delay = Math.max(0, 5000 - (now - fetchTime));
+		setTimeout(() => {
+			setFetchScheduled(false);
+			void fetchData();
+		}, delay);
+	}, [fetchData, fetchTime]);
+
 	// fetch on initial render
 	useEffect(() => {
 		if (madeInitialFetch) {
@@ -46,7 +56,8 @@ export const TemplatePreviewLoader = ({
 		void fetchData();
 	}, [fetchData, madeInitialFetch]);
 
-	// set the flag to mark changes to the data
+	// Schedule an update if the data changes
+	// and and update is not already scheduled
 	useEffect(() => {
 		if (!madeInitialFetch) {
 			return;
@@ -54,28 +65,22 @@ export const TemplatePreviewLoader = ({
 		if (newsletterData === dataLastPosted) {
 			return;
 		}
-		setHasChangeSinceLastRequest(true);
-	}, [newsletterData, madeInitialFetch, dataLastPosted]);
-
-	// every five seconds, fetch data if there have been any changes
-	// since the last fetch
-	useEffect(() => {
-		const timer = setInterval(() => {
-			if (hasChangedSinceLastRequest) {
-				setHasChangeSinceLastRequest(false);
-				void fetchData();
-			}
-		}, 5000);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, [hasChangedSinceLastRequest, fetchData]);
+		if (fetchScheduled) {
+			return;
+		}
+		scheduleUpdate();
+	}, [
+		newsletterData,
+		madeInitialFetch,
+		dataLastPosted,
+		scheduleUpdate,
+		fetchScheduled,
+	]);
 
 	return (
 		<TemplatePreview
 			html={content}
-			isLoading={hasChangedSinceLastRequest || fetchInProgress}
+			isLoading={fetchScheduled || fetchInProgress}
 			minHeight={minHeight}
 		/>
 	);
