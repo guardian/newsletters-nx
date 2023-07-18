@@ -37,6 +37,7 @@ export const renderingOptionsSchema = z.object({
 	displayStandfirst: z.boolean().describe('display standfirst?'),
 	contactEmail: z.string().email().describe('contact email'),
 	displayImageCaptions: z.boolean().describe('display image captions?'),
+	paletteOverride: themeEnumSchema.optional().describe('palette override'),
 	linkListSubheading: z
 		.array(z.string())
 		.optional()
@@ -45,6 +46,10 @@ export const renderingOptionsSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('podcast subheading'),
+	darkThemeSubheading: z
+		.array(z.string())
+		.optional()
+		.describe('dark theme subheading'),
 	readMoreSections: z
 		.array(
 			z

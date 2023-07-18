@@ -121,6 +121,10 @@ export const formSchemas = {
 		'displayStandfirst',
 	]).describe('Input the header setup'),
 
+	newsletterPaletteOverride: pickAndPrefixRenderingOption([
+		'paletteOverride',
+	]).describe('Select a palette theme'),
+
 	footer: pickAndPrefixRenderingOption(['contactEmail']).describe(
 		'Input the footer setup',
 	),
@@ -142,15 +146,19 @@ export const formSchemas = {
 		.describe('Select from the drop-down list'),
 
 	linkList: pickAndPrefixRenderingOption(['linkListSubheading']).describe(
-		'Input the subheading triggers',
+		'Add the subheading triggers',
+	),
+
+	darkTheme: pickAndPrefixRenderingOption(['darkThemeSubheading']).describe(
+		'Add the subheading triggers',
 	),
 
 	podcast: pickAndPrefixRenderingOption(['podcastSubheading']).describe(
-		'Input the subheading triggers',
+		'Add the subheading triggers',
 	),
 
 	readMore: pickAndPrefixRenderingOption(['readMoreSections']).describe(
-		'Input the Read More setup',
+		'Add the Read More setup',
 	),
 
 	tags: dataCollectionSchema

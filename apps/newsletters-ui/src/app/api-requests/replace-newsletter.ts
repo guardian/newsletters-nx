@@ -4,16 +4,16 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { replaceUndefinedWithNull } from '@newsletters-nx/newsletters-data-client';
 
-export const requestNewsletterEdit = async (
+export const replaceNewsletter = async (
 	listId: number,
-	modification: Partial<NewsletterData>,
+	newsletter: NewsletterData,
 ): Promise<ApiResponse<NewsletterData>> => {
 	const response = await fetch(`/api/newsletters/${listId}`, {
-		method: 'PATCH',
+		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(modification, replaceUndefinedWithNull),
+		body: JSON.stringify(newsletter, replaceUndefinedWithNull),
 	});
 
 	return (await response.json()) as ApiResponse<NewsletterData>;

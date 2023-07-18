@@ -87,7 +87,7 @@ export const replaceNullWithUndefinedInFormDataRecord = (
 	return formData;
 };
 
-/** Recursively replace any null propery with `undefined` */
+/** Recursively replace any null property with `undefined` */
 export const replaceNullWithUndefinedForUnknown = (value: unknown): unknown => {
 	if (value === null) {
 		return undefined;
