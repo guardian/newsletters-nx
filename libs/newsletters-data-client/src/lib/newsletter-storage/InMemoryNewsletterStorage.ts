@@ -164,6 +164,18 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			return Promise.resolve(this.buildNoItemError(listId));
 		}
 
+		if (
+			newsletter.identityName !== match.identityName ||
+			newsletter.listId !== match.listId
+		) {
+			console.error(
+				`newsletter identityName or listId mismatch for newsletter with id ${listId}`,
+			);
+			throw new Error(
+				`newsletter identityName or listId mismatch for newsletter with id ${listId}`,
+			);
+		}
+
 		const updatedItem: NewsletterDataWithMeta = {
 			...newsletter,
 			meta: this.updateMeta(match.meta, user),

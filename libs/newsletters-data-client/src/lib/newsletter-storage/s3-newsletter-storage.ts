@@ -296,6 +296,19 @@ export class S3NewsletterStorage implements NewsletterStorage {
 				message: `failed to read newsletter with id ${listId}`,
 			};
 		}
+
+		if (
+			newsletter.identityName !== newsletterToUpdate.identityName ||
+			newsletter.listId !== newsletterToUpdate.listId
+		) {
+			console.error(
+				`newsletter identityName or listId mismatch for newsletter with id ${listId}`,
+			);
+			throw new Error(
+				`newsletter identityName or listId mismatch for newsletter with id ${listId}`,
+			);
+		}
+
 		const { identityName } = newsletterToUpdate;
 		const updatedNewsletter: NewsletterDataWithMeta = {
 			...newsletter,

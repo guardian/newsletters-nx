@@ -1,5 +1,4 @@
 import type { FastifyInstance } from 'fastify';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	isNewsletterData,
 	isPartialNewsletterData,
@@ -124,15 +123,14 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 		const { newsletterId } = req.params;
 		const { body: newsletter } = req;
 		const newsletterIdAsNumber = Number(newsletterId);
-		const newsletterData = newsletter as NewsletterData;
 
 		if (isNaN(newsletterIdAsNumber)) {
 			return res.status(400).send(makeErrorResponse(`Non numeric id provided`));
 		}
 
-		replaceNullWithUndefinedForUnknown(newsletterData);
+		replaceNullWithUndefinedForUnknown(newsletter);
 
-		if (!isNewsletterData(newsletterData)) {
+		if (!isNewsletterData(newsletter)) {
 			return res.status(400).send(makeErrorResponse(`Not a valid newsletter`));
 		}
 
@@ -142,7 +140,7 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 
 		const storageResponse = await newsletterStore.replace(
 			newsletterIdAsNumber,
-			newsletterData,
+			newsletter,
 			user.profile,
 		);
 
