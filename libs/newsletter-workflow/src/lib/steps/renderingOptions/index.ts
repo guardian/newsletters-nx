@@ -1,6 +1,7 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { cancelLayout } from './cancelLayout';
+import { darkSectionLayout } from './darkSectionLayout';
 import { finishLayout } from './finishLayout';
 import { footerLayout } from './footerLayout';
 import { imageLayout } from './imageLayout';
@@ -19,6 +20,7 @@ export const renderingOptionsLayout: WizardLayout<DraftService> = {
 	readMore: readMoreLayout,
 	linkList: linkListLayout,
 	podcast: podcastLayout,
+	darkTheme: darkSectionLayout,
 	footer: footerLayout,
 	finish: finishLayout,
 	cancel: cancelLayout,
