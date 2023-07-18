@@ -13,30 +13,29 @@ export const TemplatePreviewLoader = ({
 	minHeight = 800,
 }: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
+
+	const [dataLastPosted, setDataLastPosted] = useState<
+		NewsletterData | undefined
+	>(undefined);
+
 	const [fetchInProgress, setFetchInProgress] = useState(false);
 	const [madeInitialFetch, setMadeInitalFetch] = useState(false);
-	const [gotInitalContent, setGotInitialContent] = useState(false);
 	const [hasChangedSinceLastRequest, setHasChangeSinceLastRequest] =
 		useState(false);
 
-	const fetchData = useCallback(
-		async (isInitial: boolean) => {
-			setFetchInProgress(true);
+	const fetchData = useCallback(async () => {
+		setFetchInProgress(true);
+		setDataLastPosted(newsletterData);
 
-			const data = await fetchPostApiData<{ content: string }>(
-				`/api/rendering-templates/preview`,
-				newsletterData,
-			);
-			setFetchInProgress(false);
-			if (isInitial) {
-				setGotInitialContent(true);
-			}
-			if (data) {
-				setContent(data.content);
-			}
-		},
-		[newsletterData],
-	);
+		const data = await fetchPostApiData<{ content: string }>(
+			`/api/rendering-templates/preview`,
+			newsletterData,
+		);
+		setFetchInProgress(false);
+		if (data) {
+			setContent(data.content);
+		}
+	}, [newsletterData]);
 
 	// fetch on initial render
 	useEffect(() => {
@@ -44,16 +43,19 @@ export const TemplatePreviewLoader = ({
 			return;
 		}
 		setMadeInitalFetch(true);
-		void fetchData(true);
+		void fetchData();
 	}, [fetchData, madeInitialFetch]);
 
 	// set the flag to mark changes to the data
 	useEffect(() => {
-		if (!gotInitalContent) {
+		if (!madeInitialFetch) {
+			return;
+		}
+		if (newsletterData === dataLastPosted) {
 			return;
 		}
 		setHasChangeSinceLastRequest(true);
-	}, [newsletterData, gotInitalContent]);
+	}, [newsletterData, madeInitialFetch, dataLastPosted]);
 
 	// every five seconds, fetch data if there have been any changes
 	// since the last fetch
@@ -61,7 +63,7 @@ export const TemplatePreviewLoader = ({
 		const timer = setInterval(() => {
 			if (hasChangedSinceLastRequest) {
 				setHasChangeSinceLastRequest(false);
-				void fetchData(false);
+				void fetchData();
 			}
 		}, 5000);
 
