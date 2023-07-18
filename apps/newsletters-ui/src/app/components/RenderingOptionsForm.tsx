@@ -20,7 +20,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { StateEditForm } from './StateEditForm';
-import { TemplatePreview } from './TemplatePreview';
+import { TemplatePreviewLoader } from './TemplatePreviewLoader';
 
 interface Props {
 	originalItem: NewsletterData;
@@ -167,7 +167,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				</Grid>
 
 				<Grid item xs={8}>
-					<TemplatePreview
+					<TemplatePreviewLoader
 						newsletterData={{
 							...originalItem,
 							...subset,

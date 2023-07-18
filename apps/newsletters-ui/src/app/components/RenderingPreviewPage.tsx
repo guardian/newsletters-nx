@@ -1,7 +1,7 @@
 import { ButtonGroup, Typography } from '@mui/material';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { NavigateButton } from './NavigateButton';
-import { TemplatePreview } from './TemplatePreview';
+import { TemplatePreviewLoader } from './TemplatePreviewLoader';
 
 interface Props {
 	newsletter: NewsletterData;
@@ -13,7 +13,7 @@ export const RenderingPreviewPage = ({ newsletter }: Props) => {
 			<Typography variant="h2">
 				Email rendering preview: {newsletter.name}
 			</Typography>
-			<TemplatePreview identityName={newsletter.identityName} />
+			<TemplatePreviewLoader identityName={newsletter.identityName} />
 
 			<ButtonGroup>
 				<NavigateButton href={`/newsletters/${newsletter.identityName}`}>
