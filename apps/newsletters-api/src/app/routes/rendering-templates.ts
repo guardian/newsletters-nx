@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { getEmailRenderingHost } from '../../apiDeploymentSettings';
 import { newsletterStore } from '../../services/storage';
 import {
 	makeErrorResponse,
@@ -13,9 +14,8 @@ export type RenderingTemplate = {
 	title: string;
 };
 
-const EMAIL_RENDERING = 'https://email-rendering.guardianapis.com';
-const NEWSLETTER_RENDER_URL = `${EMAIL_RENDERING}/data-article/render-template`;
-const TEMPLATES_LIST_URL = `${EMAIL_RENDERING}/info/templates/`;
+const NEWSLETTER_RENDER_URL = `${getEmailRenderingHost()}/data-article/render-template`;
+const TEMPLATES_LIST_URL = `${getEmailRenderingHost()}/info/templates/`;
 
 export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 	app.get('/api/rendering-templates', async (req, res) => {
