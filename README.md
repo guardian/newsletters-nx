@@ -7,10 +7,6 @@ This is a monorepo for:
 -   serving a user interface for editorial to manage their newsletters
 -   the state-machine library used between UI and API
 
-🛠**CURRENT STATUS: in development / WIP**🛠
-
-For the current newsletters API in production go to https://github.com/guardian/newsletters
-
 ## Running locally
 
 To run the UI and API locally with the default options:
