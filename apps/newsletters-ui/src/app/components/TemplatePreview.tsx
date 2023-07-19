@@ -1,5 +1,5 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Box, Button, ButtonGroup, Container } from '@mui/material';
+import { Avatar, Box, Button, ButtonGroup, Container } from '@mui/material';
 import { useState } from 'react';
 
 interface Props {
@@ -42,18 +42,15 @@ export const TemplatePreview = ({
 				<WidthButton width={650} />
 			</ButtonGroup>
 
-			{isLoading && (
-				<Box sx={{ position: 'absolute', top: 0, right: 0 }}>
-					<RefreshIcon sx={{ fontSize: 160 }} />
-				</Box>
-			)}
-
 			<Box
 				width={'100%'}
 				minHeight={minHeight}
 				display={'flex'}
 				justifyContent={'center'}
 				paddingY={2}
+				sx={{
+					filter: isLoading ? 'brightness(50%)' : undefined,
+				}}
 			>
 				{html && (
 					<iframe
@@ -66,6 +63,21 @@ export const TemplatePreview = ({
 					/>
 				)}
 			</Box>
+
+			{isLoading && (
+				<Box
+					sx={{
+						position: 'absolute',
+						top: '50%',
+						left: '50%',
+						transform: 'translateX(-50%)',
+					}}
+				>
+					<Avatar sx={{ width: 120, height: 120 }}>
+						<RefreshIcon sx={{ fontSize: 100 }} color="primary" />
+					</Avatar>
+				</Box>
+			)}
 		</Container>
 	);
 };
