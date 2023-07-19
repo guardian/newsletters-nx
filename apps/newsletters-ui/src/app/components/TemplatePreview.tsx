@@ -1,5 +1,12 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Avatar, Box, Button, ButtonGroup, Container } from '@mui/material';
+import {
+	Avatar,
+	Box,
+	Button,
+	ButtonGroup,
+	CircularProgress,
+	Container,
+} from '@mui/material';
 import { useState } from 'react';
 
 interface Props {
@@ -49,7 +56,8 @@ export const TemplatePreview = ({
 				justifyContent={'center'}
 				paddingY={2}
 				sx={{
-					filter: isLoading ? 'brightness(50%)' : undefined,
+					filter: isLoading ? 'blur(3px)' : undefined,
+					transition: 'filter .25s',
 				}}
 			>
 				{html && (
@@ -73,9 +81,7 @@ export const TemplatePreview = ({
 						transform: 'translateX(-50%)',
 					}}
 				>
-					<Avatar sx={{ width: 120, height: 120 }}>
-						<RefreshIcon sx={{ fontSize: 100 }} color="primary" />
-					</Avatar>
+					<CircularProgress size={200} />
 				</Box>
 			)}
 		</Container>
