@@ -142,7 +142,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				</Typography>
 			</Alert>
 
-			<Grid container>
+			<Grid container columnSpacing={2}>
 				<Grid item xs={4}>
 					<Typography variant="h3">Category and series tag</Typography>
 					<StateEditForm
@@ -166,14 +166,14 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 					)}
 				</Grid>
 
-				<Grid item xs={8}>
+				<Grid item xs={8} paddingTop={3}>
 					<TemplatePreviewLoader
 						newsletterData={{
 							...originalItem,
 							...subset,
 							renderingOptions: (renderingOptions ?? {}) as RenderingOptions,
 						}}
-						minHeight={1400}
+						minHeight={1200}
 					/>
 				</Grid>
 			</Grid>

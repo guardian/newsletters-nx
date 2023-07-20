@@ -16,7 +16,7 @@ export const RenderingOptionsView = () => {
 	}
 
 	return (
-		<ContentWrapper>
+		<ContentWrapper maxWidth="xl">
 			<Box marginBottom={2}>
 				<NavigateButton href="../" variant="outlined">
 					Back to List
