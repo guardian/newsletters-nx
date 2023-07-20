@@ -21,6 +21,12 @@ export const RenderingOptionsView = () => {
 				<NavigateButton href="../" variant="outlined">
 					Back to List
 				</NavigateButton>
+				<NavigateButton
+					href={`/newsletters/edit/${matchedItem.identityName}`}
+					variant="outlined"
+				>
+					Edit Newsletter
+				</NavigateButton>
 			</Box>
 			<RenderingOptionsForm originalItem={matchedItem} />
 		</ContentWrapper>
