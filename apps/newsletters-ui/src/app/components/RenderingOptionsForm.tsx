@@ -137,7 +137,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 	return (
 		<>
-			{hasEmailRenderingTemplate && <Alert severity="error">The Rendering options for this Newsletter amd managed Email Rendering and cannot be changed in this tool. To make changes to <strong>{item.name}</strong>, please contact the development team</Alert>}
+			{hasEmailRenderingTemplate && <Alert severity="error">The rendering options for this newsletter are managed in the Email Rendering project. Updates made here will not effect the emails sent to subscribers. To make changes to <strong>{item.name}</strong>, please contact the development team</Alert>}
 			<Typography variant="h2">{item.name}</Typography>
 			<Typography variant="subtitle1">email-rendering settings</Typography>
 			<Typography variant="h3">Category and series tag</Typography>
