@@ -1,9 +1,8 @@
-import RefreshIcon from '@mui/icons-material/Refresh';
 import {
-	Avatar,
 	Box,
 	Button,
 	ButtonGroup,
+	Card,
 	CircularProgress,
 	Container,
 } from '@mui/material';
@@ -20,7 +19,7 @@ export const TemplatePreview = ({
 	minHeight = 800,
 	isLoading,
 }: Props) => {
-	const [frameWidth, setFrameWidth] = useState(360);
+	const [frameWidth, setFrameWidth] = useState(650);
 
 	const WidthButton = (props: { width: number }) => (
 		<Button
@@ -35,11 +34,11 @@ export const TemplatePreview = ({
 
 	return (
 		<Container
+			component={Card}
+			elevation={3}
 			sx={{
-				paddingTop: 1,
-				borderStyle: 'solid',
-				borderColor: 'primary.dark',
 				position: 'relative',
+				paddingY: 3,
 			}}
 		>
 			<ButtonGroup>
