@@ -36,10 +36,7 @@ export const ArrayInput = ({
 		change(dataCopy);
 	};
 
-	const handleAdd = () => {
-		const dataCopy = [...data, ''];
-		change(dataCopy);
-	};
+	const handleAdd = () => change([...data, '']);
 
 	return (
 		<Box padding={2} border={1} borderColor={''} borderRadius={1}>
@@ -70,9 +67,7 @@ export const ArrayInput = ({
 								color="error"
 								variant="outlined"
 								title={`delete entry "${item}"`}
-								onClick={() => {
-									handleDelete(index);
-								}}
+								onClick={() => handleDelete(index)}
 							>
 								x
 							</Button>
@@ -87,9 +82,7 @@ export const ArrayInput = ({
 						variant="outlined"
 						color="success"
 						title={`add new entry to ${label} list`}
-						onClick={() => {
-							handleAdd();
-						}}
+						onClick={() => handleAdd()}
 					>
 						Add new item
 					</Button>
