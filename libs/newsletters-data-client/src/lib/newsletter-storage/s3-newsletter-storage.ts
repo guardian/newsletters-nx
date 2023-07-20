@@ -142,6 +142,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 				data: listWithoutMeta,
 			};
 		} catch (error) {
+			console.error(error);
 			return {
 				ok: false,
 				message: `failed to list newsletters`,
