@@ -14,8 +14,9 @@ export type RenderingTemplate = {
 	title: string;
 };
 
-const NEWSLETTER_RENDER_URL = `${getEmailRenderingHost()}/data-article/render-template`;
-const TEMPLATES_LIST_URL = `${getEmailRenderingHost()}/info/templates/`;
+const emailRenderingHost = getEmailRenderingHost();
+const NEWSLETTER_RENDER_URL = `${emailRenderingHost}/data-article/render-template`;
+const TEMPLATES_LIST_URL = `${emailRenderingHost}/info/templates/`;
 
 export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 	app.get('/api/rendering-templates', async (req, res) => {
