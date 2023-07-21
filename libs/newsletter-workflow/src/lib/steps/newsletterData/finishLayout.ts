@@ -12,10 +12,10 @@ You can see your draft on the [details page](/drafts/{{listId}}), which includes
 
 {{answer}}
 
-Once all the data required to create **{{name}}** has been specified, [use the launch wizard](/newsletters/launch-newsletter/{{listId}}) to launch your new newsletter.
+Once all the data required to create **{{name}}** has been specified, [use the launch wizard](/drafts/launch-newsletter/{{listId}}) to launch your new newsletter.
 `;
 
-const messageAboutRenderingOptions = `You will need to set the [rendering options](/newsletters/newsletter-data-rendering/{{listId}}) for your newsletter, since it is article-based.`;
+const messageAboutRenderingOptions = `You will need to set the [rendering options](/drafts/newsletter-data-rendering/{{listId}}) for your newsletter, since it is article-based.`;
 
 const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 

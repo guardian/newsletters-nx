@@ -17,13 +17,13 @@ export const getEditDraftWizardLinks = (
 
 	links.push({
 		label: 'Newsletter set-up',
-		href: `/launched/newsletter-data/${listId.toString()}`,
+		href: `/drafts/newsletter-data/${listId.toString()}`,
 	});
 
 	if (category === 'article-based') {
 		links.push({
 			label: 'Article Rendering',
-			href: `/launched/newsletter-data-rendering/${listId.toString()}`,
+			href: `/drafts/newsletter-data-rendering/${listId.toString()}`,
 		});
 	}
 

@@ -7,9 +7,8 @@ import { DefaultStyles } from './app/components/DefaultStyles';
 import { draftRoute } from './app/routes/drafts';
 import { homeRoute } from './app/routes/home';
 import { launchedRoute } from "./app/routes/launched";
-import { newslettersRoute } from './app/routes/newsletters';
 
-const router = createBrowserRouter([homeRoute, newslettersRoute, draftRoute, launchedRoute]);
+const router = createBrowserRouter([homeRoute, draftRoute, launchedRoute]);
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement,
