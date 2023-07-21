@@ -62,14 +62,14 @@ export function HomeMenu() {
 		<Container maxWidth={'lg'}>
 			<Grid container spacing={3} rowSpacing={6} paddingY={4}>
 				<ButtonGridItem
-					path="/newsletters"
+					path="/launched"
 					content={'View launched newsletters'}
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 
 				{permissions?.writeToDrafts && (
 					<ButtonGridItem
-						path="/launched/newsletter-data"
+						path="/newsletters/newsletter-data"
 						content={'Create newsletter wizard'}
 						variant="contained"
 					/>
@@ -113,7 +113,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/newsletters/rendering-options/${identityName as string}`);
+								navigate(`/launched/rendering-options/${identityName as string}`);
 							}}
 						/>
 					</Grid>
