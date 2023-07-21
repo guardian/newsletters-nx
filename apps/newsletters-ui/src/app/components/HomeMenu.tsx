@@ -69,7 +69,7 @@ export function HomeMenu() {
 
 				{permissions?.writeToDrafts && (
 					<ButtonGridItem
-						path="/newsletters/newsletter-data"
+						path="/drafts/newsletter-data"
 						content={'Create newsletter wizard'}
 						variant="contained"
 					/>
