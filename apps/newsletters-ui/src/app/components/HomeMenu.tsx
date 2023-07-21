@@ -69,7 +69,7 @@ export function HomeMenu() {
 
 				{permissions?.writeToDrafts && (
 					<ButtonGridItem
-						path="/newsletters/newsletter-data"
+						path="/launched/newsletter-data"
 						content={'Create newsletter wizard'}
 						variant="contained"
 					/>
@@ -91,7 +91,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/newsletters/edit/${identityName}`);
+								navigate(`/launched/edit/${identityName as string}`);
 							}}
 						/>
 					</Grid>
@@ -113,7 +113,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/newsletters/rendering-options/${identityName}`);
+								navigate(`/newsletters/rendering-options/${identityName as string}`);
 							}}
 						/>
 					</Grid>

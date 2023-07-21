@@ -22,7 +22,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Header: 'Newsletter ID',
 				accessor: 'identityName',
 				Cell: ({ cell: { value } }) => (
-					<Link to={`/newsletters/${value as string}`}>{value}</Link>
+					<Link to={`/launched/${value as string}`}>{value}</Link>
 				),
 			},
 			{
@@ -73,7 +73,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 					<NavigateButton
 						href={
 							editNewsletters
-								? `/newsletters/edit/${newsletter.identityName}`
+								? `/launched/edit/${newsletter.identityName}`
 								: undefined
 						}
 					>
