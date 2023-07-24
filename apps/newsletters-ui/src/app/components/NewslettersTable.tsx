@@ -53,11 +53,6 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Cell: formatCellDate,
 			},
 			{
-				Header: 'Cancelled',
-				accessor: 'cancellationTimeStamp',
-				Cell: formatCellDate,
-			},
-			{
 				Header: 'Status',
 				accessor: 'status',
 				sortType: 'basic',
