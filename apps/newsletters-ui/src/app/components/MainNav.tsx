@@ -77,8 +77,8 @@ export function MainNav({ isOnCode }: Props) {
 						role={'link'}
 						onClick={() => navigate('/')}
 						style={{
-								cursor: 'pointer',
-							}}
+							cursor: 'pointer',
+						}}
 					>
 						<Typography
 							variant="h1"
@@ -169,7 +169,9 @@ export function MainNav({ isOnCode }: Props) {
 									color: 'white',
 									fontWeight: menuItemIsSelected(path) ? 'bold' : 'normal',
 									display: 'block',
-									borderBottomStyle: menuItemIsSelected(path) ?'solid' : 'none',
+									borderBottomStyle: menuItemIsSelected(path)
+										? 'solid'
+										: 'none',
 									borderBottomWidth: '2px',
 									borderRadius: '0',
 								}}
