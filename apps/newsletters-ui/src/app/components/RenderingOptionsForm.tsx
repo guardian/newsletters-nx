@@ -32,7 +32,27 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	>(
 		originalItem.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
 	);
+
 	const [item, setItem] = useState<NewsletterData>(originalItem);
+	const emailRenderingManagedNewsletters = [
+		'afternoon-update',
+		'cotton-capital',
+		'the-guide-staying-in',
+		'fashion-statement',
+		'five-great-reads',
+		'morning-mail',
+		'soccer-with-jonathan-wilson',
+		'this-is-europe',
+		'moving-the-goalposts',
+		'pushing-buttons',
+		'morning-briefing',
+		'green-light',
+		'the-fiver',
+		'afternoon-update',
+	];
+	const { identityName } = originalItem;
+	const hasEmailRenderingTemplate =
+		emailRenderingManagedNewsletters.includes(identityName);
 	const [subset, setSubset] = useState<FormDataRecord>({
 		category: item.category,
 		seriesTag: item.seriesTag,
@@ -74,13 +94,13 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	};
 
 	const requestUpdate = async () => {
-		const renderingOptionsparseResult =
+		const renderingOptionsParseResult =
 			renderingOptionsSchema.safeParse(renderingOptions);
-		if (!renderingOptionsparseResult.success) {
+		if (!renderingOptionsParseResult.success) {
 			setErrorMessage('Cannot submit with validation errors');
 			return;
 		}
-		const parsedRenderingOptions = renderingOptionsparseResult.data;
+		const parsedRenderingOptions = renderingOptionsParseResult.data;
 
 		setWaitingForResponse(true);
 
@@ -126,9 +146,16 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 	return (
 		<>
+			{hasEmailRenderingTemplate && (
+				<Alert severity="error">
+					The rendering options for this newsletter are managed in the Email
+					Rendering project. Updates made here will not effect the emails sent
+					to subscribers. To make changes to <strong>{item.name}</strong>,
+					please contact the development team
+				</Alert>
+			)}
 			<Typography variant="h2">{item.name}</Typography>
 			<Typography variant="subtitle1">email-rendering settings</Typography>
-
 			<Alert severity={item.seriesTag ? 'info' : 'warning'}>
 				<AlertTitle>Series Tags</AlertTitle>
 				<Typography>

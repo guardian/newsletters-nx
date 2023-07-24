@@ -245,7 +245,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					if (isStringArray(value) || typeof value === 'undefined') {
 						return (
 							<FieldWrapper>
-								<SchemaArrayInput {...standardProps} value={value ?? []} />;
+								<SchemaArrayInput {...standardProps} value={value ?? []} />
 							</FieldWrapper>
 						);
 					}
