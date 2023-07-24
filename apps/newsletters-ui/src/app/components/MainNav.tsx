@@ -166,8 +166,12 @@ export function MainNav({ isOnCode }: Props) {
 								}}
 								sx={{
 									my: 2,
-									color: menuItemIsSelected(path) ? 'grey' : 'white',
+									color: 'white',
+									fontWeight: menuItemIsSelected(path) ? 'bold' : 'normal',
 									display: 'block',
+									borderBottomStyle: menuItemIsSelected(path) ?'solid' : 'none',
+									borderBottomWidth: '2px',
+									borderRadius: '0',
 								}}
 							>
 								{label}
