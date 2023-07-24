@@ -91,7 +91,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/launched/edit/${identityName as string}`);
+								navigate(`/launched/edit/${identityName}`);
 							}}
 						/>
 					</Grid>
@@ -113,7 +113,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/launched/rendering-options/${identityName as string}`);
+								navigate(`/launched/rendering-options/${identityName}`);
 							}}
 						/>
 					</Grid>
