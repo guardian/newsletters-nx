@@ -22,7 +22,7 @@ export const RenderingOptionsView = () => {
 					Back to List
 				</NavigateButton>
 				<NavigateButton
-					href={`/newsletters/edit/${matchedItem.identityName}`}
+					href={`/launched/edit/${matchedItem.identityName}`}
 					variant="outlined"
 				>
 					Edit Newsletter
