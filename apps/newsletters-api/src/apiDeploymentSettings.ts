@@ -89,3 +89,11 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 		return {};
 	}
 };
+
+const EMAIL_RENDERING_LOCAL = 'http://localhost:3010';
+const EMAIL_RENDERING = 'https://email-rendering.guardianapis.com';
+export const getEmailRenderingHost = (): string => {
+	return process.env.USE_LOCAL_EMAIL_RENDERING
+		? EMAIL_RENDERING_LOCAL
+		: EMAIL_RENDERING;
+};

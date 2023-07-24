@@ -27,6 +27,15 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 					<Badge badgeContent={status} color="secondary">
 						<Typography variant="h2">{name}</Typography>
 					</Badge>
+
+					<Box>
+						<NavigateButton
+							href={`/newsletters/preview/${newsletter.identityName}`}
+							variant="outlined"
+						>
+							View rendering preview
+						</NavigateButton>
+					</Box>
 				</Grid>
 				<Grid item>
 					<Illustration
