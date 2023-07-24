@@ -37,6 +37,6 @@ export const launchedRoute: RouteObject = {
 			path: 'edit-json/:id',
 			element: <NewsletterJsonEditView />,
 			loader: detailLoader,
-		}
+		},
 	],
 };

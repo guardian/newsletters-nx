@@ -1,7 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import { DraftDetailView } from '../components/views/DraftDetailView';
 import { DraftListView } from '../components/views/DraftListView';
-import { WizardContainer } from "../components/WizardContainer" ;
+import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
