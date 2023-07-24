@@ -30,7 +30,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 
 					<Box>
 						<NavigateButton
-							href={`/newsletters/preview/${newsletter.identityName}`}
+							href={`/launched/preview/${newsletter.identityName}`}
 							variant="outlined"
 						>
 							View rendering preview
