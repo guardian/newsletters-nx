@@ -5,13 +5,12 @@ import { NewsletterJsonEditView } from '../components/views/NewsletterJsonEditVi
 import { NewslettersListView } from '../components/views/NewslettersListView';
 import { PreviewView } from '../components/views/PreviewView';
 import { RenderingOptionsView } from '../components/views/RenderingOptionsView';
-import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { detailLoader, listLoader } from '../loaders/newsletters';
 
-export const newslettersRoute: RouteObject = {
-	path: '/newsletters',
+export const launchedRoute: RouteObject = {
+	path: '/launched',
 	element: <Layout />,
 	errorElement: <ErrorPage />,
 	children: [
@@ -40,27 +39,6 @@ export const newslettersRoute: RouteObject = {
 			element: <NewsletterJsonEditView />,
 			loader: detailLoader,
 		},
-		{
-			path: 'newsletter-data/:listId',
-			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
-		},
-		{
-			path: 'newsletter-data-rendering/:listId',
-			element: <WizardContainer wizardId="RENDERING_OPTIONS" />,
-		},
-		{
-			path: 'newsletter-data',
-			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
-		},
-		{
-			path: 'launch-newsletter/:listId',
-			element: <WizardContainer wizardId="LAUNCH_NEWSLETTER" />,
-		},
-		{
-			path: 'launch-newsletter',
-			element: <WizardContainer wizardId="LAUNCH_NEWSLETTER" />,
-		},
-
 		{
 			path: 'preview/:id',
 			element: <PreviewView />,

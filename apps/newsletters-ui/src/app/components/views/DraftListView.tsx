@@ -35,7 +35,7 @@ export const DraftListView = () => {
 						<Button
 							variant="contained"
 							endIcon={<AddIcon />}
-							href={'/newsletters/newsletter-data'}
+							href={'/drafts/newsletter-data'}
 							aria-label="open create new draft wizard"
 						>
 							New draft

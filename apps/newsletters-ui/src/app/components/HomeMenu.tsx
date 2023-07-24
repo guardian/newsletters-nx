@@ -62,14 +62,14 @@ export function HomeMenu() {
 		<Container maxWidth={'lg'}>
 			<Grid container spacing={3} rowSpacing={6} paddingY={4}>
 				<ButtonGridItem
-					path="/newsletters"
+					path="/launched"
 					content={'View launched newsletters'}
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 
 				{permissions?.writeToDrafts && (
 					<ButtonGridItem
-						path="/newsletters/newsletter-data"
+						path="/drafts/newsletter-data"
 						content={'Create newsletter wizard'}
 						variant="contained"
 					/>
@@ -91,7 +91,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/newsletters/edit/${identityName}`);
+								navigate(`/launched/edit/${identityName}`);
 							}}
 						/>
 					</Grid>
@@ -113,7 +113,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/newsletters/rendering-options/${identityName}`);
+								navigate(`/launched/rendering-options/${identityName}`);
 							}}
 						/>
 					</Grid>

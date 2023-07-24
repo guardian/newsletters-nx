@@ -9,7 +9,7 @@ You have reached the end of the wizard. **{{name}}** has been launched!
 
 It has id {{listId}}.
 
-You can see its details on the [details page](/newsletters/{{identityName}})
+You can see its details on the [details page](/launched/{{identityName}})
 
 `.trim();
 

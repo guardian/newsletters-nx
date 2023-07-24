@@ -138,7 +138,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 					}
 					return (
 						<NavigateButton
-							href={`/newsletters/launch-newsletter/${draft.listId}`}
+							href={`/drafts/launch-newsletter/${draft.listId}`}
 							variant="outlined"
 							color="success"
 							startIcon={<RocketLaunchIcon />}
