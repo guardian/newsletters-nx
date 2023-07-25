@@ -17,6 +17,10 @@ const getSsmClient = () => {
 	});
 };
 
+type Config = Record<string, string>;
+
+let state: Config | undefined;
+
 const getPath = (key: string) => {
 	const { STAGE, STACK, APP } = process.env;
 	if (!STAGE || !STACK || !APP) {
@@ -28,12 +32,20 @@ export const getConfigValue = async (
 	key: string,
 	defaultValue?: string,
 ): Promise<string> => {
+
+	if (state?.[key]) {
+		console.info(
+			`returning cached value for getConfigValue ${key}`
+		);
+		return state[key] as string;
+	}
+
 	console.info(
 		`getConfigValue for ${key}, defaultValue: ${defaultValue ?? 'undefined'}`,
 	);
 	const ssmClient = getSsmClient();
 	const path = getPath(key);
-	console.info(`path: ${path}`);
+
 	const value = await ssmClient
 		.getParameter({
 			Name: path,
@@ -41,6 +53,10 @@ export const getConfigValue = async (
 		})
 		.promise();
 	if (value.Parameter?.Value) {
+		state = {
+			...state,
+			[key]: value.Parameter.Value,
+		}
 		return value.Parameter.Value;
 	}
 	if (defaultValue) {
