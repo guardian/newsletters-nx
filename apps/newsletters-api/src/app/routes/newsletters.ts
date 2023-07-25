@@ -5,6 +5,7 @@ import {
 	replaceNullWithUndefinedForUnknown,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
+import { signImages } from '../../services/image/image-signer';
 import { newsletterStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
 import {
@@ -35,8 +36,10 @@ export function registerReadNewsletterRoutes(app: FastifyInstance) {
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));
 		}
-
-		return makeSuccessResponse(storageResponse.data);
+		const newsletterDataWithSignedImages = await Promise.all(
+			storageResponse.data.map(signImages),
+		);
+		return makeSuccessResponse(newsletterDataWithSignedImages);
 	});
 
 	app.get<{ Params: { newsletterId: string } }>(

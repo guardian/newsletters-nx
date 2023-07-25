@@ -74,6 +74,8 @@ User=ubuntu
 ExecStart=/usr/bin/node /opt/${app}/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=${this.stage}
+Environment=STACK=${this.stack}
+Environment=APP=${this.app}
 Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
