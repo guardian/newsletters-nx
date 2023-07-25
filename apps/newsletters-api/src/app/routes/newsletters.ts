@@ -5,6 +5,7 @@ import {
 	replaceNullWithUndefinedForUnknown,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
+import { isServingReadWriteEndpoints } from "../../apiDeploymentSettings";
 import { signImages } from '../../services/image/image-signer';
 import { newsletterStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
@@ -31,15 +32,19 @@ export function registerReadNewsletterRoutes(app: FastifyInstance) {
 
 	app.get('/api/newsletters', async (req, res) => {
 		const storageResponse = await newsletterStore.list();
+
 		if (!storageResponse.ok) {
 			return res
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));
 		}
-		const newsletterDataWithSignedImages = await Promise.all(
-			storageResponse.data.map(signImages),
-		);
-		return makeSuccessResponse(newsletterDataWithSignedImages);
+		if (!isServingReadWriteEndpoints()) {
+			const newsletterDataWithSignedImages = await Promise.all(
+				storageResponse.data.map(signImages),
+			);
+			return makeSuccessResponse(newsletterDataWithSignedImages);
+		}
+		return makeSuccessResponse(storageResponse.data);
 	});
 
 	app.get<{ Params: { newsletterId: string } }>(
@@ -54,6 +59,12 @@ export function registerReadNewsletterRoutes(app: FastifyInstance) {
 					.send(makeErrorResponse(storageResponse.message));
 			}
 
+			if (!isServingReadWriteEndpoints()) {
+				const newsletterDataWithSignedImages = await signImages(
+					storageResponse.data,
+				);
+				return makeSuccessResponse(newsletterDataWithSignedImages);
+			}
 			return makeSuccessResponse(storageResponse.data);
 		},
 	);
