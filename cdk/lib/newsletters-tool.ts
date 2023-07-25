@@ -81,6 +81,7 @@ Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USER_PERMISSIONS='${processJSONString(userPermissions)}'
+Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 [Install]
 WantedBy=multi-user.target
 EOL`,

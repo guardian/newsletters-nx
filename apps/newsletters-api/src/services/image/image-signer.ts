@@ -28,43 +28,27 @@ export const signImages = async (
 	newsletterData: NewsletterDataWithoutMeta,
 ): Promise<NewsletterData> => {
 	const isAlreadySigned = (imageUrl: string): boolean =>
-		imageUrl.includes('dpr=');
+		imageUrl.includes('dpr='); //todo: improve this check
 	let signedImages = {};
 	const { renderingOptions } = newsletterData;
 	if (!renderingOptions) return newsletterData;
 	const { mainBannerUrl, subheadingBannerUrl, darkSubheadingBannerUrl } =
 		renderingOptions;
-	if (mainBannerUrl) {
-		signedImages = isAlreadySigned(mainBannerUrl)
-			? { ...signedImages, mainBannerUrl }
-			: {
-					...signedImages,
-					mainBannerUrl: await signImage(mainBannerUrl, { dpr: 2, width: 650 }),
-			  };
-	}
-	if (subheadingBannerUrl) {
-		signedImages = isAlreadySigned(subheadingBannerUrl)
-			? { ...signedImages, subheadingBannerUrl }
-			: {
-					...signedImages,
-					subheadingBannerUrl: await signImage(subheadingBannerUrl, {
-						dpr: 2,
-						width: 650,
-					}),
-			  };
-	}
-	if (darkSubheadingBannerUrl) {
-		signedImages = isAlreadySigned(darkSubheadingBannerUrl)
-			? { ...signedImages, darkSubheadingBannerUrl }
-			: {
-					...signedImages,
-					darkSubheadingBannerUrl: await signImage(darkSubheadingBannerUrl, {
-						dpr: 2,
-						width: 650,
-					}),
-			  };
-	}
 
+	for await (const imageUrl of [
+		mainBannerUrl,
+		subheadingBannerUrl,
+		darkSubheadingBannerUrl,
+	]) {
+		if (imageUrl) {
+			signedImages = isAlreadySigned(imageUrl)
+				? { ...signedImages, mainBannerUrl }
+				: {
+						...signedImages,
+						mainBannerUrl: await signImage(imageUrl, { dpr: 2, width: 650 }),
+				  };
+		}
+	}
 	return {
 		...newsletterData,
 		renderingOptions: {

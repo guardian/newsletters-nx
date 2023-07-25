@@ -5,7 +5,7 @@ import {
 	replaceNullWithUndefinedForUnknown,
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
-import { isServingReadWriteEndpoints } from "../../apiDeploymentSettings";
+import { isDynamicImageSigningEnabled } from '../../apiDeploymentSettings';
 import { signImages } from '../../services/image/image-signer';
 import { newsletterStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
@@ -38,7 +38,7 @@ export function registerReadNewsletterRoutes(app: FastifyInstance) {
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));
 		}
-		if (!isServingReadWriteEndpoints()) {
+		if (isDynamicImageSigningEnabled()) {
 			const newsletterDataWithSignedImages = await Promise.all(
 				storageResponse.data.map(signImages),
 			);
@@ -59,7 +59,7 @@ export function registerReadNewsletterRoutes(app: FastifyInstance) {
 					.send(makeErrorResponse(storageResponse.message));
 			}
 
-			if (!isServingReadWriteEndpoints()) {
+			if (isDynamicImageSigningEnabled()) {
 				const newsletterDataWithSignedImages = await signImages(
 					storageResponse.data,
 				);

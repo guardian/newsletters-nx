@@ -37,6 +37,13 @@ export const isServingReadWriteEndpoints = () => {
 	return undefinedAndNotProduction || isApiReadWrite;
 };
 
+export const isDynamicImageSigningEnabled = () => {
+	const { ENABLE_DYNAMIC_IMAGE_SIGNING } = process.env;
+	return (
+		ENABLE_DYNAMIC_IMAGE_SIGNING && ENABLE_DYNAMIC_IMAGE_SIGNING === 'true'
+	);
+};
+
 export const isServingReadEndpoints = () => {
 	const undefinedAndNotProduction = isUndefinedAndNotProduction(
 		process.env.NEWSLETTERS_API_READ,

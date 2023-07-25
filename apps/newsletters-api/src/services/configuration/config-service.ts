@@ -32,11 +32,8 @@ export const getConfigValue = async (
 	key: string,
 	defaultValue?: string,
 ): Promise<string> => {
-
 	if (state?.[key]) {
-		console.info(
-			`returning cached value for getConfigValue ${key}`
-		);
+		console.info(`returning cached value for getConfigValue ${key}`);
 		return state[key] as string;
 	}
 
@@ -56,7 +53,7 @@ export const getConfigValue = async (
 		state = {
 			...state,
 			[key]: value.Parameter.Value,
-		}
+		};
 		return value.Parameter.Value;
 	}
 	if (defaultValue) {

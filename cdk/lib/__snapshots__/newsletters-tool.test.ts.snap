@@ -2122,6 +2122,7 @@ Environment=USER_PERMISSIONS='",
                     "Ref": "UserPermissions",
                   },
                   "'
+Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 [Install]
 WantedBy=multi-user.target
 EOL
@@ -2299,6 +2300,7 @@ Environment=USER_PERMISSIONS='",
                     "Ref": "UserPermissions",
                   },
                   "'
+Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
 [Install]
 WantedBy=multi-user.target
 EOL
