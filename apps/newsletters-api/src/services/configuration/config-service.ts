@@ -1,21 +1,4 @@
-import { SharedIniFileCredentials, SSM } from 'aws-sdk';
-
-const getSsmClient = () => {
-	const { STAGE, AWS_PROFILE } = process.env;
-
-	const shouldUseProfileCredentials = !!(STAGE && STAGE === 'DEV');
-	if (shouldUseProfileCredentials) {
-		const profile = AWS_PROFILE ?? 'frontend';
-
-		return new SSM({
-			region: 'eu-west-1',
-			credentials: new SharedIniFileCredentials({ profile }),
-		});
-	}
-	return new SSM({
-		region: 'eu-west-1',
-	});
-};
+import { getSsmClient } from './ssm-client-factory';
 
 type Config = Record<string, string>;
 
@@ -33,11 +16,11 @@ export const getConfigValue = async (
 	defaultValue?: string,
 ): Promise<string> => {
 	if (state?.[key]) {
-		console.info(`returning cached value for getConfigValue ${key}`);
+		console.log(`returning cached value for getConfigValue ${key}`);
 		return state[key] as string;
 	}
 
-	console.info(
+	console.log(
 		`getConfigValue for ${key}, defaultValue: ${defaultValue ?? 'undefined'}`,
 	);
 	const ssmClient = getSsmClient();

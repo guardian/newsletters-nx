@@ -19,7 +19,7 @@ To run the UI and API locally with the default options:
 
 ### Run the app
 
-fetch some `frontend` credentials from [Janus](https://janus.gutools.co.uk/credentials?permissionId=frontend-dev&tzOffset=1) 
+fetch some `frontend` credentials from [Janus](https://janus.gutools.co.uk/credentials?permissionId=frontend-dev&tzOffset=1)
 
 `npm run dev`
 
