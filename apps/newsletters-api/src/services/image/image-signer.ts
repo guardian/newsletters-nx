@@ -24,28 +24,28 @@ export const signImage = async (
 	});
 };
 
-export const signImages = async (
+export const signTemplateImages = async (
 	newsletterData: NewsletterDataWithoutMeta,
 ): Promise<NewsletterData> => {
-
 	let signedImages = {};
-	const {renderingOptions} = newsletterData;
+	const { renderingOptions } = newsletterData;
 	if (!renderingOptions) return newsletterData;
-	const {mainBannerUrl, subheadingBannerUrl, darkSubheadingBannerUrl} =
+	const { mainBannerUrl, subheadingBannerUrl, darkSubheadingBannerUrl } =
 		renderingOptions;
-
-	for await (const imageUrl of [
-		mainBannerUrl,
-		subheadingBannerUrl,
-		darkSubheadingBannerUrl,
-	]) {
+	const imageKeyValueMapping = [
+		{ key: 'mainBannerUrl', imageUrl: mainBannerUrl },
+		{ key: 'subheadingBannerUrl', imageUrl: subheadingBannerUrl },
+		{ key: 'darkSubheadingBannerUrl', imageUrl: darkSubheadingBannerUrl },
+	];
+	for await (const image of imageKeyValueMapping) {
+		const { key, imageUrl } = image;
 		if (imageUrl) {
 			signedImages = shouldSignImage(imageUrl)
 				? {
-					...signedImages,
-					mainBannerUrl: await signImage(imageUrl, {dpr: 2, width: 650}),
-				}
-				: {...signedImages, mainBannerUrl};
+						...signedImages,
+						[key]: await signImage(imageUrl, { dpr: 2, width: 650 }),
+				  }
+				: { ...signedImages, [key]: imageUrl };
 		}
 	}
 	return {
@@ -61,4 +61,4 @@ const supportedSigningDomains = ['uploads.guim.co.uk'];
 export const shouldSignImage = (imageUrl: string): boolean => {
 	const asUrl = new URL(imageUrl);
 	return supportedSigningDomains.includes(asUrl.hostname);
-}
+};

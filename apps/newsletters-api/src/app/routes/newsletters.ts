@@ -6,7 +6,7 @@ import {
 	transformDataToLegacyNewsletter,
 } from '@newsletters-nx/newsletters-data-client';
 import { isDynamicImageSigningEnabled } from '../../apiDeploymentSettings';
-import { signImages } from '../../services/image/image-signer';
+import { signTemplateImages } from '../../services/image/image-signer';
 import { newsletterStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
 import {
@@ -30,44 +30,52 @@ export function registerReadNewsletterRoutes(app: FastifyInstance) {
 		return storageResponse.data.map(transformDataToLegacyNewsletter);
 	});
 
-	app.get('/api/newsletters', async (req, res) => {
-		const storageResponse = await newsletterStore.list();
+	interface IQuerystring {
+		signImages: boolean;
+	}
 
-		if (!storageResponse.ok) {
-			return res
-				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-				.send(makeErrorResponse(storageResponse.message));
-		}
-		if (isDynamicImageSigningEnabled()) {
-			const newsletterDataWithSignedImages = await Promise.all(
-				storageResponse.data.map(signImages),
-			);
-			return makeSuccessResponse(newsletterDataWithSignedImages);
-		}
-		return makeSuccessResponse(storageResponse.data);
-	});
-
-	app.get<{ Params: { newsletterId: string } }>(
-		'/api/newsletters/:newsletterId',
+	app.get<{ Querystring: IQuerystring }>(
+		'/api/newsletters',
 		async (req, res) => {
-			const { newsletterId } = req.params;
-			const storageResponse = await newsletterStore.readByName(newsletterId);
+			const storageResponse = await newsletterStore.list();
 
 			if (!storageResponse.ok) {
 				return res
 					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 					.send(makeErrorResponse(storageResponse.message));
 			}
-
-			if (isDynamicImageSigningEnabled()) {
-				const newsletterDataWithSignedImages = await signImages(
-					storageResponse.data,
+			const { signImages } = req.query;
+			if (isDynamicImageSigningEnabled() && signImages) {
+				const newsletterDataWithSignedImages = await Promise.all(
+					storageResponse.data.map(signTemplateImages),
 				);
 				return makeSuccessResponse(newsletterDataWithSignedImages);
 			}
 			return makeSuccessResponse(storageResponse.data);
 		},
 	);
+
+	app.get<{
+		Params: { newsletterId: string };
+		Querystring: IQuerystring;
+	}>('/api/newsletters/:newsletterId', async (req, res) => {
+		const { newsletterId } = req.params;
+		const storageResponse = await newsletterStore.readByName(newsletterId);
+
+		if (!storageResponse.ok) {
+			return res
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
+		}
+		const { signImages } = req.query;
+		if (isDynamicImageSigningEnabled() && signImages) {
+			const newsletterDataWithSignedImages = await signTemplateImages(
+				storageResponse.data,
+			);
+			return makeSuccessResponse(newsletterDataWithSignedImages);
+		}
+		return makeSuccessResponse(storageResponse.data);
+	});
 }
 
 export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
