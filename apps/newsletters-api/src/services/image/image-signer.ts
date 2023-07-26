@@ -27,12 +27,11 @@ export const signImage = async (
 export const signImages = async (
 	newsletterData: NewsletterDataWithoutMeta,
 ): Promise<NewsletterData> => {
-	const isAlreadySigned = (imageUrl: string): boolean =>
-		imageUrl.includes('dpr='); //todo: improve this check
+
 	let signedImages = {};
-	const { renderingOptions } = newsletterData;
+	const {renderingOptions} = newsletterData;
 	if (!renderingOptions) return newsletterData;
-	const { mainBannerUrl, subheadingBannerUrl, darkSubheadingBannerUrl } =
+	const {mainBannerUrl, subheadingBannerUrl, darkSubheadingBannerUrl} =
 		renderingOptions;
 
 	for await (const imageUrl of [
@@ -41,12 +40,12 @@ export const signImages = async (
 		darkSubheadingBannerUrl,
 	]) {
 		if (imageUrl) {
-			signedImages = isAlreadySigned(imageUrl)
-				? { ...signedImages, mainBannerUrl }
-				: {
-						...signedImages,
-						mainBannerUrl: await signImage(imageUrl, { dpr: 2, width: 650 }),
-				  };
+			signedImages = shouldSignImage(imageUrl)
+				? {
+					...signedImages,
+					mainBannerUrl: await signImage(imageUrl, {dpr: 2, width: 650}),
+				}
+				: {...signedImages, mainBannerUrl};
 		}
 	}
 	return {
@@ -57,3 +56,9 @@ export const signImages = async (
 		},
 	};
 };
+
+const supportedSigningDomains = ['uploads.guim.co.uk'];
+export const shouldSignImage = (imageUrl: string): boolean => {
+	const asUrl = new URL(imageUrl);
+	return supportedSigningDomains.includes(asUrl.hostname);
+}
