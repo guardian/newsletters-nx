@@ -45,7 +45,7 @@ export const onlineArticleLayout: WizardStepLayout<DraftService> = {
 		},
 		finish: {
 			buttonType: 'NEXT',
-			label: 'Next',
+			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},

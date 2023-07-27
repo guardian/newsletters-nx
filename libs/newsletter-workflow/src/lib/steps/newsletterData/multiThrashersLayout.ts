@@ -49,7 +49,7 @@ export const multiThrashersLayout: WizardStepLayout<DraftService> = {
 		},
 		next: {
 			buttonType: 'NEXT',
-			label: 'Next',
+			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData) => {
 				const multiThrashers = stepData.formData

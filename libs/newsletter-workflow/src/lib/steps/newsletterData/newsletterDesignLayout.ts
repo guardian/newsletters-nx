@@ -42,7 +42,7 @@ export const newsletterDesignLayout: WizardStepLayout<DraftService> = {
 		},
 		finish: {
 			buttonType: 'NEXT',
-			label: 'Next',
+			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData) => {
 				const newsletterDesignDoc = stepData.formData
