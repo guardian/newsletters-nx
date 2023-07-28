@@ -57,6 +57,10 @@ export const renderingOptionsSchema = z.object({
 					subheading: nonEmptyString().describe('read more subheading'),
 					wording: nonEmptyString().describe('read more wording'),
 					url: z.string().url().describe('read more url'),
+					isDarkTheme: z
+						.boolean()
+						.optional()
+						.describe('use dark theme for section'),
 				})
 				.describe('Read more section configuration'),
 		)
