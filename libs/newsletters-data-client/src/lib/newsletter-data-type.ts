@@ -33,23 +33,23 @@ export const singleThrasherLocation = z
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
 export const renderingOptionsSchema = z.object({
-	displayDate: z.boolean().describe('display date?'),
-	displayStandfirst: z.boolean().describe('display standfirst?'),
-	contactEmail: z.string().email().describe('contact email'),
-	displayImageCaptions: z.boolean().describe('display image captions?'),
-	paletteOverride: themeEnumSchema.optional().describe('palette override'),
+	displayDate: z.boolean().describe('Display date?'),
+	displayStandfirst: z.boolean().describe('Display standfirst?'),
+	contactEmail: z.string().email().describe('Contact email'),
+	displayImageCaptions: z.boolean().describe('Display image captions?'),
+	paletteOverride: themeEnumSchema.optional().describe('Palette override'),
 	linkListSubheading: z
 		.array(z.string())
 		.optional()
-		.describe('link list subheading'),
+		.describe('Link list subheading'),
 	podcastSubheading: z
 		.array(z.string())
 		.optional()
-		.describe('podcast subheading'),
+		.describe('Podcast subheading'),
 	darkThemeSubheading: z
 		.array(z.string())
 		.optional()
-		.describe('dark theme subheading'),
+		.describe('Dark theme subheading'),
 	readMoreSections: z
 		.array(
 			z
@@ -58,7 +58,7 @@ export const renderingOptionsSchema = z.object({
 					wording: nonEmptyString().describe('read more wording'),
 					url: z.string().url().describe('read more url'),
 				})
-				.describe('read more section configuration'),
+				.describe('Read more section configuration'),
 		)
 		.optional()
 		.describe('The configuration for read more sections'),
@@ -67,26 +67,26 @@ export const renderingOptionsSchema = z.object({
 		.string()
 		.url()
 		.optional()
-		.describe('asset url for main banner'),
+		.describe('URL for the main banner'),
 	subheadingBannerUrl: z
 		.string()
 		.url()
 		.optional()
-		.describe('asset url for standard subheading banner'),
+		.describe('URL for standard subheading banner'),
 	darkSubheadingBannerUrl: z
 		.string()
 		.url()
 		.optional()
-		.describe('asset url for dark subheading banner'),
+		.describe('URL for dark subheading banner'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
 export const thrasherOptionsSchema = z.object({
-	singleThrasher: z.boolean().describe('single thrasher required?'),
+	singleThrasher: z.boolean().describe('Single thrasher required?'),
 	singleThrasherLocation: singleThrasherLocation.describe(
 		'single thrasher location',
 	),
-	thrasherDescription: z.string().describe('thrasher description'),
+	thrasherDescription: z.string().describe('Thrasher description'),
 	multiThrashers: z
 		.array(
 			z
@@ -115,7 +115,7 @@ export const newsletterCategoriesSchema = z
 		'manual-send',
 		'other',
 	])
-	.describe('production category');
+	.describe('Production category');
 export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 
 /**

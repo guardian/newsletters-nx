@@ -117,8 +117,9 @@ export const formSchemas = {
 		.describe('Input the design brief and Figma design'),
 
 	newsletterHeader: pickAndPrefixRenderingOption([
-		'displayDate',
 		'displayStandfirst',
+		'displayDate',
+		'mainBannerUrl',
 	]).describe('Input the header setup'),
 
 	newsletterPaletteOverride: pickAndPrefixRenderingOption([
@@ -187,4 +188,10 @@ export const formSchemas = {
 			privateUntilLaunch: true,
 		})
 		.describe('choose the launch date and promotion plans'),
+
+	illustrationCard: dataCollectionSchema
+		.pick({
+			illustrationCard: true,
+		})
+		.describe('Add the URL for the illustration card'),
 };

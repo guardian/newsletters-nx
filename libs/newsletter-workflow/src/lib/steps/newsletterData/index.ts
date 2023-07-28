@@ -7,6 +7,7 @@ import { dateLayout } from './dateLayout';
 import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
 import { finishLayout } from './finishLayout';
 import { frequencyLayout } from './frequencyLayout';
+import { illustrationCardLayout } from './illustrationCardLayout';
 import { multiThrashersLayout } from './multiThrashersLayout';
 import { newsletterDesignLayout } from './newsletterDesignLayout';
 import { onlineArticleLayout } from './onlineArticleLayout';
@@ -31,6 +32,7 @@ export const newsletterDataLayout: WizardLayout<DraftService> = {
 	thrasher: singleThrasherLayout,
 	multiThrashers: multiThrashersLayout,
 	newsletterDesign: newsletterDesignLayout,
+	illustrationCard: illustrationCardLayout,
 	signUpPage: signUpPageLayout,
 	signUpEmbed: signUpEmbedLayout,
 	finish: finishLayout,
