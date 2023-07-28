@@ -70,10 +70,16 @@
 		"renderingOptions": {
 			"displayDate": false,
 			"displayStandfirst": false,
-			"contactEmail": "veniam@example.com",
 			"displayImageCaptions": true,
 			"mainBannerUrl": "https://assets.guim.co.uk/images/email/banners/3aaee2fd94b67953a15b4e7a795c09b8/generic.png",
-			"darkSubheadingBannerUrl": "https://i.guim.co.uk/img/uploads/2022/10/21/default-template-sub-banner.png?dpr=2&quality=100&width=600&s=41c1744d1559a535e7b7cc77f8c6e037"
+			"darkSubheadingBannerUrl": "https://i.guim.co.uk/img/uploads/2022/10/21/default-template-sub-banner.png?dpr=2&quality=100&width=600&s=41c1744d1559a535e7b7cc77f8c6e037",
+			"readMoreSections": [
+				{
+					"subheading": "section 32",
+					"wording": "more about this",
+					"onwardPath": "/uk/tv-and-radio"
+				}
+			]
 		}
 	},
 	{
@@ -112,7 +118,14 @@
 			"displayStandfirst": true,
 			"contactEmail": "necessitatibus@example.com",
 			"displayImageCaptions": true,
-			"mainBannerUrl": "https://i.guim.co.uk/img/uploads/2022/10/21/default-newsletter-main-banner.png?dpr=2&quality=100&width=600&s=618cf82b457a343bf56650ad7acaad59"
+			"mainBannerUrl": "https://i.guim.co.uk/img/uploads/2022/10/21/default-newsletter-main-banner.png?dpr=2&quality=100&width=600&s=618cf82b457a343bf56650ad7acaad59",
+			"readMoreSections": [
+				{
+					"subheading": "section 32",
+					"wording": "more about this",
+					"url": "https://www.theguardian.com/uk/tv-and-radio"
+				}
+			]
 		}
 	},
 	{
