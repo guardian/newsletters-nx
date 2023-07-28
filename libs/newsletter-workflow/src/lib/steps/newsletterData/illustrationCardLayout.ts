@@ -10,7 +10,7 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 ## Add an illustration card for of {{name}}
 
-Illustration card images are used to promote newsletters on the newsletters page and on thrashers.
+Illustration card images are used to promote newsletters on the newsletters page.
 
 To specify an illustration card, upload the image (in the appropriate aspect ratio 5:3) via the [s3 Uploader service](https://s3-uploader.gutools.co.uk/).
 Once uploaded, copy the **vanity url** and paste it into the field below.
