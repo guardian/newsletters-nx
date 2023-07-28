@@ -52,9 +52,9 @@ export const frequencyLayout: WizardStepLayout<DraftService> = {
 	buttons: {
 		back: {
 			buttonType: 'PREVIOUS',
-			label: 'Back',
+			label: 'Back to previous step',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeModify,
+			executeStep: executeSkip,
 		},
 		finish: {
 			buttonType: 'NEXT',

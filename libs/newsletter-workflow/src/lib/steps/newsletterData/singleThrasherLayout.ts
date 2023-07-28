@@ -41,7 +41,7 @@ export const singleThrasherLayout: WizardStepLayout<DraftService> = {
 	buttons: {
 		back: {
 			buttonType: 'PREVIOUS',
-			label: 'Back',
+			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeSkip,
 		},

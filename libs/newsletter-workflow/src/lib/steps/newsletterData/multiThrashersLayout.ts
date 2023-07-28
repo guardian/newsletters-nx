@@ -5,6 +5,7 @@ import {
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
+import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
@@ -43,9 +44,9 @@ export const multiThrashersLayout: WizardStepLayout<DraftService> = {
 	buttons: {
 		back: {
 			buttonType: 'PREVIOUS',
-			label: 'Back',
+			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModify,
+			executeStep: executeSkip,
 		},
 		next: {
 			buttonType: 'NEXT',

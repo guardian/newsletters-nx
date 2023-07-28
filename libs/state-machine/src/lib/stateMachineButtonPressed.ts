@@ -47,20 +47,22 @@ export async function stateMachineButtonPressed<
 					isEditPath,
 			  );
 
-	const incomingDataError = validateIncomingFormData(
-		incomingStepData.currentStepId,
-		incomingStepData.formData,
-		wizardLayout[incomingStepData.currentStepId] as WizardStepLayout<unknown>,
-	);
-	if (incomingDataError) {
-		return makeStepDataWithErrorMessage(
-			incomingDataError.message,
+	if (buttonPressed !== 'back') {
+		const incomingDataError = validateIncomingFormData(
 			incomingStepData.currentStepId,
 			incomingStepData.formData,
-			{ zodIssues: incomingDataError.issues },
+			wizardLayout[incomingStepData.currentStepId] as WizardStepLayout<unknown>,
 		);
-	}
 
+		if (incomingDataError) {
+			return makeStepDataWithErrorMessage(
+				incomingDataError.message,
+				incomingStepData.currentStepId,
+				incomingStepData.formData,
+				{ zodIssues: incomingDataError.issues },
+			);
+		}
+	}
 	if (buttonPressedDetails.onAfterStepStartValidate) {
 		const validationFailure =
 			await buttonPressedDetails.onAfterStepStartValidate(
