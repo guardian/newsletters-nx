@@ -35,7 +35,7 @@ export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 export const renderingOptionsSchema = z.object({
 	displayDate: z.boolean().describe('Display date?'),
 	displayStandfirst: z.boolean().describe('Display standfirst?'),
-	contactEmail: z.string().email().describe('Contact email'),
+	contactEmail: z.string().email().optional().describe('Contact email'),
 	displayImageCaptions: z.boolean().describe('Display image captions?'),
 	paletteOverride: themeEnumSchema.optional().describe('Palette override'),
 	linkListSubheading: z

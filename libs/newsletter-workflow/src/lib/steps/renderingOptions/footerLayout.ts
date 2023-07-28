@@ -14,7 +14,7 @@ const markdownTemplate = `
 
 What email address would you like to display in the footer of **{{name}}**?
 
-For example: newsletters@theguardian.com
+If you leave this blank, the default contact email of **"newsletters@theguardian.com"** will be used.
 
 ![Email footer](https://i.guim.co.uk/img/uploads/2023/03/15/Email_address_contact.png?quality=85&dpr=2&width=300&s=98ce6a07791b0bfb45f2df9c732ea1d2)
 
