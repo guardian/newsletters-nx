@@ -8,7 +8,7 @@ import {
 	regionFocusEnumSchema,
 	renderingOptionsSchema,
 } from './newsletter-data-type';
-import { nonEmptyString } from './zod-helpers';
+import { nonEmptyString, urlPathString } from './zod-helpers';
 
 export const draftNewsletterDataSchema = newsletterDataSchema.deepPartial();
 export type DraftNewsletterData = z.infer<typeof draftNewsletterDataSchema>;
@@ -53,7 +53,7 @@ export const dataCollectionRenderingOptionsSchema =
 				})
 				.merge(
 					z.object({
-						onwardPath: nonEmptyString(),
+						onwardPath: urlPathString(),
 					}),
 				)
 				.array()

@@ -5,6 +5,7 @@ import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
 	underscoreCasedString,
+	urlPathString,
 } from './zod-helpers';
 
 export const themeEnumSchema = z.enum([
@@ -37,7 +38,7 @@ export const readMoreSectionSchema = z
 		subheading: nonEmptyString().describe('read more subheading'),
 		wording: nonEmptyString().describe('read more wording'),
 		url: z.string().url().describe('read more url'),
-		onwardPath: z.string().optional(),
+		onwardPath: urlPathString().optional(),
 	})
 	.describe('Read more section configuration');
 
