@@ -2,9 +2,11 @@ import { z } from 'zod';
 import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
 import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
 import type { DraftNewsletterData } from './draft-newsletter-data-type';
-import { dataCollectionSchema } from './draft-newsletter-data-type';
+import {
+	dataCollectionRenderingOptionsSchema,
+	dataCollectionSchema,
+} from './draft-newsletter-data-type';
 import type { NewsletterData, RenderingOptions } from './newsletter-data-type';
-import { renderingOptionsSchema } from './newsletter-data-type';
 
 const defaultNewsletterValues: DraftNewsletterData = {
 	listIdV1: -1,
@@ -39,6 +41,17 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 		};
 	}
 
+	if (draft.category === 'article-based') {
+		return {
+			...defaultNewsletterValues,
+			...derivedFields,
+			...draft,
+			renderingOptions: {
+				...defaultRenderingOptionsValues,
+			},
+		};
+	}
+
 	return {
 		...defaultNewsletterValues,
 		...derivedFields,
@@ -51,7 +64,7 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 		draft.category === 'article-based'
 			? dataCollectionSchema.merge(
 					z.object({
-						renderingOptions: renderingOptionsSchema,
+						renderingOptions: dataCollectionRenderingOptionsSchema,
 					}),
 			  )
 			: dataCollectionSchema;
@@ -64,7 +77,7 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 const TOTAL_FIELD_COUNT = getDraftNotReadyIssues({}).length;
 
 const renderingOptionsNotReadyIssues = (record: Record<string, unknown>) => {
-	const report = renderingOptionsSchema.safeParse({
+	const report = dataCollectionRenderingOptionsSchema.safeParse({
 		...defaultRenderingOptionsValues,
 		...record,
 	});
@@ -102,9 +115,14 @@ export const calculateProgress = (draft: DraftNewsletterData): number => {
 		draft.renderingOptions ?? {},
 	).length;
 
+	// if RENDERING_OPTIONS_FIELD_COUNT is 0  an empty object with the defaults
+	// added satifies the schema, so there can be no missing required rendering options
+	// fields. Also avoid divide by 0 errors.
 	const renderingOptionsDataRatio =
-		(RENDERING_OPTIONS_FIELD_COUNT - renderingOptionsIssuesCount) /
-		RENDERING_OPTIONS_FIELD_COUNT;
+		RENDERING_OPTIONS_FIELD_COUNT === 0
+			? 0
+			: (RENDERING_OPTIONS_FIELD_COUNT - renderingOptionsIssuesCount) /
+			  RENDERING_OPTIONS_FIELD_COUNT;
 
 	// Arbitrary calculation - wieght the basic data as 1/4's of the total score
 	const combined = (basicDataRatio * 3 + renderingOptionsDataRatio) / 4;

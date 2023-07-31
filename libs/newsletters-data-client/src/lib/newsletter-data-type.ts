@@ -32,6 +32,15 @@ export const singleThrasherLocation = z
 	.optional();
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
+export const readMoreSectionSchema = z
+	.object({
+		subheading: nonEmptyString().describe('read more subheading'),
+		wording: nonEmptyString().describe('read more wording'),
+		url: z.string().url().describe('read more url'),
+		onwardPath: z.string().optional(),
+	})
+	.describe('Read more section configuration');
+
 export const renderingOptionsSchema = z.object({
 	displayDate: z.boolean().describe('Display date?'),
 	displayStandfirst: z.boolean().describe('Display standfirst?'),
@@ -51,15 +60,7 @@ export const renderingOptionsSchema = z.object({
 		.optional()
 		.describe('Dark theme subheading'),
 	readMoreSections: z
-		.array(
-			z
-				.object({
-					subheading: nonEmptyString().describe('read more subheading'),
-					wording: nonEmptyString().describe('read more wording'),
-					url: z.string().url().describe('read more url'),
-				})
-				.describe('Read more section configuration'),
-		)
+		.array(readMoreSectionSchema)
 		.optional()
 		.describe('The configuration for read more sections'),
 
