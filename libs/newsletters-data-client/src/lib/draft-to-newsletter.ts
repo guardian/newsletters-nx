@@ -34,6 +34,8 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 			...defaultNewsletterValues,
 			...derivedFields,
 			...draft,
+			//prevent an explicit undefined status on the draft overriding the default
+			status: draft.status ? draft.status : defaultNewsletterValues.status,
 			renderingOptions: {
 				...defaultRenderingOptionsValues,
 				...draft.renderingOptions,
@@ -68,9 +70,9 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 					}),
 			  )
 			: dataCollectionSchema;
-	const report = schemaToUse.safeParse(
-		withDefaultNewsletterValuesAndDerivedFields(draft),
-	);
+
+	const draftWithDefaults = withDefaultNewsletterValuesAndDerivedFields(draft);
+	const report = schemaToUse.safeParse(draftWithDefaults);
 	return report.success ? [] : report.error.issues;
 };
 
