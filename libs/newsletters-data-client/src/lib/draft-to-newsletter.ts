@@ -76,7 +76,9 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 
 const TOTAL_FIELD_COUNT = getDraftNotReadyIssues({}).length;
 
-const renderingOptionsNotReadyIssues = (record: Record<string, unknown>) => {
+export const getRenderingOptionsNotReadyIssues = (
+	record: Record<string, unknown>,
+) => {
 	const report = dataCollectionRenderingOptionsSchema.safeParse({
 		...defaultRenderingOptionsValues,
 		...record,
@@ -87,7 +89,9 @@ const renderingOptionsNotReadyIssues = (record: Record<string, unknown>) => {
 	return [];
 };
 
-const RENDERING_OPTIONS_FIELD_COUNT = renderingOptionsNotReadyIssues({}).length;
+const RENDERING_OPTIONS_FIELD_COUNT = getRenderingOptionsNotReadyIssues(
+	{},
+).length;
 
 /**
  * Returns an integer representing a percentage of 'completeness'
@@ -111,7 +115,7 @@ export const calculateProgress = (draft: DraftNewsletterData): number => {
 		return Math.floor(basicDataRatio * 100);
 	}
 
-	const renderingOptionsIssuesCount = renderingOptionsNotReadyIssues(
+	const renderingOptionsIssuesCount = getRenderingOptionsNotReadyIssues(
 		draft.renderingOptions ?? {},
 	).length;
 
