@@ -49,7 +49,6 @@ export const dataCollectionRenderingOptionsSchema =
 				.pick({
 					subheading: true,
 					wording: true,
-					onwardPath: true,
 				})
 				.merge(
 					z.object({
