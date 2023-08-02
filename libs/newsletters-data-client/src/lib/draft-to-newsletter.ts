@@ -124,7 +124,7 @@ export const calculateProgress = (draft: DraftNewsletterData): number => {
 	// fields. Also avoid divide by 0 errors.
 	const renderingOptionsDataRatio =
 		RENDERING_OPTIONS_FIELD_COUNT === 0
-			? 0
+			? 1
 			: (RENDERING_OPTIONS_FIELD_COUNT - renderingOptionsIssuesCount) /
 			  RENDERING_OPTIONS_FIELD_COUNT;
 
