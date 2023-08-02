@@ -23,6 +23,6 @@ export const urlPathString = () =>
 	z
 		.string()
 		.regex(
-			/^(?:[/][a-zA-Z0-9-]+)*$/,
-			'Must be collection of componets starting with slashes then containing only letters, dashes or numbers',
+			/^(?:[/][a-zA-Z0-9-]*)+$/,
+			'Must start with a slash then sets of only letters, dashes or numbers, separated by slashes',
 		);
