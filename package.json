@@ -29,6 +29,7 @@
 		"@emotion/react": "^11.10.5",
 		"@emotion/styled": "^11.10.5",
 		"@fastify/static": "^6.9.0",
+		"@guardian/image": "^1.1.0",
 		"@guardian/source-foundations": "^8.0.0",
 		"@mui/icons-material": "^5.11.16",
 		"@mui/material": "^5.11.10",

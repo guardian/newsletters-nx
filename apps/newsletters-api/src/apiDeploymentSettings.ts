@@ -1,7 +1,7 @@
 /**
  * This file contains the settings for the deployment of the API.
  * The API is deployed in 3 ways.
- *  Serving the UI which can be check with isServingUI
+ *  Serving the UI which can be checked with isServingUI
  *  Serving the read endpoints which can be checked with isServingReadEndpoints
  *  Serving the read and write endpoints which can be checked with isServingReadWriteEndpoints
  * This is read in main.ts to enable/disable the endpoints
@@ -35,6 +35,13 @@ export const isServingReadWriteEndpoints = () => {
 	);
 	const isApiReadWrite = process.env.NEWSLETTERS_API_READ_WRITE === 'true';
 	return undefinedAndNotProduction || isApiReadWrite;
+};
+
+export const isDynamicImageSigningEnabled = () => {
+	const { ENABLE_DYNAMIC_IMAGE_SIGNING } = process.env;
+	return (
+		ENABLE_DYNAMIC_IMAGE_SIGNING && ENABLE_DYNAMIC_IMAGE_SIGNING === 'true'
+	);
 };
 
 export const isServingReadEndpoints = () => {
