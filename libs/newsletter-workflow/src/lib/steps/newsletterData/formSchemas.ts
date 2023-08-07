@@ -5,8 +5,8 @@ import type {
 	ThrasherOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import {
+	dataCollectionRenderingOptionsSchema,
 	dataCollectionSchema,
-	renderingOptionsSchema,
 	thrasherOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
 
@@ -15,7 +15,8 @@ const pickAndPrefixRenderingOption = (
 ): ZodObject<ZodRawShape> => {
 	const shape: ZodRawShape = {};
 	fieldKeys.forEach((key) => {
-		shape[`renderingOptions.${key}`] = renderingOptionsSchema.shape[key];
+		shape[`renderingOptions.${key}`] =
+			dataCollectionRenderingOptionsSchema.shape[key];
 	});
 	return z.object(shape);
 };
