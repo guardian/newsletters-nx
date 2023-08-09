@@ -11,7 +11,7 @@ import type { NewsletterData, RenderingOptions } from './newsletter-data-type';
 const defaultNewsletterValues: DraftNewsletterData = {
 	listIdV1: -1,
 	restricted: false,
-	status: 'paused', // TODO - add step for this - maybe best in launch wizard?
+	status: 'pending',
 	emailConfirmation: false,
 	privateUntilLaunch: false,
 	figmaIncludesThrashers: false,

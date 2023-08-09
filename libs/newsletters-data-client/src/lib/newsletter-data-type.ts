@@ -130,6 +130,14 @@ export const newsletterDataSchema = z.object({
 	name: nonEmptyString(),
 	category: newsletterCategoriesSchema,
 	restricted: z.boolean(),
+	/** The status for the newsletter:
+	 *
+	 *  - **pending**: Initial state after launch - can be promoted, not yet ready to be sent out.
+	 *    Counts as being **paused** for the same of converting to the legacy data model.
+	 *  - **live**: Able to be sent and/or currently being sent out to subscribers
+	 *  - **paused**: Currently not live, but might be restarted in future
+	 *  - **cancelled**: Permanently cancelled - must still exist in the API for referential integrity
+	 */
 	status: z.enum(['paused', 'cancelled', 'live', 'pending']),
 	emailConfirmation: z.boolean().describe('email confirmation'),
 	brazeSubscribeAttributeName: underscoreCasedString(),
