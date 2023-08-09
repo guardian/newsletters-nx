@@ -130,7 +130,7 @@ export const newsletterDataSchema = z.object({
 	name: nonEmptyString(),
 	category: newsletterCategoriesSchema,
 	restricted: z.boolean(),
-	status: z.enum(['paused', 'cancelled', 'live']),
+	status: z.enum(['paused', 'cancelled', 'live', 'pending']),
 	emailConfirmation: z.boolean().describe('email confirmation'),
 	brazeSubscribeAttributeName: underscoreCasedString(),
 	brazeSubscribeEventNamePrefix: kebabOrUnderscoreCasedString(),

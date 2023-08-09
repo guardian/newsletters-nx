@@ -52,6 +52,7 @@ const generateNewsletter = () => {
 	const status = faker.helpers.arrayElement([
 		'paused',
 		'cancelled',
+		'pending',
 		'live',
 		'live',
 	]);
