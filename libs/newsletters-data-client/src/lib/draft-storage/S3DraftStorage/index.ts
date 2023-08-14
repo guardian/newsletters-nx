@@ -47,6 +47,10 @@ export class S3DraftStorage extends DraftStorage {
 				creationTimeStamp: Date.now(),
 				listId: nextId,
 				meta: this.createNewMeta(user),
+				brazeCampaignCreationsStatus: 'NOT_REQUESTED',
+				ophanCampaignCreationsStatus: 'NOT_REQUESTED',
+				tagCreationsStatus: 'NOT_REQUESTED',
+				signupPageCreationsStatus: 'NOT_REQUESTED',
 			});
 
 			//fetching the data from s3 again to make sure the put worked. Is this necessary?
@@ -179,7 +183,7 @@ export class S3DraftStorage extends DraftStorage {
 			if (!updatedDraft) {
 				return {
 					ok: false,
-					message: `failed to update and retireve ${
+					message: `failed to update and retrieve ${
 						draft.name ?? 'UNNAMED DRAFT'
 					}.`,
 					reason: StorageRequestFailureReason.S3Failure,

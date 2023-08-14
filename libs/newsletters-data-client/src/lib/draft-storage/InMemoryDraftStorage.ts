@@ -33,6 +33,10 @@ export class InMemoryDraftStorage implements DraftStorage {
 			listId: this.getNextId(),
 			creationTimeStamp: Date.now(),
 			meta: undefined,
+			brazeCampaignCreationsStatus: 'NOT_REQUESTED',
+			ophanCampaignCreationsStatus: 'NOT_REQUESTED',
+			tagCreationsStatus: 'NOT_REQUESTED',
+			signupPageCreationsStatus: 'NOT_REQUESTED'
 		};
 
 		const newDraftWithListIdAndMeta: DraftWithIdAndMeta = {
