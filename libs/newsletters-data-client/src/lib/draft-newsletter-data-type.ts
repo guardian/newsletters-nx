@@ -49,6 +49,7 @@ export const dataCollectionRenderingOptionsSchema =
 				.pick({
 					subheading: true,
 					wording: true,
+					isDarkTheme: true,
 				})
 				.merge(
 					z.object({

@@ -39,6 +39,7 @@ export const readMoreSectionSchema = z
 		wording: nonEmptyString().describe('read more wording'),
 		url: z.string().url().optional().describe('read more url'),
 		onwardPath: urlPathString().optional(),
+		isDarkTheme: z.boolean().optional().describe('use dark theme for section'),
 	})
 	.describe('Read more section configuration');
 
