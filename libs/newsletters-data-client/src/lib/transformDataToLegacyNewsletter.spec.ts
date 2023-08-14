@@ -38,6 +38,10 @@ describe('transformNewToOld', () => {
 			...TECHSCAPE_IN_NEW_FORMAT,
 			status: 'paused',
 		};
+		const pendingTechscape: NewsletterData = {
+			...TECHSCAPE_IN_NEW_FORMAT,
+			status: 'pending',
+		};
 
 		const cancelledNewsletter =
 			transformDataToLegacyNewsletter(cancelledTechscape);
@@ -47,5 +51,9 @@ describe('transformNewToOld', () => {
 		const pausedNewsletter = transformDataToLegacyNewsletter(pausedTechscape);
 		expect(pausedNewsletter.cancelled).toBe(false);
 		expect(pausedNewsletter.paused).toBe(true);
+
+		const pendingNewsletter = transformDataToLegacyNewsletter(pendingTechscape);
+		expect(pendingNewsletter.cancelled).toBe(false);
+		expect(pendingNewsletter.paused).toBe(true);
 	});
 });
