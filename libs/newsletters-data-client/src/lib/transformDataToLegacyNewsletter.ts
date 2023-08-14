@@ -16,7 +16,7 @@ const deriveBooleansFromStatus = (
 ): { cancelled: boolean; paused: boolean } => {
 	return {
 		cancelled: status === 'cancelled',
-		paused: status === 'paused',
+		paused: status === 'paused' || status === 'pending',
 	};
 };
 

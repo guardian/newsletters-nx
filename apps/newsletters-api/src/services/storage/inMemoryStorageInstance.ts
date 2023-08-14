@@ -8,7 +8,6 @@ export const makeInMemoryStorageInstance = () =>
 			signUpDescription:
 				'Quod nobis aperiam aperiam ipsum nobis officiis explicabo molestias quibusdam.',
 			frequency: 'Weekly',
-			status: 'paused',
 			restricted: false,
 			emailConfirmation: false,
 			signUpEmbedDescription: "We'll send you Avon Recumbent weekly",
@@ -34,10 +33,10 @@ export const makeInMemoryStorageInstance = () =>
 			signUpDescription:
 				'This draft has the same name as a launched newsletters and might cause problems at launch!',
 			frequency: 'Weekly',
-			status: 'paused',
 			restricted: false,
 			emailConfirmation: false,
 			signUpEmbedDescription: "We'll send you it",
+			signUpHeadline: 'this is the headline',
 			theme: 'culture',
 			group: 'Work',
 			regionFocus: 'UK',

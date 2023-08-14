@@ -41,6 +41,18 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	onlineArticle: 'Web for all sends',
 };
 
+export const TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS: NewsletterData =
+	{
+		...TECHSCAPE_IN_NEW_FORMAT,
+		regionFocus: 'INTL',
+		signUpHeadline: 'Sign up for Techscape',
+		renderingOptions: {
+			displayDate: true,
+			displayStandfirst: true,
+			displayImageCaptions: false,
+		},
+	};
+
 export const VALID_TECHSCAPE: LegacyNewsletter = {
 	identityName: 'tech-scape',
 	name: 'TechScape',
