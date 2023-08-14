@@ -4,7 +4,7 @@ import { fromIni } from '@aws-sdk/credential-providers';
 export const getS3Client = () => {
 	const { STAGE, AWS_PROFILE } = process.env;
 
-	const shouldUseProfileCredentials = !!(STAGE && STAGE === 'local');
+	const shouldUseProfileCredentials = !!(STAGE && STAGE === 'DEV');
 	if (shouldUseProfileCredentials) {
 		const profile = AWS_PROFILE ?? 'developerPlayground';
 		return new S3Client({

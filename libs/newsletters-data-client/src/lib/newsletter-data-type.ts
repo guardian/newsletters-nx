@@ -5,6 +5,7 @@ import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
 	underscoreCasedString,
+	urlPathString,
 } from './zod-helpers';
 
 export const themeEnumSchema = z.enum([
@@ -32,10 +33,20 @@ export const singleThrasherLocation = z
 	.optional();
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
+export const readMoreSectionSchema = z
+	.object({
+		subheading: nonEmptyString().describe('read more subheading'),
+		wording: nonEmptyString().describe('read more wording'),
+		url: z.string().url().optional().describe('read more url'),
+		onwardPath: urlPathString().optional(),
+		isDarkTheme: z.boolean().optional().describe('use dark theme for section'),
+	})
+	.describe('Read more section configuration');
+
 export const renderingOptionsSchema = z.object({
 	displayDate: z.boolean().describe('Display date?'),
 	displayStandfirst: z.boolean().describe('Display standfirst?'),
-	contactEmail: z.string().email().describe('Contact email'),
+	contactEmail: z.string().email().optional().describe('Contact email'),
 	displayImageCaptions: z.boolean().describe('Display image captions?'),
 	paletteOverride: themeEnumSchema.optional().describe('Palette override'),
 	linkListSubheading: z
@@ -51,19 +62,7 @@ export const renderingOptionsSchema = z.object({
 		.optional()
 		.describe('Dark theme subheading'),
 	readMoreSections: z
-		.array(
-			z
-				.object({
-					subheading: nonEmptyString().describe('read more subheading'),
-					wording: nonEmptyString().describe('read more wording'),
-					url: z.string().url().describe('read more url'),
-					isDarkTheme: z
-						.boolean()
-						.optional()
-						.describe('use dark theme for section'),
-				})
-				.describe('Read more section configuration'),
-		)
+		.array(readMoreSectionSchema)
 		.optional()
 		.describe('The configuration for read more sections'),
 

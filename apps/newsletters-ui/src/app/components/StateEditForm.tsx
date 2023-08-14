@@ -31,12 +31,7 @@ export const StateEditForm = ({
 	};
 
 	return (
-		<Box
-			padding={1}
-			component={Paper}
-			marginBottom={2.5}
-			elevation={2}
-		>
+		<Box padding={1} component={Paper} marginBottom={2.5} elevation={2}>
 			<Typography variant="overline" component={'legend'}>
 				{formSchema.description}
 			</Typography>
