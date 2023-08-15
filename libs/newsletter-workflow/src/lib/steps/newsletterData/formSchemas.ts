@@ -1,5 +1,3 @@
-import type { ZodObject, ZodRawShape } from 'zod';
-import { z } from 'zod';
 import type {
 	RenderingOptions,
 	ThrasherOptions,
@@ -9,6 +7,8 @@ import {
 	dataCollectionSchema,
 	thrasherOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
+import type { ZodObject, ZodRawShape } from 'zod';
+import { z } from 'zod';
 
 const pickAndPrefixRenderingOption = (
 	fieldKeys: Array<keyof RenderingOptions>,

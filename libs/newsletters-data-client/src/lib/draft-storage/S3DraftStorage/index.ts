@@ -47,10 +47,6 @@ export class S3DraftStorage extends DraftStorage {
 				creationTimeStamp: Date.now(),
 				listId: nextId,
 				meta: this.createNewMeta(user),
-				brazeCampaignCreationsStatus: 'NOT_REQUESTED',
-				ophanCampaignCreationsStatus: 'NOT_REQUESTED',
-				tagCreationsStatus: 'NOT_REQUESTED',
-				signupPageCreationsStatus: 'NOT_REQUESTED',
 			});
 
 			//fetching the data from s3 again to make sure the put worked. Is this necessary?

@@ -22,9 +22,6 @@ export function isDraftNewsletterData(
 export type DraftNewsletterDataWithMeta = DraftNewsletterData & {
 	meta: MetaData;
 };
-export type DraftNewsletterDataWithoutMeta = DraftNewsletterData & {
-	meta: undefined;
-};
 
 export function isDraftNewsletterDataWithMeta(
 	subject: unknown,
