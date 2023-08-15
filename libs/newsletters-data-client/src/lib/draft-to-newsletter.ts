@@ -17,7 +17,11 @@ const defaultNewsletterValues: DraftNewsletterData = {
 	figmaIncludesThrashers: false,
 } as const;
 
-export const defaultRenderingOptionsValues: Partial<RenderingOptions> = {
+// Note - the defaults currently make us a valid set of RenderingOptions
+// as there are no required values that can't be defaulted.
+// If the schema changes, this might not be the case and the
+// defaults should be typed as Partial<RenderingOptions>
+export const defaultRenderingOptionsValues: RenderingOptions = {
 	displayDate: false,
 	displayImageCaptions: false,
 	displayStandfirst: false,
@@ -28,29 +32,21 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 ): DraftNewsletterData &
 	Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
-
-	if (draft.renderingOptions) {
-		return {
-			...defaultNewsletterValues,
-			...derivedFields,
-			...draft,
-			//prevent an explicit undefined status on the draft overriding the default
-			status: draft.status ? draft.status : defaultNewsletterValues.status,
-			renderingOptions: {
-				...defaultRenderingOptionsValues,
-				...draft.renderingOptions,
-			},
-		};
-	}
+	//prevent an explicit undefined status on the draft overriding the default
+	const status = draft.status ? draft.status : defaultNewsletterValues.status;
 
 	if (draft.category === 'article-based') {
 		return {
 			...defaultNewsletterValues,
 			...derivedFields,
 			...draft,
+			// if the draft is article based, the rendering options must be populated
+			// use the default values, even if draft.renderingOptions is undefined
 			renderingOptions: {
 				...defaultRenderingOptionsValues,
+				...draft.renderingOptions,
 			},
+			status,
 		};
 	}
 
@@ -58,6 +54,17 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 		...defaultNewsletterValues,
 		...derivedFields,
 		...draft,
+		// if the draft is not article based, the rendering options are optional
+		// if value is undefined, leave as undefined
+		// if set, add in the default values to draft.renderingOptions.
+		renderingOptions:
+			typeof draft.renderingOptions === 'undefined'
+				? draft.renderingOptions
+				: {
+						...defaultRenderingOptionsValues,
+						...draft.renderingOptions,
+				  },
+		status,
 	};
 };
 
