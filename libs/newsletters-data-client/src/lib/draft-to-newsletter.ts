@@ -33,38 +33,37 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 	Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
 	//prevent an explicit undefined status on the draft overriding the default
-	const status = draft.status ? draft.status : defaultNewsletterValues.status;
+	const getDefaultedStatus = () =>
+		draft.status ? draft.status : defaultNewsletterValues.status;
 
-	if (draft.category === 'article-based') {
-		return {
-			...defaultNewsletterValues,
-			...derivedFields,
-			...draft,
-			// if the draft is article based, the rendering options must be populated
-			// use the default values, even if draft.renderingOptions is undefined
-			renderingOptions: {
+	const getDefaultedRenderingOptions = () => {
+		// if the draft is article based, the rendering options must be populated
+		// use the default values, even if draft.renderingOptions is undefined
+		if (draft.category === 'article-based') {
+			return {
 				...defaultRenderingOptionsValues,
 				...draft.renderingOptions,
-			},
-			status,
-		};
-	}
+			};
+		}
+
+		// if the draft is not article based, the rendering options are optional
+		// if set, add in the default values to draft.renderingOptions.
+		if (draft.renderingOptions) {
+			return {
+				...defaultRenderingOptionsValues,
+				...draft.renderingOptions,
+			};
+		}
+		// if value is undefined, leave as undefined
+		return undefined;
+	};
 
 	return {
 		...defaultNewsletterValues,
 		...derivedFields,
 		...draft,
-		// if the draft is not article based, the rendering options are optional
-		// if value is undefined, leave as undefined
-		// if set, add in the default values to draft.renderingOptions.
-		renderingOptions:
-			typeof draft.renderingOptions === 'undefined'
-				? draft.renderingOptions
-				: {
-						...defaultRenderingOptionsValues,
-						...draft.renderingOptions,
-				  },
-		status,
+		renderingOptions: getDefaultedRenderingOptions(),
+		status: getDefaultedStatus(),
 	};
 };
 
