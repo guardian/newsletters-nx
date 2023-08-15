@@ -32,9 +32,6 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 ): DraftNewsletterData &
 	Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
-	//prevent an explicit undefined status on the draft overriding the default
-	const getDefaultedStatus = () =>
-		draft.status ? draft.status : defaultNewsletterValues.status;
 
 	const getDefaultedRenderingOptions = () => {
 		// if the draft is article based, the rendering options must be populated
@@ -63,7 +60,8 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 		...derivedFields,
 		...draft,
 		renderingOptions: getDefaultedRenderingOptions(),
-		status: getDefaultedStatus(),
+		//prevent an explicit undefined status on the draft overriding the default
+		status: draft.status ? draft.status : defaultNewsletterValues.status,
 	};
 };
 
