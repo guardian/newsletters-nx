@@ -10,7 +10,6 @@ import {
 	thrasherOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
 
-
 const pickAndPrefixRenderingOption = (
 	fieldKeys: Array<keyof RenderingOptions>,
 ): ZodObject<ZodRawShape> => {
