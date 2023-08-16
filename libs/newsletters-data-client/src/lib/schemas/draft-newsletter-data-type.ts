@@ -5,10 +5,12 @@ import { metaDataSchema } from './meta-data-type';
 import {
 	newsletterDataSchema,
 	onlineArticleSchema,
-	readMoreSectionSchema,
 	regionFocusEnumSchema,
-	renderingOptionsSchema,
 } from './newsletter-data-type';
+import {
+	readMoreSectionSchema,
+	renderingOptionsSchema,
+} from './rendering-options-data-type';
 
 export const draftNewsletterDataSchema = newsletterDataSchema.deepPartial();
 export type DraftNewsletterData = z.infer<typeof draftNewsletterDataSchema>;
