@@ -9,6 +9,7 @@ export * from './lib/launch-service';
 export * from './lib/schemas/legacy-newsletter-type';
 export * from './lib/schemas/meta-data-type';
 export * from './lib/schemas/newsletter-data-type';
+export * from './lib/schemas/data-collection-schema';
 export * from './lib/newsletter-storage';
 export * from './lib/storage-response-types';
 export * from './lib/transformDataToLegacyNewsletter';
