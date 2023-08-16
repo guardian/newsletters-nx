@@ -28,34 +28,36 @@ const automatedFrontSectionSchemaWithFunctionNames =
 	);
 
 /**
+ * require the `onwardPath` and  exclude the `url`.
+ * both are optional in the newsletter schema.
+ */
+const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
+	.omit({
+		url: true,
+	})
+	.merge(
+		z.object({
+			onwardPath: urlPathString(),
+		}),
+	);
+
+/**
  * A version of the renderingOptionsSchema
- * for use when defining new drafts.
- *
- * In this version ,the readMoreSections require
- * the `onwardPath` and  exclude the `url`.
- * both are optional in the 'real 'schema.
+ * for use when defining new drafts and using
+ * the preview editor.
  */
 export const dataCollectionRenderingOptionsSchema =
 	renderingOptionsSchema.merge(
 		z.object({
-			readMoreSections: readMoreSectionSchema
-				.pick({
-					subheading: true,
-					wording: true,
-					isDarkTheme: true,
-				})
-				.merge(
-					z.object({
-						onwardPath: urlPathString(),
-					}),
-				)
-				.array()
-				.optional(),
+			readMoreSections: z
+				.array(readMoreSectionSchemaWithOnwardPath)
+				.optional()
+				.describe('"read more" sections'),
 
 			automatedFrontSections: z
 				.array(automatedFrontSectionSchemaWithFunctionNames)
 				.optional()
-				.describe('The configuration for automated front sections'),
+				.describe('automated front sections'),
 		}),
 	);
 
