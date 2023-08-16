@@ -22,9 +22,6 @@ export function isDraftNewsletterData(
 export type DraftNewsletterDataWithMeta = DraftNewsletterData & {
 	meta: MetaData;
 };
-export type DraftNewsletterDataWithoutMeta = DraftNewsletterData & {
-	meta: undefined;
-};
 
 export function isDraftNewsletterDataWithMeta(
 	subject: unknown,
@@ -64,7 +61,7 @@ export const dataCollectionRenderingOptionsSchema =
 /**
  * The schema for collecting data for new drafts.
  *
- * This is more strict than the NewsletterSchema so we can enforce
+ * This is stricter than the NewsletterSchema, so we can enforce
  * rules in the UI which aren't required for the data model to
  * work, but are desired for new Newsletters.
  */

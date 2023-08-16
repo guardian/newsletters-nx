@@ -179,7 +179,7 @@ export class S3DraftStorage extends DraftStorage {
 			if (!updatedDraft) {
 				return {
 					ok: false,
-					message: `failed to update and retireve ${
+					message: `failed to update and retrieve ${
 						draft.name ?? 'UNNAMED DRAFT'
 					}.`,
 					reason: StorageRequestFailureReason.S3Failure,

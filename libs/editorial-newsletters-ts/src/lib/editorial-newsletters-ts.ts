@@ -2,6 +2,7 @@ export {
 	NewsletterData,
 	isNewsletterData,
 	Theme,
+	WorkflowStatus,
 	RegionFocus,
 	OnlineArticle,
 	RenderingOptions,
