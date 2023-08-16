@@ -6,9 +6,26 @@ import {
 	regionFocusEnumSchema,
 } from './newsletter-data-type';
 import {
+	automatedFrontSectionSchema,
 	readMoreSectionSchema,
 	renderingOptionsSchema,
 } from './rendering-options-data-type';
+
+const builderFunctionNames = [
+	'buildLinkListPart',
+	'buildListPartWithTrailText',
+	'buildListPartWithKeyword',
+	'buildNumberedListPartWithKeyword',
+	'buildNumberedListPart',
+	'buildNumberedListPartWithContributors',
+] as const;
+
+const automatedFrontSectionSchemaWithFunctionNames =
+	automatedFrontSectionSchema.merge(
+		z.object({
+			partBuilderFunction: z.enum(builderFunctionNames),
+		}),
+	);
 
 /**
  * A version of the renderingOptionsSchema
@@ -34,6 +51,11 @@ export const dataCollectionRenderingOptionsSchema =
 				)
 				.array()
 				.optional(),
+
+			automatedFrontSections: z
+				.array(automatedFrontSectionSchemaWithFunctionNames)
+				.optional()
+				.describe('The configuration for automated front sections'),
 		}),
 	);
 

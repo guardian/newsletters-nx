@@ -37,6 +37,7 @@ export const SchemaRecordArrayInput: FunctionComponent<
 	const addNew = () => {
 		const newRecord = getEmptySchemaData(recordSchema, {
 			unwrapOptionals: true,
+			setEnumsToFirstValue: true,
 		});
 		if (!isPrimitiveRecord(newRecord)) {
 			console.warn(newRecord);
