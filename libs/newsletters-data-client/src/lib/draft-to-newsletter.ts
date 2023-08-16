@@ -17,7 +17,11 @@ const defaultNewsletterValues: DraftNewsletterData = {
 	figmaIncludesThrashers: false,
 } as const;
 
-export const defaultRenderingOptionsValues: Partial<RenderingOptions> = {
+// Note - the defaults currently make us a valid set of RenderingOptions
+// as there are no required values that can't be defaulted.
+// If the schema changes, this might not be the case and the
+// defaults should be typed as Partial<RenderingOptions>
+export const defaultRenderingOptionsValues: RenderingOptions = {
 	displayDate: false,
 	displayImageCaptions: false,
 	displayStandfirst: false,
@@ -29,35 +33,35 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 	Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
 
-	if (draft.renderingOptions) {
-		return {
-			...defaultNewsletterValues,
-			...derivedFields,
-			...draft,
-			//prevent an explicit undefined status on the draft overriding the default
-			status: draft.status ? draft.status : defaultNewsletterValues.status,
-			renderingOptions: {
+	const getDefaultedRenderingOptions = () => {
+		// if the draft is article based, the rendering options must be populated
+		// use the default values, even if draft.renderingOptions is undefined
+		if (draft.category === 'article-based') {
+			return {
 				...defaultRenderingOptionsValues,
 				...draft.renderingOptions,
-			},
-		};
-	}
+			};
+		}
 
-	if (draft.category === 'article-based') {
-		return {
-			...defaultNewsletterValues,
-			...derivedFields,
-			...draft,
-			renderingOptions: {
+		// if the draft is not article based, the rendering options are optional
+		// if set, add in the default values to draft.renderingOptions.
+		if (draft.renderingOptions) {
+			return {
 				...defaultRenderingOptionsValues,
-			},
-		};
-	}
+				...draft.renderingOptions,
+			};
+		}
+		// if value is undefined, leave as undefined
+		return undefined;
+	};
 
 	return {
 		...defaultNewsletterValues,
 		...derivedFields,
 		...draft,
+		renderingOptions: getDefaultedRenderingOptions(),
+		//prevent an explicit undefined status on the draft overriding the default
+		status: draft.status ? draft.status : defaultNewsletterValues.status,
 	};
 };
 
