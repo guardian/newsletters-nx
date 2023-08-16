@@ -12,6 +12,15 @@ export const readMoreSectionSchema = z
 	})
 	.describe('Read more section configuration');
 
+export const automatedFrontSectionSchema = z.object({
+	subheading: nonEmptyString().describe('the subheading for automated section'),
+	insertPosition: z.number(),
+	frontPath: urlPathString(),
+	sectionName: nonEmptyString(),
+	maxArticles: z.number(),
+	partBuilderFunction: nonEmptyString(),
+});
+
 export const renderingOptionsSchema = z.object({
 	displayDate: z.boolean().describe('Display date?'),
 	displayStandfirst: z.boolean().describe('Display standfirst?'),
@@ -34,6 +43,10 @@ export const renderingOptionsSchema = z.object({
 		.array(readMoreSectionSchema)
 		.optional()
 		.describe('The configuration for read more sections'),
+	automatedFrontSections: z
+		.array(automatedFrontSectionSchema)
+		.optional()
+		.describe('The configuration for automated front sections'),
 
 	mainBannerUrl: z
 		.string()
