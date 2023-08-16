@@ -2,7 +2,7 @@ import {
 	TECHSCAPE_IN_NEW_FORMAT,
 	VALID_TECHSCAPE,
 } from '../fixtures/newsletter-fixtures';
-import type { NewsletterData } from './newsletter-data-type';
+import type { NewsletterData } from './schemas/newsletter-data-type';
 import {
 	TRANSFORM_ERROR_MESSAGE,
 	transformDataToLegacyNewsletter,

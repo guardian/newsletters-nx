@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { nonEmptyString, urlPathString } from '../zod-helpers';
-import { themeEnumSchema } from './themeEnumSchema';
+import { themeEnumSchema } from './theme-enum-data-type';
 
 export const readMoreSectionSchema = z
 	.object({

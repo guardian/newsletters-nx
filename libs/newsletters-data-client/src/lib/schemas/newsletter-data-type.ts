@@ -7,7 +7,7 @@ import {
 import type { MetaData } from './meta-data-type';
 import { metaDataSchema } from './meta-data-type';
 import { renderingOptionsSchema } from './rendering-options-data-type';
-import { themeEnumSchema } from './themeEnumSchema';
+import { themeEnumSchema } from './theme-enum-data-type';
 
 export const workflowStatusEnumSchema = z.enum([
 	'NOT_REQUESTED',
