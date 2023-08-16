@@ -6,9 +6,17 @@ import {
 import { TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS } from '../fixtures/newsletter-fixtures';
 
 describe('withDefaultNewsletterValuesAndDerivedFields', () => {
-	it('sets status to pending by default', () => {
+	it('sets status to pending by default , overriding explicit undefined, but not other value', () => {
 		const fromEmpty = withDefaultNewsletterValuesAndDerivedFields({});
+		const fromUndefinedStatus = withDefaultNewsletterValuesAndDerivedFields({
+			status: undefined,
+		});
+		const fromCancelledStatus = withDefaultNewsletterValuesAndDerivedFields({
+			status: 'cancelled',
+		});
 		expect(fromEmpty.status).toBe('pending');
+		expect(fromUndefinedStatus.status).toBe('pending');
+		expect(fromCancelledStatus.status).toBe('cancelled');
 	});
 
 	it('derives the identity name from the name, unless identity name is set', () => {
