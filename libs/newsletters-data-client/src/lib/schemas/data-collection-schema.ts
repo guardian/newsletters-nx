@@ -11,6 +11,12 @@ import {
 	renderingOptionsSchema,
 } from './rendering-options-data-type';
 
+// TO DO - can we fetch the list of supported functions from email-rendering
+// and dynamically create the schema? is that overkill?
+// NOTE - data validation schema types partBuilderFunction as non-empty string
+// seemed too rigid to use the names in the data schema - might need a data migration
+// to add/remove/deprecate options. Defining the options for data collection only
+// give enough flexibility
 const builderFunctionNames = [
 	'buildLinkListPart',
 	'buildListPartWithTrailText',
