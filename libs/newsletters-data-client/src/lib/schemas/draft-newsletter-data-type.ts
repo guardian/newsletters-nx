@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { nonEmptyString, urlPathString } from '../zod-helpers';
 import type { MetaData } from './meta-data-type';
 import { metaDataSchema } from './meta-data-type';
 import {
@@ -8,7 +9,6 @@ import {
 	regionFocusEnumSchema,
 	renderingOptionsSchema,
 } from './newsletter-data-type';
-import { nonEmptyString, urlPathString } from './zod-helpers';
 
 export const draftNewsletterDataSchema = newsletterDataSchema.deepPartial();
 export type DraftNewsletterData = z.infer<typeof draftNewsletterDataSchema>;

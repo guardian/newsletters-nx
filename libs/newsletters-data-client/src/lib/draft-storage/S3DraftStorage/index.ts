@@ -1,5 +1,5 @@
 import type { S3Client } from '@aws-sdk/client-s3';
-import { makeBlankMeta } from '../../meta-data-type';
+import { makeBlankMeta } from '../../schemas/meta-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,

@@ -1,12 +1,12 @@
 import { z } from 'zod';
-import type { MetaData } from './meta-data-type';
-import { metaDataSchema } from './meta-data-type';
 import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
 	underscoreCasedString,
 	urlPathString,
-} from './zod-helpers';
+} from '../zod-helpers';
+import type { MetaData } from './meta-data-type';
+import { metaDataSchema } from './meta-data-type';
 
 export const themeEnumSchema = z.enum([
 	'news',

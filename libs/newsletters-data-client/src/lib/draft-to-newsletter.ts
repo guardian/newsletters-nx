@@ -1,12 +1,15 @@
 import { z } from 'zod';
 import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
 import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
-import type { DraftNewsletterData } from './draft-newsletter-data-type';
+import type { DraftNewsletterData } from './schemas/draft-newsletter-data-type';
 import {
 	dataCollectionRenderingOptionsSchema,
 	dataCollectionSchema,
-} from './draft-newsletter-data-type';
-import type { NewsletterData, RenderingOptions } from './newsletter-data-type';
+} from './schemas/draft-newsletter-data-type';
+import type {
+	NewsletterData,
+	RenderingOptions,
+} from './schemas/newsletter-data-type';
 
 const defaultNewsletterValues: DraftNewsletterData = {
 	listIdV1: -1,
