@@ -17,17 +17,17 @@ export const sendEmailNotifications = async (newsletterId: string) => {
 					? 'newsletters <notifications@newsletters-tool.code.dev-gutools.co.uk>'
 					: 'newsletters CODE <notifications@newsletters-tool.gutools.co.uk>',
 			Destination: {
-				ToAddresses: ['phillip.barron@guardian.co.uk'],
+				ToAddresses: ['newsletters.dev@guardian.co.uk'], // Just testing - we can move all this out to config later
 			},
-			ReplyToAddresses: ['newsletters@guardian.co.uk'],
+			ReplyToAddresses: ['newsletters@guardian.co.uk'],  // again, just testing
 			Message: {
 				Subject: {
-					Data: `Newsletter ${newsletterId} requires some action`,
+					Data: `TEST - Please Ignore: Newsletter ${newsletterId} requires some action`,
 				},
 				Body: {
 					Text: { Data: 'Some Test Email' },
 					Html: {
-						Data: `<h1>Do something to <a href="${updateLink}">this newsletter</a></h1>`,
+						Data: `<h1>Do something usefult to <a href="${updateLink}">this newsletter</a></h1>`,
 					},
 				},
 			},
