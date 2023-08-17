@@ -11,6 +11,7 @@ import {
 	registerReadNewsletterRoutes,
 	registerReadWriteNewsletterRoutes,
 } from './app/routes/newsletters';
+import { registerNotificationRoutes } from './app/routes/notifications';
 import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
@@ -24,6 +25,7 @@ if (isServingReadWriteEndpoints()) {
 	registerCurrentStepRoute(app);
 	registerUserRoute(app);
 	registerReadWriteNewsletterRoutes(app);
+	registerNotificationRoutes(app);
 }
 if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(app);
