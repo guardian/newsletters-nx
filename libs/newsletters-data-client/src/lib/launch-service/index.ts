@@ -1,7 +1,7 @@
-import type { DraftNewsletterDataWithMeta } from '../schemas/draft-newsletter-data-type';
 import type { DraftStorage } from '../draft-storage';
 import { withDefaultNewsletterValuesAndDerivedFields } from '../draft-to-newsletter';
 import type { NewsletterStorage } from '../newsletter-storage';
+import type { DraftNewsletterDataWithMeta } from '../schemas/draft-newsletter-data-type';
 import type { NewsletterData } from '../schemas/newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
