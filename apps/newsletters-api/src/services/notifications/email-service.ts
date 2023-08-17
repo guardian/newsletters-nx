@@ -1,5 +1,5 @@
 import { SendEmailCommand, SESClient } from '@aws-sdk/client-ses';
-import { getStandardAwsConfig } from '../storage/s3-client-factory';
+import { getStandardAwsConfig } from '../aws/aws-config-service';
 
 export const sendEmailNotifications = async (newsletterId: string) => {
 	const emailClient = new SESClient(getStandardAwsConfig());
