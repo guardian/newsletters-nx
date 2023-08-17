@@ -4,9 +4,11 @@ import { metaDataSchema } from './meta-data-type';
 import {
 	newsletterDataSchema,
 	onlineArticleSchema,
+	readMoreSectionSchema,
 	regionFocusEnumSchema,
+	renderingOptionsSchema,
 } from './newsletter-data-type';
-import { nonEmptyString } from './zod-helpers';
+import { nonEmptyString, urlPathString } from './zod-helpers';
 
 export const draftNewsletterDataSchema = newsletterDataSchema.deepPartial();
 export type DraftNewsletterData = z.infer<typeof draftNewsletterDataSchema>;
@@ -20,9 +22,6 @@ export function isDraftNewsletterData(
 export type DraftNewsletterDataWithMeta = DraftNewsletterData & {
 	meta: MetaData;
 };
-export type DraftNewsletterDataWithoutMeta = DraftNewsletterData & {
-	meta: undefined;
-};
 
 export function isDraftNewsletterDataWithMeta(
 	subject: unknown,
@@ -33,9 +32,36 @@ export function isDraftNewsletterDataWithMeta(
 }
 
 /**
+ * A version of the renderingOptionsSchema
+ * for use when defining new drafts.
+ *
+ * In this version ,the readMoreSections require
+ * the `onwardPath` and  exclude the `url`.
+ * both are optional in the 'real 'schema.
+ */
+export const dataCollectionRenderingOptionsSchema =
+	renderingOptionsSchema.merge(
+		z.object({
+			readMoreSections: readMoreSectionSchema
+				.pick({
+					subheading: true,
+					wording: true,
+					isDarkTheme: true,
+				})
+				.merge(
+					z.object({
+						onwardPath: urlPathString(),
+					}),
+				)
+				.array()
+				.optional(),
+		}),
+	);
+
+/**
  * The schema for collecting data for new drafts.
  *
- * This is more strict than the NewsletterSchema so we can enforce
+ * This is stricter than the NewsletterSchema, so we can enforce
  * rules in the UI which aren't required for the data model to
  * work, but are desired for new Newsletters.
  */

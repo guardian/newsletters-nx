@@ -1,6 +1,6 @@
 /**
  * The fields expected in user data obtained by the Ec2
- * load balancer when authenticating user via google auth,
+ * load balancer when authenticating user via Google auth,
  * based on the scopes requested in ''Google Auth' action
  * defined the cdk config.
  */

@@ -7,9 +7,8 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	addSuffixToMakeTokenUnique,
-	defaultRenderingOptionsValues,
 	getDraftNotReadyIssues,
-	renderingOptionsSchema,
+	getRenderingOptionsNotReadyIssues,
 	withDefaultNewsletterValuesAndDerivedFields,
 } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
@@ -42,20 +41,16 @@ export const getInitialStateForLaunch = async (
 		? storageResponse.data
 		: {};
 	const name = draft.name;
-	const issues = getDraftNotReadyIssues(draft);
-
-	const hasRenderingOptionsIfNeeded =
+	const draftNotReadyIssues = getDraftNotReadyIssues(draft);
+	const renderingOptionsIssues =
 		draft.category === 'article-based'
-			? draft.renderingOptions
-				? renderingOptionsSchema.safeParse({
-						...defaultRenderingOptionsValues,
-						...draft.renderingOptions,
-				  }).success
-				: false
-			: true;
+			? getRenderingOptionsNotReadyIssues(draft)
+			: [];
 
-	if (issues.length > 0) {
-		const errorMarkdown = zodIssueToMarkdown(issues);
+	const hasRenderingOptionsIfNeeded = renderingOptionsIssues.length === 0;
+
+	if (draftNotReadyIssues.length > 0) {
+		const errorMarkdown = zodIssueToMarkdown(draftNotReadyIssues);
 		return {
 			name,
 			hasAllStandardData: false,

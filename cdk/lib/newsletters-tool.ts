@@ -74,11 +74,14 @@ User=ubuntu
 ExecStart=/usr/bin/node /opt/${app}/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=${this.stage}
+Environment=STACK=${this.stack}
+Environment=APP=${app}
 Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USER_PERMISSIONS='${processJSONString(userPermissions)}'
+Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 [Install]
 WantedBy=multi-user.target
 EOL`,

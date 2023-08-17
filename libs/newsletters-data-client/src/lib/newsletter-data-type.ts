@@ -5,6 +5,7 @@ import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
 	underscoreCasedString,
+	urlPathString,
 } from './zod-helpers';
 
 export const themeEnumSchema = z.enum([
@@ -15,6 +16,15 @@ export const themeEnumSchema = z.enum([
 	'lifestyle',
 	'features',
 ]);
+
+export const workflowStatusEnumSchema = z.enum([
+	'NOT_REQUESTED',
+	'REQUESTED',
+	'COMPLETED',
+]);
+
+export type WorkflowStatus = z.infer<typeof workflowStatusEnumSchema>;
+
 export type Theme = z.infer<typeof themeEnumSchema>;
 
 export const regionFocusEnumSchema = z
@@ -32,34 +42,36 @@ export const singleThrasherLocation = z
 	.optional();
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
 
+export const readMoreSectionSchema = z
+	.object({
+		subheading: nonEmptyString().describe('read more subheading'),
+		wording: nonEmptyString().describe('read more wording'),
+		url: z.string().url().optional().describe('read more url'),
+		onwardPath: urlPathString().optional(),
+		isDarkTheme: z.boolean().optional().describe('use dark theme for section'),
+	})
+	.describe('Read more section configuration');
+
 export const renderingOptionsSchema = z.object({
-	displayDate: z.boolean().describe('display date?'),
-	displayStandfirst: z.boolean().describe('display standfirst?'),
-	contactEmail: z.string().email().describe('contact email'),
-	displayImageCaptions: z.boolean().describe('display image captions?'),
-	paletteOverride: themeEnumSchema.optional().describe('palette override'),
+	displayDate: z.boolean().describe('Display date?'),
+	displayStandfirst: z.boolean().describe('Display standfirst?'),
+	contactEmail: z.string().email().optional().describe('Contact email'),
+	displayImageCaptions: z.boolean().describe('Display image captions?'),
+	paletteOverride: themeEnumSchema.optional().describe('Palette override'),
 	linkListSubheading: z
 		.array(z.string())
 		.optional()
-		.describe('link list subheading'),
+		.describe('Link list subheading'),
 	podcastSubheading: z
 		.array(z.string())
 		.optional()
-		.describe('podcast subheading'),
+		.describe('Podcast subheading'),
 	darkThemeSubheading: z
 		.array(z.string())
 		.optional()
-		.describe('dark theme subheading'),
+		.describe('Dark theme subheading'),
 	readMoreSections: z
-		.array(
-			z
-				.object({
-					subheading: nonEmptyString().describe('read more subheading'),
-					wording: nonEmptyString().describe('read more wording'),
-					url: z.string().url().describe('read more url'),
-				})
-				.describe('read more section configuration'),
-		)
+		.array(readMoreSectionSchema)
 		.optional()
 		.describe('The configuration for read more sections'),
 
@@ -67,26 +79,26 @@ export const renderingOptionsSchema = z.object({
 		.string()
 		.url()
 		.optional()
-		.describe('asset url for main banner'),
+		.describe('URL for the main banner'),
 	subheadingBannerUrl: z
 		.string()
 		.url()
 		.optional()
-		.describe('asset url for standard subheading banner'),
+		.describe('URL for standard subheading banner'),
 	darkSubheadingBannerUrl: z
 		.string()
 		.url()
 		.optional()
-		.describe('asset url for dark subheading banner'),
+		.describe('URL for dark subheading banner'),
 });
 export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
 export const thrasherOptionsSchema = z.object({
-	singleThrasher: z.boolean().describe('single thrasher required?'),
+	singleThrasher: z.boolean().describe('Single thrasher required?'),
 	singleThrasherLocation: singleThrasherLocation.describe(
 		'single thrasher location',
 	),
-	thrasherDescription: z.string().describe('thrasher description'),
+	thrasherDescription: z.string().describe('Thrasher description'),
 	multiThrashers: z
 		.array(
 			z
@@ -115,7 +127,7 @@ export const newsletterCategoriesSchema = z
 		'manual-send',
 		'other',
 	])
-	.describe('production category');
+	.describe('Production category');
 export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 
 /**
@@ -128,7 +140,15 @@ export const newsletterDataSchema = z.object({
 	name: nonEmptyString(),
 	category: newsletterCategoriesSchema,
 	restricted: z.boolean(),
-	status: z.enum(['paused', 'cancelled', 'live']),
+	/** The status for the newsletter:
+	 *
+	 *  - **pending**: Initial state after launch - can be promoted, not yet ready to be sent out.
+	 *    Counts as being **paused** for the same of converting to the legacy data model.
+	 *  - **live**: Able to be sent and/or currently being sent out to subscribers
+	 *  - **paused**: Currently not live, but might be restarted in future
+	 *  - **cancelled**: Permanently cancelled - must still exist in the API for referential integrity
+	 */
+	status: z.enum(['paused', 'cancelled', 'live', 'pending']),
 	emailConfirmation: z.boolean().describe('email confirmation'),
 	brazeSubscribeAttributeName: underscoreCasedString(),
 	brazeSubscribeEventNamePrefix: kebabOrUnderscoreCasedString(),
@@ -179,6 +199,10 @@ export const newsletterDataSchema = z.object({
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),
 	mailSuccessDescription: z.string().optional(),
+	brazeCampaignCreationsStatus: workflowStatusEnumSchema.optional(),
+	ophanCampaignCreationsStatus: workflowStatusEnumSchema.optional(),
+	signupPageCreationsStatus: workflowStatusEnumSchema.optional(),
+	tagCreationsStatus: workflowStatusEnumSchema.optional(),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */

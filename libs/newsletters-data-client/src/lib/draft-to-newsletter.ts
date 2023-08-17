@@ -2,20 +2,26 @@ import { z } from 'zod';
 import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
 import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
 import type { DraftNewsletterData } from './draft-newsletter-data-type';
-import { dataCollectionSchema } from './draft-newsletter-data-type';
+import {
+	dataCollectionRenderingOptionsSchema,
+	dataCollectionSchema,
+} from './draft-newsletter-data-type';
 import type { NewsletterData, RenderingOptions } from './newsletter-data-type';
-import { renderingOptionsSchema } from './newsletter-data-type';
 
 const defaultNewsletterValues: DraftNewsletterData = {
 	listIdV1: -1,
 	restricted: false,
-	status: 'paused', // TODO - add step for this - maybe best in launch wizard?
+	status: 'pending',
 	emailConfirmation: false,
 	privateUntilLaunch: false,
 	figmaIncludesThrashers: false,
 } as const;
 
-export const defaultRenderingOptionsValues: Partial<RenderingOptions> = {
+// Note - the defaults currently make us a valid set of RenderingOptions
+// as there are no required values that can't be defaulted.
+// If the schema changes, this might not be the case and the
+// defaults should be typed as Partial<RenderingOptions>
+export const defaultRenderingOptionsValues: RenderingOptions = {
 	displayDate: false,
 	displayImageCaptions: false,
 	displayStandfirst: false,
@@ -27,22 +33,35 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 	Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
 	const derivedFields = deriveNewsletterFieldsFromName(draft.name ?? '');
 
-	if (draft.renderingOptions) {
-		return {
-			...defaultNewsletterValues,
-			...derivedFields,
-			...draft,
-			renderingOptions: {
+	const getDefaultedRenderingOptions = () => {
+		// if the draft is article based, the rendering options must be populated
+		// use the default values, even if draft.renderingOptions is undefined
+		if (draft.category === 'article-based') {
+			return {
 				...defaultRenderingOptionsValues,
 				...draft.renderingOptions,
-			},
-		};
-	}
+			};
+		}
+
+		// if the draft is not article based, the rendering options are optional
+		// if set, add in the default values to draft.renderingOptions.
+		if (draft.renderingOptions) {
+			return {
+				...defaultRenderingOptionsValues,
+				...draft.renderingOptions,
+			};
+		}
+		// if value is undefined, leave as undefined
+		return undefined;
+	};
 
 	return {
 		...defaultNewsletterValues,
 		...derivedFields,
 		...draft,
+		renderingOptions: getDefaultedRenderingOptions(),
+		//prevent an explicit undefined status on the draft overriding the default
+		status: draft.status ? draft.status : defaultNewsletterValues.status,
 	};
 };
 
@@ -51,20 +70,22 @@ export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 		draft.category === 'article-based'
 			? dataCollectionSchema.merge(
 					z.object({
-						renderingOptions: renderingOptionsSchema,
+						renderingOptions: dataCollectionRenderingOptionsSchema,
 					}),
 			  )
 			: dataCollectionSchema;
-	const report = schemaToUse.safeParse(
-		withDefaultNewsletterValuesAndDerivedFields(draft),
-	);
+
+	const draftWithDefaults = withDefaultNewsletterValuesAndDerivedFields(draft);
+	const report = schemaToUse.safeParse(draftWithDefaults);
 	return report.success ? [] : report.error.issues;
 };
 
 const TOTAL_FIELD_COUNT = getDraftNotReadyIssues({}).length;
 
-const renderingOptionsNotReadyIssues = (record: Record<string, unknown>) => {
-	const report = renderingOptionsSchema.safeParse({
+export const getRenderingOptionsNotReadyIssues = (
+	record: Record<string, unknown>,
+) => {
+	const report = dataCollectionRenderingOptionsSchema.safeParse({
 		...defaultRenderingOptionsValues,
 		...record,
 	});
@@ -74,7 +95,9 @@ const renderingOptionsNotReadyIssues = (record: Record<string, unknown>) => {
 	return [];
 };
 
-const RENDERING_OPTIONS_FIELD_COUNT = renderingOptionsNotReadyIssues({}).length;
+const RENDERING_OPTIONS_FIELD_COUNT = getRenderingOptionsNotReadyIssues(
+	{},
+).length;
 
 /**
  * Returns an integer representing a percentage of 'completeness'
@@ -98,13 +121,18 @@ export const calculateProgress = (draft: DraftNewsletterData): number => {
 		return Math.floor(basicDataRatio * 100);
 	}
 
-	const renderingOptionsIssuesCount = renderingOptionsNotReadyIssues(
+	const renderingOptionsIssuesCount = getRenderingOptionsNotReadyIssues(
 		draft.renderingOptions ?? {},
 	).length;
 
+	// if RENDERING_OPTIONS_FIELD_COUNT is 0  an empty object with the defaults
+	// added satifies the schema, so there can be no missing required rendering options
+	// fields. Also avoid divide by 0 errors.
 	const renderingOptionsDataRatio =
-		(RENDERING_OPTIONS_FIELD_COUNT - renderingOptionsIssuesCount) /
-		RENDERING_OPTIONS_FIELD_COUNT;
+		RENDERING_OPTIONS_FIELD_COUNT === 0
+			? 1
+			: (RENDERING_OPTIONS_FIELD_COUNT - renderingOptionsIssuesCount) /
+			  RENDERING_OPTIONS_FIELD_COUNT;
 
 	// Arbitrary calculation - wieght the basic data as 1/4's of the total score
 	const combined = (basicDataRatio * 3 + renderingOptionsDataRatio) / 4;

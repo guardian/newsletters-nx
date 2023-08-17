@@ -14,6 +14,7 @@ import type {
 	RenderingOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import {
+	dataCollectionRenderingOptionsSchema,
 	getEmptySchemaData,
 	newsletterDataSchema,
 	renderingOptionsSchema,
@@ -185,7 +186,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 						<>
 							<Typography variant="h3">Rendering options</Typography>
 							<StateEditForm
-								formSchema={renderingOptionsSchema}
+								formSchema={dataCollectionRenderingOptionsSchema}
 								formData={renderingOptions}
 								setFormData={setRenderingOptions}
 							/>
