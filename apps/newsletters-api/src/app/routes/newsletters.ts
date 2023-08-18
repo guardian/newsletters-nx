@@ -10,6 +10,7 @@ import { signTemplateImages } from '../../services/image/image-signer';
 import { newsletterStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
 import {
+	hasEditAccess,
 	makeAccessDeniedApiResponse,
 	makeErrorResponse,
 	makeSuccessResponse,
@@ -84,12 +85,11 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 		Body: unknown;
 	}>('/api/newsletters/:newsletterId', async (req, res) => {
 		const user = getUserProfile(req);
-		const accessDeniedError = await makeAccessDeniedApiResponse(
-			user.profile,
-			'editNewsletters',
-		);
-		if (accessDeniedError) {
-			return res.status(403).send(accessDeniedError);
+
+		const isAuthorised = await hasEditAccess(user.profile); // todo - refine and move to middleware
+
+		if (!isAuthorised) {
+			return res.status(403).send({ no: 'access' });
 		}
 
 		const { newsletterId } = req.params;

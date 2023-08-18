@@ -51,3 +51,19 @@ export const makeAccessDeniedApiResponse = async (
 	}
 	return undefined;
 };
+
+export const hasEditAccess = async (
+	profile: UserProfile | undefined,
+): Promise<boolean> => {
+	if (!profile) return false;
+	const permissions = await permissionService.get(profile);
+	const { editTags, editNewsletters, editSignUpPage, editBraze, editOphan } =
+		permissions;
+	return !!(
+		editOphan ||
+		editTags ||
+		editNewsletters ||
+		editSignUpPage ||
+		editBraze
+	);
+};
