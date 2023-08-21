@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { sendEmailNotifications } from '@newsletters-nx/email-builder';
+import { makeSesClient } from '../../services/email-client/make-client';
 import { getUserProfile } from '../get-user-profile';
 import { makeAccessDeniedApiResponse } from '../responses';
 
@@ -17,13 +18,14 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 			}
 			try {
 				const { newsletterId } = req.params;
-				const output = await sendEmailNotifications(newsletterId);
-				return res
-					.status(200)
-					.send({
-						message: 'Email sent from service',
-						messageId: output.MessageId,
-					});
+				const output = await sendEmailNotifications(
+					newsletterId,
+					makeSesClient(),
+				);
+				return res.status(200).send({
+					message: 'Email sent from service',
+					messageId: output.MessageId,
+				});
 			} catch (e) {
 				console.log(Error);
 				return res

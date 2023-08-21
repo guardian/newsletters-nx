@@ -1,3 +1,4 @@
+import { buildTestMessage } from '@newsletters-nx/email-builder';
 import type {
 	DraftNewsletterData,
 	DraftService,
@@ -26,6 +27,8 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 	stepLayout,
 	draftService,
 ) => {
+	console.log('EXECUTE CREATE', { client: draftService?.emailClient });
+
 	if (!draftService) {
 		throw new StateMachineError(
 			'no draft service',
@@ -68,6 +71,11 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 		draftService.userProfile,
 	);
 	if (storageResponse.ok) {
+		const sendOutput = await draftService.emailClient.send(
+			buildTestMessage(draft.name ?? 'new-draft'),
+		);
+		console.log({ sendOutput });
+
 		return {
 			data: draftNewsletterDataToFormData(storageResponse.data),
 		};

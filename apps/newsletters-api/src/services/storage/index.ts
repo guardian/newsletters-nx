@@ -1,3 +1,4 @@
+import type { SESClient } from '@aws-sdk/client-ses';
 import {
 	DraftService,
 	InMemoryNewsletterStorage,
@@ -36,8 +37,10 @@ const newsletterStore: NewsletterStorage = isUsingInMemoryStore
 const makelaunchServiceForUser = (userProfile: UserProfile) =>
 	new LaunchService(draftStore, newsletterStore, userProfile);
 
-const makeDraftServiceForUser = (userProfile: UserProfile) =>
-	new DraftService(draftStore, userProfile);
+const makeDraftServiceForUser = (
+	userProfile: UserProfile,
+	emailClent: SESClient,
+) => new DraftService(draftStore, userProfile, emailClent);
 
 export {
 	draftStore,

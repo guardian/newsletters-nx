@@ -1,6 +1,10 @@
 import { SendEmailCommand } from '@aws-sdk/client-ses';
 
-const { STAGE, TEST_EMAIL_RECIPIENT } = process.env;
+// Library can't rely on process? as can be called by other library?
+// this worked when invoking from the API, but not from the data-client
+// const { STAGE, TEST_EMAIL_RECIPIENT } = process.env;
+const STAGE = 'DEV' as string | undefined;
+const TEST_EMAIL_RECIPIENT = 'test@example.com' as string | undefined;
 
 const getRecipients = (): string[] => {
 	const devMailingList = TEST_EMAIL_RECIPIENT ? [TEST_EMAIL_RECIPIENT] : [];

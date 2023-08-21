@@ -10,6 +10,7 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
+import { makeSesClient } from '../../services/email-client/make-client';
 import { permissionService } from '../../services/permissions';
 import {
 	makeDraftServiceForUser,
@@ -95,7 +96,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 			const serviceInterface = user.profile
 				? requestBody.wizardId === 'LAUNCH_NEWSLETTER'
 					? makelaunchServiceForUser(user.profile)
-					: makeDraftServiceForUser(user.profile)
+					: makeDraftServiceForUser(user.profile, makeSesClient())
 				: undefined;
 
 			if (!serviceInterface) {
