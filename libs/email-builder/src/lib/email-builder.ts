@@ -18,7 +18,6 @@ export function buildTestMessage(newsletterId: string): SendEmailCommand {
 	}/launched/edit/${newsletterId}`;
 
 	const recipients = getRecipients();
-	console.log({ recipients });
 
 	return new SendEmailCommand({
 		Source:
