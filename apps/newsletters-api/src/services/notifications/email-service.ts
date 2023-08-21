@@ -1,11 +1,10 @@
-import { SESClient } from '@aws-sdk/client-ses';
-import { testMessageBuilder } from '@newsletters-nx/email-builder';
-import { getStandardAwsConfig } from '../aws/aws-config-service';
+import { buildTestMessage, makeSesClient } from '@newsletters-nx/email-builder';
 
 export const sendEmailNotifications = async (newsletterId: string) => {
-	const emailClient = new SESClient(getStandardAwsConfig());
+	// create a client
+	const emailClient = makeSesClient();
 	// now send an email
-	const testMessage = testMessageBuilder(newsletterId);
+	const testMessage = buildTestMessage(newsletterId);
 
 	await emailClient.send(testMessage);
 };

@@ -2,7 +2,7 @@ import { SendEmailCommand } from '@aws-sdk/client-ses';
 
 const { STAGE } = process.env;
 
-export function testMessageBuilder(newsletterId: string): SendEmailCommand {
+export function buildTestMessage(newsletterId: string): SendEmailCommand {
 	const updateLink = `${
 		STAGE === 'PROD'
 			? 'https://newsletters-tool.gutools.co.uk'
