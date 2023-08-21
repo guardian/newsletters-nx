@@ -1,6 +1,14 @@
 import { SendEmailCommand } from '@aws-sdk/client-ses';
 
-const { STAGE } = process.env;
+const { STAGE, TEST_EMAIL_RECIPIENT } = process.env;
+
+const getRecipients = (): string[] => {
+	const devMailingList = TEST_EMAIL_RECIPIENT ? [TEST_EMAIL_RECIPIENT] : [];
+
+	return STAGE === 'DEV' ? devMailingList : ['newsletters.dev@guardian.co.uk'];
+	// Still testing - using newsletters.dev@guardian.co.uk as the 'live' recipient
+	// could use config for this too
+};
 
 export function buildTestMessage(newsletterId: string): SendEmailCommand {
 	const updateLink = `${
@@ -9,13 +17,16 @@ export function buildTestMessage(newsletterId: string): SendEmailCommand {
 			: 'https://newsletters-tool.code.dev-gutools.co.uk'
 	}/launched/edit/${newsletterId}`;
 
+	const recipients = getRecipients();
+	console.log({ recipients });
+
 	return new SendEmailCommand({
 		Source:
 			STAGE !== 'PROD'
 				? 'newsletters <notifications@newsletters-tool.code.dev-gutools.co.uk>'
 				: 'newsletters CODE <notifications@newsletters-tool.gutools.co.uk>',
 		Destination: {
-			ToAddresses: ['newsletters.dev@guardian.co.uk'], // Just testing - we can move all this out to config later
+			ToAddresses: recipients,
 		},
 		ReplyToAddresses: ['newsletters@guardian.co.uk'], // again, just testing
 		Message: {
