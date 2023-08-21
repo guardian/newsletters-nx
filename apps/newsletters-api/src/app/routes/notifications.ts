@@ -22,8 +22,11 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 			try {
 				const { newsletterId } = req.params;
 				const emailResult = await sendEmailNotifications(
-					'TEST',
-					newsletterId,
+					{
+						messageTemplateId: 'TEST',
+						newsletterId,
+						testTitle: 'From the API',
+					},
 					makeSesClient(),
 					makeEmailEnvInfo(),
 				);

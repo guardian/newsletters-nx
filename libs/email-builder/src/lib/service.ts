@@ -2,24 +2,19 @@ import type { SendEmailCommandOutput, SESClient } from '@aws-sdk/client-ses';
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { buildSendEmailCommand } from './build-send-email-command';
 import { buildNewDraftEmail, buildTestEmail } from './email-builder';
-import type { MessageTemplateId } from './types';
+import type { MessageParams } from './types';
 
-const getMessage = (
-	messageTemplateId: MessageTemplateId,
-	newsletterId: string,
-	emailEnvInfo: EmailEnvInfo,
-) => {
-	switch (messageTemplateId) {
+const getMessage = (params: MessageParams, emailEnvInfo: EmailEnvInfo) => {
+	switch (params.messageTemplateId) {
 		case 'TEST':
-			return buildTestEmail(newsletterId, emailEnvInfo);
+			return buildTestEmail(params, emailEnvInfo);
 		case 'NEW_DRAFT':
-			return buildNewDraftEmail(newsletterId, emailEnvInfo);
+			return buildNewDraftEmail(params, emailEnvInfo);
 	}
 };
 
 export const sendEmailNotifications = async (
-	messageTemplateId: MessageTemplateId,
-	newsletterId: string,
+	params: MessageParams,
 	emailClient: SESClient,
 	emailEnvInfo: EmailEnvInfo,
 ): Promise<
@@ -27,7 +22,7 @@ export const sendEmailNotifications = async (
 	| { success: false; error?: unknown }
 > => {
 	try {
-		const message = getMessage(messageTemplateId, newsletterId, emailEnvInfo);
+		const message = getMessage(params, emailEnvInfo);
 		const command = buildSendEmailCommand(
 			message.messageConfig,
 			message.content,
@@ -35,7 +30,10 @@ export const sendEmailNotifications = async (
 		const output = await emailClient.send(command);
 		return { output, success: true };
 	} catch (error) {
-		console.warn(`send of ${messageTemplateId} email failed`, error as unknown);
+		console.warn(
+			`send of ${params.messageTemplateId} email failed`,
+			error as unknown,
+		);
 		return { error: error as unknown, success: false };
 	}
 };

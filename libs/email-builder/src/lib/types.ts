@@ -15,4 +15,14 @@ export type MessageContent = {
 	text: string;
 };
 
-export type MessageTemplateId = 'TEST' | 'NEW_DRAFT';
+export type TestMessageParams = {
+	messageTemplateId: 'TEST';
+	newsletterId: string;
+	testTitle: string;
+};
+export type NewDraftMessageParams = {
+	messageTemplateId: 'NEW_DRAFT';
+	newsletterName: string;
+	listId: number;
+};
+export type MessageParams = TestMessageParams | NewDraftMessageParams;

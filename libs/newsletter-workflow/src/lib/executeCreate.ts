@@ -70,8 +70,11 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 	);
 	if (storageResponse.ok) {
 		await sendEmailNotifications(
-			'NEW_DRAFT',
-			storageResponse.data.listId.toString(),
+			{
+				messageTemplateId: 'NEW_DRAFT',
+				listId: storageResponse.data.listId,
+				newsletterName: storageResponse.data.name ?? '[unnamed]',
+			},
 			draftService.emailClient,
 			draftService.emailEnvInfo,
 		);
