@@ -22,8 +22,20 @@ export const sendEmailNotifications = async (
 	newsletterId: string,
 	emailClient: SESClient,
 	emailEnvInfo: EmailEnvInfo,
-): Promise<SendEmailCommandOutput> => {
-	const message = getMessage(messageTemplateId, newsletterId, emailEnvInfo);
-	const command = buildSendEmailCommand(message.messageConfig, message.content);
-	return emailClient.send(command);
+): Promise<
+	| { success: true; output: SendEmailCommandOutput }
+	| { success: false; error?: unknown }
+> => {
+	try {
+		const message = getMessage(messageTemplateId, newsletterId, emailEnvInfo);
+		const command = buildSendEmailCommand(
+			message.messageConfig,
+			message.content,
+		);
+		const output = await emailClient.send(command);
+		return { output, success: true };
+	} catch (error) {
+		console.warn(`send of ${messageTemplateId} email failed`, error as unknown);
+		return { error: error as unknown, success: false };
+	}
 };

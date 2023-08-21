@@ -21,21 +21,24 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 			}
 			try {
 				const { newsletterId } = req.params;
-				const output = await sendEmailNotifications(
+				const emailResult = await sendEmailNotifications(
 					'TEST',
 					newsletterId,
 					makeSesClient(),
 					makeEmailEnvInfo(),
 				);
+				if (!emailResult.success) {
+					return res.status(500).send({
+						message: 'Email service failed',
+					});
+				}
 				return res.status(200).send({
 					message: 'Email sent from service',
-					messageId: output.MessageId,
+					messageId: emailResult.output.MessageId,
 				});
 			} catch (e) {
-				console.log(Error);
-				return res
-					.status(500)
-					.send({ message: 'Error sending email' + JSON.stringify(e) });
+				console.log(e);
+				return res.status(500).send({ message: 'Error sending email' });
 			}
 		},
 	);
