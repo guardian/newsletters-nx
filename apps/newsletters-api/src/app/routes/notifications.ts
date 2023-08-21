@@ -1,6 +1,9 @@
 import type { FastifyInstance } from 'fastify';
 import { sendEmailNotifications } from '@newsletters-nx/email-builder';
-import { makeSesClient } from '../../services/email-client/make-client';
+import {
+	makeEmailEnvInfo,
+	makeSesClient,
+} from '../../services/email-client/make-client';
 import { getUserProfile } from '../get-user-profile';
 import { makeAccessDeniedApiResponse } from '../responses';
 
@@ -21,6 +24,7 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 				const output = await sendEmailNotifications(
 					newsletterId,
 					makeSesClient(),
+					makeEmailEnvInfo(),
 				);
 				return res.status(200).send({
 					message: 'Email sent from service',

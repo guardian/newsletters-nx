@@ -7,6 +7,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import type {
 	DraftStorage,
+	EmailEnvInfo,
 	NewsletterData,
 	NewsletterStorage,
 	UserProfile,
@@ -40,7 +41,8 @@ const makelaunchServiceForUser = (userProfile: UserProfile) =>
 const makeDraftServiceForUser = (
 	userProfile: UserProfile,
 	emailClent: SESClient,
-) => new DraftService(draftStore, userProfile, emailClent);
+	emailEnvInfo: EmailEnvInfo,
+) => new DraftService(draftStore, userProfile, emailClent, emailEnvInfo);
 
 export {
 	draftStore,

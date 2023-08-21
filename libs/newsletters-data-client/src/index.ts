@@ -1,3 +1,4 @@
+export * from './lib/types';
 export * from './lib/api-response-type';
 export * from './lib/draft-newsletter-data-type';
 export * from './lib/deriveNewsletterFields';

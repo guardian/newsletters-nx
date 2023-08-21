@@ -1,12 +1,8 @@
 import { SendEmailCommand } from '@aws-sdk/client-ses';
+import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 
-// Library can't rely on process? as can be called by other library?
-// this worked when invoking from the API, but not from the data-client
-// const { STAGE, TEST_EMAIL_RECIPIENT } = process.env;
-const STAGE = 'DEV' as string | undefined;
-const TEST_EMAIL_RECIPIENT = 'test@example.com' as string | undefined;
-
-const getRecipients = (): string[] => {
+const getRecipients = (emailEnvInfo: EmailEnvInfo): string[] => {
+	const { STAGE, TEST_EMAIL_RECIPIENT } = emailEnvInfo;
 	const devMailingList = TEST_EMAIL_RECIPIENT ? [TEST_EMAIL_RECIPIENT] : [];
 
 	return STAGE === 'DEV' ? devMailingList : ['newsletters.dev@guardian.co.uk'];
@@ -14,14 +10,19 @@ const getRecipients = (): string[] => {
 	// could use config for this too
 };
 
-export function buildTestMessage(newsletterId: string): SendEmailCommand {
+export function buildTestMessage(
+	newsletterId: string,
+	emailEnvInfo: EmailEnvInfo,
+): SendEmailCommand {
+	const { STAGE } = emailEnvInfo;
+
 	const updateLink = `${
 		STAGE === 'PROD'
 			? 'https://newsletters-tool.gutools.co.uk'
 			: 'https://newsletters-tool.code.dev-gutools.co.uk'
 	}/launched/edit/${newsletterId}`;
 
-	const recipients = getRecipients();
+	const recipients = getRecipients(emailEnvInfo);
 
 	return new SendEmailCommand({
 		Source:
