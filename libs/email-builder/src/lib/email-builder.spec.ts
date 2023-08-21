@@ -1,7 +1,7 @@
-import { buildTestMessage } from './email-builder';
+import { buildTestEmail } from './email-builder';
 
-describe('emailBuilder', () => {
+describe('buildTestEmail', () => {
 	it('should work', () => {
-		expect(buildTestMessage('test-email-id', {})).toBeDefined;
+		expect(buildTestEmail('test-email-id', {})).toBeDefined;
 	});
 });

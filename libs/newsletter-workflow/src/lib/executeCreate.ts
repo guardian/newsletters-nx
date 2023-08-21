@@ -27,8 +27,6 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 	stepLayout,
 	draftService,
 ) => {
-	console.log('EXECUTE CREATE', { client: draftService?.emailClient });
-
 	if (!draftService) {
 		throw new StateMachineError(
 			'no draft service',
@@ -72,7 +70,8 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 	);
 	if (storageResponse.ok) {
 		await sendEmailNotifications(
-			draft.name ?? 'new-draft',
+			'NEW_DRAFT',
+			draft.listId?.toString() ?? '0',
 			draftService.emailClient,
 			draftService.emailEnvInfo,
 		);
