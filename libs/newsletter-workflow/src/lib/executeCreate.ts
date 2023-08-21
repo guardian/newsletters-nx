@@ -71,7 +71,7 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 	if (storageResponse.ok) {
 		await sendEmailNotifications(
 			'NEW_DRAFT',
-			draft.listId?.toString() ?? '0',
+			storageResponse.data.listId.toString(),
 			draftService.emailClient,
 			draftService.emailEnvInfo,
 		);
