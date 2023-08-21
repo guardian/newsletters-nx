@@ -1,4 +1,4 @@
-import { buildTestEmail } from './email-builder';
+import { buildTestEmail } from './test-message';
 
 describe('buildTestEmail', () => {
 	it('should work', () => {
