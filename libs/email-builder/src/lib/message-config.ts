@@ -1,13 +1,5 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
-
-type MessageConfig = {
-	/** the emails addresses to send the message to */
-	recipients: string[];
-	/** the URL for the version of the tool to point recipients to */
-	toolHost: string;
-	/** the sender name  and email address to use in the message header*/
-	source: string;
-};
+import type { MessageConfig } from './types';
 
 export const getMessageConfig = (
 	prodRecipients: string[],
@@ -22,6 +14,7 @@ export const getMessageConfig = (
 			return {
 				recipients: testMailingList,
 				toolHost: 'http://localhost:4200',
+				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source:
 					'newsletters DEV <notifications@newsletters-tool.gutools.co.uk>',
 			};
@@ -29,6 +22,7 @@ export const getMessageConfig = (
 			return {
 				recipients: prodRecipients,
 				toolHost: 'https://newsletters-tool.gutools.co.uk',
+				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source:
 					'newsletters <notifications@newsletters-tool.code.dev-gutools.co.uk>',
 			};
@@ -37,6 +31,7 @@ export const getMessageConfig = (
 			return {
 				recipients: testMailingList,
 				toolHost: 'https://newsletters-tool.code.dev-gutools.co.uk',
+				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source:
 					'newsletters CODE <notifications@newsletters-tool.gutools.co.uk>',
 			};

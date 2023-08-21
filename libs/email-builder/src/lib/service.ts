@@ -1,8 +1,21 @@
 import type { SendEmailCommandOutput, SESClient } from '@aws-sdk/client-ses';
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
+import { buildSendEmailCommand } from './build-send-email-command';
 import { buildNewDraftEmail, buildTestEmail } from './email-builder';
+import type { MessageTemplateId } from './types';
 
-type MessageTemplateId = 'TEST' | 'NEW_DRAFT';
+const getMessage = (
+	messageTemplateId: MessageTemplateId,
+	newsletterId: string,
+	emailEnvInfo: EmailEnvInfo,
+) => {
+	switch (messageTemplateId) {
+		case 'TEST':
+			return buildTestEmail(newsletterId, emailEnvInfo);
+		case 'NEW_DRAFT':
+			return buildNewDraftEmail(newsletterId, emailEnvInfo);
+	}
+};
 
 export const sendEmailNotifications = async (
 	messageTemplateId: MessageTemplateId,
@@ -10,10 +23,7 @@ export const sendEmailNotifications = async (
 	emailClient: SESClient,
 	emailEnvInfo: EmailEnvInfo,
 ): Promise<SendEmailCommandOutput> => {
-	switch (messageTemplateId) {
-		case 'TEST':
-			return emailClient.send(buildTestEmail(newsletterId, emailEnvInfo));
-		case 'NEW_DRAFT':
-			return emailClient.send(buildNewDraftEmail(newsletterId, emailEnvInfo));
-	}
+	const message = getMessage(messageTemplateId, newsletterId, emailEnvInfo);
+	const command = buildSendEmailCommand(message.messageConfig, message.content);
+	return emailClient.send(command);
 };
