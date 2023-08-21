@@ -1,7 +1,11 @@
 import type { SendEmailCommandOutput, SESClient } from '@aws-sdk/client-ses';
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { buildSendEmailCommand } from './build-send-email-command';
-import { buildNewDraftEmail, buildTestEmail } from './messages';
+import {
+	buildNewDraftEmail,
+	buildNewsLetterLaunchMessage,
+	buildTestEmail,
+} from './messages';
 import type { MessageParams } from './types';
 
 const getMessage = (params: MessageParams, emailEnvInfo: EmailEnvInfo) => {
@@ -10,6 +14,8 @@ const getMessage = (params: MessageParams, emailEnvInfo: EmailEnvInfo) => {
 			return buildTestEmail(params, emailEnvInfo);
 		case 'NEW_DRAFT':
 			return buildNewDraftEmail(params, emailEnvInfo);
+		case 'NEWSLETTER_LAUNCH':
+			return buildNewsLetterLaunchMessage(params, emailEnvInfo);
 	}
 };
 

@@ -1,10 +1,4 @@
 import type { SESClient } from '@aws-sdk/client-ses';
-import {
-	DraftService,
-	InMemoryNewsletterStorage,
-	isNewsletterData,
-	LaunchService,
-} from '@newsletters-nx/newsletters-data-client';
 import type {
 	DraftStorage,
 	EmailEnvInfo,
@@ -12,8 +6,15 @@ import type {
 	NewsletterStorage,
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
+import {
+	DraftService,
+	InMemoryNewsletterStorage,
+	isNewsletterData,
+	LaunchService,
+} from '@newsletters-nx/newsletters-data-client';
 import newslettersData from '../../../static/newsletters.local.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
+import { makeEmailEnvInfo, makeSesClient } from '../email-client/make-client';
 import { makeInMemoryStorageInstance } from './inMemoryStorageInstance';
 import {
 	getS3NewsletterStore,
@@ -36,7 +37,13 @@ const newsletterStore: NewsletterStorage = isUsingInMemoryStore
 	: getS3NewsletterStore();
 
 const makelaunchServiceForUser = (userProfile: UserProfile) =>
-	new LaunchService(draftStore, newsletterStore, userProfile);
+	new LaunchService(
+		draftStore,
+		newsletterStore,
+		userProfile,
+		makeSesClient(),
+		makeEmailEnvInfo(),
+	);
 
 const makeDraftServiceForUser = (
 	userProfile: UserProfile,
@@ -46,7 +53,7 @@ const makeDraftServiceForUser = (
 
 export {
 	draftStore,
-	newsletterStore,
-	makelaunchServiceForUser,
 	makeDraftServiceForUser,
+	makelaunchServiceForUser,
+	newsletterStore,
 };

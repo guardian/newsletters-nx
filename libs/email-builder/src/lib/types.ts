@@ -1,3 +1,5 @@
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+
 export type MessageConfig = {
 	/** the emails addresses to send the message to */
 	recipients: string[];
@@ -25,4 +27,11 @@ export type NewDraftMessageParams = {
 	newsletterName: string;
 	listId: number;
 };
-export type MessageParams = TestMessageParams | NewDraftMessageParams;
+export type NewsletterLaunchedMessageParams = {
+	messageTemplateId: 'NEWSLETTER_LAUNCH';
+	newsletter: NewsletterData;
+};
+export type MessageParams =
+	| TestMessageParams
+	| NewDraftMessageParams
+	| NewsletterLaunchedMessageParams;
