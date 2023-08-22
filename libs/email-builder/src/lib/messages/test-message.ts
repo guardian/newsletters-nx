@@ -2,15 +2,14 @@ import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { getMessageConfig } from '../message-config';
 import type { MessageContent, TestMessageParams } from '../types';
 
+export const recipients = ['newsletters.dev@guardian.co.uk'];
+
 export function buildTestEmail(
 	params: TestMessageParams,
 	emailEnvInfo: EmailEnvInfo,
 ) {
 	const { newsletterId } = params;
-	const messageConfig = getMessageConfig(
-		['newsletters.dev@guardian.co.uk'],
-		emailEnvInfo,
-	);
+	const messageConfig = getMessageConfig(recipients, emailEnvInfo);
 
 	const updateLink = `${messageConfig.toolHost}/launched/edit/${newsletterId}`;
 
