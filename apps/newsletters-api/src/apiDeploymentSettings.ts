@@ -104,3 +104,6 @@ export const getEmailRenderingHost = (): string => {
 		? EMAIL_RENDERING_LOCAL
 		: EMAIL_RENDERING;
 };
+
+export const areEmailNotificationsEnabled = () =>
+	process.env.ENABLE_EMAIL_SERVICE === 'true';

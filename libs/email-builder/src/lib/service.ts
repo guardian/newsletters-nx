@@ -24,10 +24,18 @@ export const sendEmailNotifications = async (
 	emailClient: SESClient,
 	emailEnvInfo: EmailEnvInfo,
 ): Promise<
-	| { success: true; output: SendEmailCommandOutput }
+	| { success: true; output?: SendEmailCommandOutput }
 	| { success: false; error?: unknown }
 > => {
 	try {
+		const { areEmailNotificationsEnabled } = emailEnvInfo;
+
+		if (!areEmailNotificationsEnabled) {
+			return {
+				success: true,
+			};
+		}
+
 		const message = getMessage(params, emailEnvInfo);
 		const command = buildSendEmailCommand(
 			message.messageConfig,

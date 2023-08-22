@@ -69,7 +69,7 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 		draftService.userProfile,
 	);
 	if (storageResponse.ok) {
-		await sendEmailNotifications(
+		void sendEmailNotifications(
 			{
 				messageTemplateId: 'NEW_DRAFT',
 				listId: storageResponse.data.listId,

@@ -33,6 +33,13 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 						message: 'Email service failed',
 					});
 				}
+
+				if (!emailResult.output) {
+					return res.status(200).send({
+						message: 'Email service is not enabled',
+					});
+				}
+
 				return res.status(200).send({
 					message: 'Email sent from service',
 					messageId: emailResult.output.MessageId,
