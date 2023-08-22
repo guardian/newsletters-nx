@@ -11,7 +11,11 @@ describe('buildTestEmail', () => {
 				newsletterId: 'test-email-id',
 				testTitle: TEST_TITLE,
 			},
-			{ testRecipients: TEST_RECIPIENTS, STAGE: 'DEV' },
+			{
+				testRecipients: TEST_RECIPIENTS,
+				STAGE: 'DEV',
+				areEmailNotificationsEnabled: true,
+			},
 		);
 
 		expect(output.content.subject.includes(TEST_TITLE)).toBeTruthy();
@@ -25,7 +29,11 @@ describe('buildTestEmail', () => {
 				newsletterId: 'test-email-id',
 				testTitle: TEST_TITLE,
 			},
-			{ testRecipients: TEST_RECIPIENTS, STAGE: 'PROD' },
+			{
+				testRecipients: TEST_RECIPIENTS,
+				STAGE: 'PROD',
+				areEmailNotificationsEnabled: true,
+			},
 		);
 
 		expect(output.content.subject.includes(TEST_TITLE)).toBeTruthy();
