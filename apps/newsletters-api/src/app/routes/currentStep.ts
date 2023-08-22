@@ -10,10 +10,8 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
-import {
-	makeEmailEnvInfo,
-	makeSesClient,
-} from '../../services/notifications/email-service';
+import { makeEmailEnvInfo } from '../../services/notifications/email-env';
+import { makeSesClient } from '../../services/notifications/email-service';
 import { permissionService } from '../../services/permissions';
 import {
 	makeDraftServiceForUser,

@@ -1,9 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { sendEmailNotifications } from '@newsletters-nx/email-builder';
-import {
-	makeEmailEnvInfo,
-	makeSesClient,
-} from '../../services/notifications/email-service';
+import { makeEmailEnvInfo } from '../../services/notifications/email-env';
+import { makeSesClient } from '../../services/notifications/email-service';
 import { getUserProfile } from '../get-user-profile';
 import { makeAccessDeniedApiResponse } from '../responses';
 

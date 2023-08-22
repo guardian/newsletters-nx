@@ -14,10 +14,8 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import newslettersData from '../../../static/newsletters.local.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
-import {
-	makeEmailEnvInfo,
-	makeSesClient,
-} from '../notifications/email-service';
+import { makeEmailEnvInfo } from '../notifications/email-env';
+import { makeSesClient } from '../notifications/email-service';
 import { makeInMemoryStorageInstance } from './inMemoryStorageInstance';
 import {
 	getS3NewsletterStore,
