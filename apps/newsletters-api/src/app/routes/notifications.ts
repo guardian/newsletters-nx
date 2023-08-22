@@ -3,7 +3,7 @@ import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import {
 	makeEmailEnvInfo,
 	makeSesClient,
-} from '../../services/email-client/make-client';
+} from '../../services/notifications/email-service';
 import { getUserProfile } from '../get-user-profile';
 import { makeAccessDeniedApiResponse } from '../responses';
 

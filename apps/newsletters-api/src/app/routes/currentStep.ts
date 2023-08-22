@@ -13,7 +13,7 @@ import {
 import {
 	makeEmailEnvInfo,
 	makeSesClient,
-} from '../../services/email-client/make-client';
+} from '../../services/notifications/email-service';
 import { permissionService } from '../../services/permissions';
 import {
 	makeDraftServiceForUser,
