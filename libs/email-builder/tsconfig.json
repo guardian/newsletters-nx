@@ -1,7 +1,12 @@
 {
-	"extends": "../../tsconfig.base.json",
-	"files": [],
-	"include": [],
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"allowJs": false,
+		"esModuleInterop": false,
+		"allowSyntheticDefaultImports": true,
+		"strict": true,
+		"jsxImportSource": "@emotion/react"
+	},
 	"references": [
 		{
 			"path": "./tsconfig.lib.json"
@@ -9,5 +14,6 @@
 		{
 			"path": "./tsconfig.spec.json"
 		}
-	]
+	],
+	"extends": "../../tsconfig.base.json"
 }

@@ -3,12 +3,13 @@
 	"$schema": "../../node_modules/nx/schemas/project-schema.json",
 	"sourceRoot": "libs/email-builder/src",
 	"projectType": "library",
+	"tags": [],
 	"targets": {
 		"lint": {
 			"executor": "@nrwl/linter:eslint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
-				"lintFilePatterns": ["libs/email-builder/**/*.ts"]
+				"lintFilePatterns": ["libs/email-builder/**/*.{ts,tsx,js,jsx}"]
 			}
 		},
 		"test": {
@@ -25,6 +26,5 @@
 				}
 			}
 		}
-	},
-	"tags": []
+	}
 }
