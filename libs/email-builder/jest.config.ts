@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable -- config file*/
 export default {
 	displayName: 'email-builder',
 	preset: '../../jest.preset.js',
