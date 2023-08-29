@@ -7,25 +7,19 @@ interface Props {
 
 export const MessageFormat = ({ title, children }: Props) => {
 	return (
-		<table width={'100%'}>
-			<tbody>
-				<tr>
-					<th
-						style={{
-							backgroundColor: 'paleblue',
-							borderBottom: '1px dotted red',
-						}}
-					>
-						{title}
-					</th>
-				</tr>
-				<tr>
-					<td>{children}</td>
-				</tr>
-				<tr>
-					<td>from the newsletters tool</td>
-				</tr>
-			</tbody>
-		</table>
+		<div>
+			<header>
+				<h1>{title}</h1>
+				<p>Hello</p>
+				<p>
+					<em>This is an automated message from the newsletters tool.</em>
+				</p>
+			</header>
+			<div>{children}</div>
+			<footer>
+				<p>Thank you</p>
+				<p>The Newsletters Team</p>
+			</footer>
+		</div>
 	);
 };
