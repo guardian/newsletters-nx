@@ -72,8 +72,7 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 		void sendEmailNotifications(
 			{
 				messageTemplateId: 'NEW_DRAFT',
-				listId: storageResponse.data.listId,
-				newsletterName: storageResponse.data.name ?? '[unnamed]',
+				draft: storageResponse.data,
 			},
 			draftService.emailClient,
 			draftService.emailEnvInfo,

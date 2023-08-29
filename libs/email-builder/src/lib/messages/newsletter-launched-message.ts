@@ -7,25 +7,19 @@ export function buildNewsLetterLaunchMessage(
 	params: NewsletterLaunchedMessageParams,
 	emailEnvInfo: EmailEnvInfo,
 ) {
-	const { identityName, name = '' } = params.newsletter;
+	const { newsletter } = params;
 	const messageConfig = getMessageConfig(
 		['newsletters.dev@guardian.co.uk'],
 		emailEnvInfo,
 	);
 
-	const pageLink = `${messageConfig.toolHost}/launched/${identityName}`;
+	const pageLink = `${messageConfig.toolHost}/launched/${newsletter.identityName}`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
-	const html = renderNewLaunchMessage({
-		pageLink: pageLink,
-		newsletter: params.newsletter,
-	}) as string;
-
-	const content: MessageContent = {
-		subject: `New newsletters launched: ${name}`,
-		html,
-		text: `A new newsletter "${name}" has been launched: ${pageLink}.`,
-	};
+	const content = renderNewLaunchMessage({
+		pageLink,
+		newsletter,
+	}) as MessageContent;
 
 	return { content, messageConfig };
 }

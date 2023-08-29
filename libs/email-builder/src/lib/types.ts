@@ -1,4 +1,7 @@
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftWithId,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 
 export type MessageConfig = {
 	/** the emails addresses to send the message to */
@@ -24,8 +27,7 @@ export type TestMessageParams = {
 };
 export type NewDraftMessageParams = {
 	messageTemplateId: 'NEW_DRAFT';
-	newsletterName: string;
-	listId: number;
+	draft: DraftWithId;
 };
 export type NewsletterLaunchedMessageParams = {
 	messageTemplateId: 'NEWSLETTER_LAUNCH';

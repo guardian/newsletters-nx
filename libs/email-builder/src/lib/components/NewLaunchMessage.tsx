@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
 
 interface Props {
@@ -15,6 +16,16 @@ export const NewLaunchMessage = ({ pageLink, newsletter }: Props) => {
 	);
 };
 
-export const renderNewLaunchMessage = (props: Props): string => {
-	return renderToStaticMarkup(<NewLaunchMessage {...props} />);
+export const renderNewLaunchMessage = (props: Props): MessageContent => {
+	const { pageLink, newsletter } = props;
+	const subject = `New newsletters launched: ${newsletter.name}`;
+	const text = `A new newsletter "${newsletter.name}" has been launched: ${pageLink}.`;
+
+	try {
+		const html = renderToStaticMarkup(<NewLaunchMessage {...props} />);
+		return { html, text, subject };
+	} catch (e) {
+		console.error(e);
+		return { html: text, text, subject };
+	}
 };
