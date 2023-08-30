@@ -7,6 +7,6 @@ export const shouldShowEditOptions = (
 	const { editTags, editNewsletters, editSignUpPage, editBraze, editOphan } =
 		permissions;
 	return [editTags, editNewsletters, editSignUpPage, editBraze, editOphan].some(
-		(permission) => permission === true,
+		(permission) => permission,
 	);
 };
