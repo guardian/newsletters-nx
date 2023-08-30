@@ -1,3 +1,4 @@
+import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import type {
 	DraftNewsletterData,
 	DraftService,
@@ -68,6 +69,15 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 		draftService.userProfile,
 	);
 	if (storageResponse.ok) {
+		void sendEmailNotifications(
+			{
+				messageTemplateId: 'NEW_DRAFT',
+				draft: storageResponse.data,
+			},
+			draftService.emailClient,
+			draftService.emailEnvInfo,
+		);
+
 		return {
 			data: draftNewsletterDataToFormData(storageResponse.data),
 		};

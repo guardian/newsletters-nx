@@ -1,5 +1,7 @@
 import type { FastifyInstance } from 'fastify';
-import { sendEmailNotifications } from '../../services/notifications/email-service';
+import { sendEmailNotifications } from '@newsletters-nx/email-builder';
+import { makeEmailEnvInfo } from '../../services/notifications/email-env';
+import { makeSesClient } from '../../services/notifications/email-service';
 import { getUserProfile } from '../get-user-profile';
 import { makeAccessDeniedApiResponse } from '../responses';
 
@@ -17,13 +19,34 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 			}
 			try {
 				const { newsletterId } = req.params;
-				await sendEmailNotifications(newsletterId);
-				return res.status(200).send({ message: 'Email sent' });
+				const emailResult = await sendEmailNotifications(
+					{
+						messageTemplateId: 'TEST',
+						newsletterId,
+						testTitle: 'From the API',
+					},
+					makeSesClient(),
+					makeEmailEnvInfo(),
+				);
+				if (!emailResult.success) {
+					return res.status(500).send({
+						message: 'Email service failed',
+					});
+				}
+
+				if (!emailResult.output) {
+					return res.status(200).send({
+						message: 'Email service is not enabled',
+					});
+				}
+
+				return res.status(200).send({
+					message: 'Email sent from service',
+					messageId: emailResult.output.MessageId,
+				});
 			} catch (e) {
-				console.log(Error);
-				return res
-					.status(500)
-					.send({ message: 'Error sending email' + JSON.stringify(e) });
+				console.log(e);
+				return res.status(500).send({ message: 'Error sending email' });
 			}
 		},
 	);
