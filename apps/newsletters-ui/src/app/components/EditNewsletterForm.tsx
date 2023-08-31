@@ -55,7 +55,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 
 	if (permissions === undefined) return null;
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- this is safe
 	const userSchema = getUserEditSchema(
 		permissions,
 	) as typeof newsletterDataSchema;
