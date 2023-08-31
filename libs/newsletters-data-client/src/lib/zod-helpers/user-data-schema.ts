@@ -58,5 +58,5 @@ export const getUserEditSchema = (
 			signUpDescription: true,
 		});
 	}
-	throw new Error('No permissions found');
+	return newsletterDataSchema.pick({});
 };
