@@ -1,6 +1,6 @@
 import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
-import type { NewsletterData } from '../newsletter-data-type';
-import { isNewsletterData } from '../newsletter-data-type';
+import type { NewsletterData } from '../schemas/newsletter-data-type';
+import { isNewsletterData } from '../schemas/newsletter-data-type';
 
 export const objectToNewsletter = async (
 	getObjectOutput: GetObjectCommandOutput,

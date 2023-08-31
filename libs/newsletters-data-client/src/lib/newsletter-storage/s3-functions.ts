@@ -4,7 +4,7 @@ import {
 	ListObjectsCommand,
 	PutObjectCommand,
 } from '@aws-sdk/client-s3';
-import type { NewsletterData } from '../newsletter-data-type';
+import type { NewsletterData } from '../schemas/newsletter-data-type';
 import type { S3NewsletterStorage } from './s3-newsletter-storage';
 
 export const deleteObject =

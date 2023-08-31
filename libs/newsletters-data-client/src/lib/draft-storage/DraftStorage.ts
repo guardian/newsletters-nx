@@ -1,6 +1,10 @@
-import type { DraftNewsletterData } from '../draft-newsletter-data-type';
-import type { MetaData } from '../meta-data-type';
-import { createNewMeta, stripMeta, updateMeta } from '../meta-data-type';
+import type { DraftNewsletterData } from '../schemas/draft-newsletter-data-type';
+import type { MetaData } from '../schemas/meta-data-type';
+import {
+	createNewMeta,
+	stripMeta,
+	updateMeta,
+} from '../schemas/meta-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,

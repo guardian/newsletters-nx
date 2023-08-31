@@ -1,4 +1,4 @@
-import type { NewsletterData } from './newsletter-data-type';
+import type { NewsletterData } from './schemas/newsletter-data-type';
 
 export type NewsletterFieldsDerivedFromName =
 	| 'identityName'

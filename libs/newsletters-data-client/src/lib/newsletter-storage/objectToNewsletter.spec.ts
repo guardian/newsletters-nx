@@ -1,6 +1,6 @@
 import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import { TECHSCAPE_IN_NEW_FORMAT } from '../../fixtures/newsletter-fixtures';
-import type { NewsletterData } from '../newsletter-data-type';
+import type { NewsletterData } from '../schemas/newsletter-data-type';
 import { objectToNewsletter } from './objectToNewsletter';
 
 describe('objectToNewsletter', () => {
