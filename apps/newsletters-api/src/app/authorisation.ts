@@ -29,13 +29,12 @@ export const isAuthorisedToUpdateNewsletter = async (
 
 	const { body: modifications } = request;
 
-	console.log('modifications', modifications)
-	console.log('req', request)
 	if (!isPartialNewsletterData(modifications))  {
 		throw new Error('Invalid newsletter data');
 	}
 	const updateKeys = Object.keys(modifications);
 
-	const userEditSchema = Object.keys(getUserEditSchema(permissions));
-	return updateKeys.every((key) => userEditSchema.includes(key));
+	const { shape: userEditSchemaObject } = getUserEditSchema(permissions);
+	const editableProperties = Object.keys(userEditSchemaObject);
+	return updateKeys.every((key) => editableProperties.includes(key));
 };

@@ -104,7 +104,7 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 		Body: unknown;
 	}>(
 		'/api/newsletters/:newsletterId',
-		{ onRequest: hasAccessHook },
+		{ preValidation: hasAccessHook },
 		async (req, res) => {
 			const user = getUserProfile(req);
 
