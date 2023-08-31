@@ -25,6 +25,7 @@ export const isAuthorisedToUpdateNewsletter = async (
 	if (!profile) return false;
 	const permissions = await permissionService.get(profile);
 	const { editNewsletters } = permissions;
+
 	if (editNewsletters) return true;
 
 	const { body: modifications } = request;
@@ -32,6 +33,7 @@ export const isAuthorisedToUpdateNewsletter = async (
 	if (!isPartialNewsletterData(modifications))  {
 		throw new Error('Invalid newsletter data');
 	}
+
 	const updateKeys = Object.keys(modifications);
 
 	const { shape: userEditSchemaObject } = getUserEditSchema(permissions);
