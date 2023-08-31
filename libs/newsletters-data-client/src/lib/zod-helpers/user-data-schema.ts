@@ -1,5 +1,5 @@
 import type {ZodObject, ZodRawShape} from "zod";
-import { newsletterDataSchema } from '../newsletter-data-type';
+import {newsletterDataSchema} from "../schemas/newsletter-data-type";
 import type { UserPermissions } from '../user-profile';
 
 export const getUserEditSchema = (permissions: UserPermissions): ZodObject<ZodRawShape> => {
