@@ -1,3 +1,4 @@
+import type { SESClient } from '@aws-sdk/client-ses';
 import type { DraftStorage } from '../draft-storage';
 import { withDefaultNewsletterValuesAndDerivedFields } from '../draft-to-newsletter';
 import type { NewsletterStorage } from '../newsletter-storage';
@@ -7,21 +8,28 @@ import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
+import type { EmailEnvInfo } from '../types';
 import type { UserProfile } from '../user-profile';
 
 export class LaunchService {
 	draftStorage: DraftStorage;
 	newsletterStorage: NewsletterStorage;
 	userProfile: UserProfile;
+	emailClent: SESClient;
+	emailEnvInfo: EmailEnvInfo;
 
 	constructor(
 		draftStorage: DraftStorage,
 		newsletterStorage: NewsletterStorage,
 		userProfile: UserProfile,
+		emailClent: SESClient,
+		emailEnvInfo: EmailEnvInfo,
 	) {
 		this.draftStorage = draftStorage;
 		this.newsletterStorage = newsletterStorage;
 		this.userProfile = userProfile;
+		this.emailClent = emailClent;
+		this.emailEnvInfo = emailEnvInfo;
 	}
 
 	async launchDraft(
@@ -62,6 +70,7 @@ export class LaunchService {
 				draftDeleteResponse.message,
 			);
 		}
+
 		return newsletterCreateResponse;
 	}
 }

@@ -14,7 +14,6 @@ import { RadioSelectInput } from './RadioSelectInput';
 import { SchemaArrayInput } from './SchemaArrayInput';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaRecordArrayInput } from './SchemaRecordArrayInput';
-// eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
 import { SchemaRecordInput } from './SchemaRecordInput';
 import { SelectInput } from './SelectInput';
 import { StringInput } from './StringInput';

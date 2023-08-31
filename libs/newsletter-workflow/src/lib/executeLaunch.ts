@@ -1,3 +1,4 @@
+import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import type {
 	FormDataRecord,
 	LaunchService,
@@ -55,6 +56,12 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 	if (!response.ok) {
 		return { isFailure: true, message: response.message };
 	}
+
+	void sendEmailNotifications(
+		{ messageTemplateId: 'NEWSLETTER_LAUNCH', newsletter: response.data },
+		launchService.emailClent,
+		launchService.emailEnvInfo,
+	);
 
 	return {
 		data: {
