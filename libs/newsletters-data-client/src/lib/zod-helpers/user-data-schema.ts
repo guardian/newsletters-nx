@@ -7,12 +7,24 @@ export const getUserEditSchema = (permissions: UserPermissions): ZodObject<ZodRa
 		permissions;
 	if (editNewsletters) {
 		return newsletterDataSchema.pick({
+			name: true,
+			frequency: true,
+			regionFocus: true,
+			theme: true,
+			status: true,
 			tagCreationsStatus: true,
-			brazeCampaignCreationsStatus: true,
+			seriesTag: true,
+			composerTag: true,
+			composerCampaignTag: true,
 			ophanCampaignCreationsStatus: true,
 			signupPageCreationsStatus: true,
 			signupPage: true,
 			signUpDescription: true,
+			brazeCampaignCreationsStatus: true,
+			brazeNewsletterName: true,
+			brazeSubscribeAttributeName: true,
+			brazeSubscribeEventNamePrefix: true,
+			brazeSubscribeAttributeNameAlternate: true,
 		});
 	}
 	if (editBraze) {
