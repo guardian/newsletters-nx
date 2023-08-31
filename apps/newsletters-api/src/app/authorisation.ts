@@ -37,7 +37,9 @@ export const isAuthorisedToUpdateNewsletter = async (
 	}
 	const updateKeys = Object.keys(modifications);
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call
+
+	// @typescript-eslint/no-unsafe-call -- this is safe
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument -- this is safe
 	const userEditSchema = Object.keys(getUserEditSchema(permissions));
 	return updateKeys.every((key) => userEditSchema.includes(key));
 };
