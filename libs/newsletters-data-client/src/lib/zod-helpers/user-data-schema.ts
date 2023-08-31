@@ -1,8 +1,10 @@
-import type {ZodObject, ZodRawShape} from "zod";
-import {newsletterDataSchema} from "../schemas/newsletter-data-type";
+import type { ZodObject, ZodRawShape } from 'zod';
+import { newsletterDataSchema } from '../schemas/newsletter-data-type';
 import type { UserPermissions } from '../user-profile';
 
-export const getUserEditSchema = (permissions: UserPermissions): ZodObject<ZodRawShape> => {
+export const getUserEditSchema = (
+	permissions: UserPermissions,
+): ZodObject<ZodRawShape> => {
 	const { editBraze, editOphan, editTags, editSignUpPage, editNewsletters } =
 		permissions;
 	if (editNewsletters) {

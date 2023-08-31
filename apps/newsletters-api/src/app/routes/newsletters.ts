@@ -11,7 +11,7 @@ import { signTemplateImages } from '../../services/image/image-signer';
 import { newsletterStore } from '../../services/storage';
 import {
 	hasEditAccess,
-	isAuthorisedToUpdateNewsletter,
+	isAuthorisedToMakeRequestedNewsletterUpdate,
 } from '../authorisation';
 import { getUserProfile } from '../get-user-profile';
 import {
@@ -90,12 +90,18 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 	) => {
 		const user = getUserProfile(request);
 		const isAuthorised = await hasEditAccess(user.profile);
-		const isAuthorisedForUpdate = await isAuthorisedToUpdateNewsletter(
-			user.profile,
-			request,
-		);
-		if (!isAuthorised || !isAuthorisedForUpdate) {
-			void reply.status(403).send(makeErrorResponse('You do not have edit access'));
+		const { body: update } = request;
+
+		if (!isPartialNewsletterData(update)) {
+			void reply.status(403).send(makeErrorResponse('invalid update data'));
+		} else {
+			const isAuthorisedForUpdate =
+				await isAuthorisedToMakeRequestedNewsletterUpdate(user.profile, update);
+			if (!isAuthorised || !isAuthorisedForUpdate) {
+				void reply
+					.status(403)
+					.send(makeErrorResponse('You do not have edit access'));
+			}
 		}
 	};
 

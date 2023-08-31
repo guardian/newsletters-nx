@@ -1,9 +1,8 @@
-import type { FastifyRequest } from 'fastify/types/request';
-import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
-import {
-	getUserEditSchema,
-	isPartialNewsletterData,
+import type {
+	NewsletterData,
+	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
+import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { permissionService } from '../services/permissions';
 
 export const hasEditAccess = async (
@@ -18,9 +17,9 @@ export const hasEditAccess = async (
 	);
 };
 
-export const isAuthorisedToUpdateNewsletter = async (
+export const isAuthorisedToMakeRequestedNewsletterUpdate = async (
 	profile: UserProfile | undefined,
-	request: FastifyRequest,
+	update: Partial<NewsletterData>,
 ): Promise<boolean> => {
 	if (!profile) return false;
 	const permissions = await permissionService.get(profile);
@@ -28,13 +27,7 @@ export const isAuthorisedToUpdateNewsletter = async (
 
 	if (editNewsletters) return true;
 
-	const { body: modifications } = request;
-
-	if (!isPartialNewsletterData(modifications))  {
-		throw new Error('Invalid newsletter data');
-	}
-
-	const updateKeys = Object.keys(modifications);
+	const updateKeys = Object.keys(update);
 
 	const { shape: userEditSchemaObject } = getUserEditSchema(permissions);
 	const editableProperties = Object.keys(userEditSchemaObject);

@@ -1,8 +1,6 @@
 import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
-import type {
-	NewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
@@ -54,9 +52,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 
 	if (permissions === undefined) return null;
 
-	const userSchema = getUserEditSchema(
-		permissions,
-	);
+	const userSchema = getUserEditSchema(permissions);
 	return (
 		<>
 			<SimpleForm
