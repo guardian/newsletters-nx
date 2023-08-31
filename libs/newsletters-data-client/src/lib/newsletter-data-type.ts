@@ -199,10 +199,16 @@ export const newsletterDataSchema = z.object({
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),
 	mailSuccessDescription: z.string().optional(),
-	brazeCampaignCreationsStatus: workflowStatusEnumSchema,
-	ophanCampaignCreationsStatus: workflowStatusEnumSchema,
-	signupPageCreationsStatus: workflowStatusEnumSchema,
-	tagCreationsStatus: workflowStatusEnumSchema,
+	brazeCampaignCreationsStatus: workflowStatusEnumSchema.describe(
+		'Braze campaign creation status',
+	),
+	ophanCampaignCreationsStatus: workflowStatusEnumSchema.describe(
+		'Ophan campaign creation status',
+	),
+	signupPageCreationsStatus: workflowStatusEnumSchema.describe(
+		'Sign up creation status',
+	),
+	tagCreationsStatus: workflowStatusEnumSchema.describe('Tag creation status'),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */

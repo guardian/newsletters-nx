@@ -2,9 +2,9 @@ import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import type {
 	NewsletterData,
-	UserPermissions,
+	newsletterDataSchema,
 } from '@newsletters-nx/newsletters-data-client';
-import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
 import { SimpleForm } from './SimpleForm';
@@ -22,50 +22,6 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		string | undefined
 	>();
 
-	const userEditSchema = (permissions: UserPermissions) => {
-		const { editBraze, editOphan, editTags, editSignUpPage, editNewsletters } =
-			permissions;
-		if (editNewsletters) {
-			return newsletterDataSchema.pick({
-				tagCreationsStatus: true,
-				brazeCampaignCreationsStatus: true,
-				ophanCampaignCreationsStatus: true,
-				signupPageCreationsStatus: true,
-				signupPage: true,
-				signUpDescription: true,
-			});
-		}
-		if (editBraze) {
-			return newsletterDataSchema.pick({
-				brazeCampaignCreationsStatus: true,
-				brazeNewsletterName: true,
-				brazeSubscribeAttributeName: true,
-				brazeSubscribeEventNamePrefix: true,
-				brazeSubscribeAttributeNameAlternate: true,
-			});
-		}
-		if (editOphan) {
-			return newsletterDataSchema.pick({
-				ophanCampaignCreationsStatus: true,
-			});
-		}
-		if (editTags) {
-			return newsletterDataSchema.pick({
-				tagCreationsStatus: true,
-				seriesTag: true,
-				composerTag: true,
-				composerCampaignTag: true,
-			});
-		}
-		if (editSignUpPage) {
-			return newsletterDataSchema.pick({
-				signupPageCreationsStatus: true,
-				signupPage: true,
-				signUpDescription: true,
-			});
-		}
-		throw new Error('No permissions found');
-	};
 	const requestUpdate = async (modification: Partial<NewsletterData>) => {
 		if (waitingForResponse) {
 			return;
@@ -97,15 +53,19 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		}
 	};
 
-	if (!permissions) return null;
+	if (permissions === undefined) return null;
 
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	const userSchema = getUserEditSchema(
+		permissions,
+	) as typeof newsletterDataSchema;
 	return (
 		<>
 			<SimpleForm
 				title={`Edit ${originalItem.identityName}`}
 				initialData={item}
 				submit={requestUpdate}
-				schema={userEditSchema(permissions) as typeof newsletterDataSchema}
+				schema={userSchema}
 				submitButtonText="Update Newsletter"
 				isDisabled={waitingForResponse}
 				maxOptionsForRadioButtons={5}
