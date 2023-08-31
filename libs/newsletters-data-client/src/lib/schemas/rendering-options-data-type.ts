@@ -26,6 +26,15 @@ export const renderingOptionsSchema = z.object({
 	displayStandfirst: z.boolean().describe('Display standfirst?'),
 	contactEmail: z.string().email().optional().describe('Contact email'),
 	displayImageCaptions: z.boolean().describe('Display image captions?'),
+	darkHeadlineBackground: z
+		.boolean()
+		.optional()
+		.describe('Dark headline section?'),
+	displayNewsletterName: z
+		.boolean()
+		.optional()
+		.describe('Display Newsletter name above headline?'),
+
 	paletteOverride: themeEnumSchema.optional().describe('Palette override'),
 	linkListSubheading: z
 		.array(z.string())
