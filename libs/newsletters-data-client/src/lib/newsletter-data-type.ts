@@ -200,7 +200,7 @@ export const newsletterDataSchema = z.object({
 	thrasherOptions: thrasherOptionsSchema.optional(),
 	mailSuccessDescription: z.string().optional(),
 	brazeCampaignCreationsStatus: workflowStatusEnumSchema.describe(
-		'Braze campaign creation status',
+	 	'Braze campaign creation status',
 	),
 	ophanCampaignCreationsStatus: workflowStatusEnumSchema.describe(
 		'Ophan campaign creation status',
