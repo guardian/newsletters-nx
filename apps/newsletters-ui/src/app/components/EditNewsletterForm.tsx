@@ -2,7 +2,6 @@ import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import type {
 	NewsletterData,
-	newsletterDataSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
@@ -55,10 +54,9 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 
 	if (permissions === undefined) return null;
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- this is safe
 	const userSchema = getUserEditSchema(
 		permissions,
-	) as typeof newsletterDataSchema;
+	);
 	return (
 		<>
 			<SimpleForm

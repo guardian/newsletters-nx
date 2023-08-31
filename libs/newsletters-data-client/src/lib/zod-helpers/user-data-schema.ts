@@ -1,7 +1,8 @@
+import type {ZodObject, ZodRawShape} from "zod";
 import { newsletterDataSchema } from '../newsletter-data-type';
 import type { UserPermissions } from '../user-profile';
 
-export const getUserEditSchema = (permissions: UserPermissions) => {
+export const getUserEditSchema = (permissions: UserPermissions): ZodObject<ZodRawShape> => {
 	const { editBraze, editOphan, editTags, editSignUpPage, editNewsletters } =
 		permissions;
 	if (editNewsletters) {
@@ -12,7 +13,7 @@ export const getUserEditSchema = (permissions: UserPermissions) => {
 			signupPageCreationsStatus: true,
 			signupPage: true,
 			signUpDescription: true,
-		}) as typeof newsletterDataSchema;
+		});
 	}
 	if (editBraze) {
 		return newsletterDataSchema.pick({
@@ -21,12 +22,12 @@ export const getUserEditSchema = (permissions: UserPermissions) => {
 			brazeSubscribeAttributeName: true,
 			brazeSubscribeEventNamePrefix: true,
 			brazeSubscribeAttributeNameAlternate: true,
-		}) as typeof newsletterDataSchema;
+		});
 	}
 	if (editOphan) {
 		return newsletterDataSchema.pick({
 			ophanCampaignCreationsStatus: true,
-		}) as typeof newsletterDataSchema;
+		});
 	}
 	if (editTags) {
 		return newsletterDataSchema.pick({
@@ -34,14 +35,14 @@ export const getUserEditSchema = (permissions: UserPermissions) => {
 			seriesTag: true,
 			composerTag: true,
 			composerCampaignTag: true,
-		}) as typeof newsletterDataSchema;
+		});
 	}
 	if (editSignUpPage) {
 		return newsletterDataSchema.pick({
 			signupPageCreationsStatus: true,
 			signupPage: true,
 			signUpDescription: true,
-		}) as typeof newsletterDataSchema;
+		});
 	}
 	throw new Error('No permissions found');
 };
