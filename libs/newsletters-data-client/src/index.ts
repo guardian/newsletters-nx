@@ -21,3 +21,4 @@ export * from './lib/user-profile';
 export * from './lib/wizard-button-type';
 export * from './lib/zod-helpers';
 export * from './lib/json-undefined-null-conversions';
+export * from './lib/zod-helpers/user-data-schema';

@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 import { useLoaderData } from 'react-router-dom';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
+import { shouldShowEditOptions } from '../services/authorisation';
 import { ScrollingMenuButton } from './ScrollingMenuButton';
 
 const ButtonGridItem = ({
@@ -58,6 +59,10 @@ export function HomeMenu() {
 	const permissions = usePermissions();
 	const navigate = useNavigate();
 
+	if (!permissions) return null;
+
+	const showEditOptions = shouldShowEditOptions(permissions);
+
 	return (
 		<Container maxWidth={'lg'}>
 			<Grid container spacing={3} rowSpacing={6} paddingY={4}>
@@ -67,7 +72,7 @@ export function HomeMenu() {
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 
-				{permissions?.writeToDrafts && (
+				{permissions.writeToDrafts && (
 					<ButtonGridItem
 						path="/drafts/newsletter-data"
 						content={'Create newsletter wizard'}
@@ -75,7 +80,7 @@ export function HomeMenu() {
 					/>
 				)}
 
-				{permissions?.editNewsletters && (
+				{showEditOptions && (
 					<Grid item xs={6} sm={4} display={'flex'}>
 						<ScrollingMenuButton
 							buttonText="update newsletter"
@@ -97,7 +102,7 @@ export function HomeMenu() {
 					</Grid>
 				)}
 
-				{permissions?.editNewsletters && (
+				{permissions.editNewsletters && (
 					<Grid item xs={6} sm={4} display={'flex'}>
 						<ScrollingMenuButton
 							buttonText="set rendering options"
