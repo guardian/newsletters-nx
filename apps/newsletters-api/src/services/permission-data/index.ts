@@ -1,5 +1,4 @@
 export {
-	getPinboardPermissionOverrides,
 	userHasPinboardPermission,
+	getAllPinboardPermissionsData,
 } from './get-permissions-data';
-export { buildS3 } from './build-client';

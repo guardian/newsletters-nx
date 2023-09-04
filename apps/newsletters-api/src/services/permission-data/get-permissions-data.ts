@@ -16,7 +16,7 @@ interface Permission {
 }
 
 // borrowed from https://github.com/guardian/pinboard/blob/main/shared/permissions.ts#L17
-export const getPinboardPermissionOverrides = (S3: S3) =>
+const getPinboardPermissionOverrides = (S3: S3) =>
 	S3.getObject({
 		Bucket: 'permissions-cache',
 		Key: `${STAGE}/permissions.json`,
@@ -46,4 +46,9 @@ export const userHasPinboardPermission = (
 		(overrides) =>
 			!!overrides?.find(({ userId, active }) => userId === userEmail && active),
 	);
+};
+
+export const getAllPinboardPermissionsData = () => {
+	const s3 = buildS3();
+	return getPinboardPermissionOverrides(s3);
 };

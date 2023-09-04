@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import {
-	buildS3,
-	getPinboardPermissionOverrides,
+	getAllPinboardPermissionsData,
 	userHasPinboardPermission,
 } from '../../services/permission-data';
 import { permissionService } from '../../services/permissions';
@@ -23,9 +22,8 @@ export function registerUserRoute(app: FastifyInstance) {
 		return res.send(makeSuccessResponse(permissions));
 	});
 
-	app.get('/api/user/permission-data', async (req, res) => {
-		const s3 = buildS3();
-		const data = await getPinboardPermissionOverrides(s3);
+	app.get('/api/user/who-can-pinboard', async (req, res) => {
+		const data = await getAllPinboardPermissionsData();
 		return res.send({ permissions: data });
 	});
 
