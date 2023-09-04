@@ -4,7 +4,7 @@ import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
-import { formatCellDate } from './Cell';
+import { formatCellDate, formatStatusCell } from './Cell';
 import { ExternalLinkButton } from './ExternalLinkButton';
 import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
@@ -58,6 +58,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Header: 'Status',
 				accessor: 'status',
 				sortType: 'basic',
+				Cell: formatStatusCell,
 			},
 		];
 
