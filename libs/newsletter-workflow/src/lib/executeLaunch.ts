@@ -17,6 +17,14 @@ const DERIVED_FIELD_KEYS: Array<keyof NewsletterData> = [
 	'campaignCode',
 ];
 
+// TODO: determine the correct statuses for this properties based on the type of the newsletter and the success of a call to the email service
+const asyncWorkflowRequestStatusDefaults: Partial<NewsletterData> = {
+	brazeCampaignCreationsStatus: 'REQUESTED',
+	ophanCampaignCreationsStatus: 'REQUESTED',
+	signupPageCreationsStatus: 'REQUESTED',
+	tagCreationsStatus: 'REQUESTED',
+};
+
 const getExtraValuesFromFormData = (
 	formData: FormDataRecord = {},
 ): Partial<NewsletterData> => {
@@ -49,10 +57,10 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 		return { isFailure: true, message: 'ERROR: no launch service available' };
 	}
 
-	const response = await launchService.launchDraft(
-		draftId,
-		getExtraValuesFromFormData(stepData.formData),
-	);
+	const response = await launchService.launchDraft(draftId, {
+		...getExtraValuesFromFormData(stepData.formData),
+		...asyncWorkflowRequestStatusDefaults,
+	});
 	if (!response.ok) {
 		return { isFailure: true, message: response.message };
 	}
