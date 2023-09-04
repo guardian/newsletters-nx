@@ -44,7 +44,7 @@ export const formatStatusCell = ({
 	if (!value) return <span></span>;
 
 	const status = value.toLowerCase();
-	const statusClass =
+	const statusCell =
 		status === 'pending' ? (
 			<Tooltip title={statuses}>
 				<span style={{ cursor: 'pointer', display: 'flex' }}>
@@ -54,5 +54,5 @@ export const formatStatusCell = ({
 		) : (
 			status
 		);
-	return <span>{statusClass}</span>;
+	return <span>{statusCell}</span>;
 };
