@@ -1,6 +1,9 @@
 import { ButtonGroup, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	EmailRenderData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { fetchApiData } from '../api-requests/fetch-api-data';
 import { NavigateButton } from './NavigateButton';
 import { TemplatePreview } from './TemplatePreview';
@@ -13,11 +16,11 @@ export const RenderingPreviewPage = ({ newsletter }: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
 
 	const fetchData = useCallback(async () => {
-		const data = await fetchApiData<{ content: string }>(
+		const data = await fetchApiData<EmailRenderData>(
 			`/api/rendering-templates/preview/${newsletter.identityName}`,
 		);
 		if (data) {
-			setContent(data.content);
+			setContent(data.html);
 		}
 	}, [newsletter]);
 

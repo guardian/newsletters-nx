@@ -1,5 +1,8 @@
 import type { FastifyInstance } from 'fastify';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	EmailRenderData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { getEmailRenderingHost } from '../../apiDeploymentSettings';
 import { newsletterStore } from '../../services/storage';
 import {
@@ -15,7 +18,7 @@ export type RenderingTemplate = {
 };
 
 const emailRenderingHost = getEmailRenderingHost();
-const NEWSLETTER_RENDER_URL = `${emailRenderingHost}/data-article/render-template`;
+const NEWSLETTER_RENDER_URL = `${emailRenderingHost}/data-article/render-template.json`;
 const TEMPLATES_LIST_URL = `${emailRenderingHost}/info/templates/`;
 
 export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
@@ -55,8 +58,9 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 				body: JSON.stringify(storageResponse.data),
 			});
 
-			const content = await emailRenderingResponse.text();
-			return makeSuccessResponse({ content });
+			const emailRenderingJson =
+				(await emailRenderingResponse.json()) as EmailRenderData;
+			return makeSuccessResponse(emailRenderingJson);
 		},
 	);
 
@@ -71,8 +75,9 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 				body: JSON.stringify(req.body),
 			});
 
-			const content = await emailRenderingResponse.text();
-			return makeSuccessResponse({ content });
+			const emailRenderingJson =
+				(await emailRenderingResponse.json()) as EmailRenderData;
+			return makeSuccessResponse(emailRenderingJson);
 		},
 	);
 }

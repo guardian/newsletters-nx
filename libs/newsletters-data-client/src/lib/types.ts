@@ -3,3 +3,9 @@ export type EmailEnvInfo = {
 	testRecipients: string[];
 	areEmailNotificationsEnabled: boolean;
 };
+
+export type EmailRenderData = {
+	html: string;
+	startTime: number;
+	renderTime: number;
+};
