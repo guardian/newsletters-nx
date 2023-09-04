@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type {
-	EmailRenderData,
+	DemoRenderData,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { fetchPostApiData } from '../api-requests/fetch-api-data';
@@ -30,7 +30,7 @@ export const TemplatePreviewLoader = ({
 		setFetchInProgress(true);
 		setFetchTime(Date.now());
 		setDataLastPosted(newsletterData);
-		const data = await fetchPostApiData<EmailRenderData>(
+		const data = await fetchPostApiData<DemoRenderData>(
 			`/api/rendering-templates/preview`,
 			newsletterData,
 		);
