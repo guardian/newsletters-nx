@@ -22,13 +22,13 @@ export class LaunchService {
 		draftStorage: DraftStorage,
 		newsletterStorage: NewsletterStorage,
 		userProfile: UserProfile,
-		emailClent: SESClient,
+		emailClient: SESClient,
 		emailEnvInfo: EmailEnvInfo,
 	) {
 		this.draftStorage = draftStorage;
 		this.newsletterStorage = newsletterStorage;
 		this.userProfile = userProfile;
-		this.emailClent = emailClent;
+		this.emailClent = emailClient;
 		this.emailEnvInfo = emailEnvInfo;
 	}
 
