@@ -1,23 +1,28 @@
-import type { S3 } from '@aws-sdk/client-s3';
 import { STAGE } from './aws-params';
 import { buildS3 } from './build-client';
+import { localPermissions } from './local-test-permissions';
+import type { Override, Permission } from './types';
 
-interface Override {
-	userId: string;
-	active: boolean;
-}
+const useLocalPinboardPermissions = (): Promise<Override[] | undefined> => {
+	const allPermissions = localPermissions;
 
-interface Permission {
-	permission: {
-		name: string;
-		app: string;
-	};
-	overrides: Override[];
-}
+	const overrides = allPermissions.find(
+		({ permission }) =>
+			permission.app === 'pinboard' && permission.name === 'pinboard',
+	)?.overrides;
+
+	return Promise.resolve(overrides);
+};
 
 // borrowed from https://github.com/guardian/pinboard/blob/main/shared/permissions.ts#L17
-const getPinboardPermissionOverrides = (S3: S3) =>
-	S3.getObject({
+const getPinboardPermissionOverrides = () => {
+	if (STAGE !== 'CODE' && STAGE !== 'PROD') {
+		return useLocalPinboardPermissions();
+	}
+
+	const S3 = buildS3();
+
+	return S3.getObject({
 		Bucket: 'permissions-cache',
 		Key: `${STAGE}/permissions.json`,
 	})
@@ -36,19 +41,17 @@ const getPinboardPermissionOverrides = (S3: S3) =>
 					permission.app === 'pinboard' && permission.name === 'pinboard',
 			)?.overrides;
 		});
+};
 
 export const userHasPinboardPermission = (
 	userEmail: string,
 ): Promise<boolean> => {
-	const s3 = buildS3();
-
-	return getPinboardPermissionOverrides(s3).then(
+	return getPinboardPermissionOverrides().then(
 		(overrides) =>
 			!!overrides?.find(({ userId, active }) => userId === userEmail && active),
 	);
 };
 
 export const getAllPinboardPermissionsData = () => {
-	const s3 = buildS3();
-	return getPinboardPermissionOverrides(s3);
+	return getPinboardPermissionOverrides();
 };
