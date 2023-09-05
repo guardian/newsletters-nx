@@ -2,6 +2,7 @@ import { Alert, Box, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type {
 	EmailRenderingOutput,
+	EmailRenderingWarning,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { fetchPostApiData } from '../api-requests/fetch-api-data';
@@ -17,9 +18,9 @@ export const TemplatePreviewLoader = ({
 	minHeight = 800,
 }: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
-	const [warnings, setWarnings] = useState<
-		EmailRenderingOutput['warnings'] | undefined
-	>(undefined);
+	const [warnings, setWarnings] = useState<EmailRenderingWarning[] | undefined>(
+		undefined,
+	);
 
 	const [dataLastPosted, setDataLastPosted] = useState<
 		NewsletterData | undefined
