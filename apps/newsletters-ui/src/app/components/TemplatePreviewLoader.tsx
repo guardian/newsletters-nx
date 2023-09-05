@@ -1,3 +1,4 @@
+import { Alert, Box, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type {
 	DemoRenderData,
@@ -16,6 +17,9 @@ export const TemplatePreviewLoader = ({
 	minHeight = 800,
 }: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
+	const [warnings, setWarnings] = useState<
+		DemoRenderData['warnings'] | undefined
+	>(undefined);
 
 	const [dataLastPosted, setDataLastPosted] = useState<
 		NewsletterData | undefined
@@ -37,6 +41,7 @@ export const TemplatePreviewLoader = ({
 		setFetchInProgress(false);
 		if (data) {
 			setContent(data.html);
+			setWarnings(data.warnings);
 		}
 	}, [newsletterData]);
 
@@ -84,10 +89,24 @@ export const TemplatePreviewLoader = ({
 	]);
 
 	return (
-		<TemplatePreview
-			html={content}
-			isLoading={fetchScheduled || fetchInProgress}
-			minHeight={minHeight}
-		/>
+		<>
+			{warnings && warnings.length > 0 && (
+				<Alert severity="warning">
+					<Typography>Render Warnings</Typography>
+					<Box component="ul">
+						{warnings.map((warning, index) => (
+							<Typography component={'li'} key={index}>
+								{warning.message}
+							</Typography>
+						))}
+					</Box>
+				</Alert>
+			)}
+			<TemplatePreview
+				html={content}
+				isLoading={fetchScheduled || fetchInProgress}
+				minHeight={minHeight}
+			/>
+		</>
 	);
 };
