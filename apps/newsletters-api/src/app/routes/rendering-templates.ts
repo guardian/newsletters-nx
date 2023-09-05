@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type {
-	DemoRenderData,
+	EmailRenderingOutput,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { getEmailRenderingHost } from '../../apiDeploymentSettings';
@@ -59,7 +59,7 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 			});
 
 			const emailRenderingJson =
-				(await emailRenderingResponse.json()) as DemoRenderData;
+				(await emailRenderingResponse.json()) as EmailRenderingOutput;
 			return makeSuccessResponse(emailRenderingJson);
 		},
 	);
@@ -76,7 +76,7 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 			});
 
 			const emailRenderingJson =
-				(await emailRenderingResponse.json()) as DemoRenderData;
+				(await emailRenderingResponse.json()) as EmailRenderingOutput;
 
 			return makeSuccessResponse(emailRenderingJson);
 		},

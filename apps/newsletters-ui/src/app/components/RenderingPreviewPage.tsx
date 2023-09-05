@@ -1,7 +1,7 @@
 import { ButtonGroup, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type {
-	DemoRenderData,
+	EmailRenderingOutput,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { fetchApiData } from '../api-requests/fetch-api-data';
@@ -16,7 +16,7 @@ export const RenderingPreviewPage = ({ newsletter }: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
 
 	const fetchData = useCallback(async () => {
-		const data = await fetchApiData<DemoRenderData>(
+		const data = await fetchApiData<EmailRenderingOutput>(
 			`/api/rendering-templates/preview/${newsletter.identityName}`,
 		);
 		if (data) {

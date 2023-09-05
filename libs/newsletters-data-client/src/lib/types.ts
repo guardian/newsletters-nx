@@ -4,11 +4,11 @@ export type EmailEnvInfo = {
 	areEmailNotificationsEnabled: boolean;
 };
 
-export type DemoRenderWarning = {
+export type EmailRenderingWarning = {
 	message: string;
 };
 
-export type DemoRenderData = {
+export type EmailRenderingOutput = {
 	html: string;
-	warnings?: DemoRenderWarning[];
+	warnings?: EmailRenderingWarning[];
 };

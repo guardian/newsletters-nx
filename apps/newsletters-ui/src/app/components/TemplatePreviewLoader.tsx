@@ -1,7 +1,7 @@
 import { Alert, Box, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import type {
-	DemoRenderData,
+	EmailRenderingOutput,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { fetchPostApiData } from '../api-requests/fetch-api-data';
@@ -18,7 +18,7 @@ export const TemplatePreviewLoader = ({
 }: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
 	const [warnings, setWarnings] = useState<
-		DemoRenderData['warnings'] | undefined
+		EmailRenderingOutput['warnings'] | undefined
 	>(undefined);
 
 	const [dataLastPosted, setDataLastPosted] = useState<
@@ -34,7 +34,7 @@ export const TemplatePreviewLoader = ({
 		setFetchInProgress(true);
 		setFetchTime(Date.now());
 		setDataLastPosted(newsletterData);
-		const data = await fetchPostApiData<DemoRenderData>(
+		const data = await fetchPostApiData<EmailRenderingOutput>(
 			`/api/rendering-templates/preview`,
 			newsletterData,
 		);
