@@ -78,7 +78,6 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 			const emailRenderingJson =
 				(await emailRenderingResponse.json()) as DemoRenderData;
 
-			console.log('warnings', emailRenderingJson.warnings);
 			return makeSuccessResponse(emailRenderingJson);
 		},
 	);
