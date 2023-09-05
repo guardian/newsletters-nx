@@ -39,10 +39,10 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	thrasherDate: new Date(87678876),
 	privateUntilLaunch: false,
 	onlineArticle: 'Web for all sends',
-	brazeCampaignCreationsStatus: 'NOT_REQUESTED',
-	ophanCampaignCreationsStatus: 'NOT_REQUESTED',
-	signupPageCreationsStatus: 'NOT_REQUESTED',
-	tagCreationsStatus: 'NOT_REQUESTED',
+	brazeCampaignCreationStatus: 'NOT_REQUESTED',
+	ophanCampaignCreationStatus: 'NOT_REQUESTED',
+	signupPageCreationStatus: 'NOT_REQUESTED',
+	tagCreationStatus: 'NOT_REQUESTED',
 };
 
 export const TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS: NewsletterData =
