@@ -28,19 +28,19 @@ export const formatStatusCell = ({
 	},
 }: Cell<string>) => {
 	const {
-		brazeCampaignCreationsStatus,
-		ophanCampaignCreationsStatus,
-		signupPageCreationsStatus,
-		tagCreationsStatus,
+		brazeCampaignCreationStatus,
+		ophanCampaignCreationStatus,
+		signupPageCreationStatus,
+		tagCreationStatus,
 	} = original;
 
 	const statuses = `Braze status: ${formatStatus(
-		brazeCampaignCreationsStatus,
+		brazeCampaignCreationStatus,
 	)}, Ophan status: ${formatStatus(
-		ophanCampaignCreationsStatus,
+		ophanCampaignCreationStatus,
 	)}, Signup page status: ${formatStatus(
-		signupPageCreationsStatus,
-	)}, Tag status: ${formatStatus(tagCreationsStatus)}`;
+		signupPageCreationStatus,
+	)}, Tag status: ${formatStatus(tagCreationStatus)}`;
 	if (!value) return <span></span>;
 
 	const status = value.toLowerCase();
