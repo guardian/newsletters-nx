@@ -1,4 +1,4 @@
-import { VALID_TECHSCAPE } from '../fixtures/newsletter-fixtures';
+import { VALID_TECHSCAPE } from '../../fixtures/newsletter-fixtures';
 import type {
 	LegacyCancelledNewsletter,
 	LegacyNewsletter,

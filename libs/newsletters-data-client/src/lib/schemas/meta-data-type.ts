@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { UserProfile } from './user-profile';
+import type { UserProfile } from '../user-profile';
 
 export const metaDataSchema = z.object({
 	createdTimestamp: z.number(),

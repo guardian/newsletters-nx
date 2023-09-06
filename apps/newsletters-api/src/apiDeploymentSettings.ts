@@ -85,6 +85,10 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 				case UserAccessLevel.Editor:
 				case UserAccessLevel.Drafter:
 				case UserAccessLevel.Viewer:
+				case UserAccessLevel.OphanEditor:
+				case UserAccessLevel.BrazeEditor:
+				case UserAccessLevel.TagEditor:
+				case UserAccessLevel.SignUpPageEditor:
 					output[key] = value;
 					break;
 			}
@@ -100,7 +104,10 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 const EMAIL_RENDERING_LOCAL = 'http://localhost:3010';
 const EMAIL_RENDERING = 'https://email-rendering.guardianapis.com';
 export const getEmailRenderingHost = (): string => {
-	return process.env.USE_LOCAL_EMAIL_RENDERING
+	return process.env.USE_LOCAL_EMAIL_RENDERING === 'true'
 		? EMAIL_RENDERING_LOCAL
 		: EMAIL_RENDERING;
 };
+
+export const areEmailNotificationsEnabled = () =>
+	process.env.ENABLE_EMAIL_SERVICE === 'true';

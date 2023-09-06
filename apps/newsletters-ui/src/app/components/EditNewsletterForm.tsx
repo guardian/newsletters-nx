@@ -1,8 +1,9 @@
 import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { usePermissions } from '../hooks/user-hooks';
 import { SimpleForm } from './SimpleForm';
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 
 export const EditNewsletterForm = ({ originalItem }: Props) => {
 	const [item, setItem] = useState(originalItem);
+	const permissions = usePermissions();
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [confirmationMessage, setConfirmationMessage] = useState<
@@ -48,20 +50,16 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		}
 	};
 
+	if (permissions === undefined) return null;
+
+	const userSchema = getUserEditSchema(permissions);
 	return (
 		<>
 			<SimpleForm
 				title={`Edit ${originalItem.identityName}`}
 				initialData={item}
 				submit={requestUpdate}
-				schema={newsletterDataSchema.pick({
-					name: true,
-					signUpDescription: true,
-					frequency: true,
-					regionFocus: true,
-					theme: true,
-					status: true,
-				})}
+				schema={userSchema}
 				submitButtonText="Update Newsletter"
 				isDisabled={waitingForResponse}
 				maxOptionsForRadioButtons={5}

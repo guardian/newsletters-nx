@@ -4,12 +4,10 @@ import { executeLaunch } from '../../executeLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
-// TODO - this page is a placeholder until we implement automation
-// I have added it so that both Ophan and Edit Ophan point to a single place from which to call the Launch functionality
 const markdownTemplate = `
-## {{name}} is ready to launch
+## {{name}} is ready for a launch request
 
-All the steps have been completed, so please press the Launch button when you're ready to continue.
+All the data collection steps have now been completed. By requesting a launch for this newsletter, the teams responsible for creating tags, sign-up pages, the Braze campaign and tracking the newsletter will be notified. Once these tasks have been completed, the newsletter will be ready to send.
 
 `.trim();
 
@@ -36,7 +34,7 @@ export const doLaunchLayout: WizardStepLayout<LaunchService> = {
 		},
 		next: {
 			buttonType: 'LAUNCH',
-			label: 'Launch',
+			label: 'Request Launch',
 			stepToMoveTo: 'finish',
 			executeStep: executeLaunch,
 		},

@@ -1,21 +1,13 @@
 import { z } from 'zod';
-import type { MetaData } from './meta-data-type';
-import { metaDataSchema } from './meta-data-type';
 import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
 	underscoreCasedString,
-	urlPathString,
-} from './zod-helpers';
-
-export const themeEnumSchema = z.enum([
-	'news',
-	'opinion',
-	'culture',
-	'sport',
-	'lifestyle',
-	'features',
-]);
+} from '../zod-helpers';
+import type { MetaData } from './meta-data-type';
+import { metaDataSchema } from './meta-data-type';
+import { renderingOptionsSchema } from './rendering-options-data-type';
+import { themeEnumSchema } from './theme-enum-data-type';
 
 export const workflowStatusEnumSchema = z.enum([
 	'NOT_REQUESTED',
@@ -24,8 +16,6 @@ export const workflowStatusEnumSchema = z.enum([
 ]);
 
 export type WorkflowStatus = z.infer<typeof workflowStatusEnumSchema>;
-
-export type Theme = z.infer<typeof themeEnumSchema>;
 
 export const regionFocusEnumSchema = z
 	.enum(['UK', 'AU', 'US', 'INTL'])
@@ -41,57 +31,6 @@ export const singleThrasherLocation = z
 	.enum(['Web only', 'App only', 'Web and App'])
 	.optional();
 export type SingleThrasherLocation = z.infer<typeof singleThrasherLocation>;
-
-export const readMoreSectionSchema = z
-	.object({
-		subheading: nonEmptyString().describe('read more subheading'),
-		wording: nonEmptyString().describe('read more wording'),
-		url: z.string().url().optional().describe('read more url'),
-		onwardPath: urlPathString().optional(),
-		isDarkTheme: z.boolean().optional().describe('use dark theme for section'),
-	})
-	.describe('Read more section configuration');
-
-export const renderingOptionsSchema = z.object({
-	displayDate: z.boolean().describe('Display date?'),
-	displayStandfirst: z.boolean().describe('Display standfirst?'),
-	contactEmail: z.string().email().optional().describe('Contact email'),
-	displayImageCaptions: z.boolean().describe('Display image captions?'),
-	paletteOverride: themeEnumSchema.optional().describe('Palette override'),
-	linkListSubheading: z
-		.array(z.string())
-		.optional()
-		.describe('Link list subheading'),
-	podcastSubheading: z
-		.array(z.string())
-		.optional()
-		.describe('Podcast subheading'),
-	darkThemeSubheading: z
-		.array(z.string())
-		.optional()
-		.describe('Dark theme subheading'),
-	readMoreSections: z
-		.array(readMoreSectionSchema)
-		.optional()
-		.describe('The configuration for read more sections'),
-
-	mainBannerUrl: z
-		.string()
-		.url()
-		.optional()
-		.describe('URL for the main banner'),
-	subheadingBannerUrl: z
-		.string()
-		.url()
-		.optional()
-		.describe('URL for standard subheading banner'),
-	darkSubheadingBannerUrl: z
-		.string()
-		.url()
-		.optional()
-		.describe('URL for dark subheading banner'),
-});
-export type RenderingOptions = z.infer<typeof renderingOptionsSchema>;
 
 export const thrasherOptionsSchema = z.object({
 	singleThrasher: z.boolean().describe('Single thrasher required?'),
@@ -199,10 +138,16 @@ export const newsletterDataSchema = z.object({
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),
 	mailSuccessDescription: z.string().optional(),
-	brazeCampaignCreationsStatus: workflowStatusEnumSchema.optional(),
-	ophanCampaignCreationsStatus: workflowStatusEnumSchema.optional(),
-	signupPageCreationsStatus: workflowStatusEnumSchema.optional(),
-	tagCreationsStatus: workflowStatusEnumSchema.optional(),
+	brazeCampaignCreationStatus: workflowStatusEnumSchema.describe(
+		'Braze campaign creation status',
+	),
+	ophanCampaignCreationStatus: workflowStatusEnumSchema.describe(
+		'Ophan campaign creation status',
+	),
+	signupPageCreationStatus: workflowStatusEnumSchema.describe(
+		'Sign up creation status',
+	),
+	tagCreationStatus: workflowStatusEnumSchema.describe('Tag creation status'),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */

@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { emailEmbedSchema } from './emailEmbedSchema';
-import { themeEnumSchema } from './newsletter-data-type';
-import { nonEmptyString } from './zod-helpers/schema-helpers';
+import { nonEmptyString } from '../zod-helpers/schema-helpers';
+import { emailEmbedSchema } from './email-embed-data-type';
+import { themeEnumSchema } from './theme-enum-data-type';
 
 export const illustrationSchema = z.object({
 	circle: z.string(),

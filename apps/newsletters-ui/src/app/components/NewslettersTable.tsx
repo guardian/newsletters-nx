@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
-import { formatCellDate } from './Cell';
+import { shouldShowEditOptions } from '../services/authorisation';
+import { formatCellDate, formatStatusCell } from './Cell';
 import { ExternalLinkButton } from './ExternalLinkButton';
 import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
@@ -13,7 +14,8 @@ interface Props {
 }
 
 export const NewslettersTable = ({ newsletters }: Props) => {
-	const { editNewsletters } = usePermissions() ?? {};
+	const permissions = usePermissions();
+	const showEditOptions = shouldShowEditOptions(permissions);
 	const data = newsletters;
 
 	const columns = useMemo<Column[]>(() => {
@@ -56,6 +58,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Header: 'Status',
 				accessor: 'status',
 				sortType: 'basic',
+				Cell: formatStatusCell,
 			},
 		];
 
@@ -67,7 +70,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				return (
 					<NavigateButton
 						href={
-							editNewsletters
+							showEditOptions
 								? `/launched/edit/${newsletter.identityName}`
 								: undefined
 						}
@@ -78,7 +81,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 			},
 		};
 
-		return editNewsletters ? [...infoColumns, editColumn] : infoColumns;
-	}, [editNewsletters]);
+		return showEditOptions ? [...infoColumns, editColumn] : infoColumns;
+	}, [showEditOptions]);
 	return <Table data={data} columns={columns} defaultSortId="identityName" />;
 };

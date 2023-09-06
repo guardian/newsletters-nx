@@ -4,7 +4,7 @@ import {
 	ListObjectsCommand,
 	PutObjectCommand,
 } from '@aws-sdk/client-s3';
-import type { NewsletterData } from '../newsletter-data-type';
+import type { NewsletterData } from '../schemas/newsletter-data-type';
 import type { S3NewsletterStorage } from './s3-newsletter-storage';
 
 export const deleteObject =
@@ -53,10 +53,11 @@ export const getNextId = async (
 };
 
 const getStringId = (key: string): string => {
-	// todo - deal with unexpected formats
 	const filenameWithExtension = key.split(':').pop();
-	const stringId = filenameWithExtension!.split('.')[0];
-	return stringId!;
+	if (!filenameWithExtension) throw new Error('Unexpected key format');
+	const stringId = filenameWithExtension.split('.')[0];
+	if (!stringId) throw new Error('Unexpected key format');
+	return stringId;
 };
 
 export const putObject =
