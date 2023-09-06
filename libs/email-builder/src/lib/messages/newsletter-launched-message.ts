@@ -1,10 +1,10 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { renderNewLaunchMessage } from '../components/NewLaunchMessage';
 import { getMessageConfig } from '../message-config';
-import type { MessageContent, NewsletterLaunchedMessageParams } from '../types';
+import type { MessageAboutNewsletterParams, MessageContent } from '../types';
 
 export function buildNewsLetterLaunchMessage(
-	params: NewsletterLaunchedMessageParams,
+	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
 ) {
 	const { newsletter } = params;

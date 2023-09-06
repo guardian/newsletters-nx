@@ -29,26 +29,16 @@ export type NewDraftMessageParams = {
 	messageTemplateId: 'NEW_DRAFT';
 	draft: DraftWithId;
 };
-export type NewsletterLaunchedMessageParams = {
-	messageTemplateId: 'NEWSLETTER_LAUNCH';
-	newsletter: NewsletterData;
-};
-export type RequestBrazeSetUpMessageParams = {
-	messageTemplateId: 'BRAZE_SET_UP_REQUEST';
-	newsletter: NewsletterData;
-};
-export type RequestTagCreationMessageParams = {
-	messageTemplateId: 'TAG_CREATION_REQUEST';
-	newsletter: NewsletterData;
-};
-export type RequestSignUpPageMessageParams = {
-	messageTemplateId: 'SIGN_UP_PAGE_CREATION_REQUEST';
+
+export type MessageAboutNewsletterParams = {
+	messageTemplateId:
+		| 'NEWSLETTER_LAUNCH'
+		| 'SIGN_UP_PAGE_CREATION_REQUEST'
+		| 'TAG_CREATION_REQUEST'
+		| 'BRAZE_SET_UP_REQUEST';
 	newsletter: NewsletterData;
 };
 export type MessageParams =
 	| TestMessageParams
 	| NewDraftMessageParams
-	| NewsletterLaunchedMessageParams
-	| RequestBrazeSetUpMessageParams
-	| RequestTagCreationMessageParams
-	| RequestSignUpPageMessageParams;
+	| MessageAboutNewsletterParams;

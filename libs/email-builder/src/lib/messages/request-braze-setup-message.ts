@@ -2,13 +2,13 @@ import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { renderBrazeSetupRequestMessage } from '../components/RequestBrazeSetUpMessage';
 import { getMessageConfig } from '../message-config';
 import type {
+	MessageAboutNewsletterParams,
 	MessageConfig,
 	MessageContent,
-	RequestBrazeSetUpMessageParams,
 } from '../types';
 
 export function buildBrazeSetUpRequestMessage(
-	params: RequestBrazeSetUpMessageParams,
+	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
 ): { content: MessageContent; messageConfig: MessageConfig } {
 	const { newsletter } = params;

@@ -2,13 +2,13 @@ import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { renderRequestTagCreationMessage } from '../components/RequestTagCreationMessage';
 import { getMessageConfig } from '../message-config';
 import type {
+	MessageAboutNewsletterParams,
 	MessageConfig,
 	MessageContent,
-	RequestTagCreationMessageParams,
 } from '../types';
 
 export function buildTagCreationRequestMessage(
-	params: RequestTagCreationMessageParams,
+	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
 ): { content: MessageContent; messageConfig: MessageConfig } {
 	const { newsletter } = params;

@@ -2,13 +2,13 @@ import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { renderRequestTagCreationMessage } from '../components/RequestSignUpPageCreationMessage';
 import { getMessageConfig } from '../message-config';
 import type {
+	MessageAboutNewsletterParams,
 	MessageConfig,
 	MessageContent,
-	RequestSignUpPageMessageParams,
 } from '../types';
 
 export function buildSignUpPageCreationRequestMessage(
-	params: RequestSignUpPageMessageParams,
+	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
 ): { content: MessageContent; messageConfig: MessageConfig } {
 	const { newsletter } = params;
