@@ -17,14 +17,6 @@ const DERIVED_FIELD_KEYS: Array<keyof NewsletterData> = [
 	'campaignCode',
 ];
 
-// TODO: determine the correct statuses for this properties based on the type of the newsletter and the success of a call to the email service
-const asyncWorkflowRequestStatusDefaults: Partial<NewsletterData> = {
-	brazeCampaignCreationStatus: 'REQUESTED',
-	ophanCampaignCreationStatus: 'REQUESTED',
-	signupPageCreationStatus: 'REQUESTED',
-	tagCreationStatus: 'REQUESTED',
-};
-
 const getExtraValuesFromFormData = (
 	formData: FormDataRecord = {},
 ): Partial<NewsletterData> => {
@@ -43,6 +35,33 @@ const getExtraValuesFromFormData = (
 	);
 };
 
+const sendOutEmailsAndUpdateStatus = async (
+	launchService: LaunchService,
+	newsletter: NewsletterData,
+) => {
+	// TO DO - define other messages, use success valid to set corresponding status
+	const [launchEmailResult] = await Promise.all([
+		sendEmailNotifications(
+			{ messageTemplateId: 'NEWSLETTER_LAUNCH', newsletter },
+			launchService.emailClent,
+			launchService.emailEnvInfo,
+		),
+	]);
+
+	console.log('email results:NEWSLETTER_LAUNCH', launchEmailResult);
+
+	return launchService.updateCreationStatus(newsletter, {
+		brazeCampaignCreationStatus: 'NOT_REQUESTED',
+		ophanCampaignCreationStatus: launchEmailResult.success
+			? 'REQUESTED'
+			: 'NOT_REQUESTED',
+		signupPageCreationStatus: launchEmailResult.success
+			? 'REQUESTED'
+			: 'NOT_REQUESTED',
+		tagCreationStatus: 'NOT_REQUESTED',
+	});
+};
+
 export const executeLaunch: AsyncExecution<LaunchService> = async (
 	stepData,
 	wizardStepData,
@@ -59,17 +78,15 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 
 	const response = await launchService.launchDraft(draftId, {
 		...getExtraValuesFromFormData(stepData.formData),
-		...asyncWorkflowRequestStatusDefaults,
 	});
 	if (!response.ok) {
 		return { isFailure: true, message: response.message };
 	}
 
-	void sendEmailNotifications(
-		{ messageTemplateId: 'NEWSLETTER_LAUNCH', newsletter: response.data },
-		launchService.emailClent,
-		launchService.emailEnvInfo,
-	);
+	// voiding rather than awaiting - the UI doesn't need to wait for the
+	// notification emails and status updates before confirming the
+	// newsletter is in the API
+	void sendOutEmailsAndUpdateStatus(launchService, response.data);
 
 	return {
 		data: {
