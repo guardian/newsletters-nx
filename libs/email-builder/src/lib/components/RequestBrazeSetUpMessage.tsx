@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
+import { NewsletterPropertyTable } from './NewsletterPropertyTable';
 
 interface Props {
 	pageLink: string;
@@ -23,26 +24,16 @@ export const BrazeSetupRequestMessage = ({ pageLink, newsletter }: Props) => {
 				any reason, please contact the newsletters team.
 			</p>
 
-			<table>
-				<tbody>
-					<tr>
-						<th>brazeNewsletterName</th>
-						<td>{newsletter.brazeNewsletterName}</td>
-					</tr>
-					<tr>
-						<th>brazeSubscribeAttributeName</th>
-						<td>{newsletter.brazeSubscribeAttributeName}</td>
-					</tr>
-					<tr>
-						<th>brazeSubscribeAttributeNameAlternate</th>
-						<td>{newsletter.brazeSubscribeAttributeNameAlternate?.join()}</td>
-					</tr>
-					<tr>
-						<th>brazeSubscribeEventNamePrefix</th>
-						<td>{newsletter.brazeSubscribeEventNamePrefix}</td>
-					</tr>
-				</tbody>
-			</table>
+			<NewsletterPropertyTable
+				newsletter={newsletter}
+				properties={[
+					'identityName',
+					'brazeNewsletterName',
+					'brazeSubscribeAttributeName',
+					'brazeSubscribeAttributeNameAlternate',
+					'brazeSubscribeEventNamePrefix',
+				]}
+			/>
 
 			<p>
 				When you have set up the campaign, please go to{' '}
