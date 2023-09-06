@@ -6,7 +6,6 @@ import {
 	buildNewDraftEmail,
 	buildNewsLetterLaunchMessage,
 	buildTagCreationRequestMessage,
-	buildTestEmail,
 } from './messages';
 import { buildSignUpPageCreationRequestMessage } from './messages/request-sign-up-page-creation-message';
 import type { MessageConfig, MessageContent, MessageParams } from './types';
@@ -19,8 +18,6 @@ const getMessage = (
 	messageConfig: MessageConfig;
 } => {
 	switch (params.messageTemplateId) {
-		case 'TEST':
-			return buildTestEmail(params, emailEnvInfo);
 		case 'NEW_DRAFT':
 			return buildNewDraftEmail(params, emailEnvInfo);
 		case 'NEWSLETTER_LAUNCH':

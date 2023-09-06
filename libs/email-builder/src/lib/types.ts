@@ -20,11 +20,6 @@ export type MessageContent = {
 	text: string;
 };
 
-export type TestMessageParams = {
-	messageTemplateId: 'TEST';
-	newsletterId: string;
-	testTitle: string;
-};
 export type NewDraftMessageParams = {
 	messageTemplateId: 'NEW_DRAFT';
 	draft: DraftWithId;
@@ -44,6 +39,5 @@ export type MessageAboutNewsletterParams = {
 	newsletter: NewsletterData;
 };
 export type MessageParams =
-	| TestMessageParams
 	| NewDraftMessageParams
 	| MessageAboutNewsletterParams;

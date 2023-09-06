@@ -10,7 +10,7 @@ const testNewsletter: NewsletterData = {
 	name: 'Spec Email',
 } as NewsletterData;
 
-describe('buildTestEmail', () => {
+describe('buildNewsLetterLaunchMessage', () => {
 	it('should generate content and config, using test recipients when stage is not PROD', () => {
 		const output = buildNewsLetterLaunchMessage(
 			{
