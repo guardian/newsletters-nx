@@ -40,18 +40,23 @@ const sendOutEmailsAndUpdateStatus = async (
 	newsletter: NewsletterData,
 ) => {
 	// TO DO - define other messages, use success valid to set corresponding status
-	const [launchEmailResult] = await Promise.all([
+	const [launchEmailResult, brazeRequestEmailResult] = await Promise.all([
 		sendEmailNotifications(
 			{ messageTemplateId: 'NEWSLETTER_LAUNCH', newsletter },
 			launchService.emailClent,
 			launchService.emailEnvInfo,
 		),
+		sendEmailNotifications(
+			{ messageTemplateId: 'BRAZE_SET_UP_REQUEST', newsletter },
+			launchService.emailClent,
+			launchService.emailEnvInfo,
+		),
 	]);
 
-	console.log('email results:NEWSLETTER_LAUNCH', launchEmailResult);
-
 	return launchService.updateCreationStatus(newsletter, {
-		brazeCampaignCreationStatus: 'NOT_REQUESTED',
+		brazeCampaignCreationStatus: brazeRequestEmailResult.success
+			? 'REQUESTED'
+			: 'NOT_REQUESTED',
 		ophanCampaignCreationStatus: launchEmailResult.success
 			? 'REQUESTED'
 			: 'NOT_REQUESTED',

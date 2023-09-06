@@ -33,7 +33,12 @@ export type NewsletterLaunchedMessageParams = {
 	messageTemplateId: 'NEWSLETTER_LAUNCH';
 	newsletter: NewsletterData;
 };
+export type RequestBrazeSetUpMessageParams = {
+	messageTemplateId: 'BRAZE_SET_UP_REQUEST';
+	newsletter: NewsletterData;
+};
 export type MessageParams =
 	| TestMessageParams
 	| NewDraftMessageParams
-	| NewsletterLaunchedMessageParams;
+	| NewsletterLaunchedMessageParams
+	| RequestBrazeSetUpMessageParams;
