@@ -1,3 +1,4 @@
+import type { NewsletterMessageId } from '@newsletters-nx/email-builder';
 import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import type {
 	FormDataRecord,
@@ -35,51 +36,47 @@ const getExtraValuesFromFormData = (
 	);
 };
 
+const outputToStatus = (output: {
+	success: boolean;
+}): 'REQUESTED' | 'NOT_REQUESTED' =>
+	output.success ? 'REQUESTED' : 'NOT_REQUESTED';
+
+const doNotSendEmail = () =>
+	Promise.resolve({ success: false, error: undefined });
+
 const sendOutEmailsAndUpdateStatus = async (
 	launchService: LaunchService,
 	newsletter: NewsletterData,
 ) => {
+	const shouldSendTagCreationRequest =
+		!!newsletter.seriesTag && !!newsletter.composerTag;
+
+	const sendEmail = (messageTemplateId: NewsletterMessageId) =>
+		sendEmailNotifications(
+			{ messageTemplateId, newsletter },
+			launchService.emailClent,
+			launchService.emailEnvInfo,
+		);
+
 	const [
 		launchEmailResult,
 		brazeRequestEmailResult,
 		tagCreationEmailResult,
 		signupPageCreationEmailResult,
 	] = await Promise.all([
-		sendEmailNotifications(
-			{ messageTemplateId: 'NEWSLETTER_LAUNCH', newsletter },
-			launchService.emailClent,
-			launchService.emailEnvInfo,
-		),
-		sendEmailNotifications(
-			{ messageTemplateId: 'BRAZE_SET_UP_REQUEST', newsletter },
-			launchService.emailClent,
-			launchService.emailEnvInfo,
-		),
-		sendEmailNotifications(
-			{ messageTemplateId: 'TAG_CREATION_REQUEST', newsletter },
-			launchService.emailClent,
-			launchService.emailEnvInfo,
-		),
-		sendEmailNotifications(
-			{ messageTemplateId: 'SIGN_UP_PAGE_CREATION_REQUEST', newsletter },
-			launchService.emailClent,
-			launchService.emailEnvInfo,
-		),
+		sendEmail('NEWSLETTER_LAUNCH'),
+		sendEmail('BRAZE_SET_UP_REQUEST'),
+		shouldSendTagCreationRequest
+			? sendEmail('TAG_CREATION_REQUEST')
+			: doNotSendEmail(),
+		sendEmail('SIGN_UP_PAGE_CREATION_REQUEST'),
 	]);
 
 	return launchService.updateCreationStatus(newsletter, {
-		brazeCampaignCreationStatus: brazeRequestEmailResult.success
-			? 'REQUESTED'
-			: 'NOT_REQUESTED',
-		ophanCampaignCreationStatus: launchEmailResult.success
-			? 'REQUESTED'
-			: 'NOT_REQUESTED',
-		signupPageCreationStatus: signupPageCreationEmailResult.success
-			? 'REQUESTED'
-			: 'NOT_REQUESTED',
-		tagCreationStatus: tagCreationEmailResult.success
-			? 'REQUESTED'
-			: 'NOT_REQUESTED',
+		ophanCampaignCreationStatus: outputToStatus(launchEmailResult),
+		brazeCampaignCreationStatus: outputToStatus(brazeRequestEmailResult),
+		tagCreationStatus: outputToStatus(tagCreationEmailResult),
+		signupPageCreationStatus: outputToStatus(signupPageCreationEmailResult),
 	});
 };
 

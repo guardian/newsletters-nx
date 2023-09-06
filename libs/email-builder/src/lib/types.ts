@@ -30,12 +30,17 @@ export type NewDraftMessageParams = {
 	draft: DraftWithId;
 };
 
+/**  The message Ids for MessageParams that take a newsletter
+ * as the only other property
+ */
+export type NewsletterMessageId =
+	| 'NEWSLETTER_LAUNCH'
+	| 'SIGN_UP_PAGE_CREATION_REQUEST'
+	| 'TAG_CREATION_REQUEST'
+	| 'BRAZE_SET_UP_REQUEST';
+
 export type MessageAboutNewsletterParams = {
-	messageTemplateId:
-		| 'NEWSLETTER_LAUNCH'
-		| 'SIGN_UP_PAGE_CREATION_REQUEST'
-		| 'TAG_CREATION_REQUEST'
-		| 'BRAZE_SET_UP_REQUEST';
+	messageTemplateId: NewsletterMessageId;
 	newsletter: NewsletterData;
 };
 export type MessageParams =
