@@ -37,8 +37,13 @@ export type RequestBrazeSetUpMessageParams = {
 	messageTemplateId: 'BRAZE_SET_UP_REQUEST';
 	newsletter: NewsletterData;
 };
+export type RequestTagCreationMessageParams = {
+	messageTemplateId: 'TAG_CREATION_REQUEST';
+	newsletter: NewsletterData;
+};
 export type MessageParams =
 	| TestMessageParams
 	| NewDraftMessageParams
 	| NewsletterLaunchedMessageParams
-	| RequestBrazeSetUpMessageParams;
+	| RequestBrazeSetUpMessageParams
+	| RequestTagCreationMessageParams;

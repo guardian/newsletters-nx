@@ -5,6 +5,7 @@ import {
 	buildBrazeSetUpRequestMessage,
 	buildNewDraftEmail,
 	buildNewsLetterLaunchMessage,
+	buildTagCreationRequestMessage,
 	buildTestEmail,
 } from './messages';
 import type { MessageConfig, MessageContent, MessageParams } from './types';
@@ -25,6 +26,8 @@ const getMessage = (
 			return buildNewsLetterLaunchMessage(params, emailEnvInfo);
 		case 'BRAZE_SET_UP_REQUEST':
 			return buildBrazeSetUpRequestMessage(params, emailEnvInfo);
+		case 'TAG_CREATION_REQUEST':
+			return buildTagCreationRequestMessage(params, emailEnvInfo);
 	}
 };
 

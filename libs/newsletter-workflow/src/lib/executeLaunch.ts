@@ -40,18 +40,24 @@ const sendOutEmailsAndUpdateStatus = async (
 	newsletter: NewsletterData,
 ) => {
 	// TO DO - define other messages, use success valid to set corresponding status
-	const [launchEmailResult, brazeRequestEmailResult] = await Promise.all([
-		sendEmailNotifications(
-			{ messageTemplateId: 'NEWSLETTER_LAUNCH', newsletter },
-			launchService.emailClent,
-			launchService.emailEnvInfo,
-		),
-		sendEmailNotifications(
-			{ messageTemplateId: 'BRAZE_SET_UP_REQUEST', newsletter },
-			launchService.emailClent,
-			launchService.emailEnvInfo,
-		),
-	]);
+	const [launchEmailResult, brazeRequestEmailResult, tagCreationEmailResult] =
+		await Promise.all([
+			sendEmailNotifications(
+				{ messageTemplateId: 'NEWSLETTER_LAUNCH', newsletter },
+				launchService.emailClent,
+				launchService.emailEnvInfo,
+			),
+			sendEmailNotifications(
+				{ messageTemplateId: 'BRAZE_SET_UP_REQUEST', newsletter },
+				launchService.emailClent,
+				launchService.emailEnvInfo,
+			),
+			sendEmailNotifications(
+				{ messageTemplateId: 'TAG_CREATION_REQUEST', newsletter },
+				launchService.emailClent,
+				launchService.emailEnvInfo,
+			),
+		]);
 
 	return launchService.updateCreationStatus(newsletter, {
 		brazeCampaignCreationStatus: brazeRequestEmailResult.success
@@ -63,7 +69,9 @@ const sendOutEmailsAndUpdateStatus = async (
 		signupPageCreationStatus: launchEmailResult.success
 			? 'REQUESTED'
 			: 'NOT_REQUESTED',
-		tagCreationStatus: 'NOT_REQUESTED',
+		tagCreationStatus: tagCreationEmailResult.success
+			? 'REQUESTED'
+			: 'NOT_REQUESTED',
 	});
 };
 

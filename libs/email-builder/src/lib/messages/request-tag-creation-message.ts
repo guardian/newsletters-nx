@@ -1,26 +1,26 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
-import { renderBrazeSetupRequestMessage } from '../components/RequestBrazeSetUpMessage';
+import { renderRequestTagCreationMessage } from '../components/RequestTagCreationMessage';
 import { getMessageConfig } from '../message-config';
 import type {
 	MessageConfig,
 	MessageContent,
-	RequestBrazeSetUpMessageParams,
+	RequestTagCreationMessageParams,
 } from '../types';
 
-export function buildBrazeSetUpRequestMessage(
-	params: RequestBrazeSetUpMessageParams,
+export function buildTagCreationRequestMessage(
+	params: RequestTagCreationMessageParams,
 	emailEnvInfo: EmailEnvInfo,
 ): { content: MessageContent; messageConfig: MessageConfig } {
 	const { newsletter } = params;
 	const messageConfig = getMessageConfig(
-		['newsletters.dev@guardian.co.uk'], // TO DO - who gets this?
+		['central.production@guardian.co.uk'],
 		emailEnvInfo,
 	);
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
-	const content = renderBrazeSetupRequestMessage({
+	const content = renderRequestTagCreationMessage({
 		pageLink,
 		newsletter,
 	}) as MessageContent;

@@ -9,7 +9,7 @@ interface Props {
 	newsletter: NewsletterData;
 }
 
-export const BrazeSetupRequestMessage = ({ pageLink, newsletter }: Props) => {
+export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
 	return (
 		<MessageFormat
 			title={
@@ -48,10 +48,11 @@ export const renderBrazeSetupRequestMessage = (
 ): MessageContent => {
 	const { pageLink, newsletter } = props;
 	const subject = `Braze campaign for newsletter "${newsletter.identityName}"`;
+	// TO DO - generate the tag version nicely
 	const text = `A new newsletter "${newsletter.name}" has been launched: ${pageLink}. Please create the campaign.`;
 
 	try {
-		const html = renderToStaticMarkup(<BrazeSetupRequestMessage {...props} />);
+		const html = renderToStaticMarkup(<RequestBrazeSetUpMessage {...props} />);
 		return { html, text, subject };
 	} catch (e) {
 		console.error(e);
