@@ -8,6 +8,7 @@ import {
 	buildTagCreationRequestMessage,
 	buildTestEmail,
 } from './messages';
+import { buildSignUpPageCreationRequestMessage } from './messages/request-sign-up-page-creation-message';
 import type { MessageConfig, MessageContent, MessageParams } from './types';
 
 const getMessage = (
@@ -28,6 +29,8 @@ const getMessage = (
 			return buildBrazeSetUpRequestMessage(params, emailEnvInfo);
 		case 'TAG_CREATION_REQUEST':
 			return buildTagCreationRequestMessage(params, emailEnvInfo);
+		case 'SIGN_UP_PAGE_CREATION_REQUEST':
+			return buildSignUpPageCreationRequestMessage(params, emailEnvInfo);
 	}
 };
 

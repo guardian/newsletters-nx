@@ -41,9 +41,14 @@ export type RequestTagCreationMessageParams = {
 	messageTemplateId: 'TAG_CREATION_REQUEST';
 	newsletter: NewsletterData;
 };
+export type RequestSignUpPageMessageParams = {
+	messageTemplateId: 'SIGN_UP_PAGE_CREATION_REQUEST';
+	newsletter: NewsletterData;
+};
 export type MessageParams =
 	| TestMessageParams
 	| NewDraftMessageParams
 	| NewsletterLaunchedMessageParams
 	| RequestBrazeSetUpMessageParams
-	| RequestTagCreationMessageParams;
+	| RequestTagCreationMessageParams
+	| RequestSignUpPageMessageParams;
