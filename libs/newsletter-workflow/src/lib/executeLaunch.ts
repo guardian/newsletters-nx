@@ -19,10 +19,10 @@ const DERIVED_FIELD_KEYS: Array<keyof NewsletterData> = [
 
 // TODO: determine the correct statuses for this properties based on the type of the newsletter and the success of a call to the email service
 const asyncWorkflowRequestStatusDefaults: Partial<NewsletterData> = {
-	brazeCampaignCreationsStatus: 'REQUESTED',
-	ophanCampaignCreationsStatus: 'REQUESTED',
-	signupPageCreationsStatus: 'REQUESTED',
-	tagCreationsStatus: 'REQUESTED',
+	brazeCampaignCreationStatus: 'REQUESTED',
+	ophanCampaignCreationStatus: 'REQUESTED',
+	signupPageCreationStatus: 'REQUESTED',
+	tagCreationStatus: 'REQUESTED',
 };
 
 const getExtraValuesFromFormData = (
