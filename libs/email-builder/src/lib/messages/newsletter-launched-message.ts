@@ -1,18 +1,17 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { renderNewLaunchMessage } from '../components/NewLaunchMessage';
 import { getMessageConfig } from '../message-config';
-import type { MessageContent, NewsletterLaunchedMessageParams } from '../types';
+import type { MessageAboutNewsletterParams, MessageContent } from '../types';
+
+const recipients = ['newsletters.dev@guardian.co.uk'];
+export { recipients as newsletterLaunchedRecipients };
 
 export function buildNewsLetterLaunchMessage(
-	params: NewsletterLaunchedMessageParams,
+	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
 ) {
 	const { newsletter } = params;
-	const messageConfig = getMessageConfig(
-		['newsletters.dev@guardian.co.uk'],
-		emailEnvInfo,
-	);
-
+	const messageConfig = getMessageConfig(recipients, emailEnvInfo);
 	const pageLink = `${messageConfig.toolHost}/launched/${newsletter.identityName}`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
