@@ -18,7 +18,7 @@ export const workflowStatusEnumSchema = z.enum([
 export type WorkflowStatus = z.infer<typeof workflowStatusEnumSchema>;
 
 export const regionFocusEnumSchema = z
-	.enum(['UK', 'AU', 'US', 'INTL'])
+	.enum(['UK', 'AU', 'US', 'INT', 'EUR'])
 	.optional();
 export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 

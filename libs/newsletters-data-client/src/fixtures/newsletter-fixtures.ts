@@ -48,7 +48,7 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 export const TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS: NewsletterData =
 	{
 		...TECHSCAPE_IN_NEW_FORMAT,
-		regionFocus: 'INTL',
+		regionFocus: 'INT',
 		signUpHeadline: 'Sign up for Techscape',
 		renderingOptions: {
 			displayDate: true,

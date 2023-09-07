@@ -13,7 +13,7 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 ## Choose the Geo Focus for {{name}}
 
-What’s the geo focus of **{{name}}**? UK, US, Australia or International?
+What’s the geo focus of **{{name}}**? UK, US, Australia, Europe or International?
 
 `.trim();
 
