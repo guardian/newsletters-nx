@@ -20,8 +20,8 @@ export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
 			}
 		>
 			<p>
-				The Braze for this newsletter are below - if these need to change for
-				any reason, please contact the newsletters team.
+				The Braze values for this newsletter are below - if these need to change for
+				any reason, please <a href={pageLink}>update in the newsletters tool</a> .
 			</p>
 
 			<NewsletterPropertyTable
