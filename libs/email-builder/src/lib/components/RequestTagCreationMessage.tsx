@@ -9,15 +9,18 @@ interface Props {
 }
 
 export const RequestTagCreationMessage = ({ pageLink, newsletter }: Props) => {
+	// message is only sent if there is a defined series tag, but composerCampaignTag could be undefined.
+	const {
+		seriesTag,
+		composerCampaignTag,
+		composerTag: tagsThatPromptRecomendationOfCampaignTag,
+	} = newsletter;
+	const title = composerCampaignTag
+		? `Please create a Series and Campaign Tags for newsletter " ${newsletter.identityName}"`
+		: `Please create a Series Tag for newsletter " ${newsletter.identityName}"`;
+
 	return (
-		<MessageFormat
-			title={
-				<>
-					Please create a Series and Campaign Tags for newsletter "
-					{newsletter.identityName}"
-				</>
-			}
-		>
+		<MessageFormat title={title}>
 			<p>
 				Can you please create the below tags in order to support the launch of
 				the "{newsletter.name}"" newsletter?
@@ -25,19 +28,25 @@ export const RequestTagCreationMessage = ({ pageLink, newsletter }: Props) => {
 
 			<ul>
 				<li>
-					<b>Series Tag:</b> {newsletter.seriesTag}
+					<b>Series Tag:</b> {seriesTag}
 				</li>
-				<li>
-					<b>Campaign Tag:</b> {newsletter.composerCampaignTag}
-				</li>
+				{composerCampaignTag && (
+					<li>
+						<b>Campaign Tag:</b> {composerCampaignTag}
+					</li>
+				)}
 			</ul>
 
-			<p>
-				Can the tag relationship be set up so that{' '}
-				<b>{newsletter.composerCampaignTag}</b> will be suggested when the
-				following tags are used:
-			</p>
-			<p>{newsletter.composerTag}</p>
+			{!!(composerCampaignTag && tagsThatPromptRecomendationOfCampaignTag) && (
+				<div>
+					<p>
+						Can the tag relationship be set up so that{' '}
+						<b>{newsletter.composerCampaignTag}</b> will be suggested when the
+						following tags are used:
+					</p>
+					<p>{tagsThatPromptRecomendationOfCampaignTag}</p>
+				</div>
+			)}
 
 			<p>
 				When you have set up the tags, please go to{' '}
@@ -52,7 +61,7 @@ export const renderRequestTagCreationMessage = (
 ): MessageContent => {
 	const { pageLink, newsletter } = props;
 	const subject = `Series Tags for newsletter "${newsletter.identityName}"`;
-	// TO DO - generate the tag version nicely
+	// TO DO - generate the text version nicely
 	const text = `A new newsletter "${newsletter.name}" has been launched: ${pageLink}. Please create the Tags.`;
 
 	try {

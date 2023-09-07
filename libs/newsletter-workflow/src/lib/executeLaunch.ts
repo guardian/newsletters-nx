@@ -48,8 +48,7 @@ const sendOutEmailsAndUpdateStatus = async (
 	launchService: LaunchService,
 	newsletter: NewsletterData,
 ) => {
-	const shouldSendTagCreationRequest =
-		!!newsletter.seriesTag && !!newsletter.composerTag;
+	const shouldSendTagCreationRequest = !!newsletter.seriesTag;
 
 	const sendEmail = (messageTemplateId: NewsletterMessageId) =>
 		sendEmailNotifications(
