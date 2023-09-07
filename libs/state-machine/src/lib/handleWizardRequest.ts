@@ -12,6 +12,7 @@ import type {
 	WizardStepLayout,
 } from './types';
 
+const validationTriggerButtonTypes = ['LAUNCH', 'NEXT'];
 /**
  * Execute the changes to state (if any) in response to a
  * user's request and return the CurrentStepRouteResponse.
@@ -55,7 +56,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 						},
 						wizardLayout,
 						!!requestBody.id,
-						requestBody.buttonId !== 'back',
+						validationTriggerButtonTypes.includes(requestBody.buttonType ?? ''),
 						serviceInterface,
 				  )
 				: await setupInitialState(requestBody, wizardLayout, serviceInterface);

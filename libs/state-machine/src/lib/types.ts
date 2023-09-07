@@ -143,6 +143,7 @@ export interface CurrentStepRouteRequest {
 	formData?: WizardFormData;
 	/** ID of the step the user clicked a skip link for*/
 	stepToSkipToId?: string;
+	buttonType?: WizardButtonType;
 }
 
 /**
