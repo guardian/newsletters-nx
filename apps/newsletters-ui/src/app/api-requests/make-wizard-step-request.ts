@@ -1,8 +1,5 @@
-import { replaceUndefinedWithNull } from '@newsletters-nx/newsletters-data-client';
-import type {
-	CurrentStepRouteRequest,
-	CurrentStepRouteResponse,
-} from '@newsletters-nx/state-machine';
+import {replaceUndefinedWithNull} from '@newsletters-nx/newsletters-data-client';
+import type {CurrentStepRouteRequest, CurrentStepRouteResponse,} from '@newsletters-nx/state-machine';
 
 export const makeWizardStepRequest = async (
 	body: CurrentStepRouteRequest,
@@ -15,6 +12,5 @@ export const makeWizardStepRequest = async (
 		body: JSON.stringify(body, replaceUndefinedWithNull),
 	});
 
-	const data = (await response.json()) as CurrentStepRouteResponse;
-	return data;
+	return (await response.json()) as CurrentStepRouteResponse;
 };

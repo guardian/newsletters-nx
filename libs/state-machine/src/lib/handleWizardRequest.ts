@@ -55,6 +55,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 						},
 						wizardLayout,
 						!!requestBody.id,
+						requestBody.buttonId !== 'back',
 						serviceInterface,
 				  )
 				: await setupInitialState(requestBody, wizardLayout, serviceInterface);
