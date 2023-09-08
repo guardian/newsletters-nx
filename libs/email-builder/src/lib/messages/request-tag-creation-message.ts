@@ -7,14 +7,14 @@ import type {
 	MessageContent,
 } from '../types';
 
-export function buildTagCreationRequestMessage(
+export async function buildTagCreationRequestMessage(
 	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
-): { content: MessageContent; messageConfig: MessageConfig } {
+): Promise<{ content: MessageContent; messageConfig: MessageConfig }> {
 	const { newsletter } = params;
-	const messageConfig = getMessageConfig(
-		['central.production@guardian.co.uk'],
+	const messageConfig = await getMessageConfig(
 		emailEnvInfo,
+		'TAG_CREATION_REQUEST',
 	);
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;

@@ -1,24 +1,47 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
+import { getConfigValue } from '../../../../apps/newsletters-api/src/services/configuration/config-service';
 import type { MessageConfig } from './types';
+import type { EmailRecipientConfiguration } from './types';
 
-export const getMessageConfig = (
-	prodRecipients: string[],
+export type NewsletterMessageId =
+	| 'NEWSLETTER_LAUNCH'
+	| 'SIGN_UP_PAGE_CREATION_REQUEST'
+	| 'TAG_CREATION_REQUEST'
+	| 'BRAZE_SET_UP_REQUEST';
+
+export const getMessageConfig = async (
 	emailEnvInfo: EmailEnvInfo,
-): MessageConfig => {
-	const { STAGE, testRecipients } = emailEnvInfo;
+	messageType: NewsletterMessageId,
+): Promise<MessageConfig> => {
+	const { STAGE } = emailEnvInfo;
 	// TO DO - should the recipients for CODE and DEV be different?
 
+	const {
+		tagRecipients,
+		signUpPageRecipients,
+		brazeRecipients,
+		launchRecipients,
+	} = JSON.parse(
+		await getConfigValue('emailRecipientConfiguration'),
+	) as EmailRecipientConfiguration;
+
+	const recipientMapping: Record<NewsletterMessageId, string[]> = {
+		NEWSLETTER_LAUNCH: launchRecipients,
+		SIGN_UP_PAGE_CREATION_REQUEST: signUpPageRecipients,
+		TAG_CREATION_REQUEST: tagRecipients,
+		BRAZE_SET_UP_REQUEST: brazeRecipients,
+	};
 	switch (STAGE) {
 		case 'PROD':
 			return {
-				recipients: prodRecipients,
+				recipients: recipientMapping[messageType],
 				toolHost: 'https://newsletters-tool.gutools.co.uk',
 				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source: 'newsletters <notifications@newsletters-tool-gutools.co.uk>',
 			};
 		case 'CODE':
 			return {
-				recipients: testRecipients,
+				recipients: recipientMapping[messageType],
 				toolHost: 'https://newsletters-tool.code.dev-gutools.co.uk',
 				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source:
@@ -27,7 +50,7 @@ export const getMessageConfig = (
 		case 'DEV':
 		default:
 			return {
-				recipients: testRecipients,
+				recipients: recipientMapping[messageType],
 				toolHost: 'http://localhost:4200',
 				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source:

@@ -1,9 +1,14 @@
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import {
-	buildNewsLetterLaunchMessage,
-	newsletterLaunchedRecipients,
-} from './newsletter-launched-message';
+import { getConfigValue } from '../../../../apps/newsletters-api/src/services/configuration/config-service';
+import { buildNewsLetterLaunchMessage } from './newsletter-launched-message';
 
+jest.mock(
+	'../../../../apps/newsletters-api/src/services/configuration/config-service',
+);
+
+const mockedGetConfigValue = <jest.Mock<typeof getConfigValue>>(
+	(<unknown>getConfigValue)
+);
 const TEST_RECIPIENTS = ['test@example.com', 'example@test.net'];
 
 const testNewsletter: NewsletterData = {
@@ -11,8 +16,11 @@ const testNewsletter: NewsletterData = {
 } as NewsletterData;
 
 describe('buildNewsLetterLaunchMessage', () => {
-	it('should generate content and config, using test recipients when stage is not PROD', () => {
-		const output = buildNewsLetterLaunchMessage(
+	it('should generate content and config, using recipients defined in config', async () => {
+		mockedGetConfigValue.mockResolvedValueOnce(
+			'{"tagRecipients":["alpha"],"brazeRecipients":["beta"],"signUpPageRecipients":["gamma"],"launchRecipients":["delta"]}',
+		);
+		const output = await buildNewsLetterLaunchMessage(
 			{
 				messageTemplateId: 'NEWSLETTER_LAUNCH',
 				newsletter: testNewsletter,
@@ -25,25 +33,6 @@ describe('buildNewsLetterLaunchMessage', () => {
 		);
 
 		expect(output.content.subject.includes(testNewsletter.name)).toBeTruthy();
-		expect(output.messageConfig.recipients).toEqual(TEST_RECIPIENTS);
-	});
-
-	it('should generate content and config, sending to the recipients defined for the template on PROD', () => {
-		const output = buildNewsLetterLaunchMessage(
-			{
-				messageTemplateId: 'NEWSLETTER_LAUNCH',
-				newsletter: testNewsletter,
-			},
-			{
-				testRecipients: TEST_RECIPIENTS,
-				STAGE: 'PROD',
-				areEmailNotificationsEnabled: true,
-			},
-		);
-
-		expect(output.content.subject.includes(testNewsletter.name)).toBeTruthy();
-		expect(output.messageConfig.recipients).toEqual(
-			newsletterLaunchedRecipients,
-		);
+		expect(output.messageConfig.recipients).toEqual(['delta']);
 	});
 });

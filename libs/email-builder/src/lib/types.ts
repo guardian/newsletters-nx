@@ -10,7 +10,7 @@ export type MessageConfig = {
 	toolHost: string;
 	/** the sender name  and email address to use in the message header*/
 	source: string;
-	/** the email addresses replies shoudl be directed to */
+	/** the email addresses replies should be directed to */
 	replyToAddresses: string[];
 };
 
@@ -41,3 +41,10 @@ export type MessageAboutNewsletterParams = {
 export type MessageParams =
 	| NewDraftMessageParams
 	| MessageAboutNewsletterParams;
+
+export type EmailRecipientConfiguration = {
+	tagRecipients: string[];
+	brazeRecipients: string[];
+	signUpPageRecipients: string[];
+	launchRecipients: string[];
+};

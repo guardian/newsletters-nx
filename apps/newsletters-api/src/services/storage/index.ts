@@ -48,9 +48,9 @@ const makelaunchServiceForUser = (userProfile: UserProfile) =>
 
 const makeDraftServiceForUser = (
 	userProfile: UserProfile,
-	emailClent: SESClient,
+	emailClient: SESClient,
 	emailEnvInfo: EmailEnvInfo,
-) => new DraftService(draftStore, userProfile, emailClent, emailEnvInfo);
+) => new DraftService(draftStore, userProfile, emailClient, emailEnvInfo);
 
 export {
 	draftStore,
