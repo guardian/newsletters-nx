@@ -1,10 +1,8 @@
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { getConfigValue } from '../../../../apps/newsletters-api/src/services/configuration/config-service';
+import { getConfigValue } from '@newsletters-nx/util';
 import { buildNewsLetterLaunchMessage } from './newsletter-launched-message';
 
-jest.mock(
-	'../../../../apps/newsletters-api/src/services/configuration/config-service',
-);
+jest.mock('@newsletters-nx/util');
 
 const mockedGetConfigValue = <jest.Mock<typeof getConfigValue>>(
 	(<unknown>getConfigValue)
