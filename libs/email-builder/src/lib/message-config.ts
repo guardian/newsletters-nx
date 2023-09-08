@@ -1,5 +1,5 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
-import { getConfigValue } from '../../../../apps/newsletters-api/src/services/configuration/config-service';
+import { getConfigValue } from '@newsletters-nx/util';
 import type { MessageConfig } from './types';
 import type { EmailRecipientConfiguration } from './types';
 
@@ -14,7 +14,6 @@ export const getMessageConfig = async (
 	messageType: NewsletterMessageId,
 ): Promise<MessageConfig> => {
 	const { STAGE } = emailEnvInfo;
-	// TO DO - should the recipients for CODE and DEV be different?
 
 	const {
 		tagRecipients,
