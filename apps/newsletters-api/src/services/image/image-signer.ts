@@ -3,7 +3,7 @@ import type {
 	NewsletterData,
 	NewsletterDataWithoutMeta,
 } from '@newsletters-nx/newsletters-data-client';
-import { getConfigValue } from '../configuration/config-service';
+import { getConfigValue } from '@newsletters-nx/util';
 
 interface Props {
 	dpr?: number;
@@ -42,9 +42,9 @@ export const signTemplateImages = async (
 		if (imageUrl) {
 			signedImages = shouldSignImage(imageUrl)
 				? {
-						...signedImages,
-						[key]: await signImage(imageUrl, { dpr: 2, width: 650 }),
-				  }
+					...signedImages,
+					[key]: await signImage(imageUrl, { dpr: 2, width: 650 }),
+				}
 				: { ...signedImages, [key]: imageUrl };
 		}
 	}

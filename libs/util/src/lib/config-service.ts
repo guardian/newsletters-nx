@@ -6,7 +6,7 @@ let state: Config | undefined;
 
 const getPath = (key: string) => {
 	const { STAGE, STACK, APP } = process.env;
-	if (!STAGE || !STACK || !APP) {
+	if (!(STAGE && STACK && APP)) {
 		throw new Error('Missing environment variables');
 	}
 	return `/${STAGE}/${STACK}/${APP}/${key}`;
