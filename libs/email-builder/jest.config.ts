@@ -6,6 +6,7 @@ export default {
 		'^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
 		'^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
 	},
+	setupFiles: ['<rootDir>/.jest/setEnvVars.js'],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
 	coverageDirectory: '../../coverage/libs/email-builder',
 };

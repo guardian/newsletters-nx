@@ -6,12 +6,15 @@ import type { MessageAboutNewsletterParams, MessageContent } from '../types';
 const recipients = ['newsletters.dev@guardian.co.uk'];
 export { recipients as newsletterLaunchedRecipients };
 
-export function buildNewsLetterLaunchMessage(
+export async function buildNewsLetterLaunchMessage(
 	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
 ) {
 	const { newsletter } = params;
-	const messageConfig = getMessageConfig(recipients, emailEnvInfo);
+	const messageConfig = await getMessageConfig(
+		emailEnvInfo,
+		'NEWSLETTER_LAUNCH',
+	);
 	const pageLink = `${messageConfig.toolHost}/launched/${newsletter.identityName}`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
