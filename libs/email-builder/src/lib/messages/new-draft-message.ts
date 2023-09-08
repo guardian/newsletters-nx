@@ -3,14 +3,14 @@ import { renderNewDraftMessage } from '../components/NewDraftMessage';
 import { getMessageConfig } from '../message-config';
 import type { MessageContent, NewDraftMessageParams } from '../types';
 
-export function buildNewDraftEmail(
+export async function buildNewDraftEmail(
 	params: NewDraftMessageParams,
 	emailEnvInfo: EmailEnvInfo,
 ) {
 	const { draft } = params;
-	const messageConfig = getMessageConfig(
-		['newsletters.dev@guardian.co.uk'],
+	const messageConfig = await getMessageConfig(
 		emailEnvInfo,
+		'NEWSLETTER_LAUNCH',
 	);
 
 	const pageLink = `${messageConfig.toolHost}/drafts/${draft.listId}`;

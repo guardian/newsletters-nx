@@ -10,13 +10,13 @@ import {
 import { buildSignUpPageCreationRequestMessage } from './messages/request-sign-up-page-creation-message';
 import type { MessageConfig, MessageContent, MessageParams } from './types';
 
-const getMessage = (
+const getMessage = async (
 	params: MessageParams,
 	emailEnvInfo: EmailEnvInfo,
-): {
+): Promise<{
 	content: MessageContent;
 	messageConfig: MessageConfig;
-} => {
+}> => {
 	switch (params.messageTemplateId) {
 		case 'NEW_DRAFT':
 			return buildNewDraftEmail(params, emailEnvInfo);
@@ -48,7 +48,7 @@ export const sendEmailNotifications = async (
 			};
 		}
 
-		const message = getMessage(params, emailEnvInfo);
+		const message = await getMessage(params, emailEnvInfo);
 		const command = buildSendEmailCommand(
 			message.messageConfig,
 			message.content,

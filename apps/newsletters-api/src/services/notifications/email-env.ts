@@ -8,13 +8,11 @@ export const splitEmailConfig = (emailsString?: string): string[] => {
 		return [];
 	}
 
-	const testRecipients = emailsString
+	return emailsString
 		.split(';')
 		.map((email) => email.trim())
 		.filter((email) => email.length > 0)
 		.filter((email) => emailRegex.test(email));
-
-	return testRecipients;
 };
 
 export const makeEmailEnvInfo = (): EmailEnvInfo => {

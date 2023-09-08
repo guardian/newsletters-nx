@@ -7,14 +7,14 @@ import type {
 	MessageContent,
 } from '../types';
 
-export function buildSignUpPageCreationRequestMessage(
+export async function buildSignUpPageCreationRequestMessage(
 	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
-): { content: MessageContent; messageConfig: MessageConfig } {
+): Promise<{ content: MessageContent; messageConfig: MessageConfig }> {
 	const { newsletter } = params;
-	const messageConfig = getMessageConfig(
-		['central.production@guardian.co.uk'],
+	const messageConfig = await getMessageConfig(
 		emailEnvInfo,
+		'SIGN_UP_PAGE_CREATION_REQUEST',
 	);
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
