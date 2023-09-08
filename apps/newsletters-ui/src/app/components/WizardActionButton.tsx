@@ -4,7 +4,7 @@ import type { WizardButton } from '@newsletters-nx/state-machine';
 
 interface Props {
 	button: WizardButton;
-	onClick: { (buttonId: string): { (): void } };
+	onClick: { (buttonId: string, buttonType: WizardButtonType): { (): void } };
 }
 
 export const WizardActionButton = ({ button, onClick }: Props) => {
@@ -18,7 +18,7 @@ export const WizardActionButton = ({ button, onClick }: Props) => {
 		<Button
 			variant={variant}
 			onClick={() => {
-				onClick(button.id)();
+				onClick(button.id, button.buttonType)();
 			}}
 		>
 			{button.label}

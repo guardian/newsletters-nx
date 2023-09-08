@@ -15,6 +15,5 @@ export const makeWizardStepRequest = async (
 		body: JSON.stringify(body, replaceUndefinedWithNull),
 	});
 
-	const data = (await response.json()) as CurrentStepRouteResponse;
-	return data;
+	return (await response.json()) as CurrentStepRouteResponse;
 };
