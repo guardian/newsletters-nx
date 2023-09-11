@@ -18,7 +18,7 @@ const defaultPermissions: UserPermissions = {
 	editSignUpPage: false,
 };
 
-export class DataPermissionService implements PermissionsService {
+export class LocalPermissionService implements PermissionsService {
 	get = async (user?: UserProfile) => {
 		if (!user?.email) {
 			return { ...defaultPermissions };
