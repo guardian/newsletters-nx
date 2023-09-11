@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export interface Override {
+interface Override {
 	userId: string;
 	active: boolean;
 }

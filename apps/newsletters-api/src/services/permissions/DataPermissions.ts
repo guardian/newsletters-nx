@@ -2,8 +2,9 @@ import type {
 	UserPermissions,
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
-import { getUserPermissionsFromPermissionsData } from '../permission-data';
+import { getLocalUserPermissions } from '../../apiDeploymentSettings';
 import type { PermissionsService } from './abstract-class';
+import { permissionsToUserPermissions } from './permissions-to-user-permissions';
 
 const defaultPermissions: UserPermissions = {
 	editNewsletters: false,
@@ -23,7 +24,13 @@ export class DataPermissionService implements PermissionsService {
 			return { ...defaultPermissions };
 		}
 
-		const permissions = await getUserPermissionsFromPermissionsData(user.email);
-		return permissions;
+		const permissions = getLocalUserPermissions();
+
+		const userPermissions = permissionsToUserPermissions(
+			user.email,
+			permissions,
+		);
+
+		return Promise.resolve(userPermissions);
 	};
 }

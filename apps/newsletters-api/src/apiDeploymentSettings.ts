@@ -13,8 +13,8 @@
  * or by creating a .env.local file in the root folder for the newsletters-api project
  */
 
-import type { Permission } from './services/permission-data/types';
-import { permissionsArraySchema } from './services/permission-data/types';
+import type { Permission } from './services/permissions/types';
+import { permissionsArraySchema } from './services/permissions/types';
 
 export function isUndefinedAndNotProduction(
 	envVar: string | undefined,

@@ -1,42 +1,11 @@
 import type { UserPermissions } from '@newsletters-nx/newsletters-data-client';
 import { newslettersToolPermissionNames } from '@newsletters-nx/newsletters-data-client';
-import { getLocalUserPermissions } from '../../apiDeploymentSettings';
-import { STAGE } from './aws-params';
-import { buildS3 } from './build-client';
 import type { Permission } from './types';
 
-const getAllPermissions = async (): Promise<Permission[]> => {
-	if (STAGE !== 'CODE' && STAGE !== 'PROD') {
-		return getLocalUserPermissions();
-	}
-
-	const S3 = buildS3();
-
-	const { Body } = await S3.getObject({
-		Bucket: 'permissions-cache',
-		Key: `${STAGE}/permissions.json`,
-	});
-
-	if (!Body) {
-		throw Error('could not read permissions');
-	}
-
-	const bodyString = await Body.transformToString();
-
-	try {
-		const allPermissions = JSON.parse(bodyString) as Permission[];
-		return allPermissions;
-	} catch (e) {
-		console.warn(e);
-		throw Error('could not parse permissions');
-	}
-};
-
-export const getUserPermissionsFromPermissionsData = async (
+export const permissionsToUserPermissions = (
 	userEmail: string,
-): Promise<UserPermissions> => {
-	const permissions = await getAllPermissions();
-
+	permissions: Permission[],
+): UserPermissions => {
 	const toolPermissionsTheUserHas = permissions.filter(
 		(permission) =>
 			permission.permission.app === 'newsletters-tool' &&
