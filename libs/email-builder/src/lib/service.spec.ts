@@ -1,13 +1,17 @@
 import { SESClient } from '@aws-sdk/client-ses';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { sendEmailNotifications } from './service';
 import type { MessageParams } from './types';
 
 jest.mock('@aws-sdk/client-ses');
 
+const testNewsletter: NewsletterData = {
+	name: 'Spec Email',
+} as NewsletterData;
+
 const TEST_MESSAGE_PARAMS: MessageParams = {
-	messageTemplateId: 'TEST',
-	newsletterId: 'test newsletter',
-	testTitle: 'This is a mocked message',
+	messageTemplateId: 'NEWSLETTER_LAUNCH',
+	newsletter: testNewsletter,
 };
 
 const TEST_RECIPIENTS = ['test@example.com', 'test_two@example.com'];

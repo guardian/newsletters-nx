@@ -18,7 +18,7 @@ export const workflowStatusEnumSchema = z.enum([
 export type WorkflowStatus = z.infer<typeof workflowStatusEnumSchema>;
 
 export const regionFocusEnumSchema = z
-	.enum(['UK', 'AU', 'US', 'INTL'])
+	.enum(['UK', 'AU', 'US', 'INT', 'EUR'])
 	.optional();
 export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 
@@ -138,16 +138,16 @@ export const newsletterDataSchema = z.object({
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),
 	mailSuccessDescription: z.string().optional(),
-	brazeCampaignCreationsStatus: workflowStatusEnumSchema.describe(
+	brazeCampaignCreationStatus: workflowStatusEnumSchema.describe(
 		'Braze campaign creation status',
 	),
-	ophanCampaignCreationsStatus: workflowStatusEnumSchema.describe(
+	ophanCampaignCreationStatus: workflowStatusEnumSchema.describe(
 		'Ophan campaign creation status',
 	),
-	signupPageCreationsStatus: workflowStatusEnumSchema.describe(
+	signupPageCreationStatus: workflowStatusEnumSchema.describe(
 		'Sign up creation status',
 	),
-	tagCreationsStatus: workflowStatusEnumSchema.describe('Tag creation status'),
+	tagCreationStatus: workflowStatusEnumSchema.describe('Tag creation status'),
 });
 
 /** NOT FINAL - this type a placeholder to test the data transformation structure */

@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import { makeEmailEnvInfo } from '../../services/notifications/email-env';
 import { makeSesClient } from '../../services/notifications/email-service';
+import { newsletterStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
 import { makeAccessDeniedApiResponse } from '../responses';
 
@@ -19,11 +20,19 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 			}
 			try {
 				const { newsletterId } = req.params;
+
+				const newsletterResponse = await newsletterStore.readByName(
+					newsletterId,
+				);
+
+				if (!newsletterResponse.ok) {
+					return res.status(404).send(newsletterResponse);
+				}
+
 				const emailResult = await sendEmailNotifications(
 					{
-						messageTemplateId: 'TEST',
-						newsletterId,
-						testTitle: 'From the API',
+						messageTemplateId: 'NEWSLETTER_LAUNCH',
+						newsletter: newsletterResponse.data,
 					},
 					makeSesClient(),
 					makeEmailEnvInfo(),

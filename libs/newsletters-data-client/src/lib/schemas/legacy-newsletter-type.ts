@@ -51,7 +51,7 @@ const baseLegacyNewsletterSchema = z.object({
 	regionFocus: z
 		.string()
 		.optional()
-		.describe('Which region (AU, UK, US) the newsletter is targetted at'),
+		.describe('Which region (AU, UK, US, EUR) the newsletter is targetted at'),
 	frequency: z
 		.string()
 		.optional()

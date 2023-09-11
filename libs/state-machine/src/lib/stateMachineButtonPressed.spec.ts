@@ -95,6 +95,7 @@ describe('stateMachineButtonPressed', () => {
 				mockStepData,
 				mockWizardLayout,
 				false,
+				true,
 				mockStorage,
 			),
 		).rejects.toThrowError('Button poop not found in step step1');
@@ -111,6 +112,7 @@ describe('stateMachineButtonPressed', () => {
 				mockStepData,
 				mockWizardLayout,
 				false,
+				true,
 				mockStorage,
 			);
 			expect(executeStepMock).toHaveBeenCalledWith(
@@ -135,6 +137,7 @@ describe('stateMachineButtonPressed', () => {
 				mockStepData,
 				mockWizardLayout,
 				false,
+				true,
 				mockStorage,
 			);
 			expect(onBeforeStepChangeValidateMock).toHaveBeenCalledWith(
@@ -160,6 +163,7 @@ describe('stateMachineButtonPressed', () => {
 				mockStepData,
 				mockWizardLayout,
 				false,
+				true,
 				mockStorage,
 			);
 			expect(onAfterStepStartValidateMock).toHaveBeenCalledWith(
@@ -184,6 +188,7 @@ describe('stateMachineButtonPressed', () => {
 				mockStepData,
 				mockWizardLayout,
 				false,
+				true,
 				mockStorage,
 			);
 			expect(executeStepMock).toHaveBeenCalled;
@@ -204,6 +209,7 @@ describe('stateMachineButtonPressed', () => {
 				mockStepData,
 				mockWizardLayout,
 				false,
+				true,
 				mockStorage,
 			);
 			expect(executeStepMock).toHaveBeenCalledWith(

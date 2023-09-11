@@ -73,4 +73,25 @@ export class LaunchService {
 
 		return newsletterCreateResponse;
 	}
+
+	async updateCreationStatus(
+		newsletter: NewsletterData,
+		creationStatuses: Pick<
+			NewsletterData,
+			| 'brazeCampaignCreationStatus'
+			| 'ophanCampaignCreationStatus'
+			| 'signupPageCreationStatus'
+			| 'tagCreationStatus'
+		>,
+	) {
+		const { newsletterStorage, userProfile } = this;
+
+		const result = await newsletterStorage.update(
+			newsletter.listId,
+			creationStatuses,
+			userProfile,
+		);
+
+		return result;
+	}
 }

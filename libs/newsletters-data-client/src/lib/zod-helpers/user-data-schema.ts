@@ -14,15 +14,15 @@ export const getUserEditSchema = (
 			regionFocus: true,
 			theme: true,
 			status: true,
-			tagCreationsStatus: true,
+			tagCreationStatus: true,
 			seriesTag: true,
 			composerTag: true,
 			composerCampaignTag: true,
-			ophanCampaignCreationsStatus: true,
-			signupPageCreationsStatus: true,
+			ophanCampaignCreationStatus: true,
+			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,
-			brazeCampaignCreationsStatus: true,
+			brazeCampaignCreationStatus: true,
 			brazeNewsletterName: true,
 			brazeSubscribeAttributeName: true,
 			brazeSubscribeEventNamePrefix: true,
@@ -31,7 +31,7 @@ export const getUserEditSchema = (
 	}
 	if (editBraze) {
 		return newsletterDataSchema.pick({
-			brazeCampaignCreationsStatus: true,
+			brazeCampaignCreationStatus: true,
 			brazeNewsletterName: true,
 			brazeSubscribeAttributeName: true,
 			brazeSubscribeEventNamePrefix: true,
@@ -40,12 +40,12 @@ export const getUserEditSchema = (
 	}
 	if (editOphan) {
 		return newsletterDataSchema.pick({
-			ophanCampaignCreationsStatus: true,
+			ophanCampaignCreationStatus: true,
 		});
 	}
 	if (editTags) {
 		return newsletterDataSchema.pick({
-			tagCreationsStatus: true,
+			tagCreationStatus: true,
 			seriesTag: true,
 			composerTag: true,
 			composerCampaignTag: true,
@@ -53,7 +53,7 @@ export const getUserEditSchema = (
 	}
 	if (editSignUpPage) {
 		return newsletterDataSchema.pick({
-			signupPageCreationsStatus: true,
+			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,
 		});
