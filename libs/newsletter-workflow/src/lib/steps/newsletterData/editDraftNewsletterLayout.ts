@@ -21,7 +21,7 @@ You can edit the name of the newsletter.
 		},
 		next: {
 			buttonType: 'NEXT',
-			label: 'Next',
+			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},

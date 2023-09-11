@@ -31,7 +31,7 @@ const convertWizardStepLayoutButtonsToWizardButtons = (
 };
 
 /**
- * Constuct a CurrentStepRouteResponse to return
+ * Construct a CurrentStepRouteResponse to return
  * to the client after the request has been handled.
  *
  * Involves constructing the markdown message and converting
@@ -49,7 +49,7 @@ export const makeResponse = (
 		? dynamicMarkdown(requestBody.formData, state.formData)
 		: staticMarkdown;
 
-	const currentStepRouteResponse = {
+	return {
 		markdownToDisplay: markdown,
 		currentStepId: state.currentStepId,
 		buttons: convertWizardStepLayoutButtonsToWizardButtons(
@@ -59,6 +59,4 @@ export const makeResponse = (
 		errorDetails: state.errorDetails,
 		formData: state.formData,
 	};
-
-	return currentStepRouteResponse;
 };
