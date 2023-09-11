@@ -14,6 +14,7 @@
  */
 
 import type { Permission } from './services/permission-data/types';
+import { permissionsArraySchema } from './services/permission-data/types';
 
 export function isUndefinedAndNotProduction(
 	envVar: string | undefined,
@@ -60,23 +61,21 @@ export const getTestJwtProfileDataIfUsing = () => {
 	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;
 };
 
-export const getLocalUserProfiles = (): Permission[] => {
-	const json = process.env.USER_PERMISSIONS;
-	if (!json) {
+export const getLocalUserPermissions = (): Permission[] => {
+	const USER_PERMISSIONS = process.env.USER_PERMISSIONS;
+	if (!USER_PERMISSIONS) {
 		return [];
 	}
 	try {
-		const data = JSON.parse(json) as Record<string, unknown> | unknown[];
-		if (!Array.isArray(data)) {
-			console.warn(
-				'USER PROFILE PARSE FAILED - data was not array',
-				data as unknown,
-			);
-			console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
+		const parseResult = permissionsArraySchema.safeParse(
+			JSON.parse(USER_PERMISSIONS),
+		);
+
+		if (!parseResult.success) {
+			console.warn('USER_PERMISSIONS failed validation', parseResult.error);
 			return [];
 		}
-		// TO DO - parse properly
-		return data as Permission[];
+		return parseResult.data;
 	} catch (err) {
 		console.warn('USER PROFILE PARSE FAILED - JSON error', err as unknown);
 		console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
