@@ -72,7 +72,10 @@ export const getLocalUserPermissions = (): Permission[] => {
 		);
 
 		if (!parseResult.success) {
-			console.warn('USER_PERMISSIONS failed validation', parseResult.error);
+			console.warn(
+				'USER_PERMISSIONS failed validation',
+				parseResult.error.issues,
+			);
 			return [];
 		}
 		return parseResult.data;

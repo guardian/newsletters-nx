@@ -1,18 +1,13 @@
 import type { UserPermissions } from '@newsletters-nx/newsletters-data-client';
 import { newslettersToolPermissionNames } from '@newsletters-nx/newsletters-data-client';
+import { getLocalUserPermissions } from '../../apiDeploymentSettings';
 import { STAGE } from './aws-params';
 import { buildS3 } from './build-client';
-import { localPermissions } from './local-test-permissions';
 import type { Permission } from './types';
-
-const getAllLocalPermissions = (): Promise<Permission[]> => {
-	const allPermissions = localPermissions;
-	return Promise.resolve([...allPermissions]);
-};
 
 const getAllPermissions = async (): Promise<Permission[]> => {
 	if (STAGE !== 'CODE' && STAGE !== 'PROD') {
-		return getAllLocalPermissions();
+		return getLocalUserPermissions();
 	}
 
 	const S3 = buildS3();
