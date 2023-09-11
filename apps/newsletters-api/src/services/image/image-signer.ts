@@ -42,9 +42,9 @@ export const signTemplateImages = async (
 		if (imageUrl) {
 			signedImages = shouldSignImage(imageUrl)
 				? {
-					...signedImages,
-					[key]: await signImage(imageUrl, { dpr: 2, width: 650 }),
-				}
+						...signedImages,
+						[key]: await signImage(imageUrl, { dpr: 2, width: 650 }),
+				  }
 				: { ...signedImages, [key]: imageUrl };
 		}
 	}
