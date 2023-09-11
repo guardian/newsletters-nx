@@ -13,20 +13,13 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 ## Choose the Pillar and Group for {{name}}
 
-Select a pillar for the newsletter e.g. **Football Daily** sits under the **Sport** pillar.
+Select a pillar for the **{{name}}** e.g. "*Football Daily*" sits under the *Sport* pillar. The pillar is a general category for the newsletter's content and design elements that represent the newsletter can use the pillar to determine the right color scheme to use.
 
 ![Pillars](https://i.guim.co.uk/img/uploads/2023/02/21/pillarScreenshot.png?quality=85&dpr=2&width=300&s=0692a8714eaf66313fc599cb3462befd)
 
-Select a group for {{name}} to be listed under on the [All Newsletters Page](https://www.theguardian.com/email-newsletters). The current groups are:
- - News in depth
- - News in brief
- - Opinion
- - Features
- - Culture
- - Lifestyle
- - Sport
- - Work
- - From the papers
+Please then select a group for **{{name}}** to be listed under on the [Manage My Account](https://manage.theguardian.com/email-prefs) page. The current groups include ‘News in depth’, ‘News in brief’ and others.
+
+![Groups](https://i.guim.co.uk/img/uploads/2023/09/11/mma-screenshot.png?quality=85&dpr=2&width=300&s=1b7e49ebb42e9ac563da1f2afedf1c88)
 
 `.trim();
 
