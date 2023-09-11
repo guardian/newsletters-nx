@@ -24,17 +24,6 @@ export type UserProfile = Partial<{
 	iss: string;
 }>;
 
-export enum UserAccessLevel {
-	Developer,
-	Editor,
-	Drafter,
-	Viewer,
-	TagEditor,
-	BrazeEditor,
-	OphanEditor,
-	SignUpPageEditor,
-}
-
 export type UserPermissions = {
 	editNewsletters: boolean;
 	useJsonEditor: boolean;
@@ -60,33 +49,3 @@ export const newslettersToolPermissionNames: Readonly<
 	'editTags',
 	'editSignUpPage',
 ];
-
-export const levelToPermissions = (
-	accessLevel: UserAccessLevel,
-): UserPermissions => {
-	return {
-		editNewsletters: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-		].includes(accessLevel),
-		launchNewsletters: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-		].includes(accessLevel),
-		writeToDrafts: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-			UserAccessLevel.Drafter,
-			UserAccessLevel.TagEditor,
-			UserAccessLevel.BrazeEditor,
-			UserAccessLevel.OphanEditor,
-			UserAccessLevel.SignUpPageEditor,
-		].includes(accessLevel),
-		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
-		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
-		editBraze: [UserAccessLevel.BrazeEditor].includes(accessLevel),
-		editOphan: [UserAccessLevel.OphanEditor].includes(accessLevel),
-		editTags: [UserAccessLevel.TagEditor].includes(accessLevel),
-		editSignUpPage: [UserAccessLevel.SignUpPageEditor].includes(accessLevel),
-	};
-};

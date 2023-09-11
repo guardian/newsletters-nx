@@ -13,7 +13,7 @@
  * or by creating a .env.local file in the root folder for the newsletters-api project
  */
 
-import { UserAccessLevel } from '@newsletters-nx/newsletters-data-client';
+import type { Permission } from './services/permission-data/types';
 
 export function isUndefinedAndNotProduction(
 	envVar: string | undefined,
@@ -60,44 +60,27 @@ export const getTestJwtProfileDataIfUsing = () => {
 	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;
 };
 
-export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
+export const getLocalUserProfiles = (): Permission[] => {
 	const json = process.env.USER_PERMISSIONS;
 	if (!json) {
-		return {};
+		return [];
 	}
 	try {
 		const data = JSON.parse(json) as Record<string, unknown> | unknown[];
-		if (Array.isArray(data)) {
+		if (!Array.isArray(data)) {
 			console.warn(
-				'USER PROFILE PARSE FAILED - data was array',
+				'USER PROFILE PARSE FAILED - data was not array',
 				data as unknown,
 			);
 			console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
-			return {};
+			return [];
 		}
-
-		const output: Record<string, UserAccessLevel> = {};
-
-		for (const key in data) {
-			const value = data[key];
-			switch (value) {
-				case UserAccessLevel.Developer:
-				case UserAccessLevel.Editor:
-				case UserAccessLevel.Drafter:
-				case UserAccessLevel.Viewer:
-				case UserAccessLevel.OphanEditor:
-				case UserAccessLevel.BrazeEditor:
-				case UserAccessLevel.TagEditor:
-				case UserAccessLevel.SignUpPageEditor:
-					output[key] = value;
-					break;
-			}
-		}
-		return output;
+		// TO DO - parse properly
+		return data as Permission[];
 	} catch (err) {
 		console.warn('USER PROFILE PARSE FAILED - JSON error', err as unknown);
 		console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
-		return {};
+		return [];
 	}
 };
 
