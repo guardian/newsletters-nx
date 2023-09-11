@@ -1,5 +1,8 @@
 import type { UserPermissions } from '@newsletters-nx/newsletters-data-client';
-import { newslettersToolPermissionNames } from '@newsletters-nx/newsletters-data-client';
+import {
+	EMPTY_USER_PERMISSIONS,
+	newslettersToolPermissionNames,
+} from '@newsletters-nx/newsletters-data-client';
 import type { Permission } from './types';
 
 export const permissionsToUserPermissions = (
@@ -14,25 +17,15 @@ export const permissionsToUserPermissions = (
 			),
 	);
 
-	const positives = newslettersToolPermissionNames.filter((permissionName) =>
-		toolPermissionsTheUserHas.some(
-			(permission) => permission.permission.name == permissionName,
-		),
-	);
+	const namesForToolPermissionsTheUserHas =
+		newslettersToolPermissionNames.filter((permissionName) =>
+			toolPermissionsTheUserHas.some(
+				(permission) => permission.permission.name == permissionName,
+			),
+		);
 
-	const userPermissions: UserPermissions = {
-		editNewsletters: false,
-		useJsonEditor: false,
-		launchNewsletters: false,
-		writeToDrafts: false,
-		viewMetaData: false,
-		editBraze: false,
-		editOphan: false,
-		editTags: false,
-		editSignUpPage: false,
-	};
-
-	positives.forEach((key) => {
+	const userPermissions: UserPermissions = { ...EMPTY_USER_PERMISSIONS };
+	namesForToolPermissionsTheUserHas.forEach((key) => {
 		userPermissions[key] = true;
 	});
 

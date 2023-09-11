@@ -49,3 +49,15 @@ export const newslettersToolPermissionNames: Readonly<
 	'editTags',
 	'editSignUpPage',
 ];
+
+export const EMPTY_USER_PERMISSIONS: Readonly<UserPermissions> = {
+	editNewsletters: false,
+	useJsonEditor: false,
+	launchNewsletters: false,
+	writeToDrafts: false,
+	viewMetaData: false,
+	editBraze: false,
+	editOphan: false,
+	editTags: false,
+	editSignUpPage: false,
+};
