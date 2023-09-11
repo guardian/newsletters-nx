@@ -1,5 +1,5 @@
-import { LocalPermissionService } from './LocalPermissions';
+import { DataPermissionService } from './DataPermissions';
 
-const permissionService = new LocalPermissionService();
+const permissionService = new DataPermissionService();
 
 export { permissionService };

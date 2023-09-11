@@ -47,6 +47,20 @@ export type UserPermissions = {
 	editSignUpPage: boolean;
 };
 
+export const newslettersToolPermissionNames: Readonly<
+	Array<keyof UserPermissions>
+> = [
+	'editNewsletters',
+	'useJsonEditor',
+	'launchNewsletters',
+	'writeToDrafts',
+	'viewMetaData',
+	'editBraze',
+	'editOphan',
+	'editTags',
+	'editSignUpPage',
+];
+
 export const levelToPermissions = (
 	accessLevel: UserAccessLevel,
 ): UserPermissions => {

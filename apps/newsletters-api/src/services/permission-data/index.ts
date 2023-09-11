@@ -1,4 +1,1 @@
-export {
-	userHasPinboardPermission,
-	getAllPinboardPermissionsData,
-} from './get-permissions-data';
+export * from './get-newsletters-tool-permissions';
