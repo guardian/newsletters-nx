@@ -92,6 +92,12 @@ export const newsletterDataSchema = z.object({
 	brazeSubscribeAttributeName: underscoreCasedString(),
 	brazeSubscribeEventNamePrefix: kebabOrUnderscoreCasedString(),
 	brazeNewsletterName: underscoreCasedString(),
+	/**
+	 * The name of the Pillar to associate this newsletter under
+	 *
+	 * Note that the display name(set using the schema description)
+	 * for this field in the tool is "pillar".
+	 * */
 	theme: themeEnumSchema,
 	group: nonEmptyString(),
 	signUpHeadline: z.string().optional().describe('sign up headline'),
