@@ -5,28 +5,28 @@ import {
 } from './editorial-newsletters-ts';
 
 describe('isNewsletterData', () => {
-	it('is defined', () => {
+	test('is defined', () => {
 		expect(isNewsletterData).toBeDefined();
 	});
-	it('works', () => {
+	test('works', () => {
 		expect(isNewsletterData({})).toBe(false);
 	});
 });
 
 describe('isLegacyNewsletter', () => {
-	it('is defined', () => {
+	test('is defined', () => {
 		expect(isLegacyNewsletter).toBeDefined();
 	});
-	it('works', () => {
+	test('works', () => {
 		expect(isLegacyNewsletter({})).toBe(false);
 	});
 });
 
 describe('isLegacyCancelledNewsletter', () => {
-	it('is defined', () => {
+	test('is defined', () => {
 		expect(isLegacyCancelledNewsletter).toBeDefined();
 	});
-	it('works', () => {
+	test('works', () => {
 		expect(isLegacyCancelledNewsletter({})).toBe(false);
 	});
 });
