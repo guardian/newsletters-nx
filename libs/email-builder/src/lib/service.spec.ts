@@ -7,9 +7,7 @@ import type { MessageParams } from './types';
 jest.mock('@aws-sdk/client-ses');
 jest.mock('@newsletters-nx/util');
 
-const mockedGetConfigValue = <jest.Mock<typeof getConfigValue>>(
-	(<unknown>getConfigValue)
-);
+const mockedGetConfigValue = getConfigValue as jest.Mock;
 
 const testNewsletter: NewsletterData = {
 	name: 'Spec Email',
@@ -23,7 +21,7 @@ const TEST_MESSAGE_PARAMS: MessageParams = {
 const TEST_RECIPIENTS = ['test@example.com', 'test_two@example.com'];
 
 describe('sendEmailNotifications', () => {
-	it('will not send a message if notifications are not enabled', async () => {
+	test('will not send a message if notifications are not enabled', async () => {
 		const mockedClient = new SESClient();
 
 		const results = await sendEmailNotifications(
@@ -40,7 +38,7 @@ describe('sendEmailNotifications', () => {
 		expect(mockedClient.send).not.toHaveBeenCalled();
 	});
 
-	it('sends messages when notifications are enabled', async () => {
+	test('sends messages when notifications are enabled', async () => {
 		const mockedClient = new SESClient();
 		mockedGetConfigValue.mockResolvedValueOnce(
 			'{"foo":["foo"],"bar":["bar"],"baz":["baz"]}',

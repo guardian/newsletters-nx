@@ -4,9 +4,7 @@ import { buildNewsLetterLaunchMessage } from './newsletter-launched-message';
 
 jest.mock('@newsletters-nx/util');
 
-const mockedGetConfigValue = <jest.Mock<typeof getConfigValue>>(
-	(<unknown>getConfigValue)
-);
+const mockedGetConfigValue = getConfigValue as jest.Mock;
 const TEST_RECIPIENTS = ['test@example.com', 'example@test.net'];
 
 const testNewsletter: NewsletterData = {
@@ -14,7 +12,7 @@ const testNewsletter: NewsletterData = {
 } as NewsletterData;
 
 describe('buildNewsLetterLaunchMessage', () => {
-	it('should generate content and config, using recipients defined in config', async () => {
+	test('should generate content and config, using recipients defined in config', async () => {
 		mockedGetConfigValue.mockResolvedValueOnce(
 			'{"tagRecipients":["alpha"],"brazeRecipients":["beta"],"signUpPageRecipients":["gamma"],"launchRecipients":["delta"]}',
 		);
