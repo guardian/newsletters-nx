@@ -19,10 +19,11 @@ export const kebabOrUnderscoreCasedString = () =>
 			'Must containt numbers or lower-case letters only, separated by dashes or underscores',
 		);
 
-export const urlPathString = () =>
+export const urlPathString = (customValidationMessage?: string) =>
 	z
 		.string()
 		.regex(
 			/^(?:[/][a-zA-Z0-9-]*)+$/,
-			'Must start with a slash then sets of only letters, dashes or numbers, separated by slashes',
+			customValidationMessage ??
+				'Must start with a slash then sets of only letters, dashes or numbers, separated by slashes',
 		);

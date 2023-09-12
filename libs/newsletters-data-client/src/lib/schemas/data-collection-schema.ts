@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { nonEmptyString, urlPathString } from '../zod-helpers';
+import { nonEmptyString } from '../zod-helpers';
 import {
 	newsletterDataSchema,
 	onlineArticleSchema,
@@ -34,8 +34,9 @@ const automatedFrontSectionSchemaWithFunctionNames =
 	);
 
 /**
- * require the `onwardPath` and  exclude the `url`.
+ * require the `onwardPath`and exclude the `url`.
  * both are optional in the newsletter schema.
+ * `url` is deprecated.
  */
 const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
 	.omit({
@@ -43,7 +44,7 @@ const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
 	})
 	.merge(
 		z.object({
-			onwardPath: urlPathString(),
+			onwardPath: readMoreSectionSchema.shape.onwardPath.unwrap(),
 		}),
 	);
 
