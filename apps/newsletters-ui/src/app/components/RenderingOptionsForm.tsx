@@ -149,24 +149,19 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		<>
 			{hasEmailRenderingTemplate && (
 				<Alert severity="error">
-					The rendering options for this newsletter are managed in the Email
-					Rendering project. Updates made here will not effect the emails sent
-					to subscribers. To make changes to <strong>{item.name}</strong>,
-					please contact the development team
+					This newsletter’s rendering options are managed by email rendering. To
+					make changes to <strong>{item.name}</strong>, please contact the
+					development team
 				</Alert>
 			)}
 			<Typography variant="h2">{item.name}</Typography>
 			<Typography variant="subtitle1">email-rendering settings</Typography>
 			<Alert severity={item.seriesTag ? 'info' : 'warning'}>
 				<AlertTitle>Series Tags</AlertTitle>
+				{!item.seriesTag && <Typography>Please add a series tag</Typography>}
 				<Typography>
-					The email-rendering service will the rendering options below when
-					asked to render an article that has the specified series tag.{' '}
-				</Typography>
-				<Typography>
-					If no valid series tag is specified, email-rendering service cannot
-					tell that an article belongs to the series for this newsletter an will
-					use the generic template.
+					If no valid series tag is specified, the email rendering service will
+					show a generic template
 				</Typography>
 			</Alert>
 
