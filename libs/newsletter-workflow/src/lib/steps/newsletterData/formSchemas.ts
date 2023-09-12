@@ -90,7 +90,7 @@ export const formSchemas = {
 				'From the papers',
 			]),
 		})
-		.describe('Choose a theme and a group'),
+		.describe('Choose a pillar and a group'),
 
 	signUpPage: dataCollectionSchema
 		.pick({
