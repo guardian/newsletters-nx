@@ -23,4 +23,12 @@ describe('isNewsletterData', () => {
 		const filteredData = invalidItems.filter(isNewsletterData);
 		expect(filteredData.length).toBe(0);
 	});
+	it('Allows extra properties, provided they do not conflict with existing keys', () => {
+		const newsletterWithExtraProperties = {
+			...TECHSCAPE_IN_NEW_FORMAT,
+			'this is not an expected key name so should be ignored': true,
+			meaningOfLifeTheUniverseAndEveryThing: 42,
+		};
+		expect(isNewsletterData(newsletterWithExtraProperties)).toBe(true);
+	});
 });
