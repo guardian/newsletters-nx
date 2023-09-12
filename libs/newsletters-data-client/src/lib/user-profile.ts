@@ -24,21 +24,20 @@ export type UserProfile = Partial<{
 	iss: string;
 }>;
 
-export type UserPermissions = {
-	editNewsletters: boolean;
-	useJsonEditor: boolean;
-	launchNewsletters: boolean;
-	writeToDrafts: boolean;
-	viewMetaData: boolean;
-	editBraze: boolean;
-	editOphan: boolean;
-	editTags: boolean;
-	editSignUpPage: boolean;
-};
+export type UserPermissionName =
+	| 'editNewsletters'
+	| 'useJsonEditor'
+	| 'launchNewsletters'
+	| 'writeToDrafts'
+	| 'viewMetaData'
+	| 'editBraze'
+	| 'editOphan'
+	| 'editTags'
+	| 'editSignUpPage';
 
-export const newslettersToolPermissionNames: Readonly<
-	Array<keyof UserPermissions>
-> = [
+export type UserPermissions = Record<UserPermissionName, boolean>;
+
+export const newslettersToolPermissionNames: Readonly<UserPermissionName[]> = [
 	'editNewsletters',
 	'useJsonEditor',
 	'launchNewsletters',
