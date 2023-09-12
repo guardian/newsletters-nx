@@ -62,7 +62,13 @@ const generateNewsletter = () => {
 		'Fortnightly',
 		'Monthly',
 	]);
-	const regionFocus = faker.helpers.arrayElement(['UK', 'AU', 'US', undefined]);
+	const regionFocus = faker.helpers.arrayElement([
+		'UK',
+		'AU',
+		'US',
+		'EUR',
+		undefined,
+	]);
 
 	const category = faker.helpers.arrayElement([
 		'article-based',
@@ -137,7 +143,7 @@ const generateNewsletter = () => {
 			'Work',
 			'From the papers',
 		]),
-		regionFocus: faker.helpers.arrayElement(['UK', 'AU', 'US', undefined]),
+		regionFocus,
 		listIdV1: faker.datatype.number({ max: 4000 }),
 		listId: faker.datatype.number({ max: 6000 }),
 		exampleUrl: `/world/series/series-${newsletterId}/latest/email`,
