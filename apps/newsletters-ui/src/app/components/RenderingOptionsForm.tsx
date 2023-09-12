@@ -158,14 +158,10 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 			<Typography variant="subtitle1">email-rendering settings</Typography>
 			<Alert severity={item.seriesTag ? 'info' : 'warning'}>
 				<AlertTitle>Series Tags</AlertTitle>
+				{!item.seriesTag && <Typography>Please add a series tag</Typography>}
 				<Typography>
-					The email-rendering service will the rendering options below when
-					asked to render an article that has the specified series tag.{' '}
-				</Typography>
-				<Typography>
-					If no valid series tag is specified, email-rendering service cannot
-					tell that an article belongs to the series for this newsletter an will
-					use the generic template.
+					If no valid series tag is specified, the email rendering service will
+					show a generic template
 				</Typography>
 			</Alert>
 
