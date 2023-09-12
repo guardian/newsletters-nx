@@ -1,10 +1,12 @@
 import {
+	getLocalUserPermissions,
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
 	isServingUI,
 	isUndefinedAndNotProduction,
 	isUsingInMemoryStorage,
 } from './apiDeploymentSettings';
+import type { Permission } from './services/permissions/types';
 
 const ORIGINAL_ENV = process.env;
 beforeEach(() => {
@@ -163,5 +165,39 @@ describe('isUsingInMemoryStorage', () => {
 	it('returns false if USE_IN_MEMORY_STORAGE is something other than true or false', () => {
 		process.env.USE_IN_MEMORY_STORAGE = 'foo';
 		expect(isUsingInMemoryStorage()).toBe(false);
+	});
+});
+
+describe('getLocalUserPermissions', () => {
+	it('will return an empty array if the USER_PERMISSIONS var is not valid JSON', () => {
+		process.env.USER_PERMISSIONS = 'nonsence';
+
+		const permissions = getLocalUserPermissions();
+		expect(permissions.length).toBe(0);
+	});
+	it('will return and empty array if the USER_PERMISSIONS var does not match the permissions schema', () => {
+		process.env.USER_PERMISSIONS = JSON.stringify([
+			{ key: 'nothing to do with permissions' },
+			{ cost: 26 },
+		]);
+
+		const permissions = getLocalUserPermissions();
+		expect(permissions.length).toBe(0);
+	});
+
+	it('will read valid permissions from the USER_PERMISSIONS var', () => {
+		const testPermissions: Permission[] = [
+			{
+				permission: { app: 'any-app', name: 'make-changes' },
+				overrides: [
+					{ userId: 'test-user@example.com', active: false },
+					{ userId: 'other-test-user@example.com', active: false },
+				],
+			},
+		];
+
+		process.env.USER_PERMISSIONS = JSON.stringify(testPermissions);
+		const permissions = getLocalUserPermissions();
+		expect(permissions).toEqual(testPermissions);
 	});
 });
