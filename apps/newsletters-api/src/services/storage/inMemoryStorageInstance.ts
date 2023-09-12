@@ -8,7 +8,6 @@ export const makeInMemoryStorageInstance = () =>
 			signUpDescription:
 				'Quod nobis aperiam aperiam ipsum nobis officiis explicabo molestias quibusdam.',
 			frequency: 'Weekly',
-			status: 'paused',
 			restricted: false,
 			emailConfirmation: false,
 			signUpEmbedDescription: "We'll send you Avon Recumbent weekly",
@@ -27,6 +26,10 @@ export const makeInMemoryStorageInstance = () =>
 			onlineArticle: 'Web for all sends',
 			designBriefDoc: 'Its on google drive somewhere.',
 			figmaDesignUrl: 'https://example.com/',
+			brazeCampaignCreationStatus: 'NOT_REQUESTED',
+			ophanCampaignCreationStatus: 'NOT_REQUESTED',
+			signupPageCreationStatus: 'NOT_REQUESTED',
+			tagCreationStatus: 'NOT_REQUESTED',
 		},
 		{
 			name: 'blue empowering',
@@ -34,10 +37,10 @@ export const makeInMemoryStorageInstance = () =>
 			signUpDescription:
 				'This draft has the same name as a launched newsletters and might cause problems at launch!',
 			frequency: 'Weekly',
-			status: 'paused',
 			restricted: false,
 			emailConfirmation: false,
 			signUpEmbedDescription: "We'll send you it",
+			signUpHeadline: 'this is the headline',
 			theme: 'culture',
 			group: 'Work',
 			regionFocus: 'UK',
@@ -50,8 +53,11 @@ export const makeInMemoryStorageInstance = () =>
 			thrasherDate: new Date('1970-01-02T00:21:18.876Z'),
 			privateUntilLaunch: false,
 			onlineArticle: 'Web for all sends',
+			brazeCampaignCreationStatus: 'NOT_REQUESTED',
+			ophanCampaignCreationStatus: 'NOT_REQUESTED',
+			signupPageCreationStatus: 'NOT_REQUESTED',
+			tagCreationStatus: 'NOT_REQUESTED',
 		},
-
 		{
 			listId: 7000,
 			name: 'Test draft newsletter',
@@ -66,6 +72,10 @@ export const makeInMemoryStorageInstance = () =>
 			campaignName: 'Testdraftnewsletter',
 			campaignCode: 'testdraftnewsletter_email',
 			creationTimeStamp: 1633539258449,
+			brazeCampaignCreationStatus: 'NOT_REQUESTED',
+			ophanCampaignCreationStatus: 'NOT_REQUESTED',
+			signupPageCreationStatus: 'NOT_REQUESTED',
+			tagCreationStatus: 'NOT_REQUESTED',
 		},
 		{
 			listId: 7001,
@@ -73,6 +83,10 @@ export const makeInMemoryStorageInstance = () =>
 			category: 'other',
 			theme: 'news',
 			creationTimeStamp: 1633539258449,
+			brazeCampaignCreationStatus: 'NOT_REQUESTED',
+			ophanCampaignCreationStatus: 'NOT_REQUESTED',
+			signupPageCreationStatus: 'NOT_REQUESTED',
+			tagCreationStatus: 'NOT_REQUESTED',
 		},
 		{
 			name: 'Response Academic',
@@ -82,6 +96,10 @@ export const makeInMemoryStorageInstance = () =>
 			signUpDescription:
 				'Officia neque totam temporibus incidunt ad dolorem quo sit mollitia.\\net molestiae reprehenderit.\\nquo dolores beatae suscipit veniam maiores delectus.',
 			creationTimeStamp: 1633539258449,
+			brazeCampaignCreationStatus: 'NOT_REQUESTED',
+			ophanCampaignCreationStatus: 'NOT_REQUESTED',
+			signupPageCreationStatus: 'NOT_REQUESTED',
+			tagCreationStatus: 'NOT_REQUESTED',
 		},
 		{
 			name: 'Wagon Automotive',
@@ -92,6 +110,10 @@ export const makeInMemoryStorageInstance = () =>
 			group: 'Work',
 			listId: 7009,
 			creationTimeStamp: 1633539258449,
+			brazeCampaignCreationStatus: 'NOT_REQUESTED',
+			ophanCampaignCreationStatus: 'NOT_REQUESTED',
+			signupPageCreationStatus: 'NOT_REQUESTED',
+			tagCreationStatus: 'NOT_REQUESTED',
 		},
 		{
 			name: 'Background Hatchback',
@@ -107,5 +129,9 @@ export const makeInMemoryStorageInstance = () =>
 			launchDate: new Date('1970-01-02T00:21:18.876Z'),
 			signUpPageDate: new Date('1970-01-02T00:21:18.876Z'),
 			thrasherDate: new Date('1970-01-02T00:21:18.876Z'),
+			brazeCampaignCreationStatus: 'NOT_REQUESTED',
+			ophanCampaignCreationStatus: 'NOT_REQUESTED',
+			signupPageCreationStatus: 'NOT_REQUESTED',
+			tagCreationStatus: 'NOT_REQUESTED',
 		},
 	]);

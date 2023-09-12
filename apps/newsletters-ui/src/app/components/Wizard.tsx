@@ -7,6 +7,7 @@ import {
 	getStartStepId,
 	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
+import type { WizardButtonType } from '@newsletters-nx/newsletters-data-client';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
@@ -174,18 +175,20 @@ export const Wizard: React.FC<WizardProps> = ({
 		return setFormData(updatedLocalState);
 	};
 
-	const handleButtonClick = (buttonId: string) => () => {
-		if (showSkipModalFor) {
-			return;
-		}
-		void fetchStep({
-			wizardId: wizardId,
-			id: id,
-			buttonId: buttonId,
-			stepId: serverData.currentStepId || '',
-			formData: { ...formData, listId }, // will work for the create and modify workflow, but might break other workflows
-		});
-	};
+	const handleButtonClick =
+		(buttonId: string, buttonType: WizardButtonType) => () => {
+			if (showSkipModalFor) {
+				return;
+			}
+			void fetchStep({
+				wizardId: wizardId,
+				id: id,
+				buttonId: buttonId,
+				buttonType,
+				stepId: serverData.currentStepId || '',
+				formData: { ...formData, listId }, // will work for the create and modify workflow, but might break other workflows
+			});
+		};
 
 	const handleStepClick = (stepToSkipToId: string) => {
 		if (showSkipModalFor) {

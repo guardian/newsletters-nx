@@ -1,3 +1,5 @@
+import type { NewsletterMessageId } from '@newsletters-nx/email-builder';
+import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import type {
 	FormDataRecord,
 	LaunchService,
@@ -34,6 +36,49 @@ const getExtraValuesFromFormData = (
 	);
 };
 
+const outputToStatus = (output: {
+	success: boolean;
+}): 'REQUESTED' | 'NOT_REQUESTED' =>
+	output.success ? 'REQUESTED' : 'NOT_REQUESTED';
+
+const doNotSendEmail = () =>
+	Promise.resolve({ success: false, error: undefined });
+
+const sendOutEmailsAndUpdateStatus = async (
+	launchService: LaunchService,
+	newsletter: NewsletterData,
+) => {
+	const shouldSendTagCreationRequest = !!newsletter.seriesTag;
+
+	const sendEmail = (messageTemplateId: NewsletterMessageId) =>
+		sendEmailNotifications(
+			{ messageTemplateId, newsletter },
+			launchService.emailClent,
+			launchService.emailEnvInfo,
+		);
+
+	const [
+		launchEmailResult,
+		brazeRequestEmailResult,
+		tagCreationEmailResult,
+		signupPageCreationEmailResult,
+	] = await Promise.all([
+		sendEmail('NEWSLETTER_LAUNCH'),
+		sendEmail('BRAZE_SET_UP_REQUEST'),
+		shouldSendTagCreationRequest
+			? sendEmail('TAG_CREATION_REQUEST')
+			: doNotSendEmail(),
+		sendEmail('SIGN_UP_PAGE_CREATION_REQUEST'),
+	]);
+
+	return launchService.updateCreationStatus(newsletter, {
+		ophanCampaignCreationStatus: outputToStatus(launchEmailResult),
+		brazeCampaignCreationStatus: outputToStatus(brazeRequestEmailResult),
+		tagCreationStatus: outputToStatus(tagCreationEmailResult),
+		signupPageCreationStatus: outputToStatus(signupPageCreationEmailResult),
+	});
+};
+
 export const executeLaunch: AsyncExecution<LaunchService> = async (
 	stepData,
 	wizardStepData,
@@ -48,13 +93,17 @@ export const executeLaunch: AsyncExecution<LaunchService> = async (
 		return { isFailure: true, message: 'ERROR: no launch service available' };
 	}
 
-	const response = await launchService.launchDraft(
-		draftId,
-		getExtraValuesFromFormData(stepData.formData),
-	);
+	const response = await launchService.launchDraft(draftId, {
+		...getExtraValuesFromFormData(stepData.formData),
+	});
 	if (!response.ok) {
 		return { isFailure: true, message: response.message };
 	}
+
+	// voiding rather than awaiting - the UI doesn't need to wait for the
+	// notification emails and status updates before confirming the
+	// newsletter is in the API
+	void sendOutEmailsAndUpdateStatus(launchService, response.data);
 
 	return {
 		data: {

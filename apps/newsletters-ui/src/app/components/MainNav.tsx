@@ -29,7 +29,7 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-	{ path: '/newsletters', label: 'Launched' },
+	{ path: '/launched', label: 'Launched' },
 	{ path: '/drafts', label: 'Drafts' },
 	{ path: '/templates', label: 'Email Templates' },
 ];
@@ -52,7 +52,7 @@ const ToolBarIcon = (props: {
 	</Box>
 );
 
-export function MainNav({ isOnCode, isOnLocal }: Props) {
+export function MainNav({ isOnCode }: Props) {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
 	const userProfile = useProfile();
@@ -77,8 +77,8 @@ export function MainNav({ isOnCode, isOnLocal }: Props) {
 						role={'link'}
 						onClick={() => navigate('/')}
 						style={{
-								cursor: 'pointer',
-							}}
+							cursor: 'pointer',
+						}}
 					>
 						<Typography
 							variant="h1"
@@ -166,8 +166,14 @@ export function MainNav({ isOnCode, isOnLocal }: Props) {
 								}}
 								sx={{
 									my: 2,
-									color: menuItemIsSelected(path) ? 'grey' : 'white',
+									color: 'white',
+									fontWeight: menuItemIsSelected(path) ? 'bold' : 'normal',
 									display: 'block',
+									borderBottomStyle: menuItemIsSelected(path)
+										? 'solid'
+										: 'none',
+									borderBottomWidth: '2px',
+									borderRadius: '0',
 								}}
 							>
 								{label}

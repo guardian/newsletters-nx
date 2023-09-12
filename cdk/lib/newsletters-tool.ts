@@ -3,12 +3,12 @@ import { AccessScope } from '@guardian/cdk/lib/constants';
 import {
 	GuDistributionBucketParameter,
 	GuStack,
-	GuStringParameter,
 	type GuStackProps,
+	GuStringParameter,
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
-import { type App, Duration, SecretValue } from 'aws-cdk-lib';
+import { type App, aws_ses, Duration, SecretValue } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import {
 	ApplicationListenerRule,
@@ -20,6 +20,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { GuPolicy } from '@guardian/cdk/lib/constructs/iam';
 import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
+import { EmailIdentity } from 'aws-cdk-lib/aws-ses';
 
 export interface NewslettersToolProps extends GuStackProps {
 	domainNameTool: string;
@@ -28,8 +29,7 @@ export interface NewslettersToolProps extends GuStackProps {
 
 const processJSONString = (jsonParam: string): string => {
 	const escapedAndWrapped = JSON.stringify(jsonParam);
-	const escaped = escapedAndWrapped.substring(1, escapedAndWrapped.length - 1);
-	return escaped;
+	return escapedAndWrapped.substring(1, escapedAndWrapped.length - 1);
 };
 
 export class NewslettersTool extends GuStack {
@@ -74,11 +74,14 @@ User=ubuntu
 ExecStart=/usr/bin/node /opt/${app}/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=${this.stage}
+Environment=STACK=${this.stack}
+Environment=APP=${app}
 Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USER_PERMISSIONS='${processJSONString(userPermissions)}'
+Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 [Install]
 WantedBy=multi-user.target
 EOL`,
@@ -104,6 +107,19 @@ EOL`,
 			versioned: true,
 		});
 
+		const sesVerifiedIdentity = new EmailIdentity(this, 'EmailIdentity', {
+			identity: aws_ses.Identity.domain(domainNameTool),
+		});
+
+		sesVerifiedIdentity.dkimRecords.forEach(({ name, value }, index) => {
+			new GuCname(this, `EmailIdentityDkim${index}`, {
+				app: toolAppName,
+				domainName: name,
+				resourceRecord: value,
+				ttl: Duration.hours(1),
+			});
+		});
+
 		const s3AccessPolicy = new GuPolicy(this, `s3-access-policy`, {
 			policyName: 'readWriteAccessToDataBucket',
 			statements: [
@@ -122,6 +138,19 @@ EOL`,
 					resources: [
 						`${dataStorageBucket.bucketArn}/*`,
 						`${dataStorageBucket.bucketArn}`,
+					],
+				}),
+			],
+		});
+
+		const sendEmailPolicy = new GuPolicy(this, `send-email-policy`, {
+			policyName: 'sendEmailPolicy',
+			statements: [
+				new PolicyStatement({
+					effect: Effect.ALLOW,
+					actions: ['ses:SendEmail'],
+					resources: [
+						`arn:aws:ses:${this.region}:${this.account}:identity/${sesVerifiedIdentity.emailIdentityName}`,
 					],
 				}),
 			],
@@ -154,7 +183,7 @@ EOL`,
 				userPermissions.valueAsString,
 			),
 			roleConfiguration: {
-				additionalPolicies: [s3AccessPolicy],
+				additionalPolicies: [s3AccessPolicy, sendEmailPolicy],
 			},
 			app: toolAppName,
 			accessLogging: {

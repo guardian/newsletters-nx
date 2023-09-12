@@ -16,5 +16,13 @@ export const kebabOrUnderscoreCasedString = () =>
 		.string()
 		.regex(
 			/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/,
-			'Must numbers or lower-case letters only, separated by dashes or underscores',
+			'Must containt numbers or lower-case letters only, separated by dashes or underscores',
+		);
+
+export const urlPathString = () =>
+	z
+		.string()
+		.regex(
+			/^(?:[/][a-zA-Z0-9-]*)+$/,
+			'Must start with a slash then sets of only letters, dashes or numbers, separated by slashes',
 		);

@@ -1,12 +1,12 @@
 import type { S3Client } from '@aws-sdk/client-s3';
-import type { DraftNewsletterDataWithMeta } from '../draft-newsletter-data-type';
-import { makeBlankMeta } from '../meta-data-type';
+import type { DraftNewsletterDataWithMeta } from '../schemas/draft-newsletter-data-type';
+import { makeBlankMeta } from '../schemas/meta-data-type';
 import type {
 	NewsletterData,
 	NewsletterDataWithMeta,
 	NewsletterDataWithoutMeta,
-} from '../newsletter-data-type';
-import { isNewsletterDataWithMeta } from '../newsletter-data-type';
+} from '../schemas/newsletter-data-type';
+import { isNewsletterDataWithMeta } from '../schemas/newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
@@ -142,6 +142,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 				data: listWithoutMeta,
 			};
 		} catch (error) {
+			console.error(error);
 			return {
 				ok: false,
 				message: `failed to list newsletters`,

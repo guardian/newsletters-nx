@@ -1,3 +1,4 @@
+import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import type {
 	DraftNewsletterData,
 	DraftService,
@@ -13,6 +14,13 @@ import {
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
 import type { AsyncExecution } from '@newsletters-nx/state-machine';
+
+const defaultDraftNewsletterValues: DraftNewsletterData = {
+	brazeCampaignCreationStatus: 'NOT_REQUESTED',
+	ophanCampaignCreationStatus: 'NOT_REQUESTED',
+	tagCreationStatus: 'NOT_REQUESTED',
+	signupPageCreationStatus: 'NOT_REQUESTED',
+} as const;
 
 export const executeCreate: AsyncExecution<DraftService> = async (
 	stepData,
@@ -55,11 +63,21 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 	const storageResponse = await draftService.draftStorage.create(
 		{
 			...draft,
+			...defaultDraftNewsletterValues,
 			listId: undefined,
 		},
 		draftService.userProfile,
 	);
 	if (storageResponse.ok) {
+		void sendEmailNotifications(
+			{
+				messageTemplateId: 'NEW_DRAFT',
+				draft: storageResponse.data,
+			},
+			draftService.emailClient,
+			draftService.emailEnvInfo,
+		);
+
 		return {
 			data: draftNewsletterDataToFormData(storageResponse.data),
 		};

@@ -1,4 +1,11 @@
-import { Alert, AlertTitle, Button, Snackbar, Typography } from '@mui/material';
+import {
+	Alert,
+	AlertTitle,
+	Button,
+	Grid,
+	Snackbar,
+	Typography,
+} from '@mui/material';
 import { Stack } from '@mui/system';
 import { useMemo, useState } from 'react';
 import type {
@@ -7,12 +14,14 @@ import type {
 	RenderingOptions,
 } from '@newsletters-nx/newsletters-data-client';
 import {
+	dataCollectionRenderingOptionsSchema,
 	getEmptySchemaData,
 	newsletterDataSchema,
 	renderingOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { StateEditForm } from './StateEditForm';
+import { TemplatePreviewLoader } from './TemplatePreviewLoader';
 
 interface Props {
 	originalItem: NewsletterData;
@@ -24,7 +33,27 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	>(
 		originalItem.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
 	);
+
 	const [item, setItem] = useState<NewsletterData>(originalItem);
+	const emailRenderingManagedNewsletters = [
+		'afternoon-update',
+		'cotton-capital',
+		'the-guide-staying-in',
+		'fashion-statement',
+		'five-great-reads',
+		'morning-mail',
+		'soccer-with-jonathan-wilson',
+		'this-is-europe',
+		'moving-the-goalposts',
+		'pushing-buttons',
+		'morning-briefing',
+		'green-light',
+		'the-fiver',
+		'afternoon-update',
+	];
+	const { identityName } = originalItem;
+	const hasEmailRenderingTemplate =
+		emailRenderingManagedNewsletters.includes(identityName);
 	const [subset, setSubset] = useState<FormDataRecord>({
 		category: item.category,
 		seriesTag: item.seriesTag,
@@ -66,13 +95,13 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	};
 
 	const requestUpdate = async () => {
-		const renderingOptionsparseResult =
+		const renderingOptionsParseResult =
 			renderingOptionsSchema.safeParse(renderingOptions);
-		if (!renderingOptionsparseResult.success) {
+		if (!renderingOptionsParseResult.success) {
 			setErrorMessage('Cannot submit with validation errors');
 			return;
 		}
-		const parsedRenderingOptions = renderingOptionsparseResult.data;
+		const parsedRenderingOptions = renderingOptionsParseResult.data;
 
 		setWaitingForResponse(true);
 
@@ -118,19 +147,16 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 	return (
 		<>
+			{hasEmailRenderingTemplate && (
+				<Alert severity="error">
+					The rendering options for this newsletter are managed in the Email
+					Rendering project. Updates made here will not effect the emails sent
+					to subscribers. To make changes to <strong>{item.name}</strong>,
+					please contact the development team
+				</Alert>
+			)}
 			<Typography variant="h2">{item.name}</Typography>
 			<Typography variant="subtitle1">email-rendering settings</Typography>
-
-			<Typography variant="h3">Category and series tag</Typography>
-			<StateEditForm
-				formSchema={newsletterDataSchema.pick({
-					category: true,
-					seriesTag: true,
-				})}
-				formData={subset}
-				setFormData={setSubset}
-			/>
-
 			<Alert severity={item.seriesTag ? 'info' : 'warning'}>
 				<AlertTitle>Series Tags</AlertTitle>
 				<Typography>
@@ -144,16 +170,41 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				</Typography>
 			</Alert>
 
-			{renderingOptions && (
-				<>
-					<Typography variant="h3">Rendering options</Typography>
+			<Grid container columnSpacing={2}>
+				<Grid item xs={4}>
+					<Typography variant="h3">Category and series tag</Typography>
 					<StateEditForm
-						formSchema={renderingOptionsSchema}
-						formData={renderingOptions}
-						setFormData={setRenderingOptions}
+						formSchema={newsletterDataSchema.pick({
+							category: true,
+							seriesTag: true,
+						})}
+						formData={subset}
+						setFormData={setSubset}
 					/>
-				</>
-			)}
+
+					{renderingOptions && (
+						<>
+							<Typography variant="h3">Rendering options</Typography>
+							<StateEditForm
+								formSchema={dataCollectionRenderingOptionsSchema}
+								formData={renderingOptions}
+								setFormData={setRenderingOptions}
+							/>
+						</>
+					)}
+				</Grid>
+
+				<Grid item xs={8} paddingTop={3}>
+					<TemplatePreviewLoader
+						newsletterData={{
+							...originalItem,
+							...subset,
+							renderingOptions: (renderingOptions ?? {}) as RenderingOptions,
+						}}
+						minHeight={1200}
+					/>
+				</Grid>
+			</Grid>
 
 			<Stack maxWidth={'md'} direction={'row'} spacing={2} marginBottom={2}>
 				<Button

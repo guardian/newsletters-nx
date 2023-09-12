@@ -1,6 +1,6 @@
 /**
  * The fields expected in user data obtained by the Ec2
- * load balancer when authenticating user via google auth,
+ * load balancer when authenticating user via Google auth,
  * based on the scopes requested in ''Google Auth' action
  * defined the cdk config.
  */
@@ -29,6 +29,10 @@ export enum UserAccessLevel {
 	Editor,
 	Drafter,
 	Viewer,
+	TagEditor,
+	BrazeEditor,
+	OphanEditor,
+	SignUpPageEditor,
 }
 
 export type UserPermissions = {
@@ -37,6 +41,10 @@ export type UserPermissions = {
 	launchNewsletters: boolean;
 	writeToDrafts: boolean;
 	viewMetaData: boolean;
+	editBraze: boolean;
+	editOphan: boolean;
+	editTags: boolean;
+	editSignUpPage: boolean;
 };
 
 export const levelToPermissions = (
@@ -55,8 +63,16 @@ export const levelToPermissions = (
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
 			UserAccessLevel.Drafter,
+			UserAccessLevel.TagEditor,
+			UserAccessLevel.BrazeEditor,
+			UserAccessLevel.OphanEditor,
+			UserAccessLevel.SignUpPageEditor,
 		].includes(accessLevel),
 		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
+		editBraze: [UserAccessLevel.BrazeEditor].includes(accessLevel),
+		editOphan: [UserAccessLevel.OphanEditor].includes(accessLevel),
+		editTags: [UserAccessLevel.TagEditor].includes(accessLevel),
+		editSignUpPage: [UserAccessLevel.SignUpPageEditor].includes(accessLevel),
 	};
 };

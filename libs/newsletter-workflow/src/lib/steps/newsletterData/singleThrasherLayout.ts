@@ -41,13 +41,13 @@ export const singleThrasherLayout: WizardStepLayout<DraftService> = {
 	buttons: {
 		back: {
 			buttonType: 'PREVIOUS',
-			label: 'Back',
+			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModify,
+			executeStep: executeSkip,
 		},
 		next: {
 			buttonType: 'NEXT',
-			label: 'Next',
+			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData) => {
 				const singleThrasher = stepData.formData

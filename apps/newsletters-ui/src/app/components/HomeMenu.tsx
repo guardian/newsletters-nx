@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 import { useLoaderData } from 'react-router-dom';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
+import { shouldShowEditOptions } from '../services/authorisation';
 import { ScrollingMenuButton } from './ScrollingMenuButton';
 
 const ButtonGridItem = ({
@@ -58,24 +59,28 @@ export function HomeMenu() {
 	const permissions = usePermissions();
 	const navigate = useNavigate();
 
+	if (!permissions) return null;
+
+	const showEditOptions = shouldShowEditOptions(permissions);
+
 	return (
 		<Container maxWidth={'lg'}>
 			<Grid container spacing={3} rowSpacing={6} paddingY={4}>
 				<ButtonGridItem
-					path="/newsletters"
+					path="/launched"
 					content={'View launched newsletters'}
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 
-				{permissions?.writeToDrafts && (
+				{permissions.writeToDrafts && (
 					<ButtonGridItem
-						path="/newsletters/newsletter-data"
-						content={'Create newsletter wizard'}
+						path="/drafts/newsletter-data"
+						content={'Create newsletter'}
 						variant="contained"
 					/>
 				)}
 
-				{permissions?.editNewsletters && (
+				{showEditOptions && (
 					<Grid item xs={6} sm={4} display={'flex'}>
 						<ScrollingMenuButton
 							buttonText="update newsletter"
@@ -91,13 +96,13 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/newsletters/edit/${identityName}`);
+								navigate(`/launched/edit/${identityName}`);
 							}}
 						/>
 					</Grid>
 				)}
 
-				{permissions?.editNewsletters && (
+				{permissions.editNewsletters && (
 					<Grid item xs={6} sm={4} display={'flex'}>
 						<ScrollingMenuButton
 							buttonText="set rendering options"
@@ -113,7 +118,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/newsletters/rendering-options/${identityName}`);
+								navigate(`/launched/rendering-options/${identityName}`);
 							}}
 						/>
 					</Grid>

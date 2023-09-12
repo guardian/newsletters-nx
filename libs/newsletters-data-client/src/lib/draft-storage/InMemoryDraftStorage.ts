@@ -1,4 +1,4 @@
-import { makeBlankMeta } from '../meta-data-type';
+import { makeBlankMeta } from '../schemas/meta-data-type';
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type {
 	SuccessfulStorageResponse,

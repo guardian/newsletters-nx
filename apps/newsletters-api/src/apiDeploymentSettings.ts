@@ -1,7 +1,7 @@
 /**
  * This file contains the settings for the deployment of the API.
  * The API is deployed in 3 ways.
- *  Serving the UI which can be check with isServingUI
+ *  Serving the UI which can be checked with isServingUI
  *  Serving the read endpoints which can be checked with isServingReadEndpoints
  *  Serving the read and write endpoints which can be checked with isServingReadWriteEndpoints
  * This is read in main.ts to enable/disable the endpoints
@@ -35,6 +35,13 @@ export const isServingReadWriteEndpoints = () => {
 	);
 	const isApiReadWrite = process.env.NEWSLETTERS_API_READ_WRITE === 'true';
 	return undefinedAndNotProduction || isApiReadWrite;
+};
+
+export const isDynamicImageSigningEnabled = () => {
+	const { ENABLE_DYNAMIC_IMAGE_SIGNING } = process.env;
+	return (
+		ENABLE_DYNAMIC_IMAGE_SIGNING && ENABLE_DYNAMIC_IMAGE_SIGNING === 'true'
+	);
 };
 
 export const isServingReadEndpoints = () => {
@@ -78,6 +85,10 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 				case UserAccessLevel.Editor:
 				case UserAccessLevel.Drafter:
 				case UserAccessLevel.Viewer:
+				case UserAccessLevel.OphanEditor:
+				case UserAccessLevel.BrazeEditor:
+				case UserAccessLevel.TagEditor:
+				case UserAccessLevel.SignUpPageEditor:
 					output[key] = value;
 					break;
 			}
@@ -89,3 +100,14 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 		return {};
 	}
 };
+
+const EMAIL_RENDERING_LOCAL = 'http://localhost:3010';
+const EMAIL_RENDERING = 'https://email-rendering.guardianapis.com';
+export const getEmailRenderingHost = (): string => {
+	return process.env.USE_LOCAL_EMAIL_RENDERING === 'true'
+		? EMAIL_RENDERING_LOCAL
+		: EMAIL_RENDERING;
+};
+
+export const areEmailNotificationsEnabled = () =>
+	process.env.ENABLE_EMAIL_SERVICE === 'true';

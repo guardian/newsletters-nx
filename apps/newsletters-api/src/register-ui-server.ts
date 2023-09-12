@@ -23,10 +23,8 @@ export function registerUIServer(app: FastifyInstance) {
 	// Routes for serving main menu options
 	app.get('/drafts/*', handleUiRequest);
 	app.get('/drafts', handleUiRequest);
-	app.get('/newsletters/*', handleUiRequest);
-	app.get('/newsletters', handleUiRequest);
+	app.get('/launched/*', handleUiRequest);
+	app.get('/launched', handleUiRequest);
 	app.get('/templates/*', handleUiRequest);
 	app.get('/templates', handleUiRequest);
-	app.get('/thrashers/*', handleUiRequest);
-	app.get('/thrashers', handleUiRequest);
 }

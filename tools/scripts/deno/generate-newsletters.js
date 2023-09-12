@@ -37,7 +37,7 @@ const generateRenderingOptions = () => {
 			'https://i.guim.co.uk/img/uploads/2023/06/02/moving-the-goalposts-sub-heading.png?quality=100&dpr=2&width=650&s=f3bbf75a71f4a16c22d0dd6e12b5188d',
 			'https://i.guim.co.uk/img/uploads/2022/10/21/default-template-sub-banner.png?dpr=2&quality=100&width=600&s=41c1744d1559a535e7b7cc77f8c6e037',
 		]),
-		darksubheadingBannerUrl: faker.helpers.arrayElement([
+		darkSubheadingBannerUrl: faker.helpers.arrayElement([
 			undefined,
 			'https://i.guim.co.uk/img/uploads/2022/10/21/default-template-sub-banner.png?dpr=2&quality=100&width=600&s=41c1744d1559a535e7b7cc77f8c6e037',
 		]),
@@ -52,6 +52,7 @@ const generateNewsletter = () => {
 	const status = faker.helpers.arrayElement([
 		'paused',
 		'cancelled',
+		'pending',
 		'live',
 		'live',
 	]);
@@ -61,7 +62,13 @@ const generateNewsletter = () => {
 		'Fortnightly',
 		'Monthly',
 	]);
-	const regionFocus = faker.helpers.arrayElement(['UK', 'AU', 'US', undefined]);
+	const regionFocus = faker.helpers.arrayElement([
+		'UK',
+		'AU',
+		'US',
+		'EUR',
+		undefined,
+	]);
 
 	const category = faker.helpers.arrayElement([
 		'article-based',
@@ -136,7 +143,7 @@ const generateNewsletter = () => {
 			'Work',
 			'From the papers',
 		]),
-		regionFocus: faker.helpers.arrayElement(['UK', 'AU', 'US', undefined]),
+		regionFocus,
 		listIdV1: faker.datatype.number({ max: 4000 }),
 		listId: faker.datatype.number({ max: 6000 }),
 		exampleUrl: `/world/series/series-${newsletterId}/latest/email`,

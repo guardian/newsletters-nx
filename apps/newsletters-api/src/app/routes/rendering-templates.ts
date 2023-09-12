@@ -1,5 +1,12 @@
 import type { FastifyInstance } from 'fastify';
-import { makeErrorResponse, makeSuccessResponse } from '../responses';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { getEmailRenderingHost } from '../../apiDeploymentSettings';
+import { newsletterStore } from '../../services/storage';
+import {
+	makeErrorResponse,
+	makeSuccessResponse,
+	mapStorageFailureReasonToStatusCode,
+} from '../responses';
 
 export type RenderingTemplate = {
 	id: string;
@@ -7,8 +14,9 @@ export type RenderingTemplate = {
 	title: string;
 };
 
-const TEMPLATES_LIST_URL =
-	'https://email-rendering.guardianapis.com/info/templates/';
+const emailRenderingHost = getEmailRenderingHost();
+const NEWSLETTER_RENDER_URL = `${emailRenderingHost}/data-article/render-template`;
+const TEMPLATES_LIST_URL = `${emailRenderingHost}/info/templates/`;
 
 export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 	app.get('/api/rendering-templates', async (req, res) => {
@@ -26,4 +34,45 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 		const body = (await fetchResponse.json()) as RenderingTemplate[];
 		return makeSuccessResponse(body);
 	});
+
+	app.get<{ Params: { newsletterId: string } }>(
+		'/api/rendering-templates/preview/:newsletterId',
+		async (req, res) => {
+			const { newsletterId } = req.params;
+			const storageResponse = await newsletterStore.readByName(newsletterId);
+
+			if (!storageResponse.ok) {
+				return res
+					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+					.send(makeErrorResponse(storageResponse.message));
+			}
+
+			const emailRenderingResponse = await fetch(NEWSLETTER_RENDER_URL, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(storageResponse.data),
+			});
+
+			const content = await emailRenderingResponse.text();
+			return makeSuccessResponse({ content });
+		},
+	);
+
+	app.post<{ Body: NewsletterData }>(
+		'/api/rendering-templates/preview',
+		async (req) => {
+			const emailRenderingResponse = await fetch(NEWSLETTER_RENDER_URL, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(req.body),
+			});
+
+			const content = await emailRenderingResponse.text();
+			return makeSuccessResponse({ content });
+		},
+	);
 }

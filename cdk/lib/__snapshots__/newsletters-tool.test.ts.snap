@@ -5,6 +5,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
   "Metadata": {
     "gu:cdk:constructs": [
       "GuS3Bucket",
+      "GuCname",
+      "GuCname",
+      "GuCname",
+      "GuPolicy",
       "GuPolicy",
       "GuStringParameter",
       "GuDistributionBucketParameter",
@@ -459,6 +463,78 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "EmailIdentity7187767D": {
+      "Properties": {
+        "EmailIdentity": "newsletters-tool.test.dev-gutools.co.uk",
+      },
+      "Type": "AWS::SES::EmailIdentity",
+    },
+    "EmailIdentityDkim0": {
+      "Properties": {
+        "Name": {
+          "Fn::GetAtt": [
+            "EmailIdentity7187767D",
+            "DkimDNSTokenName1",
+          ],
+        },
+        "RecordType": "CNAME",
+        "ResourceRecords": [
+          {
+            "Fn::GetAtt": [
+              "EmailIdentity7187767D",
+              "DkimDNSTokenValue1",
+            ],
+          },
+        ],
+        "Stage": "TEST",
+        "TTL": 3600,
+      },
+      "Type": "Guardian::DNS::RecordSet",
+    },
+    "EmailIdentityDkim1": {
+      "Properties": {
+        "Name": {
+          "Fn::GetAtt": [
+            "EmailIdentity7187767D",
+            "DkimDNSTokenName2",
+          ],
+        },
+        "RecordType": "CNAME",
+        "ResourceRecords": [
+          {
+            "Fn::GetAtt": [
+              "EmailIdentity7187767D",
+              "DkimDNSTokenValue2",
+            ],
+          },
+        ],
+        "Stage": "TEST",
+        "TTL": 3600,
+      },
+      "Type": "Guardian::DNS::RecordSet",
+    },
+    "EmailIdentityDkim2": {
+      "Properties": {
+        "Name": {
+          "Fn::GetAtt": [
+            "EmailIdentity7187767D",
+            "DkimDNSTokenName3",
+          ],
+        },
+        "RecordType": "CNAME",
+        "ResourceRecords": [
+          {
+            "Fn::GetAtt": [
+              "EmailIdentity7187767D",
+              "DkimDNSTokenValue3",
+            ],
+          },
+        ],
+        "Stage": "TEST",
+        "TTL": 3600,
+      },
+      "Type": "Guardian::DNS::RecordSet",
     },
     "GetDistributablePolicyNewslettersapi1B9C4AAD": {
       "Properties": {
@@ -2107,6 +2183,8 @@ User=ubuntu
 ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=TEST
+Environment=STACK=newsletters
+Environment=APP=newsletters-api
 Environment=NEWSLETTERS_API_READ=true
 Environment=NEWSLETTERS_UI_SERVE=false
 Environment=NEWSLETTER_BUCKET_NAME=",
@@ -2120,6 +2198,7 @@ Environment=USER_PERMISSIONS='",
                     "Ref": "UserPermissions",
                   },
                   "'
+Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 [Install]
 WantedBy=multi-user.target
 EOL
@@ -2282,6 +2361,8 @@ User=ubuntu
 ExecStart=/usr/bin/node /opt/newsletters-tool/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=TEST
+Environment=STACK=newsletters
+Environment=APP=newsletters-tool
 Environment=NEWSLETTERS_API_READ=false
 Environment=NEWSLETTERS_UI_SERVE=true
 Environment=NEWSLETTER_BUCKET_NAME=",
@@ -2295,6 +2376,7 @@ Environment=USER_PERMISSIONS='",
                     "Ref": "UserPermissions",
                   },
                   "'
+Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
 [Install]
 WantedBy=multi-user.target
 EOL
@@ -2393,6 +2475,41 @@ systemctl start newsletters-api",
           },
           {
             "Ref": "InstanceRoleNewslettersapi01755604",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "sendemailpolicyD7B4A00F": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ses:SendEmail",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:ses:eu-west-1:",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":identity/",
+                    {
+                      "Ref": "EmailIdentity7187767D",
+                    },
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "sendEmailPolicy",
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewsletterstoolDD0F3665",
           },
         ],
       },

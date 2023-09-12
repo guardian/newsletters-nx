@@ -12,19 +12,24 @@ import { formSchemas } from '../newsletterData/formSchemas';
 const markdownTemplate = `
 ## Specify the header setup for {{name}}
 
+### Main Banner
+
+The main banner is the image that appears at the top of the newsletter.
+To specify a specify a banner, upload the image via the [s3 Uploader service](https://s3-uploader.gutools.co.uk/).
+
+Once uploaded, copy the **vanity url** and paste it into the field below.
+
 ### Date
 
 Should the publication date display in each edition?
 
 This is typically shown for daily emails, but not for weekly ones.
 
-![Date](https://i.guim.co.uk/img/uploads/2023/03/15/Date.png?quality=85&dpr=2&width=300&s=815d857cb40089e47f501bf6d5838c2a)
-
 ### Standfirst
 
 Would you like this to be displayed?
 
-![Standfirst](https://i.guim.co.uk/img/uploads/2023/03/15/Standfirst.png?quality=85&dpr=2&width=300&s=52779b0975a45a2cc9e4ae3a6b034aac)
+![Header](https://i.guim.co.uk/img/uploads/2023/07/27/Screenshot_2023-07-27_at_20.22.34.png?quality=85&dpr=2&width=300&s=12752e8962d88cfcd9fe9d59e48cb086)
 
 `.trim();
 

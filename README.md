@@ -19,13 +19,19 @@ To run the UI and API locally with the default options:
 
 ### Run the app
 
+fetch some `frontend` credentials from [Janus](https://janus.gutools.co.uk/credentials?permissionId=frontend-dev&tzOffset=1)
+
 `npm run dev`
 
 See the documentation for the [API](apps/newsletters-api/README.md) for the configuration options.
 
+## Development
+
+**NOTE** Any changes to the legacy API data structure should be communicated to the [Data Design](mailto:data.design@theguardian.com) **before** merging to main.
+
 ## UI Tool Deployment and Access
 
-The newsletters-tool is deployed to PROD, (🛠 currently as a demo only, using test data):
+The newsletters-tool is deployed to PROD
 https://newsletters-tool.gutools.co.uk/
 
 CODE environment (for testing) deployed to:

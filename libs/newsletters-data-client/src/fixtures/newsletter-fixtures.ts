@@ -1,5 +1,5 @@
 import type { LegacyNewsletter } from '..';
-import type { NewsletterData } from '../lib/newsletter-data-type';
+import type { NewsletterData } from '../lib/schemas/newsletter-data-type';
 
 export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	identityName: 'tech-scape',
@@ -39,7 +39,23 @@ export const TECHSCAPE_IN_NEW_FORMAT: NewsletterData = {
 	thrasherDate: new Date(87678876),
 	privateUntilLaunch: false,
 	onlineArticle: 'Web for all sends',
+	brazeCampaignCreationStatus: 'NOT_REQUESTED',
+	ophanCampaignCreationStatus: 'NOT_REQUESTED',
+	signupPageCreationStatus: 'NOT_REQUESTED',
+	tagCreationStatus: 'NOT_REQUESTED',
 };
+
+export const TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS: NewsletterData =
+	{
+		...TECHSCAPE_IN_NEW_FORMAT,
+		regionFocus: 'INT',
+		signUpHeadline: 'Sign up for Techscape',
+		renderingOptions: {
+			displayDate: true,
+			displayStandfirst: true,
+			displayImageCaptions: false,
+		},
+	};
 
 export const VALID_TECHSCAPE: LegacyNewsletter = {
 	identityName: 'tech-scape',

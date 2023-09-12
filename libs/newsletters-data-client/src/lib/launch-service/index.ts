@@ -1,27 +1,35 @@
-import type { DraftNewsletterDataWithMeta } from '../draft-newsletter-data-type';
+import type { SESClient } from '@aws-sdk/client-ses';
 import type { DraftStorage } from '../draft-storage';
 import { withDefaultNewsletterValuesAndDerivedFields } from '../draft-to-newsletter';
-import type { NewsletterData } from '../newsletter-data-type';
 import type { NewsletterStorage } from '../newsletter-storage';
+import type { DraftNewsletterDataWithMeta } from '../schemas/draft-newsletter-data-type';
+import type { NewsletterData } from '../schemas/newsletter-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
+import type { EmailEnvInfo } from '../types';
 import type { UserProfile } from '../user-profile';
 
 export class LaunchService {
 	draftStorage: DraftStorage;
 	newsletterStorage: NewsletterStorage;
 	userProfile: UserProfile;
+	emailClent: SESClient;
+	emailEnvInfo: EmailEnvInfo;
 
 	constructor(
 		draftStorage: DraftStorage,
 		newsletterStorage: NewsletterStorage,
 		userProfile: UserProfile,
+		emailClient: SESClient,
+		emailEnvInfo: EmailEnvInfo,
 	) {
 		this.draftStorage = draftStorage;
 		this.newsletterStorage = newsletterStorage;
 		this.userProfile = userProfile;
+		this.emailClent = emailClient;
+		this.emailEnvInfo = emailEnvInfo;
 	}
 
 	async launchDraft(
@@ -62,6 +70,28 @@ export class LaunchService {
 				draftDeleteResponse.message,
 			);
 		}
+
 		return newsletterCreateResponse;
+	}
+
+	async updateCreationStatus(
+		newsletter: NewsletterData,
+		creationStatuses: Pick<
+			NewsletterData,
+			| 'brazeCampaignCreationStatus'
+			| 'ophanCampaignCreationStatus'
+			| 'signupPageCreationStatus'
+			| 'tagCreationStatus'
+		>,
+	) {
+		const { newsletterStorage, userProfile } = this;
+
+		const result = await newsletterStorage.update(
+			newsletter.listId,
+			creationStatuses,
+			userProfile,
+		);
+
+		return result;
 	}
 }
