@@ -59,12 +59,12 @@ export const dataCollectionRenderingOptionsSchema =
 			readMoreSections: z
 				.array(readMoreSectionSchemaWithOnwardPath)
 				.optional()
-				.describe('"read more" sections'),
+				.describe('"Read more" sections'),
 
 			automatedFrontSections: z
 				.array(automatedFrontSectionSchemaWithFunctionNames)
 				.optional()
-				.describe('automated front sections'),
+				.describe('Automated sections from Fronts'),
 		}),
 	);
 
