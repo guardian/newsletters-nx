@@ -16,7 +16,7 @@ Run `nx test newsletters-data-client` to execute the unit tests via [Jest](https
 
 ## How not to break the API
 
-Merging changes to this library, especially the `newsletterDataSchema`, can potentially make newsletters disappear from the API data in production. Merging changes will not change the data persisted in s3, but the `newsletterDataSchema` is used validate that data and filter out any items that do not conform to the schema.
+Merging changes to this library, especially to the `newsletterDataSchema` or the sub-schemas it uses, can potentially make newsletters disappear from the API data in production. Merging changes will not change the data persisted in s3, but the `newsletterDataSchema` is used validate that data and filter out any items that do not conform to the schema.
 
 For example, if you made an optional property required or change the shape of an object field, any newsletters in s3 that no longer conformed would be excluded from the API response. Reverting the change would restore the items in the API (assuming the files in s3 had not been removed).
 
@@ -39,4 +39,4 @@ If you do need to make a breaking change to the schema, such as adding a new req
 
 The [newsletter migration tool](https://github.com/guardian/newsletters-migration-tool) is a utility for performing bulk updates on the newsletter data in s3.
 
-The migration tool has its own version of the `newsletterDataSchema` and associated function. Before using it in production, ensure it has been updated to match the versions used in this project.
+The migration tool has its own version of the `newsletterDataSchema` and associated functions. Before using it in production, ensure it has been updated to match the versions used in this project.
