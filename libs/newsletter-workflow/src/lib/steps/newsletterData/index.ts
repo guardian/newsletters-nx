@@ -9,7 +9,6 @@ import { finishLayout } from './finishLayout';
 import { frequencyLayout } from './frequencyLayout';
 import { illustrationCardLayout } from './illustrationCardLayout';
 import { multiThrashersLayout } from './multiThrashersLayout';
-import { newsletterDesignLayout } from './newsletterDesignLayout';
 import { onlineArticleLayout } from './onlineArticleLayout';
 import { pillarAndGroupLayout } from './pillarAndGroupLayout';
 import { regionFocusLayout } from './regionFocusLayout';
@@ -31,7 +30,6 @@ export const newsletterDataLayout: WizardLayout<DraftService> = {
 	tags: tagsLayout,
 	thrasher: singleThrasherLayout,
 	multiThrashers: multiThrashersLayout,
-	newsletterDesign: newsletterDesignLayout,
 	illustrationCard: illustrationCardLayout,
 	signUpPage: signUpPageLayout,
 	signUpEmbed: signUpEmbedLayout,

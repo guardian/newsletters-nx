@@ -14,6 +14,7 @@ export const getUserEditSchema = (
 			regionFocus: true,
 			theme: true,
 			status: true,
+			illustrationCard: true,
 			tagCreationStatus: true,
 			seriesTag: true,
 			composerTag: true,
