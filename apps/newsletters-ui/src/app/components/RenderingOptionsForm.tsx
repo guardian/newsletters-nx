@@ -43,7 +43,6 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		'five-great-reads',
 		'morning-mail',
 		'soccer-with-jonathan-wilson',
-		'this-is-europe',
 		'moving-the-goalposts',
 		'pushing-buttons',
 		'morning-briefing',
