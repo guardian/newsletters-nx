@@ -194,5 +194,5 @@ export const formSchemas = {
 		.pick({
 			illustrationCard: true,
 		})
-		.describe('Add the URL for the illustration card'),
+		.describe('Add the URL for the illustration card (5:3 format)'),
 };
