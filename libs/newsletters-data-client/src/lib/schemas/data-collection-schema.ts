@@ -78,8 +78,8 @@ export const dataCollectionRenderingOptionsSchema =
 export const dataCollectionSchema = newsletterDataSchema.merge(
 	z.object({
 		onlineArticle: onlineArticleSchema,
-		signUpHeadline: nonEmptyString(),
-		signUpDescription: nonEmptyString(),
+		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
+		signUpDescription: nonEmptyString().describe('Sign-up description'),
 		regionFocus: regionFocusEnumSchema.unwrap(),
 	}),
 );
