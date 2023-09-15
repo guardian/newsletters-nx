@@ -16,21 +16,12 @@ Specify how regularly the newsletter will be sent e.g.
 - Weekly
 - Fortnightly
 - Monthly
-- Monthly
-
-You can also add a different frequency e.g.
 - Weekly during election season
 - Weekly for eight weeks (in the case of an asynchronous newsletter)
 
-The frequency you specify will be shown on thrashers, on the sign up page and on the all newsletters page.
+The frequency you specify will be shown on thrashers, on the sign up page, and on the all newsletters page.
 
-![Frequency](https://i.guim.co.uk/img/uploads/2023/03/15/Frequency.png?quality=85&dpr=2&width=300&s=d5d201d2285880f52354f27c98ee7354)
-
-It will also be used on the success message displayed after the reader signs up to the newsletter
-
-For example: We'll send you {{name}} every weekday
-
-![Success message](https://i.guim.co.uk/img/uploads/2023/03/15/successMessage.png?quality=85&dpr=2&width=300&s=6f5d485263960ea04527a8f03ba3b45c)
+![Frequency](https://i.guim.co.uk/img/uploads/2023/09/15/frequency.png?quality=85&dpr=2&width=300&s=e8c4bdd12b9c2f1f48d35a2d9b1ef1c7)
 
 `.trim();
 
