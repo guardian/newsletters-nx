@@ -13,7 +13,8 @@
  * or by creating a .env.local file in the root folder for the newsletters-api project
  */
 
-import { UserAccessLevel } from '@newsletters-nx/newsletters-data-client';
+import type { Permission } from './services/permissions/types';
+import { permissionsArraySchema } from './services/permissions/types';
 
 export function isUndefinedAndNotProduction(
 	envVar: string | undefined,
@@ -60,44 +61,28 @@ export const getTestJwtProfileDataIfUsing = () => {
 	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;
 };
 
-export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
-	const json = process.env.USER_PERMISSIONS;
-	if (!json) {
-		return {};
+export const getLocalUserPermissions = (): Permission[] => {
+	const USER_PERMISSIONS = process.env.USER_PERMISSIONS;
+	if (!USER_PERMISSIONS) {
+		return [];
 	}
 	try {
-		const data = JSON.parse(json) as Record<string, unknown> | unknown[];
-		if (Array.isArray(data)) {
+		const parseResult = permissionsArraySchema.safeParse(
+			JSON.parse(USER_PERMISSIONS),
+		);
+
+		if (!parseResult.success) {
 			console.warn(
-				'USER PROFILE PARSE FAILED - data was array',
-				data as unknown,
+				'USER_PERMISSIONS failed validation',
+				parseResult.error.issues,
 			);
-			console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
-			return {};
+			return [];
 		}
-
-		const output: Record<string, UserAccessLevel> = {};
-
-		for (const key in data) {
-			const value = data[key];
-			switch (value) {
-				case UserAccessLevel.Developer:
-				case UserAccessLevel.Editor:
-				case UserAccessLevel.Drafter:
-				case UserAccessLevel.Viewer:
-				case UserAccessLevel.OphanEditor:
-				case UserAccessLevel.BrazeEditor:
-				case UserAccessLevel.TagEditor:
-				case UserAccessLevel.SignUpPageEditor:
-					output[key] = value;
-					break;
-			}
-		}
-		return output;
+		return parseResult.data;
 	} catch (err) {
 		console.warn('USER PROFILE PARSE FAILED - JSON error', err as unknown);
 		console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
-		return {};
+		return [];
 	}
 };
 

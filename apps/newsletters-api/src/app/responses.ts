@@ -1,7 +1,7 @@
 import { StorageRequestFailureReason } from '@newsletters-nx/newsletters-data-client';
 import type {
 	ApiResponse,
-	UserPermissions,
+	UserPermissionName,
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
 import { permissionService } from '../services/permissions';
@@ -39,7 +39,7 @@ export const mapStorageFailureReasonToStatusCode = (
 
 export const makeAccessDeniedApiResponse = async (
 	profile: UserProfile | undefined,
-	permission: keyof UserPermissions,
+	permission: UserPermissionName,
 ): Promise<ApiResponse | undefined> => {
 	if (!profile) {
 		return makeErrorResponse(`No user profile.`);
