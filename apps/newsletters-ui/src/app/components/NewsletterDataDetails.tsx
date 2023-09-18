@@ -1,6 +1,9 @@
 import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
+import { usePermissions } from '../hooks/user-hooks';
+import { shouldShowEditOptions } from '../services/authorisation';
 import { DetailAccordian } from './DetailAccordian';
 import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
@@ -13,6 +16,15 @@ interface Props {
 
 export const NewsletterDataDetails = ({ newsletter }: Props) => {
 	const { status, name } = newsletter;
+	const permissions = usePermissions();
+	const [showEditButton, setShowEditButton] = useState(false);
+
+	useEffect(() => {
+		if (permissions) {
+			setShowEditButton(shouldShowEditOptions(permissions) ?? false);
+		}
+	}, [permissions]);
+
 	const DataPoint = higherLevelDataPoint(newsletter);
 
 	return (
@@ -35,6 +47,14 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 						>
 							View rendering preview
 						</NavigateButton>
+						{showEditButton && (
+							<NavigateButton
+								href={`/launched/edit/${newsletter.identityName}`}
+								variant="outlined"
+							>
+								Edit Newsletter
+							</NavigateButton>
+						)}
 					</Box>
 				</Grid>
 				<Grid item>
