@@ -2,6 +2,7 @@ import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
 import { DetailAccordian } from './DetailAccordian';
+import { EmbedCode } from './EmbedCode';
 import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
 import { NavigateButton } from './NavigateButton';
@@ -90,6 +91,8 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				/>
 				<DataPoint property="designBriefDoc" url />
 				<DataPoint property="figmaDesignUrl" url />
+
+				<EmbedCode newsletter={newsletter} />
 			</DetailAccordian>
 
 			<DetailAccordian title="Braze Values">
