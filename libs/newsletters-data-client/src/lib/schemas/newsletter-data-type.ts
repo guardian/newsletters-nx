@@ -18,13 +18,13 @@ export const workflowStatusEnumSchema = z.enum([
 export type WorkflowStatus = z.infer<typeof workflowStatusEnumSchema>;
 
 export const regionFocusEnumSchema = z
-	.enum(['UK', 'AU', 'US', 'INTL'])
+	.enum(['UK', 'AU', 'US', 'INT', 'EUR'])
 	.optional();
 export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 
 export const onlineArticleSchema = z
 	.enum(['Email only', 'Web for first send only', 'Web for all sends'])
-	.describe('location of article');
+	.describe('Location of article');
 export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
 
 export const singleThrasherLocation = z
@@ -76,7 +76,7 @@ export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
  */
 export const newsletterDataSchema = z.object({
 	identityName: kebabOrUnderscoreCasedString().describe('identity name'),
-	name: nonEmptyString(),
+	name: nonEmptyString().describe('Name'),
 	category: newsletterCategoriesSchema,
 	restricted: z.boolean(),
 	/** The status for the newsletter:
@@ -87,20 +87,26 @@ export const newsletterDataSchema = z.object({
 	 *  - **paused**: Currently not live, but might be restarted in future
 	 *  - **cancelled**: Permanently cancelled - must still exist in the API for referential integrity
 	 */
-	status: z.enum(['paused', 'cancelled', 'live', 'pending']),
+	status: z.enum(['paused', 'cancelled', 'live', 'pending']).describe('Status'),
 	emailConfirmation: z.boolean().describe('email confirmation'),
 	brazeSubscribeAttributeName: underscoreCasedString(),
 	brazeSubscribeEventNamePrefix: kebabOrUnderscoreCasedString(),
 	brazeNewsletterName: underscoreCasedString(),
+	/**
+	 * The name of the Pillar to associate this newsletter under
+	 *
+	 * Note that the display name(set using the schema description)
+	 * for this field in the tool is "pillar".
+	 * */
 	theme: themeEnumSchema,
-	group: nonEmptyString(),
-	signUpHeadline: z.string().optional().describe('sign up headline'),
-	signUpDescription: nonEmptyString().describe('sign up description'),
+	group: nonEmptyString().describe('Group'),
+	signUpHeadline: z.string().optional().describe('Sign up headline'),
+	signUpDescription: nonEmptyString().describe('Sign up description'),
 	signUpEmbedDescription: nonEmptyString().describe(
-		'sign up embed description',
+		'Sign up embed description',
 	),
-	regionFocus: regionFocusEnumSchema.describe('region focus'),
-	frequency: nonEmptyString(),
+	regionFocus: regionFocusEnumSchema.describe('Region focus'),
+	frequency: nonEmptyString().describe('Frequency'),
 	listId: z.number(),
 	listIdV1: z.number(),
 	campaignName: z.string().optional(),
@@ -108,10 +114,10 @@ export const newsletterDataSchema = z.object({
 	brazeSubscribeAttributeNameAlternate: z
 		.array(underscoreCasedString())
 		.optional(),
-	signupPage: z.string().optional(),
-	exampleUrl: z.string().optional(),
-	designBriefDoc: z.string().optional().describe('design brief doc'),
-	figmaDesignUrl: z.string().url().optional().describe('figma design url'),
+	signupPage: z.string().optional().describe('Sign up page'),
+	exampleUrl: z.string().optional().describe('Example url'),
+	designBriefDoc: z.string().optional().describe('Design brief doc'),
+	figmaDesignUrl: z.string().url().optional().describe('Figma design url'),
 	figmaIncludesThrashers: z
 		.boolean()
 		.describe('Does the figma design include thrashers?'),
@@ -120,19 +126,19 @@ export const newsletterDataSchema = z.object({
 		.string()
 		.url()
 		.optional()
-		.describe('url for 5:3 image to use on the newsletters page'),
+		.describe('URL for 5:3 image to use on the all newsletters page'),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
 
-	seriesTag: z.string().optional().describe('series tag'),
-	composerTag: z.string().optional().describe('composer tag(s)'),
-	composerCampaignTag: z.string().optional().describe('composer campaign tag'),
+	seriesTag: z.string().optional().describe('Series tag'),
+	composerTag: z.string().optional().describe('Composer tag(s)'),
+	composerCampaignTag: z.string().optional().describe('Composer campaign tag'),
 
-	launchDate: z.coerce.date().describe('launch date'),
-	signUpPageDate: z.coerce.date().describe('sign up page date'),
-	thrasherDate: z.coerce.date().describe('thrasher date'),
-	privateUntilLaunch: z.boolean().describe('needs to be private until launch?'),
+	launchDate: z.coerce.date().describe('Launch date'),
+	signUpPageDate: z.coerce.date().describe('Sign up page date'),
+	thrasherDate: z.coerce.date().describe('Thrasher date'),
+	privateUntilLaunch: z.boolean().describe('Needs to be private until launch?'),
 	onlineArticle: onlineArticleSchema.optional(),
 
 	renderingOptions: renderingOptionsSchema.optional(),

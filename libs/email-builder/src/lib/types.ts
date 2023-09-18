@@ -20,20 +20,24 @@ export type MessageContent = {
 	text: string;
 };
 
-export type TestMessageParams = {
-	messageTemplateId: 'TEST';
-	newsletterId: string;
-	testTitle: string;
-};
 export type NewDraftMessageParams = {
 	messageTemplateId: 'NEW_DRAFT';
 	draft: DraftWithId;
 };
-export type NewsletterLaunchedMessageParams = {
-	messageTemplateId: 'NEWSLETTER_LAUNCH';
+
+/**  The message Ids for MessageParams that take a newsletter
+ * as the only other property
+ */
+export type NewsletterMessageId =
+	| 'NEWSLETTER_LAUNCH'
+	| 'SIGN_UP_PAGE_CREATION_REQUEST'
+	| 'TAG_CREATION_REQUEST'
+	| 'BRAZE_SET_UP_REQUEST';
+
+export type MessageAboutNewsletterParams = {
+	messageTemplateId: NewsletterMessageId;
 	newsletter: NewsletterData;
 };
 export type MessageParams =
-	| TestMessageParams
 	| NewDraftMessageParams
-	| NewsletterLaunchedMessageParams;
+	| MessageAboutNewsletterParams;

@@ -39,13 +39,13 @@ export const onlineArticleLayout: WizardStepLayout<DraftService> = {
 	buttons: {
 		back: {
 			buttonType: 'PREVIOUS',
-			label: 'Back',
+			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModify,
+			executeStep: executeSkip,
 		},
 		finish: {
 			buttonType: 'NEXT',
-			label: 'Next',
+			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},

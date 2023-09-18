@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { nonEmptyString, urlPathString } from '../zod-helpers';
+import { nonEmptyString } from '../zod-helpers';
 import {
 	newsletterDataSchema,
 	onlineArticleSchema,
@@ -34,8 +34,9 @@ const automatedFrontSectionSchemaWithFunctionNames =
 	);
 
 /**
- * require the `onwardPath` and  exclude the `url`.
+ * require the `onwardPath`and exclude the `url`.
  * both are optional in the newsletter schema.
+ * `url` is deprecated.
  */
 const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
 	.omit({
@@ -43,7 +44,7 @@ const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
 	})
 	.merge(
 		z.object({
-			onwardPath: urlPathString(),
+			onwardPath: readMoreSectionSchema.shape.onwardPath.unwrap(),
 		}),
 	);
 
@@ -58,12 +59,12 @@ export const dataCollectionRenderingOptionsSchema =
 			readMoreSections: z
 				.array(readMoreSectionSchemaWithOnwardPath)
 				.optional()
-				.describe('"read more" sections'),
+				.describe('"Read more" sections'),
 
 			automatedFrontSections: z
 				.array(automatedFrontSectionSchemaWithFunctionNames)
 				.optional()
-				.describe('automated front sections'),
+				.describe('Automated sections from Fronts'),
 		}),
 	);
 
@@ -77,8 +78,8 @@ export const dataCollectionRenderingOptionsSchema =
 export const dataCollectionSchema = newsletterDataSchema.merge(
 	z.object({
 		onlineArticle: onlineArticleSchema,
-		signUpHeadline: nonEmptyString(),
-		signUpDescription: nonEmptyString(),
+		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
+		signUpDescription: nonEmptyString().describe('Sign-up description'),
 		regionFocus: regionFocusEnumSchema.unwrap(),
 	}),
 );

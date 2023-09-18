@@ -36,7 +36,7 @@ export const RenderingPreviewPage = ({ newsletter }: Props) => {
 			<TemplatePreview html={content} isLoading={!content} />
 
 			<ButtonGroup>
-				<NavigateButton href={`/newsletters/${newsletter.identityName}`}>
+				<NavigateButton href={`/launched/${newsletter.identityName}`}>
 					back to details
 				</NavigateButton>
 			</ButtonGroup>
