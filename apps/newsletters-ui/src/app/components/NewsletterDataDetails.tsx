@@ -1,4 +1,4 @@
-import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const NewsletterDataDetails = ({ newsletter }: Props) => {
-	const { status, name } = newsletter;
+	const { name } = newsletter;
 	const permissions = usePermissions();
 	const [showEditButton, setShowEditButton] = useState(false);
 
@@ -36,10 +36,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				justifyContent={'space-between'}
 			>
 				<Grid item>
-					<Badge badgeContent={status} color="secondary">
-						<Typography variant="h2">{name}</Typography>
-					</Badge>
-
+					<Typography variant="h2">{name}</Typography>
 					<Box>
 						<NavigateButton
 							href={`/launched/preview/${newsletter.identityName}`}
@@ -128,7 +125,6 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<NavigateButton href="../" variant="outlined">
 					Back to List
 				</NavigateButton>
-				{/* TO DO - restrict the access to the JSON editor based on user role? */}
 				<RawDataDialog
 					record={newsletter}
 					title={newsletter.identityName}
