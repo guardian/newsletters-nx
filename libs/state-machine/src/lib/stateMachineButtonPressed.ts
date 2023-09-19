@@ -11,7 +11,7 @@ import {
 } from './utility';
 
 /**
- * Perform the vaidation and actions required for a button press.Result a
+ * Perform the validation and actions required for a button press.Result a
  * new WizardStepData containing either:
  *
  *  - a copy of the incomingStepData with an error message added if the step
@@ -26,6 +26,7 @@ export async function stateMachineButtonPressed<
 	incomingStepData: WizardStepData,
 	wizardLayout: WizardLayout<T>,
 	isEditPath: boolean,
+	shouldValidate: boolean,
 	storageInstance: T,
 ): Promise<WizardStepData> {
 	const currentStepLayout = wizardLayout[incomingStepData.currentStepId];
@@ -47,20 +48,22 @@ export async function stateMachineButtonPressed<
 					isEditPath,
 			  );
 
-	const incomingDataError = validateIncomingFormData(
-		incomingStepData.currentStepId,
-		incomingStepData.formData,
-		wizardLayout[incomingStepData.currentStepId] as WizardStepLayout<unknown>,
-	);
-	if (incomingDataError) {
-		return makeStepDataWithErrorMessage(
-			incomingDataError.message,
+	if (shouldValidate) {
+		const incomingDataError = validateIncomingFormData(
 			incomingStepData.currentStepId,
 			incomingStepData.formData,
-			{ zodIssues: incomingDataError.issues },
+			wizardLayout[incomingStepData.currentStepId] as WizardStepLayout<unknown>,
 		);
-	}
 
+		if (incomingDataError) {
+			return makeStepDataWithErrorMessage(
+				incomingDataError.message,
+				incomingStepData.currentStepId,
+				incomingStepData.formData,
+				{ zodIssues: incomingDataError.issues },
+			);
+		}
+	}
 	if (buttonPressedDetails.onAfterStepStartValidate) {
 		const validationFailure =
 			await buttonPressedDetails.onAfterStepStartValidate(

@@ -34,7 +34,7 @@ const pickAndPrefixThrasherOption = (
 export const formSchemas = {
 	startDraftNewsletter: dataCollectionSchema
 		.pick({ name: true })
-		.describe('Input the name for the new newsletter'),
+		.describe('Add the name for the new newsletter'),
 
 	identityName: dataCollectionSchema
 		.pick({ identityName: true })
@@ -88,20 +88,20 @@ export const formSchemas = {
 				'Sport',
 				'Work',
 				'From the papers',
-			]),
+			]).describe('Group'),
 		})
-		.describe('Choose a theme and a group'),
+		.describe('Choose a pillar and a group'),
 
 	signUpPage: dataCollectionSchema
 		.pick({
 			signUpHeadline: true,
 			signUpDescription: true,
 		})
-		.describe('Input the Sign Up page copy'),
+		.describe('Add the sign up page copy'),
 
 	signUpEmbed: dataCollectionSchema
 		.pick({ signUpEmbedDescription: true })
-		.describe('Input the Sign Up embed copy'),
+		.describe('Add the sign up embed copy'),
 
 	regionFocus: dataCollectionSchema
 		.pick({
@@ -115,27 +115,27 @@ export const formSchemas = {
 			figmaDesignUrl: true,
 			figmaIncludesThrashers: true,
 		})
-		.describe('Input the design brief and Figma design'),
+		.describe('Add the design brief and Figma design'),
 
 	newsletterHeader: pickAndPrefixRenderingOption([
 		'displayStandfirst',
 		'displayDate',
 		'mainBannerUrl',
-	]).describe('Input the header setup'),
+	]).describe('Add the header setup'),
 
 	newsletterPaletteOverride: pickAndPrefixRenderingOption([
 		'paletteOverride',
 	]).describe('Select a palette theme'),
 
 	footer: pickAndPrefixRenderingOption(['contactEmail']).describe(
-		'Input the footer setup',
+		'Add the footer setup',
 	),
 
 	frequency: dataCollectionSchema
 		.pick({
 			frequency: true,
 		})
-		.describe('Input the send frequency'),
+		.describe('Specify the send frequency'),
 
 	images: pickAndPrefixRenderingOption(['displayImageCaptions']).describe(
 		'Specify the image setup',
@@ -169,16 +169,16 @@ export const formSchemas = {
 			composerTag: true,
 			composerCampaignTag: true,
 		})
-		.describe('Input the tag setup'),
+		.describe('Add the tag setup'),
 
 	singleThrasher: pickAndPrefixThrasherOption([
 		'singleThrasher',
 		'singleThrasherLocation',
 		'thrasherDescription',
-	]).describe('Input the thrasher setup'),
+	]).describe('Add the thrasher setup'),
 
 	multiThrashers: pickAndPrefixThrasherOption(['multiThrashers']).describe(
-		'Input details of the multi-thrashers',
+		'Add details of the multi-thrashers',
 	),
 
 	promotionDates: dataCollectionSchema
@@ -194,5 +194,5 @@ export const formSchemas = {
 		.pick({
 			illustrationCard: true,
 		})
-		.describe('Add the URL for the illustration card'),
+		.describe('Add the URL for the illustration card (5:3 format)'),
 };

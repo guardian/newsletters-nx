@@ -87,8 +87,7 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 				case UserAccessLevel.Viewer:
 				case UserAccessLevel.OphanEditor:
 				case UserAccessLevel.BrazeEditor:
-				case UserAccessLevel.TagEditor:
-				case UserAccessLevel.SignUpPageEditor:
+				case UserAccessLevel.CentralProduction:
 					output[key] = value;
 					break;
 			}

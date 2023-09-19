@@ -13,7 +13,7 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 ## Choose the Geo Focus for {{name}}
 
-What’s the geo focus of **{{name}}**? UK, US, Australia or International?
+What’s the geo focus of **{{name}}**? UK, US, Australia, Europe or International?
 
 `.trim();
 
@@ -35,13 +35,13 @@ export const regionFocusLayout: WizardStepLayout<DraftService> = {
 	buttons: {
 		back: {
 			buttonType: 'PREVIOUS',
-			label: 'Back',
+			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModify,
+			executeStep: executeSkip,
 		},
 		finish: {
 			buttonType: 'NEXT',
-			label: 'Next',
+			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},

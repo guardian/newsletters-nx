@@ -14,7 +14,7 @@ export const Illustration = ({ name, url }: Props) => {
 	);
 
 	const captionText = url
-		? `illustration for ${name}`
+		? `Illustration for ${name}`
 		: `${name} has no illustration`;
 
 	return (

@@ -29,10 +29,9 @@ export enum UserAccessLevel {
 	Editor,
 	Drafter,
 	Viewer,
-	TagEditor,
+	CentralProduction,
 	BrazeEditor,
 	OphanEditor,
-	SignUpPageEditor,
 }
 
 export type UserPermissions = {
@@ -63,16 +62,15 @@ export const levelToPermissions = (
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
 			UserAccessLevel.Drafter,
-			UserAccessLevel.TagEditor,
+			UserAccessLevel.CentralProduction,
 			UserAccessLevel.BrazeEditor,
 			UserAccessLevel.OphanEditor,
-			UserAccessLevel.SignUpPageEditor,
 		].includes(accessLevel),
 		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
 		editBraze: [UserAccessLevel.BrazeEditor].includes(accessLevel),
 		editOphan: [UserAccessLevel.OphanEditor].includes(accessLevel),
-		editTags: [UserAccessLevel.TagEditor].includes(accessLevel),
-		editSignUpPage: [UserAccessLevel.SignUpPageEditor].includes(accessLevel),
+		editTags: [UserAccessLevel.CentralProduction].includes(accessLevel),
+		editSignUpPage: [UserAccessLevel.CentralProduction].includes(accessLevel),
 	};
 };

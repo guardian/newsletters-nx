@@ -2,20 +2,32 @@ import type { SendEmailCommandOutput, SESClient } from '@aws-sdk/client-ses';
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { buildSendEmailCommand } from './build-send-email-command';
 import {
+	buildBrazeSetUpRequestMessage,
 	buildNewDraftEmail,
 	buildNewsLetterLaunchMessage,
-	buildTestEmail,
+	buildTagCreationRequestMessage,
 } from './messages';
-import type { MessageParams } from './types';
+import { buildSignUpPageCreationRequestMessage } from './messages/request-sign-up-page-creation-message';
+import type { MessageConfig, MessageContent, MessageParams } from './types';
 
-const getMessage = (params: MessageParams, emailEnvInfo: EmailEnvInfo) => {
+const getMessage = (
+	params: MessageParams,
+	emailEnvInfo: EmailEnvInfo,
+): {
+	content: MessageContent;
+	messageConfig: MessageConfig;
+} => {
 	switch (params.messageTemplateId) {
-		case 'TEST':
-			return buildTestEmail(params, emailEnvInfo);
 		case 'NEW_DRAFT':
 			return buildNewDraftEmail(params, emailEnvInfo);
 		case 'NEWSLETTER_LAUNCH':
 			return buildNewsLetterLaunchMessage(params, emailEnvInfo);
+		case 'BRAZE_SET_UP_REQUEST':
+			return buildBrazeSetUpRequestMessage(params, emailEnvInfo);
+		case 'TAG_CREATION_REQUEST':
+			return buildTagCreationRequestMessage(params, emailEnvInfo);
+		case 'SIGN_UP_PAGE_CREATION_REQUEST':
+			return buildSignUpPageCreationRequestMessage(params, emailEnvInfo);
 	}
 };
 
