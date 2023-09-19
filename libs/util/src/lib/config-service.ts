@@ -1,3 +1,4 @@
+import { GetParameterCommand } from '@aws-sdk/client-ssm';
 import { getSsmClient } from './ssm-client-factory';
 
 type Config = Record<string, string>;
@@ -26,12 +27,12 @@ export const getConfigValue = async (
 	const ssmClient = getSsmClient();
 	const path = getPath(key);
 
-	const value = await ssmClient
-		.getParameter({
+	const value = await ssmClient.send(
+		new GetParameterCommand({
 			Name: path,
 			WithDecryption: true,
-		})
-		.promise();
+		}),
+	);
 	if (value.Parameter?.Value) {
 		state = {
 			...state,
