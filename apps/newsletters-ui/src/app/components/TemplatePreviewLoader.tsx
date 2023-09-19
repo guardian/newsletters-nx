@@ -1,5 +1,10 @@
+import { Alert, Box, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	EmailRenderingOutput,
+	EmailRenderingWarning,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { fetchPostApiData } from '../api-requests/fetch-api-data';
 import { TemplatePreview } from './TemplatePreview';
 
@@ -13,6 +18,9 @@ export const TemplatePreviewLoader = ({
 	minHeight = 800,
 }: Props) => {
 	const [content, setContent] = useState<string | undefined>(undefined);
+	const [warnings, setWarnings] = useState<EmailRenderingWarning[] | undefined>(
+		undefined,
+	);
 
 	const [dataLastPosted, setDataLastPosted] = useState<
 		NewsletterData | undefined
@@ -27,13 +35,14 @@ export const TemplatePreviewLoader = ({
 		setFetchInProgress(true);
 		setFetchTime(Date.now());
 		setDataLastPosted(newsletterData);
-		const data = await fetchPostApiData<{ content: string }>(
+		const data = await fetchPostApiData<EmailRenderingOutput>(
 			`/api/rendering-templates/preview`,
 			newsletterData,
 		);
 		setFetchInProgress(false);
 		if (data) {
-			setContent(data.content);
+			setContent(data.html);
+			setWarnings(data.warnings);
 		}
 	}, [newsletterData]);
 
@@ -81,10 +90,24 @@ export const TemplatePreviewLoader = ({
 	]);
 
 	return (
-		<TemplatePreview
-			html={content}
-			isLoading={fetchScheduled || fetchInProgress}
-			minHeight={minHeight}
-		/>
+		<>
+			{warnings && warnings.length > 0 && (
+				<Alert severity="warning">
+					<Typography>Render Warnings</Typography>
+					<Box component="ul">
+						{warnings.map((warning, index) => (
+							<Typography component={'li'} key={index}>
+								{warning.message}
+							</Typography>
+						))}
+					</Box>
+				</Alert>
+			)}
+			<TemplatePreview
+				html={content}
+				isLoading={fetchScheduled || fetchInProgress}
+				minHeight={minHeight}
+			/>
+		</>
 	);
 };
