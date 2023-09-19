@@ -1,5 +1,6 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { areEmailNotificationsEnabled } from '../../apiDeploymentSettings';
+import { getSsmClient } from '../../ssm-client-factory';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -22,5 +23,6 @@ export const makeEmailEnvInfo = (): EmailEnvInfo => {
 		STAGE,
 		testRecipients: splitEmailConfig(TEST_EMAIL_RECIPIENTS),
 		areEmailNotificationsEnabled: areEmailNotificationsEnabled(),
+		ssmClient: getSsmClient(),
 	};
 };

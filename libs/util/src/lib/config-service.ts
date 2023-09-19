@@ -1,4 +1,4 @@
-import { getSsmClient } from './ssm-client-factory';
+import type { SSM } from 'aws-sdk';
 
 type Config = Record<string, string>;
 
@@ -12,6 +12,7 @@ const getPath = (key: string) => {
 	return `/${STAGE}/${STACK}/${APP}/${key}`;
 };
 export const getConfigValue = async (
+	ssmClient: SSM,
 	key: string,
 	defaultValue?: string,
 ): Promise<string> => {
@@ -23,7 +24,6 @@ export const getConfigValue = async (
 	console.log(
 		`getConfigValue for ${key}, defaultValue: ${defaultValue ?? 'undefined'}`,
 	);
-	const ssmClient = getSsmClient();
 	const path = getPath(key);
 
 	const value = await ssmClient

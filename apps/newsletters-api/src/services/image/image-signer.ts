@@ -4,6 +4,7 @@ import type {
 	NewsletterDataWithoutMeta,
 } from '@newsletters-nx/newsletters-data-client';
 import { getConfigValue } from '@newsletters-nx/util';
+import { getSsmClient } from '../../ssm-client-factory';
 
 interface Props {
 	dpr?: number;
@@ -14,7 +15,7 @@ export const signImage = async (
 	src: string,
 	{ width = 650, dpr = 2 }: Props,
 ): Promise<string> => {
-	const salt = await getConfigValue('imageSalt');
+	const salt = await getConfigValue(getSsmClient(), 'imageSalt');
 	if (!salt) throw new Error(`imageSalt not found`);
 
 	return format(src, salt, {

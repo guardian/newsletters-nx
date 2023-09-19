@@ -1,7 +1,6 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { getConfigValue } from '@newsletters-nx/util';
-import type { MessageConfig } from './types';
-import type { EmailRecipientConfiguration } from './types';
+import type { EmailRecipientConfiguration, MessageConfig } from './types';
 
 export type NewsletterMessageId =
 	| 'NEW_DRAFT_CREATED'
@@ -14,7 +13,7 @@ export const getMessageConfig = async (
 	emailEnvInfo: EmailEnvInfo,
 	messageType: NewsletterMessageId,
 ): Promise<MessageConfig> => {
-	const { STAGE } = emailEnvInfo;
+	const { STAGE, ssmClient } = emailEnvInfo;
 
 	const {
 		draftCreatedRecipients,
@@ -23,7 +22,7 @@ export const getMessageConfig = async (
 		brazeRecipients,
 		launchRecipients,
 	} = JSON.parse(
-		await getConfigValue('emailRecipientConfiguration'),
+		await getConfigValue(ssmClient, 'emailRecipientConfiguration'),
 	) as EmailRecipientConfiguration;
 
 	const recipientMapping: Record<NewsletterMessageId, string[]> = {
