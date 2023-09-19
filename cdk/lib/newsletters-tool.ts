@@ -72,6 +72,8 @@ After=network.target
 WorkingDirectory=/opt/${app}
 Type=simple
 User=ubuntu
+StandardError=journal
+StandardOutput=journal
 ExecStart=/usr/bin/node /opt/${app}/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=${this.stage}

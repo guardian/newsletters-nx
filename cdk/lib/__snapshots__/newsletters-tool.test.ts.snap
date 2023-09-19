@@ -2184,6 +2184,8 @@ After=network.target
 WorkingDirectory=/opt/newsletters-api
 Type=simple
 User=ubuntu
+StandardError=journal
+StandardOutput=journal
 ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=TEST
@@ -2363,6 +2365,8 @@ After=network.target
 WorkingDirectory=/opt/newsletters-tool
 Type=simple
 User=ubuntu
+StandardError=journal
+StandardOutput=journal
 ExecStart=/usr/bin/node /opt/newsletters-tool/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=TEST
