@@ -4,7 +4,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 
 export type MessageConfig = {
-	/** the emails addresses to send the message to */
+	/** the email addresses to send the message to */
 	recipients: string[];
 	/** the URL for the version of the tool to point recipients to */
 	toolHost: string;
@@ -43,6 +43,7 @@ export type MessageParams =
 	| MessageAboutNewsletterParams;
 
 export type EmailRecipientConfiguration = {
+	draftCreatedRecipients: string[];
 	tagRecipients: string[];
 	brazeRecipients: string[];
 	signUpPageRecipients: string[];
