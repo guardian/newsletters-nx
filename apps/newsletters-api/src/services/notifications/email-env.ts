@@ -1,5 +1,5 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
-import { areEmailNotificationsEnabled } from '../../apiDeploymentSettings';
+// import { areEmailNotificationsEnabled } from '../../apiDeploymentSettings';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -21,6 +21,6 @@ export const makeEmailEnvInfo = (): EmailEnvInfo => {
 	return {
 		STAGE,
 		testRecipients: splitEmailConfig(TEST_EMAIL_RECIPIENTS),
-		areEmailNotificationsEnabled: areEmailNotificationsEnabled(),
+		areEmailNotificationsEnabled: true,
 	};
 };
