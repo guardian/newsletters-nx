@@ -7,14 +7,14 @@ import type {
 	MessageContent,
 } from '../types';
 
-export function buildBrazeSetUpRequestMessage(
+export async function buildBrazeSetUpRequestMessage(
 	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
-): { content: MessageContent; messageConfig: MessageConfig } {
+): Promise<{ content: MessageContent; messageConfig: MessageConfig }> {
 	const { newsletter } = params;
-	const messageConfig = getMessageConfig(
-		['newsletters.dev@guardian.co.uk'], // TO DO - who gets this?
+	const messageConfig = await getMessageConfig(
 		emailEnvInfo,
+		'BRAZE_SET_UP_REQUEST',
 	);
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
