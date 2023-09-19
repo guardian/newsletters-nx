@@ -4,6 +4,7 @@ import type { MessageConfig } from './types';
 import type { EmailRecipientConfiguration } from './types';
 
 export type NewsletterMessageId =
+	| 'NEW_DRAFT_CREATED'
 	| 'NEWSLETTER_LAUNCH'
 	| 'SIGN_UP_PAGE_CREATION_REQUEST'
 	| 'TAG_CREATION_REQUEST'
@@ -16,6 +17,7 @@ export const getMessageConfig = async (
 	const { STAGE } = emailEnvInfo;
 
 	const {
+		draftCreatedRecipients,
 		tagRecipients,
 		signUpPageRecipients,
 		brazeRecipients,
@@ -25,6 +27,7 @@ export const getMessageConfig = async (
 	) as EmailRecipientConfiguration;
 
 	const recipientMapping: Record<NewsletterMessageId, string[]> = {
+		NEW_DRAFT_CREATED: draftCreatedRecipients,
 		NEWSLETTER_LAUNCH: launchRecipients,
 		SIGN_UP_PAGE_CREATION_REQUEST: signUpPageRecipients,
 		TAG_CREATION_REQUEST: tagRecipients,

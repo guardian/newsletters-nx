@@ -10,7 +10,7 @@ export async function buildNewDraftEmail(
 	const { draft } = params;
 	const messageConfig = await getMessageConfig(
 		emailEnvInfo,
-		'NEWSLETTER_LAUNCH',
+		'NEW_DRAFT_CREATED',
 	);
 
 	const pageLink = `${messageConfig.toolHost}/drafts/${draft.listId}`;
