@@ -1,7 +1,6 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { getConfigValue } from '@newsletters-nx/util';
-import type { MessageConfig } from './types';
-import type { EmailRecipientConfiguration } from './types';
+import type { EmailRecipientConfiguration, MessageConfig } from './types';
 
 export type NewsletterMessageId =
 	| 'NEW_DRAFT_CREATED'
