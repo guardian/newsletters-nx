@@ -2206,11 +2206,6 @@ Environment=USER_PERMISSIONS='",
                   "'
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 Environment=ENABLE_EMAIL_SERVICE=false
-Environment=ENABLE_EMAIL_SERVICE_VALUE=",
-                  {
-                    "Ref": "SsmParameterValueTESTnewslettersnewsletterstoolenableEmailServiceC96584B6F00A464EAD1953AFF4B05118Parameter",
-                  },
-                  "
 [Install]
 WantedBy=multi-user.target
 EOL
@@ -2391,8 +2386,7 @@ Environment=USER_PERMISSIONS='",
                   },
                   "'
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
-Environment=ENABLE_EMAIL_SERVICE=false
-Environment=ENABLE_EMAIL_SERVICE_VALUE=",
+Environment=ENABLE_EMAIL_SERVICE=",
                   {
                     "Ref": "SsmParameterValueTESTnewslettersnewsletterstoolenableEmailServiceC96584B6F00A464EAD1953AFF4B05118Parameter",
                   },
