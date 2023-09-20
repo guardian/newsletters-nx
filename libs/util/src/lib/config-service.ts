@@ -20,12 +20,12 @@ export const getConfigValue = async (
 		console.log(`returning cached value for getConfigValue ${key}`);
 		return state[key] as string;
 	}
-
-	console.log(
-		`getConfigValue for ${key}, defaultValue: ${defaultValue ?? 'undefined'}`,
-	);
-	const ssmClient = getSsmClient();
 	const path = getPath(key);
+	console.log(
+		`getConfigValue for ${path}, defaultValue: ${defaultValue ?? 'undefined'}`,
+	);
+
+	const ssmClient = getSsmClient();
 
 	const value = await ssmClient.send(
 		new GetParameterCommand({
