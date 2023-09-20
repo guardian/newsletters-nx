@@ -50,6 +50,7 @@ export class NewslettersTool extends GuStack {
 		readOnly: boolean,
 		userPermissions: string,
 		enableEmailService: boolean,
+		enableEmailServiceValue: string,
 	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
@@ -86,6 +87,7 @@ Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USER_PERMISSIONS='${processJSONString(userPermissions)}'
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 Environment=ENABLE_EMAIL_SERVICE=${enableEmailService ? 'true' : 'false'}
+Environment=ENABLE_EMAIL_SERVICE_VALUE=${enableEmailServiceValue}
 [Install]
 WantedBy=multi-user.target
 EOL`,
@@ -107,10 +109,12 @@ EOL`,
 		);
 
 		const enableEmailSSMParameterName = `/${this.stage}/${this.stack}/${toolAppName}/enableEmailService`;
-		const enableEmailService = StringParameter.valueForStringParameter(
+		const enableEmailServiceValue = StringParameter.valueForStringParameter(
 			this,
 			enableEmailSSMParameterName,
-		) === 'true';
+		);
+
+		const enableEmailService = enableEmailServiceValue == 'true';
 
 		const dataStorageBucket = new GuS3Bucket(this, 'DataBucket', {
 			bucketName,
@@ -193,6 +197,7 @@ EOL`,
 				false,
 				userPermissions.valueAsString,
 				enableEmailService,
+				enableEmailServiceValue
 			),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy, sendEmailPolicy],
@@ -223,7 +228,8 @@ EOL`,
 				bucketName,
 				true,
 				userPermissions.valueAsString,
-				false
+				false,
+				enableEmailServiceValue
 			),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],

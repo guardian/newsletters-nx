@@ -53,9 +53,8 @@ export const sendEmailNotifications = async (
 			message.messageConfig,
 			message.content,
 		);
-		console.log('sending email', command);
+		console.info('sending email notification', JSON.stringify(command));
 		const output = await emailClient.send(command);
-		console.log('email sent', output);
 		return { output, success: true };
 	} catch (error) {
 		console.warn(
