@@ -1,13 +1,33 @@
-import { getLinkOnNavBar } from '../support/app.po';
+import { getLinkOnNavBar, getPageHeading } from '../support/app.po';
 
 describe('newsletters-ui', () => {
 	beforeEach(() => cy.visit('/'));
 
 	it('should display the link on the nav bar', () => {
-		// Custom command example, see `../support/commands.ts` file
-		cy.login('my-email@something.com', 'myPassword');
-
-		// Function helper example, see `../support/app.po.ts` file
 		getLinkOnNavBar().contains('Newsletters');
+	});
+});
+
+describe('newsletters-ui launched page', () => {
+	beforeEach(() => cy.visit('/launched'));
+
+	it('should display the link on the nav bar', () => {
+		getLinkOnNavBar().contains('Newsletters');
+	});
+
+	it('should render the heading', () => {
+		getPageHeading().contains('View launched newsletters');
+	});
+});
+
+describe('newsletters-ui templates page', () => {
+	beforeEach(() => cy.visit('/templates'));
+
+	it('should display the link on the nav bar', () => {
+		getLinkOnNavBar().contains('Newsletters');
+	});
+
+	it('should render the heading', () => {
+		getPageHeading().contains('Email Rendering Templates');
 	});
 });
