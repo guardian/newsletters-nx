@@ -112,6 +112,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "Default": "/TEST/newsletters/newsletters-api/s3BucketName",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
+    "SsmParameterValueTESTnewslettersnewsletterstoolenableEmailServiceC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/TEST/newsletters/newsletters-tool/enableEmailService",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
     "UserPermissions": {
       "Default": "/TEST/newsletters/newsletters-tool/userPermissions",
       "Description": "The JSON string of user permissions",
@@ -2180,6 +2184,8 @@ After=network.target
 WorkingDirectory=/opt/newsletters-api
 Type=simple
 User=ubuntu
+StandardError=journal
+StandardOutput=journal
 ExecStart=/usr/bin/node /opt/newsletters-api/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=TEST
@@ -2199,6 +2205,7 @@ Environment=USER_PERMISSIONS='",
                   },
                   "'
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
+Environment=ENABLE_EMAIL_SERVICE=false
 [Install]
 WantedBy=multi-user.target
 EOL
@@ -2358,6 +2365,8 @@ After=network.target
 WorkingDirectory=/opt/newsletters-tool
 Type=simple
 User=ubuntu
+StandardError=journal
+StandardOutput=journal
 ExecStart=/usr/bin/node /opt/newsletters-tool/dist/apps/newsletters-api/index.cjs
 Restart=on-failure
 Environment=STAGE=TEST
@@ -2377,6 +2386,11 @@ Environment=USER_PERMISSIONS='",
                   },
                   "'
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
+Environment=ENABLE_EMAIL_SERVICE=",
+                  {
+                    "Ref": "SsmParameterValueTESTnewslettersnewsletterstoolenableEmailServiceC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                  "
 [Install]
 WantedBy=multi-user.target
 EOL
