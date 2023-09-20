@@ -35,7 +35,6 @@ export default defineConfig({
 
 	define: {
 		'import.meta.vitest': undefined,
-		global: 'window',
 	},
 	test: {
 		globals: true,

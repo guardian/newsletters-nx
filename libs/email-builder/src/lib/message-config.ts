@@ -1,7 +1,6 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { getConfigValue } from '@newsletters-nx/util';
-import type { MessageConfig } from './types';
-import type { EmailRecipientConfiguration } from './types';
+import type { EmailRecipientConfiguration, MessageConfig } from './types';
 
 export type NewsletterMessageId =
 	| 'NEW_DRAFT_CREATED'
@@ -47,7 +46,7 @@ export const getMessageConfig = async (
 				toolHost: 'https://newsletters-tool.code.dev-gutools.co.uk',
 				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source:
-					'newsletters CODE <notifications@newsletters-tool.code.dev.gutools.co.uk>',
+					'newsletters CODE <notifications@newsletters-tool.code.dev-gutools.co.uk>',
 			};
 		case 'DEV':
 		default:
