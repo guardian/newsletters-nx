@@ -53,6 +53,7 @@
 	"devDependencies": {
 		"@babel/preset-react": "^7.14.5",
 		"@emotion/babel-plugin": "11.10.6",
+		"@esbuild/darwin-x64": "^0.19.3",
 		"@faker-js/faker": "^7.6.0",
 		"@guardian/eslint-config": "^2.0.3",
 		"@guardian/eslint-config-typescript": "^3.0.0",
@@ -60,7 +61,7 @@
 		"@guardian/tsconfig": "^0.2.0",
 		"@jest/types": "^29.3.1",
 		"@nrwl/cypress": "15.9.2",
-		"@nrwl/esbuild": "15.9.2",
+		"@nrwl/esbuild": "^15.9.2",
 		"@nrwl/eslint-plugin-nx": "15.9.2",
 		"@nrwl/jest": "15.9.2",
 		"@nrwl/js": "15.9.2",
