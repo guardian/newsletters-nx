@@ -47,7 +47,7 @@ export const getMessageConfig = async (
 				toolHost: 'https://newsletters-tool.code.dev-gutools.co.uk',
 				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source:
-					'newsletters CODE <notifications@newsletters-tool.code.dev.gutools.co.uk>',
+					'newsletters CODE <notifications@newsletters-tool.code.dev-gutools.co.uk>',
 			};
 		case 'DEV':
 		default:
