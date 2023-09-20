@@ -8,15 +8,18 @@ import {
 	Tooltip,
 	Typography,
 } from '@mui/material';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { embedIframeCode } from '@newsletters-nx/newsletters-data-client';
+import type {
+	NewsletterData,
+	NewsletterValueGenerator,
+} from '@newsletters-nx/newsletters-data-client';
 
 interface Props {
 	newsletter: NewsletterData;
+	valueGenerator: NewsletterValueGenerator;
 }
 
-export const EmbedCode = ({ newsletter }: Props) => {
-	const generatedValue = embedIframeCode.generate(newsletter);
+export const GeneratedDataPoint = ({ newsletter, valueGenerator }: Props) => {
+	const generatedValue = valueGenerator.generate(newsletter);
 
 	const copyToClipBoard = async () => {
 		await navigator.clipboard.writeText(generatedValue);
@@ -26,7 +29,7 @@ export const EmbedCode = ({ newsletter }: Props) => {
 		<Grid container justifyContent={'space-between'} spacing={1}>
 			<Grid item xs={3} flexGrow={1} flexShrink={0}>
 				<Typography variant="caption">{'Sign up embed code'}</Typography>
-				<Tooltip title={embedIframeCode.description} arrow>
+				<Tooltip title={valueGenerator.description} arrow>
 					<Chip size="small" label="?" />
 				</Tooltip>
 			</Grid>

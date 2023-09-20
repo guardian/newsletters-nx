@@ -1,11 +1,14 @@
 import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
+import {
+	embedIframeCode,
+	getPropertyDescription,
+} from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { DetailAccordian } from './DetailAccordian';
-import { EmbedCode } from './EmbedCode';
+import { GeneratedDataPoint } from './GeneratedDataPoint';
 import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
 import { NavigateButton } from './NavigateButton';
@@ -126,7 +129,10 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 			</DetailAccordian>
 
 			<DetailAccordian title="Generated values" defaultExpanded>
-				<EmbedCode newsletter={newsletter} />
+				<GeneratedDataPoint
+					newsletter={newsletter}
+					valueGenerator={embedIframeCode}
+				/>
 			</DetailAccordian>
 
 			<Stack direction={'row'} justifyContent={'space-between'} marginTop={3}>
