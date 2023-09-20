@@ -5,7 +5,6 @@ export const getSsmClient = () => {
 	const { STAGE } = process.env;
 
 	if (STAGE === 'DEV') {
-		console.log('Using dev credentials');
 		return new SSMClient({
 			region: 'eu-west-1',
 			credentials: creds.fromIni({profile: 'frontend'}),

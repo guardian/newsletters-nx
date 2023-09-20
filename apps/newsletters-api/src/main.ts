@@ -1,6 +1,5 @@
 import Fastify from 'fastify';
 import {
-	areEmailNotificationsEnabled,
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
 	isServingUI,
@@ -50,10 +49,8 @@ const start = async () => {
 			host: '0.0.0.0',
 		};
 
-		const emailNotificationsEnabled = areEmailNotificationsEnabled();
 		console.log(
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- this is a template literal
-			`Starting newsletters-api server on http://${options.host}:${options.port} email notifications enabled: ${emailNotificationsEnabled}`,
+			`Starting newsletters-api server on http://${options.host}:${options.port}`,
 
 		);
 		await app.listen(options);

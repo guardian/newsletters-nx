@@ -13,7 +13,6 @@ export async function buildNewDraftEmail(
 		'NEW_DRAFT_CREATED',
 	);
 
-	console.log('messageConfig', messageConfig);
 	const pageLink = `${messageConfig.toolHost}/drafts/${draft.listId}`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component

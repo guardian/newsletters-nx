@@ -11,11 +11,7 @@
 		}
 	],
 	"compilerOptions": {
-		"module": "commonjs",
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"noPropertyAccessFromIndexSignature": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true
+		"jsx": "react-jsx",
+		"resolveJsonModule": true
 	}
 }
