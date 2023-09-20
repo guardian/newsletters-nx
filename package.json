@@ -9,6 +9,7 @@
 		"lint": "nx run-many --target=lint --all",
 		"build": "nx run-many --target=build --all",
 		"test": "nx run-many --target=test --all",
+		"e2e": "nx run newsletters-ui-e2e:e2e",
 		"generate:lib": "npx nx generate @nrwl/workspace:library --setParserOptionsProject --standaloneConfig --testEnvironment=node --",
 		"prepare": "husky install",
 		"generate-newsletters": "./tools/scripts/generate-newsletters.sh",
