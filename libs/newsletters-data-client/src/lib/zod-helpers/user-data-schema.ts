@@ -44,16 +44,12 @@ export const getUserEditSchema = (
 			ophanCampaignCreationStatus: true,
 		});
 	}
-	if (editTags) {
+	if (editTags && editSignUpPage) {
 		return newsletterDataSchema.pick({
 			tagCreationStatus: true,
 			seriesTag: true,
 			composerTag: true,
 			composerCampaignTag: true,
-		});
-	}
-	if (editSignUpPage) {
-		return newsletterDataSchema.pick({
 			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,

@@ -26,7 +26,7 @@ const staticMarkdown = markdownTemplate.replace(
 export const illustrationCardLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
 	label: 'Illustration Card',
-	dynamicMarkdown(requestData, responseData) {
+	dynamicMarkdown(_, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
 		}
@@ -36,13 +36,13 @@ export const illustrationCardLayout: WizardStepLayout<DraftService> = {
 	buttons: {
 		back: {
 			buttonType: 'PREVIOUS',
-			label: 'Back',
+			label: 'Back to previous step',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeModify,
+			executeStep: executeSkip,
 		},
 		finish: {
 			buttonType: 'NEXT',
-			label: 'Next',
+			label: 'Save and continue',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},

@@ -3,7 +3,7 @@ import type {
 	NewsletterData,
 	NewsletterDataWithoutMeta,
 } from '@newsletters-nx/newsletters-data-client';
-import { getConfigValue } from '../configuration/config-service';
+import { getConfigValue } from '@newsletters-nx/util';
 
 interface Props {
 	dpr?: number;
