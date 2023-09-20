@@ -50,7 +50,7 @@ export type UserPermissions = {
 
 export const permissionsDataSchema = z.record(
 	z.string(),
-	z.number().int().positive(),
+	z.number().int().min(0),
 );
 
 export const levelToPermissions = (
