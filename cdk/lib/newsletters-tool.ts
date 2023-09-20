@@ -192,7 +192,7 @@ EOL`,
 				bucketName,
 				false,
 				userPermissions.valueAsString,
-				enableEmailService
+				enableEmailService,
 			),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy, sendEmailPolicy],
@@ -223,7 +223,7 @@ EOL`,
 				bucketName,
 				true,
 				userPermissions.valueAsString,
-				'false'
+				'false',
 			),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],

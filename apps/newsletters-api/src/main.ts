@@ -51,7 +51,6 @@ const start = async () => {
 
 		console.log(
 			`Starting newsletters-api server on http://${options.host}:${options.port}`,
-
 		);
 		await app.listen(options);
 	} catch (err) {

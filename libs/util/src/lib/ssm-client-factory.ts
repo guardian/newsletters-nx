@@ -7,7 +7,7 @@ export const getSsmClient = () => {
 	if (STAGE === 'DEV') {
 		return new SSMClient({
 			region: 'eu-west-1',
-			credentials: creds.fromIni({profile: 'frontend'}),
+			credentials: creds.fromIni({ profile: 'frontend' }),
 		});
 	}
 	return new SSMClient({
