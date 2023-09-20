@@ -9,27 +9,24 @@ import {
 	Typography,
 } from '@mui/material';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { embedIframeCode } from '@newsletters-nx/newsletters-data-client';
 
 interface Props {
 	newsletter: NewsletterData;
 }
 
-const tooltip =
-	'The HTML code to paste into a composer embed block to add a sign-up form to the article content.';
-
-const generateEmbedCode = ({ identityName }: NewsletterData) =>
-	`<iframe id="${identityName}" name="${identityName}" src="https://www.theguardian.com/email/form/plaintone/${identityName}" scrolling="no" seamless="" class="iframed--overflow-hidden email-sub__iframe" height="52px" frameborder="0" data-component="email-embed--${identityName}"></iframe>`;
-
 export const EmbedCode = ({ newsletter }: Props) => {
+	const generatedValue = embedIframeCode.generate(newsletter);
+
 	const copyToClipBoard = async () => {
-		await navigator.clipboard.writeText(generateEmbedCode(newsletter));
+		await navigator.clipboard.writeText(generatedValue);
 	};
 
 	return (
 		<Grid container justifyContent={'space-between'} spacing={1}>
 			<Grid item xs={3} flexGrow={1} flexShrink={0}>
 				<Typography variant="caption">{'Sign up embed code'}</Typography>
-				<Tooltip title={tooltip} arrow>
+				<Tooltip title={embedIframeCode.description} arrow>
 					<Chip size="small" label="?" />
 				</Tooltip>
 			</Grid>
@@ -43,7 +40,7 @@ export const EmbedCode = ({ newsletter }: Props) => {
 								resize: 'none',
 								minHeight: 100,
 							}}
-							value={generateEmbedCode(newsletter)}
+							value={generatedValue}
 							readOnly
 						/>
 					</Box>

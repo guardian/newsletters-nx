@@ -111,8 +111,6 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				/>
 				<DataPoint property="designBriefDoc" url />
 				<DataPoint property="figmaDesignUrl" url />
-
-				<EmbedCode newsletter={newsletter} />
 			</DetailAccordian>
 
 			<DetailAccordian title="Braze Values">
@@ -125,6 +123,10 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 			<DetailAccordian title="Ophan Values">
 				<DataPoint property="campaignName" />
 				<DataPoint property="campaignCode" />
+			</DetailAccordian>
+
+			<DetailAccordian title="Generated values" defaultExpanded>
+				<EmbedCode newsletter={newsletter} />
 			</DetailAccordian>
 
 			<Stack direction={'row'} justifyContent={'space-between'} marginTop={3}>
