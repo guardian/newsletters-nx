@@ -52,12 +52,36 @@ const ToolBarIcon = (props: {
 	</Box>
 );
 
-export function MainNav({ isOnCode }: Props) {
+const DesktopNavLinks = () => {
+	const navigate = useNavigate();
+	return (
+		<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+			{navLinks.map(({ path, label }) => (
+				<Button
+					key={label}
+					onClick={() => {
+						navigate(path);
+					}}
+					sx={{
+						my: 2,
+						color: 'white',
+						fontWeight: menuItemIsSelected(path) ? 'bold' : 'normal',
+						display: 'block',
+						borderBottomStyle: menuItemIsSelected(path) ? 'solid' : 'none',
+						borderBottomWidth: '2px',
+						borderRadius: '0',
+					}}
+				>
+					{label}
+				</Button>
+			))}
+		</Box>
+	);
+};
+
+const MobileBurgerNav = () => {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
-	const userProfile = useProfile();
-	const userName = userProfile?.name ?? 'Logged in user';
-
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElNav(event.currentTarget);
 	};
@@ -67,78 +91,63 @@ export function MainNav({ isOnCode }: Props) {
 	};
 
 	return (
+		<Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+			<IconButton
+				size="large"
+				aria-label="account of current user"
+				aria-controls="menu-appbar"
+				aria-haspopup="true"
+				onClick={handleOpenNavMenu}
+				color="inherit"
+			>
+				<MenuIcon />
+			</IconButton>
+			<Menu
+				id="menu-appbar"
+				anchorEl={anchorElNav}
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left',
+				}}
+				keepMounted
+				transformOrigin={{
+					vertical: 'top',
+					horizontal: 'left',
+				}}
+				open={Boolean(anchorElNav)}
+				onClose={handleCloseNavMenu}
+				sx={{
+					display: { xs: 'block', md: 'none' },
+				}}
+			>
+				{navLinks.map(({ path, label }) => (
+					<MenuItem
+						key={label}
+						onClick={() => {
+							navigate(path);
+							handleCloseNavMenu();
+						}}
+						selected={menuItemIsSelected(path)}
+					>
+						<Typography textAlign="center">{label}</Typography>
+					</MenuItem>
+				))}
+			</Menu>
+		</Box>
+	);
+};
+
+export function MainNav({ isOnCode }: Props) {
+	const userProfile = useProfile();
+	const userName = userProfile?.name ?? 'Logged in user';
+
+	return (
 		<AppBar position="fixed" component={'header'}>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
-					<Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-						<IconButton
-							size="large"
-							aria-label="account of current user"
-							aria-controls="menu-appbar"
-							aria-haspopup="true"
-							onClick={handleOpenNavMenu}
-							color="inherit"
-						>
-							<MenuIcon />
-						</IconButton>
-						<Menu
-							id="menu-appbar"
-							anchorEl={anchorElNav}
-							anchorOrigin={{
-								vertical: 'bottom',
-								horizontal: 'left',
-							}}
-							keepMounted
-							transformOrigin={{
-								vertical: 'top',
-								horizontal: 'left',
-							}}
-							open={Boolean(anchorElNav)}
-							onClose={handleCloseNavMenu}
-							sx={{
-								display: { xs: 'block', md: 'none' },
-							}}
-						>
-							{navLinks.map(({ path, label }) => (
-								<MenuItem
-									key={label}
-									onClick={() => {
-										navigate(path);
-										handleCloseNavMenu();
-									}}
-									selected={menuItemIsSelected(path)}
-								>
-									<Typography textAlign="center">{label}</Typography>
-								</MenuItem>
-							))}
-						</Menu>
-					</Box>
-
+					<MobileBurgerNav />
 					<NewslettersBrandHeading />
-
-					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-						{navLinks.map(({ path, label }) => (
-							<Button
-								key={label}
-								onClick={() => {
-									navigate(path);
-								}}
-								sx={{
-									my: 2,
-									color: 'white',
-									fontWeight: menuItemIsSelected(path) ? 'bold' : 'normal',
-									display: 'block',
-									borderBottomStyle: menuItemIsSelected(path)
-										? 'solid'
-										: 'none',
-									borderBottomWidth: '2px',
-									borderRadius: '0',
-								}}
-							>
-								{label}
-							</Button>
-						))}
-					</Box>
+					<DesktopNavLinks />
 
 					{isOnCode && (
 						<ToolBarIcon
