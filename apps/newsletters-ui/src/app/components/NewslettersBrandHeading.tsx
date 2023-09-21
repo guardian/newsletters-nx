@@ -1,56 +1,46 @@
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import type { TypographyProps } from '@mui/material';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface Props {
-	mobile: boolean;
-}
+const titleSx: TypographyProps['sx'] = {
+	mr: 2,
+	display: 'flex',
+	color: 'inherit',
+	textDecoration: 'none',
+	fontSize: { xs: '1.5rem', md: '1.25rem' },
+	lineHeight: { xs: '1.334', md: '1.6' },
+};
 
-export const NewslettersBrandHeading = ({ mobile }: Props) => {
+const LinkWrap = ({ children }: { children: ReactNode }) => {
 	const navigate = useNavigate();
+	return (
+		<Box
+			role={'link'}
+			onClick={() => navigate('/')}
+			sx={{
+				cursor: 'pointer',
+				flexGrow: {
+					xs: 1,
+					md: 0,
+				},
+			}}
+		>
+			{children}
+		</Box>
+	);
+};
 
-	const titleSx: TypographyProps['sx'] = mobile
-		? {
-				mr: 2,
-				display: { xs: 'flex', md: 'none' },
-				color: 'inherit',
-				textDecoration: 'none',
-				fontSize: '1.5rem',
-				lineHeight: '1.334',
-		  }
-		: {
-				mr: 2,
-				display: { xs: 'none', md: 'flex' },
-				color: 'inherit',
-				textDecoration: 'none',
-		  };
-
-	const iconSx = mobile
-		? {
-				display: { xs: 'flex', md: 'none' },
-				mr: 1,
-		  }
-		: {
-				display: { xs: 'none', md: 'flex' },
-				mr: 1,
-		  };
-
+export const NewslettersBrandHeading = () => {
 	return (
 		<>
-			<MailOutlineIcon sx={iconSx} />
-			<div
-				role={'link'}
-				onClick={() => navigate('/')}
-				style={{
-					cursor: 'pointer',
-					flexGrow: mobile ? 1 : undefined,
-				}}
-			>
+			<MailOutlineIcon sx={{ display: 'flex', mr: 1 }} />
+			<LinkWrap>
 				<Typography variant="h1" noWrap component="a" sx={titleSx}>
 					Newsletters
 				</Typography>
-			</div>
+			</LinkWrap>
 		</>
 	);
 };

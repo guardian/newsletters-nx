@@ -70,7 +70,6 @@ export function MainNav({ isOnCode }: Props) {
 		<AppBar position="fixed" component={'header'}>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
-					{/* Mobile menu */}
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
 							size="large"
@@ -115,10 +114,8 @@ export function MainNav({ isOnCode }: Props) {
 						</Menu>
 					</Box>
 
-					<NewslettersBrandHeading mobile={false} />
-					<NewslettersBrandHeading mobile={true} />
+					<NewslettersBrandHeading />
 
-					{/* desktop menu */}
 					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
 						{navLinks.map(({ path, label }) => (
 							<Button
