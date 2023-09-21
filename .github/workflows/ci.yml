@@ -39,6 +39,10 @@ jobs:
           npm run lint
           npm run test
 
+      - name: End to end tests
+        run: |
+          npm run e2e
+
 
       - name: Bundle and zip
         run: |
