@@ -1,5 +1,4 @@
 import CodeIcon from '@mui/icons-material/Code';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
 import type { AvatarProps } from '@mui/material/Avatar';
@@ -17,6 +16,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../hooks/user-hooks';
+import { NewslettersBrandHeading } from './NewslettersBrandHeading';
 
 interface Props {
 	isOnCode: boolean;
@@ -70,30 +70,7 @@ export function MainNav({ isOnCode }: Props) {
 		<AppBar position="fixed" component={'header'}>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
-					<MailOutlineIcon
-						sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
-					/>
-					<div
-						role={'link'}
-						onClick={() => navigate('/')}
-						style={{
-							cursor: 'pointer',
-						}}
-					>
-						<Typography
-							variant="h1"
-							noWrap
-							component="a"
-							sx={{
-								mr: 2,
-								display: { xs: 'none', md: 'flex' },
-								color: 'inherit',
-								textDecoration: 'none',
-							}}
-						>
-							Newsletters
-						</Typography>
-					</div>
+					{/* Mobile menu */}
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
 							size="large"
@@ -137,26 +114,11 @@ export function MainNav({ isOnCode }: Props) {
 							))}
 						</Menu>
 					</Box>
-					<MailOutlineIcon
-						sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
-					/>
-					<Typography
-						variant="h1"
-						noWrap
-						component="a"
-						href=""
-						sx={{
-							mr: 2,
-							display: { xs: 'flex', md: 'none' },
-							flexGrow: 1,
-							color: 'inherit',
-							textDecoration: 'none',
-							fontSize: '1.5rem',
-							lineHeight: '1.334',
-						}}
-					>
-						Newsletters
-					</Typography>
+
+					<NewslettersBrandHeading mobile={false} />
+					<NewslettersBrandHeading mobile={true} />
+
+					{/* desktop menu */}
 					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
 						{navLinks.map(({ path, label }) => (
 							<Button
