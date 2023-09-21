@@ -26,7 +26,7 @@ export const NavigateButton = (props: Props) => {
 	};
 
 	return (
-		<Button {...props} onClick={onClick}>
+		<Button {...props} role="link" onClick={onClick}>
 			{children}
 		</Button>
 	);
