@@ -1,46 +1,47 @@
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import type { TypographyProps } from '@mui/material';
 import { Box, Typography } from '@mui/material';
-import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const titleSx: TypographyProps['sx'] = {
-	mr: 2,
-	display: 'flex',
-	color: 'inherit',
-	textDecoration: 'none',
-	fontSize: { xs: '1.5rem', md: '1.25rem' },
-	lineHeight: { xs: '1.334', md: '1.6' },
-};
-
-const LinkWrap = ({ children }: { children: ReactNode }) => {
-	const navigate = useNavigate();
-	return (
-		<Box
-			role={'link'}
-			onClick={() => navigate('/')}
-			sx={{
-				cursor: 'pointer',
-				flexGrow: {
-					xs: 1,
-					md: 0,
-				},
-			}}
-		>
-			{children}
-		</Box>
-	);
-};
-
 export const NewslettersBrandHeading = () => {
+	const navigate = useNavigate();
+
 	return (
 		<>
 			<MailOutlineIcon sx={{ display: 'flex', mr: 1 }} />
-			<LinkWrap>
-				<Typography variant="h1" noWrap component="a" sx={titleSx}>
+			<Box
+				role={'link'}
+				onClick={(event) => {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call -- is a sythetic pointer event
+					event.preventDefault();
+					navigate('/');
+				}}
+				sx={{
+					cursor: 'pointer',
+					margin: 0,
+					flexGrow: {
+						xs: 1,
+						md: 0,
+					},
+					color: 'inherit',
+					textDecoration: 'none',
+				}}
+				href="#"
+				component={'a'}
+			>
+				<Typography
+					variant="h1"
+					noWrap
+					sx={{
+						margin: 0,
+						mr: 2,
+						display: 'flex',
+						fontSize: { xs: '1.5rem', md: '1.25rem' },
+						lineHeight: { xs: '1.334', md: '1.6' },
+					}}
+				>
 					Newsletters
 				</Typography>
-			</LinkWrap>
+			</Box>
 		</>
 	);
 };
