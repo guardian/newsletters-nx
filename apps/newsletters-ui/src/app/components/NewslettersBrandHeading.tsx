@@ -1,5 +1,5 @@
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import { Typography } from '@mui/material';
+import { palette, space } from '@guardian/source-foundations';
+import { Box, Typography } from '@mui/material';
 import { NavigateButton } from './NavigateButton';
 
 export const NewslettersBrandHeading = () => {
@@ -7,8 +7,6 @@ export const NewslettersBrandHeading = () => {
 		<NavigateButton
 			href="/"
 			sx={{
-				cursor: 'pointer',
-				margin: 0,
 				flexGrow: {
 					xs: 1,
 					md: 0,
@@ -16,24 +14,19 @@ export const NewslettersBrandHeading = () => {
 				color: 'inherit',
 				textDecoration: 'none',
 				textTransform: 'none',
-				padding: 0,
 				minWidth: 'unset',
+				padding: 0,
+				mr: 2,
 			}}
 		>
-			<MailOutlineIcon sx={{ display: 'flex', mr: 1 }} />
-			<Typography
-				variant="h1"
-				noWrap
+			<Box
 				sx={{
-					margin: 0,
-					mr: 2,
-					display: 'flex',
-					fontSize: { xs: '1.5rem', md: '1.25rem' },
-					lineHeight: { xs: '1.334', md: '1.6' },
+					padding: `1px ${space[1]}px`,
+					border: `1px dashed ${palette.neutral[100]}`,
 				}}
 			>
-				Newsletters
-			</Typography>
+				<Typography variant="h1">Newsletters</Typography>
+			</Box>
 		</NavigateButton>
 	);
 };
