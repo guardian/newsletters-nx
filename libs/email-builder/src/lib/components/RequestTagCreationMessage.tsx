@@ -1,5 +1,5 @@
-import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { renderToStaticMarkup } from 'react-dom/server';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
 
@@ -12,8 +12,9 @@ export const RequestTagCreationMessage = ({ pageLink, newsletter }: Props) => {
 	// message is only sent if there is a defined series tag, but composerCampaignTag could be undefined.
 	const {
 		seriesTag,
+		seriesTagDescription,
 		composerCampaignTag,
-		composerTag: tagsThatPromptRecomendationOfCampaignTag,
+		composerTag: tagsThatPromptRecommendationOfCampaignTag,
 	} = newsletter;
 	const title = composerCampaignTag
 		? `Please create a Series and Campaign Tags for newsletter " ${newsletter.identityName}"`
@@ -30,6 +31,11 @@ export const RequestTagCreationMessage = ({ pageLink, newsletter }: Props) => {
 				<li>
 					<b>Series Tag:</b> {seriesTag}
 				</li>
+				{seriesTagDescription && (
+					<li>
+						<b>Series Tag Description:</b> {seriesTagDescription}
+					</li>
+				)}
 				{composerCampaignTag && (
 					<li>
 						<b>Campaign Tag:</b> {composerCampaignTag}
@@ -37,14 +43,14 @@ export const RequestTagCreationMessage = ({ pageLink, newsletter }: Props) => {
 				)}
 			</ul>
 
-			{!!(composerCampaignTag && tagsThatPromptRecomendationOfCampaignTag) && (
+			{!!(composerCampaignTag && tagsThatPromptRecommendationOfCampaignTag) && (
 				<div>
 					<p>
 						Can the tag relationship be set up so that{' '}
 						<b>{newsletter.composerCampaignTag}</b> will be suggested when the
 						following tags are used:
 					</p>
-					<p>{tagsThatPromptRecomendationOfCampaignTag}</p>
+					<p>{tagsThatPromptRecommendationOfCampaignTag}</p>
 				</div>
 			)}
 
