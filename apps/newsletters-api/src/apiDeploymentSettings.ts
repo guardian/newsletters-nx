@@ -60,6 +60,10 @@ export const getTestJwtProfileDataIfUsing = () => {
 	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;
 };
 
+export const isUsingLocalUserPermissions = () => {
+	return process.env.USE_LOCAL_USER_PERMISSIONS === 'true';
+};
+
 export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 	const json = process.env.USER_PERMISSIONS;
 	if (!json) {

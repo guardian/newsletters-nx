@@ -1,19 +1,16 @@
-import { SharedIniFileCredentials, SSM } from 'aws-sdk';
+import { SSMClient } from '@aws-sdk/client-ssm';
+import * as creds from '@aws-sdk/credential-providers';
 
 export const getSsmClient = () => {
-	const { STAGE, AWS_PROFILE } = process.env;
+	const { STAGE } = process.env;
 
-	const shouldUseProfileCredentials = !!(STAGE && STAGE === 'DEV');
-
-	if (shouldUseProfileCredentials) {
-		const profile = AWS_PROFILE ?? 'frontend';
-
-		return new SSM({
+	if (STAGE === 'DEV') {
+		return new SSMClient({
 			region: 'eu-west-1',
-			credentials: new SharedIniFileCredentials({ profile }),
+			credentials: creds.fromIni({ profile: 'frontend' }),
 		});
 	}
-	return new SSM({
+	return new SSMClient({
 		region: 'eu-west-1',
 	});
 };

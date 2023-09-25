@@ -1,7 +1,9 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
 import { getConfigValue } from '@newsletters-nx/util';
-import type { MessageConfig } from './types';
-import type { EmailRecipientConfiguration } from './types';
+import type { EmailRecipientConfiguration, MessageConfig } from './types';
+
+/** 15 minutes*/
+const TIME_BETWEEN_RECIPIENT_PARAM_CHECKS = 1000 * 60 * 15;
 
 export type NewsletterMessageId =
 	| 'NEW_DRAFT_CREATED'
@@ -23,7 +25,9 @@ export const getMessageConfig = async (
 		brazeRecipients,
 		launchRecipients,
 	} = JSON.parse(
-		await getConfigValue('emailRecipientConfiguration'),
+		await getConfigValue('emailRecipientConfiguration', {
+			maxAge: TIME_BETWEEN_RECIPIENT_PARAM_CHECKS,
+		}),
 	) as EmailRecipientConfiguration;
 
 	const recipientMapping: Record<NewsletterMessageId, string[]> = {
@@ -47,7 +51,7 @@ export const getMessageConfig = async (
 				toolHost: 'https://newsletters-tool.code.dev-gutools.co.uk',
 				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source:
-					'newsletters CODE <notifications@newsletters-tool.code.dev.gutools.co.uk>',
+					'newsletters CODE <notifications@newsletters-tool.code.dev-gutools.co.uk>',
 			};
 		case 'DEV':
 		default:

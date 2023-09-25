@@ -78,17 +78,19 @@ export const formSchemas = {
 			// but on the formSchema, we can use an enum to allow users to pick from the current list.
 			// In practice, we would not want users to be able to create new groups on the all-newsletters page
 			// for each newsletter.
-			group: z.enum([
-				'News in depth',
-				'News in brief',
-				'Opinion',
-				'Features',
-				'Culture',
-				'Lifestyle',
-				'Sport',
-				'Work',
-				'From the papers',
-			]).describe('Group'),
+			group: z
+				.enum([
+					'News in depth',
+					'News in brief',
+					'Opinion',
+					'Features',
+					'Culture',
+					'Lifestyle',
+					'Sport',
+					'Work',
+					'From the papers',
+				])
+				.describe('Group'),
 		})
 		.describe('Choose a pillar and a group'),
 
@@ -166,6 +168,7 @@ export const formSchemas = {
 	tags: dataCollectionSchema
 		.pick({
 			seriesTag: true,
+			seriesTagDescription: true,
 			composerTag: true,
 			composerCampaignTag: true,
 		})
