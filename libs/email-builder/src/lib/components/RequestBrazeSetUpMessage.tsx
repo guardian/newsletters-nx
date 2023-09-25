@@ -47,6 +47,12 @@ export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
 			/>
 
 			<p>
+				Note that the "temporary sign Up URL" will not be available immediately
+				after a newsletter is launched as the site can take 1-3 hours to update
+				its list of newsletters.
+			</p>
+
+			<p>
 				When you have set up the campaign, please go to{' '}
 				<a href={pageLink}>this page on the newsletters tool</a> to confirm!
 			</p>
