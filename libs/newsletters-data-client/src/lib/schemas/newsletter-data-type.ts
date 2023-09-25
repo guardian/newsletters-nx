@@ -132,6 +132,10 @@ export const newsletterDataSchema = z.object({
 	cancellationTimeStamp: z.number().optional(),
 
 	seriesTag: z.string().optional().describe('Series tag'),
+	seriesTagDescription: z
+		.string()
+		.optional()
+		.describe('The Series tag description'),
 	composerTag: z.string().optional().describe('Composer tag(s)'),
 	composerCampaignTag: z.string().optional().describe('Composer campaign tag'),
 

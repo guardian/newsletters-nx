@@ -24,7 +24,7 @@ export const RequestSignUpPageCreationMessage = ({
 		<MessageFormat
 			title={
 				<>
-					Please create a Sign up Page Article for newsletter "
+					Please create a Sign up Page Article in Composer for newsletter"
 					{newsletter.identityName}"
 				</>
 			}
