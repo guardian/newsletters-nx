@@ -4,6 +4,7 @@ import {
 	Button,
 	Chip,
 	Grid,
+	Link,
 	Stack,
 	Tooltip,
 	Typography,
@@ -16,14 +17,30 @@ import type {
 interface Props {
 	newsletter: NewsletterData;
 	valueGenerator: NewsletterValueGenerator;
+	includeCopyButton?: boolean;
 }
 
-export const GeneratedDataPoint = ({ newsletter, valueGenerator }: Props) => {
+const isUrl = (text: string): boolean => {
+	try {
+		new URL(text);
+		return true;
+	} catch {
+		return false;
+	}
+};
+
+export const GeneratedDataPoint = ({
+	newsletter,
+	valueGenerator,
+	includeCopyButton,
+}: Props) => {
 	const generatedValue = valueGenerator.generate(newsletter);
 
 	const copyToClipBoard = async () => {
 		await navigator.clipboard.writeText(generatedValue);
 	};
+
+	const valueIsUrl = isUrl(generatedValue);
 
 	return (
 		<Grid container justifyContent={'space-between'} spacing={1}>
@@ -35,21 +52,32 @@ export const GeneratedDataPoint = ({ newsletter, valueGenerator }: Props) => {
 			</Grid>
 			<Grid item xs={9} flexShrink={1}>
 				<Stack direction={'row'}>
-					<Box flex={1} display={'flex'}>
-						<textarea
-							style={{
-								width: '100%',
-								display: 'flex',
-								resize: 'none',
-								minHeight: 100,
-							}}
-							value={generatedValue}
-							readOnly
-						/>
-					</Box>
-					<Button onClick={copyToClipBoard} startIcon={<CopyAllIcon />}>
-						copy
-					</Button>
+					{includeCopyButton ? (
+						<>
+							<Box flex={1} display={'flex'}>
+								<textarea
+									style={{
+										width: '100%',
+										display: 'flex',
+										resize: 'none',
+										minHeight: 80,
+									}}
+									value={generatedValue}
+									readOnly
+								/>
+							</Box>
+							<Button
+								onClick={void copyToClipBoard}
+								startIcon={<CopyAllIcon />}
+							>
+								copy
+							</Button>
+						</>
+					) : valueIsUrl ? (
+						<Link href={generatedValue}>{generatedValue}</Link>
+					) : (
+						<Typography>{generatedValue}</Typography>
+					)}
 				</Stack>
 			</Grid>
 		</Grid>

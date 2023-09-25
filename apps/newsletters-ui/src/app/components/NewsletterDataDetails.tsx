@@ -2,6 +2,8 @@ import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
+	brazeSubscribeEventName,
+	brazeUnsubscribeEventName,
 	embedIframeCode,
 	getPropertyDescription,
 } from '@newsletters-nx/newsletters-data-client';
@@ -121,6 +123,14 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<DataPoint property="brazeSubscribeEventNamePrefix" />
 				<DataPoint property="brazeNewsletterName" />
 				<DataPoint property="brazeSubscribeAttributeNameAlternate" />
+				<GeneratedDataPoint
+					newsletter={newsletter}
+					valueGenerator={brazeSubscribeEventName}
+				/>
+				<GeneratedDataPoint
+					newsletter={newsletter}
+					valueGenerator={brazeUnsubscribeEventName}
+				/>
 			</DetailAccordian>
 
 			<DetailAccordian title="Ophan Values">
@@ -132,6 +142,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<GeneratedDataPoint
 					newsletter={newsletter}
 					valueGenerator={embedIframeCode}
+					includeCopyButton
 				/>
 			</DetailAccordian>
 
