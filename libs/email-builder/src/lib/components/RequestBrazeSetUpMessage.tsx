@@ -1,5 +1,11 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	brazeSubscribeEventName,
+	brazeUnsubscribeEventName,
+	emailRenderingLatestInSeriesUrl,
+	temporarySignUpUrl,
+} from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
 import { NewsletterPropertyTable } from './NewsletterPropertyTable';
@@ -20,8 +26,9 @@ export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
 			}
 		>
 			<p>
-				The Braze values for this newsletter are below - if these need to change for
-				any reason, please <a href={pageLink}>update in the newsletters tool</a> .
+				The Braze values for this newsletter are below - if these need to change
+				for any reason, please{' '}
+				<a href={pageLink}>update in the newsletters tool</a> .
 			</p>
 
 			<NewsletterPropertyTable
@@ -32,8 +39,18 @@ export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
 					'brazeSubscribeAttributeName',
 					'brazeSubscribeAttributeNameAlternate',
 					'brazeSubscribeEventNamePrefix',
+					brazeSubscribeEventName,
+					brazeUnsubscribeEventName,
+					emailRenderingLatestInSeriesUrl,
+					temporarySignUpUrl,
 				]}
 			/>
+
+			<p>
+				Note that the "temporary sign Up URL" will not be available immediately
+				after a newsletter is launched as the site can take 1-3 hours to update
+				its list of newsletters.
+			</p>
 
 			<p>
 				When you have set up the campaign, please go to{' '}
