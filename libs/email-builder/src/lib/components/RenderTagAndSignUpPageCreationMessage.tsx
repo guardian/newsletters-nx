@@ -27,10 +27,10 @@ export const RequestTagAndSignUpPageMessage = ({
 			  })
 			: undefined;
 	const tagTitle = composerCampaignTag
-		? `& create series and Campaign Tags`
-		: `& create a Series Tag for newsletter`;
+		? ` series and campaign tags`
+		: ` a series tag`;
 
-	const title = `Please create a Sign up Page Article in Composer for newsletter ${tagTitle}`;
+	const title = `Please create a sign-up page article in Composer & ${tagTitle} for newsletter`;
 	return (
 		<MessageFormat title={title}>
 			<p>
@@ -65,7 +65,7 @@ export const RequestTagAndSignUpPageMessage = ({
 				</div>
 			)}
 
-			<h2> Create Sign-up Page </h2>
+			<h2> Create sign-up page </h2>
 			<NewsletterPropertyTable
 				newsletter={newsletter}
 				properties={['name', 'signUpHeadline', 'signUpDescription']}
