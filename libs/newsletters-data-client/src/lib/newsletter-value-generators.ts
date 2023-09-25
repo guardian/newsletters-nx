@@ -30,3 +30,22 @@ export const brazeUnsubscribeEventName: NewsletterValueGenerator = {
 	description:
 		'The name of the custom event the identity database adds to a Braze user record when a user unsubscribes to the newsletter',
 };
+
+export const temporarySignUpUrl: NewsletterValueGenerator = {
+	generate: ({ identityName }: NewsletterData) =>
+		`https://www.theguardian.com/email/form/plain/${identityName}`,
+	displayName: 'temporary sign Up URL',
+	description:
+		'A link to a page on the theguardian.com that renders a basic sign-up form for the newsletter. Note this page will not be available immediately after a newsletter is launched as the site can take 1-3 hours to update its list of newsletters',
+};
+
+// see https://github.com/guardian/email-rendering/blob/main/src/articleApp/index.ts
+export const emailRenderingLatestInSeriesUrl: NewsletterValueGenerator = {
+	generate: ({ seriesTag }: NewsletterData) =>
+		seriesTag
+			? `https://email-rendering.guardianapis.com/article/${seriesTag}/latest.json`
+			: `[not available - no series tag defined]`,
+	displayName: 'email-rendering latest in series URL',
+	description:
+		"The URL to render the latest article in the Newsletter's series tag as JSON for consumption by Braze.",
+};
