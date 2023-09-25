@@ -30,8 +30,7 @@ export type NewDraftMessageParams = {
  */
 export type NewsletterMessageId =
 	| 'NEWSLETTER_LAUNCH'
-	| 'SIGN_UP_PAGE_CREATION_REQUEST'
-	| 'TAG_CREATION_REQUEST'
+	| 'CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST'
 	| 'BRAZE_SET_UP_REQUEST';
 
 export type MessageAboutNewsletterParams = {
@@ -48,4 +47,5 @@ export type EmailRecipientConfiguration = {
 	brazeRecipients: string[];
 	signUpPageRecipients: string[];
 	launchRecipients: string[];
+	centralProductionRecipients: string[];
 };
