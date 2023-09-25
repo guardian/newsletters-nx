@@ -28,7 +28,7 @@ export const GeneratedDataPoint = ({ newsletter, valueGenerator }: Props) => {
 	return (
 		<Grid container justifyContent={'space-between'} spacing={1}>
 			<Grid item xs={3} flexGrow={1} flexShrink={0}>
-				<Typography variant="caption">{'Sign up embed code'}</Typography>
+				<Typography variant="caption">{valueGenerator.displayName}</Typography>
 				<Tooltip title={valueGenerator.description} arrow>
 					<Chip size="small" label="?" />
 				</Tooltip>
