@@ -10,7 +10,8 @@ export type NewsletterMessageId =
 	| 'NEWSLETTER_LAUNCH'
 	| 'SIGN_UP_PAGE_CREATION_REQUEST'
 	| 'TAG_CREATION_REQUEST'
-	| 'BRAZE_SET_UP_REQUEST';
+	| 'BRAZE_SET_UP_REQUEST'
+	| 'CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST';
 
 export const getMessageConfig = async (
 	emailEnvInfo: EmailEnvInfo,
@@ -24,6 +25,7 @@ export const getMessageConfig = async (
 		signUpPageRecipients,
 		brazeRecipients,
 		launchRecipients,
+		centralProductionRecipients,
 	} = JSON.parse(
 		await getConfigValue('emailRecipientConfiguration', {
 			maxAge: TIME_BETWEEN_RECIPIENT_PARAM_CHECKS,
@@ -36,6 +38,8 @@ export const getMessageConfig = async (
 		SIGN_UP_PAGE_CREATION_REQUEST: signUpPageRecipients,
 		TAG_CREATION_REQUEST: tagRecipients,
 		BRAZE_SET_UP_REQUEST: brazeRecipients,
+		CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST:
+			centralProductionRecipients,
 	};
 	switch (STAGE) {
 		case 'PROD':

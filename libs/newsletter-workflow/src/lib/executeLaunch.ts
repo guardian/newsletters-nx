@@ -41,15 +41,10 @@ const outputToStatus = (output: {
 }): 'REQUESTED' | 'NOT_REQUESTED' =>
 	output.success ? 'REQUESTED' : 'NOT_REQUESTED';
 
-const doNotSendEmail = () =>
-	Promise.resolve({ success: false, error: undefined });
-
 const sendOutEmailsAndUpdateStatus = async (
 	launchService: LaunchService,
 	newsletter: NewsletterData,
 ) => {
-	const shouldSendTagCreationRequest = !!newsletter.seriesTag;
-
 	const sendEmail = (messageTemplateId: NewsletterMessageId) =>
 		sendEmailNotifications(
 			{ messageTemplateId, newsletter },
@@ -60,22 +55,20 @@ const sendOutEmailsAndUpdateStatus = async (
 	const [
 		launchEmailResult,
 		brazeRequestEmailResult,
-		tagCreationEmailResult,
-		signupPageCreationEmailResult,
+		tagAndSignUpPageCreationEmailResult,
 	] = await Promise.all([
 		sendEmail('NEWSLETTER_LAUNCH'),
 		sendEmail('BRAZE_SET_UP_REQUEST'),
-		shouldSendTagCreationRequest
-			? sendEmail('TAG_CREATION_REQUEST')
-			: doNotSendEmail(),
-		sendEmail('SIGN_UP_PAGE_CREATION_REQUEST'),
+		sendEmail('CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST'),
 	]);
 
 	return launchService.updateCreationStatus(newsletter, {
 		ophanCampaignCreationStatus: outputToStatus(launchEmailResult),
 		brazeCampaignCreationStatus: outputToStatus(brazeRequestEmailResult),
-		tagCreationStatus: outputToStatus(tagCreationEmailResult),
-		signupPageCreationStatus: outputToStatus(signupPageCreationEmailResult),
+		tagCreationStatus: outputToStatus(tagAndSignUpPageCreationEmailResult),
+		signupPageCreationStatus: outputToStatus(
+			tagAndSignUpPageCreationEmailResult,
+		),
 	});
 };
 
