@@ -18,6 +18,7 @@ export const embedIframeCode: NewsletterValueGenerator = {
 export const brazeSubscribeEventName: NewsletterValueGenerator = {
 	generate: ({ brazeSubscribeEventNamePrefix }: NewsletterData) =>
 		`${brazeSubscribeEventNamePrefix}_subscribe_email_date`,
+	displayName: 'braze subscribe event name',
 	description:
 		'The name of the custom event the identity database adds to a Braze user record when a user subscribes to the newsletter',
 };
@@ -25,6 +26,7 @@ export const brazeSubscribeEventName: NewsletterValueGenerator = {
 export const brazeUnsubscribeEventName: NewsletterValueGenerator = {
 	generate: ({ brazeSubscribeEventNamePrefix }: NewsletterData) =>
 		`${brazeSubscribeEventNamePrefix}_unsubscribe_email_date`,
+	displayName: 'braze unsubscribe event name',
 	description:
 		'The name of the custom event the identity database adds to a Braze user record when a user unsubscribes to the newsletter',
 };
