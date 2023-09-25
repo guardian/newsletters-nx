@@ -5,9 +5,7 @@ import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
 
 export const createDraftNewsletterLayout: WizardStepLayout<DraftService> = {
-	staticMarkdown: `# Start creating a newsletter
-
-Welcome!  This wizard will guide you through the process of creating a newsletter using email-rendering.
+	staticMarkdown: `# Enter the newsletter's name
 
 The first step is to enter the name of your newsletter. For example,  **Down to Earth**.
 
