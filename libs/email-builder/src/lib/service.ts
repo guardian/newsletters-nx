@@ -5,9 +5,8 @@ import {
 	buildBrazeSetUpRequestMessage,
 	buildNewDraftEmail,
 	buildNewsLetterLaunchMessage,
-	buildTagCreationRequestMessage,
 } from './messages';
-import { buildSignUpPageCreationRequestMessage } from './messages/request-sign-up-page-creation-message';
+import { buildSignupPageAndTagCreationRequestMessage } from './messages/request-tags-and-signup-page-message';
 import type { MessageConfig, MessageContent, MessageParams } from './types';
 
 const getMessage = async (
@@ -24,10 +23,8 @@ const getMessage = async (
 			return buildNewsLetterLaunchMessage(params, emailEnvInfo);
 		case 'BRAZE_SET_UP_REQUEST':
 			return buildBrazeSetUpRequestMessage(params, emailEnvInfo);
-		case 'TAG_CREATION_REQUEST':
-			return buildTagCreationRequestMessage(params, emailEnvInfo);
-		case 'SIGN_UP_PAGE_CREATION_REQUEST':
-			return buildSignUpPageCreationRequestMessage(params, emailEnvInfo);
+		case 'CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST':
+			return buildSignupPageAndTagCreationRequestMessage(params, emailEnvInfo);
 	}
 };
 

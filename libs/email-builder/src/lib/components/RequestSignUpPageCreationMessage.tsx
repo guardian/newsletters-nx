@@ -41,6 +41,7 @@ export const RequestSignUpPageCreationMessage = ({
 					until {embargoDate}.
 				</p>
 			)}
+			{!embargoDate && <p>The page can go live immediately.</p>}
 			<p>
 				When the article is created, please go to{' '}
 				<a href={pageLink}>this page on the newsletters tool</a> to confirm
