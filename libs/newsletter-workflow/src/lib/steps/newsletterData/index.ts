@@ -8,6 +8,7 @@ import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
 import { finishLayout } from './finishLayout';
 import { frequencyLayout } from './frequencyLayout';
 import { illustrationCardLayout } from './illustrationCardLayout';
+import { createDraftIntro } from './introLayout';
 import { multiThrashersLayout } from './multiThrashersLayout';
 import { onlineArticleLayout } from './onlineArticleLayout';
 import { pillarAndGroupLayout } from './pillarAndGroupLayout';
@@ -19,6 +20,7 @@ import { tagsLayout } from './tagsLayout';
 
 export const newsletterDataLayout: WizardLayout<DraftService> = {
 	cancel: cancelLayout,
+	intro: createDraftIntro,
 	createDraftNewsletter: createDraftNewsletterLayout,
 	editDraftNewsletter: editDraftNewsletterLayout,
 	category: categoryLayout,
