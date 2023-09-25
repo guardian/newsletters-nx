@@ -135,7 +135,7 @@ export const newsletterDataSchema = z.object({
 	seriesTagDescription: z
 		.string()
 		.optional()
-		.describe('The series tag description'),
+		.describe('The Series tag description'),
 	composerTag: z.string().optional().describe('Composer tag(s)'),
 	composerCampaignTag: z.string().optional().describe('Composer campaign tag'),
 

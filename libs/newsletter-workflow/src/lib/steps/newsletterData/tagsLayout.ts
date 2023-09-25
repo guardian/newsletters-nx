@@ -15,7 +15,7 @@ const markdownTemplate = `
 
 ### Series Tag
 
-Please share the series tag URL for the newsletter.
+Please share the series tag URL & description for the newsletter.
 
 For example: [tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the What's On newsletter.
 
@@ -56,22 +56,28 @@ export const tagsLayout: WizardStepLayout<DraftService> = {
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			onBeforeStepChangeValidate: (stepData) => {
-				const composerTag = stepData.formData
-					? stepData.formData['composerTag']
-					: undefined;
-				const composerCampaignTag = stepData.formData
-					? stepData.formData['composerCampaignTag']
-					: undefined;
+				if (!stepData.formData) {
+					return undefined;
+				}
+				const seriesTag = stepData.formData['seriesTag'] ?? undefined;
+				const seriesTagDescription = stepData.formData['seriesTagDescription'] ?? undefined;
+				if (seriesTag && !seriesTagDescription) {
+					return {
+						message: 'Series tag description is required if series tag specified',
+					};
+				}
+				const composerTag = stepData.formData['composerTag'] ?? undefined;
+				const composerCampaignTag = stepData.formData['composerCampaignTag'] ?? undefined;
 				if (composerTag || composerCampaignTag) {
 					if (!composerTag) {
 						return {
 							message:
-								'ENTER AT LEAST ONE COMPOSER TAG IF SPECIFYING COMPOSER CAMPAIGN TAG',
+								'Enter at least one composer tag if specifying composer campaign tag',
 						};
 					}
 					if (!composerCampaignTag) {
 						return {
-							message: 'ENTER COMPOSER CAMPAIGN TAG IF SPECIFYING COMPOSER TAG',
+							message: 'Enter composer campaign tag if specifying composer tag',
 						};
 					}
 				}
