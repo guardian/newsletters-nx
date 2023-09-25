@@ -11,3 +11,18 @@ export const embedIframeCode: NewsletterValueGenerator = {
 	description:
 		'The HTML code to paste into a composer embed block to add a sign-up form to the article content.',
 };
+
+// see https://github.com/guardian/identity/blob/main/identity-api/src/main/scala/com/gu/identity/api/mail/CmtModels.scala
+export const brazeSubscribeEventName: NewsletterValueGenerator = {
+	generate: ({ brazeSubscribeEventNamePrefix }: NewsletterData) =>
+		`${brazeSubscribeEventNamePrefix}_subscribe_email_date`,
+	description:
+		'The name of the custom event the identity database adds to a Braze user record when a user subscribes to the newsletter',
+};
+
+export const brazeUnsubscribeEventName: NewsletterValueGenerator = {
+	generate: ({ brazeSubscribeEventNamePrefix }: NewsletterData) =>
+		`${brazeSubscribeEventNamePrefix}_unsubscribe_email_date`,
+	description:
+		'The name of the custom event the identity database adds to a Braze user record when a user unsubscribes to the newsletter',
+};
