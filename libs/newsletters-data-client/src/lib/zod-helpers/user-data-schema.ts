@@ -32,11 +32,9 @@ export const getUserEditSchema = (
 	}
 	if (editBraze) {
 		return newsletterDataSchema.pick({
-			brazeCampaignCreationStatus: true,
 			brazeNewsletterName: true,
-			brazeSubscribeAttributeName: true,
-			brazeSubscribeEventNamePrefix: true,
 			brazeSubscribeAttributeNameAlternate: true,
+			brazeCampaignCreationStatus: true,
 		});
 	}
 	if (editOphan) {
