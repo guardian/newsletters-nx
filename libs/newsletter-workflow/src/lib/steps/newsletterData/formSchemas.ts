@@ -83,14 +83,6 @@ export const formSchemas = {
 		.pick({ signUpEmbedDescription: true })
 		.describe('Add the sign up embed copy'),
 
-	newsletterDesign: dataCollectionSchema
-		.pick({
-			designBriefDoc: true,
-			figmaDesignUrl: true,
-			figmaIncludesThrashers: true,
-		})
-		.describe('Add the design brief and Figma design'),
-
 	newsletterHeader: pickAndPrefixRenderingOption([
 		'displayStandfirst',
 		'displayDate',
