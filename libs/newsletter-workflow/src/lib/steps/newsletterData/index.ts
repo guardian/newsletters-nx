@@ -5,11 +5,9 @@ import { createDraftNewsletterLayout } from './createDraftNewsletterLayout';
 import { dateLayout } from './dateLayout';
 import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
 import { finishLayout } from './finishLayout';
-import { illustrationCardLayout } from './illustrationCardLayout';
 import { createDraftIntro } from './introLayout';
 import { productionDetailsLayout } from './productionDetailsLayout';
-import { signUpEmbedLayout } from './signUpEmbedLayout';
-import { signUpPageLayout } from './signUpPageLayout';
+import { promotionContentLayout } from './promotionContentLayout';
 import { tagsLayout } from './tagsLayout';
 import { targetingLayout } from './targetingLayout';
 import { thrashersLayout } from './thrashersLayout';
@@ -24,8 +22,6 @@ export const newsletterDataLayout: WizardLayout<DraftService> = {
 	targeting: targetingLayout,
 	tags: tagsLayout,
 	thrasher: thrashersLayout,
-	illustrationCard: illustrationCardLayout,
-	signUpPage: signUpPageLayout,
-	signUpEmbed: signUpEmbedLayout,
+	signUpPage: promotionContentLayout,
 	finish: finishLayout,
 };

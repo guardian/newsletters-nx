@@ -72,16 +72,14 @@ export const formSchemas = {
 		})
 		.describe('Set targeting options'),
 
-	signUpPage: dataCollectionSchema
+	promotionContent: dataCollectionSchema
 		.pick({
 			signUpHeadline: true,
 			signUpDescription: true,
+			signUpEmbedDescription: true,
+			illustrationCard: true,
 		})
-		.describe('Add the sign up page copy'),
-
-	signUpEmbed: dataCollectionSchema
-		.pick({ signUpEmbedDescription: true })
-		.describe('Add the sign up embed copy'),
+		.describe('Add promotion copy and newsletters page image'),
 
 	newsletterHeader: pickAndPrefixRenderingOption([
 		'displayStandfirst',
@@ -141,10 +139,4 @@ export const formSchemas = {
 			privateUntilLaunch: true,
 		})
 		.describe('choose the launch date and promotion plans'),
-
-	illustrationCard: dataCollectionSchema
-		.pick({
-			illustrationCard: true,
-		})
-		.describe('Add the URL for the illustration card (5:3 format)'),
 };

@@ -122,7 +122,7 @@ export const newsletterDataSchema = z.object({
 		.string()
 		.url()
 		.optional()
-		.describe('URL for 5:3 image to use on the all newsletters page'),
+		.describe('URL of image for all newsletters page(5:3 format)'),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
