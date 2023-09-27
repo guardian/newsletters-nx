@@ -40,18 +40,13 @@ export const formSchemas = {
 		.pick({ identityName: true })
 		.describe('Edit the identity name if required'),
 
-	// Exclude 'article-based-legacy' from the options presented:
-	// needs to be supported in the schema for existing data, but
-	// not an option to present for new newsletters.
-	category: z
-		.object({
-			category: z.enum(
-				dataCollectionSchema.shape['category'].options.filter(
-					(option) => option !== 'article-based-legacy',
-				) as [string, ...string[]],
-			),
+	productionDetails: dataCollectionSchema
+		.pick({
+			category: true,
+			onlineArticle: true,
+			frequency: true,
 		})
-		.describe('Pick a category'),
+		.describe('Set Production details'),
 
 	braze: dataCollectionSchema
 		.pick({
@@ -133,21 +128,9 @@ export const formSchemas = {
 		'Add the footer setup',
 	),
 
-	frequency: dataCollectionSchema
-		.pick({
-			frequency: true,
-		})
-		.describe('Specify the send frequency'),
-
 	images: pickAndPrefixRenderingOption(['displayImageCaptions']).describe(
 		'Specify the image setup',
 	),
-
-	onlineArticle: dataCollectionSchema
-		.pick({
-			onlineArticle: true,
-		})
-		.describe('Select from the drop-down list'),
 
 	linkList: pickAndPrefixRenderingOption(['linkListSubheading']).describe(
 		'Add the subheading triggers',

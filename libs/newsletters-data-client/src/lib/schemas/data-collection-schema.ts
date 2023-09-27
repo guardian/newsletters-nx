@@ -68,6 +68,15 @@ export const dataCollectionRenderingOptionsSchema =
 		}),
 	);
 
+// Exclude 'article-based-legacy' from the options presented:
+// needs to be supported in the schema for existing data, but
+// not an option to present for new newsletters.
+const dataCollectionCategories = z.enum(
+	newsletterDataSchema.shape['category'].options.filter(
+		(option) => option !== 'article-based-legacy',
+	) as [string, ...string[]],
+);
+
 /**
  * The schema for collecting data for new drafts.
  *
@@ -78,6 +87,7 @@ export const dataCollectionRenderingOptionsSchema =
 export const dataCollectionSchema = newsletterDataSchema.merge(
 	z.object({
 		onlineArticle: onlineArticleSchema,
+		category: dataCollectionCategories,
 		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
 		signUpDescription: nonEmptyString().describe('Sign-up description'),
 		regionFocus: regionFocusEnumSchema.unwrap(),
