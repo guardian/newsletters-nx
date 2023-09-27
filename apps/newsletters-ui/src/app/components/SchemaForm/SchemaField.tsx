@@ -52,7 +52,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 const WrongTypeMessage = (props: { field: FieldDef }) => (
 	<div>
 		wrong value type ({fieldValueAsDisplayString(props.field)}) for{' '}
-		{props.field.type}
+		{props.field.key}
 	</div>
 );
 

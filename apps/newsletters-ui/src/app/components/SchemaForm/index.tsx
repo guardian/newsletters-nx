@@ -78,9 +78,6 @@ export function SchemaForm<T extends z.ZodRawShape>({
 
 		const innerZod = recursiveUnwrap(zod);
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- zod
-		const type = innerZod._def.typeName as unknown as string;
-
 		const enumOptions =
 			innerZod instanceof ZodEnum ? (innerZod.options as string[]) : undefined;
 
@@ -90,7 +87,6 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			key,
 			description: zod.description,
 			optional: zod.isOptional(),
-			type,
 			value: data[key],
 			enumOptions,
 			readOnly: readOnlyKeys.includes(key),

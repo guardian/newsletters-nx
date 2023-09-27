@@ -1,5 +1,15 @@
 import type { FormEvent } from 'react';
-import type { ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
+import type { ZodRawShape, ZodTypeAny } from 'zod';
+import {
+	ZodArray,
+	ZodBoolean,
+	ZodDate,
+	ZodEnum,
+	ZodNumber,
+	ZodObject,
+	ZodString,
+} from 'zod';
+import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import {
 	isPrimitiveRecord,
@@ -12,7 +22,6 @@ export interface FieldDef {
 	key: string;
 	description?: string;
 	optional: boolean;
-	type: string;
 	value: unknown;
 	enumOptions?: string[];
 	readOnly?: boolean;
@@ -56,27 +65,29 @@ export function eventToString(event: FormEvent, defaultValue = ''): string {
 }
 
 function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
-	if (field.type === 'ZodEnum') {
+	const innerZod = recursiveUnwrap(field.zod);
+
+	if (innerZod instanceof ZodEnum) {
 		if (field.optional && typeof value === 'undefined') {
 			return true;
 		}
 		return field.enumOptions?.includes(value as string) ?? false;
 	}
 
-	if (field.type === 'ZodDate') {
+	if (innerZod instanceof ZodDate) {
 		return value instanceof Date;
 	}
 
-	if (field.type === 'ZodArray' && field.arrayItemType === 'string') {
+	if (innerZod instanceof ZodArray && field.arrayItemType === 'string') {
 		return isStringArray(value);
 	}
 
-	if (field.type === 'ZodArray' && field.arrayItemType === 'record') {
+	if (innerZod instanceof ZodArray && field.arrayItemType === 'record') {
 		// TODO - use field.recordSchema to validate each item?
 		return isPrimitiveRecordArray(value);
 	}
 
-	if (field.type === 'ZodObject') {
+	if (innerZod instanceof ZodObject) {
 		if (field.optional && typeof value === 'undefined') {
 			return true;
 		}
@@ -89,11 +100,11 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 		case 'undefined':
 			return field.optional;
 		case 'string':
-			return field.type === 'ZodString';
+			return innerZod instanceof ZodString;
 		case 'number':
-			return field.type === 'ZodNumber';
+			return innerZod instanceof ZodNumber;
 		case 'boolean':
-			return field.type === 'ZodBoolean';
+			return innerZod instanceof ZodBoolean;
 		default:
 			return false;
 	}
