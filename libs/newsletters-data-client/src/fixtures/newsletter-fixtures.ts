@@ -55,6 +55,7 @@ export const TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS: NewsletterData
 			displayStandfirst: true,
 			displayImageCaptions: false,
 		},
+		category: 'article-based',
 	};
 
 export const VALID_TECHSCAPE: LegacyNewsletter = {
