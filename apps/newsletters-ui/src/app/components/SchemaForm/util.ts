@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import {
 	isPrimitiveRecord,
@@ -8,6 +8,7 @@ import {
 } from '../../util';
 
 export interface FieldDef {
+	zod: ZodTypeAny;
 	key: string;
 	description?: string;
 	optional: boolean;

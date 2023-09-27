@@ -67,7 +67,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
-		const zod = schema.shape[key];
+		const zod: ZodTypeAny | undefined = schema.shape[key];
 		if (!zod) {
 			return null;
 		}
@@ -96,6 +96,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			readOnly: readOnlyKeys.includes(key),
 			arrayItemType,
 			recordSchema,
+			zod,
 		});
 	}
 
