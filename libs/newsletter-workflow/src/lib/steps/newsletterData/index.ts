@@ -8,13 +8,12 @@ import { finishLayout } from './finishLayout';
 import { illustrationCardLayout } from './illustrationCardLayout';
 import { createDraftIntro } from './introLayout';
 import { multiThrashersLayout } from './multiThrashersLayout';
-import { pillarAndGroupLayout } from './pillarAndGroupLayout';
 import { productionDetailsLayout } from './productionDetailsLayout';
-import { regionFocusLayout } from './regionFocusLayout';
 import { signUpEmbedLayout } from './signUpEmbedLayout';
 import { signUpPageLayout } from './signUpPageLayout';
 import { singleThrasherLayout } from './singleThrasherLayout';
 import { tagsLayout } from './tagsLayout';
+import { targetingLayout } from './targetingLayout';
 
 export const newsletterDataLayout: WizardLayout<DraftService> = {
 	cancel: cancelLayout,
@@ -23,8 +22,7 @@ export const newsletterDataLayout: WizardLayout<DraftService> = {
 	editDraftNewsletter: editDraftNewsletterLayout,
 	productionDetails: productionDetailsLayout,
 	dates: dateLayout,
-	pillarAndGroup: pillarAndGroupLayout,
-	regionFocus: regionFocusLayout,
+	targeting: targetingLayout,
 	tags: tagsLayout,
 	thrasher: singleThrasherLayout,
 	multiThrashers: multiThrashersLayout,

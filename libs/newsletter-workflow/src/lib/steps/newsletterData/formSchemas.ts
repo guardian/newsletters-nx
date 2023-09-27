@@ -64,6 +64,14 @@ export const formSchemas = {
 		})
 		.describe('Edit the Ophan values if required'),
 
+	targeting: dataCollectionSchema
+		.pick({
+			theme: true,
+			group: true,
+			regionFocus: true,
+		})
+		.describe('Set targeting options'),
+
 	pillarAndGroup: dataCollectionSchema
 		.pick({
 			theme: true,

@@ -19,7 +19,8 @@ export type WorkflowStatus = z.infer<typeof workflowStatusEnumSchema>;
 
 export const regionFocusEnumSchema = z
 	.enum(['UK', 'AU', 'US', 'INT', 'EUR'])
-	.optional();
+	.optional()
+	.describe('Regional Focus');
 export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 
 export const onlineArticleSchema = z

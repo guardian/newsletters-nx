@@ -77,6 +77,24 @@ const dataCollectionCategories = z.enum(
 	) as [string, ...string[]],
 );
 
+// 'group' is a string field since there are no external constraint on what we call the groups
+// butduring datacollection, we can use an enum to allow users to pick from the current list.
+// In practice, we would not want users to be able to create new groups for MMA
+// for each newsletter.
+const dataCollectionGroup = z
+	.enum([
+		'News in depth',
+		'News in brief',
+		'Opinion',
+		'Features',
+		'Culture',
+		'Lifestyle',
+		'Sport',
+		'Work',
+		'From the papers',
+	])
+	.describe('Group for MMA page');
+
 /**
  * The schema for collecting data for new drafts.
  *
@@ -90,6 +108,7 @@ export const dataCollectionSchema = newsletterDataSchema.merge(
 		category: dataCollectionCategories,
 		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
 		signUpDescription: nonEmptyString().describe('Sign-up description'),
+		group: dataCollectionGroup,
 		regionFocus: regionFocusEnumSchema.unwrap(),
 	}),
 );
