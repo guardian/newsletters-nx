@@ -72,31 +72,6 @@ export const formSchemas = {
 		})
 		.describe('Set targeting options'),
 
-	pillarAndGroup: dataCollectionSchema
-		.pick({
-			theme: true,
-		})
-		.extend({
-			// 'group' is a string field since there are no external constraint on what we call the groups
-			// but on the formSchema, we can use an enum to allow users to pick from the current list.
-			// In practice, we would not want users to be able to create new groups on the all-newsletters page
-			// for each newsletter.
-			group: z
-				.enum([
-					'News in depth',
-					'News in brief',
-					'Opinion',
-					'Features',
-					'Culture',
-					'Lifestyle',
-					'Sport',
-					'Work',
-					'From the papers',
-				])
-				.describe('Group'),
-		})
-		.describe('Choose a pillar and a group'),
-
 	signUpPage: dataCollectionSchema
 		.pick({
 			signUpHeadline: true,
@@ -107,12 +82,6 @@ export const formSchemas = {
 	signUpEmbed: dataCollectionSchema
 		.pick({ signUpEmbedDescription: true })
 		.describe('Add the sign up embed copy'),
-
-	regionFocus: dataCollectionSchema
-		.pick({
-			regionFocus: true,
-		})
-		.describe('Select from the drop-down list'),
 
 	newsletterDesign: dataCollectionSchema
 		.pick({
@@ -165,15 +134,12 @@ export const formSchemas = {
 		})
 		.describe('Add the tag setup'),
 
-	singleThrasher: pickAndPrefixThrasherOption([
+	thrashers: pickAndPrefixThrasherOption([
 		'singleThrasher',
 		'singleThrasherLocation',
 		'thrasherDescription',
-	]).describe('Add the thrasher setup'),
-
-	multiThrashers: pickAndPrefixThrasherOption(['multiThrashers']).describe(
-		'Add details of the multi-thrashers',
-	),
+		'multiThrashers',
+	]).describe('Add the thrasher requests'),
 
 	promotionDates: dataCollectionSchema
 		.pick({
