@@ -76,11 +76,6 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			continue;
 		}
 
-		const innerZod = recursiveUnwrap(zod);
-
-		const enumOptions =
-			innerZod instanceof ZodEnum ? (innerZod.options as string[]) : undefined;
-
 		const [arrayItemType, recordSchema] = getArrayItemTypeAndRecordSchema(zod);
 
 		fields.push({
@@ -88,7 +83,6 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			description: zod.description,
 			optional: zod.isOptional(),
 			value: data[key],
-			enumOptions,
 			readOnly: readOnlyKeys.includes(key),
 			arrayItemType,
 			recordSchema,

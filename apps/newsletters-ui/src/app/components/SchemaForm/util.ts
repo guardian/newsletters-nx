@@ -23,7 +23,6 @@ export interface FieldDef {
 	description?: string;
 	optional: boolean;
 	value: unknown;
-	enumOptions?: string[];
 	readOnly?: boolean;
 	arrayItemType?: 'string' | 'record' | 'unsupported';
 	recordSchema?: ZodObject<ZodRawShape>;
@@ -71,7 +70,12 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 		if (field.optional && typeof value === 'undefined') {
 			return true;
 		}
-		return field.enumOptions?.includes(value as string) ?? false;
+
+		const options = isStringArray(innerZod.options)
+			? innerZod.options
+			: undefined;
+
+		return options?.includes(value as string) ?? false;
 	}
 
 	if (innerZod instanceof ZodDate) {

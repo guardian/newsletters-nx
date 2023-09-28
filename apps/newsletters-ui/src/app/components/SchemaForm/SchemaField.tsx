@@ -201,16 +201,17 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongTypeMessage field={field} />;
 		}
 
-		if (
-			field.enumOptions &&
-			field.enumOptions.length <= maxOptionsForRadioButtons
-		) {
+		const options = isStringArray(innerZod.options)
+			? innerZod.options
+			: undefined;
+
+		if (options && options.length <= maxOptionsForRadioButtons) {
 			return (
 				<FieldWrapper>
 					<RadioSelectInput
 						{...standardProps}
 						value={value}
-						options={field.enumOptions}
+						options={options}
 					/>
 				</FieldWrapper>
 			);
@@ -218,11 +219,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 		return (
 			<FieldWrapper>
-				<SelectInput
-					{...standardProps}
-					value={value}
-					options={field.enumOptions ?? []}
-				/>
+				<SelectInput {...standardProps} value={value} options={options ?? []} />
 			</FieldWrapper>
 		);
 	}
