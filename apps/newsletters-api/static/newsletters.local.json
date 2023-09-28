@@ -47,6 +47,7 @@
 		"signUpDescription": "Fuga corporis suscipit earum.",
 		"frequency": "Monthly",
 		"status": "cancelled",
+		"seriesTag": "some/series/tag",
 		"restricted": false,
 		"emailConfirmation": false,
 		"brazeNewsletterName": "Editorial_RoiFemaleUk",

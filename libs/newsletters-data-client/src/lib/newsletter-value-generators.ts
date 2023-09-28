@@ -49,3 +49,18 @@ export const emailRenderingLatestInSeriesUrl: NewsletterValueGenerator = {
 	description:
 		"The URL to render the latest article in the Newsletter's series tag as JSON for consumption by Braze.",
 };
+
+export const emailEndpoint: NewsletterValueGenerator = {
+	generate: ({ seriesTag }: NewsletterData) =>
+		seriesTag
+			? `${seriesTag}/latest.json`
+			: `[not available - no series tag defined]`,
+	displayName: 'email_endpoint',
+	description: 'The the value to use for email_endpoint in the Braze campaign',
+};
+
+export const emailContent: NewsletterValueGenerator = {
+	generate: () => 'Editorial_FirstEditionContent',
+	displayName: 'email_content',
+	description: 'The the value to use for email_content in the Braze campaign',
+};

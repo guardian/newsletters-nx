@@ -1,5 +1,6 @@
 import type {
 	NewsletterData,
+	UserPermissions,
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
@@ -15,6 +16,16 @@ export const hasEditAccess = async (
 	return [editTags, editNewsletters, editSignUpPage, editBraze, editOphan].some(
 		(permission) => permission,
 	);
+};
+
+export const hasPermission = async (
+	profile: UserProfile | undefined,
+	permission: keyof UserPermissions,
+): Promise<boolean> => {
+	if (!profile) return false;
+	const permissions = await permissionService.get(profile);
+	console.log('permissions', permissions);
+	return permissions[permission];
 };
 
 export const isAuthorisedToMakeRequestedNewsletterUpdate = async (

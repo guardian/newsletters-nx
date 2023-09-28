@@ -11,6 +11,7 @@ export type NewsletterMessageId =
 	| 'SIGN_UP_PAGE_CREATION_REQUEST'
 	| 'TAG_CREATION_REQUEST'
 	| 'BRAZE_SET_UP_REQUEST'
+	| 'BRAZE_UPDATE_REQUEST'
 	| 'CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST';
 
 export const getMessageConfig = async (
@@ -38,6 +39,7 @@ export const getMessageConfig = async (
 		SIGN_UP_PAGE_CREATION_REQUEST: signUpPageRecipients,
 		TAG_CREATION_REQUEST: tagRecipients,
 		BRAZE_SET_UP_REQUEST: brazeRecipients,
+		BRAZE_UPDATE_REQUEST: brazeRecipients,
 		CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST:
 			centralProductionRecipients,
 	};

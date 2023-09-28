@@ -11,7 +11,7 @@ interface Props {
 export const isStringArray = (value: unknown): value is string[] =>
 	Array.isArray(value) && value.every((item) => typeof item === 'string');
 
-export const properyToString = (value: unknown): string => {
+export const propertyToString = (value: unknown): string => {
 	switch (typeof value) {
 		case 'string':
 		case 'number':
@@ -26,8 +26,7 @@ export const properyToString = (value: unknown): string => {
 				return value.join();
 			}
 			try {
-				const stringification = JSON.stringify(value);
-				return stringification;
+				return JSON.stringify(value);
 			} catch (err) {
 				return '[non-serialisable object]';
 			}
@@ -44,7 +43,7 @@ export const NewsletterPropertyTable = ({ newsletter, properties }: Props) => (
 					return (
 						<tr key={index}>
 							<th>{property}</th>
-							<td>{properyToString(newsletter[property])}</td>
+							<td>{propertyToString(newsletter[property])}</td>
 						</tr>
 					);
 				}
