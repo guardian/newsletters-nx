@@ -55,7 +55,7 @@ export function eventToBoolean(
 	return (event.target as HTMLInputElement).checked;
 }
 
-export function eventToString(event: FormEvent, defaultValue = ''): string {
+export function eventToString(event: FormEvent): string {
 	return (event.target as HTMLInputElement).value;
 }
 

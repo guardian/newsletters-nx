@@ -1,4 +1,3 @@
-import type { ZodRawShape, ZodTypeAny } from 'zod';
 import {
 	z,
 	ZodArray,
@@ -49,10 +48,17 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	maxOptionsForRadioButtons: number;
 }
 
-const WrongTypeMessage = (props: { field: FieldDef }) => (
+const WrongValueTypeMessage = (props: { field: FieldDef }) => (
 	<div>
-		wrong value type ({fieldValueAsDisplayString(props.field)}) for{' '}
-		{props.field.key}
+		<p>WRONG VALUE TYPE FOR {props.field.key}</p>
+		<p>value: {fieldValueAsDisplayString(props.field)} </p>
+	</div>
+);
+
+const UnsupportedFieldMessage = (props: { field: FieldDef }) => (
+	<div>
+		<p>UNSUPPORTED FIELD: {props.field.key} </p>
+		<p>value: {fieldValueAsDisplayString(props.field)} </p>
 	</div>
 );
 
@@ -108,7 +114,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		const parsed = parsevalueForZodDate(value);
 
 		if (!parsed) {
-			return <WrongTypeMessage field={field} />;
+			return <WrongValueTypeMessage field={field} />;
 		}
 
 		return (
@@ -124,7 +130,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 	if (innerZod instanceof ZodString) {
 		if (typeof value !== 'string' && typeof value !== 'undefined') {
-			return <WrongTypeMessage field={field} />;
+			return <WrongValueTypeMessage field={field} />;
 		}
 
 		if (options) {
@@ -159,7 +165,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 	if (innerZod instanceof ZodBoolean) {
 		if (typeof value !== 'boolean' && typeof value !== 'undefined') {
-			return <WrongTypeMessage field={field} />;
+			return <WrongValueTypeMessage field={field} />;
 		}
 		return (
 			<FieldWrapper>
@@ -170,7 +176,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 	if (innerZod instanceof ZodNumber) {
 		if (typeof value !== 'number' && typeof value !== 'undefined') {
-			return <WrongTypeMessage field={field} />;
+			return <WrongValueTypeMessage field={field} />;
 		}
 
 		if (zod.isOptional()) {
@@ -198,7 +204,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 	if (innerZod instanceof ZodEnum) {
 		if (typeof value !== 'string' && typeof value !== 'undefined') {
-			return <WrongTypeMessage field={field} />;
+			return <WrongValueTypeMessage field={field} />;
 		}
 
 		const options = isStringArray(innerZod.options)
@@ -225,59 +231,51 @@ export function SchemaField<T extends z.ZodRawShape>({
 	}
 
 	if (innerZod instanceof ZodObject) {
-		if (isPrimitiveRecord(value) || typeof value === 'undefined') {
-			return (
-				<FieldWrapper>
-					<SchemaRecordInput
-						{...standardProps}
-						recordSchema={innerZod}
-						value={value}
-					/>
-				</FieldWrapper>
-			);
+		if (!isPrimitiveRecord(value) && typeof value !== 'undefined') {
+			return <WrongValueTypeMessage field={field} />;
 		}
-		return <WrongTypeMessage field={field} />;
+		return (
+			<FieldWrapper>
+				<SchemaRecordInput
+					{...standardProps}
+					recordSchema={innerZod}
+					value={value}
+				/>
+			</FieldWrapper>
+		);
 	}
 
 	if (innerZod instanceof ZodArray) {
 		if (innerZod.element instanceof ZodString) {
-			if (isStringArray(value) || typeof value === 'undefined') {
-				return (
-					<FieldWrapper>
-						<SchemaArrayInput {...standardProps} value={value ?? []} />
-					</FieldWrapper>
-				);
+			if (!isStringArray(value) && typeof value !== 'undefined') {
+				return <WrongValueTypeMessage field={field} />;
 			}
-			return <WrongTypeMessage field={field} />;
+			return (
+				<FieldWrapper>
+					<SchemaArrayInput {...standardProps} value={value ?? []} />
+				</FieldWrapper>
+			);
 		}
 
 		if (innerZod.element instanceof ZodObject) {
-			if (isPrimitiveRecordArray(value) || typeof value === 'undefined') {
-				return (
-					<FieldWrapper>
-						<SchemaRecordArrayInput
-							{...standardProps}
-							value={value ?? []}
-							recordSchema={innerZod.element}
-							maxOptionsForRadioButtons={maxOptionsForRadioButtons}
-						/>
-					</FieldWrapper>
-				);
+			if (!isPrimitiveRecordArray(value) && typeof value !== 'undefined') {
+				return <WrongValueTypeMessage field={field} />;
 			}
-			return <WrongTypeMessage field={field} />;
+			return (
+				<FieldWrapper>
+					<SchemaRecordArrayInput
+						{...standardProps}
+						value={value ?? []}
+						recordSchema={innerZod.element}
+						maxOptionsForRadioButtons={maxOptionsForRadioButtons}
+					/>
+				</FieldWrapper>
+			);
 		}
-
-		return <WrongTypeMessage field={field} />;
 	}
 
 	if (showUnsupported) {
-		return (
-			<div>
-				<b>UNSUPPORTED FIELD TYPE [{key}] : </b>
-				{key}
-				<b>{fieldValueAsDisplayString(field)}</b>
-			</div>
-		);
+		return <UnsupportedFieldMessage field={field} />;
 	}
 
 	return null;
