@@ -105,8 +105,8 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 						.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 						.send(makeErrorResponse(storageResponse.message));
 				}
-
-				if (!storageResponse.data.seriesTag) {
+				const notificationRequiresSeriesTag = action === 'brazeUpdate';
+				if (notificationRequiresSeriesTag && !storageResponse.data.seriesTag) {
 					return res
 						.status(400)
 						.send(makeErrorResponse(`No series tag is present`));
