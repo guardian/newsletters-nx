@@ -24,7 +24,6 @@ export const hasPermission = async (
 ): Promise<boolean> => {
 	if (!profile) return false;
 	const permissions = await permissionService.get(profile);
-	console.log('permissions', permissions);
 	return permissions[permission];
 };
 
