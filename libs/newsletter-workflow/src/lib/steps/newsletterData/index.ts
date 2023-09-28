@@ -1,39 +1,27 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardLayout } from '@newsletters-nx/state-machine';
 import { cancelLayout } from './cancelLayout';
-import { categoryLayout } from './categoryLayout';
 import { createDraftNewsletterLayout } from './createDraftNewsletterLayout';
 import { dateLayout } from './dateLayout';
 import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
 import { finishLayout } from './finishLayout';
-import { frequencyLayout } from './frequencyLayout';
-import { illustrationCardLayout } from './illustrationCardLayout';
 import { createDraftIntro } from './introLayout';
-import { multiThrashersLayout } from './multiThrashersLayout';
-import { onlineArticleLayout } from './onlineArticleLayout';
-import { pillarAndGroupLayout } from './pillarAndGroupLayout';
-import { regionFocusLayout } from './regionFocusLayout';
-import { signUpEmbedLayout } from './signUpEmbedLayout';
-import { signUpPageLayout } from './signUpPageLayout';
-import { singleThrasherLayout } from './singleThrasherLayout';
+import { productionDetailsLayout } from './productionDetailsLayout';
+import { promotionContentLayout } from './promotionContentLayout';
 import { tagsLayout } from './tagsLayout';
+import { targetingLayout } from './targetingLayout';
+import { thrashersLayout } from './thrashersLayout';
 
 export const newsletterDataLayout: WizardLayout<DraftService> = {
 	cancel: cancelLayout,
 	intro: createDraftIntro,
 	createDraftNewsletter: createDraftNewsletterLayout,
 	editDraftNewsletter: editDraftNewsletterLayout,
-	category: categoryLayout,
+	productionDetails: productionDetailsLayout,
 	dates: dateLayout,
-	pillarAndGroup: pillarAndGroupLayout,
-	regionFocus: regionFocusLayout,
-	frequency: frequencyLayout,
-	onlineArticle: onlineArticleLayout,
+	targeting: targetingLayout,
 	tags: tagsLayout,
-	thrasher: singleThrasherLayout,
-	multiThrashers: multiThrashersLayout,
-	illustrationCard: illustrationCardLayout,
-	signUpPage: signUpPageLayout,
-	signUpEmbed: signUpEmbedLayout,
+	thrasher: thrashersLayout,
+	signUpPage: promotionContentLayout,
 	finish: finishLayout,
 };

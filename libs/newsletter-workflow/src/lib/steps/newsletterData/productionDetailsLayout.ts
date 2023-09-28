@@ -1,6 +1,9 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
-import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrEditStartStepId,
+} from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -8,8 +11,23 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-## Specify the send frequency of {{name}}
+## Production details for {{name}}?
 
+### Category
+Editorial newsletters can be produced in three ways:
+
+- **article-based**: Each chapter of the newsletter is written as a composer article.
+- **fronts-based**: The newsletters are generated from a fronts page.
+- **manual-send**: The content of the email are generated manually or with an external tool.
+
+### Web article
+Tell us if the newsletter will appear as a web article.
+
+This is the case for most newsletters, but you may prefer to offer the newsletter exclusively as an email.
+
+Alternatively, you might want the first send on web to preview it, but subsequent sends to be email-only.
+
+### Frequency
 Specify how regularly the newsletter will be sent e.g.
 - Every day
 - Every weekday
@@ -30,9 +48,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const frequencyLayout: WizardStepLayout<DraftService> = {
+export const productionDetailsLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
-	label: 'Send Frequency',
+	label: 'Production Details',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -44,7 +62,7 @@ export const frequencyLayout: WizardStepLayout<DraftService> = {
 		back: {
 			buttonType: 'PREVIOUS',
 			label: 'Back to previous step',
-			stepToMoveTo: getNextStepId,
+			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeSkip,
 		},
 		finish: {
@@ -54,7 +72,7 @@ export const frequencyLayout: WizardStepLayout<DraftService> = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.frequency,
+	schema: formSchemas.productionDetails,
 	canSkipTo: true,
-	executeSkip: executeSkip,
+	executeSkip,
 };

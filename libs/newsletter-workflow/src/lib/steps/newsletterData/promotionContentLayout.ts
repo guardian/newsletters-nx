@@ -11,13 +11,22 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-## Will {{name}} be an online article?
+## Promotion copy and image for {{name}}.
 
-Tell us if the newsletter will appear as a web article.
+### Sign up page text
+Please enter the headline and description for the sign up page:
 
-This is the case for most newsletters, but you may prefer to offer the newsletter exclusively as an email.
+![Headline and Description](https://i.guim.co.uk/img/uploads/2023/03/15/signUp.png?quality=85&dpr=2&width=300&s=3b06497952cbb042084787fd324ebe6c)
 
-Alternatively, you might want the first send on web to preview it, but subsequent sends to be email-only.
+### Specify the sign up embed description and illustration for newsletters page
+
+Please enter the description for the sign up embeds - this text is used on the in-article embeds and on the [newsletters page](https://www.theguardian.com/email-newsletters):
+
+![Sign Up Embed Description](https://i.guim.co.uk/img/uploads/2023/04/20/signUp-embed.png?quality=85&dpr=2&width=300&s=48b7b65b3dcbff5fcd4b78c562a4175e)
+
+To provide an image to use on the all newsletters page, upload the image (in the appropriate aspect ratio 5:3) via the [s3 Uploader service](https://s3-uploader.gutools.co.uk/).
+Once uploaded, copy the **vanity url** and paste it into the field below.
+
 
 `.trim();
 
@@ -26,9 +35,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const onlineArticleLayout: WizardStepLayout<DraftService> = {
+export const promotionContentLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
-	label: 'Online Article',
+	label: 'Promotion copy and images',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -43,14 +52,22 @@ export const onlineArticleLayout: WizardStepLayout<DraftService> = {
 			stepToMoveTo: getPreviousOrEditStartStepId,
 			executeStep: executeSkip,
 		},
-		finish: {
+		next: {
 			buttonType: 'NEXT',
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.onlineArticle,
+	schema: formSchemas.promotionContent,
+	fieldDisplayOptions: {
+		signUpDescription: {
+			textArea: true,
+		},
+		signUpHeadline: {
+			textArea: true,
+		},
+	},
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };
