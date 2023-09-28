@@ -21,7 +21,6 @@ export interface FieldDef {
 	zod: ZodTypeAny;
 	key: string;
 	description?: string;
-	optional: boolean;
 	value: unknown;
 	readOnly?: boolean;
 	arrayItemType?: 'string' | 'record' | 'unsupported';
@@ -67,7 +66,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	const innerZod = recursiveUnwrap(field.zod);
 
 	if (innerZod instanceof ZodEnum) {
-		if (field.optional && typeof value === 'undefined') {
+		if (field.zod.isOptional() && typeof value === 'undefined') {
 			return true;
 		}
 
@@ -92,7 +91,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	}
 
 	if (innerZod instanceof ZodObject) {
-		if (field.optional && typeof value === 'undefined') {
+		if (field.zod.isOptional() && typeof value === 'undefined') {
 			return true;
 		}
 		// TODO - use field.recordSchema to validate item?
@@ -102,7 +101,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 
 	switch (typeof value) {
 		case 'undefined':
-			return field.optional;
+			return field.zod.isOptional();
 		case 'string':
 			return innerZod instanceof ZodString;
 		case 'number':

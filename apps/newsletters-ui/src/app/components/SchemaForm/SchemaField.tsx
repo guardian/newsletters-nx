@@ -88,7 +88,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (field.readOnly) {
 			return;
 		}
-		if (field.optional && newValue === '') {
+		if (field.zod.isOptional() && newValue === '') {
 			return change(undefined, field);
 		}
 		change(newValue, field);
@@ -98,7 +98,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		label: field.description ?? field.key,
 		inputHandler,
 		readOnly: !!field.readOnly,
-		optional: !!field.optional,
+		optional: !!field.zod.isOptional(),
 		error: validationWarning,
 	};
 
@@ -173,7 +173,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongTypeMessage field={field} />;
 		}
 
-		if (field.optional) {
+		if (field.zod.isOptional()) {
 			return (
 				<FieldWrapper>
 					<OptionalNumberInput

@@ -81,7 +81,6 @@ export function SchemaForm<T extends z.ZodRawShape>({
 		fields.push({
 			key,
 			description: zod.description,
-			optional: zod.isOptional(),
 			value: data[key],
 			readOnly: readOnlyKeys.includes(key),
 			arrayItemType,
