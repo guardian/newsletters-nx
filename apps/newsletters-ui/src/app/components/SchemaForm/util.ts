@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import type { ZodRawShape, ZodTypeAny } from 'zod';
+import type { ZodTypeAny } from 'zod';
 import {
 	ZodArray,
 	ZodBoolean,
@@ -22,9 +22,6 @@ export interface FieldDef {
 	key: string;
 	value: unknown;
 	readOnly?: boolean;
-	arrayItemType?: 'string' | 'record' | 'unsupported';
-	/** if the zod property is a Zod Array of ZodObjects, the schema for the items in the array  */
-	arrayItemRecordSchema?: ZodObject<ZodRawShape>;
 }
 export type FieldValue =
 	| string

@@ -1,4 +1,4 @@
-import type { ZodRawShape } from 'zod';
+import type { ZodRawShape, ZodTypeAny } from 'zod';
 import {
 	z,
 	ZodArray,
@@ -70,6 +70,21 @@ const parsevalueForZodDate = (
 		}
 	}
 	return undefined;
+};
+
+const getArrayItemTypeAndRecordSchema = (
+	zodArray: ZodArray<ZodTypeAny, 'atleastone' | 'many'>,
+): {
+	arrayItemType: 'string' | 'record' | 'unsupported' | undefined;
+	arrayItemRecordSchema: ZodObject<ZodRawShape> | undefined;
+} => {
+	if (zodArray.element instanceof ZodString) {
+		return { arrayItemType: 'string', arrayItemRecordSchema: undefined };
+	}
+	if (zodArray.element instanceof ZodObject) {
+		return { arrayItemType: 'record', arrayItemRecordSchema: zodArray.element };
+	}
+	return { arrayItemType: 'unsupported', arrayItemRecordSchema: undefined };
 };
 
 export function SchemaField<T extends z.ZodRawShape>({
@@ -240,7 +255,12 @@ export function SchemaField<T extends z.ZodRawShape>({
 	}
 
 	if (innerZod instanceof ZodArray) {
-		switch (field.arrayItemType) {
+		const { arrayItemType, arrayItemRecordSchema } =
+			getArrayItemTypeAndRecordSchema(
+				innerZod as ZodArray<ZodTypeAny, 'atleastone' | 'many'>,
+			);
+
+		switch (arrayItemType) {
 			case 'string': {
 				if (isStringArray(value) || typeof value === 'undefined') {
 					return (
@@ -254,7 +274,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 			case 'record': {
 				if (isPrimitiveRecordArray(value) || typeof value === 'undefined') {
-					if (!field.arrayItemRecordSchema) {
+					if (!arrayItemRecordSchema) {
 						return <p>MISSING SCHEMA</p>;
 					}
 					return (
@@ -262,7 +282,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 							<SchemaRecordArrayInput
 								{...standardProps}
 								value={value ?? []}
-								recordSchema={field.arrayItemRecordSchema}
+								recordSchema={arrayItemRecordSchema}
 								maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 							/>
 						</FieldWrapper>

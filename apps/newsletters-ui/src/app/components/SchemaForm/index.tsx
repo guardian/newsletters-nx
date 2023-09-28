@@ -26,24 +26,6 @@ interface Props<T extends z.ZodRawShape> {
 	maxOptionsForRadioButtons?: number;
 }
 
-const getArrayItemTypeAndRecordSchema = (
-	zod: ZodTypeAny,
-): [FieldDef['arrayItemType'], ZodObject<ZodRawShape> | undefined] => {
-	const unwrappedZod = recursiveUnwrap(zod);
-
-	if (!(unwrappedZod instanceof ZodArray)) {
-		return [undefined, undefined];
-	}
-	const elementSchema = unwrappedZod.element as ZodTypeAny;
-	if (elementSchema instanceof ZodString) {
-		return ['string', undefined];
-	}
-	if (elementSchema instanceof ZodObject) {
-		return ['record', elementSchema];
-	}
-	return ['unsupported', undefined];
-};
-
 /**
  * Creates a form for the schema, Supports only primitives, optional primitives
  * and required string enums.
@@ -72,15 +54,10 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			continue;
 		}
 
-		const [arrayItemType, arrayItemRecordSchema] =
-			getArrayItemTypeAndRecordSchema(zod);
-
 		fields.push({
 			key,
 			value: data[key],
 			readOnly: readOnlyKeys.includes(key),
-			arrayItemType,
-			arrayItemRecordSchema,
 			zod,
 		});
 	}
