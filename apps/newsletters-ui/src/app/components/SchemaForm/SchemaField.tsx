@@ -72,21 +72,6 @@ const parsevalueForZodDate = (
 	return undefined;
 };
 
-const getArrayItemTypeAndRecordSchema = (
-	zodArray: ZodArray<ZodTypeAny, 'atleastone' | 'many'>,
-): {
-	arrayItemType: 'string' | 'record' | 'unsupported' | undefined;
-	arrayItemRecordSchema: ZodObject<ZodRawShape> | undefined;
-} => {
-	if (zodArray.element instanceof ZodString) {
-		return { arrayItemType: 'string', arrayItemRecordSchema: undefined };
-	}
-	if (zodArray.element instanceof ZodObject) {
-		return { arrayItemType: 'record', arrayItemRecordSchema: zodArray.element };
-	}
-	return { arrayItemType: 'unsupported', arrayItemRecordSchema: undefined };
-};
-
 export function SchemaField<T extends z.ZodRawShape>({
 	field,
 	change,
@@ -255,48 +240,34 @@ export function SchemaField<T extends z.ZodRawShape>({
 	}
 
 	if (innerZod instanceof ZodArray) {
-		const { arrayItemType, arrayItemRecordSchema } =
-			getArrayItemTypeAndRecordSchema(
-				innerZod as ZodArray<ZodTypeAny, 'atleastone' | 'many'>,
-			);
-
-		switch (arrayItemType) {
-			case 'string': {
-				if (isStringArray(value) || typeof value === 'undefined') {
-					return (
-						<FieldWrapper>
-							<SchemaArrayInput {...standardProps} value={value ?? []} />
-						</FieldWrapper>
-					);
-				}
-				return <WrongTypeMessage field={field} />;
+		if (innerZod.element instanceof ZodString) {
+			if (isStringArray(value) || typeof value === 'undefined') {
+				return (
+					<FieldWrapper>
+						<SchemaArrayInput {...standardProps} value={value ?? []} />
+					</FieldWrapper>
+				);
 			}
-
-			case 'record': {
-				if (isPrimitiveRecordArray(value) || typeof value === 'undefined') {
-					if (!arrayItemRecordSchema) {
-						return <p>MISSING SCHEMA</p>;
-					}
-					return (
-						<FieldWrapper>
-							<SchemaRecordArrayInput
-								{...standardProps}
-								value={value ?? []}
-								recordSchema={arrayItemRecordSchema}
-								maxOptionsForRadioButtons={maxOptionsForRadioButtons}
-							/>
-						</FieldWrapper>
-					);
-				} else {
-					return <WrongTypeMessage field={field} />;
-				}
-			}
-
-			case 'unsupported':
-			default: {
-				return <WrongTypeMessage field={field} />;
-			}
+			return <WrongTypeMessage field={field} />;
 		}
+
+		if (innerZod.element instanceof ZodObject) {
+			if (isPrimitiveRecordArray(value) || typeof value === 'undefined') {
+				return (
+					<FieldWrapper>
+						<SchemaRecordArrayInput
+							{...standardProps}
+							value={value ?? []}
+							recordSchema={innerZod.element}
+							maxOptionsForRadioButtons={maxOptionsForRadioButtons}
+						/>
+					</FieldWrapper>
+				);
+			}
+			return <WrongTypeMessage field={field} />;
+		}
+
+		return <WrongTypeMessage field={field} />;
 	}
 
 	if (showUnsupported) {
