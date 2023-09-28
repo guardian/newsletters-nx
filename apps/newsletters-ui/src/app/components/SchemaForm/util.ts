@@ -20,7 +20,6 @@ import {
 export interface FieldDef {
 	zod: ZodTypeAny;
 	key: string;
-	description?: string;
 	value: unknown;
 	readOnly?: boolean;
 	arrayItemType?: 'string' | 'record' | 'unsupported';

@@ -82,23 +82,23 @@ export function SchemaField<T extends z.ZodRawShape>({
 	validationWarning,
 	maxOptionsForRadioButtons,
 }: SchemaFieldProps<T>) {
-	const { key, value, zod } = field;
+	const { key, value, zod, readOnly } = field;
 
 	const inputHandler = (newValue: FieldValue) => {
-		if (field.readOnly) {
+		if (readOnly) {
 			return;
 		}
-		if (field.zod.isOptional() && newValue === '') {
+		if (zod.isOptional() && newValue === '') {
 			return change(undefined, field);
 		}
 		change(newValue, field);
 	};
 
 	const standardProps = {
-		label: field.description ?? field.key,
+		label: zod.description ?? key,
 		inputHandler,
-		readOnly: !!field.readOnly,
-		optional: !!field.zod.isOptional(),
+		readOnly,
+		optional: zod.isOptional(),
 		error: validationWarning,
 	};
 
@@ -173,7 +173,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongTypeMessage field={field} />;
 		}
 
-		if (field.zod.isOptional()) {
+		if (zod.isOptional()) {
 			return (
 				<FieldWrapper>
 					<OptionalNumberInput
@@ -283,7 +283,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	if (showUnsupported) {
 		return (
 			<div>
-				<b>UNSUPPORTED FIELD TYPE [{field.key}] : </b>
+				<b>UNSUPPORTED FIELD TYPE [{key}] : </b>
 				{key}
 				<b>{fieldValueAsDisplayString(field)}</b>
 			</div>

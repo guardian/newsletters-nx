@@ -69,7 +69,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	for (const key in schema.shape) {
 		const zod: ZodTypeAny | undefined = schema.shape[key];
 		if (!zod) {
-			return null;
+			continue;
 		}
 
 		if (excludedKeys.includes(key)) {
@@ -80,7 +80,6 @@ export function SchemaForm<T extends z.ZodRawShape>({
 
 		fields.push({
 			key,
-			description: zod.description,
 			value: data[key],
 			readOnly: readOnlyKeys.includes(key),
 			arrayItemType,
