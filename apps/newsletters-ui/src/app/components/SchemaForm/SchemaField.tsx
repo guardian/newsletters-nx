@@ -230,9 +230,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				<FieldWrapper>
 					<SchemaRecordInput
 						{...standardProps}
-						recordSchema={
-							field.recordSchema as unknown as ZodObject<ZodRawShape>
-						}
+						recordSchema={innerZod}
 						value={value}
 					/>
 				</FieldWrapper>
@@ -256,7 +254,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 			case 'record': {
 				if (isPrimitiveRecordArray(value) || typeof value === 'undefined') {
-					if (!field.recordSchema) {
+					if (!field.arrayItemRecordSchema) {
 						return <p>MISSING SCHEMA</p>;
 					}
 					return (
@@ -264,7 +262,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 							<SchemaRecordArrayInput
 								{...standardProps}
 								value={value ?? []}
-								recordSchema={field.recordSchema}
+								recordSchema={field.arrayItemRecordSchema}
 								maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 							/>
 						</FieldWrapper>
@@ -274,7 +272,8 @@ export function SchemaField<T extends z.ZodRawShape>({
 				}
 			}
 
-			case 'unsupported': {
+			case 'unsupported':
+			default: {
 				return <WrongTypeMessage field={field} />;
 			}
 		}

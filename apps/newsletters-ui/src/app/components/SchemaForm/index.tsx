@@ -1,5 +1,5 @@
 import type { z, ZodRawShape, ZodTypeAny } from 'zod';
-import { ZodArray, ZodEnum, ZodObject, ZodString } from 'zod';
+import { ZodArray, ZodObject, ZodString } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
@@ -30,10 +30,6 @@ const getArrayItemTypeAndRecordSchema = (
 	zod: ZodTypeAny,
 ): [FieldDef['arrayItemType'], ZodObject<ZodRawShape> | undefined] => {
 	const unwrappedZod = recursiveUnwrap(zod);
-
-	if (unwrappedZod instanceof ZodObject) {
-		return [undefined, unwrappedZod];
-	}
 
 	if (!(unwrappedZod instanceof ZodArray)) {
 		return [undefined, undefined];
@@ -76,14 +72,15 @@ export function SchemaForm<T extends z.ZodRawShape>({
 			continue;
 		}
 
-		const [arrayItemType, recordSchema] = getArrayItemTypeAndRecordSchema(zod);
+		const [arrayItemType, arrayItemRecordSchema] =
+			getArrayItemTypeAndRecordSchema(zod);
 
 		fields.push({
 			key,
 			value: data[key],
 			readOnly: readOnlyKeys.includes(key),
 			arrayItemType,
-			recordSchema,
+			arrayItemRecordSchema,
 			zod,
 		});
 	}

@@ -23,7 +23,8 @@ export interface FieldDef {
 	value: unknown;
 	readOnly?: boolean;
 	arrayItemType?: 'string' | 'record' | 'unsupported';
-	recordSchema?: ZodObject<ZodRawShape>;
+	/** if the zod property is a Zod Array of ZodObjects, the schema for the items in the array  */
+	arrayItemRecordSchema?: ZodObject<ZodRawShape>;
 }
 export type FieldValue =
 	| string
