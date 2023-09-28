@@ -163,7 +163,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 						setErrorMessage('Failed to send Braze update request');
 					}
 					setConfirmationMessage(
-						`rendering options updated ${
+						`Rendering options updated ${
 							notificationSent ? 'and Braze update requested' : ''
 						}`,
 					);
@@ -171,7 +171,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 					console.log(error);
 				}
 			} else {
-				setConfirmationMessage('rendering options updated');
+				setConfirmationMessage('Rendering options updated');
 			}
 		} else {
 			setWaitingForResponse(false);
