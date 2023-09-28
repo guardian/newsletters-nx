@@ -2,12 +2,17 @@ import {
 	Alert,
 	AlertTitle,
 	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	Grid,
 	Snackbar,
 	Typography,
 } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type {
 	FormDataRecord,
 	NewsletterData,
@@ -20,6 +25,7 @@ import {
 	renderingOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { requestNotification } from '../api-requests/request-notification';
 import { StateEditForm } from './StateEditForm';
 import { TemplatePreviewLoader } from './TemplatePreviewLoader';
 
@@ -34,7 +40,11 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		originalItem.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
 	);
 
-	const [item, setItem] = useState<NewsletterData>(originalItem);
+	const [showUpdateBrazeDialog, setShowUpdateBrazeDialog] =
+		useState<boolean>(false);
+
+	const [initialState, setInitialState] =
+		useState<NewsletterData>(originalItem);
 	const emailRenderingManagedNewsletters = [
 		'afternoon-update',
 		'cotton-capital',
@@ -54,8 +64,8 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 	const hasEmailRenderingTemplate =
 		emailRenderingManagedNewsletters.includes(identityName);
 	const [subset, setSubset] = useState<FormDataRecord>({
-		category: item.category,
-		seriesTag: item.seriesTag,
+		category: initialState.category,
+		seriesTag: initialState.seriesTag,
 	});
 
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
@@ -64,8 +74,11 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		string | undefined
 	>();
 
+	const [couldRequireBrazeUpdate, setCouldRequireBrazeUpdate] =
+		useState<boolean>(false);
+
 	const resetValue =
-		item.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema);
+		initialState.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema);
 
 	const noChangesMade = useMemo(() => {
 		const renderingOptionsMatch = Object.keys(resetValue ?? {}).every(
@@ -75,25 +88,30 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 		return (
 			renderingOptionsMatch &&
-			item.category === subset['category'] &&
-			item.seriesTag === subset['seriesTag']
+			initialState.category === subset['category'] &&
+			initialState.seriesTag === subset['seriesTag']
 		);
-	}, [renderingOptions, resetValue, item, subset]);
+	}, [renderingOptions, resetValue, initialState, subset]);
 
-	const handleSubmit = () => {
+	const handleSubmit = (requestBrazeUpdate: boolean) => {
+		setShowUpdateBrazeDialog(false);
 		if (waitingForResponse) {
 			return;
 		}
+		if (couldRequireBrazeUpdate && !showUpdateBrazeDialog) {
+			return setShowUpdateBrazeDialog(true);
+		}
+
 		const parseResult = renderingOptionsSchema.safeParse(renderingOptions);
 		if (!parseResult.success) {
 			setErrorMessage('Cannot submit with validation errors');
 			return;
 		}
 
-		void requestUpdate();
+		void requestUpdate(requestBrazeUpdate);
 	};
 
-	const requestUpdate = async () => {
+	const requestUpdate = async (includeBrazeNotification: boolean) => {
 		const renderingOptionsParseResult =
 			renderingOptionsSchema.safeParse(renderingOptions);
 		if (!renderingOptionsParseResult.success) {
@@ -120,14 +138,41 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		}
 
 		if (response.ok) {
-			setItem(response.data);
+			setInitialState(response.data);
 			setRenderingOptions(response.data.renderingOptions);
 			setSubset({
 				category: response.data.category,
 				seriesTag: response.data.seriesTag,
 			});
 			setWaitingForResponse(false);
-			setConfirmationMessage('rendering options updated!');
+			if (includeBrazeNotification) {
+				try {
+					const notificationSent = (
+						await requestNotification(initialState.identityName, 'brazeUpdate')
+					).ok;
+					if (notificationSent) {
+						const asyncStatusUpdate = (
+							await requestNewsletterEdit(originalItem.listId, {
+								brazeCampaignCreationStatus: 'REQUESTED',
+							})
+						).ok;
+						if (!asyncStatusUpdate) {
+							setErrorMessage('Failed to update Braze campaign status');
+						}
+					} else {
+						setErrorMessage('Failed to send Braze update request');
+					}
+					setConfirmationMessage(
+						`rendering options updated ${
+							notificationSent ? 'and Braze update requested' : ''
+						}`,
+					);
+				} catch (error: unknown) {
+					console.log(error);
+				}
+			} else {
+				setConfirmationMessage('rendering options updated');
+			}
 		} else {
 			setWaitingForResponse(false);
 			setErrorMessage(response.message);
@@ -136,28 +181,59 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 	const reset = () => {
 		setRenderingOptions(
-			item.renderingOptions ?? getEmptySchemaData(renderingOptionsSchema),
+			initialState.renderingOptions ??
+				getEmptySchemaData(renderingOptionsSchema),
 		);
 		setSubset({
-			category: item.category,
-			seriesTag: item.seriesTag,
+			category: initialState.category,
+			seriesTag: initialState.seriesTag,
 		});
 	};
 
+	useEffect(() => {
+		setCouldRequireBrazeUpdate(
+			initialState.category === 'article-based-legacy' &&
+				subset.category === 'article-based',
+		);
+	}, [initialState.category, subset.category]);
+
 	return (
 		<>
+			<Dialog open={showUpdateBrazeDialog}>
+				<DialogTitle>Request update to Braze campaign?</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						You have updated the category to article-based. This usually
+						requires a change to the Braze Campaign to fetch Newsletter content
+						from the correct API. Request this now?
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setShowUpdateBrazeDialog(false)}>
+						Cancel
+					</Button>
+					<Button onClick={() => handleSubmit(false)} variant="contained">
+						Save without update
+					</Button>
+					<Button onClick={() => handleSubmit(true)} variant="contained">
+						Save and Request Update
+					</Button>
+				</DialogActions>
+			</Dialog>
 			{hasEmailRenderingTemplate && (
 				<Alert severity="error">
 					This newsletter’s rendering options are managed by email rendering. To
-					make changes to <strong>{item.name}</strong>, please contact the
-					development team
+					make changes to <strong>{initialState.name}</strong>, please contact
+					the development team
 				</Alert>
 			)}
-			<Typography variant="h2">{item.name}</Typography>
+			<Typography variant="h2">{initialState.name}</Typography>
 			<Typography variant="subtitle1">email-rendering settings</Typography>
-			<Alert severity={item.seriesTag ? 'info' : 'warning'}>
+			<Alert severity={initialState.seriesTag ? 'info' : 'warning'}>
 				<AlertTitle>Series Tags</AlertTitle>
-				{!item.seriesTag && <Typography>Please add a series tag</Typography>}
+				{!initialState.seriesTag && (
+					<Typography>Please add a series tag</Typography>
+				)}
 				<Typography>
 					If no valid series tag is specified, the email rendering service will
 					show a generic template
@@ -212,10 +288,10 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 				<Button
 					variant="contained"
 					size="large"
-					onClick={handleSubmit}
+					onClick={() => handleSubmit(false)}
 					disabled={waitingForResponse}
 				>
-					submit
+					update
 				</Button>
 				<Snackbar
 					sx={{ position: 'static' }}
