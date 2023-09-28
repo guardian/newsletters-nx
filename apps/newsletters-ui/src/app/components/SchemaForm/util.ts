@@ -78,11 +78,11 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 		return value instanceof Date;
 	}
 
-	if (innerZod instanceof ZodArray && field.arrayItemType === 'string') {
+	if (innerZod instanceof ZodArray && innerZod.element instanceof ZodString) {
 		return isStringArray(value);
 	}
 
-	if (innerZod instanceof ZodArray && field.arrayItemType === 'record') {
+	if (innerZod instanceof ZodArray && innerZod.element instanceof ZodObject) {
 		// TODO - use field.recordSchema to validate each item?
 		return isPrimitiveRecordArray(value);
 	}
