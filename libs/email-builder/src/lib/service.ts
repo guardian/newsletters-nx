@@ -6,6 +6,7 @@ import {
 	buildNewDraftEmail,
 	buildNewsLetterLaunchMessage,
 } from './messages';
+import { buildBrazeUpdateRequestMessage } from './messages/request-braze-update-message';
 import { buildSignupPageAndTagCreationRequestMessage } from './messages/request-tags-and-signup-page-message';
 import type { MessageConfig, MessageContent, MessageParams } from './types';
 
@@ -23,6 +24,8 @@ const getMessage = async (
 			return buildNewsLetterLaunchMessage(params, emailEnvInfo);
 		case 'BRAZE_SET_UP_REQUEST':
 			return buildBrazeSetUpRequestMessage(params, emailEnvInfo);
+		case 'BRAZE_UPDATE_REQUEST':
+			return buildBrazeUpdateRequestMessage(params, emailEnvInfo);
 		case 'CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST':
 			return buildSignupPageAndTagCreationRequestMessage(params, emailEnvInfo);
 	}
