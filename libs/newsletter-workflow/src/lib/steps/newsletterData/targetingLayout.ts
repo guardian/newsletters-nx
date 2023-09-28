@@ -1,9 +1,9 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
-import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import {
 	getNextStepId,
-	getPreviousOrEditStartStepId,
+	getPreviousOrStartStepId,
 } from '@newsletters-nx/state-machine';
+import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
@@ -11,11 +11,20 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-## Specify the sign up page copy
+## Targeting  for {{name}}
+### Choose the Pillar
+Please select a pillar (a section category) for **{{name}}** e.g. "*Football Daily*" sits under the *Sport* pillar.
 
-Please enter the headline and description for the sign up page for **{{name}}**
+![Pillars](https://i.guim.co.uk/img/uploads/2023/02/21/pillarScreenshot.png?quality=85&dpr=2&width=300&s=0692a8714eaf66313fc599cb3462befd)
 
-![Headline and Description](https://i.guim.co.uk/img/uploads/2023/03/15/signUp.png?quality=85&dpr=2&width=300&s=3b06497952cbb042084787fd324ebe6c)
+### Choose the Group for MMA page
+Please then select a group for **{{name}}** to be listed under on the [Manage My Account](https://manage.theguardian.com/email-prefs) page e.g. *News in Depth*.
+
+![Groups](https://i.guim.co.uk/img/uploads/2023/09/11/mma-screenshot.png?quality=85&dpr=2&width=300&s=1b7e49ebb42e9ac563da1f2afedf1c88)
+
+### Choose the Geo Focus for {{name}}
+
+What’s the geo focus of **{{name}}**? UK, US, Australia, Europe or International?
 
 `.trim();
 
@@ -24,9 +33,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const signUpPageLayout: WizardStepLayout<DraftService> = {
+export const targetingLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
-	label: 'Sign Up Page',
+	label: 'Targeting',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -38,25 +47,17 @@ export const signUpPageLayout: WizardStepLayout<DraftService> = {
 		back: {
 			buttonType: 'PREVIOUS',
 			label: 'Back to previous step',
-			stepToMoveTo: getPreviousOrEditStartStepId,
+			stepToMoveTo: getPreviousOrStartStepId,
 			executeStep: executeSkip,
 		},
-		next: {
+		finish: {
 			buttonType: 'NEXT',
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.signUpPage,
-	fieldDisplayOptions: {
-		signUpDescription: {
-			textArea: true,
-		},
-		signUpHeadline: {
-			textArea: true,
-		},
-	},
+	schema: formSchemas.targeting,
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };
