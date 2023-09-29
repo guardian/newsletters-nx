@@ -44,9 +44,7 @@ export type MessageParams =
 
 export type EmailRecipientConfiguration = {
 	draftCreatedRecipients: string[];
-	tagRecipients: string[];
 	brazeRecipients: string[];
-	signUpPageRecipients: string[];
 	launchRecipients: string[];
 	centralProductionRecipients: string[];
 };

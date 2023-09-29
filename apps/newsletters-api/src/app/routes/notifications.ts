@@ -120,22 +120,24 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 					makeEmailEnvInfo(),
 				);
 				if (!emailResult.success) {
-					return res.status(500).send({
-						message: 'Email service failed',
-					});
+					return res
+						.status(500)
+						.send(makeErrorResponse('Email service failed'));
 				}
 				if (!emailResult.output) {
 					return res.status(200).send({
+						ok: false,
 						message: 'Email service is not enabled',
 					});
 				}
 				return res.status(200).send({
+					ok: true,
 					message: 'Email sent from service',
 					messageId: emailResult.output.MessageId,
 				});
 			} catch (e) {
 				console.log(e);
-				return res.status(500).send({ message: 'Error sending email' });
+				return res.status(500).send(makeErrorResponse('Error sending email'));
 			}
 		},
 	);
