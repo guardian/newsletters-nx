@@ -40,18 +40,13 @@ export const formSchemas = {
 		.pick({ identityName: true })
 		.describe('Edit the identity name if required'),
 
-	// Exclude 'article-based-legacy' from the options presented:
-	// needs to be supported in the schema for existing data, but
-	// not an option to present for new newsletters.
-	category: z
-		.object({
-			category: z.enum(
-				dataCollectionSchema.shape['category'].options.filter(
-					(option) => option !== 'article-based-legacy',
-				) as [string, ...string[]],
-			),
+	productionDetails: dataCollectionSchema
+		.pick({
+			category: true,
+			onlineArticle: true,
+			frequency: true,
 		})
-		.describe('Pick a category'),
+		.describe('Set Production details'),
 
 	braze: dataCollectionSchema
 		.pick({
@@ -69,55 +64,22 @@ export const formSchemas = {
 		})
 		.describe('Edit the Ophan values if required'),
 
-	pillarAndGroup: dataCollectionSchema
+	targeting: dataCollectionSchema
 		.pick({
 			theme: true,
+			group: true,
+			regionFocus: true,
 		})
-		.extend({
-			// 'group' is a string field since there are no external constraint on what we call the groups
-			// but on the formSchema, we can use an enum to allow users to pick from the current list.
-			// In practice, we would not want users to be able to create new groups on the all-newsletters page
-			// for each newsletter.
-			group: z
-				.enum([
-					'News in depth',
-					'News in brief',
-					'Opinion',
-					'Features',
-					'Culture',
-					'Lifestyle',
-					'Sport',
-					'Work',
-					'From the papers',
-				])
-				.describe('Group'),
-		})
-		.describe('Choose a pillar and a group'),
+		.describe('Set targeting options'),
 
-	signUpPage: dataCollectionSchema
+	promotionContent: dataCollectionSchema
 		.pick({
 			signUpHeadline: true,
 			signUpDescription: true,
+			signUpEmbedDescription: true,
+			illustrationCard: true,
 		})
-		.describe('Add the sign up page copy'),
-
-	signUpEmbed: dataCollectionSchema
-		.pick({ signUpEmbedDescription: true })
-		.describe('Add the sign up embed copy'),
-
-	regionFocus: dataCollectionSchema
-		.pick({
-			regionFocus: true,
-		})
-		.describe('Select from the drop-down list'),
-
-	newsletterDesign: dataCollectionSchema
-		.pick({
-			designBriefDoc: true,
-			figmaDesignUrl: true,
-			figmaIncludesThrashers: true,
-		})
-		.describe('Add the design brief and Figma design'),
+		.describe('Add promotion copy and newsletters page image'),
 
 	newsletterHeader: pickAndPrefixRenderingOption([
 		'displayStandfirst',
@@ -133,21 +95,9 @@ export const formSchemas = {
 		'Add the footer setup',
 	),
 
-	frequency: dataCollectionSchema
-		.pick({
-			frequency: true,
-		})
-		.describe('Specify the send frequency'),
-
 	images: pickAndPrefixRenderingOption(['displayImageCaptions']).describe(
 		'Specify the image setup',
 	),
-
-	onlineArticle: dataCollectionSchema
-		.pick({
-			onlineArticle: true,
-		})
-		.describe('Select from the drop-down list'),
 
 	linkList: pickAndPrefixRenderingOption(['linkListSubheading']).describe(
 		'Add the subheading triggers',
@@ -174,15 +124,12 @@ export const formSchemas = {
 		})
 		.describe('Add the tag setup'),
 
-	singleThrasher: pickAndPrefixThrasherOption([
+	thrashers: pickAndPrefixThrasherOption([
 		'singleThrasher',
 		'singleThrasherLocation',
 		'thrasherDescription',
-	]).describe('Add the thrasher setup'),
-
-	multiThrashers: pickAndPrefixThrasherOption(['multiThrashers']).describe(
-		'Add details of the multi-thrashers',
-	),
+		'multiThrashers',
+	]).describe('Add the thrasher requests'),
 
 	promotionDates: dataCollectionSchema
 		.pick({
@@ -192,10 +139,4 @@ export const formSchemas = {
 			privateUntilLaunch: true,
 		})
 		.describe('choose the launch date and promotion plans'),
-
-	illustrationCard: dataCollectionSchema
-		.pick({
-			illustrationCard: true,
-		})
-		.describe('Add the URL for the illustration card (5:3 format)'),
 };

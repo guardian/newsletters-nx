@@ -14,7 +14,7 @@ const testNewsletter: NewsletterData = {
 describe('buildNewsLetterLaunchMessage', () => {
 	test('should generate content and config, using recipients defined in config', async () => {
 		mockedGetConfigValue.mockResolvedValueOnce(
-			'{"tagRecipients":["alpha"],"brazeRecipients":["beta"],"signUpPageRecipients":["gamma"],"launchRecipients":["delta"]}',
+			'{"centralProductionRecipients":["alpha"],"brazeRecipients":["beta"],"launchRecipients":["delta"]}',
 		);
 		const output = await buildNewsLetterLaunchMessage(
 			{
