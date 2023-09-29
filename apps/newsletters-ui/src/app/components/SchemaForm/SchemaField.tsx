@@ -50,19 +50,19 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 
 const WrongValueTypeMessage = (props: { field: FieldDef }) => (
 	<div>
-		<p>WRONG VALUE TYPE FOR {props.field.key}</p>
+		<p>Wrong value type for {props.field.key}</p>
 		<p>value: {fieldValueAsDisplayString(props.field)} </p>
 	</div>
 );
 
 const UnsupportedFieldMessage = (props: { field: FieldDef }) => (
 	<div>
-		<p>UNSUPPORTED FIELD: {props.field.key} </p>
+		<p>Unsupported Field: {props.field.key} </p>
 		<p>value: {fieldValueAsDisplayString(props.field)} </p>
 	</div>
 );
 
-const parsevalueForZodDate = (
+const parseValueForZodDate = (
 	value: unknown,
 ): { value: Date | undefined } | undefined => {
 	if (typeof value === 'undefined' || value instanceof Date) {
@@ -111,7 +111,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	const innerZod = recursiveUnwrap(zod);
 
 	if (innerZod instanceof ZodDate) {
-		const parsed = parsevalueForZodDate(value);
+		const parsed = parseValueForZodDate(value);
 
 		if (!parsed) {
 			return <WrongValueTypeMessage field={field} />;
