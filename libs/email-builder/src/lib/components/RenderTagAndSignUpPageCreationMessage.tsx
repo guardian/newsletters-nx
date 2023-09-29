@@ -89,10 +89,8 @@ export const renderRequestTagAndSignUpPageCreationMessage = (
 	props: Props,
 ): MessageContent => {
 	const { pageLink, newsletter } = props;
-	const subject = `Tags & Sign-up page for newsletter "${newsletter.identityName}"`;
-	// TO DO - generate the text version nicely
+	const subject = `Action Required - Tags & Sign-up page for newsletter "${newsletter.identityName}"`;
 	const text = `A new newsletter "${newsletter.name}" has been launched: ${pageLink}. Please create the Tags.`;
-
 	try {
 		const html = renderToStaticMarkup(
 			<RequestTagAndSignUpPageMessage {...props} />,
