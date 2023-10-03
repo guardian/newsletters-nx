@@ -27,11 +27,6 @@ export interface NewslettersToolProps extends GuStackProps {
 	domainNameApi: string;
 }
 
-const processJSONString = (jsonParam: string): string => {
-	const escapedAndWrapped = JSON.stringify(jsonParam);
-	return escapedAndWrapped.substring(1, escapedAndWrapped.length - 1);
-};
-
 export class NewslettersTool extends GuStack {
 	constructor(scope: App, id: string, props: NewslettersToolProps) {
 		super(scope, id, props);
@@ -83,7 +78,6 @@ Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=USER_PERMISSIONS='${processJSONString(userPermissions)}'
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 Environment=ENABLE_EMAIL_SERVICE=${enableEmailService}
 [Install]
