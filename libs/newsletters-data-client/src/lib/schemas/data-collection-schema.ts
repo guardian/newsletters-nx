@@ -68,6 +68,33 @@ export const dataCollectionRenderingOptionsSchema =
 		}),
 	);
 
+// Exclude 'article-based-legacy' from the options presented:
+// needs to be supported in the schema for existing data, but
+// not an option to present for new newsletters.
+const dataCollectionCategories = z.enum(
+	newsletterDataSchema.shape['category'].options.filter(
+		(option) => option !== 'article-based-legacy',
+	) as [string, ...string[]],
+);
+
+// 'group' is a string field since there are no external constraint on what we call the groups
+// butduring datacollection, we can use an enum to allow users to pick from the current list.
+// In practice, we would not want users to be able to create new groups for MMA
+// for each newsletter.
+const dataCollectionGroup = z
+	.enum([
+		'News in depth',
+		'News in brief',
+		'Opinion',
+		'Features',
+		'Culture',
+		'Lifestyle',
+		'Sport',
+		'Work',
+		'From the papers',
+	])
+	.describe('Group for MMA page');
+
 /**
  * The schema for collecting data for new drafts.
  *
@@ -78,8 +105,10 @@ export const dataCollectionRenderingOptionsSchema =
 export const dataCollectionSchema = newsletterDataSchema.merge(
 	z.object({
 		onlineArticle: onlineArticleSchema,
+		category: dataCollectionCategories,
 		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
 		signUpDescription: nonEmptyString().describe('Sign-up description'),
+		group: dataCollectionGroup,
 		regionFocus: regionFocusEnumSchema.unwrap(),
 	}),
 );

@@ -1,5 +1,5 @@
 import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
-import { renderRequestTagCreationMessage } from '../components/RequestSignUpPageCreationMessage';
+import { renderBrazeUpdateRequestMessage } from '../components/RequestBrazeUpdateMessage';
 import { getMessageConfig } from '../message-config';
 import type {
 	MessageAboutNewsletterParams,
@@ -7,20 +7,20 @@ import type {
 	MessageContent,
 } from '../types';
 
-export async function buildSignUpPageCreationRequestMessage(
+export async function buildBrazeUpdateRequestMessage(
 	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
 ): Promise<{ content: MessageContent; messageConfig: MessageConfig }> {
 	const { newsletter } = params;
 	const messageConfig = await getMessageConfig(
 		emailEnvInfo,
-		'SIGN_UP_PAGE_CREATION_REQUEST',
+		'BRAZE_UPDATE_REQUEST',
 	);
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
-	const content = renderRequestTagCreationMessage({
+	const content = renderBrazeUpdateRequestMessage({
 		pageLink,
 		newsletter,
 	}) as MessageContent;

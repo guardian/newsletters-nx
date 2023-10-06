@@ -1,4 +1,4 @@
-import { palette } from '@guardian/source-foundations';
+import { headlineObjectStyles, palette } from '@guardian/source-foundations';
 import { createTheme } from '@mui/material';
 
 export const appTheme = createTheme({
@@ -23,11 +23,8 @@ export const appTheme = createTheme({
 			fontFamily: 'roboto, arial, sans-serif',
 		},
 		h1: {
-			fontFamily: 'monospace, sans-serif',
-			fontWeight: 700,
-			letterSpacing: '.3rem',
-			fontSize: '1.25rem',
-			lineHeight: '1.6',
+			...headlineObjectStyles.medium(),
+			margin: 0,
 		},
 		h2: {
 			fontSize: '2rem',

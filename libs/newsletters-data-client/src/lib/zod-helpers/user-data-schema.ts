@@ -23,6 +23,7 @@ export const getUserEditSchema = (
 			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,
+			mailSuccessDescription: true,
 			brazeCampaignCreationStatus: true,
 			brazeNewsletterName: true,
 			brazeSubscribeAttributeName: true,
@@ -32,11 +33,9 @@ export const getUserEditSchema = (
 	}
 	if (editBraze) {
 		return newsletterDataSchema.pick({
-			brazeCampaignCreationStatus: true,
 			brazeNewsletterName: true,
-			brazeSubscribeAttributeName: true,
-			brazeSubscribeEventNamePrefix: true,
 			brazeSubscribeAttributeNameAlternate: true,
+			brazeCampaignCreationStatus: true,
 		});
 	}
 	if (editOphan) {

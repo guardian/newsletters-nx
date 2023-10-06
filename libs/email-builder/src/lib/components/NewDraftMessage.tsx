@@ -10,7 +10,7 @@ interface Props {
 
 export const NewDraftMessage = ({ pageLink, draft }: Props) => {
 	return (
-		<MessageFormat title={<>new draft created launched: {draft.name}</>}>
+		<MessageFormat title={<>new draft created: {draft.name}</>}>
 			<p>{pageLink}</p>
 		</MessageFormat>
 	);
@@ -18,7 +18,7 @@ export const NewDraftMessage = ({ pageLink, draft }: Props) => {
 
 export const renderNewDraftMessage = (props: Props): MessageContent => {
 	const { draft, pageLink } = props;
-	const subject = `New draft email created: ${draft.name ?? '[UNNAMED]'}`;
+	const subject = `New draft newsletter created: ${draft.name ?? '[UNNAMED]'}`;
 	const text = `A new draft, ${
 		draft.name ?? '[UNNAMED]'
 	}, was created. You can see it on this page: ${pageLink}.`;

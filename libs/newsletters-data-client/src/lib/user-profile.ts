@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 /**
  * The fields expected in user data obtained by the Ec2
  * load balancer when authenticating user via Google auth,
@@ -45,6 +47,11 @@ export type UserPermissions = {
 	editTags: boolean;
 	editSignUpPage: boolean;
 };
+
+export const permissionsDataSchema = z.record(
+	z.string(),
+	z.number().int().min(0),
+);
 
 export const levelToPermissions = (
 	accessLevel: UserAccessLevel,

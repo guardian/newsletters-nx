@@ -5,11 +5,13 @@ import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `## Finished
 
-You have reached the end of the wizard. **{{name}}** has been launched!
+You have requested the launch of **{{name}}**
 
 It has id {{listId}}.
 
 You can see its details on the [details page](/launched/{{identityName}})
+
+Once the teams responsible for creating tags, sign-up pages, the Braze campaign and tracking the newsletter have completed their tasks, the newsletter will be ready to mark as live.
 
 `.trim();
 

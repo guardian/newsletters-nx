@@ -1,5 +1,8 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
-import { getNextStepId } from '@newsletters-nx/state-machine';
+import {
+	getNextStepId,
+	getPreviousOrStartStepId,
+} from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
@@ -8,20 +11,20 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
 const markdownTemplate = `
-## Specify the send frequency of {{name}}
+## Targeting  for {{name}}
+### Choose the Pillar
+Please select a pillar (a section category) for **{{name}}** e.g. "*Football Daily*" sits under the *Sport* pillar.
 
-Specify how regularly the newsletter will be sent e.g.
-- Every day
-- Every weekday
-- Weekly
-- Fortnightly
-- Monthly
-- Weekly during election season
-- Weekly for eight weeks (in the case of an asynchronous newsletter)
+![Pillars](https://i.guim.co.uk/img/uploads/2023/02/21/pillarScreenshot.png?quality=85&dpr=2&width=300&s=0692a8714eaf66313fc599cb3462befd)
 
-The frequency you specify will be shown on thrashers, on the sign up page, and on the all newsletters page.
+### Choose the Group for MMA page
+Please then select a group for **{{name}}** to be listed under on the [Manage My Account](https://manage.theguardian.com/email-prefs) page e.g. *News in Depth*.
 
-![Frequency](https://i.guim.co.uk/img/uploads/2023/09/15/frequency.png?quality=85&dpr=2&width=300&s=e8c4bdd12b9c2f1f48d35a2d9b1ef1c7)
+![Groups](https://i.guim.co.uk/img/uploads/2023/09/11/mma-screenshot.png?quality=85&dpr=2&width=300&s=1b7e49ebb42e9ac563da1f2afedf1c88)
+
+### Choose the Geo Focus for {{name}}
+
+What’s the geo focus of **{{name}}**? UK, US, Australia, Europe or International?
 
 `.trim();
 
@@ -30,9 +33,9 @@ const staticMarkdown = markdownTemplate.replace(
 	'the newsletter',
 );
 
-export const frequencyLayout: WizardStepLayout<DraftService> = {
+export const targetingLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
-	label: 'Send Frequency',
+	label: 'Targeting',
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -44,7 +47,7 @@ export const frequencyLayout: WizardStepLayout<DraftService> = {
 		back: {
 			buttonType: 'PREVIOUS',
 			label: 'Back to previous step',
-			stepToMoveTo: getNextStepId,
+			stepToMoveTo: getPreviousOrStartStepId,
 			executeStep: executeSkip,
 		},
 		finish: {
@@ -54,7 +57,7 @@ export const frequencyLayout: WizardStepLayout<DraftService> = {
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.frequency,
+	schema: formSchemas.targeting,
 	canSkipTo: true,
 	executeSkip: executeSkip,
 };

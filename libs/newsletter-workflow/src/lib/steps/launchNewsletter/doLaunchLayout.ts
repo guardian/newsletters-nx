@@ -25,7 +25,7 @@ export const doLaunchLayout: WizardStepLayout<LaunchService> = {
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
 		return markdownTemplate.replace(regExPatterns.name, name);
 	},
-	label: 'Launch',
+	label: 'Request launch',
 	buttons: {
 		cancel: {
 			buttonType: 'CANCEL',

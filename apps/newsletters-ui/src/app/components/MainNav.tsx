@@ -1,5 +1,4 @@
 import CodeIcon from '@mui/icons-material/Code';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
 import type { AvatarProps } from '@mui/material/Avatar';
@@ -17,6 +16,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../hooks/user-hooks';
+import { NewslettersBrandHeading } from './NewslettersBrandHeading';
 
 interface Props {
 	isOnCode: boolean;
@@ -52,12 +52,36 @@ const ToolBarIcon = (props: {
 	</Box>
 );
 
-export function MainNav({ isOnCode }: Props) {
+const DesktopNavLinks = () => {
+	const navigate = useNavigate();
+	return (
+		<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+			{navLinks.map(({ path, label }) => (
+				<Button
+					key={label}
+					onClick={() => {
+						navigate(path);
+					}}
+					sx={{
+						my: 2,
+						color: 'white',
+						fontWeight: menuItemIsSelected(path) ? 'bold' : 'normal',
+						display: 'block',
+						borderBottomStyle: menuItemIsSelected(path) ? 'solid' : 'none',
+						borderBottomWidth: '2px',
+						borderRadius: '0',
+					}}
+				>
+					{label}
+				</Button>
+			))}
+		</Box>
+	);
+};
+
+const MobileBurgerNav = () => {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
-	const userProfile = useProfile();
-	const userName = userProfile?.name ?? 'Logged in user';
-
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElNav(event.currentTarget);
 	};
@@ -67,119 +91,63 @@ export function MainNav({ isOnCode }: Props) {
 	};
 
 	return (
+		<Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+			<IconButton
+				size="large"
+				aria-label="account of current user"
+				aria-controls="menu-appbar"
+				aria-haspopup="true"
+				onClick={handleOpenNavMenu}
+				color="inherit"
+			>
+				<MenuIcon />
+			</IconButton>
+			<Menu
+				id="menu-appbar"
+				anchorEl={anchorElNav}
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left',
+				}}
+				keepMounted
+				transformOrigin={{
+					vertical: 'top',
+					horizontal: 'left',
+				}}
+				open={Boolean(anchorElNav)}
+				onClose={handleCloseNavMenu}
+				sx={{
+					display: { xs: 'block', md: 'none' },
+				}}
+			>
+				{navLinks.map(({ path, label }) => (
+					<MenuItem
+						key={label}
+						onClick={() => {
+							navigate(path);
+							handleCloseNavMenu();
+						}}
+						selected={menuItemIsSelected(path)}
+					>
+						<Typography textAlign="center">{label}</Typography>
+					</MenuItem>
+				))}
+			</Menu>
+		</Box>
+	);
+};
+
+export function MainNav({ isOnCode }: Props) {
+	const userProfile = useProfile();
+	const userName = userProfile?.name ?? 'Logged in user';
+
+	return (
 		<AppBar position="fixed" component={'header'}>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
-					<MailOutlineIcon
-						sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
-					/>
-					<div
-						role={'link'}
-						onClick={() => navigate('/')}
-						style={{
-							cursor: 'pointer',
-						}}
-					>
-						<Typography
-							variant="h1"
-							noWrap
-							component="a"
-							sx={{
-								mr: 2,
-								display: { xs: 'none', md: 'flex' },
-								color: 'inherit',
-								textDecoration: 'none',
-							}}
-						>
-							Newsletters
-						</Typography>
-					</div>
-					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-						<IconButton
-							size="large"
-							aria-label="account of current user"
-							aria-controls="menu-appbar"
-							aria-haspopup="true"
-							onClick={handleOpenNavMenu}
-							color="inherit"
-						>
-							<MenuIcon />
-						</IconButton>
-						<Menu
-							id="menu-appbar"
-							anchorEl={anchorElNav}
-							anchorOrigin={{
-								vertical: 'bottom',
-								horizontal: 'left',
-							}}
-							keepMounted
-							transformOrigin={{
-								vertical: 'top',
-								horizontal: 'left',
-							}}
-							open={Boolean(anchorElNav)}
-							onClose={handleCloseNavMenu}
-							sx={{
-								display: { xs: 'block', md: 'none' },
-							}}
-						>
-							{navLinks.map(({ path, label }) => (
-								<MenuItem
-									key={label}
-									onClick={() => {
-										navigate(path);
-										handleCloseNavMenu();
-									}}
-									selected={menuItemIsSelected(path)}
-								>
-									<Typography textAlign="center">{label}</Typography>
-								</MenuItem>
-							))}
-						</Menu>
-					</Box>
-					<MailOutlineIcon
-						sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
-					/>
-					<Typography
-						variant="h1"
-						noWrap
-						component="a"
-						href=""
-						sx={{
-							mr: 2,
-							display: { xs: 'flex', md: 'none' },
-							flexGrow: 1,
-							color: 'inherit',
-							textDecoration: 'none',
-							fontSize: '1.5rem',
-							lineHeight: '1.334',
-						}}
-					>
-						Newsletters
-					</Typography>
-					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-						{navLinks.map(({ path, label }) => (
-							<Button
-								key={label}
-								onClick={() => {
-									navigate(path);
-								}}
-								sx={{
-									my: 2,
-									color: 'white',
-									fontWeight: menuItemIsSelected(path) ? 'bold' : 'normal',
-									display: 'block',
-									borderBottomStyle: menuItemIsSelected(path)
-										? 'solid'
-										: 'none',
-									borderBottomWidth: '2px',
-									borderRadius: '0',
-								}}
-							>
-								{label}
-							</Button>
-						))}
-					</Box>
+					<MobileBurgerNav />
+					<NewslettersBrandHeading />
+					<DesktopNavLinks />
 
 					{isOnCode && (
 						<ToolBarIcon

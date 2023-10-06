@@ -1,10 +1,16 @@
 import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { getPropertyDescription } from '@newsletters-nx/newsletters-data-client';
+import {
+	brazeSubscribeEventName,
+	brazeUnsubscribeEventName,
+	embedIframeCode,
+	getPropertyDescription,
+} from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { DetailAccordian } from './DetailAccordian';
+import { GeneratedDataPoint } from './GeneratedDataPoint';
 import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
 import { NavigateButton } from './NavigateButton';
@@ -117,6 +123,14 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<DataPoint property="brazeSubscribeEventNamePrefix" />
 				<DataPoint property="brazeNewsletterName" />
 				<DataPoint property="brazeSubscribeAttributeNameAlternate" />
+				<GeneratedDataPoint
+					newsletter={newsletter}
+					valueGenerator={brazeSubscribeEventName}
+				/>
+				<GeneratedDataPoint
+					newsletter={newsletter}
+					valueGenerator={brazeUnsubscribeEventName}
+				/>
 			</DetailAccordian>
 
 			<DetailAccordian title="Ophan Values">
@@ -124,11 +138,18 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<DataPoint property="campaignCode" />
 			</DetailAccordian>
 
+			<DetailAccordian title="Generated values" defaultExpanded>
+				<GeneratedDataPoint
+					newsletter={newsletter}
+					valueGenerator={embedIframeCode}
+					includeCopyButton
+				/>
+			</DetailAccordian>
+
 			<Stack direction={'row'} justifyContent={'space-between'} marginTop={3}>
 				<NavigateButton href="../" variant="outlined">
 					Back to List
 				</NavigateButton>
-				{/* TO DO - restrict the access to the JSON editor based on user role? */}
 				<RawDataDialog
 					record={newsletter}
 					title={newsletter.identityName}

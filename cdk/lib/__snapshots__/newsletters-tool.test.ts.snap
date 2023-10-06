@@ -2199,11 +2199,6 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   },
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=USER_PERMISSIONS='",
-                  {
-                    "Ref": "UserPermissions",
-                  },
-                  "'
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 Environment=ENABLE_EMAIL_SERVICE=false
 [Install]
@@ -2380,11 +2375,6 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   },
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=USER_PERMISSIONS='",
-                  {
-                    "Ref": "UserPermissions",
-                  },
-                  "'
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
 Environment=ENABLE_EMAIL_SERVICE=",
                   {
