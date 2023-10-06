@@ -143,7 +143,10 @@ export const newsletterDataSchema = z.object({
 
 	renderingOptions: renderingOptionsSchema.optional(),
 	thrasherOptions: thrasherOptionsSchema.optional(),
-	mailSuccessDescription: z.string().optional().describe('Sign-up success message'),
+	mailSuccessDescription: z
+		.string()
+		.optional()
+		.describe('Sign-up success message'),
 	brazeCampaignCreationStatus: workflowStatusEnumSchema.describe(
 		'Braze campaign creation status',
 	),
