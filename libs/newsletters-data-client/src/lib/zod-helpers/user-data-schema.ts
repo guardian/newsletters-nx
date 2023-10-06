@@ -23,6 +23,7 @@ export const getUserEditSchema = (
 			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,
+			mailSuccessDescription: true,
 			brazeCampaignCreationStatus: true,
 			brazeNewsletterName: true,
 			brazeSubscribeAttributeName: true,

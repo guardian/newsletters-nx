@@ -14,11 +14,11 @@ const markdownTemplate = `
 ## Promotion copy and image for {{name}}.
 
 ### Sign up page text
-Please enter the headline and description for the sign up page:
+Please enter the headline, description and sign-up success message for the sign up page:
 
-![Headline and Description](https://i.guim.co.uk/img/uploads/2023/03/15/signUp.png?quality=85&dpr=2&width=300&s=3b06497952cbb042084787fd324ebe6c)
+![Headline and Description](https://i.guim.co.uk/img/uploads/2023/10/06/signUpImageWithBoarderTwo.png?quality=85&dpr=2&width=300&s=002979e840129ac072654cb66367d971)
 
-### Specify the sign up embed description and illustration for newsletters page
+### Specify the sign up embed description, Sign up success message, and illustration for the newsletters page
 
 Please enter the description for the sign up embeds - this text is used on the in-article embeds and on the [newsletters page](https://www.theguardian.com/email-newsletters):
 
