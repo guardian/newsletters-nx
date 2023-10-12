@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
+	tagPathString,
 	underscoreCasedString,
 	urlPathString,
 } from '../zod-helpers';
@@ -132,7 +133,11 @@ export const newsletterDataSchema = z.object({
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
 
-	seriesTag: z.string().optional().describe('Series tag'),
+	seriesTag: tagPathString(
+		'Please add the path of the series tag e.g. for https://www.theguardian.com/world/series/first-edition just use world/series/first-edition. Can only include lower-case letters, number and dashes, separated by slashes',
+	)
+		.optional()
+		.describe('Series tag(path)'),
 	seriesTagDescription: z
 		.string()
 		.optional()
