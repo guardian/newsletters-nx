@@ -4,7 +4,16 @@ import { isNewsletterData } from './newsletter-data-type';
 
 describe('isNewsletterData', () => {
 	it('Does not filter out any valid newsletters', () => {
+		const allNames = sampleData.map((newsletter) => newsletter.identityName);
 		const filteredData = sampleData.filter(isNewsletterData);
+		const filteredNames = filteredData.map(
+			(newsletter) => newsletter.identityName,
+		);
+
+		const excludedNames = allNames.filter(
+			(name) => !filteredNames.includes(name),
+		);
+		expect(excludedNames).toEqual([]);
 		expect(filteredData.length).toBe(sampleData.length);
 	});
 	it('Does will filter out any invalid newsletters', () => {
