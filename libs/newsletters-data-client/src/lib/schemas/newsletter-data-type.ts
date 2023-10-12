@@ -3,6 +3,7 @@ import {
 	kebabOrUnderscoreCasedString,
 	nonEmptyString,
 	underscoreCasedString,
+	urlPathString,
 } from '../zod-helpers';
 import type { MetaData } from './meta-data-type';
 import { metaDataSchema } from './meta-data-type';
@@ -110,7 +111,11 @@ export const newsletterDataSchema = z.object({
 	brazeSubscribeAttributeNameAlternate: z
 		.array(underscoreCasedString())
 		.optional(),
-	signupPage: z.string().optional().describe('Sign up page'),
+	signupPage: urlPathString(
+		'Please add the path of the Guardian URL from the slash e.g. for https://www.theguardian.com/global/sign-up-for-newsletter just use /global/sign-up-for-newsletter',
+	)
+		.optional()
+		.describe('Path to Sign up page'),
 	exampleUrl: z.string().optional().describe('Example url'),
 	designBriefDoc: z.string().optional().describe('Design brief doc'),
 	figmaDesignUrl: z.string().url().optional().describe('Figma design url'),
