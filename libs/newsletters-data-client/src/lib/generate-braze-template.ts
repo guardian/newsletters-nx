@@ -1,4 +1,4 @@
-import {NewsletterData} from "@newsletters-nx/newsletters-data-client";
+import type { NewsletterData } from './schemas/newsletter-data-type';
 
 export const generateGrazeTemplateString = (newsletterData: NewsletterData): string => {
     const {identityName, campaignName, campaignCode, seriesTag, category} = newsletterData;
