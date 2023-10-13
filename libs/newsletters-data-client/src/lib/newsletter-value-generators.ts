@@ -17,8 +17,7 @@ export const embedIframeCode: NewsletterValueGenerator = {
 };
 
 export const brazeTemplateCode: NewsletterValueGenerator = {
-	generate: (newsletter: NewsletterData) => generateGrazeTemplateString(newsletter)
-		 ,
+	generate: (newsletter: NewsletterData) => generateGrazeTemplateString(newsletter),
 	displayName: 'Braze campaign template code',
 	description:
 		'The template code to use in the Braze campaign.',

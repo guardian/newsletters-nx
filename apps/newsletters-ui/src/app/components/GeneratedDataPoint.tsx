@@ -60,6 +60,7 @@ export const GeneratedDataPoint = ({
 										width: '100%',
 										display: 'flex',
 										minHeight: 80,
+										resize: 'none',
 									}}
 									value={generatedValue}
 									readOnly

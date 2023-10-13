@@ -10,12 +10,12 @@ import {
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { DetailAccordian } from './DetailAccordian';
+import { GeneratedCodeDataPoint } from "./GeneratedCodeDataPoint";
 import { GeneratedDataPoint } from './GeneratedDataPoint';
 import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
 import { NavigateButton } from './NavigateButton';
 import { RawDataDialog } from './RawDataDialog';
-import {GeneratedCodeDataPoint} from "./GeneratedCodeDataPoint";
 
 interface Props {
 	newsletter: NewsletterData;
