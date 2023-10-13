@@ -2,7 +2,7 @@ import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
-	brazeSubscribeEventName,
+	brazeSubscribeEventName, brazeTemplateCode,
 	brazeUnsubscribeEventName,
 	embedIframeCode,
 	getPropertyDescription,
@@ -15,6 +15,7 @@ import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
 import { NavigateButton } from './NavigateButton';
 import { RawDataDialog } from './RawDataDialog';
+import {GeneratedCodeDataPoint} from "./GeneratedCodeDataPoint";
 
 interface Props {
 	newsletter: NewsletterData;
@@ -139,10 +140,17 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 			</DetailAccordian>
 
 			<DetailAccordian title="Generated values" defaultExpanded>
-				<GeneratedDataPoint
+				<GeneratedCodeDataPoint
 					newsletter={newsletter}
 					valueGenerator={embedIframeCode}
 					includeCopyButton
+					language={'xml'}
+				/>
+				<GeneratedCodeDataPoint
+					newsletter={newsletter}
+					valueGenerator={brazeTemplateCode}
+					includeCopyButton
+					language={'django'}
 				/>
 			</DetailAccordian>
 

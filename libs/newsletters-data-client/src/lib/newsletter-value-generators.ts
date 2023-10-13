@@ -1,4 +1,6 @@
 import type { NewsletterData } from '..';
+import {generateGrazeTemplateString} from "./generate-braze-template";
+
 
 export type NewsletterValueGenerator = {
 	generate: { (newsletter: NewsletterData): string };
@@ -12,6 +14,14 @@ export const embedIframeCode: NewsletterValueGenerator = {
 	displayName: 'Sign up embed code',
 	description:
 		'The HTML code to paste into a composer embed block to add a sign-up form to the article content.',
+};
+
+export const brazeTemplateCode: NewsletterValueGenerator = {
+	generate: (newsletter: NewsletterData) => generateGrazeTemplateString(newsletter)
+		 ,
+	displayName: 'Braze campaign template code',
+	description:
+		'The template code to use in the Braze campaign.',
 };
 
 // see https://github.com/guardian/identity/blob/main/identity-api/src/main/scala/com/gu/identity/api/mail/CmtModels.scala
