@@ -67,7 +67,7 @@ const deriveLegacyNewsletter = (
 			identityName: newsletterData.identityName,
 			name: newsletterData.name,
 			cancelled,
-			restricted: newsletterData.restricted,
+			restricted: newsletterData.status === 'pending' || newsletterData.restricted,
 			paused,
 			emailConfirmation: newsletterData.emailConfirmation,
 			brazeNewsletterName: newsletterData.brazeNewsletterName,
