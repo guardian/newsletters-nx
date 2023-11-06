@@ -20,6 +20,7 @@ export const RequestTagAndSignUpPageMessage = ({
 		composerCampaignTag,
 		composerTag: tagsThatPromptRecommendationOfCampaignTag,
 	} = newsletter;
+	const viewDetailsLink = pageLink.split('/').filter(element => element !== 'edit').join('/');
 	const embargoDate =
 		newsletter.signUpPageDate.valueOf() > Date.now()
 			? newsletter.signUpPageDate.toLocaleDateString(undefined, {
@@ -70,6 +71,9 @@ export const RequestTagAndSignUpPageMessage = ({
 				newsletter={newsletter}
 				properties={['name', 'signUpHeadline', 'signUpDescription']}
 			/>
+			<p>
+				The embed code for the sign-up page is available in the <a href={viewDetailsLink}>newsletters tool</a>.
+			</p>
 			{embargoDate && (
 				<p>
 					Please add an embargo so that the sign up page should not go live
