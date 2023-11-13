@@ -137,7 +137,7 @@ export const newsletterDataSchema = z.object({
 		'Please add the path of the series tag e.g. for https://www.theguardian.com/world/series/first-edition just use world/series/first-edition. Can only include lower-case letters, number and dashes, separated by slashes',
 	)
 		.optional()
-		.describe('Series tag(path)'),
+		.describe('Series tag (path)'),
 	seriesTagDescription: z
 		.string()
 		.optional()
