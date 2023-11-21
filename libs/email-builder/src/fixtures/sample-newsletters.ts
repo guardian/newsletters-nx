@@ -1,0 +1,41 @@
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+
+export const ART_WEEKLY_FIXTURE: Readonly<NewsletterData> = {
+	brazeCampaignCreationStatus: 'COMPLETED',
+	ophanCampaignCreationStatus: 'COMPLETED',
+	signupPageCreationStatus: 'COMPLETED',
+	tagCreationStatus: 'COMPLETED',
+	identityName: 'art-weekly',
+	name: 'Art Weekly',
+	category: 'article-based-legacy',
+	restricted: false,
+	status: 'live',
+	emailConfirmation: false,
+	brazeSubscribeAttributeName: 'ArtWeekly_Subscribe_Email',
+	brazeSubscribeEventNamePrefix: 'art_weekly',
+	brazeNewsletterName: 'Editorial_ArtWeekly',
+	theme: 'culture',
+	group: 'Culture',
+	signUpDescription:
+		'Your weekly art world round-up, sketching out all the biggest stories, scandals and exhibitions',
+	signUpEmbedDescription:
+		'Your weekly art world round-up, sketching out all the biggest stories, scandals and exhibitions',
+	frequency: 'Weekly',
+	listIdV1: 99,
+	listId: 4134,
+	campaignName: 'ArtWeekly',
+	campaignCode: 'artweekly_email',
+	brazeSubscribeAttributeNameAlternate: ['email_subscribe_art_weekly'],
+	signupPage: '/artanddesign/2015/oct/19/sign-up-to-the-art-weekly-email',
+	exampleUrl: '/artanddesign/series/art-weekly/latest/email',
+	figmaIncludesThrashers: false,
+	creationTimeStamp: 946684800,
+	seriesTag: 'artanddesign/series/art-weekly',
+	launchDate: new Date('1970-01-11T22:58:04.800Z'),
+	signUpPageDate: new Date('1970-01-11T22:58:04.800Z'),
+	thrasherDate: new Date('1970-01-11T22:58:04.800Z'),
+	privateUntilLaunch: false,
+	mailSuccessDescription: "We'll send you Art Weekly every week",
+	illustrationCard:
+		'https://media.guim.co.uk/e6ee88c4b60cd6fd315fb472beb8989920dd59a9/7_231_882_529/500.jpg',
+} as const;
