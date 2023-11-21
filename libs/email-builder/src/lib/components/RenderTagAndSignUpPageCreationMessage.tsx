@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
+import { getEmbargoDate } from '../util';
 import { MessageFormat } from './MessageFormat';
 import { NewsletterPropertyTable } from './NewsletterPropertyTable';
 
@@ -20,13 +21,11 @@ export const RequestTagAndSignUpPageMessage = ({
 		composerCampaignTag,
 		composerTag: tagsThatPromptRecommendationOfCampaignTag,
 	} = newsletter;
-	const viewDetailsLink = pageLink.split('/').filter(element => element !== 'edit').join('/');
-	const embargoDate =
-		newsletter.signUpPageDate.valueOf() > Date.now()
-			? newsletter.signUpPageDate.toLocaleDateString(undefined, {
-					dateStyle: 'long',
-			  })
-			: undefined;
+	const viewDetailsLink = pageLink
+		.split('/')
+		.filter((element) => element !== 'edit')
+		.join('/');
+	const embargoDate = getEmbargoDate(newsletter);
 	const tagTitle = composerCampaignTag
 		? ` series and campaign tags`
 		: ` a series tag`;
@@ -72,7 +71,8 @@ export const RequestTagAndSignUpPageMessage = ({
 				properties={['name', 'signUpHeadline', 'signUpDescription']}
 			/>
 			<p>
-				The embed code for the sign-up page is available in the <a href={viewDetailsLink}>newsletters tool</a>.
+				The embed code for the sign-up page is available in the{' '}
+				<a href={viewDetailsLink}>newsletters tool</a>.
 			</p>
 			{embargoDate && (
 				<p>
