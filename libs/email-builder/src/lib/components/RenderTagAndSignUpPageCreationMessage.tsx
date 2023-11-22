@@ -82,11 +82,11 @@ export const RequestTagAndSignUpPageMessage = ({
 			)}
 			{!embargoDate && (
 				<p>
-					When the page has been created, please contact{' '}
+					When the page has been created, please check with{' '}
 					<a href="mailto:newsletters@guardian.co.uk">
 						newsletters@guardian.co.uk
 					</a>{' '}
-					to confirm when the page should be made live.
+					before setting the page live.
 				</p>
 			)}
 			<p>
