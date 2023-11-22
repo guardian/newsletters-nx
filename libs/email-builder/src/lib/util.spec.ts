@@ -21,4 +21,27 @@ describe('getEmbargoDate', () => {
 		expect(result).toBeDefined();
 		expect(result?.includes('4024')).toBeTruthy();
 	});
+	it('Works for small differences', () => {
+		const yesterday = new Date('2020-01-14');
+		const now = new Date('2020-01-15');
+		const tomorrow = new Date('2020-01-16');
+
+		const resultWhenSignUpDateIsYesterday = getEmbargoDate(
+			{
+				...ART_WEEKLY_FIXTURE,
+				signUpPageDate: yesterday,
+			},
+			now.valueOf(),
+		);
+		const resultWhenSignUpDateIsTomorrow = getEmbargoDate(
+			{
+				...ART_WEEKLY_FIXTURE,
+				signUpPageDate: tomorrow,
+			},
+			now.valueOf(),
+		);
+
+		expect(resultWhenSignUpDateIsYesterday).toBeUndefined();
+		expect(resultWhenSignUpDateIsTomorrow).toBeDefined();
+	});
 });
