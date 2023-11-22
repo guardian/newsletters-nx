@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { composerCampaignTagId } from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
 import { NewsletterPropertyTable } from './NewsletterPropertyTable';
@@ -20,7 +21,10 @@ export const RequestTagAndSignUpPageMessage = ({
 		composerCampaignTag,
 		composerTag: tagsThatPromptRecommendationOfCampaignTag,
 	} = newsletter;
-	const viewDetailsLink = pageLink.split('/').filter(element => element !== 'edit').join('/');
+	const viewDetailsLink = pageLink
+		.split('/')
+		.filter((element) => element !== 'edit')
+		.join('/');
 	const embargoDate =
 		newsletter.signUpPageDate.valueOf() > Date.now()
 			? newsletter.signUpPageDate.toLocaleDateString(undefined, {
@@ -41,7 +45,7 @@ export const RequestTagAndSignUpPageMessage = ({
 			<h2> Create Tags </h2>
 			<ul>
 				<li>
-					<b>Series Tag:</b> {seriesTag} (Section: {theme})
+					<b>Series Tag Id:</b> {seriesTag} (Section: {theme})
 				</li>
 				{seriesTagDescription && (
 					<li>
@@ -49,9 +53,15 @@ export const RequestTagAndSignUpPageMessage = ({
 					</li>
 				)}
 				{composerCampaignTag && (
-					<li>
-						<b>Campaign Tag:</b> {composerCampaignTag}
-					</li>
+					<>
+						<li>
+							<b>{composerCampaignTagId.displayName}:</b>{' '}
+							{composerCampaignTagId.generate(newsletter)}
+						</li>
+						<li>
+							<b>Campaign Tag Description:</b> {composerCampaignTag}
+						</li>
+					</>
 				)}
 			</ul>
 
@@ -72,7 +82,8 @@ export const RequestTagAndSignUpPageMessage = ({
 				properties={['name', 'signUpHeadline', 'signUpDescription']}
 			/>
 			<p>
-				The embed code for the sign-up page is available in the <a href={viewDetailsLink}>newsletters tool</a>.
+				The embed code for the sign-up page is available in the{' '}
+				<a href={viewDetailsLink}>newsletters tool</a>.
 			</p>
 			{embargoDate && (
 				<p>
