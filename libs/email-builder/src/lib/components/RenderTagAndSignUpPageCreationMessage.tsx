@@ -80,15 +80,13 @@ export const RequestTagAndSignUpPageMessage = ({
 					until {embargoDate}.
 				</p>
 			)}
-			{!embargoDate && (
-				<p>
-					When the page has been created, please check with{' '}
-					<a href="mailto:newsletters@guardian.co.uk">
-						newsletters@guardian.co.uk
-					</a>{' '}
-					before setting the page live.
-				</p>
-			)}
+			<p>
+				When the page has been created, please check with{' '}
+				<a href="mailto:newsletters@guardian.co.uk">
+					newsletters@guardian.co.uk
+				</a>{' '}
+				before setting the page live.
+			</p>
 			<p>
 				When the tasks are completed, please go to{' '}
 				<a href={pageLink}>this page on the newsletters tool</a> to confirm
