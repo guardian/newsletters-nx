@@ -68,7 +68,7 @@ export const emailContent: NewsletterValueGenerator = {
 // see https://github.com/guardian/frontend/blob/d67c1c03875bfb972de000305a922dade6c8285d/common/app/services/NewsletterService.scala#L31
 export const composerCampaignTagId: NewsletterValueGenerator = {
 	generate: ({ identityName }) => `campaign/email/${identityName}`,
-	displayName: 'composer tag id',
+	displayName: 'Campaign Tag Id',
 	description:
-		'The id to use when creating the Composer Campaign Tag (must be in this format for the signup form to be added to an article)',
+		'The id to use when creating the Composer Campaign Tag (must be in this format to add the signup form to an article)',
 };
