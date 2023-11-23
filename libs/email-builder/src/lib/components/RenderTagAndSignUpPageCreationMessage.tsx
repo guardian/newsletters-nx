@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { composerCampaignTagId } from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
 import { getEmbargoDate } from '../util';
 import { MessageFormat } from './MessageFormat';
@@ -40,7 +41,7 @@ export const RequestTagAndSignUpPageMessage = ({
 			<h2> Create Tags </h2>
 			<ul>
 				<li>
-					<b>Series Tag:</b> {seriesTag} (Section: {theme})
+					<b>Series Tag Id:</b> {seriesTag} (Section: {theme})
 				</li>
 				{seriesTagDescription && (
 					<li>
@@ -48,9 +49,15 @@ export const RequestTagAndSignUpPageMessage = ({
 					</li>
 				)}
 				{composerCampaignTag && (
-					<li>
-						<b>Campaign Tag:</b> {composerCampaignTag}
-					</li>
+					<>
+						<li>
+							<b>{composerCampaignTagId.displayName}:</b>{' '}
+							{composerCampaignTagId.generate(newsletter)}
+						</li>
+						<li>
+							<b>Campaign Tag Description:</b> {composerCampaignTag}
+						</li>
+					</>
 				)}
 			</ul>
 

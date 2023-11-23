@@ -143,7 +143,10 @@ export const newsletterDataSchema = z.object({
 		.optional()
 		.describe('The Series tag description'),
 	composerTag: z.string().optional().describe('Composer tag(s)'),
-	composerCampaignTag: z.string().optional().describe('Composer campaign tag'),
+	composerCampaignTag: z
+		.string()
+		.optional()
+		.describe('Composer campaign tag description'),
 
 	launchDate: z.coerce.date().describe('Launch date'),
 	signUpPageDate: z.coerce.date().describe('Sign up page date'),

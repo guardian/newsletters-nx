@@ -56,11 +56,19 @@ export const emailEndpoint: NewsletterValueGenerator = {
 			? `${seriesTag}/latest.json`
 			: `[not available - no series tag defined]`,
 	displayName: 'email_endpoint',
-	description: 'The the value to use for email_endpoint in the Braze campaign',
+	description: 'The value to use for email_endpoint in the Braze campaign',
 };
 
 export const emailContent: NewsletterValueGenerator = {
 	generate: () => 'Editorial_FirstEditionContent',
 	displayName: 'email_content',
-	description: 'The the value to use for email_content in the Braze campaign',
+	description: 'The value to use for email_content in the Braze campaign',
+};
+
+// see https://github.com/guardian/frontend/blob/d67c1c03875bfb972de000305a922dade6c8285d/common/app/services/NewsletterService.scala#L31
+export const composerCampaignTagId: NewsletterValueGenerator = {
+	generate: ({ identityName }) => `campaign/email/${identityName}`,
+	displayName: 'Campaign Tag Id',
+	description:
+		'The id to use when creating the Composer Campaign Tag (must be in this format to add the signup form to an article)',
 };
