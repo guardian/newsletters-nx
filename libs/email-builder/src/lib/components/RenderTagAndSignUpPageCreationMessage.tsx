@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { composerCampaignTagId } from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
+import { getEmbargoDate } from '../util';
 import { MessageFormat } from './MessageFormat';
 import { NewsletterPropertyTable } from './NewsletterPropertyTable';
 
@@ -25,12 +26,7 @@ export const RequestTagAndSignUpPageMessage = ({
 		.split('/')
 		.filter((element) => element !== 'edit')
 		.join('/');
-	const embargoDate =
-		newsletter.signUpPageDate.valueOf() > Date.now()
-			? newsletter.signUpPageDate.toLocaleDateString(undefined, {
-					dateStyle: 'long',
-			  })
-			: undefined;
+	const embargoDate = getEmbargoDate(newsletter);
 	const tagTitle = composerCampaignTag
 		? ` series and campaign tags`
 		: ` a series tag`;
@@ -91,7 +87,13 @@ export const RequestTagAndSignUpPageMessage = ({
 					until {embargoDate}.
 				</p>
 			)}
-			{!embargoDate && <p>The page can go live immediately.</p>}
+			<p>
+				When the page has been created, please check with{' '}
+				<a href="mailto:newsletters@guardian.co.uk">
+					newsletters@guardian.co.uk
+				</a>{' '}
+				before setting the page live.
+			</p>
 			<p>
 				When the tasks are completed, please go to{' '}
 				<a href={pageLink}>this page on the newsletters tool</a> to confirm
