@@ -2,7 +2,8 @@ import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
-	brazeSubscribeEventName, brazeTemplateCode,
+	brazeSubscribeEventName,
+	brazeTemplateCode,
 	brazeUnsubscribeEventName,
 	embedIframeCode,
 	getPropertyDescription,

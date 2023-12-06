@@ -57,5 +57,5 @@ export const generateBrazeTemplateString = (newsletterData: NewsletterData): str
 {% capture merchandising_content_middle %}{{content_blocks.\${${middle}}}}{% endcapture %}
 {% capture merchandising_content_footer %}{{content_blocks.\${${footer}}}}{% endcapture %}
 {% capture merchandising_content_newsletter %}{% endcapture %}
-{{ email_content | strip | replace: "<!-- Braze Placeholder - Above Banner -->", merchandising_content_header | replace: "<!-- Braze Placeholder - Above Section 1 -->", merchandising_content_lifecycle | replace: "<!-- Braze Placeholder - Above Section 3 -->", merchandising_content_middle | replace: "<!-- Braze Placeholder - Above Footer -->", merchandising_content_footer | replace: "<!-- Braze Placeholder - Above Section 5 -->", merchandising_content_newsletter | replace: "<!-- Braze Placeholder - Above Section 4 -->", merchandising_content_advert }}`;
+{{ email_content | strip | replace: "<!-- Braze Placeholder - Above Banner -->", merchandising_content_header | replace: "<!-- Braze Placeholder - Above Section 1 -->", merchandising_content_lifecycle | replace: "<!-- Braze Placeholder - Above Section 3 -->", merchandising_content_middle | replace: "<!-- Braze Placeholder - Above Footer -->", merchandising_content_footer | replace: "<!-- Braze Placeholder - Above Section 5 -->", merchandising_content_newsletter }}`;
 }

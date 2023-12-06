@@ -39,10 +39,7 @@ export const GeneratedCodeDataPoint = ({
                                        }: Props) => {
     const generatedValue = valueGenerator.generate(newsletter);
 
-    const copyToClipBoard = async () => {
-        console.log('copying to clipboard');
-        await navigator.clipboard.writeText(generatedValue);
-    };
+    const copyToClipBoard = async () => await navigator.clipboard.writeText(generatedValue);
 
     const code = hljs.highlight(generatedValue, { language })
     return (
