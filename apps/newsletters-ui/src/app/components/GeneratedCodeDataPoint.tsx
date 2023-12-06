@@ -32,44 +32,44 @@ interface Props {
 
 
 export const GeneratedCodeDataPoint = ({
-                                           newsletter,
-                                           valueGenerator,
-                                           includeCopyButton,
-                                            language,
-                                       }: Props) => {
-    const generatedValue = valueGenerator.generate(newsletter);
+		newsletter,
+		valueGenerator,
+		includeCopyButton,
+		language,
+	 }: Props) => {
 
-    const copyToClipBoard = async () => await navigator.clipboard.writeText(generatedValue);
+  const generatedValue = valueGenerator.generate(newsletter);
 
-    const code = hljs.highlight(generatedValue, { language })
-    return (
-        <Grid container justifyContent={'space-between'} spacing={1}>
-            <Grid item xs={3} flexGrow={1} flexShrink={0}>
-                <Typography variant="caption">{valueGenerator.displayName}</Typography>
-                <Tooltip title={valueGenerator.description} arrow>
-                    <Chip size="small" label="?"/>
-                </Tooltip>
-            </Grid>
-            <Grid item xs={9} flexShrink={1}>
-                <Stack direction={'row'}>
-                    {
-                        <>
-                            <Box flex={1} display={'flex'} sx={{p: 1}}>
-                                <div dangerouslySetInnerHTML={{__html: code.value}}  />
-                            </Box>
-                            {includeCopyButton && (
-                                <Button
-                                    onClick={copyToClipBoard}
-                                    startIcon={<CopyAllIcon/>}
-                                >
-                                    copy
-                                </Button>)
-                            }
+  const copyToClipBoard = async () => await navigator.clipboard.writeText(generatedValue);
 
-                        </>
-                    }
-                </Stack>
-            </Grid>
-        </Grid>
-    );
+	const code = hljs.highlight(generatedValue, { language })
+	return (
+			<Grid container justifyContent={'space-between'} spacing={1}>
+					<Grid item xs={3} flexGrow={1} flexShrink={0}>
+							<Typography variant="caption">{valueGenerator.displayName}</Typography>
+							<Tooltip title={valueGenerator.description} arrow>
+									<Chip size="small" label="?"/>
+							</Tooltip>
+					</Grid>
+					<Grid item xs={9} flexShrink={1}>
+							<Stack direction={'row'}>
+									{
+											<>
+													<Box flex={1} display={'flex'} sx={{p: 1}}>
+															<div dangerouslySetInnerHTML={{__html: code.value}}  />
+													</Box>
+													{includeCopyButton && (
+															<Button
+																	onClick={copyToClipBoard}
+																	startIcon={<CopyAllIcon/>}
+															>
+																	copy
+															</Button>)
+													}
+											</>
+									}
+							</Stack>
+					</Grid>
+			</Grid>
+	);
 };
