@@ -51,12 +51,11 @@ export const generateBrazeTemplateString = (newsletterData: NewsletterData): str
 {% assign email_endpoint = "${emailEndpoint}" %}
 {% assign utm_campaign = "${campaignName ?? "CAMPAIGN NAME IS NOT SET"}" %}
 {% assign CMP = "${campaignCode ?? 'CAMPAIGN CODE IS NOT SET'}" %}
-{% capture email_content %}{{content_blocks.\${${contentBlocks}}}{% endcapture %}
-{% capture merchandising_content_header %}{{content_blocks.\${${header}}}{% endcapture %}
-{% capture merchandising_content_lifecycle %}{{content_blocks.\${${lifecycle}}}{% endcapture %}
-{% capture merchandising_content_middle %}{{content_blocks.\${${middle}}}{% endcapture %}
-{% capture merchandising_content_footer %}{{content_blocks.\${${footer}}}{% endcapture %}
+{% capture email_content %}{{content_blocks.\${${contentBlocks}}}}{% endcapture %}
+{% capture merchandising_content_header %}{{content_blocks.\${${header}}}}{% endcapture %}
+{% capture merchandising_content_lifecycle %}{{content_blocks.\${${lifecycle}}}}{% endcapture %}
+{% capture merchandising_content_middle %}{{content_blocks.\${${middle}}}}{% endcapture %}
+{% capture merchandising_content_footer %}{{content_blocks.\${${footer}}}}{% endcapture %}
 {% capture merchandising_content_newsletter %}{% endcapture %}
-{% capture merchandising_content_advert %}{{content_blocks.\${ADVERT_RECIPECARD_October23_Belazu_WordOfMouth}}}{% endcapture %}
 {{ email_content | strip | replace: "<!-- Braze Placeholder - Above Banner -->", merchandising_content_header | replace: "<!-- Braze Placeholder - Above Section 1 -->", merchandising_content_lifecycle | replace: "<!-- Braze Placeholder - Above Section 3 -->", merchandising_content_middle | replace: "<!-- Braze Placeholder - Above Footer -->", merchandising_content_footer | replace: "<!-- Braze Placeholder - Above Section 5 -->", merchandising_content_newsletter | replace: "<!-- Braze Placeholder - Above Section 4 -->", merchandising_content_advert }}`;
 }
