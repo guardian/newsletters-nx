@@ -151,6 +151,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 					newsletter={newsletter}
 					valueGenerator={brazeTemplateCode}
 					includeCopyButton
+					showOverride
 					language={'django'}
 				/>
 			</DetailAccordian>

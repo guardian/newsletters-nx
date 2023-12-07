@@ -3,7 +3,7 @@ import {generateBrazeTemplateString} from "./generate-braze-template";
 
 
 export type NewsletterValueGenerator = {
-	generate: { (newsletter: NewsletterData): string };
+	generate: { (newsletter: NewsletterData, 	override?: string): string };
 	displayName: string;
 	description: string;
 };
@@ -17,7 +17,7 @@ export const embedIframeCode: NewsletterValueGenerator = {
 };
 
 export const brazeTemplateCode: NewsletterValueGenerator = {
-	generate: (newsletter: NewsletterData) => generateBrazeTemplateString(newsletter),
+	generate: (newsletter: NewsletterData, 	override?: string) => generateBrazeTemplateString(newsletter, override),
 	displayName: 'Braze campaign template code',
 	description:
 		'The template code to use in the Braze campaign.',
