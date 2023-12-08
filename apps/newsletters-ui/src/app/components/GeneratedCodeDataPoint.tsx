@@ -37,7 +37,7 @@ interface Props {
 	language: string;
 }
 
-export type MerchandisingOverride = 'default' | 'aus' | 'culture' | 'features' | 'global' | 'sport' | 'us';
+export type MerchandisingOverride = 'default' | 'AUS' | 'Culture' | 'Features' | 'Global' | 'Sport' | 'US';
 
 export const GeneratedCodeDataPoint = ({
 																				 newsletter,
@@ -52,6 +52,17 @@ export const GeneratedCodeDataPoint = ({
 
 	const codeOverride = override === 'default' ? undefined : override;
 	const generatedValue = valueGenerator.generate(newsletter, codeOverride);
+
+
+	const valueKeyMapping = {
+		'AUS': 'Australia',
+		'Culture': 'Culture',
+		'Features': 'Features',
+		'Global': 'Global',
+		'Sport': 'Sport',
+		'US': 'US',
+		'default': 'Default',
+	}
 	const copyToClipBoard = async () => await navigator.clipboard.writeText(generatedValue);
 
 	const code = hljs.highlight(generatedValue, {language})
@@ -77,13 +88,11 @@ export const GeneratedCodeDataPoint = ({
 									value={override}
 									onChange={(override) => setOverride(override.target.value as MerchandisingOverride)}
 								>
-									<FormControlLabel value="default" control={<Radio/>} label="Default"/>
-									<FormControlLabel value="AUS" control={<Radio/>} label="Australia"/>
-									<FormControlLabel value="Culture" control={<Radio/>} label="Culture"/>
-									<FormControlLabel value="Features" control={<Radio/>} label="Features"/>
-									<FormControlLabel value="Global" control={<Radio/>} label="Global"/>
-									<FormControlLabel value="Sport" control={<Radio/>} label="Sport"/>
-									<FormControlLabel value="US" control={<Radio/>} label="US"/>
+									{
+										['default', 'AUS', 'Culture', 'Features', 'Global', 'Sport', 'US'].map((item) => <FormControlLabel
+											value={item} control={<Radio/>} label={valueKeyMapping[item as keyof typeof valueKeyMapping]}/>)
+									}
+
 								</RadioGroup>
 							</FormControl>
 						</Box>

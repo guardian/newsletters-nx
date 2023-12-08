@@ -1,5 +1,6 @@
 import { Alert, Snackbar } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from "react-router";
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export const EditNewsletterForm = ({ originalItem }: Props) => {
+	const navigate = useNavigate();
 	const [item, setItem] = useState(originalItem);
 	const permissions = usePermissions();
 	const [waitingForResponse, setWaitingForResponse] = useState<boolean>(false);
@@ -43,7 +45,8 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		if (response.ok) {
 			setItem(response.data);
 			setWaitingForResponse(false);
-			setConfirmationMessage('newsletter updated!');
+			navigate(`/launched/${response.data.identityName}`);
+
 		} else {
 			setWaitingForResponse(false);
 			setErrorMessage(response.message);
