@@ -15,7 +15,8 @@ interface Props {
 	newsletter: NewsletterData;
 }
 
-export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
+export const RequestBrazeSetUpMessage = ({ pageLink: pageEditLink, newsletter }: Props) => {
+	const pageDetailsLink = pageEditLink.split('/').filter(element => element !== 'edit').join('/');
 	return (
 		<MessageFormat
 			title={
@@ -28,7 +29,7 @@ export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
 			<p>
 				The Braze values for this newsletter are below - if these need to change
 				for any reason, please{' '}
-				<a href={pageLink}>update in the newsletters tool</a> .
+				<a href={pageEditLink}>update in the newsletters tool</a> .
 			</p>
 
 			<NewsletterPropertyTable
@@ -47,6 +48,11 @@ export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
 			/>
 
 			<p>
+				A Braze template has been created for this newsletter. The template code
+				is available in the <a href={pageDetailsLink}>newsletters tool</a>.
+			</p>
+
+			<p>
 				Note that the "temporary sign Up URL" will not be available immediately
 				after a newsletter is launched as the site can take 1-3 hours to update
 				its list of newsletters.
@@ -54,7 +60,7 @@ export const RequestBrazeSetUpMessage = ({ pageLink, newsletter }: Props) => {
 
 			<p>
 				When you have set up the campaign, please go to{' '}
-				<a href={pageLink}>this page on the newsletters tool</a> to confirm!
+				<a href={pageEditLink}>this page on the newsletters tool</a> to confirm!
 			</p>
 		</MessageFormat>
 	);
