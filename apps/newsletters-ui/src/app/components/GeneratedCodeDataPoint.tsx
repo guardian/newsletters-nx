@@ -2,8 +2,13 @@ import CopyAllIcon from '@mui/icons-material/CopyAll';
 import {
 	Box,
 	Button,
-	Chip, FormControl, FormControlLabel, FormLabel,
-	Grid, Radio, RadioGroup,
+	Chip,
+	FormControl,
+	FormControlLabel,
+	FormLabel,
+	Grid,
+	Radio,
+	RadioGroup,
 	Stack,
 	Tooltip,
 	Typography,
@@ -32,6 +37,7 @@ interface Props {
 	language: string;
 }
 
+export type MerchandisingOverride = 'default' | 'aus' | 'culture' | 'features' | 'global' | 'sport' | 'us';
 
 export const GeneratedCodeDataPoint = ({
 																				 newsletter,
@@ -41,13 +47,15 @@ export const GeneratedCodeDataPoint = ({
 																				 language,
 																			 }: Props) => {
 
-	type MerchandisingOverride = 'default' | 'aus' | 'culture' | 'features' | 'global' | 'sport' | 'us';
+
 	const [override, setOverride] = useState<MerchandisingOverride>('default' as MerchandisingOverride);
+
 	const codeOverride = override === 'default' ? undefined : override;
 	const generatedValue = valueGenerator.generate(newsletter, codeOverride);
 	const copyToClipBoard = async () => await navigator.clipboard.writeText(generatedValue);
 
 	const code = hljs.highlight(generatedValue, {language})
+
 	return (
 		<Grid container justifyContent={'space-between'} spacing={1}>
 			<Grid item xs={3} flexGrow={1} flexShrink={0}>
@@ -61,11 +69,11 @@ export const GeneratedCodeDataPoint = ({
 					<Stack direction={'row'}>
 						<Box flex={1} display={'flex'} sx={{p: 1}}>
 							<FormControl fullWidth>
-								<FormLabel id="demo-row-radio-buttons-group-label">DRR Slot Set</FormLabel>
+								<FormLabel id="drr-override-group-label">DRR Slot Set</FormLabel>
 								<RadioGroup
 									row
-									aria-labelledby="demo-row-radio-buttons-group-label"
-									name="row-radio-buttons-group"
+									aria-labelledby="drr-override-group-label"
+									name="drr-row-radio-buttons-group"
 									value={override}
 									onChange={(override) => setOverride(override.target.value as MerchandisingOverride)}
 								>
