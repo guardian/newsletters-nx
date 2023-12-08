@@ -1,6 +1,6 @@
 import type { NewsletterData } from './schemas/newsletter-data-type';
 
-export type DrrSlotKey = 'AUS' | 'Culture' | 'Sport' | 'US' |'Features' | 'Global';
+export type DrrSlotKey = 'AUS' | 'Culture' | 'Sport' | 'US' | 'Features' | 'Global';
 
 const getDrrSlotSet = (slotKey: DrrSlotKey) => {
 	return {
@@ -10,6 +10,10 @@ const getDrrSlotSet = (slotKey: DrrSlotKey) => {
 		lifecycle: `Logic_Lifecycle_${slotKey}`
 	}
 }
+
+const regionFocusMappings = {
+	'AU': 'AUS'
+}
 const getMerchandisingContent = (newsletterData: NewsletterData, override?: string) => {
 	const {regionFocus, theme} = newsletterData;
 
@@ -17,8 +21,8 @@ const getMerchandisingContent = (newsletterData: NewsletterData, override?: stri
 		return getDrrSlotSet(override as DrrSlotKey)
 	}
 
-	if (regionFocus && ['US', 'AUS'].includes(regionFocus)) {
-		return getDrrSlotSet(regionFocus as DrrSlotKey);
+	if (regionFocus && ['US', 'AU'].includes(regionFocus)) {
+		return getDrrSlotSet((regionFocusMappings[regionFocus as keyof typeof regionFocusMappings] || regionFocus) as DrrSlotKey);
 	}
 	if (['culture', 'sport'].includes(theme)) {
 		return getDrrSlotSet(theme as DrrSlotKey);
@@ -27,13 +31,15 @@ const getMerchandisingContent = (newsletterData: NewsletterData, override?: stri
 }
 
 export const generateBrazeTemplateString = (newsletterData: NewsletterData, override?: string): string => {
-    const {identityName, campaignName, campaignCode, seriesTag, category} = newsletterData;
-    const contentBlocks = category === 'article-based' ? 'Editorial_FirstEditionContent' : 'Editorial_Content'
-    const emailEndpoint = seriesTag && ['article-based', 'article-based-legacy'].includes(category) ? `${seriesTag}/latest.json` : 'EMAIL ENDPOINT IS NOT SET';
-		const merchandisingContent = getMerchandisingContent(newsletterData, override);
-		if (!merchandisingContent) return "Could not determine merchandising content. Please select a DRR slot set";
-		const { header, footer, middle, lifecycle} = merchandisingContent;
-    return `{% comment %} Required Campaign-level variables {% endcomment %}
+	const {identityName, campaignName, campaignCode, seriesTag, category} = newsletterData;
+	const contentBlocks = category === 'article-based' ? 'Editorial_FirstEditionContent' : 'Editorial_Content'
+	const emailEndpoint = seriesTag && ['article-based', 'article-based-legacy'].includes(category) ? `${seriesTag}/latest.json` : 'EMAIL ENDPOINT IS NOT SET';
+	const merchandisingContent = getMerchandisingContent(newsletterData, override);
+
+	if (!merchandisingContent) return "Could not determine merchandising content. Please select a DRR slot set";
+
+	const {header, footer, middle, lifecycle} = merchandisingContent;
+	return `{% comment %} Required Campaign-level variables {% endcomment %}
 {% assign identity_newsletter_id = "${identityName}" %}
 {% assign email_endpoint = "${emailEndpoint}" %}
 {% assign utm_campaign = "${campaignName ?? "CAMPAIGN NAME IS NOT SET"}" %}
