@@ -2,31 +2,33 @@ import type { NewsletterData } from './schemas/newsletter-data-type';
 
 export type DrrSlotKey = 'AUS' | 'Culture' | 'Sport' | 'US' | 'Features' | 'Global';
 
-const getDrrSlotSet = (slotKey: DrrSlotKey) => {
-	return {
+const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 		header: `Logic_Header_${slotKey}`,
 		footer: `Logic_Footer${slotKey}`,
 		middle: `Logic_Middle_${slotKey}`,
 		lifecycle: `Logic_Lifecycle_${slotKey}`
-	}
-}
+});
 
-const regionFocusMappings = {
-	'AU': 'AUS'
+const drrSlotKeyMappings = {
+	'AU': 'AUS',
+	'sport': 'Sport',
+	'culture': 'Culture',
 }
 const getMerchandisingContent = (newsletterData: NewsletterData, override?: string) => {
-	const {regionFocus, theme} = newsletterData;
+	const { regionFocus, theme} = newsletterData;
 
 	if (override) {
 		return getDrrSlotSet(override as DrrSlotKey)
 	}
 
 	if (regionFocus && ['US', 'AU'].includes(regionFocus)) {
-		return getDrrSlotSet((regionFocusMappings[regionFocus as keyof typeof regionFocusMappings] || regionFocus) as DrrSlotKey);
+		return getDrrSlotSet((drrSlotKeyMappings[regionFocus as keyof typeof drrSlotKeyMappings] || regionFocus) as DrrSlotKey);
 	}
+
 	if (['culture', 'sport'].includes(theme)) {
-		return getDrrSlotSet(theme as DrrSlotKey);
+		return getDrrSlotSet((drrSlotKeyMappings[theme as keyof typeof drrSlotKeyMappings] || theme) as DrrSlotKey);
 	}
+
 	return undefined;
 }
 
