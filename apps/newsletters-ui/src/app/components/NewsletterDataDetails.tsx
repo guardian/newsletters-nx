@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	brazeSubscribeEventName,
+	brazeTemplateCode,
 	brazeUnsubscribeEventName,
 	embedIframeCode,
 	getPropertyDescription,
@@ -10,6 +11,7 @@ import {
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { DetailAccordian } from './DetailAccordian';
+import { GeneratedCodeDataPoint } from "./GeneratedCodeDataPoint";
 import { GeneratedDataPoint } from './GeneratedDataPoint';
 import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
@@ -139,10 +141,18 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 			</DetailAccordian>
 
 			<DetailAccordian title="Generated values" defaultExpanded>
-				<GeneratedDataPoint
+				<GeneratedCodeDataPoint
 					newsletter={newsletter}
 					valueGenerator={embedIframeCode}
 					includeCopyButton
+					language={'xml'}
+				/>
+				<GeneratedCodeDataPoint
+					newsletter={newsletter}
+					valueGenerator={brazeTemplateCode}
+					includeCopyButton
+					showOverride
+					language={'django'}
 				/>
 			</DetailAccordian>
 

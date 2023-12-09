@@ -40,6 +40,7 @@
 		"aws-sdk": "^2.1354.0",
 		"dayjs": "^1.11.8",
 		"fastify": "4.11.0",
+		"highlight.js": "^11.9.0",
 		"instead": "^1.0.3",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",

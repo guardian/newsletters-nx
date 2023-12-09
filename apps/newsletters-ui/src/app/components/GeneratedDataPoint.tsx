@@ -59,15 +59,15 @@ export const GeneratedDataPoint = ({
 									style={{
 										width: '100%',
 										display: 'flex',
-										resize: 'none',
 										minHeight: 80,
+										resize: 'none',
 									}}
 									value={generatedValue}
 									readOnly
 								/>
 							</Box>
 							<Button
-								onClick={void copyToClipBoard}
+								onClick={copyToClipBoard}
 								startIcon={<CopyAllIcon />}
 							>
 								copy
