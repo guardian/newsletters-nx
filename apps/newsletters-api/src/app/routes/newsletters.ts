@@ -90,10 +90,11 @@ export function registerReadWriteNewsletterRoutes(app: FastifyInstance) {
 	) => {
 		const user = getUserProfile(request);
 		const isAuthorised = await hasEditAccess(user.profile);
-		const { body: update } = request;
+		const { body } = request;
+		const update = replaceNullWithUndefinedForUnknown(body);
 
 		if (!isPartialNewsletterData(update)) {
-			void reply.status(403).send(makeErrorResponse('invalid update data'));
+			void reply.status(400).send(makeErrorResponse('invalid update data'));
 		} else {
 			const isAuthorisedForUpdate =
 				await isAuthorisedToMakeRequestedNewsletterUpdate(user.profile, update);
