@@ -4,7 +4,7 @@ export type DrrSlotKey = 'AUS' | 'Culture' | 'Sport' | 'US' | 'Features' | 'Glob
 
 const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 		header: `Logic_Header_${slotKey}`,
-		footer: `Logic_Footer${slotKey}`,
+		footer: `Logic_Footer_${slotKey}`,
 		middle: `Logic_Middle_${slotKey}`,
 		lifecycle: `Logic_Lifecycle_${slotKey}`
 });
