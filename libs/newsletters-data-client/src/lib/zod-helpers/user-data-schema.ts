@@ -23,6 +23,7 @@ export const getUserEditSchema = (
 			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,
+			signUpEmbedDescription: true,
 			mailSuccessDescription: true,
 			brazeCampaignCreationStatus: true,
 			brazeNewsletterName: true,
@@ -52,6 +53,7 @@ export const getUserEditSchema = (
 			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,
+			signUpEmbedDescription: true,
 		});
 	}
 	return newsletterDataSchema.pick({});
