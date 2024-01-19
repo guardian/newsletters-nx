@@ -1,0 +1,34 @@
+{
+	"name": "newsletters-ui-e2e",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "apps/newsletters-ui-e2e/src",
+	"projectType": "application",
+	"targets": {
+		"e2e": {
+			"executor": "@nrwl/cypress:cypress",
+			"options": {
+				"cypressConfig": "apps/newsletters-ui-e2e/cypress.config.ts",
+				"devServerTarget": "newsletters-ui:serve:development",
+				"testingType": "e2e",
+				"port": 4210
+			},
+			"configurations": {
+				"production": {
+					"devServerTarget": "newsletters-ui:serve:production"
+				},
+				"ci": {
+					"devServerTarget": "newsletters-ui:serve-static"
+				}
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["apps/newsletters-ui-e2e/**/*.{js,ts}"]
+			}
+		}
+	},
+	"tags": [],
+	"implicitDependencies": ["newsletters-ui"]
+}
