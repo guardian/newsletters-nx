@@ -37,6 +37,12 @@ export const RequestBrazeUpdateMessage = ({ pageLink, newsletter }: Props) => {
 				properties={[emailContent, emailEndpoint]}
 			/>
 			<p>
+				<strong>
+					Ensure that the plaintext editor version in Braze is checked and
+					updated too.
+				</strong>
+			</p>
+			<p>
 				Once the Campaign has been updated, please visit{' '}
 				<a href={pageLink}>this page on the newsletters tool</a> to confirm!
 			</p>
