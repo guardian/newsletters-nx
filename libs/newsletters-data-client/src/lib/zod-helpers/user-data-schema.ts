@@ -14,6 +14,7 @@ export const getUserEditSchema = (
 			regionFocus: true,
 			theme: true,
 			status: true,
+			restricted: true,
 			illustrationCard: true,
 			tagCreationStatus: true,
 			seriesTag: true,
@@ -54,6 +55,7 @@ export const getUserEditSchema = (
 			signupPage: true,
 			signUpDescription: true,
 			signUpEmbedDescription: true,
+			restricted: true,
 		});
 	}
 	return newsletterDataSchema.pick({});
