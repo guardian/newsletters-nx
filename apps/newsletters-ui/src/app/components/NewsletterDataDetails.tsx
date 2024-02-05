@@ -1,4 +1,4 @@
-import { Badge, Box, Grid, Stack, Typography } from '@mui/material';
+import { Alert, Badge, Box, Grid, Stack, Typography} from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
@@ -23,7 +23,7 @@ interface Props {
 }
 
 export const NewsletterDataDetails = ({ newsletter }: Props) => {
-	const { status, name } = newsletter;
+	const { status, name, restricted } = newsletter;
 	const permissions = usePermissions();
 	const [showEditButton, setShowEditButton] = useState(false);
 
@@ -43,7 +43,13 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				columnSpacing={2}
 				justifyContent={'space-between'}
 			>
+				{status === 'live' && restricted &&
+					<Grid item paddingBottom={"16px"} flexGrow={1}>
+						<Alert severity="error">The Newsletter is set to live but with a restricted status. This will prevent the newsletter from appearing in MMA and in-article promotions for it will not be rendered </Alert>
+					</Grid>
+				}
 				<Grid item>
+
 					<Badge badgeContent={status} color="secondary">
 						<Typography variant="h2">{name}</Typography>
 					</Badge>

@@ -76,7 +76,7 @@ export const newsletterDataSchema = z.object({
 	identityName: kebabOrUnderscoreCasedString().describe('identity name'),
 	name: nonEmptyString().describe('Name'),
 	category: newsletterCategoriesSchema,
-	restricted: z.boolean(),
+	restricted: z.boolean().describe('Restricted'),
 	/** The status for the newsletter:
 	 *
 	 *  - **pending**: Initial state after launch - can be promoted, not yet ready to be sent out.
