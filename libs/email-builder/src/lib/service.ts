@@ -50,18 +50,12 @@ export const sendEmailNotifications = async (
 > => {
 	try {
 		const { areEmailNotificationsEnabled } = emailEnvInfo;
-		const message = await getMessage(params, emailEnvInfo, user);
-
 		if (!areEmailNotificationsEnabled) {
-			console.log(
-				`Email produced but not sent: "${message.content.subject}"`,
-				message.messageConfig,
-				`\n${message.content.html}\n\n`,
-			);
 			return {
 				success: true,
 			};
 		}
+		const message = await getMessage(params, emailEnvInfo, user);
 		const command = buildSendEmailCommand(
 			message.messageConfig,
 			message.content,
