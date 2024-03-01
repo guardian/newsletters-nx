@@ -17,6 +17,7 @@ export type NewsletterMessageId =
 export const getMessageConfig = async (
 	emailEnvInfo: EmailEnvInfo,
 	messageType: NewsletterMessageId,
+	ccRecipients?: string[],
 ): Promise<MessageConfig> => {
 	const { STAGE } = emailEnvInfo;
 
@@ -43,6 +44,7 @@ export const getMessageConfig = async (
 		case 'PROD':
 			return {
 				recipients: recipientMapping[messageType],
+				ccRecipients,
 				toolHost: `https://${PROD_TOOLS_DOMAIN}`,
 				replyToAddresses: ['newsletters@guardian.co.uk'],
 				source: `newsletters <notifications@${PROD_TOOLS_DOMAIN}>`,
@@ -50,19 +52,19 @@ export const getMessageConfig = async (
 		case 'CODE':
 			return {
 				recipients: recipientMapping[messageType],
+				ccRecipients,
 				toolHost: `https://${CODE_TOOLS_DOMAIN}`,
 				replyToAddresses: ['newsletters@guardian.co.uk'],
-				source:
-					`newsletters CODE <notifications@${CODE_TOOLS_DOMAIN}>`,
+				source: `newsletters CODE <notifications@${CODE_TOOLS_DOMAIN}>`,
 			};
 		case 'DEV':
 		default:
 			return {
 				recipients: recipientMapping[messageType],
+				ccRecipients,
 				toolHost: 'http://localhost:4200',
 				replyToAddresses: ['newsletters@guardian.co.uk'],
-				source:
-					`newsletters DEV <notifications@${CODE_TOOLS_DOMAIN}>`,
+				source: `newsletters DEV <notifications@${CODE_TOOLS_DOMAIN}>`,
 			};
 	}
 };

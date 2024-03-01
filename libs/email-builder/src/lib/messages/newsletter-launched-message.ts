@@ -6,9 +6,6 @@ import { renderNewLaunchMessage } from '../components/NewLaunchMessage';
 import { getMessageConfig } from '../message-config';
 import type { MessageAboutNewsletterParams, MessageContent } from '../types';
 
-const recipients = ['newsletters.dev@guardian.co.uk'];
-export { recipients as newsletterLaunchedRecipients };
-
 export async function buildNewsLetterLaunchMessage(
 	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,

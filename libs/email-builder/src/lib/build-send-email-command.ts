@@ -5,13 +5,14 @@ export const buildSendEmailCommand = (
 	config: MessageConfig,
 	content: MessageContent,
 ): SendEmailCommand => {
-	const { source, recipients, replyToAddresses } = config;
+	const { source, recipients, replyToAddresses, ccRecipients = [] } = config;
 	const { subject, html, text } = content;
 
 	return new SendEmailCommand({
 		Source: source,
 		Destination: {
 			ToAddresses: recipients,
+			CcAddresses: ccRecipients,
 		},
 		ReplyToAddresses: replyToAddresses,
 		Message: {

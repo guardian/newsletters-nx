@@ -19,6 +19,7 @@ export async function buildSignupPageAndTagCreationRequestMessage(
 	const messageConfig = await getMessageConfig(
 		emailEnvInfo,
 		'CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST',
+		user?.email ? [user.email] : [],
 	);
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
