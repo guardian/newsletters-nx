@@ -5,6 +5,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
+import { UserDescription } from './UserDescription';
 
 interface Props {
 	pageLink: string;
@@ -12,10 +13,17 @@ interface Props {
 	user?: UserProfile;
 }
 
-export const NewLaunchMessage = ({ pageLink, newsletter }: Props) => {
+export const NewLaunchMessage = ({ pageLink, newsletter, user }: Props) => {
 	return (
 		<MessageFormat title={<>newsletter launched: {newsletter.name}</>}>
 			<p>{pageLink}</p>
+
+			{user && (
+				<p>
+					launched by:
+					<UserDescription user={user} asLink />
+				</p>
+			)}
 		</MessageFormat>
 	);
 };

@@ -23,7 +23,7 @@ const getMessage = async (
 }> => {
 	switch (params.messageTemplateId) {
 		case 'NEW_DRAFT':
-			return buildNewDraftEmail(params, emailEnvInfo);
+			return buildNewDraftEmail(params, emailEnvInfo, user);
 		case 'NEWSLETTER_LAUNCH':
 			return buildNewsLetterLaunchMessage(params, emailEnvInfo, user);
 		case 'BRAZE_SET_UP_REQUEST':

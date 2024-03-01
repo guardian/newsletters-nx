@@ -1,10 +1,14 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	NewsletterData,
+	UserProfile,
+} from '@newsletters-nx/newsletters-data-client';
 import { composerCampaignTagId } from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
 import { getEmbargoDate } from '../util';
 import { MessageFormat } from './MessageFormat';
 import { NewsletterPropertyTable } from './NewsletterPropertyTable';
+import { UserDescription } from './UserDescription';
 
 interface Props {
 	pageLink: string;
@@ -15,6 +19,7 @@ interface Props {
 export const RequestTagAndSignUpPageMessage = ({
 	pageLink,
 	newsletter,
+	user,
 }: Props) => {
 	const {
 		seriesTag,
@@ -37,8 +42,15 @@ export const RequestTagAndSignUpPageMessage = ({
 		<MessageFormat title={title}>
 			<p>
 				Can you please create complete the following tasks to support the launch
-				of the "{newsletter.name}"" newsletter?
+				of the "{newsletter.name}" newsletter?
 			</p>
+			{user && (
+				<p>
+					"{newsletter.name}" was launched by <UserDescription user={user} /> (
+					<UserDescription user={user} asLink />
+					).
+				</p>
+			)}
 			<h2> Create Tags </h2>
 			<ul>
 				<li>
