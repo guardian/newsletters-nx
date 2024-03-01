@@ -9,6 +9,7 @@ import { NewsletterPropertyTable } from './NewsletterPropertyTable';
 interface Props {
 	pageLink: string;
 	newsletter: NewsletterData;
+	user?: UserProfile;
 }
 
 export const RequestTagAndSignUpPageMessage = ({

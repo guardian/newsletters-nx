@@ -1,4 +1,7 @@
-import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
+import type {
+	EmailEnvInfo,
+	UserProfile,
+} from '@newsletters-nx/newsletters-data-client';
 import { renderRequestTagAndSignUpPageCreationMessage } from '../components/RenderTagAndSignUpPageCreationMessage';
 import { getMessageConfig } from '../message-config';
 import type {
@@ -10,6 +13,7 @@ import type {
 export async function buildSignupPageAndTagCreationRequestMessage(
 	params: MessageAboutNewsletterParams,
 	emailEnvInfo: EmailEnvInfo,
+	user?: UserProfile,
 ): Promise<{ content: MessageContent; messageConfig: MessageConfig }> {
 	const { newsletter } = params;
 	const messageConfig = await getMessageConfig(
@@ -23,6 +27,7 @@ export async function buildSignupPageAndTagCreationRequestMessage(
 	const content = renderRequestTagAndSignUpPageCreationMessage({
 		pageLink,
 		newsletter,
+		user,
 	}) as MessageContent;
 
 	return { content, messageConfig };

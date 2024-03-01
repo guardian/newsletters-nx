@@ -1,11 +1,15 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	NewsletterData,
+	UserProfile,
+} from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
 
 interface Props {
 	pageLink: string;
 	newsletter: NewsletterData;
+	user?: UserProfile;
 }
 
 export const NewLaunchMessage = ({ pageLink, newsletter }: Props) => {

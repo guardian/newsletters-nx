@@ -21,19 +21,21 @@ const getMessage = async (
 	content: MessageContent;
 	messageConfig: MessageConfig;
 }> => {
-	console.log(params.messageTemplateId, { user });
-
 	switch (params.messageTemplateId) {
 		case 'NEW_DRAFT':
 			return buildNewDraftEmail(params, emailEnvInfo);
 		case 'NEWSLETTER_LAUNCH':
-			return buildNewsLetterLaunchMessage(params, emailEnvInfo);
+			return buildNewsLetterLaunchMessage(params, emailEnvInfo, user);
 		case 'BRAZE_SET_UP_REQUEST':
 			return buildBrazeSetUpRequestMessage(params, emailEnvInfo);
 		case 'BRAZE_UPDATE_REQUEST':
 			return buildBrazeUpdateRequestMessage(params, emailEnvInfo);
 		case 'CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST':
-			return buildSignupPageAndTagCreationRequestMessage(params, emailEnvInfo);
+			return buildSignupPageAndTagCreationRequestMessage(
+				params,
+				emailEnvInfo,
+				user,
+			);
 	}
 };
 
