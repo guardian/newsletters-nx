@@ -56,6 +56,7 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 					},
 					makeSesClient(),
 					makeEmailEnvInfo(),
+					getUserProfile(req).profile,
 				);
 				if (!emailResult.success) {
 					return res.status(500).send({
@@ -118,6 +119,7 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 					},
 					makeSesClient(),
 					makeEmailEnvInfo(),
+					getUserProfile(req).profile,
 				);
 				if (!emailResult.success) {
 					return res

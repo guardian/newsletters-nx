@@ -50,6 +50,7 @@ const sendOutEmailsAndUpdateStatus = async (
 			{ messageTemplateId, newsletter },
 			launchService.emailClent,
 			launchService.emailEnvInfo,
+			launchService.userProfile,
 		);
 
 	const [
