@@ -1,4 +1,7 @@
-import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
+import type {
+	EmailEnvInfo,
+	UserProfile,
+} from '@newsletters-nx/newsletters-data-client';
 import { renderNewDraftMessage } from '../components/NewDraftMessage';
 import { getMessageConfig } from '../message-config';
 import type { MessageContent, NewDraftMessageParams } from '../types';
@@ -6,6 +9,7 @@ import type { MessageContent, NewDraftMessageParams } from '../types';
 export async function buildNewDraftEmail(
 	params: NewDraftMessageParams,
 	emailEnvInfo: EmailEnvInfo,
+	user?: UserProfile,
 ) {
 	const { draft } = params;
 	const messageConfig = await getMessageConfig(
@@ -19,6 +23,7 @@ export async function buildNewDraftEmail(
 	const content = renderNewDraftMessage({
 		pageLink,
 		draft,
+		user,
 	}) as MessageContent;
 
 	return { content, messageConfig };

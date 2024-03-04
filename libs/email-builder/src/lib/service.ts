@@ -1,5 +1,8 @@
 import type { SendEmailCommandOutput, SESClient } from '@aws-sdk/client-ses';
-import type { EmailEnvInfo } from '@newsletters-nx/newsletters-data-client';
+import type {
+	EmailEnvInfo,
+	UserProfile,
+} from '@newsletters-nx/newsletters-data-client';
 import { buildSendEmailCommand } from './build-send-email-command';
 import {
 	buildBrazeSetUpRequestMessage,
@@ -13,21 +16,26 @@ import type { MessageConfig, MessageContent, MessageParams } from './types';
 const getMessage = async (
 	params: MessageParams,
 	emailEnvInfo: EmailEnvInfo,
+	user?: UserProfile,
 ): Promise<{
 	content: MessageContent;
 	messageConfig: MessageConfig;
 }> => {
 	switch (params.messageTemplateId) {
 		case 'NEW_DRAFT':
-			return buildNewDraftEmail(params, emailEnvInfo);
+			return buildNewDraftEmail(params, emailEnvInfo, user);
 		case 'NEWSLETTER_LAUNCH':
-			return buildNewsLetterLaunchMessage(params, emailEnvInfo);
+			return buildNewsLetterLaunchMessage(params, emailEnvInfo, user);
 		case 'BRAZE_SET_UP_REQUEST':
 			return buildBrazeSetUpRequestMessage(params, emailEnvInfo);
 		case 'BRAZE_UPDATE_REQUEST':
 			return buildBrazeUpdateRequestMessage(params, emailEnvInfo);
 		case 'CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST':
-			return buildSignupPageAndTagCreationRequestMessage(params, emailEnvInfo);
+			return buildSignupPageAndTagCreationRequestMessage(
+				params,
+				emailEnvInfo,
+				user,
+			);
 	}
 };
 
@@ -35,20 +43,19 @@ export const sendEmailNotifications = async (
 	params: MessageParams,
 	emailClient: SESClient,
 	emailEnvInfo: EmailEnvInfo,
+	user?: UserProfile,
 ): Promise<
 	| { success: true; output?: SendEmailCommandOutput }
 	| { success: false; error?: unknown }
 > => {
 	try {
 		const { areEmailNotificationsEnabled } = emailEnvInfo;
-
 		if (!areEmailNotificationsEnabled) {
 			return {
 				success: true,
 			};
 		}
-
-		const message = await getMessage(params, emailEnvInfo);
+		const message = await getMessage(params, emailEnvInfo, user);
 		const command = buildSendEmailCommand(
 			message.messageConfig,
 			message.content,

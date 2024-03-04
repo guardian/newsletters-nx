@@ -6,6 +6,8 @@ import type {
 export type MessageConfig = {
 	/** the email addresses to send the message to */
 	recipients: string[];
+	/** the email address to copy(CC) on the message */
+	ccRecipients?: string[];
 	/** the URL for the version of the tool to point recipients to */
 	toolHost: string;
 	/** the sender name  and email address to use in the message header*/

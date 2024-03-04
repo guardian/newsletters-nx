@@ -76,6 +76,7 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 			},
 			draftService.emailClient,
 			draftService.emailEnvInfo,
+			draftService.userProfile,
 		);
 
 		return {
