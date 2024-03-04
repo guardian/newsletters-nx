@@ -41,8 +41,8 @@ export const RequestTagAndSignUpPageMessage = ({
 	return (
 		<MessageFormat title={title}>
 			<p>
-				Can you please create complete the following tasks to support the launch
-				of the "{newsletter.name}" newsletter?
+				Can you please complete the following tasks to support the launch of "
+				{newsletter.name}"?
 			</p>
 			{user && (
 				<p>
