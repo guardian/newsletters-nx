@@ -2089,7 +2089,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
           "ImageId": {
             "Ref": "AMINewslettersapi",
           },
-          "InstanceType": "t4g.small",
+          "InstanceType": "t4g.micro",
           "MetadataOptions": {
             "HttpTokens": "required",
           },
@@ -2265,7 +2265,7 @@ systemctl start newsletters-api",
           "ImageId": {
             "Ref": "AMINewsletterstool",
           },
-          "InstanceType": "t4g.small",
+          "InstanceType": "t4g.micro",
           "MetadataOptions": {
             "HttpTokens": "required",
           },

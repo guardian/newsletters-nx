@@ -177,7 +177,7 @@ EOL`,
 				snsTopicName: alarmsTopicName,
 				unhealthyInstancesAlarm: true,
 			},
-			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
+			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
 			// Minimum of 1 EC2 instance running at a time. If one fails, scales up to 2 before dropping back to 1 again
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			// Instructions to set up the environment in the instance
@@ -210,7 +210,7 @@ EOL`,
 				snsTopicName: alarmsTopicName,
 				unhealthyInstancesAlarm: true,
 			},
-			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
+			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			userData: this.getUserData(
 				apiAppName,
