@@ -5,6 +5,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
+import { NewsletterPropertyTable } from './NewsletterPropertyTable';
 import { UserDescription } from './UserDescription';
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
 
 export const NewLaunchMessage = ({ pageLink, newsletter, user }: Props) => {
 	return (
-		<MessageFormat title={<>newsletter launched: {newsletter.name}</>}>
+		<MessageFormat title={<>Newsletter launched: {newsletter.name}</>}>
 			<p>{pageLink}</p>
 
 			{user && (
@@ -24,13 +25,18 @@ export const NewLaunchMessage = ({ pageLink, newsletter, user }: Props) => {
 					<UserDescription user={user} asLink />
 				</p>
 			)}
+
+			<NewsletterPropertyTable
+				newsletter={newsletter}
+				properties={['campaignName', 'campaignCode', 'identityName']}
+			/>
 		</MessageFormat>
 	);
 };
 
 export const renderNewLaunchMessage = (props: Props): MessageContent => {
 	const { pageLink, newsletter } = props;
-	const subject = `New newsletters launched: ${newsletter.name}`;
+	const subject = `New newsletter launched: ${newsletter.name}`;
 	const text = `A new newsletter "${newsletter.name}" has been launched: ${pageLink}.`;
 
 	try {
