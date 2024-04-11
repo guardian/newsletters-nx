@@ -25,8 +25,13 @@ Please enter the description for the sign up embeds - this text is used on the i
 ![Sign Up Embed Description](https://i.guim.co.uk/img/uploads/2023/04/20/signUp-embed.png?quality=85&dpr=2&width=300&s=48b7b65b3dcbff5fcd4b78c562a4175e)
 
 To provide an image to use on the all newsletters page, upload the image (in the appropriate aspect ratio 5:3) via the [s3 Uploader service](https://s3-uploader.gutools.co.uk/).
-Once uploaded, copy the **vanity url** and paste it into the field below.
+Once uploaded, copy the **vanity url** and paste it into the field below. Please note:
 
+ - When used on the theguardian.com or other platforms, images are optimised and resized by our image service to be displayed at the most approriate file size for the usage.
+
+ - If the orginal image is too large for the image service to process, it will fail and the original version will be used on the page. This can harm the pages performance, especially for users on mobile devices.
+
+**Please make sure** that the image you are uploading does not exceed the limits described in [this documentation from our image service](https://www.fastly.com/documentation/reference/io/#limitations-and-constraints).
 
 `.trim();
 
