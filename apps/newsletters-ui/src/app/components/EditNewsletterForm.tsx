@@ -1,6 +1,6 @@
-import { Alert, Snackbar } from '@mui/material';
+import { Alert, Link, Snackbar } from '@mui/material';
 import { useState } from 'react';
-import { useNavigate } from "react-router";
+import { useNavigate } from 'react-router';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
@@ -46,7 +46,6 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 			setItem(response.data);
 			setWaitingForResponse(false);
 			navigate(`/launched/${response.data.identityName}`);
-
 		} else {
 			setWaitingForResponse(false);
 			setErrorMessage(response.message);
@@ -77,6 +76,36 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 					signUpDescription: {
 						inputType: 'textArea',
 					},
+				}}
+				explanations={{
+					illustrationCard: (
+						<Alert severity="info" sx={{ marginBottom: 1, maxWidth: 600 }}>
+							<p>
+								When used on the theguardian.com or other platforms, images are
+								optimised and resized by our image service to be displayed at
+								the most approriate file size for the usage.
+							</p>
+							<p>
+								However, if the orginal image is too large for the image service
+								to process, it will fail and the original version will be used
+								on the page. This can harm the pages performance, especially for
+								users on mobile devices.
+							</p>
+							<p>
+								Please make sure that the image you are uploading does not
+								exceed the limits described in{' '}
+								<Link
+									href={
+										'https://www.fastly.com/documentation/reference/io/#limitations-and-constraints'
+									}
+									target="_blank"
+								>
+									this documentation from our image service
+								</Link>
+								.
+							</p>
+						</Alert>
+					),
 				}}
 			/>
 
