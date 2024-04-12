@@ -18,11 +18,13 @@ Please enter the headline, description and sign-up success message for the sign 
 
 ![Headline and Description](https://i.guim.co.uk/img/uploads/2023/10/06/signUpImageWithBoarderTwo.png?quality=85&dpr=2&width=300&s=002979e840129ac072654cb66367d971)
 
-### Specify the sign up embed description, Sign up success message, and illustration for the newsletters page
+### Specify the sign up embed description and Sign up success message
 
 Please enter the description for the sign up embeds - this text is used on the in-article embeds and on the [newsletters page](https://www.theguardian.com/email-newsletters):
 
 ![Sign Up Embed Description](https://i.guim.co.uk/img/uploads/2023/04/20/signUp-embed.png?quality=85&dpr=2&width=300&s=48b7b65b3dcbff5fcd4b78c562a4175e)
+
+### Illustration for the newsletters page
 
 To provide an image to use on the all newsletters page, upload the image (in the appropriate aspect ratio 5:3) via the [s3 Uploader service](https://s3-uploader.gutools.co.uk/).
 Once uploaded, copy the **vanity url** and paste it into the field below. Please note:
