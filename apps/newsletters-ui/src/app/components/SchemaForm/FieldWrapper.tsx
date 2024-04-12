@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 interface Props {
 	children: ReactNode;
+	explanation?: ReactNode;
 }
 
 export const defaultBoxProps: BoxProps = {
@@ -13,6 +14,9 @@ export const defaultBoxProps: BoxProps = {
 	maxWidth: 'sm',
 };
 
-export const FieldWrapper = ({ children }: Props) => (
-	<Box {...defaultBoxProps}>{children}</Box>
+export const FieldWrapper = ({ children, explanation }: Props) => (
+	<>
+		<Box {...defaultBoxProps}>{children}</Box>
+		{explanation}
+	</>
 );
