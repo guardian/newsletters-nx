@@ -1,4 +1,4 @@
-import { Alert, Link, Snackbar } from '@mui/material';
+import { Alert, Link, Snackbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
@@ -80,18 +80,18 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 				explanations={{
 					illustrationCard: (
 						<Alert severity="info" sx={{ marginBottom: 1, maxWidth: 600 }}>
-							<p>
+							<Typography>
 								When used on the theguardian.com or other platforms, images are
 								optimised and resized by our image service to be displayed at
 								the most approriate file size for the usage.
-							</p>
-							<p>
+							</Typography>
+							<Typography>
 								However, if the orginal image is too large for the image service
 								to process, it will fail and the original version will be used
 								on the page. This can harm the pages performance, especially for
 								users on mobile devices.
-							</p>
-							<p>
+							</Typography>
+							<Typography>
 								Please make sure that the image you are uploading does not
 								exceed the limits described in{' '}
 								<Link
@@ -103,7 +103,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 									this documentation from our image service
 								</Link>
 								.
-							</p>
+							</Typography>
 						</Alert>
 					),
 				}}
