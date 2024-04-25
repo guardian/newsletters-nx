@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import type { NewsletterFieldsDerivedFromName } from './deriveNewsletterFields';
-import { deriveNewsletterFieldsFromName } from './deriveNewsletterFields';
+import type { NewsletterFieldsDerivedFromName } from './derive-newsletter-fields';
+import { deriveNewsletterFieldsFromName } from './derive-newsletter-fields';
 import {
 	dataCollectionRenderingOptionsSchema,
 	dataCollectionSchema,

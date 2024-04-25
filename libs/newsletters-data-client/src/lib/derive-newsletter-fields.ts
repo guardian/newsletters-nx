@@ -11,23 +11,28 @@ export type NewsletterFieldsDerivedFromName =
 
 const allWhiteSpaceRegEx = new RegExp(/\W/, 'g');
 const replaceWhiteSpace = (input: string, replaceValue = '') =>
-	input.replace(allWhiteSpaceRegEx, replaceValue);
+	input.replace(allWhiteSpaceRegEx, replaceValue)
+		.replace(/_+/g, '_')
+		.replace(/-+/g, '-');
 
+const removeNonAlphaNumericCharacters = (input: string) =>
+	input.replace(/[^a-zA-Z0-9\s]/g, '');
 export const deriveNewsletterFieldsFromName = (
 	name: string,
 ): Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
-	const lowerCased = name.toLowerCase();
+	const sanitizedName = removeNonAlphaNumericCharacters(name)
+	const lowerCased = sanitizedName.toLowerCase();
 	const trimmedLowerCase = lowerCased.trim();
 
 	return {
 		identityName: replaceWhiteSpace(trimmedLowerCase, '-'),
 		brazeSubscribeEventNamePrefix: replaceWhiteSpace(trimmedLowerCase, '_'),
-		brazeNewsletterName: 'Editorial_' + replaceWhiteSpace(name.trim()),
-		brazeSubscribeAttributeName: replaceWhiteSpace(name) + '_Subscribe_Email',
+		brazeNewsletterName: 'Editorial_' + replaceWhiteSpace(sanitizedName.trim()),
+		brazeSubscribeAttributeName: replaceWhiteSpace(sanitizedName) + '_Subscribe_Email',
 		brazeSubscribeAttributeNameAlternate: [
 			'email_subscribe_' + replaceWhiteSpace(trimmedLowerCase, '_'),
 		],
-		campaignName: replaceWhiteSpace(name),
+		campaignName: replaceWhiteSpace(sanitizedName),
 		campaignCode: replaceWhiteSpace(trimmedLowerCase) + '_email',
 	};
 };
@@ -38,7 +43,7 @@ export const deriveNewsletterFieldsFromName = (
  * if `${original}${delimiter}i` is already an existingToken.
  *
  * This is not ideal - it ensures the suggested derived name is
- * unqiue, but the user should have the option to replace it with a
+ * unique, but the user should have the option to replace it with a
  * more readable name.
  */
 export const addSuffixToMakeTokenUnique = (
