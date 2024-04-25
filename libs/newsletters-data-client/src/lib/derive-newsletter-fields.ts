@@ -12,8 +12,7 @@ export type NewsletterFieldsDerivedFromName =
 const allWhiteSpaceRegEx = new RegExp(/\W/, 'g');
 const replaceWhiteSpace = (input: string, replaceValue = '') =>
 	input.replace(allWhiteSpaceRegEx, replaceValue)
-		.replace(/_+/g, '_')
-		.replace(/-+/g, '-');
+		.replace(/[\s_-]+/g, replaceValue)
 
 const removeNonAlphaNumericCharacters = (input: string) =>
 	input.replace(/[^a-zA-Z0-9\s]/g, '');
