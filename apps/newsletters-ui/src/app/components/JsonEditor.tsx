@@ -1,23 +1,14 @@
-import {
-	Alert,
-	Box,
-	Button,
-	ButtonGroup,
-	Container,
-	Grid,
-	Stack,
-	TextField,
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import type { z, ZodIssue, ZodObject, ZodRawShape } from 'zod';
-import { ZodIssuesReport } from './ZodIssuesReport';
+import {Alert, Box, Button, ButtonGroup, Container, Grid, Stack, TextField,} from '@mui/material';
+import {useEffect, useState} from 'react';
+import type {z, ZodIssue, ZodObject, ZodRawShape} from 'zod';
+import {ZodIssuesReport} from './ZodIssuesReport';
 
 type JsonRecord = Record<string, unknown>;
 
 interface Props<T extends ZodRawShape> {
 	originalData: SchemaObjectType<T>;
 	schema: ZodObject<T>;
-	submit: { (data: SchemaObjectType<T>): void };
+	submit: { (data: SchemaObjectType<T>): void | Promise<void> };
 }
 
 type SchemaObjectType<T extends z.ZodRawShape> = {
@@ -41,8 +32,7 @@ const getFormattedJsonString = (
 
 const safeJsonParse = (value: string): JsonRecord | undefined => {
 	try {
-		const record = JSON.parse(value) as JsonRecord;
-		return record;
+		return JSON.parse(value) as JsonRecord;
 	} catch (err) {
 		return undefined;
 	}
@@ -142,12 +132,12 @@ export const JsonEditor = <T extends ZodRawShape>({
 		setFieldContents(originalJson ?? '{}');
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		checkJsonValidity();
 		checkSchema();
 		try {
 			const output = schema.parse(safeJsonParse(fieldContents));
-			submit(output);
+			await submit(output);
 		} catch (err) {
 			console.warn('submit fail');
 			console.log(err);
@@ -218,7 +208,7 @@ export const JsonEditor = <T extends ZodRawShape>({
 			<Container maxWidth="md" sx={{ marginTop: 3 }}>
 				<Button
 					variant="contained"
-					onClick={handleSubmit}
+					onClick={void handleSubmit}
 					fullWidth
 					size="large"
 				>

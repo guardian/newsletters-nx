@@ -18,7 +18,7 @@ interface Props<T extends z.ZodRawShape> {
 	submitButtonText?: string;
 	schema: z.ZodObject<T>;
 	initialData: SchemaObjectType<T>;
-	submit: { (data: SchemaObjectType<T>): void };
+	submit: { (data: SchemaObjectType<T>): void | Promise<void> };
 	isDisabled?: boolean;
 	message?: ReactNode;
 	maxOptionsForRadioButtons?: number;
@@ -150,7 +150,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 			<Box marginBottom={2}>
 				<Button
 					variant="contained"
-					onClick={handleSubmit}
+					onClick={void handleSubmit}
 					disabled={isDisabled}
 				>
 					{submitButtonText}
