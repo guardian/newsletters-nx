@@ -1,5 +1,5 @@
 export * from './lib/api-response-type';
-export * from './lib/deriveNewsletterFields';
+export * from './lib/derive-newsletter-fields';
 export * from './lib/draft-service';
 export * from './lib/draft-storage';
 export * from './lib/draft-to-newsletter';
