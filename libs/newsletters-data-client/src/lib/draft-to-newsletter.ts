@@ -26,6 +26,7 @@ export const defaultRenderingOptionsValues: RenderingOptions = {
 	displayDate: false,
 	displayImageCaptions: false,
 	displayStandfirst: false,
+	includeBreakingNews: false,
 } as const;
 
 export const withDefaultNewsletterValuesAndDerivedFields = (
