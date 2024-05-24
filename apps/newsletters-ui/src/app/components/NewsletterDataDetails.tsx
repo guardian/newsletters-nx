@@ -118,7 +118,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<DataPoint property="composerCampaignTag" />
 				<DataPoint
 					property="composerTag"
-					tooltip="The list of tags that, when added in Composer, should trigger the suggestion to include the Composer campaign tag"
+					tooltip="The list of tags that, when added in Composer, should propose that the user also includes the Composer campaign tag"
 				/>
 			</DetailAccordian>
 
