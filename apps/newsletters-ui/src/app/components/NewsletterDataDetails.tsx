@@ -1,17 +1,18 @@
-import { Alert, Badge, Box, Grid, Stack, Typography} from '@mui/material';
+import { Alert, Badge, Box, Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	brazeSubscribeEventName,
 	brazeTemplateCode,
 	brazeUnsubscribeEventName,
+	composerCampaignTagId,
 	embedIframeCode,
 	getPropertyDescription,
 } from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { DetailAccordian } from './DetailAccordian';
-import { GeneratedCodeDataPoint } from "./GeneratedCodeDataPoint";
+import { GeneratedCodeDataPoint } from './GeneratedCodeDataPoint';
 import { GeneratedDataPoint } from './GeneratedDataPoint';
 import { higherLevelDataPoint } from './higher-level-data-point';
 import { Illustration } from './Illustration';
@@ -43,13 +44,16 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				columnSpacing={2}
 				justifyContent={'space-between'}
 			>
-				{status === 'live' && restricted &&
-					<Grid item paddingBottom={"16px"} flexGrow={1}>
-						<Alert severity="error">The Newsletter is set to live but with a restricted status. This will prevent the newsletter from appearing in MMA and in-article promotions for it will not be rendered </Alert>
+				{status === 'live' && restricted && (
+					<Grid item paddingBottom={'16px'} flexGrow={1}>
+						<Alert severity="error">
+							The Newsletter is set to live but with a restricted status. This
+							will prevent the newsletter from appearing in MMA and in-article
+							promotions for it will not be rendered{' '}
+						</Alert>
 					</Grid>
-				}
+				)}
 				<Grid item>
-
 					<Badge badgeContent={status} color="secondary">
 						<Typography variant="h2">{name}</Typography>
 					</Badge>
@@ -107,8 +111,15 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 
 			<DetailAccordian title="Tags">
 				<DataPoint property="seriesTag" />
-				<DataPoint property="composerTag" />
+				<GeneratedDataPoint
+					newsletter={newsletter}
+					valueGenerator={composerCampaignTagId}
+				/>
 				<DataPoint property="composerCampaignTag" />
+				<DataPoint
+					property="composerTag"
+					tooltip="The list of tags that, when added in Composer, should trigger the suggestion to include the Composer campaign tag"
+				/>
 			</DetailAccordian>
 
 			<DetailAccordian title="Links" defaultExpanded>
