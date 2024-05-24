@@ -28,6 +28,7 @@ export const renderingOptionsSchema = z.object({
 	displayStandfirst: z.boolean().describe('Display standfirst?'),
 	contactEmail: z.string().email().optional().describe('Contact email'),
 	displayImageCaptions: z.boolean().describe('Display image captions?'),
+	includeBreakingNews: z.boolean().optional().describe('Include breaking news sections?'),
 	darkHeadlineBackground: z
 		.boolean()
 		.optional()
