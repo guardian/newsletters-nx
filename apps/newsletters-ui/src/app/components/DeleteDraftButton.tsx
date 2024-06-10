@@ -79,7 +79,7 @@ export const DeleteDraftButton = ({
 					>
 						CANCEL
 					</Button>
-					<Button color="error" onClick={void sendDeleteRequest}>
+					<Button color="error" onClick={() => void sendDeleteRequest()}>
 						CONFIRM DELETE
 					</Button>
 				</DialogActions>

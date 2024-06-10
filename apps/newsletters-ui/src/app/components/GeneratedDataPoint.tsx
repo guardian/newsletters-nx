@@ -67,7 +67,7 @@ export const GeneratedDataPoint = ({
 								/>
 							</Box>
 							<Button
-								onClick={void copyToClipBoard}
+								onClick={() => void copyToClipBoard()}
 								startIcon={<CopyAllIcon />}
 							>
 								copy

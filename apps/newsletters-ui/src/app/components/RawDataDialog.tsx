@@ -78,7 +78,7 @@ export const RawDataDialog = ({
 					</Table>
 				</TableContainer>
 				<DialogActions>
-					<Button onClick={void copyJson}>copy json</Button>
+					<Button onClick={() => void copyJson()}>copy json</Button>
 					{editHref && permissions?.useJsonEditor && (
 						<NavigateButton href={editHref}>edit json</NavigateButton>
 					)}

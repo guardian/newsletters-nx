@@ -1,7 +1,16 @@
-import {Alert, Box, Button, ButtonGroup, Container, Grid, Stack, TextField,} from '@mui/material';
-import {useEffect, useState} from 'react';
-import type {z, ZodIssue, ZodObject, ZodRawShape} from 'zod';
-import {ZodIssuesReport} from './ZodIssuesReport';
+import {
+	Alert,
+	Box,
+	Button,
+	ButtonGroup,
+	Container,
+	Grid,
+	Stack,
+	TextField,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import type { z, ZodIssue, ZodObject, ZodRawShape } from 'zod';
+import { ZodIssuesReport } from './ZodIssuesReport';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -208,7 +217,7 @@ export const JsonEditor = <T extends ZodRawShape>({
 			<Container maxWidth="md" sx={{ marginTop: 3 }}>
 				<Button
 					variant="contained"
-					onClick={void handleSubmit}
+					onClick={() => void handleSubmit()}
 					fullWidth
 					size="large"
 				>

@@ -150,7 +150,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 			<Box marginBottom={2}>
 				<Button
 					variant="contained"
-					onClick={void handleSubmit}
+					onClick={() => void handleSubmit()}
 					disabled={isDisabled}
 				>
 					{submitButtonText}

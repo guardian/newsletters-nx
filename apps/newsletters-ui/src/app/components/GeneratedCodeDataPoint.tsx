@@ -128,7 +128,10 @@ export const GeneratedCodeDataPoint = ({
 								<div dangerouslySetInnerHTML={{ __html: code.value }} />
 							</Box>
 							{includeCopyButton && (
-								<Button onClick={void copyToClipBoard} startIcon={<CopyAllIcon />}>
+								<Button
+									onClick={() => void copyToClipBoard()}
+									startIcon={<CopyAllIcon />}
+								>
 									copy
 								</Button>
 							)}
