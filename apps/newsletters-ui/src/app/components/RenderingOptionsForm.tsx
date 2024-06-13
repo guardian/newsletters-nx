@@ -57,7 +57,6 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 		'pushing-buttons',
 		'morning-briefing',
 		'green-light',
-		'the-fiver',
 		'afternoon-update',
 	];
 	const { identityName } = originalItem;
