@@ -54,7 +54,6 @@ const sendOutEmailsAndUpdateStatus = async (
 		);
 
 	const [
-		launchEmailResult,
 		brazeRequestEmailResult,
 		tagAndSignUpPageCreationEmailResult,
 	] = await Promise.all([
@@ -64,7 +63,6 @@ const sendOutEmailsAndUpdateStatus = async (
 	]);
 
 	return launchService.updateCreationStatus(newsletter, {
-		ophanCampaignCreationStatus: outputToStatus(launchEmailResult),
 		brazeCampaignCreationStatus: outputToStatus(brazeRequestEmailResult),
 		tagCreationStatus: outputToStatus(tagAndSignUpPageCreationEmailResult),
 		signupPageCreationStatus: outputToStatus(

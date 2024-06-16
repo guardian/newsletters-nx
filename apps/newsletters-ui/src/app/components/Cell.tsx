@@ -29,15 +29,12 @@ export const formatStatusCell = ({
 }: Cell<string>) => {
 	const {
 		brazeCampaignCreationStatus,
-		ophanCampaignCreationStatus,
 		signupPageCreationStatus,
 		tagCreationStatus,
 	} = original;
 
 	const statuses = `Braze status: ${formatStatus(
 		brazeCampaignCreationStatus,
-	)}, Ophan status: ${formatStatus(
-		ophanCampaignCreationStatus,
 	)}, Signup page status: ${formatStatus(
 		signupPageCreationStatus,
 	)}, Tag status: ${formatStatus(tagCreationStatus)}`;

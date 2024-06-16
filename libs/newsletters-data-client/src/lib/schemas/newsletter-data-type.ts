@@ -163,9 +163,11 @@ export const newsletterDataSchema = z.object({
 	brazeCampaignCreationStatus: workflowStatusEnumSchema.describe(
 		'Braze campaign creation status',
 	),
-	ophanCampaignCreationStatus: workflowStatusEnumSchema.describe(
-		'Ophan campaign creation status',
-	),
+	ophanCampaignCreationStatus: workflowStatusEnumSchema
+		.optional()
+		.describe(
+			'Ophan campaign creation status',
+		),
 	signupPageCreationStatus: workflowStatusEnumSchema.describe(
 		'Sign up creation status',
 	),

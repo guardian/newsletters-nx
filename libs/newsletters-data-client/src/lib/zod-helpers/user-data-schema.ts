@@ -5,7 +5,7 @@ import type { UserPermissions } from '../user-profile';
 export const getUserEditSchema = (
 	permissions: UserPermissions,
 ): ZodObject<ZodRawShape> => {
-	const { editBraze, editOphan, editTags, editSignUpPage, editNewsletters } =
+	const { editBraze, editTags, editSignUpPage, editNewsletters } =
 		permissions;
 	if (editNewsletters) {
 		return newsletterDataSchema.pick({
@@ -20,7 +20,6 @@ export const getUserEditSchema = (
 			seriesTag: true,
 			composerTag: true,
 			composerCampaignTag: true,
-			ophanCampaignCreationStatus: true,
 			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,
@@ -38,11 +37,6 @@ export const getUserEditSchema = (
 			brazeNewsletterName: true,
 			brazeSubscribeAttributeNameAlternate: true,
 			brazeCampaignCreationStatus: true,
-		});
-	}
-	if (editOphan) {
-		return newsletterDataSchema.pick({
-			ophanCampaignCreationStatus: true,
 		});
 	}
 	if (editTags && editSignUpPage) {

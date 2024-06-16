@@ -17,7 +17,6 @@ import type { AsyncExecution } from '@newsletters-nx/state-machine';
 
 const defaultDraftNewsletterValues: DraftNewsletterData = {
 	brazeCampaignCreationStatus: 'NOT_REQUESTED',
-	ophanCampaignCreationStatus: 'NOT_REQUESTED',
 	tagCreationStatus: 'NOT_REQUESTED',
 	signupPageCreationStatus: 'NOT_REQUESTED',
 } as const;
@@ -48,9 +47,8 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 	if (!parseResult.success) {
 		return {
 			isFailure: true,
-			message: `Form data is invalid for schema: ${
-				schema.description ?? '[no description]'
-			}`,
+			message: `Form data is invalid for schema: ${schema.description ?? '[no description]'
+				}`,
 			details: { zodIssues: parseResult.error.issues },
 		};
 	}
