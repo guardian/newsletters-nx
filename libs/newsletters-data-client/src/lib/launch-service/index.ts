@@ -79,7 +79,6 @@ export class LaunchService {
 		creationStatuses: Pick<
 			NewsletterData,
 			| 'brazeCampaignCreationStatus'
-			| 'ophanCampaignCreationStatus'
 			| 'signupPageCreationStatus'
 			| 'tagCreationStatus'
 		>,
