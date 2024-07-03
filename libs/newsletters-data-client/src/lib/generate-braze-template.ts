@@ -3,10 +3,9 @@ import type { NewsletterData } from './schemas/newsletter-data-type';
 export type DrrSlotKey = 'AUS' | 'Culture' | 'Sport' | 'US' | 'Features' | 'Global';
 
 const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
-		header: `Logic_Header_${slotKey}`,
-		footer: `Logic_Footer_${slotKey}`,
-		middle: `Logic_Middle_${slotKey}`,
-		lifecycle: `Logic_Lifecycle_${slotKey}`
+	header: `Logic_Header_${slotKey}`,
+	footer: `Logic_Footer_${slotKey}`,
+	middle: `Logic_Middle_${slotKey}`,
 });
 
 const drrSlotKeyMappings = {
@@ -15,7 +14,7 @@ const drrSlotKeyMappings = {
 	'culture': 'Culture',
 }
 const getMerchandisingContent = (newsletterData: NewsletterData, override?: string) => {
-	const { regionFocus, theme} = newsletterData;
+	const { regionFocus, theme } = newsletterData;
 
 	if (override) {
 		return getDrrSlotSet(override as DrrSlotKey)
@@ -33,14 +32,14 @@ const getMerchandisingContent = (newsletterData: NewsletterData, override?: stri
 }
 
 export const generateBrazeTemplateString = (newsletterData: NewsletterData, override?: string): string => {
-	const {identityName, campaignName, campaignCode, seriesTag, category} = newsletterData;
+	const { identityName, campaignName, campaignCode, seriesTag, category } = newsletterData;
 	const contentBlocks = category === 'article-based' ? 'Editorial_FirstEditionContent' : 'Editorial_Content'
 	const emailEndpoint = seriesTag && ['article-based', 'article-based-legacy'].includes(category) ? `${seriesTag}/latest.json` : 'EMAIL ENDPOINT IS NOT SET';
 	const merchandisingContent = getMerchandisingContent(newsletterData, override);
 
 	if (!merchandisingContent) return "Could not determine merchandising content. Please select a DRR slot set";
 
-	const {header, footer, middle, lifecycle} = merchandisingContent;
+	const { header, footer, middle } = merchandisingContent;
 	return `{% comment %} Required Campaign-level variables {% endcomment %}
 {% assign identity_newsletter_id = "${identityName}" %}
 {% assign email_endpoint = "${emailEndpoint}" %}
@@ -48,7 +47,6 @@ export const generateBrazeTemplateString = (newsletterData: NewsletterData, over
 {% assign CMP = "${campaignCode ?? 'CAMPAIGN CODE IS NOT SET'}" %}
 {% capture email_content %}{{content_blocks.\${${contentBlocks}}}}{% endcapture %}
 {% capture merchandising_content_header %}{{content_blocks.\${${header}}}}{% endcapture %}
-{% capture merchandising_content_lifecycle %}{{content_blocks.\${${lifecycle}}}}{% endcapture %}
 {% capture merchandising_content_middle %}{{content_blocks.\${${middle}}}}{% endcapture %}
 {% capture merchandising_content_footer %}{{content_blocks.\${${footer}}}}{% endcapture %}
 {% capture merchandising_content_newsletter %}{% endcapture %}
