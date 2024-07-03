@@ -1,6 +1,6 @@
 import type { NewsletterData } from './schemas/newsletter-data-type';
 
-export type DrrSlotKey = 'AUS' | 'Culture' | 'Sport' | 'US' | 'Features' | 'Global';
+export type DrrSlotKey = 'AUS' | 'US' | 'Newsletters';
 
 const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 	header: `Logic_Header_${slotKey}`,
@@ -10,8 +10,9 @@ const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 
 const drrSlotKeyMappings = {
 	'AU': 'AUS',
-	'sport': 'Sport',
-	'culture': 'Culture',
+	'sport': 'Newsletters',
+	'culture': 'Newsletters',
+	'features': 'Newsletters',
 }
 const getMerchandisingContent = (newsletterData: NewsletterData, override?: string) => {
 	const { regionFocus, theme } = newsletterData;
@@ -24,7 +25,7 @@ const getMerchandisingContent = (newsletterData: NewsletterData, override?: stri
 		return getDrrSlotSet((drrSlotKeyMappings[regionFocus as keyof typeof drrSlotKeyMappings] || regionFocus) as DrrSlotKey);
 	}
 
-	if (['culture', 'sport'].includes(theme)) {
+	if (['culture', 'sport', 'features'].includes(theme)) {
 		return getDrrSlotSet((drrSlotKeyMappings[theme as keyof typeof drrSlotKeyMappings] || theme) as DrrSlotKey);
 	}
 
