@@ -8,28 +8,21 @@ const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 	middle: `Logic_Middle_${slotKey}`,
 });
 
-const drrSlotKeyMappings = {
-	'AU': 'AUS',
-	'sport': 'Newsletters',
-	'culture': 'Newsletters',
-	'features': 'Newsletters',
+const drrSlotKeyMapping = {
+	'AU': 'AUS'
 }
 const getMerchandisingContent = (newsletterData: NewsletterData, override?: string) => {
-	const { regionFocus, theme } = newsletterData;
+	const { regionFocus} = newsletterData;
 
 	if (override) {
 		return getDrrSlotSet(override as DrrSlotKey)
 	}
 
 	if (regionFocus && ['US', 'AU'].includes(regionFocus)) {
-		return getDrrSlotSet((drrSlotKeyMappings[regionFocus as keyof typeof drrSlotKeyMappings] || regionFocus) as DrrSlotKey);
+		return getDrrSlotSet((drrSlotKeyMapping[regionFocus as keyof typeof drrSlotKeyMapping] || regionFocus) as DrrSlotKey);
 	}
 
-	if (['culture', 'sport', 'features'].includes(theme)) {
-		return getDrrSlotSet((drrSlotKeyMappings[theme as keyof typeof drrSlotKeyMappings] || theme) as DrrSlotKey);
-	}
-
-	return undefined;
+	return getDrrSlotSet(('Newsletters') as DrrSlotKey);
 }
 
 export const generateBrazeTemplateString = (newsletterData: NewsletterData, override?: string): string => {
@@ -37,8 +30,6 @@ export const generateBrazeTemplateString = (newsletterData: NewsletterData, over
 	const contentBlocks = category === 'article-based' ? 'Editorial_FirstEditionContent' : 'Editorial_Content'
 	const emailEndpoint = seriesTag && ['article-based', 'article-based-legacy'].includes(category) ? `${seriesTag}/latest.json` : 'EMAIL ENDPOINT IS NOT SET';
 	const merchandisingContent = getMerchandisingContent(newsletterData, override);
-
-	if (!merchandisingContent) return "Could not determine merchandising content. Please select a DRR slot set";
 
 	const { header, footer, middle } = merchandisingContent;
 	return `{% comment %} Required Campaign-level variables {% endcomment %}
