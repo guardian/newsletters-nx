@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const editionIdSchema = z.enum(['UK', 'US', 'AU', 'INT', 'EUR']);
+export const editionIdSchema = z.enum(['UK', 'US', 'AU', 'INT', 'EUR']);
 
 export const editionIds = editionIdSchema.options;
 export type EditionId = z.infer<typeof editionIdSchema>;

@@ -7,6 +7,7 @@ import {
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
+import { registerReadLayoutRoutes } from './app/routes/layouts';
 import {
 	registerReadNewsletterRoutes,
 	registerReadWriteNewsletterRoutes,
@@ -31,6 +32,7 @@ if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(app);
 	registerDraftsRoutes(app);
 	registerRenderingTemplatesRoutes(app);
+	registerReadLayoutRoutes(app);
 }
 
 const start = async () => {

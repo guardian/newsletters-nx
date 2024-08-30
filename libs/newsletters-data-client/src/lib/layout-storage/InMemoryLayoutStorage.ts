@@ -39,7 +39,7 @@ export class InMemoryLayoutStorage implements LayoutStorage {
 		this.data[edition] = parseResult.data;
 		return Promise.resolve({
 			ok: true,
-			data: structuredClone(this.data[edition]),
+			data: structuredClone(parseResult.data),
 		});
 	}
 	read(
