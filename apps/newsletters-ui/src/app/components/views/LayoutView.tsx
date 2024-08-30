@@ -6,6 +6,7 @@ import {
 	type NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { ContentWrapper } from '../../ContentWrapper';
+import { LayoutDisplay } from '../LayoutDisplay';
 
 export const LayoutView = () => {
 	const data = useLoaderData() as
@@ -34,9 +35,7 @@ export const LayoutView = () => {
 	return (
 		<ContentWrapper>
 			<Typography variant="h2">Layout for {editionId}</Typography>
-			<Typography>{newsletters.length} newsletters</Typography>
-			<Typography>Please find below</Typography>
-			<pre>{JSON.stringify(layout, undefined, 2)}</pre>
+			<LayoutDisplay newsletters={newsletters} layout={layout} />
 		</ContentWrapper>
 	);
 };

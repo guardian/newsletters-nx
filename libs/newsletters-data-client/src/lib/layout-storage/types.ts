@@ -23,8 +23,9 @@ export const TEST_GROUPS: EditionsLayouts = {
 			title: 'Get started',
 			newsletters: [
 				'morning-briefing', // First Edition
+				'bmx-tesla',
 				'the-stakes-us-election-edition',
-				'swift-notes',
+				'electric-bicycle',
 				'saturday-edition',
 				'word-of-mouth', // Feast
 				'the-guide-staying-in',
