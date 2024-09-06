@@ -12,11 +12,14 @@ import { addGuardianFonts } from './fonts';
 
 addGuardianFonts(document);
 
+const SHOW_LAYOUT_ROUTE = true as boolean;
+const maybeLayoutRoute = SHOW_LAYOUT_ROUTE ? [layoutsRoute] : [];
+
 const router = createBrowserRouter([
 	homeRoute,
 	draftRoute,
 	launchedRoute,
-	layoutsRoute,
+	...maybeLayoutRoute,
 ]);
 
 const root = ReactDOM.createRoot(
