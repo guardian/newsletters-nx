@@ -3,7 +3,8 @@ import {
 	isServingReadWriteEndpoints,
 	isServingUI,
 	isUndefinedAndNotProduction,
-	isUsingInMemoryStorage,
+	isUsingInMemoryLayoutStorage,
+	isUsingInMemoryNewsletterStorage,
 } from './apiDeploymentSettings';
 
 const ORIGINAL_ENV = process.env;
@@ -148,20 +149,38 @@ describe('isServingReadWriteEndpoints', () => {
 	});
 });
 
-describe('isUsingInMemoryStorage', () => {
+describe('isUsingInMemoryNewsletterStorage', () => {
 	it('returns false where USE_IN_MEMORY_STORAGE is not set', () => {
-		expect(isUsingInMemoryStorage()).toBe(false);
+		expect(isUsingInMemoryNewsletterStorage()).toBe(false);
 	});
 	it('returns false where USE_IN_MEMORY_STORAGE is false', () => {
 		process.env.USE_IN_MEMORY_STORAGE = 'false';
-		expect(isUsingInMemoryStorage()).toBe(false);
+		expect(isUsingInMemoryNewsletterStorage()).toBe(false);
 	});
 	it('returns true where USE_IN_MEMORY_STORAGE is true', () => {
 		process.env.USE_IN_MEMORY_STORAGE = 'true';
-		expect(isUsingInMemoryStorage()).toBe(true);
+		expect(isUsingInMemoryNewsletterStorage()).toBe(true);
 	});
 	it('returns false if USE_IN_MEMORY_STORAGE is something other than true or false', () => {
 		process.env.USE_IN_MEMORY_STORAGE = 'foo';
-		expect(isUsingInMemoryStorage()).toBe(false);
+		expect(isUsingInMemoryNewsletterStorage()).toBe(false);
+	});
+});
+
+describe(isUsingInMemoryLayoutStorage.name, () => {
+	it('returns false where USE_IN_MEMORY_LAYOUT_STORAGE is not set', () => {
+		expect(isUsingInMemoryLayoutStorage()).toBe(false);
+	});
+	it('returns false where USE_IN_MEMORY_LAYOUT_STORAGE is false', () => {
+		process.env.USE_IN_MEMORY_LAYOUT_STORAGE = 'false';
+		expect(isUsingInMemoryLayoutStorage()).toBe(false);
+	});
+	it('returns true where USE_IN_MEMORY_LAYOUT_STORAGE is true', () => {
+		process.env.USE_IN_MEMORY_LAYOUT_STORAGE = 'true';
+		expect(isUsingInMemoryLayoutStorage()).toBe(true);
+	});
+	it('returns false if USE_IN_MEMORY_LAYOUT_STORAGE is something other than true or false', () => {
+		process.env.USE_IN_MEMORY_LAYOUT_STORAGE = 'foo';
+		expect(isUsingInMemoryLayoutStorage()).toBe(false);
 	});
 });
