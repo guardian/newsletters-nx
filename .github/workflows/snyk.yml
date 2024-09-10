@@ -1,16 +1,14 @@
 name: Snyk
 on:
-  pull_request:
+  push:
     branches:
       - main
   workflow_dispatch:
 jobs:
   security:
     with:
-      ORG: guardian-newsletters-b16
+      ORG: guardian
       SKIP_SBT: true # SBT is not used in this project
-      SKIP_PYTHON: true # Python is not used in this project
-      SKIP_GO: true # GO is not used in this project
       EXCLUDE: project.json
     uses: guardian/.github/.github/workflows/sbt-node-snyk.yml@main
     secrets:
