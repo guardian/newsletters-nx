@@ -7,7 +7,10 @@ import {
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
-import { registerReadLayoutRoutes } from './app/routes/layouts';
+import {
+	registerReadLayoutRoutes,
+	registerWriteLayoutRoutes,
+} from './app/routes/layouts';
 import {
 	registerReadNewsletterRoutes,
 	registerReadWriteNewsletterRoutes,
@@ -27,6 +30,7 @@ if (isServingReadWriteEndpoints()) {
 	registerUserRoute(app);
 	registerReadWriteNewsletterRoutes(app);
 	registerNotificationRoutes(app);
+	registerWriteLayoutRoutes(app);
 }
 if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(app);
