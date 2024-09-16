@@ -1,16 +1,29 @@
 import { Alert, Typography } from '@mui/material';
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import type {
+	EditionId,
 	EditionsLayouts,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { editionIds } from '@newsletters-nx/newsletters-data-client';
+import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { ContentWrapper } from '../../ContentWrapper';
 
 export const LayoutMapView = () => {
 	const data = useLoaderData() as {
 		editionsLayouts: EditionsLayouts;
 		newsletters: NewsletterData[];
+	};
+
+	const navigate = useNavigate();
+
+	const handleCreate = async (editionId: EditionId) => {
+		const result = await fetchPostApiData(`/api/layouts/${editionId}`, []);
+		if (result) {
+			navigate(`/layouts/${editionId.toLowerCase()}`);
+		} else {
+			alert('failed to create layout');
+		}
 	};
 
 	return (
@@ -39,16 +52,25 @@ export const LayoutMapView = () => {
 						{newsletterCount !== undefined && (
 							<Alert>{newsletterCount} newsletters in layout</Alert>
 						)}
-						{invalidNewsletterCount && (
+						{!!invalidNewsletterCount && (
 							<Alert severity="warning">
 								{invalidNewsletterCount} newsletters named in the layout do not
 								exist
 							</Alert>
 						)}
 						{!layout && (
-							<Alert severity="warning">
-								no layout defined for {editionId}
-							</Alert>
+							<>
+								<Alert severity="warning">
+									no layout defined for {editionId}
+								</Alert>
+								<button
+									onClick={() => {
+										void handleCreate(editionId);
+									}}
+								>
+									create?
+								</button>
+							</>
 						)}
 					</section>
 				);
