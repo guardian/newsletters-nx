@@ -58,7 +58,7 @@ const LayoutOverview = ({
 				<Box display={'flex'} alignItems={'flex-end'} gap={4}>
 					{title}
 
-					{permissions?.useJsonEditor && (
+					{permissions?.editLayouts && (
 						<Button
 							onClick={() => {
 								void handleCreate(editionId);

@@ -3,7 +3,9 @@ import {
 	editionIdSchema,
 	layoutSchema,
 } from '@newsletters-nx/newsletters-data-client';
+import { permissionService } from '../../services/permissions';
 import { layoutStore } from '../../services/storage';
+import { getUserProfile } from '../get-user-profile';
 import {
 	makeErrorResponse,
 	makeSuccessResponse,
@@ -52,7 +54,14 @@ export function registerWriteLayoutRoutes(app: FastifyInstance) {
 	}>('/api/layouts/:editionId', async (req, res) => {
 		const { editionId } = req.params;
 		const layout: unknown = req.body;
-		console.log(editionId, layout);
+		const user = getUserProfile(req);
+		const permissions = await permissionService.get(user.profile);
+
+		if (!permissions.editLayouts) {
+			return res
+				.status(403)
+				.send(makeErrorResponse(`You don't have permission to edit layouts.`));
+		}
 
 		const idParseResult = editionIdSchema.safeParse(editionId.toUpperCase());
 		if (!idParseResult.success) {

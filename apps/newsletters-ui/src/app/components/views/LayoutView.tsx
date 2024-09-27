@@ -58,7 +58,7 @@ export const LayoutView = () => {
 		if (result) {
 			setLocalLayout(updatedLayout);
 		} else {
-			alert('failed to create layout');
+			alert('failed to edit layout');
 		}
 	};
 
@@ -66,7 +66,7 @@ export const LayoutView = () => {
 		<ContentWrapper>
 			<Typography variant="h2">Layout for {editionId}</Typography>
 			<LayoutDisplay newsletters={newsletters} layout={localLayout ?? []} />
-			{permissions?.useJsonEditor && (
+			{permissions?.editLayouts && (
 				<JsonEditor
 					schema={layoutSchema}
 					originalData={originalLayout}
