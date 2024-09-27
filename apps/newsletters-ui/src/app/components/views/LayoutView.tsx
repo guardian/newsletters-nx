@@ -39,14 +39,11 @@ export const LayoutView = () => {
 	const { layout: originalLayout, newsletters } = data;
 
 	const handleUpdate = async (updatedLayout: Layout) => {
-		console.log(updatedLayout);
-
 		const result = await fetchPostApiData(
 			`/api/layouts/${editionId}`,
 			updatedLayout,
 		);
 		if (result) {
-			console.log(result);
 			setLocalLayout(updatedLayout);
 		} else {
 			alert('failed to create layout');

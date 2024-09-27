@@ -1,15 +1,11 @@
-import {
-	StorageRequestFailureReason,
-	type SuccessfulStorageResponse,
-	type UnsuccessfulStorageResponse,
+import type {
+	SuccessfulStorageResponse,
+	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
+import { StorageRequestFailureReason } from '../storage-response-types';
 import type { LayoutStorage } from './LayoutStorage';
-import {
-	layoutSchema,
-	type EditionId,
-	type EditionsLayouts,
-	type Layout,
-} from './types';
+import type { EditionId, EditionsLayouts, Layout } from './types';
+import { layoutSchema } from './types';
 
 export class InMemoryLayoutStorage implements LayoutStorage {
 	private data: EditionsLayouts;
