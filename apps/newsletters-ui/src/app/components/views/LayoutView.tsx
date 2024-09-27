@@ -10,7 +10,7 @@ import { useLoaderData, useLocation } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { ContentWrapper } from '../../ContentWrapper';
 import { JsonEditor } from '../JsonEditor';
-import { LayoutDisplay } from '../LayoutDisplay';
+import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
 
 export const LayoutView = () => {
 	const data = useLoaderData() as
