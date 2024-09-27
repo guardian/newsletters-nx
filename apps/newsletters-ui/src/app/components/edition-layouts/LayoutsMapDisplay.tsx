@@ -25,7 +25,7 @@ const LayoutOverview = ({
 	layout?: Layout;
 }) => {
 	const navigate = useNavigate();
-	const { useJsonEditor: canUseJsonEditor = false } = usePermissions() ?? {};
+	const permissions = usePermissions();
 
 	const newsletterCount = layout?.flatMap(
 		(section) => section.newsletters,
@@ -58,7 +58,7 @@ const LayoutOverview = ({
 				<Box display={'flex'} alignItems={'flex-end'} gap={4}>
 					{title}
 
-					{canUseJsonEditor && (
+					{permissions?.useJsonEditor && (
 						<Button
 							onClick={() => {
 								void handleCreate(editionId);

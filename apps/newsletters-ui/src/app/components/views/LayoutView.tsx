@@ -11,6 +11,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { ContentWrapper } from '../../ContentWrapper';
+import { usePermissions } from '../../hooks/user-hooks';
 import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
 import { JsonEditor } from '../JsonEditor';
 
@@ -20,8 +21,9 @@ export const LayoutView = () => {
 		| undefined;
 
 	const [localLayout, setLocalLayout] = useState(data?.layout);
-
 	const location = useLocation();
+	const permissions = usePermissions();
+
 	const editionId = location.pathname.split('/').pop()?.toUpperCase();
 	const editionIdIsValid =
 		(editionId && (editionIds as string[]).includes(editionId)) || false;
@@ -64,14 +66,15 @@ export const LayoutView = () => {
 		<ContentWrapper>
 			<Typography variant="h2">Layout for {editionId}</Typography>
 			<LayoutDisplay newsletters={newsletters} layout={localLayout ?? []} />
-
-			<JsonEditor
-				schema={layoutSchema}
-				originalData={originalLayout}
-				submit={(updatedLayout) => {
-					void handleUpdate(updatedLayout);
-				}}
-			/>
+			{permissions?.useJsonEditor && (
+				<JsonEditor
+					schema={layoutSchema}
+					originalData={originalLayout}
+					submit={(updatedLayout) => {
+						void handleUpdate(updatedLayout);
+					}}
+				/>
+			)}
 		</ContentWrapper>
 	);
 };
