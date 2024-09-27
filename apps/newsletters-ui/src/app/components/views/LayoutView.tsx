@@ -1,16 +1,18 @@
 import { Typography } from '@mui/material';
+import { useState } from 'react';
+import { useLoaderData, useLocation } from 'react-router-dom';
+import type {
+	Layout,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import {
 	editionIds,
 	layoutSchema,
-	type Layout,
-	type NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { useState } from 'react';
-import { useLoaderData, useLocation } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { ContentWrapper } from '../../ContentWrapper';
-import { JsonEditor } from '../JsonEditor';
 import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
+import { JsonEditor } from '../JsonEditor';
 
 export const LayoutView = () => {
 	const data = useLoaderData() as
@@ -22,7 +24,7 @@ export const LayoutView = () => {
 	const location = useLocation();
 	const editionId = location.pathname.split('/').pop()?.toUpperCase();
 	const editionIdIsValid =
-		editionId && (editionIds as string[]).includes(editionId);
+		(editionId && (editionIds as string[]).includes(editionId)) || false;
 
 	if (!data) {
 		return (
@@ -32,6 +34,14 @@ export const LayoutView = () => {
 				) : (
 					<Typography variant="h2">no such edition "{editionId}"</Typography>
 				)}
+			</ContentWrapper>
+		);
+	}
+
+	if (!editionId) {
+		return (
+			<ContentWrapper>
+				<Typography variant="h2">edition id not provided"</Typography>
 			</ContentWrapper>
 		);
 	}
