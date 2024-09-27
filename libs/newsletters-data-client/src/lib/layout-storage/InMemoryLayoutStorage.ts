@@ -6,7 +6,6 @@ import {
 import type { LayoutStorage } from './LayoutStorage';
 import {
 	layoutSchema,
-	TEST_GROUPS,
 	type EditionId,
 	type EditionsLayouts,
 	type Layout,
@@ -15,8 +14,8 @@ import {
 export class InMemoryLayoutStorage implements LayoutStorage {
 	private data: EditionsLayouts;
 
-	constructor() {
-		this.data = TEST_GROUPS;
+	constructor(data: EditionsLayouts) {
+		this.data = data;
 	}
 
 	create(

@@ -1,6 +1,7 @@
 import type { SESClient } from '@aws-sdk/client-ses';
 import type {
 	DraftStorage,
+	EditionsLayouts,
 	EmailEnvInfo,
 	LayoutStorage,
 	NewsletterData,
@@ -14,6 +15,7 @@ import {
 	isNewsletterData,
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client';
+import layoutsData from '../../../static/layouts.local.json';
 import newslettersData from '../../../static/newsletters.local.json';
 import { isUsingInMemoryNewsletterStorage } from '../../apiDeploymentSettings';
 import { makeEmailEnvInfo } from '../notifications/email-env';
@@ -39,7 +41,9 @@ const newsletterStore: NewsletterStorage = isUsingInMemoryNewslettersStore
 	  )
 	: getS3NewsletterStore();
 
-const layoutStore: LayoutStorage = new InMemoryLayoutStorage();
+const layoutStore: LayoutStorage = new InMemoryLayoutStorage(
+	layoutsData as unknown as EditionsLayouts,
+);
 
 const makelaunchServiceForUser = (userProfile: UserProfile) =>
 	new LaunchService(
