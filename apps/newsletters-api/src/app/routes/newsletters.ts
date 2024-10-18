@@ -24,7 +24,7 @@ import {
 export function registerReadNewsletterRoutes(app: FastifyInstance) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
-	app.get('/api/legacy/newsletters', {}, async (req, res) => {
+	app.get('/api/legacy/newsletters', async (req, res) => {
 		const storageResponse = await newsletterStore.list();
 		if (!storageResponse.ok) {
 			return res
@@ -50,7 +50,6 @@ export function registerReadNewsletterRoutes(app: FastifyInstance) {
 					.send(makeErrorResponse(storageResponse.message));
 			}
 			const { signImages } = req.query;
-
 			if (isDynamicImageSigningEnabled() && signImages) {
 				const newsletterDataWithSignedImages = await Promise.all(
 					storageResponse.data.map(signTemplateImages),
