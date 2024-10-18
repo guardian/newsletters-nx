@@ -55,13 +55,9 @@ export function registerReadNewsletterRoutes(app: FastifyInstance) {
 				const newsletterDataWithSignedImages = await Promise.all(
 					storageResponse.data.map(signTemplateImages),
 				);
-				return res
-					.headers({ 'Cache-Control': 'max-age=60' })
-					.send(makeSuccessResponse(newsletterDataWithSignedImages));
+				return makeSuccessResponse(newsletterDataWithSignedImages);
 			}
-			return res
-				.headers({ 'Cache-Control': 'max-age=60' })
-				.send(makeSuccessResponse(storageResponse.data));
+			return makeSuccessResponse(storageResponse.data);
 		},
 	);
 
