@@ -4,6 +4,7 @@ import {
 	isServingReadWriteEndpoints,
 	isServingUI,
 } from './apiDeploymentSettings';
+import { setHeaderHook } from './app/headers';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
@@ -32,6 +33,8 @@ if (isServingReadEndpoints()) {
 	registerDraftsRoutes(app);
 	registerRenderingTemplatesRoutes(app);
 }
+
+app.addHook('onSend', setHeaderHook);
 
 const start = async () => {
 	try {
