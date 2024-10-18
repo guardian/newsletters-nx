@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import { isServingUI } from '../apiDeploymentSettings';
 
 type TtlSettings = {
 	cacheMaxAge: number;
@@ -13,6 +14,11 @@ const newsletterTtl: TtlSettings = {
 export const getCacheControl = (
 	req: FastifyRequest,
 ): TtlSettings | undefined => {
+	// the API instance serving the UI must always provide fresh data
+	if (isServingUI()) {
+		return undefined;
+	}
+
 	if (req.routerPath.startsWith('/api/newsletters')) {
 		return newsletterTtl;
 	}
