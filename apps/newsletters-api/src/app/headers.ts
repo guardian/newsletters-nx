@@ -1,10 +1,23 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
-export const getCacheControl = (req: FastifyRequest) => {
+type TtlSettings = {
+	cacheMaxAge: number;
+	surrogateMaxAge: number;
+};
+
+const newsletterTtl: TtlSettings = {
+	cacheMaxAge: 60,
+	surrogateMaxAge: 360,
+};
+
+export const getCacheControl = (
+	req: FastifyRequest,
+): TtlSettings | undefined => {
 	if (req.routerPath.startsWith('/api/newsletters')) {
-		return {
-			age: '60',
-		};
+		return newsletterTtl;
+	}
+	if (req.routerPath.startsWith('/api/legacy')) {
+		return newsletterTtl;
 	}
 
 	return undefined;
@@ -19,5 +32,12 @@ export const setHeaderHook = async (
 		return;
 	}
 
-	void reply.header(`Cache-Control`, `max-age=${cacheControl.age}`);
+	// Fastly gives priority to the Surrogate-Control header to determine how often to
+	// refresh the data from the origin server
+	// https://docs.fastly.com/en/guides/caching-best-practices#understand-how-cache-control-headers-work
+	void reply.header(
+		`Surrogate-Control`,
+		`max-age=${cacheControl.surrogateMaxAge}`,
+	);
+	void reply.header(`Cache-Control`, `max-age=${cacheControl.cacheMaxAge}`);
 };
