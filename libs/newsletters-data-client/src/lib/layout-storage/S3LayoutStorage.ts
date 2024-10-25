@@ -34,46 +34,25 @@ export class S3LayoutStorage implements LayoutStorage {
 		layout: Layout,
 	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {
 		try {
-			const newIdentifier = `${edition}.json`;
-
-			try {
-				const layoutWithSameKeyExists = await this.objectExists(newIdentifier);
-				if (layoutWithSameKeyExists) {
-					return {
-						ok: false,
-						message: `Layout ${edition} already exists`,
-						reason: StorageRequestFailureReason.DataInStoreNotValid,
-					};
-				}
-			} catch (err) {
+			const layoutWithSameKeyExists = await this.objectExists(
+				this.editionIdToKey(edition),
+			);
+			if (layoutWithSameKeyExists) {
 				return {
 					ok: false,
-					message: `failed to check if layout for ${edition} exists`,
-					reason: StorageRequestFailureReason.S3Failure,
+					message: `Layout ${edition} already exists`,
+					reason: StorageRequestFailureReason.InvalidDataInput,
 				};
 			}
-
-			try {
-				await this.putObject(layout, newIdentifier);
-			} catch (err) {
-				return {
-					ok: false,
-					message: `failed create layout ${edition}.`,
-					reason: StorageRequestFailureReason.S3Failure,
-				};
-			}
-			return {
-				ok: true,
-				data: layout,
-			};
-		} catch (error) {
-			console.error(error);
+		} catch (err) {
 			return {
 				ok: false,
-				message: `failed to create newsletter ${edition}`,
+				message: `failed to check if layout for ${edition} exists`,
 				reason: StorageRequestFailureReason.S3Failure,
 			};
 		}
+
+		return this.update(edition, layout);
 	}
 
 	async read(
@@ -88,6 +67,7 @@ export class S3LayoutStorage implements LayoutStorage {
 				return {
 					ok: false,
 					message: `failed to read layout with name '${edition}'`,
+					reason: StorageRequestFailureReason.NotFound,
 				};
 			}
 
@@ -134,12 +114,34 @@ export class S3LayoutStorage implements LayoutStorage {
 			};
 		}
 	}
-	update(
+	async update(
 		edition: EditionId,
 		layout: Layout,
 	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {
-		console.log('update', edition, layout);
-		throw new Error('Method not implemented.');
+		const newIdentifier = this.editionIdToKey(edition);
+
+		try {
+			try {
+				await this.putObject(layout, newIdentifier);
+			} catch (err) {
+				return {
+					ok: false,
+					message: `failed update layout ${edition}.`,
+					reason: StorageRequestFailureReason.S3Failure,
+				};
+			}
+			return {
+				ok: true,
+				data: layout,
+			};
+		} catch (error) {
+			console.error(error);
+			return {
+				ok: false,
+				message: `failed to update newsletter ${edition}`,
+				reason: StorageRequestFailureReason.S3Failure,
+			};
+		}
 	}
 	delete(
 		edition: EditionId,
@@ -158,6 +160,9 @@ export class S3LayoutStorage implements LayoutStorage {
 		// format = 'layouts/UK.json'
 		const unparsedEditionId = key.split('/').pop()?.split('.').shift();
 		return editionIdSchema.safeParse(unparsedEditionId).data;
+	}
+	private editionIdToKey(edition: string) {
+		return `${this.OBJECT_PREFIX}${edition}.json`;
 	}
 
 	private fetchObject = fetchObject(this);

@@ -75,7 +75,9 @@ export function registerWriteLayoutRoutes(app: FastifyInstance) {
 			return res.status(400).send(makeErrorResponse(`invalid layout data`));
 		}
 
-		const storageResponse = await layoutStore.create(
+		// TO DO - need a separate route or param for 'create' requests
+		// that will fail if the layout exists already rather than replacing with blanks
+		const storageResponse = await layoutStore.update(
 			idParseResult.data,
 			layoutParseResult.data,
 		);
