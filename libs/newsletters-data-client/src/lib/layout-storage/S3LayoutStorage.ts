@@ -4,6 +4,7 @@ import {
 	getListOfObjectsKeys,
 	objectExists,
 	putObject,
+	deleteObject,
 } from '../generic-s3-functions';
 import type {
 	SuccessfulStorageResponse,
@@ -143,11 +144,33 @@ export class S3LayoutStorage implements LayoutStorage {
 			};
 		}
 	}
-	delete(
+	async delete(
 		edition: EditionId,
 	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {
-		console.log('delete', edition);
-		throw new Error('Method not implemented.');
+		const key = this.editionIdToKey(edition);
+
+		try {
+			const layoutToDelete = await this.fetchLayout(edition);
+			if (!layoutToDelete) {
+				return {
+					ok: false,
+					message: `no layout for ${edition} to delete`,
+					reason: StorageRequestFailureReason.NotFound,
+				};
+			}
+
+			await this.deleteObject(key);
+			return {
+				ok: true,
+				data: layoutToDelete,
+			};
+		} catch (err) {
+			return {
+				ok: false,
+				message: `failed to delete layout for ${edition}`,
+				reason: StorageRequestFailureReason.S3Failure,
+			};
+		}
 	}
 
 	private async fetchLayout(edition: EditionId): Promise<Layout | undefined> {
@@ -169,4 +192,5 @@ export class S3LayoutStorage implements LayoutStorage {
 	private putObject = putObject(this);
 	private objectExists = objectExists(this);
 	private getListOfObjectsKeys = getListOfObjectsKeys(this);
+	private deleteObject = deleteObject(this);
 }
