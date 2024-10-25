@@ -119,11 +119,11 @@ export class S3LayoutStorage implements LayoutStorage {
 		edition: EditionId,
 		layout: Layout,
 	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {
-		const newIdentifier = this.editionIdToKey(edition);
+		const filename = this.editionIdToFileName(edition);
 
 		try {
 			try {
-				await this.putObject(layout, newIdentifier);
+				await this.putObject(layout, filename);
 			} catch (err) {
 				return {
 					ok: false,
@@ -185,7 +185,10 @@ export class S3LayoutStorage implements LayoutStorage {
 		return editionIdSchema.safeParse(unparsedEditionId).data;
 	}
 	private editionIdToKey(edition: string) {
-		return `${this.OBJECT_PREFIX}${edition}.json`;
+		return `${this.OBJECT_PREFIX}${this.editionIdToFileName(edition)}`;
+	}
+	private editionIdToFileName(edition: string) {
+		return `${edition}.json`;
 	}
 
 	private fetchObject = fetchObject(this);
