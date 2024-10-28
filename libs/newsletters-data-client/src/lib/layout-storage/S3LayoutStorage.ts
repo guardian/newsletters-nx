@@ -1,10 +1,10 @@
 import type { S3Client } from '@aws-sdk/client-s3';
 import {
+	deleteObject,
 	fetchObject,
 	getListOfObjectsKeys,
 	objectExists,
 	putObject,
-	deleteObject,
 } from '../generic-s3-functions';
 import type {
 	SuccessfulStorageResponse,
@@ -13,12 +13,8 @@ import type {
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type { LayoutStorage } from './LayoutStorage';
 import { objectToLayout } from './objectToLayout';
-import {
-	editionIdSchema,
-	type EditionId,
-	type EditionsLayouts,
-	type Layout,
-} from './types';
+import type { EditionId, EditionsLayouts, Layout } from './types';
+import { editionIdSchema } from './types';
 
 export class S3LayoutStorage implements LayoutStorage {
 	readonly s3Client: S3Client;
