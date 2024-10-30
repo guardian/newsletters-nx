@@ -424,6 +424,12 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             "Value": "guardian/newsletters-nx",
           },
           {
+            "Key": "Name",
+            "Value": {
+              "Ref": "SsmParameterValueTESTnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+            },
+          },
+          {
             "Key": "Stack",
             "Value": "newsletters",
           },
