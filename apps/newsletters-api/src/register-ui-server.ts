@@ -27,4 +27,6 @@ export function registerUIServer(app: FastifyInstance) {
 	app.get('/launched', handleUiRequest);
 	app.get('/templates/*', handleUiRequest);
 	app.get('/templates', handleUiRequest);
+	app.get('/layouts/*', handleUiRequest);
+	app.get('/layouts', handleUiRequest);
 }
