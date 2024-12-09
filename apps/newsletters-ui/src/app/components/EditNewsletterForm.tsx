@@ -78,7 +78,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 					},
 				}}
 				explanations={{
-					illustrationCard: (
+					illustrationSquare: (
 						<Alert severity="info" sx={{ marginBottom: 1, maxWidth: 600 }}>
 							<Typography>
 								When used on the theguardian.com or other platforms, images are
