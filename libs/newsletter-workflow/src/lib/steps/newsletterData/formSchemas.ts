@@ -79,6 +79,7 @@ export const formSchemas = {
 			signUpEmbedDescription: true,
 			mailSuccessDescription: true,
 			illustrationCard: true,
+			illustrationSquare: true,
 		})
 		.describe('Add promotion copy and newsletters page image'),
 
