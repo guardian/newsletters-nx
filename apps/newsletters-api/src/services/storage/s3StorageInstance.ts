@@ -1,5 +1,6 @@
 import {
 	S3DraftStorage,
+	S3LayoutStorage,
 	S3NewsletterStorage,
 } from '@newsletters-nx/newsletters-data-client';
 import { getS3Client } from './s3-client-factory';
@@ -21,4 +22,8 @@ const getS3NewsletterStore = (): S3NewsletterStorage => {
 	return new S3NewsletterStorage(getS3BucketName(), getS3Client());
 };
 
-export { makeS3DraftStorageInstance, getS3NewsletterStore };
+const getS3LayoutStore = (): S3LayoutStorage => {
+	return new S3LayoutStorage(getS3BucketName(), getS3Client());
+};
+
+export { makeS3DraftStorageInstance, getS3NewsletterStore, getS3LayoutStore };

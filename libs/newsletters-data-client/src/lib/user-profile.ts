@@ -46,6 +46,7 @@ export type UserPermissions = {
 	editOphan: boolean;
 	editTags: boolean;
 	editSignUpPage: boolean;
+	editLayouts: boolean;
 };
 
 export const permissionsDataSchema = z.record(
@@ -75,6 +76,7 @@ export const levelToPermissions = (
 		].includes(accessLevel),
 		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
+		editLayouts: [UserAccessLevel.Developer].includes(accessLevel),
 		editBraze: [UserAccessLevel.BrazeEditor].includes(accessLevel),
 		editOphan: [UserAccessLevel.OphanEditor].includes(accessLevel),
 		editTags: [UserAccessLevel.CentralProduction].includes(accessLevel),
