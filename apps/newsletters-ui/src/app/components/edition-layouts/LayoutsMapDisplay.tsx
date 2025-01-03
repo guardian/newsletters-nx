@@ -30,7 +30,7 @@ const LayoutOverview = ({
 		(section) => section.newsletters,
 	).length;
 	const invalidNewsletterCount = layout?.groups
-		?.flatMap((section) => section.newsletters)
+		.flatMap((section) => section.newsletters)
 		.filter(
 			(newsletterId) =>
 				!newsletters.some(
