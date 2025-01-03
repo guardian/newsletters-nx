@@ -53,11 +53,8 @@ export const isServingReadEndpoints = () => {
 	return undefinedAndNotProduction || isApiRead || isApiReadWrite;
 };
 
-export const isUsingInMemoryNewsletterStorage = () =>
+export const isUsingInMemoryStorage = () =>
 	process.env.USE_IN_MEMORY_STORAGE === 'true';
-
-export const isUsingInMemoryLayoutStorage = () =>
-	process.env.USE_IN_MEMORY_LAYOUT_STORAGE === 'true';
 
 export const getTestJwtProfileDataIfUsing = () => {
 	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;

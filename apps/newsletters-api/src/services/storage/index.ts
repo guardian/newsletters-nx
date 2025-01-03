@@ -17,10 +17,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import layoutsData from '../../../static/layouts.local.json';
 import newslettersData from '../../../static/newsletters.local.json';
-import {
-	isUsingInMemoryLayoutStorage,
-	isUsingInMemoryNewsletterStorage,
-} from '../../apiDeploymentSettings';
+import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
 import { makeEmailEnvInfo } from '../notifications/email-env';
 import { makeSesClient } from '../notifications/email-service';
 import { makeInMemoryStorageInstance } from './inMemoryStorageInstance';
@@ -30,7 +27,7 @@ import {
 	makeS3DraftStorageInstance,
 } from './s3StorageInstance';
 
-const isUsingInMemoryNewslettersStore = isUsingInMemoryNewsletterStorage();
+const isUsingInMemoryNewslettersStore = isUsingInMemoryStorage();
 
 const draftStore: DraftStorage = isUsingInMemoryNewslettersStore
 	? makeInMemoryStorageInstance()
@@ -45,9 +42,7 @@ const newsletterStore: NewsletterStorage = isUsingInMemoryNewslettersStore
 	  )
 	: getS3NewsletterStore();
 
-const isUsingInMemoryLayoutStore = isUsingInMemoryLayoutStorage();
-
-const layoutStore: LayoutStorage = isUsingInMemoryLayoutStore
+const layoutStore: LayoutStorage = isUsingInMemoryNewslettersStore
 	? new InMemoryLayoutStorage(layoutsData as unknown as EditionsLayouts)
 	: getS3LayoutStore();
 
