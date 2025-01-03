@@ -8,7 +8,7 @@ import {
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
-import { type App, aws_ses, Duration, SecretValue } from 'aws-cdk-lib';
+import { type App, aws_ses, Duration, SecretValue, Tags } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import {
 	ApplicationListenerRule,
@@ -111,6 +111,8 @@ EOL`,
 			app: toolAppName,
 			versioned: true,
 		});
+
+		Tags.of(dataStorageBucket).add('Name', bucketName);
 
 		const sesVerifiedIdentity = new EmailIdentity(this, 'EmailIdentity', {
 			identity: aws_ses.Identity.domain(domainNameTool),
