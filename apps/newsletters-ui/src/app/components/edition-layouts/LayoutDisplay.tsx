@@ -13,7 +13,7 @@ interface Props {
 export const LayoutDisplay = ({ newsletters, layout }: Props) => {
 	return (
 		<Box component={'article'}>
-			{layout.map((section, index) => (
+			{layout.groups.map((section, index) => (
 				<Box key={index} component={'section'}>
 					<Typography variant="h3">{section.title}</Typography>
 					{section.subtitle && (

@@ -1,23 +1,25 @@
 {
-	"UK": [
-		{
-			"title": "Get started",
-			"newsletters": [
-				"bmx-tesla",
-				"roi-female",
-				"electric-bicycle",
-				"dram-security",
-				"does-not-exist"
-			]
-		},
-		{
-			"title": "In depth",
-			"newsletters": [
-				"muddle-teal",
-				"van-coordinator",
-				"does-not-exist-two",
-				"dram-security"
-			]
-		}
-	]
+	"UK": {
+		"groups": [
+			{
+				"title": "Get started",
+				"newsletters": [
+					"bmx-tesla",
+					"roi-female",
+					"electric-bicycle",
+					"dram-security",
+					"does-not-exist"
+				]
+			},
+			{
+				"title": "In depth",
+				"newsletters": [
+					"muddle-teal",
+					"van-coordinator",
+					"does-not-exist-two",
+					"dram-security"
+				]
+			}
+		]
+	}
 }

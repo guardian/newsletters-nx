@@ -6,7 +6,7 @@ import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { editionIds } from '@newsletters-nx/newsletters-data-client';
+import { editionIds, makeBlankLayout } from '@newsletters-nx/newsletters-data-client';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { usePermissions } from '../../hooks/user-hooks';
 
@@ -26,12 +26,11 @@ const LayoutOverview = ({
 }) => {
 	const navigate = useNavigate();
 	const permissions = usePermissions();
-
-	const newsletterCount = layout?.flatMap(
+	const newsletterCount = layout?.groups.flatMap(
 		(section) => section.newsletters,
 	).length;
-	const invalidNewsletterCount = layout
-		?.flatMap((section) => section.newsletters)
+	const invalidNewsletterCount = layout?.groups
+		.flatMap((section) => section.newsletters)
 		.filter(
 			(newsletterId) =>
 				!newsletters.some(
@@ -40,7 +39,7 @@ const LayoutOverview = ({
 		).length;
 
 	const handleCreate = async (editionId: EditionId) => {
-		const result = await fetchPostApiData(`/api/layouts/${editionId}`, []);
+		const result = await fetchPostApiData(`/api/layouts/${editionId}`, makeBlankLayout());
 		if (result) {
 			navigate(`/layouts/${editionId.toLowerCase()}`);
 		} else {
@@ -73,7 +72,7 @@ const LayoutOverview = ({
 
 			{!!newsletterCount && (
 				<Alert>
-					{newsletterCount} newsletters and {layout?.length ?? 0} groups in
+					{newsletterCount} newsletters and {layout?.groups.length ?? 0} groups in
 					layout
 				</Alert>
 			)}
