@@ -4,6 +4,7 @@ import { LayoutView } from '../components/views/LayoutView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { layoutLoader, mapLoader } from '../loaders/layouts';
+import { EditLayoutJsonView } from '../components/views/EditLayoutJsonView';
 
 export const layoutsRoute: RouteObject = {
 	path: '/layouts',
@@ -19,6 +20,11 @@ export const layoutsRoute: RouteObject = {
 		{
 			path: ':id',
 			element: <LayoutView />,
+			loader: layoutLoader,
+		},
+		{
+			path: 'edit-json/:id',
+			element: <EditLayoutJsonView />,
 			loader: layoutLoader,
 		},
 	],
