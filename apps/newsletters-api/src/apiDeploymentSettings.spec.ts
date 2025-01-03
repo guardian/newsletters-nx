@@ -165,4 +165,3 @@ describe('isUsingInMemoryStorage', () => {
 		expect(isUsingInMemoryStorage()).toBe(false);
 	});
 });
-

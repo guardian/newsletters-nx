@@ -27,22 +27,22 @@ import {
 	makeS3DraftStorageInstance,
 } from './s3StorageInstance';
 
-const isUsingInMemoryNewslettersStore = isUsingInMemoryStorage();
+const isUsingInMemoryStore = isUsingInMemoryStorage();
 
-const draftStore: DraftStorage = isUsingInMemoryNewslettersStore
+const draftStore: DraftStorage = isUsingInMemoryStore
 	? makeInMemoryStorageInstance()
 	: makeS3DraftStorageInstance();
 
 const validNewsletters = newslettersData.filter((item) =>
 	isNewsletterData(item),
 );
-const newsletterStore: NewsletterStorage = isUsingInMemoryNewslettersStore
+const newsletterStore: NewsletterStorage = isUsingInMemoryStore
 	? new InMemoryNewsletterStorage(
 			validNewsletters as unknown as NewsletterData[],
 	  )
 	: getS3NewsletterStore();
 
-const layoutStore: LayoutStorage = isUsingInMemoryNewslettersStore
+const layoutStore: LayoutStorage = isUsingInMemoryStore
 	? new InMemoryLayoutStorage(layoutsData as unknown as EditionsLayouts)
 	: getS3LayoutStore();
 
