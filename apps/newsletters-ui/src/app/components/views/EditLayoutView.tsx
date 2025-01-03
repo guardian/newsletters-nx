@@ -1,21 +1,22 @@
 import { Typography } from '@mui/material';
+import { useState } from 'react';
+import { useLoaderData, useLocation } from 'react-router-dom';
 import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import {
-	layoutSchema
+	editionIds,
+	layoutSchema,
 } from '@newsletters-nx/newsletters-data-client';
-import { useState } from 'react';
-import { useLoaderData, useLocation } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { ContentWrapper } from '../../ContentWrapper';
 import { usePermissions } from '../../hooks/user-hooks';
 import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
-import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 import { JsonEditor } from '../JsonEditor';
+import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 
-export const EditLayoutJsonView = () => {
+export const EditLayoutView = () => {
 	const data = useLoaderData() as
 		| { layout: Layout; newsletters: NewsletterData[] }
 		| undefined;
@@ -30,6 +31,8 @@ export const EditLayoutJsonView = () => {
 			<MissingLayoutContent editionId={editionId} />
 		);
 	}
+
+
 
 	const { layout: originalLayout, newsletters } = data;
 
@@ -47,7 +50,7 @@ export const EditLayoutJsonView = () => {
 
 	return (
 		<ContentWrapper>
-			<Typography variant="h2">Edit Layout JSON for {editionId}</Typography>
+			<Typography variant="h2">Edit Layout for {editionId}</Typography>
 			{permissions?.editLayouts && (
 				<JsonEditor
 					schema={layoutSchema}
