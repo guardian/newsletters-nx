@@ -65,7 +65,7 @@ export const LayoutView = () => {
 	return (
 		<ContentWrapper>
 			<Typography variant="h2">Layout for {editionId}</Typography>
-			<LayoutDisplay newsletters={newsletters} layout={localLayout ?? []} />
+			<LayoutDisplay newsletters={newsletters} layout={localLayout ?? { groups: [] }} />
 			{permissions?.editLayouts && (
 				<JsonEditor
 					schema={layoutSchema}

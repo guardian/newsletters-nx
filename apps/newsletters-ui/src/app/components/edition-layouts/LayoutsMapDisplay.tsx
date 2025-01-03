@@ -26,11 +26,10 @@ const LayoutOverview = ({
 }) => {
 	const navigate = useNavigate();
 	const permissions = usePermissions();
-
-	const newsletterCount = layout?.flatMap(
+	const newsletterCount = layout?.groups.flatMap(
 		(section) => section.newsletters,
 	).length;
-	const invalidNewsletterCount = layout
+	const invalidNewsletterCount = layout?.groups
 		?.flatMap((section) => section.newsletters)
 		.filter(
 			(newsletterId) =>
@@ -73,7 +72,7 @@ const LayoutOverview = ({
 
 			{!!newsletterCount && (
 				<Alert>
-					{newsletterCount} newsletters and {layout?.length ?? 0} groups in
+					{newsletterCount} newsletters and {layout?.groups.length ?? 0} groups in
 					layout
 				</Alert>
 			)}
