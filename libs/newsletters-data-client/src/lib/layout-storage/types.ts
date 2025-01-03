@@ -19,3 +19,7 @@ export const layoutSchema = z.object({
 export type Layout = z.infer<typeof layoutSchema>;
 
 export type EditionsLayouts = Partial<Record<EditionId, Layout>>;
+
+export const makeBlankLayout = (): Layout => ({
+	groups: []
+})

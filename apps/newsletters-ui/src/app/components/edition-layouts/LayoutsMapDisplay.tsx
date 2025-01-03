@@ -6,7 +6,7 @@ import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { editionIds } from '@newsletters-nx/newsletters-data-client';
+import { editionIds, makeBlankLayout } from '@newsletters-nx/newsletters-data-client';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { usePermissions } from '../../hooks/user-hooks';
 
@@ -39,7 +39,7 @@ const LayoutOverview = ({
 		).length;
 
 	const handleCreate = async (editionId: EditionId) => {
-		const result = await fetchPostApiData(`/api/layouts/${editionId}`, []);
+		const result = await fetchPostApiData(`/api/layouts/${editionId}`, makeBlankLayout());
 		if (result) {
 			navigate(`/layouts/${editionId.toLowerCase()}`);
 		} else {
