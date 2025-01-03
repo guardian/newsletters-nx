@@ -18,8 +18,6 @@ export class InMemoryLayoutStorage implements LayoutStorage {
 		edition: EditionId,
 		layout: Layout,
 	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {
-		// TO DO - zod parsing of input
-
 		const parseResult = layoutSchema.safeParse(layout);
 
 		if (!parseResult.success) {

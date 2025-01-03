@@ -14,7 +14,7 @@ import { StorageRequestFailureReason } from '../storage-response-types';
 import type { LayoutStorage } from './LayoutStorage';
 import { objectToLayout } from './objectToLayout';
 import type { EditionId, EditionsLayouts, Layout } from './types';
-import { editionIdSchema } from './types';
+import { editionIdSchema, layoutSchema } from './types';
 
 export class S3LayoutStorage implements LayoutStorage {
 	readonly s3Client: S3Client;
@@ -29,7 +29,16 @@ export class S3LayoutStorage implements LayoutStorage {
 	async create(
 		edition: EditionId,
 		layout: Layout,
-	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {
+	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {		
+		const parseResult = layoutSchema.safeParse(layout);
+		if (!parseResult.success) {
+			return {
+				ok: false,
+				message: 'layout in wrong format',
+				reason: StorageRequestFailureReason.InvalidDataInput,
+			};
+		}
+
 		try {
 			const layoutWithSameKeyExists = await this.objectExists(
 				this.editionIdToKey(edition),
@@ -116,6 +125,15 @@ export class S3LayoutStorage implements LayoutStorage {
 		layout: Layout,
 	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {
 		const filename = this.editionIdToFileName(edition);
+
+		const parseResult = layoutSchema.safeParse(layout);
+		if (!parseResult.success) {
+			return {
+				ok: false,
+				message: 'layout in wrong format',
+				reason: StorageRequestFailureReason.InvalidDataInput,
+			};
+		}
 
 		try {
 			try {
