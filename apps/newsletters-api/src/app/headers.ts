@@ -23,6 +23,9 @@ export const getCacheControl = (
 	if (req.routerPath.startsWith('/api/legacy')) {
 		return newsletterTtl;
 	}
+	if (req.routerPath.startsWith('/api/layouts')) {
+		return newsletterTtl;
+	}
 
 	return undefined;
 };

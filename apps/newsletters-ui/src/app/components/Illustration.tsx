@@ -4,13 +4,17 @@ import { Stack, Typography } from '@mui/material';
 interface Props {
 	name: string;
 	url?: string;
+	height?: number;
 }
 
-export const Illustration = ({ name, url }: Props) => {
+export const Illustration = ({ name, url, height = 200 }: Props) => {
 	const image = url ? (
-		<img src={url} alt="" height={200} />
+		<img src={url} alt="" height={height} />
 	) : (
-		<ImageNotSupportedIcon color="primary" sx={{ height: 200, width: 200 }} />
+		<ImageNotSupportedIcon
+			color="primary"
+			sx={{ height: height, width: height }}
+		/>
 	);
 
 	const captionText = url
