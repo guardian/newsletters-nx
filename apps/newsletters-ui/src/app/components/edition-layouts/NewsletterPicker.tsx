@@ -1,0 +1,59 @@
+import { Box, Button, Checkbox, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material"
+import { NewsletterData } from "@newsletters-nx/newsletters-data-client"
+import { useState } from "react"
+import { StringInput } from "../SchemaForm/StringInput"
+import { RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material"
+
+
+interface Props {
+    newsletters: NewsletterData[]
+    selectedNewsletter?: string
+    setSelectedNewsletter: { (identityName?: string): void }
+}
+
+export const NewsletterPicker = ({ newsletters, selectedNewsletter, setSelectedNewsletter }: Props) => {
+
+    const [searchText, setsearchText] = useState('')
+
+    const filteredNewsletters = searchText
+        ? newsletters.filter(
+            newsletter =>
+                newsletter.identityName === selectedNewsletter ||
+                newsletter.name.toLowerCase().includes(searchText.toLowerCase()) ||
+                newsletter.identityName.toLowerCase().includes(searchText.toLowerCase())
+        )
+        : newsletters
+
+    return <Stack divider={<Divider />}>
+        <Typography variant="h3" sx={{ marginTop: 0 }}>Pick newsletter to insert</Typography>
+        <StringInput optional label="search" value={searchText} inputHandler={setsearchText} />
+
+        <List disablePadding>
+
+            {filteredNewsletters.map((newsletter) => (
+                <ListItem key={newsletter.identityName} disableGutters disablePadding>
+
+                    <ListItemButton disableGutters sx={{ paddingY: 0 }}
+                        // variant={newsletter.identityName === selectedNewsletter ? 'contained' : 'outlined'}
+                        onClick={() => setSelectedNewsletter(newsletter.identityName)}
+                    >
+                        <Checkbox
+                            checkedIcon={<RadioButtonChecked />}
+                            icon={<RadioButtonUnchecked />}
+                            size="small"
+                            // edge="start"
+                            checked={newsletter.identityName === selectedNewsletter}
+                            tabIndex={-1}
+                            disableRipple
+                            inputProps={{ 'aria-labelledby': newsletter.name }}
+                        />
+                        <ListItemText
+                            primary={newsletter.name}
+                            secondary={newsletter.status !== 'live' && newsletter.status} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </List>
+    </Stack>
+
+}

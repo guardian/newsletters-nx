@@ -5,6 +5,7 @@ import { fetchPostApiData } from "../../api-requests/fetch-api-data";
 import { addNewGroup, deleteGroup, deleteNewsletterFromGroup, insertNewsletterIntoGroup, updateLayoutGroup } from "../../lib/modify-layout";
 import { StringInput } from "../SchemaForm/StringInput";
 import { NewsletterCard } from "./NewsletterCard";
+import { NewsletterPicker } from "./NewsletterPicker";
 
 interface Props {
     layout: Layout;
@@ -66,7 +67,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                                         />
                                     </Box>
                                     <Box flex={1}>
-                                        <StringInput
+                                        <StringInput optional
                                             label="subtitle"
                                             value={group.subtitle ?? ''}
                                             inputHandler={(subtitle) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { subtitle }))}
@@ -124,16 +125,11 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     </Divider>
                 </Stack>
 
-                <Stack divider={<Divider />}>
-                    {newsletters.map((newsletter) => (
-                        <Box key={newsletter.identityName}>
-                            <Button
-                                variant={newsletter.identityName === selectedNewsletter ? 'contained' : 'outlined'}
-                                onClick={() => setSelectedNewsletter(newsletter.identityName)}
-                            >{newsletter.name}</Button>
-                        </Box>
-                    ))}
-                </Stack>
+                <NewsletterPicker
+                    newsletters={newsletters}
+                    selectedNewsletter={selectedNewsletter}
+                    setSelectedNewsletter={setSelectedNewsletter}
+                />
             </Box>
         </Box>
     )
