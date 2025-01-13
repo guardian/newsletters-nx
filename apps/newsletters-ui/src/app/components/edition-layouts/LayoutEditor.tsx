@@ -40,7 +40,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     disabled={updateInProgress}
                     onClick={() => {
                         handleUpdate(localLayout)
-                    }}>update</Button>
+                    }}>Publish update</Button>
                 {updateInProgress && <p>WAIT...</p>}
                 {lastUpdateFailed && <p>FAILED!</p>}
 
@@ -48,14 +48,15 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
 
             <Box display={'flex'} gap={1} paddingTop={2}>
 
-                <Stack divider={<Divider sx={{ margin: 1 }} />}>
+                <Stack>
                     {localLayout.groups.map((group, groupIndex) => (
                         <Fragment key={groupIndex}>
-                            <Button variant="outlined" onClick={() => {
-                                setLocalLayout(addNewGroup(localLayout, groupIndex))
-                            }}>add group</Button>
-                            <Divider sx={{ margin: 1 }} />
-                            <Box key={groupIndex} padding={2} component={Card}>
+                            <Divider>
+                                <Button variant="contained" onClick={() => {
+                                    setLocalLayout(addNewGroup(localLayout, groupIndex))
+                                }}>add group</Button>
+                            </Divider>
+                            <Box key={groupIndex} padding={2} component={Card} sx={{ marginY: 1, backgroundColor: "secondary.light" }}>
                                 <Box display={'flex'} flexWrap={'wrap'} gap={2}>
                                     <Box flex={1}>
                                         <StringInput
@@ -71,7 +72,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                                             inputHandler={(subtitle) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { subtitle }))}
                                         />
                                     </Box>
-                                    <Button variant="outlined" color="warning"
+                                    <Button variant="contained" color="warning"
                                         onClick={() => {
                                             setLocalLayout(deleteGroup(localLayout, groupIndex))
                                         }}
@@ -92,7 +93,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                                             <Box >
                                                 <Button
                                                     onClick={() => setLocalLayout(deleteNewsletterFromGroup(localLayout, groupIndex, newsletterIndex))}
-                                                >delete</Button>
+                                                >remove</Button>
                                                 <NewsletterCard
                                                     size="small"
                                                     newsletterId={newsletterId}
@@ -116,9 +117,11 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                         </Fragment>
                     ))}
 
-                    <Button variant="outlined" onClick={() => {
-                        setLocalLayout(addNewGroup(localLayout, localLayout.groups.length))
-                    }}>add group</Button>
+                    <Divider>
+                        <Button variant="contained" onClick={() => {
+                            setLocalLayout(addNewGroup(localLayout, localLayout.groups.length))
+                        }}>add group</Button>
+                    </Divider>
                 </Stack>
 
                 <Stack divider={<Divider />}>
