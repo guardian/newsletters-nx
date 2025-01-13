@@ -1,6 +1,6 @@
 import { Box, Button, Card, Divider, Stack } from "@mui/material";
 import { Layout, LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-data-client";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
 import { StringInput } from "../SchemaForm/StringInput";
 import { NewsletterCard } from "./NewsletterCard";
@@ -10,6 +10,11 @@ interface Props {
     editionId: string;
     newsletters: NewsletterData[];
 }
+
+const makeBlankGroup = () => ({
+    title: '',
+    newsletters: []
+})
 
 const updateLayoutGroup = (layout: Layout, groupIndex: number, groupMod: Partial<LayoutGroup>): Layout => {
     const groupToUpdate = layout.groups[groupIndex];
@@ -55,6 +60,28 @@ const insertNewsletterIntoGroup = (layout: Layout, groupIndex: number, newslette
     })
 }
 
+const addNewGroup = (layout: Layout, groupIndex: number): Layout => {
+    return {
+        ...layout,
+        groups: [
+            ...layout.groups.slice(0, groupIndex),
+            makeBlankGroup(),
+            ...layout.groups.slice(groupIndex),
+        ]
+    }
+}
+
+const deleteGroup = (layout: Layout, groupIndexToInsertBefore: number): Layout => {
+    return {
+        ...layout,
+        groups: [
+            ...layout.groups.slice(0, groupIndexToInsertBefore),
+            ...layout.groups.slice(groupIndexToInsertBefore + 1),
+        ]
+    }
+}
+
+
 export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }: Props) => {
     const [localLayout, setLocalLayout] = useState(originalLayout);
     const [updateInProgress, setUpdateInProgress] = useState(false);
@@ -88,64 +115,79 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
 
             </Box>
 
-            <Box display={'flex'} gap={1}>
+            <Box display={'flex'} gap={1} paddingTop={2}>
 
-                <Stack divider={<Divider sx={{ margin: 2 }} />}>
+                <Stack divider={<Divider sx={{ margin: 1 }} />}>
                     {localLayout.groups.map((group, groupIndex) => (
-                        <Box key={groupIndex} padding={2} component={Card}>
-                            <Box display={'flex'} flexWrap={'wrap'} gap={2}>
-                                <Box flex={1}>
-                                    <StringInput
-                                        label="title"
-                                        value={group.title}
-                                        inputHandler={(title) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { title }))}
-                                    />
-                                </Box>
-                                <Box flex={1}>
-                                    <StringInput
-                                        label="subtitle"
-                                        value={group.subtitle ?? ''}
-                                        inputHandler={(subtitle) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { subtitle }))}
-                                    />
-                                </Box>
-                            </Box>
-                            <Box display={'flex'} flexWrap={'wrap'} gap={1}>
-                                {group.newsletters.map((newsletterId, newsletterIndex) => (
-                                    <Box key={newsletterIndex} display={'flex'} justifyContent={'space-between'}>
-                                        <Button
-                                            disabled={!selectedNewsletter}
-                                            onClick={() => {
-                                                if (selectedNewsletter) {
-                                                    setLocalLayout(insertNewsletterIntoGroup(localLayout, groupIndex, newsletterIndex, selectedNewsletter))
-                                                    setSelectedNewsletter(undefined)
-                                                }
-                                            }}
-                                        >insert</Button>
-                                        <Box >
-                                            <Button
-                                                onClick={() => setLocalLayout(deleteNewsletterFromGroup(localLayout, groupIndex, newsletterIndex))}
-                                            >delete</Button>
-                                            <NewsletterCard
-                                                size="small"
-                                                newsletterId={newsletterId}
-                                                index={newsletterIndex}
-                                                newsletter={newsletters.find(n => n.identityName === newsletterId)} />
-                                        </Box>
+                        <Fragment key={groupIndex}>
+                            <Button variant="outlined" onClick={() => {
+                                setLocalLayout(addNewGroup(localLayout, groupIndex))
+                            }}>add group</Button>
+                            <Divider sx={{ margin: 1 }} />
+                            <Box key={groupIndex} padding={2} component={Card}>
+                                <Box display={'flex'} flexWrap={'wrap'} gap={2}>
+                                    <Box flex={1}>
+                                        <StringInput
+                                            label="title"
+                                            value={group.title}
+                                            inputHandler={(title) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { title }))}
+                                        />
                                     </Box>
-                                ))}
+                                    <Box flex={1}>
+                                        <StringInput
+                                            label="subtitle"
+                                            value={group.subtitle ?? ''}
+                                            inputHandler={(subtitle) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { subtitle }))}
+                                        />
+                                    </Box>
+                                    <Button variant="outlined" color="warning"
+                                        onClick={() => {
+                                            setLocalLayout(deleteGroup(localLayout, groupIndex))
+                                        }}
+                                    >delete group</Button>
+                                </Box>
+                                <Box display={'flex'} flexWrap={'wrap'} gap={1}>
+                                    {group.newsletters.map((newsletterId, newsletterIndex) => (
+                                        <Box key={newsletterIndex} display={'flex'} justifyContent={'space-between'}>
+                                            <Button
+                                                disabled={!selectedNewsletter}
+                                                onClick={() => {
+                                                    if (selectedNewsletter) {
+                                                        setLocalLayout(insertNewsletterIntoGroup(localLayout, groupIndex, newsletterIndex, selectedNewsletter))
+                                                        setSelectedNewsletter(undefined)
+                                                    }
+                                                }}
+                                            >insert</Button>
+                                            <Box >
+                                                <Button
+                                                    onClick={() => setLocalLayout(deleteNewsletterFromGroup(localLayout, groupIndex, newsletterIndex))}
+                                                >delete</Button>
+                                                <NewsletterCard
+                                                    size="small"
+                                                    newsletterId={newsletterId}
+                                                    index={newsletterIndex}
+                                                    newsletter={newsletters.find(n => n.identityName === newsletterId)} />
+                                            </Box>
+                                        </Box>
+                                    ))}
 
-                                <Button
-                                    disabled={!selectedNewsletter}
-                                    onClick={() => {
-                                        if (selectedNewsletter) {
-                                            setLocalLayout(insertNewsletterIntoGroup(localLayout, groupIndex, group.newsletters.length, selectedNewsletter))
-                                            setSelectedNewsletter(undefined)
-                                        }
-                                    }}
-                                >insert</Button>
+                                    <Button
+                                        disabled={!selectedNewsletter}
+                                        onClick={() => {
+                                            if (selectedNewsletter) {
+                                                setLocalLayout(insertNewsletterIntoGroup(localLayout, groupIndex, group.newsletters.length, selectedNewsletter))
+                                                setSelectedNewsletter(undefined)
+                                            }
+                                        }}
+                                    >insert</Button>
+                                </Box>
                             </Box>
-                        </Box>
+                        </Fragment>
                     ))}
+
+                    <Button variant="outlined" onClick={() => {
+                        setLocalLayout(addNewGroup(localLayout, localLayout.groups.length))
+                    }}>add group</Button>
                 </Stack>
 
                 <Stack divider={<Divider />}>
