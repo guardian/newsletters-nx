@@ -11,10 +11,14 @@ import { Link } from 'react-router-dom';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { Illustration } from '../Illustration';
 
+
+type CardSize = 'medium' | 'small'
+
 interface NewsletterCardProps {
 	newsletterId: string;
 	index: number;
 	newsletter?: NewsletterData;
+	size?: CardSize
 }
 
 const statusToAlertVariant = (
@@ -45,10 +49,17 @@ const statusToToolTipText = (
 	}
 };
 
+
+const illustrationSize = (size: CardSize) => size === 'small' ? 40 : 80
+const cardWidth = (size: CardSize) => size === 'small' ? 180 : 220
+const cardMinHeight = (size: CardSize) => size === 'small' ? 80 : 120
+
+
 export const NewsletterCard = ({
 	newsletterId,
 	newsletter,
 	index,
+	size = 'medium',
 }: NewsletterCardProps) => {
 	const { palette } = useTheme();
 	const paletteSet = newsletter ? palette.primary : palette.warning;
@@ -69,9 +80,9 @@ export const NewsletterCard = ({
 			sx={{
 				padding: 1,
 				backgroundColor: paletteSet.light,
-				minWidth: 220,
-				maxWidth: 220,
-				minHeight: 120,
+				minWidth: cardWidth(size),
+				maxWidth: cardWidth(size),
+				minHeight: cardMinHeight(size),
 				boxSizing: 'border-box',
 				display: 'flex',
 				flexDirection: 'column',
@@ -88,9 +99,10 @@ export const NewsletterCard = ({
 					<Illustration
 						name={newsletter.name}
 						url={newsletter.illustrationCard ?? newsletter.illustrationCircle}
-						height={80}
+						height={illustrationSize(size)}
+						noCaption
 					/>
-					<Alert severity={statusToAlertVariant(newsletter.status)}>
+					<Alert severity={statusToAlertVariant(newsletter.status)} sx={{ paddingY: 0 }}>
 						{newsletter.status}{' '}
 						{tooltipText && (
 							<Tooltip title={tooltipText} arrow>
@@ -106,7 +118,7 @@ export const NewsletterCard = ({
 						{newsletterId}
 					</Typography>
 
-					<Alert severity="error">
+					<Alert severity="error" sx={{ paddingY: 0 }}>
 						invalid id
 						<Tooltip
 							title={`There is no newsletter with the id "${newsletterId}"`}

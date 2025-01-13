@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Stack } from "@mui/material";
+import { Box, Button, Card, Divider, Stack } from "@mui/material";
 import { Layout, LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { useState } from "react";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
@@ -88,21 +88,27 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
 
             </Box>
 
-            <Box display={'flex'} >
+            <Box display={'flex'} gap={1}>
 
                 <Stack divider={<Divider sx={{ margin: 2 }} />}>
                     {localLayout.groups.map((group, groupIndex) => (
-                        <Box key={groupIndex} padding={2} borderRight={1}>
-                            <StringInput
-                                label="title"
-                                value={group.title}
-                                inputHandler={(title) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { title }))}
-                            />
-                            <StringInput
-                                label="subtitle"
-                                value={group.subtitle ?? ''}
-                                inputHandler={(subtitle) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { subtitle }))}
-                            />
+                        <Box key={groupIndex} padding={2} component={Card}>
+                            <Box display={'flex'} flexWrap={'wrap'} gap={2}>
+                                <Box flex={1}>
+                                    <StringInput
+                                        label="title"
+                                        value={group.title}
+                                        inputHandler={(title) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { title }))}
+                                    />
+                                </Box>
+                                <Box flex={1}>
+                                    <StringInput
+                                        label="subtitle"
+                                        value={group.subtitle ?? ''}
+                                        inputHandler={(subtitle) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { subtitle }))}
+                                    />
+                                </Box>
+                            </Box>
                             <Box display={'flex'} flexWrap={'wrap'} gap={1}>
                                 {group.newsletters.map((newsletterId, newsletterIndex) => (
                                     <Box key={newsletterIndex} display={'flex'} justifyContent={'space-between'}>
@@ -120,6 +126,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                                                 onClick={() => setLocalLayout(deleteNewsletterFromGroup(localLayout, groupIndex, newsletterIndex))}
                                             >delete</Button>
                                             <NewsletterCard
+                                                size="small"
                                                 newsletterId={newsletterId}
                                                 index={newsletterIndex}
                                                 newsletter={newsletters.find(n => n.identityName === newsletterId)} />

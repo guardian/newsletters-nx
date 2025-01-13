@@ -5,11 +5,16 @@ interface Props {
 	name: string;
 	url?: string;
 	height?: number;
+	noCaption?: boolean;
 }
 
-export const Illustration = ({ name, url, height = 200 }: Props) => {
+export const Illustration = ({ name, url, height = 200, noCaption }: Props) => {
+	const captionText = url
+		? `Illustration for ${name}`
+		: `${name} has no illustration`;
+
 	const image = url ? (
-		<img src={url} alt="" height={height} />
+		<img src={url} alt={captionText} height={height} />
 	) : (
 		<ImageNotSupportedIcon
 			color="primary"
@@ -17,9 +22,7 @@ export const Illustration = ({ name, url, height = 200 }: Props) => {
 		/>
 	);
 
-	const captionText = url
-		? `Illustration for ${name}`
-		: `${name} has no illustration`;
+
 
 	return (
 		<Stack
@@ -35,9 +38,11 @@ export const Illustration = ({ name, url, height = 200 }: Props) => {
 			}}
 		>
 			{image}
-			<Typography component={'figcaption'} variant="caption">
-				{captionText}
-			</Typography>
+			{!noCaption &&
+				<Typography component={'figcaption'} variant="caption">
+					{captionText}
+				</Typography>
+			}
 		</Stack>
 	);
 };
