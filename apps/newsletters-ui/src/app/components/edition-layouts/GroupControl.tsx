@@ -1,20 +1,20 @@
 
+import Add from "@mui/icons-material/Add";
 import { Box, Button, Card, IconButton } from "@mui/material";
-import { Layout, LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-data-client";
+import { Fragment } from "react";
+import type { Layout, LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { deleteGroup, deleteNewsletterFromGroup, insertNewsletterIntoGroup, updateLayoutGroup } from "../../lib/modify-layout";
 import { StringInput } from "../SchemaForm/StringInput";
 import { NewsletterCard } from "./NewsletterCard";
-import Add from "@mui/icons-material/Add";
-import { Fragment } from "react";
 
 interface Props {
-    groupIndex: number,
-    group: LayoutGroup,
-    setLocalLayout: { (layout: Layout): void },
-    localLayout: Layout,
-    selectedNewsletter: string | undefined,
-    setSelectedNewsletter: { (identityName: string | undefined): void },
-    newsletters: NewsletterData[]
+    groupIndex: number;
+    group: LayoutGroup;
+    setLocalLayout: { (layout: Layout): void };
+    localLayout: Layout;
+    selectedNewsletter: string | undefined;
+    setSelectedNewsletter: { (identityName: string | undefined): void };
+    newsletters: NewsletterData[];
 }
 
 

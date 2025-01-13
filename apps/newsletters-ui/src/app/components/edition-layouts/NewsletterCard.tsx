@@ -18,7 +18,7 @@ interface NewsletterCardProps {
 	newsletterId: string;
 	index: number;
 	newsletter?: NewsletterData;
-	size?: CardSize
+	size?: CardSize;
 }
 
 const statusToAlertVariant = (

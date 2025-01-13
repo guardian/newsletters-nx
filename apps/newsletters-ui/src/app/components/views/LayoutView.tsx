@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material';
+import { useLoaderData, useLocation } from 'react-router-dom';
 import type {
 	Layout,
 	NewsletterData,
@@ -6,7 +7,6 @@ import type {
 import {
 	makeBlankLayout
 } from '@newsletters-nx/newsletters-data-client';
-import { useLoaderData, useLocation } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { usePermissions } from '../../hooks/user-hooks';
 import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
@@ -15,7 +15,7 @@ import { NavigateButton } from '../NavigateButton';
 
 export const LayoutView = () => {
 	const data = useLoaderData() as
-		| { layout: Layout; newsletters: NewsletterData[] }
+		| { layout?: Layout; newsletters: NewsletterData[] }
 		| undefined;
 
 	const location = useLocation();
@@ -31,7 +31,7 @@ export const LayoutView = () => {
 	return (
 		<ContentWrapper>
 			<Typography variant="h2">Layout for {editionId}</Typography>
-			<LayoutDisplay newsletters={data.newsletters} layout={data?.layout ?? makeBlankLayout()} />
+			<LayoutDisplay newsletters={data.newsletters} layout={data.layout ?? makeBlankLayout()} />
 			{permissions?.editLayouts && (
 				<Box paddingY={2}>
 					<NavigateButton href={`/layouts/edit/${editionId}`}>Edit layout</NavigateButton>

@@ -3,7 +3,7 @@ import { editionIds } from "@newsletters-nx/newsletters-data-client";
 import { ContentWrapper } from "../../ContentWrapper";
 
 interface Props {
-    editionId?: string
+    editionId?: string;
 }
 
 const getMessage = (editionId?: string) => {

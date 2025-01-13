@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Stack } from "@mui/material";
-import { Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { Fragment, useState } from "react";
+import type { Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
 import { addNewGroup } from "../../lib/modify-layout";
 import { GroupControl } from "./GroupControl";

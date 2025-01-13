@@ -1,9 +1,9 @@
 import { Typography } from '@mui/material';
+import { useLoaderData, useLocation } from 'react-router-dom';
 import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { useLoaderData, useLocation } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { usePermissions } from '../../hooks/user-hooks';
 import { LayoutEditor } from '../edition-layouts/LayoutEditor';

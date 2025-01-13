@@ -1,4 +1,4 @@
-import { Layout, LayoutGroup } from "@newsletters-nx/newsletters-data-client";
+import type { Layout, LayoutGroup } from "@newsletters-nx/newsletters-data-client";
 
 const makeBlankGroup = () => ({
     title: '',
