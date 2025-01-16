@@ -1,5 +1,6 @@
 import { RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material"
-import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, Stack, StackProps, Typography } from "@mui/material"
+import type { StackProps } from "@mui/material"
+import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, Stack, Typography } from "@mui/material"
 import { useState } from "react"
 import type { NewsletterData } from "@newsletters-nx/newsletters-data-client"
 import { StringInput } from "../SchemaForm/StringInput"
@@ -9,7 +10,7 @@ interface Props {
     newsletters: NewsletterData[];
     selectedNewsletter?: string;
     setSelectedNewsletter: { (identityName?: string): void };
-    stackProps?: StackProps
+    stackProps?: StackProps;
 }
 
 export const NewsletterPicker = ({ newsletters, selectedNewsletter, setSelectedNewsletter, stackProps }: Props) => {
