@@ -65,8 +65,9 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     newsletters={newsletters}
                     selectedNewsletter={selectedNewsletter}
                     setSelectedNewsletter={setSelectedNewsletter}
+                    stackProps={{ flex: 1 }}
                 />
-                <Stack>
+                <Stack flex={3}>
                     {localLayout.groups.map((group, groupIndex) => (
                         <Fragment key={groupIndex}>
                             <Divider>

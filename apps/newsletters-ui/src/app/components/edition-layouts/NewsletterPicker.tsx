@@ -1,5 +1,5 @@
 import { RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material"
-import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, Stack, Typography } from "@mui/material"
+import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, Stack, StackProps, Typography } from "@mui/material"
 import { useState } from "react"
 import type { NewsletterData } from "@newsletters-nx/newsletters-data-client"
 import { StringInput } from "../SchemaForm/StringInput"
@@ -9,9 +9,10 @@ interface Props {
     newsletters: NewsletterData[];
     selectedNewsletter?: string;
     setSelectedNewsletter: { (identityName?: string): void };
+    stackProps?: StackProps
 }
 
-export const NewsletterPicker = ({ newsletters, selectedNewsletter, setSelectedNewsletter }: Props) => {
+export const NewsletterPicker = ({ newsletters, selectedNewsletter, setSelectedNewsletter, stackProps }: Props) => {
 
     const [searchText, setsearchText] = useState('')
 
@@ -24,7 +25,7 @@ export const NewsletterPicker = ({ newsletters, selectedNewsletter, setSelectedN
         )
         : newsletters
 
-    return <Stack divider={<Divider />}>
+    return <Stack {...stackProps} divider={<Divider />}>
         <Typography variant="h3" sx={{ marginTop: 0 }}>Pick newsletter to insert</Typography>
         <StringInput optional label="search" value={searchText} inputHandler={setsearchText} />
 
