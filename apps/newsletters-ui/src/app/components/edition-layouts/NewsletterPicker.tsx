@@ -36,14 +36,12 @@ export const NewsletterPicker = ({ newsletters, selectedNewsletter, setSelectedN
                 <ListItem key={newsletter.identityName} disableGutters disablePadding>
 
                     <ListItemButton disableGutters sx={{ paddingY: 0 }}
-                        // variant={newsletter.identityName === selectedNewsletter ? 'contained' : 'outlined'}
                         onClick={() => setSelectedNewsletter(newsletter.identityName)}
                     >
                         <Checkbox
                             checkedIcon={<RadioButtonChecked />}
                             icon={<RadioButtonUnchecked />}
                             size="small"
-                            // edge="start"
                             checked={newsletter.identityName === selectedNewsletter}
                             tabIndex={-1}
                             disableRipple

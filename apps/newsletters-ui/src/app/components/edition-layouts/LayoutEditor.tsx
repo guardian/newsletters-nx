@@ -51,12 +51,12 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     }}>Publish update</Button>
                 {updateInProgress && <CircularProgress />}
                 {feedback === 'success' && <Alert severity="success">
-                    <Typography> Layout updated</Typography>
-                    <Typography> It will take some time for site to update</Typography>
+                    <Typography>Layout updated</Typography>
+                    <Typography>It will take some time for site to update</Typography>
                 </Alert>}
                 {feedback === 'failure' && <Alert severity="error">
-                    <Typography> Failed to update</Typography>
-                    <Typography> If the problem persists, please contact Central Production</Typography>
+                    <Typography>Failed to update</Typography>
+                    <Typography>If the problem persists, please contact Central Production</Typography>
                 </Alert>}
             </Box>
 
