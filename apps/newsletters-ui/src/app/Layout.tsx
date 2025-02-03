@@ -1,21 +1,21 @@
-import styled from '@emotion/styled';
+// import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
 
-const Frame = styled.div`
-	display: flex;
-	flex-direction: column;
-	height: 100vh;
-	box-sizing: border-box;
-	align-items: stretch;
+// const Frame = styled.div`
+// 	display: flex;
+// 	flex-direction: column;
+// 	height: 100vh;
+// 	box-sizing: border-box;
+// 	align-items: stretch;
 
-	> main {
-		box-sizing: border-box;
-		flex: 1;
-		overflow: auto;
-	}
-`;
+// 	> main {
+// 		box-sizing: border-box;
+// 		flex: 1;
+// 		overflow: auto;
+// 	}
+// `;
 
 interface IRootRoute {
 	outlet?: undefined | React.ReactNode;
@@ -30,11 +30,11 @@ export function Layout(props: IRootRoute) {
 	const isOnLocal = !!host?.toLowerCase().split(':').includes('localhost');
 
 	return (
-		<Frame>
+		<div>
 			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
 			<Box pt={8} component={'main'}>
 				{props.outlet ? props.outlet : <Outlet />}
 			</Box>
-		</Frame>
+		</div>
 	);
 }
