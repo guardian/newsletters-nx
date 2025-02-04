@@ -11,6 +11,7 @@ const layoutGroup = z
 		subtitle: z.string().optional(),
 		newsletters: z.string().array(),
 	});
+export type LayoutGroup = z.infer<typeof layoutGroup>
 
 export const layoutSchema = z.object({
 	groups: layoutGroup.array()
