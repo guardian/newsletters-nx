@@ -123,6 +123,12 @@ export function HomeMenu() {
 						/>
 					</Grid>
 				)}
+
+				<ButtonGridItem
+					path="/layouts"
+					content={'All Newsletters page layouts'}
+					variant="outlined"
+				/>
 			</Grid>
 		</Container>
 	);
