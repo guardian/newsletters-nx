@@ -76,7 +76,11 @@ export const levelToPermissions = (
 		].includes(accessLevel),
 		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
-		editLayouts: [UserAccessLevel.Developer].includes(accessLevel),
+		editLayouts: [
+			UserAccessLevel.Developer,
+			UserAccessLevel.Editor,
+			UserAccessLevel.CentralProduction,
+		].includes(accessLevel),
 		editBraze: [UserAccessLevel.BrazeEditor].includes(accessLevel),
 		editOphan: [UserAccessLevel.OphanEditor].includes(accessLevel),
 		editTags: [UserAccessLevel.CentralProduction].includes(accessLevel),
