@@ -126,7 +126,7 @@ export function HomeMenu() {
 
 				<ButtonGridItem
 					path="/layouts"
-					content={'All Newsletters page layouts'}
+					content={'View Newsletter Layouts'}
 					variant="outlined"
 				/>
 			</Grid>
