@@ -29,6 +29,11 @@ deployments:
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json
         PROD: NewslettersTool-PROD.template.json
+      templateParameters:
+        newslettersapiPrivateSubnets:
+          /devx/bigger/private/subnets
+        newsletterstoolPrivateSubnets:
+          /devx/bigger/private/subnets
 
   # Newsletters internal tool autoscaling deployment
   newsletters-tool:
