@@ -29,15 +29,6 @@ deployments:
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json
         PROD: NewslettersTool-PROD.template.json
-      #
-      # This is to be an interim solution on the way to bigger subnets that will be reverted once we are in
-      # a position to make the values of the new values in the parameter /devx/bigger/private/subnets
-      # into a new default.
-      templateParameters:
-        newslettersapiPrivateSubnets:
-          /devx/bigger/private/subnets
-        newsletterstoolPrivateSubnets:
-          /devx/bigger/private/subnets
 
   # Newsletters internal tool autoscaling deployment
   newsletters-tool:
