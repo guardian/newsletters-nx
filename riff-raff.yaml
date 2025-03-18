@@ -35,9 +35,9 @@ deployments:
       # into a new default.
       templateParameters:
         newslettersapiPrivateSubnets:
-          /devx/bigger/private/subnets
+          /account/vpc/primary/subnets/private
         newsletterstoolPrivateSubnets:
-          /devx/bigger/private/subnets
+          /account/vpc/primary/subnets/private
 
   # Newsletters internal tool autoscaling deployment
   newsletters-tool:
