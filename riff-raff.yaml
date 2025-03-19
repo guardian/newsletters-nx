@@ -23,9 +23,11 @@ deployments:
         AMINewsletterstool:
           BuiltBy: amigo
           Recipe: newsletters-node
+          amiEncrypted: true
         AMINewslettersapi:
           BuiltBy: amigo
           Recipe: newsletters-node
+          amiEncrypted: true
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json
         PROD: NewslettersTool-PROD.template.json
