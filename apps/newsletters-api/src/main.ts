@@ -29,7 +29,7 @@ if (isServingUI()) {
 }
 if (isServingReadWriteEndpoints()) {
 	registerCurrentStepRoute(fastifyApp);
-	registerUserRoute(fastifyApp);
+	registerUserRoute(fastifyApp as unknown as ExpressInterface);
 	registerReadWriteNewsletterRoutes(fastifyApp);
 	registerNotificationRoutes(fastifyApp);
 	registerWriteLayoutRoutes(fastifyApp);
@@ -45,6 +45,12 @@ fastifyApp.addHook('onSend', setHeaderHook);
 
 const expressApp = Express();
 registerHealthRoute(expressApp);
+if (isServingReadWriteEndpoints()) {
+	registerUserRoute(expressApp);
+}
+if (isServingReadEndpoints()) {
+	// registerReadNewsletterRoutes(expressApp);
+}
 
 const USE_EXPRESS = false as boolean;
 

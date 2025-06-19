@@ -1,9 +1,9 @@
-import type { FastifyInstance } from 'fastify';
+import type { Express } from 'express';
 import { permissionService } from '../../services/permissions';
 import { getUserProfile } from '../get-user-profile';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
-export function registerUserRoute(app: FastifyInstance) {
+export function registerUserRoute(app: Express) {
 	app.get('/api/user/whoami', async (req, res) => {
 		const maybeUser = getUserProfile(req);
 		if (!maybeUser.profile) {
