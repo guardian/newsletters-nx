@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import Express, { Express as ExpressInterface } from 'express';
 import {
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
@@ -21,26 +22,31 @@ import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templat
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
-const app = Fastify();
-registerHealthRoute(app);
+const fastifyApp = Fastify();
+registerHealthRoute(fastifyApp as unknown as ExpressInterface);
 if (isServingUI()) {
-	registerUIServer(app);
+	registerUIServer(fastifyApp);
 }
 if (isServingReadWriteEndpoints()) {
-	registerCurrentStepRoute(app);
-	registerUserRoute(app);
-	registerReadWriteNewsletterRoutes(app);
-	registerNotificationRoutes(app);
-	registerWriteLayoutRoutes(app);
+	registerCurrentStepRoute(fastifyApp);
+	registerUserRoute(fastifyApp);
+	registerReadWriteNewsletterRoutes(fastifyApp);
+	registerNotificationRoutes(fastifyApp);
+	registerWriteLayoutRoutes(fastifyApp);
 }
 if (isServingReadEndpoints()) {
-	registerReadNewsletterRoutes(app);
-	registerDraftsRoutes(app);
-	registerRenderingTemplatesRoutes(app);
-	registerReadLayoutRoutes(app);
+	registerReadNewsletterRoutes(fastifyApp);
+	registerDraftsRoutes(fastifyApp);
+	registerRenderingTemplatesRoutes(fastifyApp);
+	registerReadLayoutRoutes(fastifyApp);
 }
 
-app.addHook('onSend', setHeaderHook);
+fastifyApp.addHook('onSend', setHeaderHook);
+
+const expressApp = Express();
+registerHealthRoute(expressApp);
+
+const USE_EXPRESS = false as boolean;
 
 const start = async () => {
 	try {
@@ -61,7 +67,12 @@ const start = async () => {
 		console.log(
 			`Starting newsletters-api server on http://${options.host}:${options.port}`,
 		);
-		await app.listen(options);
+
+		if (USE_EXPRESS) {
+			await expressApp.listen(options);
+		} else {
+			await fastifyApp.listen(options);
+		}
 	} catch (err) {
 		// Errors are logged here
 		console.error(err);
