@@ -1,4 +1,4 @@
-import type { FastifyInstance } from 'fastify';
+import type { Express } from 'express';
 import {
 	editionIdSchema,
 	layoutSchema,
@@ -12,7 +12,7 @@ import {
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
 
-export function registerReadLayoutRoutes(app: FastifyInstance) {
+export function registerReadLayoutRoutes(app: Express) {
 	app.get('/api/layouts', async (req, res) => {
 		const storageResponse = await layoutStore.readAll();
 		if (!storageResponse.ok) {
@@ -26,7 +26,7 @@ export function registerReadLayoutRoutes(app: FastifyInstance) {
 	app.get<{
 		Params: { editionId: string };
 	}>('/api/layouts/:editionId', async (req, res) => {
-		const { editionId } = req.params;
+		const { editionId } = req.params.Params;
 
 		const idParseResult = editionIdSchema.safeParse(editionId.toUpperCase());
 
@@ -47,11 +47,8 @@ export function registerReadLayoutRoutes(app: FastifyInstance) {
 	});
 }
 
-export function registerWriteLayoutRoutes(app: FastifyInstance) {
-	app.post<{
-		Body: unknown;
-		Params: { editionId: string };
-	}>('/api/layouts/:editionId', async (req, res) => {
+export function registerWriteLayoutRoutes(app: Express) {
+	app.post('/api/layouts/:editionId', async (req, res) => {
 		const { editionId } = req.params;
 		const layout: unknown = req.body;
 		const user = getUserProfile(req);

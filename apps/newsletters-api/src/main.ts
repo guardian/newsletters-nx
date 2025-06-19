@@ -32,13 +32,13 @@ if (isServingReadWriteEndpoints()) {
 	registerUserRoute(fastifyApp as unknown as ExpressInterface);
 	registerReadWriteNewsletterRoutes(fastifyApp);
 	registerNotificationRoutes(fastifyApp);
-	registerWriteLayoutRoutes(fastifyApp);
+	// registerWriteLayoutRoutes(fastifyApp);
 }
 if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(fastifyApp);
 	registerDraftsRoutes(fastifyApp);
 	registerRenderingTemplatesRoutes(fastifyApp);
-	registerReadLayoutRoutes(fastifyApp);
+	// registerReadLayoutRoutes(fastifyApp);
 }
 
 fastifyApp.addHook('onSend', setHeaderHook);
@@ -46,13 +46,20 @@ fastifyApp.addHook('onSend', setHeaderHook);
 const expressApp = Express();
 registerHealthRoute(expressApp);
 if (isServingReadWriteEndpoints()) {
+	registerCurrentStepRoute(fastifyApp);
 	registerUserRoute(expressApp);
+	// registerReadWriteNewsletterRoutes(fastifyApp);
+	// registerNotificationRoutes(fastifyApp);
+	registerWriteLayoutRoutes(expressApp);
 }
 if (isServingReadEndpoints()) {
 	// registerReadNewsletterRoutes(expressApp);
+	// registerDraftsRoutes(expressApp);
+	// registerRenderingTemplatesRoutes(expressApp);
+	registerReadLayoutRoutes(expressApp);
 }
 
-const USE_EXPRESS = false as boolean;
+const USE_EXPRESS = true as boolean;
 
 const start = async () => {
 	try {
