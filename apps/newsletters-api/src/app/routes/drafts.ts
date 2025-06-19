@@ -1,8 +1,4 @@
-import type { FastifyInstance } from 'fastify';
-import type {
-	ApiResponse,
-	DraftWithId,
-} from '@newsletters-nx/newsletters-data-client';
+import { Express } from 'express';
 import { permissionService } from '../../services/permissions';
 import { draftStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
@@ -12,7 +8,7 @@ import {
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
 
-export function registerDraftsRoutes(app: FastifyInstance) {
+export function registerDraftsRoutes(app: Express) {
 	app.get('/api/drafts', async (req, res) => {
 		const storageResponse = await draftStore.readAll();
 		if (storageResponse.ok) {
@@ -23,7 +19,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 			.send(makeErrorResponse(storageResponse.message));
 	});
 
-	app.get<{ Params: { listId: string } }>(
+	app.get(
 		'/api/drafts/:listId',
 		async (req, res) => {
 			const { listId } = req.params;
@@ -42,9 +38,9 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 		},
 	);
 
-	app.delete<{ Params: { listId: string } }>(
+	app.delete(
 		'/api/drafts/:listId',
-		async (req, res): Promise<ApiResponse<DraftWithId>> => {
+		async (req, res) => {
 			const user = getUserProfile(req);
 			const permissions = await permissionService.get(user.profile);
 

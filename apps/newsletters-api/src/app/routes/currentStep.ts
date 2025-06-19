@@ -1,4 +1,3 @@
-import type { FastifyInstance } from 'fastify';
 import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import type {
@@ -10,6 +9,7 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
+import { Express } from 'express';
 import { makeEmailEnvInfo } from '../../services/notifications/email-env';
 import { makeSesClient } from '../../services/notifications/email-service';
 import { permissionService } from '../../services/permissions';
@@ -72,10 +72,10 @@ const getAccessDeniedError = async (
  * TODO: This is a placeholder that will be changed to a state machine
  * @param app - Fastify instance to add the route to
  */
-export function registerCurrentStepRoute(app: FastifyInstance) {
-	app.post<{ Body: CurrentStepRouteRequest }>(
+export function registerCurrentStepRoute(app: Express) {
+	app.post(
 		'/api/currentstep',
-		async (req, res): Promise<CurrentStepRouteResponse> => {
+		async (req, res) => {
 			const user = getUserProfile(req);
 			const accessDeniedError = await getAccessDeniedError(user, req.body);
 			if (accessDeniedError) {
@@ -98,10 +98,10 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 				? requestBody.wizardId === 'LAUNCH_NEWSLETTER'
 					? makelaunchServiceForUser(user.profile)
 					: makeDraftServiceForUser(
-							user.profile,
-							makeSesClient(),
-							makeEmailEnvInfo(),
-					  )
+						user.profile,
+						makeSesClient(),
+						makeEmailEnvInfo(),
+					)
 				: undefined;
 
 			if (!serviceInterface) {

@@ -23,10 +23,8 @@ export function registerReadLayoutRoutes(app: Express) {
 		return makeSuccessResponse(storageResponse.data);
 	});
 
-	app.get<{
-		Params: { editionId: string };
-	}>('/api/layouts/:editionId', async (req, res) => {
-		const { editionId } = req.params.Params;
+	app.get('/api/layouts/:editionId', async (req, res) => {
+		const { editionId } = req.params;
 
 		const idParseResult = editionIdSchema.safeParse(editionId.toUpperCase());
 

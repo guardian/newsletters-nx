@@ -1,13 +1,12 @@
-import Fastify from 'fastify';
-import Express, { Express as ExpressInterface } from 'express';
+import Express from 'express';
 import {
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
-	isServingUI,
+	// isServingUI,
 } from './apiDeploymentSettings';
-import { setHeaderHook } from './app/headers';
-import { registerCurrentStepRoute } from './app/routes/currentStep';
-import { registerDraftsRoutes } from './app/routes/drafts';
+// import { setHeaderHook } from './app/headers';
+// import { registerCurrentStepRoute } from './app/routes/currentStep';
+// import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import {
 	registerReadLayoutRoutes,
@@ -18,48 +17,30 @@ import {
 	registerReadWriteNewsletterRoutes,
 } from './app/routes/newsletters';
 import { registerNotificationRoutes } from './app/routes/notifications';
-import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
+// import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
 import { registerUserRoute } from './app/routes/user';
-import { registerUIServer } from './register-ui-server';
+// import { registerUIServer } from './register-ui-server';
 
-const fastifyApp = Fastify();
-registerHealthRoute(fastifyApp as unknown as ExpressInterface);
-if (isServingUI()) {
-	registerUIServer(fastifyApp);
-}
-if (isServingReadWriteEndpoints()) {
-	registerCurrentStepRoute(fastifyApp);
-	registerUserRoute(fastifyApp as unknown as ExpressInterface);
-	registerReadWriteNewsletterRoutes(fastifyApp);
-	registerNotificationRoutes(fastifyApp);
-	// registerWriteLayoutRoutes(fastifyApp);
-}
-if (isServingReadEndpoints()) {
-	registerReadNewsletterRoutes(fastifyApp);
-	registerDraftsRoutes(fastifyApp);
-	registerRenderingTemplatesRoutes(fastifyApp);
-	// registerReadLayoutRoutes(fastifyApp);
-}
 
-fastifyApp.addHook('onSend', setHeaderHook);
+// TO DO - define as middleware
+// fastifyApp.addHook('onSend', setHeaderHook);
 
 const expressApp = Express();
 registerHealthRoute(expressApp);
 if (isServingReadWriteEndpoints()) {
-	registerCurrentStepRoute(fastifyApp);
+	// registerCurrentStepRoute(expressApp);
 	registerUserRoute(expressApp);
-	// registerReadWriteNewsletterRoutes(fastifyApp);
-	// registerNotificationRoutes(fastifyApp);
+	registerReadWriteNewsletterRoutes(expressApp);
+	registerNotificationRoutes(expressApp);
 	registerWriteLayoutRoutes(expressApp);
 }
 if (isServingReadEndpoints()) {
-	// registerReadNewsletterRoutes(expressApp);
+	registerReadNewsletterRoutes(expressApp);
 	// registerDraftsRoutes(expressApp);
 	// registerRenderingTemplatesRoutes(expressApp);
 	registerReadLayoutRoutes(expressApp);
 }
 
-const USE_EXPRESS = true as boolean;
 
 const start = async () => {
 	try {
@@ -81,11 +62,7 @@ const start = async () => {
 			`Starting newsletters-api server on http://${options.host}:${options.port}`,
 		);
 
-		if (USE_EXPRESS) {
-			await expressApp.listen(options);
-		} else {
-			await fastifyApp.listen(options);
-		}
+		await expressApp.listen(options);
 	} catch (err) {
 		// Errors are logged here
 		console.error(err);
