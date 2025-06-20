@@ -12,7 +12,7 @@ export function registerDraftsRoutes(app: Express) {
 	app.get('/api/drafts', async (req, res) => {
 		const storageResponse = await draftStore.readAll();
 		if (storageResponse.ok) {
-			return makeSuccessResponse(storageResponse.data);
+			return res.send(makeSuccessResponse(storageResponse.data));
 		}
 		return res
 			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
@@ -25,12 +25,12 @@ export function registerDraftsRoutes(app: Express) {
 			const { listId } = req.params;
 			const idAsNumber = Number(listId);
 			if (isNaN(idAsNumber)) {
-				return makeErrorResponse('Non numerical id passed');
+				return res.status(400).send(makeErrorResponse('Non numerical id passed'));
 			}
 
 			const storageResponse = await draftStore.read(idAsNumber);
 			if (storageResponse.ok) {
-				return makeSuccessResponse(storageResponse.data);
+				return res.send(makeSuccessResponse(storageResponse.data));
 			}
 			return res
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
@@ -64,7 +64,7 @@ export function registerDraftsRoutes(app: Express) {
 			const storageResponse = await draftStore.deleteItem(idAsNumber);
 
 			if (storageResponse.ok) {
-				return makeSuccessResponse(storageResponse.data);
+				return res.send(makeSuccessResponse(storageResponse.data));
 			}
 
 			return res

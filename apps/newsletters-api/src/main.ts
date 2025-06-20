@@ -6,7 +6,7 @@ import {
 } from './apiDeploymentSettings';
 // import { setHeaderHook } from './app/headers';
 // import { registerCurrentStepRoute } from './app/routes/currentStep';
-// import { registerDraftsRoutes } from './app/routes/drafts';
+import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import {
 	registerReadLayoutRoutes,
@@ -36,7 +36,7 @@ if (isServingReadWriteEndpoints()) {
 }
 if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(expressApp);
-	// registerDraftsRoutes(expressApp);
+	registerDraftsRoutes(expressApp);
 	// registerRenderingTemplatesRoutes(expressApp);
 	registerReadLayoutRoutes(expressApp);
 }
