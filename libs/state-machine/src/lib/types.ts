@@ -1,8 +1,9 @@
-import type {
-	FormDataRecord,
-	WizardButtonType,
+import {
+	supportedValueSchema,
+	type FormDataRecord,
+	type WizardButtonType,
 } from '@newsletters-nx/newsletters-data-client';
-import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
+import { z, type ZodIssue, type ZodObject, type ZodRawShape } from 'zod';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completely generic?
 export type GenericStorageInterface = any;
@@ -145,6 +146,16 @@ export interface CurrentStepRouteRequest {
 	stepToSkipToId?: string;
 	buttonType?: WizardButtonType;
 }
+
+export const currentStepRouteRequestSchema = z.object({
+	wizardId: z.string(),
+	id: z.string().optional(),
+	buttonId: z.string().optional(),
+	stepId: z.string(),
+	formData: z.record(supportedValueSchema).optional(),
+	stepToSkipToId: z.string().optional(),
+	buttonType: z.enum(['NEXT', 'PREVIOUS', 'EDIT', 'SKIP', 'LAUNCH', 'CANCEL']).optional(),
+})
 
 /**
  * Interface for the response received from the server for a single step in the wizard.

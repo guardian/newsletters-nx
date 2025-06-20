@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import type {
 	Express,
-	RequestHandler
+	Request,
+	Response,
 } from 'express'
 import { static as serveStatic } from 'express';
 
@@ -44,11 +45,11 @@ export function registerUIServer(app: Express) {
 
 	app.use(serveStatic(pathToStaticFiles))
 
-	const serveIndexHtml: RequestHandler = async (req, reply) => {
+	const serveIndexHtml = async (req: Request, res: Response) => {
 		const pathToServedFile = path.join(pathToStaticFiles, 'index.html');
 		const handler = await fs.promises.open(pathToServedFile);
 		const buffer = await handler.readFile();
-		reply.type('text/html').send(buffer);
+		res.type('text/html').send(buffer);
 	};
 
 	Object.entries(routeMap).forEach(([routeName, paths]) => {

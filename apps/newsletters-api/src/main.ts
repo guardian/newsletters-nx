@@ -1,3 +1,4 @@
+import bodyParser from 'body-parser';
 import ExpressApp from 'express';
 import {
 	isServingReadEndpoints,
@@ -20,7 +21,6 @@ import { registerNotificationRoutes } from './app/routes/notifications';
 import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
-import bodyParser from 'body-parser';
 
 const expressApp = ExpressApp();
 expressApp.use(setCacheControlHeaderMiddleware)
@@ -69,7 +69,12 @@ const start = async () => {
 			`Starting newsletters-api server on http://${options.host}:${options.port}`,
 		);
 
-		await expressApp.listen(options);
+		expressApp.listen(options);
+
+		// TO DO - start was "intentionally asynchronous" - is that essential??
+		await new Promise(() => {
+			//
+		})
 	} catch (err) {
 		// Errors are logged here
 		console.error(err);

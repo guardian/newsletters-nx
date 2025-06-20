@@ -83,7 +83,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 	) => {
 		const user = getUserProfile(request);
 		const isAuthorised = await hasEditAccess(user.profile);
-		const { body } = request;
+		const body = request.body as unknown;
 		const update = replaceNullWithUndefinedForUnknown(body);
 
 		if (!isPartialNewsletterData(update)) {
@@ -114,7 +114,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 			const user = getUserProfile(req);
 
 			const { newsletterId } = req.params;
-			const { body: modifications } = req;
+			const modifications = req.body as unknown;
 			const newsletterIdAsNumber = Number(newsletterId);
 
 			if (isNaN(newsletterIdAsNumber)) {
@@ -172,7 +172,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 			}
 
 			const { newsletterId } = req.params;
-			const { body: newsletter } = req;
+			const newsletter = req.body as unknown;
 			const newsletterIdAsNumber = Number(newsletterId);
 
 			if (isNaN(newsletterIdAsNumber)) {

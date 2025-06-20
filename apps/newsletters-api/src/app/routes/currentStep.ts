@@ -6,6 +6,7 @@ import type {
 	CurrentStepRouteResponse,
 } from '@newsletters-nx/state-machine';
 import {
+	currentStepRouteRequestSchema,
 	handleWizardRequestAndReturnWizardResponse,
 	StateMachineError,
 	StateMachineErrorCode,
@@ -77,25 +78,44 @@ export function registerCurrentStepRoute(app: Express) {
 		'/api/currentstep',
 		async (req, res) => {
 			const user = getUserProfile(req);
-			const accessDeniedError = await getAccessDeniedError(user, req.body);
+
+			// TO DO - need to parse request body
+
+			const parsedBodyResult = currentStepRouteRequestSchema.safeParse(req.body)
+
+			if (!parsedBodyResult.success) {
+				console.error(`invalid currentStepRouteRequest on ${req.path}`, parsedBodyResult.error.issues)
+				const badDataError: CurrentStepRouteResponse = {
+					currentStepId: '',
+					errorMessage: "The application sent data that the server could not interpret",
+					errorDetails: {
+						zodIssues: parsedBodyResult.error.issues
+					},
+					hasPersistentError: true
+				}
+
+				return res.status(400).send(badDataError);
+			}
+
+			const currentStepRouteRequest = parsedBodyResult.data;
+			const accessDeniedError = await getAccessDeniedError(user, currentStepRouteRequest);
 			if (accessDeniedError) {
 				return res.status(403).send(accessDeniedError);
 			}
 
-			const requestBody: CurrentStepRouteRequest = req.body;
-			const layout = newslettersWorkflowStepLayout[requestBody.wizardId];
+			const layout = newslettersWorkflowStepLayout[currentStepRouteRequest.wizardId];
 
 			if (!layout) {
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'No layout found',
-					currentStepId: requestBody.stepId,
+					currentStepId: currentStepRouteRequest.stepId,
 					hasPersistentError: true,
 				};
 				return res.status(400).send(errorResponse);
 			}
 
 			const serviceInterface = user.profile
-				? requestBody.wizardId === 'LAUNCH_NEWSLETTER'
+				? currentStepRouteRequest.wizardId === 'LAUNCH_NEWSLETTER'
 					? makelaunchServiceForUser(user.profile)
 					: makeDraftServiceForUser(
 						user.profile,
@@ -107,7 +127,7 @@ export function registerCurrentStepRoute(app: Express) {
 			if (!serviceInterface) {
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'FAILED to CONSTRUCT SERVICE',
-					currentStepId: requestBody.stepId,
+					currentStepId: currentStepRouteRequest.stepId,
 					hasPersistentError: true,
 				};
 				return res.status(500).send(errorResponse);
@@ -115,7 +135,7 @@ export function registerCurrentStepRoute(app: Express) {
 
 			try {
 				const response = await handleWizardRequestAndReturnWizardResponse(
-					requestBody,
+					currentStepRouteRequest,
 					layout,
 					serviceInterface,
 				)
@@ -124,7 +144,7 @@ export function registerCurrentStepRoute(app: Express) {
 				if (error instanceof StateMachineError) {
 					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: error.message,
-						currentStepId: requestBody.stepId,
+						currentStepId: currentStepRouteRequest.stepId,
 						hasPersistentError: error.isPersistant,
 					};
 					return res.status(getHttpCode(error)).send(errorResponse);
@@ -132,7 +152,7 @@ export function registerCurrentStepRoute(app: Express) {
 
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'UNHANDLED ERROR',
-					currentStepId: requestBody.stepId,
+					currentStepId: currentStepRouteRequest.stepId,
 					hasPersistentError: true,
 				};
 				return res.status(500).send(errorResponse);
