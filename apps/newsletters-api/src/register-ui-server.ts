@@ -1,6 +1,42 @@
-import { Express, RequestHandler, static as serveStatic } from 'express';
+import type {
+	Express,
+	RequestHandler
+} from 'express'
+import { static as serveStatic } from 'express';
 import fs from 'fs';
 import path from 'path';
+
+
+const routeMap = {
+	'/': [
+		'',
+		'/templates',
+	],
+	'/launched': [
+		'',
+		'/:id',
+		'/edit/:id',
+		'/rendering-options/:id',
+		'/edit-json/:id',
+		'/preview/:id',
+	],
+	'/drafts': [
+		'',
+		'/:id',
+		'/newsletter-data/:listId',
+		'/newsletter-data-rendering/:listId',
+		'/newsletter-data-rendering',
+		'/newsletter-data',
+		'/launch-newsletter/:listId',
+		'/launch-newsletter',
+	],
+	'/layouts': [
+		'',
+		'/:id',
+		'/edit/:id',
+		'/edit-json/:id',
+	],
+} satisfies Record<string, string[]>
 
 
 export function registerUIServer(app: Express) {
@@ -15,16 +51,9 @@ export function registerUIServer(app: Express) {
 		return reply.type('text/html').send(buffer);
 	};
 
-	// Route for serving the index.html file
-	app.get('/', serveIndexHtml);
-
-	// Routes for serving main menu options
-	app.get('/drafts/*', serveIndexHtml);
-	app.get('/drafts', serveIndexHtml);
-	app.get('/launched/*', serveIndexHtml);
-	app.get('/launched', serveIndexHtml);
-	app.get('/templates/*', serveIndexHtml);
-	app.get('/templates', serveIndexHtml);
-	app.get('/layouts/*', serveIndexHtml);
-	app.get('/layouts', serveIndexHtml);
+	Object.entries(routeMap).forEach(([routeName, paths]) => {
+		paths.forEach(path => {
+			app.get(`${routeName}${path}`, serveIndexHtml)
+		})
+	})
 }
