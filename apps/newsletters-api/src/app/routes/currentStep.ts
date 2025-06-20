@@ -114,11 +114,12 @@ export function registerCurrentStepRoute(app: Express) {
 			}
 
 			try {
-				return await handleWizardRequestAndReturnWizardResponse(
+				const response = await handleWizardRequestAndReturnWizardResponse(
 					requestBody,
 					layout,
 					serviceInterface,
-				);
+				)
+				return res.send(response);
 			} catch (error) {
 				if (error instanceof StateMachineError) {
 					const errorResponse: CurrentStepRouteResponse = {

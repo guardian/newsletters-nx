@@ -20,11 +20,11 @@ import { registerNotificationRoutes } from './app/routes/notifications';
 import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
+import bodyParser from 'body-parser';
 
 const expressApp = ExpressApp();
-
 expressApp.use(setCacheControlHeaderMiddleware)
-
+expressApp.use(bodyParser.json());
 
 registerHealthRoute(expressApp);
 if (isServingUI()) {
