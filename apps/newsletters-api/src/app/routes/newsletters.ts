@@ -19,6 +19,7 @@ import {
 	makeSuccessResponse,
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
+import { queryParamToBoolean } from '../params';
 
 export function registerReadNewsletterRoutes(app: Express) {
 	// not using the makeSuccess function on this route as
@@ -31,7 +32,7 @@ export function registerReadNewsletterRoutes(app: Express) {
 				.send(makeErrorResponse(storageResponse.message));
 		}
 
-		return storageResponse.data.map(transformDataToLegacyNewsletter);
+		return res.send(storageResponse.data.map(transformDataToLegacyNewsletter));
 	});
 
 	app.get(
@@ -44,15 +45,14 @@ export function registerReadNewsletterRoutes(app: Express) {
 					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 					.send(makeErrorResponse(storageResponse.message));
 			}
-			// TO  DO - CONVERT string to boolean??
 			const { signImages } = req.query;
-			if (isDynamicImageSigningEnabled() && signImages) {
+			if (isDynamicImageSigningEnabled() && queryParamToBoolean(signImages)) {
 				const newsletterDataWithSignedImages = await Promise.all(
 					storageResponse.data.map(signTemplateImages),
 				);
-				return makeSuccessResponse(newsletterDataWithSignedImages);
+				return res.send(makeSuccessResponse(newsletterDataWithSignedImages));
 			}
-			return makeSuccessResponse(storageResponse.data);
+			return res.send(makeSuccessResponse(storageResponse.data));
 		},
 	);
 
@@ -66,13 +66,13 @@ export function registerReadNewsletterRoutes(app: Express) {
 				.send(makeErrorResponse(storageResponse.message));
 		}
 		const { signImages } = req.query;
-		if (isDynamicImageSigningEnabled() && signImages) {
+		if (isDynamicImageSigningEnabled() && queryParamToBoolean(signImages)) {
 			const newsletterDataWithSignedImages = await signTemplateImages(
 				storageResponse.data,
 			);
-			return makeSuccessResponse(newsletterDataWithSignedImages);
+			return res.send(makeSuccessResponse(newsletterDataWithSignedImages));
 		}
-		return makeSuccessResponse(storageResponse.data);
+		return res.send(makeSuccessResponse(storageResponse.data));
 	});
 }
 
@@ -149,7 +149,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 					.send(makeErrorResponse(storageResponse.message));
 			}
 
-			return makeSuccessResponse(storageResponse.data);
+			return res.send(makeSuccessResponse(storageResponse.data));
 		},
 	);
 
@@ -205,7 +205,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 					.send(makeErrorResponse(storageResponse.message));
 			}
 
-			return makeSuccessResponse(storageResponse.data);
+			return res.send(makeSuccessResponse(storageResponse.data));
 		},
 	);
 }

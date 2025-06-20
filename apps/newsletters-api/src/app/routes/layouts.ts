@@ -20,7 +20,7 @@ export function registerReadLayoutRoutes(app: Express) {
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));
 		}
-		return makeSuccessResponse(storageResponse.data);
+		return res.send(makeSuccessResponse(storageResponse.data));
 	});
 
 	app.get('/api/layouts/:editionId', async (req, res) => {
@@ -41,7 +41,7 @@ export function registerReadLayoutRoutes(app: Express) {
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));
 		}
-		return makeSuccessResponse(storageResponse.data);
+		return res.send(makeSuccessResponse(storageResponse.data));
 	});
 }
 
@@ -82,6 +82,6 @@ export function registerWriteLayoutRoutes(app: Express) {
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 				.send(makeErrorResponse(storageResponse.message));
 		}
-		return makeSuccessResponse(storageResponse.data);
+		return res.send(makeSuccessResponse(storageResponse.data));
 	});
 }
