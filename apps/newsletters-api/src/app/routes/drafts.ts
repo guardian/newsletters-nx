@@ -1,4 +1,4 @@
-import { Express } from 'express';
+import type { Express } from 'express';
 import { permissionService } from '../../services/permissions';
 import { draftStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';

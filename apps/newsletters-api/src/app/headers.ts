@@ -1,5 +1,4 @@
-import { Request, RequestHandler, Response } from 'express'
-
+import type { Request, RequestHandler, Response } from 'express'
 import { isServingUI } from '../apiDeploymentSettings';
 
 type TtlSettings = {
@@ -31,7 +30,7 @@ export const getCacheControl = (
 	return undefined;
 };
 
-export const setCacheControlHeaderMiddleware: RequestHandler = async (
+export const setCacheControlHeaderMiddleware: RequestHandler = (
 	req: Request,
 	res: Response,
 	next

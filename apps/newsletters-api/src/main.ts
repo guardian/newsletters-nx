@@ -1,4 +1,4 @@
-import Express from 'express';
+import ExpressApp from 'express';
 import {
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
@@ -21,7 +21,7 @@ import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templat
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
-const expressApp = Express();
+const expressApp = ExpressApp();
 
 expressApp.use(setCacheControlHeaderMiddleware)
 

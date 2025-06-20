@@ -1,6 +1,6 @@
+import type { Express, Request, Response } from 'express';
 import type { NewsletterMessageId } from '@newsletters-nx/email-builder';
 import { sendEmailNotifications } from '@newsletters-nx/email-builder';
-import { Express, Request, Response } from 'express';
 import { makeEmailEnvInfo } from '../../services/notifications/email-env';
 import { makeSesClient } from '../../services/notifications/email-service';
 import { newsletterStore } from '../../services/storage';

@@ -1,10 +1,10 @@
+import fs from 'fs';
+import path from 'path';
 import type {
 	Express,
 	RequestHandler
 } from 'express'
 import { static as serveStatic } from 'express';
-import fs from 'fs';
-import path from 'path';
 
 
 const routeMap = {
@@ -36,7 +36,7 @@ const routeMap = {
 		'/edit/:id',
 		'/edit-json/:id',
 	],
-} satisfies Record<string, string[]>
+};
 
 
 export function registerUIServer(app: Express) {
@@ -48,7 +48,7 @@ export function registerUIServer(app: Express) {
 		const pathToServedFile = path.join(pathToStaticFiles, 'index.html');
 		const handler = await fs.promises.open(pathToServedFile);
 		const buffer = await handler.readFile();
-		return reply.type('text/html').send(buffer);
+		reply.type('text/html').send(buffer);
 	};
 
 	Object.entries(routeMap).forEach(([routeName, paths]) => {

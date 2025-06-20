@@ -1,4 +1,4 @@
-import { Express } from 'express';
+import type { Express } from 'express';
 import type {
 	EmailRenderingOutput,
 } from '@newsletters-nx/newsletters-data-client';

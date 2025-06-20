@@ -1,4 +1,4 @@
-import { Express, Request, Response } from 'express';
+import type { Express, Request, Response } from 'express';
 import {
 	isNewsletterData,
 	isPartialNewsletterData,
@@ -13,13 +13,13 @@ import {
 	isAuthorisedToMakeRequestedNewsletterUpdate,
 } from '../authorisation';
 import { getUserProfile } from '../get-user-profile';
+import { queryParamToBoolean } from '../params';
 import {
 	makeAccessDeniedApiResponse,
 	makeErrorResponse,
 	makeSuccessResponse,
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
-import { queryParamToBoolean } from '../params';
 
 export function registerReadNewsletterRoutes(app: Express) {
 	// not using the makeSuccess function on this route as
