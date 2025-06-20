@@ -19,7 +19,7 @@ import {
 import { registerNotificationRoutes } from './app/routes/notifications';
 import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
 import { registerUserRoute } from './app/routes/user';
-// import { registerUIServer } from './register-ui-server';
+import { registerUIServer } from './register-ui-server';
 
 
 // TO DO - define as middleware
@@ -28,7 +28,11 @@ import { registerUserRoute } from './app/routes/user';
 const expressApp = Express();
 registerHealthRoute(expressApp);
 if (isServingUI()) {
-	// registerUIServer(expressApp);
+	// When running locally UI dev-server runs on :4200, even without this function.
+	// but the UI should also be served on :3000, like it is on PROD
+	// if registerUIServer is working locally, a ui route on :3000 (eg http://localhost:3000/launched) 
+	// should serve the index.html and static assets from: dist/apps/newsletters-ui (if built with nx:build)
+	registerUIServer(expressApp);
 }
 if (isServingReadWriteEndpoints()) {
 	registerCurrentStepRoute(expressApp);

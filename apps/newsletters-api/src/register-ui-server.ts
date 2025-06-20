@@ -1,32 +1,30 @@
+import { Express, RequestHandler, static as serveStatic } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { fastifyStatic } from '@fastify/static';
-import type { FastifyInstance, RouteHandlerMethod } from 'fastify';
 
-export function registerUIServer(app: FastifyInstance) {
+
+export function registerUIServer(app: Express) {
 	const pathToStaticFiles = path.join('./dist/apps/newsletters-ui');
-	// Get fastify to serve the static files
-	void app.register(fastifyStatic, {
-		root: path.resolve(pathToStaticFiles),
-		prefix: '/',
-	});
 
-	const handleUiRequest: RouteHandlerMethod = (req, reply) => {
+	app.use(serveStatic(pathToStaticFiles))
+
+	const serveIndexHtml: RequestHandler = async (req, reply) => {
 		const pathToServedFile = path.join(pathToStaticFiles, 'index.html');
-		const stream = fs.createReadStream(path.resolve(pathToServedFile));
-		return reply.type('text/html').send(stream);
+		const handler = await fs.promises.open(pathToServedFile);
+		const buffer = await handler.readFile();
+		return reply.type('text/html').send(buffer);
 	};
 
 	// Route for serving the index.html file
-	app.get('/index.html', handleUiRequest);
+	app.get('/', serveIndexHtml);
 
 	// Routes for serving main menu options
-	app.get('/drafts/*', handleUiRequest);
-	app.get('/drafts', handleUiRequest);
-	app.get('/launched/*', handleUiRequest);
-	app.get('/launched', handleUiRequest);
-	app.get('/templates/*', handleUiRequest);
-	app.get('/templates', handleUiRequest);
-	app.get('/layouts/*', handleUiRequest);
-	app.get('/layouts', handleUiRequest);
+	app.get('/drafts/*', serveIndexHtml);
+	app.get('/drafts', serveIndexHtml);
+	app.get('/launched/*', serveIndexHtml);
+	app.get('/launched', serveIndexHtml);
+	app.get('/templates/*', serveIndexHtml);
+	app.get('/templates', serveIndexHtml);
+	app.get('/layouts/*', serveIndexHtml);
+	app.get('/layouts', serveIndexHtml);
 }
