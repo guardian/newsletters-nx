@@ -1,9 +1,10 @@
-import {
-	supportedValueSchema,
-	type FormDataRecord,
-	type WizardButtonType,
+import type {
+	FormDataRecord,
+	WizardButtonType,
 } from '@newsletters-nx/newsletters-data-client';
-import { z, type ZodIssue, type ZodObject, type ZodRawShape } from 'zod';
+import { supportedValueSchema, } from '@newsletters-nx/newsletters-data-client';
+import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
+import { z } from 'zod';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completely generic?
 export type GenericStorageInterface = any;
