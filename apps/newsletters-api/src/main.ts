@@ -4,7 +4,7 @@ import {
 	isServingReadWriteEndpoints,
 	isServingUI,
 } from './apiDeploymentSettings';
-// import { setHeaderHook } from './app/headers';
+import { setCacheControlHeaderMiddleware } from './app/headers';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
@@ -21,11 +21,11 @@ import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templat
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
-
-// TO DO - define as middleware
-// fastifyApp.addHook('onSend', setHeaderHook);
-
 const expressApp = Express();
+
+expressApp.use(setCacheControlHeaderMiddleware)
+
+
 registerHealthRoute(expressApp);
 if (isServingUI()) {
 	// When running locally UI dev-server runs on :4200, even without this function.
