@@ -2,10 +2,10 @@ import Express from 'express';
 import {
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
-	// isServingUI,
+	isServingUI,
 } from './apiDeploymentSettings';
 // import { setHeaderHook } from './app/headers';
-// import { registerCurrentStepRoute } from './app/routes/currentStep';
+import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import {
@@ -17,7 +17,7 @@ import {
 	registerReadWriteNewsletterRoutes,
 } from './app/routes/newsletters';
 import { registerNotificationRoutes } from './app/routes/notifications';
-// import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
+import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
 import { registerUserRoute } from './app/routes/user';
 // import { registerUIServer } from './register-ui-server';
 
@@ -27,8 +27,11 @@ import { registerUserRoute } from './app/routes/user';
 
 const expressApp = Express();
 registerHealthRoute(expressApp);
+if (isServingUI()) {
+	// registerUIServer(expressApp);
+}
 if (isServingReadWriteEndpoints()) {
-	// registerCurrentStepRoute(expressApp);
+	registerCurrentStepRoute(expressApp);
 	registerUserRoute(expressApp);
 	registerReadWriteNewsletterRoutes(expressApp);
 	registerNotificationRoutes(expressApp);
@@ -37,7 +40,7 @@ if (isServingReadWriteEndpoints()) {
 if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(expressApp);
 	registerDraftsRoutes(expressApp);
-	// registerRenderingTemplatesRoutes(expressApp);
+	registerRenderingTemplatesRoutes(expressApp);
 	registerReadLayoutRoutes(expressApp);
 }
 
