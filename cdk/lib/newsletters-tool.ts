@@ -196,7 +196,8 @@ EOL`,
 			app: toolAppName,
 			accessLogging: {
 				enabled: true,
-				prefix: `ELBLogs/${this.stack}/${toolAppName}/${this.stage}`,
+				// This is the prefix pattern DevX assume so that the logs can be shown on the Availability dashboard.
+				prefix: `application-load-balancer/${this.stage}/${this.stack}/${toolAppName}`,
 			},
 			applicationLogging: {
 				enabled: true,
