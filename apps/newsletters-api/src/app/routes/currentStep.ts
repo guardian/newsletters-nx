@@ -1,5 +1,6 @@
 import type { Express } from 'express';
 import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
+import { replaceNullWithUndefinedForUnknown } from '@newsletters-nx/newsletters-data-client';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
@@ -78,11 +79,7 @@ export function registerCurrentStepRoute(app: Express) {
 		'/api/currentstep',
 		async (req, res) => {
 			const user = getUserProfile(req);
-
-			// TO DO - need to parse request body
-
-			const parsedBodyResult = currentStepRouteRequestSchema.safeParse(req.body)
-
+			const parsedBodyResult = currentStepRouteRequestSchema.safeParse(replaceNullWithUndefinedForUnknown(req.body))
 			if (!parsedBodyResult.success) {
 				console.error(`invalid currentStepRouteRequest on ${req.path}`, parsedBodyResult.error.issues)
 				const badDataError: CurrentStepRouteResponse = {
