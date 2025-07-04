@@ -22,30 +22,30 @@ import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templat
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
-const expressApp = ExpressApp();
-expressApp.use(setCacheControlHeaderMiddleware)
-expressApp.use(bodyParser.json());
+const app = ExpressApp();
+app.use(setCacheControlHeaderMiddleware)
+app.use(bodyParser.json());
 
-registerHealthRoute(expressApp);
+registerHealthRoute(app);
 if (isServingUI()) {
 	// When running locally UI dev-server runs on :4200, even without this function.
 	// but the UI should also be served on :3000, like it is on PROD
 	// if registerUIServer is working locally, a ui route on :3000 (eg http://localhost:3000/launched) 
 	// should serve the index.html and static assets from: dist/apps/newsletters-ui (if built with nx:build)
-	registerUIServer(expressApp);
+	registerUIServer(app);
 }
 if (isServingReadWriteEndpoints()) {
-	registerCurrentStepRoute(expressApp);
-	registerUserRoute(expressApp);
-	registerReadWriteNewsletterRoutes(expressApp);
-	registerNotificationRoutes(expressApp);
-	registerWriteLayoutRoutes(expressApp);
+	registerCurrentStepRoute(app);
+	registerUserRoute(app);
+	registerReadWriteNewsletterRoutes(app);
+	registerNotificationRoutes(app);
+	registerWriteLayoutRoutes(app);
 }
 if (isServingReadEndpoints()) {
-	registerReadNewsletterRoutes(expressApp);
-	registerDraftsRoutes(expressApp);
-	registerRenderingTemplatesRoutes(expressApp);
-	registerReadLayoutRoutes(expressApp);
+	registerReadNewsletterRoutes(app);
+	registerDraftsRoutes(app);
+	registerRenderingTemplatesRoutes(app);
+	registerReadLayoutRoutes(app);
 }
 
 
@@ -69,7 +69,7 @@ const start = async () => {
 			`Starting newsletters-api server on http://${options.host}:${options.port}`,
 		);
 
-		expressApp.listen(options);
+		app.listen(options);
 
 		// TO DO - start was "intentionally asynchronous" - is that essential??
 		await new Promise(() => {

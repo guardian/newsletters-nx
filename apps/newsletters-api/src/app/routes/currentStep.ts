@@ -72,7 +72,7 @@ const getAccessDeniedError = async (
 /**
  * Register the current step route for the newsletter wizard
  * TODO: This is a placeholder that will be changed to a state machine
- * @param app - Fastify instance to add the route to
+ * @param app - Express instance to add the route to
  */
 export function registerCurrentStepRoute(app: Express) {
 	app.post(
