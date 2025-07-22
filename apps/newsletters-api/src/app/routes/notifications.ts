@@ -91,7 +91,6 @@ export function registerNotificationRoutes(app: Express) {
 
 	app.get(
 		'/api/email/:newsletterId/:action',
-		// { preValidation: canTriggerNotification },
 		async (req, res) => {
 			const { newsletterId, action } = req.params;
 
