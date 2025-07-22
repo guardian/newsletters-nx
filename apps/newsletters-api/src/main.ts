@@ -1,10 +1,11 @@
-import Fastify from 'fastify';
+import bodyParser from 'body-parser';
+import ExpressApp from 'express';
 import {
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
 	isServingUI,
 } from './apiDeploymentSettings';
-import { setHeaderHook } from './app/headers';
+import { setCacheControlHeaderMiddleware } from './app/headers';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
@@ -21,9 +22,16 @@ import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templat
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
-const app = Fastify();
+const app = ExpressApp();
+app.use(setCacheControlHeaderMiddleware)
+app.use(bodyParser.json());
+
 registerHealthRoute(app);
 if (isServingUI()) {
+	// When running locally UI dev-server runs on :4200, even without this function.
+	// but the UI should also be served on :3000, like it is on PROD
+	// if registerUIServer is working locally, a ui route on :3000 (eg http://localhost:3000/launched) 
+	// should serve the index.html and static assets from: dist/apps/newsletters-ui (if built with nx:build)
 	registerUIServer(app);
 }
 if (isServingReadWriteEndpoints()) {
@@ -40,7 +48,6 @@ if (isServingReadEndpoints()) {
 	registerReadLayoutRoutes(app);
 }
 
-app.addHook('onSend', setHeaderHook);
 
 const start = async () => {
 	try {
@@ -61,7 +68,13 @@ const start = async () => {
 		console.log(
 			`Starting newsletters-api server on http://${options.host}:${options.port}`,
 		);
-		await app.listen(options);
+
+		app.listen(options);
+
+		// TO DO - start was "intentionally asynchronous" - is that essential??
+		await new Promise(() => {
+			//
+		})
 	} catch (err) {
 		// Errors are logged here
 		console.error(err);

@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { Request, RequestHandler, Response } from 'express'
 import { isServingUI } from '../apiDeploymentSettings';
 
 type TtlSettings = {
@@ -10,34 +10,34 @@ const newsletterTtl: TtlSettings = {
 };
 
 export const getCacheControl = (
-	req: FastifyRequest,
+	req: Request,
 ): TtlSettings | undefined => {
 	// the API instance serving the UI must always provide fresh data
 	if (isServingUI()) {
 		return undefined;
 	}
 
-	if (req.routerPath.startsWith('/api/newsletters')) {
+	if (req.path.startsWith('/api/newsletters')) {
 		return newsletterTtl;
 	}
-	if (req.routerPath.startsWith('/api/legacy')) {
+	if (req.path.startsWith('/api/legacy')) {
 		return newsletterTtl;
 	}
-	if (req.routerPath.startsWith('/api/layouts')) {
+	if (req.path.startsWith('/api/layouts')) {
 		return newsletterTtl;
 	}
 
 	return undefined;
 };
 
-export const setHeaderHook = async (
-	req: FastifyRequest,
-	reply: FastifyReply,
+export const setCacheControlHeaderMiddleware: RequestHandler = (
+	req: Request,
+	res: Response,
+	next
 ) => {
 	const cacheControl = getCacheControl(req);
-	if (!cacheControl) {
-		return;
+	if (cacheControl) {
+		res.header(`Cache-Control`, `max-age=${cacheControl.cacheMaxAge}`);
 	}
-
-	void reply.header(`Cache-Control`, `max-age=${cacheControl.cacheMaxAge}`);
+	next();
 };

@@ -1,11 +1,13 @@
-import type { FastifyInstance } from 'fastify';
+import type { Express } from 'express';
 import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
+import { replaceNullWithUndefinedForUnknown } from '@newsletters-nx/newsletters-data-client';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 } from '@newsletters-nx/state-machine';
 import {
+	currentStepRouteRequestSchema,
 	handleWizardRequestAndReturnWizardResponse,
 	StateMachineError,
 	StateMachineErrorCode,
@@ -70,60 +72,76 @@ const getAccessDeniedError = async (
 /**
  * Register the current step route for the newsletter wizard
  * TODO: This is a placeholder that will be changed to a state machine
- * @param app - Fastify instance to add the route to
+ * @param app - Express instance to add the route to
  */
-export function registerCurrentStepRoute(app: FastifyInstance) {
-	app.post<{ Body: CurrentStepRouteRequest }>(
+export function registerCurrentStepRoute(app: Express) {
+	app.post(
 		'/api/currentstep',
-		async (req, res): Promise<CurrentStepRouteResponse> => {
+		async (req, res) => {
 			const user = getUserProfile(req);
-			const accessDeniedError = await getAccessDeniedError(user, req.body);
+			const parsedBodyResult = currentStepRouteRequestSchema.safeParse(replaceNullWithUndefinedForUnknown(req.body))
+			if (!parsedBodyResult.success) {
+				console.error(`invalid currentStepRouteRequest on ${req.path}`, parsedBodyResult.error.issues)
+				const badDataError: CurrentStepRouteResponse = {
+					currentStepId: '',
+					errorMessage: "The application sent data that the server could not interpret",
+					errorDetails: {
+						zodIssues: parsedBodyResult.error.issues
+					},
+					hasPersistentError: true
+				}
+
+				return res.status(400).send(badDataError);
+			}
+
+			const currentStepRouteRequest = parsedBodyResult.data;
+			const accessDeniedError = await getAccessDeniedError(user, currentStepRouteRequest);
 			if (accessDeniedError) {
 				return res.status(403).send(accessDeniedError);
 			}
 
-			const requestBody: CurrentStepRouteRequest = req.body;
-			const layout = newslettersWorkflowStepLayout[requestBody.wizardId];
+			const layout = newslettersWorkflowStepLayout[currentStepRouteRequest.wizardId];
 
 			if (!layout) {
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'No layout found',
-					currentStepId: requestBody.stepId,
+					currentStepId: currentStepRouteRequest.stepId,
 					hasPersistentError: true,
 				};
 				return res.status(400).send(errorResponse);
 			}
 
 			const serviceInterface = user.profile
-				? requestBody.wizardId === 'LAUNCH_NEWSLETTER'
+				? currentStepRouteRequest.wizardId === 'LAUNCH_NEWSLETTER'
 					? makelaunchServiceForUser(user.profile)
 					: makeDraftServiceForUser(
-							user.profile,
-							makeSesClient(),
-							makeEmailEnvInfo(),
-					  )
+						user.profile,
+						makeSesClient(),
+						makeEmailEnvInfo(),
+					)
 				: undefined;
 
 			if (!serviceInterface) {
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'FAILED to CONSTRUCT SERVICE',
-					currentStepId: requestBody.stepId,
+					currentStepId: currentStepRouteRequest.stepId,
 					hasPersistentError: true,
 				};
 				return res.status(500).send(errorResponse);
 			}
 
 			try {
-				return await handleWizardRequestAndReturnWizardResponse(
-					requestBody,
+				const response = await handleWizardRequestAndReturnWizardResponse(
+					currentStepRouteRequest,
 					layout,
 					serviceInterface,
-				);
+				)
+				return res.send(response);
 			} catch (error) {
 				if (error instanceof StateMachineError) {
 					const errorResponse: CurrentStepRouteResponse = {
 						errorMessage: error.message,
-						currentStepId: requestBody.stepId,
+						currentStepId: currentStepRouteRequest.stepId,
 						hasPersistentError: error.isPersistant,
 					};
 					return res.status(getHttpCode(error)).send(errorResponse);
@@ -131,7 +149,7 @@ export function registerCurrentStepRoute(app: FastifyInstance) {
 
 				const errorResponse: CurrentStepRouteResponse = {
 					errorMessage: 'UNHANDLED ERROR',
-					currentStepId: requestBody.stepId,
+					currentStepId: currentStepRouteRequest.stepId,
 					hasPersistentError: true,
 				};
 				return res.status(500).send(errorResponse);
