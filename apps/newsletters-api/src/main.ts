@@ -59,7 +59,6 @@ const start = async () => {
 			 * This is essential for running the app within AWS.
 			 *
 			 * See:
-			 *   - https://www.fastify.io/docs/latest/Reference/Server/#listen
 			 * 	 - https://serverfault.com/questions/78048/whats-the-difference-between-ip-address-0-0-0-0-and-127-0-0-1
 			 */
 			host: '0.0.0.0',
