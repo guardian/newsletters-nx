@@ -31,13 +31,12 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
         if (updateInProgress) {
             return
         }
-        dispatch({ type: 'set-updating', updateInProgress: true })
+        dispatch({ type: 'set-pending' })
         const result = await fetchPostApiData<ApiResponse<Layout>>(
             `/api/layouts/${editionId}`,
             localLayout,
         );
-        dispatch({ type: 'set-updating', updateInProgress: false })
-        dispatch({ type: 'set-feedback', feedback: result?.ok ? 'success' : 'failure' })
+        dispatch({ type: 'handle-server-response', success: !!result?.ok })
     };
 
 

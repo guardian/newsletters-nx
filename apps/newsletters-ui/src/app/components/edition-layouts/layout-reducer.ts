@@ -7,16 +7,15 @@ export type LayoutAction = {
     layout: Layout;
 } |
 {
-    type: 'set-feedback';
-    feedback: FeedbackType | undefined;
-} |
-{
-    type: 'set-updating';
-    updateInProgress: boolean;
+    type: 'set-pending';
 } |
 {
     type: 'select-newsletter';
     selectedNewsletter?: string;
+} |
+{
+    type: 'handle-server-response';
+    success: boolean;
 }
 
 export type LayoutState = {
@@ -27,7 +26,7 @@ export type LayoutState = {
 }
 
 
-export function layoutReducer(state: LayoutState, action: LayoutAction) {
+export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutState {
     switch (action.type) {
 
         case "local-update":
@@ -39,15 +38,10 @@ export function layoutReducer(state: LayoutState, action: LayoutAction) {
                 layout: action.layout,
                 feedback: undefined,
             }
-        case "set-feedback":
+        case "set-pending":
             return {
                 ...state,
-                feedback: action.feedback
-            }
-        case "set-updating":
-            return {
-                ...state,
-                updateInProgress: action.updateInProgress
+                updateInProgress: true
             }
         case "select-newsletter": {
             return {
@@ -55,5 +49,11 @@ export function layoutReducer(state: LayoutState, action: LayoutAction) {
                 selectedNewsletter: action.selectedNewsletter
             }
         }
+        case "handle-server-response":
+            return {
+                ...state,
+                updateInProgress: false,
+                feedback: action.success ? 'success' : 'failure'
+            }
     }
 }
