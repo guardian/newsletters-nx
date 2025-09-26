@@ -76,7 +76,6 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                                 dispatch={dispatch}
                                 groupIndex={groupIndex}
                                 group={group}
-                                localLayout={localLayout}
                                 selectedNewsletter={selectedNewsletter}
                                 newsletters={newsletters}
                             />

@@ -1,5 +1,5 @@
 import type { Layout, LayoutGroup } from "@newsletters-nx/newsletters-data-client";
-import { addNewGroup, deleteGroup, deleteNewsletterFromGroup, insertNewsletterIntoGroup, updateLayoutGroup } from "../../lib/modify-layout";
+import { addNewGroup, deleteGroup, deleteNewsletterFromGroup, insertNewsletterIntoGroup, moveNewsletterTo, updateLayoutGroup } from "../../lib/modify-layout";
 
 type FeedbackType = 'success' | 'failure'
 
@@ -26,6 +26,14 @@ export type LayoutAction =
         mod: Partial<LayoutGroup>;
     } | {
         type: 'remove-newsletter';
+        groupIndex: number;
+        newsletterIndex: number;
+    } | {
+        type: 'move-newsletter-forward';
+        groupIndex: number;
+        newsletterIndex: number;
+    } | {
+        type: 'move-newsletter-back';
         groupIndex: number;
         newsletterIndex: number;
     } | {
@@ -103,6 +111,16 @@ export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutS
             return {
                 ...state,
                 layout: deleteGroup(state.layout, action.groupIndex)
+            }
+        case "move-newsletter-back":
+            return {
+                ...state,
+                layout: moveNewsletterTo(state.layout, action.groupIndex, action.newsletterIndex, action.newsletterIndex - 1)
+            }
+        case "move-newsletter-forward":
+            return {
+                ...state,
+                layout: moveNewsletterTo(state.layout, action.groupIndex, action.newsletterIndex, action.newsletterIndex + 1)
             }
     }
 }

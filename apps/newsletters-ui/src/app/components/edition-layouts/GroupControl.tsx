@@ -1,27 +1,25 @@
-
 import Add from "@mui/icons-material/Add";
 import { Box, Button, Card, IconButton } from "@mui/material";
 import type { Dispatch } from "react";
 import { Fragment } from "react";
-import type { Layout, LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-data-client";
+import type { LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { StringInput } from "../SchemaForm/StringInput";
 import type { LayoutAction } from "./layout-reducer";
 import { NewsletterCard } from "./NewsletterCard";
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
 
 interface Props {
     dispatch: Dispatch<LayoutAction>;
     groupIndex: number;
     group: LayoutGroup;
-    localLayout: Layout;
     selectedNewsletter: string | undefined;
     newsletters: NewsletterData[];
 }
 
 
-
 export const GroupControl = ({
     dispatch,
-    groupIndex, group, localLayout, selectedNewsletter, newsletters
+    groupIndex, group, selectedNewsletter, newsletters
 }: Props) => {
 
     const InsertButton = ({ insertIndex }: { insertIndex: number }) => {
@@ -65,11 +63,19 @@ export const GroupControl = ({
                 <Fragment key={newsletterIndex}>
                     <InsertButton insertIndex={newsletterIndex} />
                     <Box>
-                        <Button
-                            onClick={() => dispatch(
-                                { type: 'remove-newsletter', groupIndex, newsletterIndex }
-                            )}
-                        >remove</Button>
+                        <Box display={'flex'} justifyContent={'space-between'}>
+                            <IconButton disabled={newsletterIndex === 0}
+                                onClick={() => dispatch({ type: 'move-newsletter-back', groupIndex, newsletterIndex })} >
+                                <ArrowBack />
+                            </IconButton>
+                            <Button onClick={() => dispatch({ type: 'remove-newsletter', groupIndex, newsletterIndex })}>
+                                remove
+                            </Button>
+                            <IconButton disabled={newsletterIndex + 1 >= group.newsletters.length}
+                                onClick={() => dispatch({ type: 'move-newsletter-forward', groupIndex, newsletterIndex })} >
+                                <ArrowForward />
+                            </IconButton>
+                        </Box>
                         <NewsletterCard
                             size="small"
                             newsletterId={newsletterId}
