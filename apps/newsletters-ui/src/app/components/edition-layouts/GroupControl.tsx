@@ -1,26 +1,28 @@
 
 import Add from "@mui/icons-material/Add";
 import { Box, Button, Card, IconButton } from "@mui/material";
+import type { Dispatch } from "react";
 import { Fragment } from "react";
 import type { Layout, LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { deleteGroup, deleteNewsletterFromGroup, insertNewsletterIntoGroup, updateLayoutGroup } from "../../lib/modify-layout";
 import { StringInput } from "../SchemaForm/StringInput";
+import type { LayoutAction } from "./layout-reducer";
 import { NewsletterCard } from "./NewsletterCard";
 
 interface Props {
+    dispatch: Dispatch<LayoutAction>;
     groupIndex: number;
     group: LayoutGroup;
-    setLocalLayout: { (layout: Layout): void };
     localLayout: Layout;
     selectedNewsletter: string | undefined;
-    setSelectedNewsletter: { (identityName: string | undefined): void };
     newsletters: NewsletterData[];
 }
 
 
 
 export const GroupControl = ({
-    groupIndex, group, setLocalLayout, localLayout, selectedNewsletter, setSelectedNewsletter, newsletters
+    dispatch,
+    groupIndex, group, localLayout, selectedNewsletter, newsletters
 }: Props) => {
 
     const InsertButton = ({ insertIndex }: { insertIndex: number }) => {
@@ -29,8 +31,8 @@ export const GroupControl = ({
             disabled={!selectedNewsletter}
             onClick={() => {
                 if (selectedNewsletter) {
-                    setLocalLayout(insertNewsletterIntoGroup(localLayout, groupIndex, insertIndex, selectedNewsletter));
-                    setSelectedNewsletter(undefined);
+                    dispatch({ type: 'local-update', layout: insertNewsletterIntoGroup(localLayout, groupIndex, insertIndex, selectedNewsletter) })
+                    dispatch({ type: 'select-newsletter' })
                 }
             }}
         >
@@ -44,18 +46,22 @@ export const GroupControl = ({
                 <StringInput
                     label="Group Title"
                     value={group.title}
-                    inputHandler={(title) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { title }))} />
+                    inputHandler={(title) => dispatch(
+                        { type: 'local-update', layout: updateLayoutGroup(localLayout, groupIndex, { title }) }
+                    )} />
             </Box>
             <Box flex={1}>
                 <StringInput optional
                     label="subtitle"
                     value={group.subtitle ?? ''}
-                    inputHandler={(subtitle) => setLocalLayout(updateLayoutGroup(localLayout, groupIndex, { subtitle }))} />
+                    inputHandler={(subtitle) => dispatch(
+                        { type: 'local-update', layout: updateLayoutGroup(localLayout, groupIndex, { subtitle }) }
+                    )} />
             </Box>
             <Button variant="contained" color="warning"
-                onClick={() => {
-                    setLocalLayout(deleteGroup(localLayout, groupIndex));
-                }}
+                onClick={() => dispatch(
+                    { type: 'local-update', layout: deleteGroup(localLayout, groupIndex) }
+                )}
             >delete group</Button>
         </Box>
         <Box display={'flex'} flexWrap={'wrap'} gap={1} alignItems={'center'}>
@@ -64,7 +70,9 @@ export const GroupControl = ({
                     <InsertButton insertIndex={newsletterIndex} />
                     <Box>
                         <Button
-                            onClick={() => setLocalLayout(deleteNewsletterFromGroup(localLayout, groupIndex, newsletterIndex))}
+                            onClick={() => dispatch(
+                                { type: 'local-update', layout: deleteNewsletterFromGroup(localLayout, groupIndex, newsletterIndex) }
+                            )}
                         >remove</Button>
                         <NewsletterCard
                             size="small"

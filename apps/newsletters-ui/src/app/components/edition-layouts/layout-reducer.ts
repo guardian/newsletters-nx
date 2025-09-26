@@ -3,7 +3,7 @@ import type { Layout } from "@newsletters-nx/newsletters-data-client";
 type FeedbackType = 'success' | 'failure'
 
 export type LayoutAction = {
-    type: 'replace';
+    type: 'local-update';
     layout: Layout;
 } |
 {
@@ -15,7 +15,7 @@ export type LayoutAction = {
     updateInProgress: boolean;
 } |
 {
-    type: 'set-selected-newsletter';
+    type: 'select-newsletter';
     selectedNewsletter?: string;
 }
 
@@ -29,10 +29,15 @@ export type LayoutState = {
 
 export function layoutReducer(state: LayoutState, action: LayoutAction) {
     switch (action.type) {
-        case "replace":
+
+        case "local-update":
+            if (state.updateInProgress) {
+                return state
+            }
             return {
                 ...state,
-                layout: action.layout
+                layout: action.layout,
+                feedback: undefined,
             }
         case "set-feedback":
             return {
@@ -44,7 +49,7 @@ export function layoutReducer(state: LayoutState, action: LayoutAction) {
                 ...state,
                 updateInProgress: action.updateInProgress
             }
-        case "set-selected-newsletter": {
+        case "select-newsletter": {
             return {
                 ...state,
                 selectedNewsletter: action.selectedNewsletter

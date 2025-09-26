@@ -1,6 +1,6 @@
 import { Alert, Box, Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import { Fragment, useReducer } from "react";
-import type { Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
+import type { ApiResponse, Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
 import { addNewGroup } from "../../lib/modify-layout";
 import { GroupControl } from "./GroupControl";
@@ -27,35 +27,27 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
     } = state
 
 
-    const handleSubmitUpdate = async (updatedLayout: Layout) => {
+    const handleSubmitUpdate = async () => {
         if (updateInProgress) {
             return
         }
         dispatch({ type: 'set-updating', updateInProgress: true })
-        const result = await fetchPostApiData(
+        const result = await fetchPostApiData<ApiResponse<Layout>>(
             `/api/layouts/${editionId}`,
-            updatedLayout,
+            localLayout,
         );
         dispatch({ type: 'set-updating', updateInProgress: false })
-        dispatch({ type: 'set-feedback', feedback: result ? 'success' : 'failure' })
+        dispatch({ type: 'set-feedback', feedback: result?.ok ? 'success' : 'failure' })
     };
 
-    const handleChange = (layout: Layout) => {
-        if (updateInProgress) {
-            return
-        }
-        dispatch({ type: 'replace', layout });
-        dispatch({ type: 'set-feedback', feedback: undefined })
-    }
 
     return (
         <Box>
             <Box display={'flex'} gap={2} minHeight={80} alignItems={'center'}>
                 <Button variant="contained"
                     disabled={updateInProgress}
-                    onClick={() => {
-                        void handleSubmitUpdate(localLayout)
-                    }}>Publish update</Button>
+                    onClick={() => void handleSubmitUpdate()}
+                >Publish update</Button>
                 {updateInProgress && <CircularProgress />}
                 {feedback === 'success' && <Alert severity="success">
                     <Typography>Layout updated</Typography>
@@ -71,7 +63,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                 <NewsletterPicker
                     newsletters={newsletters}
                     selectedNewsletter={selectedNewsletter}
-                    setSelectedNewsletter={(selectedNewsletter => dispatch({ type: 'set-selected-newsletter', selectedNewsletter }))}
+                    setSelectedNewsletter={(selectedNewsletter => dispatch({ type: 'select-newsletter', selectedNewsletter }))}
                     stackProps={{ flex: 1 }}
                 />
                 <Stack flex={3}>
@@ -79,23 +71,22 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                         <Fragment key={groupIndex}>
                             <Divider>
                                 <Button variant="contained" onClick={() => {
-                                    handleChange(addNewGroup(localLayout, groupIndex))
+                                    dispatch({ type: 'local-update', layout: addNewGroup(localLayout, groupIndex) })
                                 }}>add group</Button>
                             </Divider>
                             <GroupControl
+                                dispatch={dispatch}
                                 groupIndex={groupIndex}
                                 group={group}
-                                setLocalLayout={handleChange}
                                 localLayout={localLayout}
                                 selectedNewsletter={selectedNewsletter}
-                                setSelectedNewsletter={(selectedNewsletter => dispatch({ type: 'set-selected-newsletter', selectedNewsletter }))}
                                 newsletters={newsletters}
                             />
                         </Fragment>
                     ))}
                     <Divider>
                         <Button variant="contained" onClick={() => {
-                            handleChange(addNewGroup(localLayout, localLayout.groups.length))
+                            dispatch({ type: 'local-update', layout: addNewGroup(localLayout, localLayout.groups.length) })
                         }}>add group</Button>
                     </Divider>
                 </Stack>
