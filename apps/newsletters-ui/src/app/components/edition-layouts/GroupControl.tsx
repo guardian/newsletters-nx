@@ -4,7 +4,6 @@ import { Box, Button, Card, IconButton } from "@mui/material";
 import type { Dispatch } from "react";
 import { Fragment } from "react";
 import type { Layout, LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-data-client";
-import { deleteGroup, deleteNewsletterFromGroup, insertNewsletterIntoGroup, updateLayoutGroup } from "../../lib/modify-layout";
 import { StringInput } from "../SchemaForm/StringInput";
 import type { LayoutAction } from "./layout-reducer";
 import { NewsletterCard } from "./NewsletterCard";
@@ -30,10 +29,7 @@ export const GroupControl = ({
             aria-label="insert newsletter"
             disabled={!selectedNewsletter}
             onClick={() => {
-                if (selectedNewsletter) {
-                    dispatch({ type: 'local-update', layout: insertNewsletterIntoGroup(localLayout, groupIndex, insertIndex, selectedNewsletter) })
-                    dispatch({ type: 'select-newsletter' })
-                }
+                dispatch({ type: 'insert-newsletter', groupIndex, insertIndex })
             }}
         >
             <Add fontSize="large" />
@@ -47,7 +43,7 @@ export const GroupControl = ({
                     label="Group Title"
                     value={group.title}
                     inputHandler={(title) => dispatch(
-                        { type: 'local-update', layout: updateLayoutGroup(localLayout, groupIndex, { title }) }
+                        { type: 'update-group', groupIndex, mod: { title } }
                     )} />
             </Box>
             <Box flex={1}>
@@ -55,12 +51,12 @@ export const GroupControl = ({
                     label="subtitle"
                     value={group.subtitle ?? ''}
                     inputHandler={(subtitle) => dispatch(
-                        { type: 'local-update', layout: updateLayoutGroup(localLayout, groupIndex, { subtitle }) }
+                        { type: 'update-group', groupIndex, mod: { subtitle } }
                     )} />
             </Box>
             <Button variant="contained" color="warning"
                 onClick={() => dispatch(
-                    { type: 'local-update', layout: deleteGroup(localLayout, groupIndex) }
+                    { type: 'delete-group', groupIndex }
                 )}
             >delete group</Button>
         </Box>
@@ -71,7 +67,7 @@ export const GroupControl = ({
                     <Box>
                         <Button
                             onClick={() => dispatch(
-                                { type: 'local-update', layout: deleteNewsletterFromGroup(localLayout, groupIndex, newsletterIndex) }
+                                { type: 'remove-newsletter', groupIndex, newsletterIndex }
                             )}
                         >remove</Button>
                         <NewsletterCard

@@ -2,7 +2,6 @@ import { Alert, Box, Button, CircularProgress, Divider, Stack, Typography } from
 import { Fragment, useReducer } from "react";
 import type { ApiResponse, Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
-import { addNewGroup } from "../../lib/modify-layout";
 import { GroupControl } from "./GroupControl";
 import { layoutReducer } from "./layout-reducer";
 import { NewsletterPicker } from "./NewsletterPicker";
@@ -69,9 +68,9 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     {localLayout.groups.map((group, groupIndex) => (
                         <Fragment key={groupIndex}>
                             <Divider>
-                                <Button variant="contained" onClick={() => {
-                                    dispatch({ type: 'local-update', layout: addNewGroup(localLayout, groupIndex) })
-                                }}>add group</Button>
+                                <Button variant="contained"
+                                    onClick={() => dispatch({ type: 'add-group', index: groupIndex })}
+                                >add group</Button>
                             </Divider>
                             <GroupControl
                                 dispatch={dispatch}
@@ -84,9 +83,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                         </Fragment>
                     ))}
                     <Divider>
-                        <Button variant="contained" onClick={() => {
-                            dispatch({ type: 'local-update', layout: addNewGroup(localLayout, localLayout.groups.length) })
-                        }}>add group</Button>
+                        <Button variant="contained" onClick={() => dispatch({ type: 'add-group' })}>add group</Button>
                     </Divider>
                 </Stack>
             </Box>
