@@ -1,9 +1,10 @@
 import { Alert, Box, Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
-import { Fragment, useState } from "react";
+import { Fragment, useReducer } from "react";
 import type { Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
 import { addNewGroup } from "../../lib/modify-layout";
 import { GroupControl } from "./GroupControl";
+import { layoutReducer } from "./layout-reducer";
 import { NewsletterPicker } from "./NewsletterPicker";
 
 interface Props {
@@ -12,33 +13,39 @@ interface Props {
     newsletters: NewsletterData[];
 }
 
-type FeedbackType = 'success' | 'failure'
 
 export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }: Props) => {
-    const [localLayout, setLocalLayout] = useState(originalLayout);
-    const [updateInProgress, setUpdateInProgress] = useState(false);
-    const [feedback, setFeedback] = useState<FeedbackType | undefined>(undefined);
-    const [selectedNewsletter, setSelectedNewsletter] = useState<string | undefined>(undefined)
+
+    const [state, dispatch] = useReducer(layoutReducer, {
+        layout: originalLayout,
+        feedback: undefined,
+        updateInProgress: false
+    })
+
+    const {
+        feedback, updateInProgress, layout: localLayout, selectedNewsletter
+    } = state
+
 
     const handleSubmitUpdate = async (updatedLayout: Layout) => {
         if (updateInProgress) {
             return
         }
-        setUpdateInProgress(true)
+        dispatch({ type: 'set-updating', updateInProgress: true })
         const result = await fetchPostApiData(
             `/api/layouts/${editionId}`,
             updatedLayout,
         );
-        setUpdateInProgress(false)
-        setFeedback(result ? 'success' : 'failure')
+        dispatch({ type: 'set-updating', updateInProgress: false })
+        dispatch({ type: 'set-feedback', feedback: result ? 'success' : 'failure' })
     };
 
     const handleChange = (layout: Layout) => {
         if (updateInProgress) {
             return
         }
-        setFeedback(undefined)
-        setLocalLayout(layout)
+        dispatch({ type: 'replace', layout });
+        dispatch({ type: 'set-feedback', feedback: undefined })
     }
 
     return (
@@ -64,7 +71,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                 <NewsletterPicker
                     newsletters={newsletters}
                     selectedNewsletter={selectedNewsletter}
-                    setSelectedNewsletter={setSelectedNewsletter}
+                    setSelectedNewsletter={(selectedNewsletter => dispatch({ type: 'set-selected-newsletter', selectedNewsletter }))}
                     stackProps={{ flex: 1 }}
                 />
                 <Stack flex={3}>
@@ -81,7 +88,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                                 setLocalLayout={handleChange}
                                 localLayout={localLayout}
                                 selectedNewsletter={selectedNewsletter}
-                                setSelectedNewsletter={setSelectedNewsletter}
+                                setSelectedNewsletter={(selectedNewsletter => dispatch({ type: 'set-selected-newsletter', selectedNewsletter }))}
                                 newsletters={newsletters}
                             />
                         </Fragment>
