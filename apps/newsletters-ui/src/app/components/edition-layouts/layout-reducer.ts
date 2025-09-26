@@ -40,33 +40,35 @@ export type LayoutAction =
         type: 'insert-newsletter';
         groupIndex: number;
         insertIndex: number;
+    } | {
+        type: 'undo';
+    } | {
+        type: 'reset';
     }
 
 export type LayoutState = {
-    layout: Layout;
     feedback?: FeedbackType;
     updateInProgress: boolean;
     selectedNewsletter?: string;
+    history: [Layout, ...Layout[]];
+    original: Layout;
 }
 
 
 export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutState {
-
 
     switch (action.type) {
         case "select-newsletter":
         case "handle-server-response":
         case "set-pending":
             break;
-        case "add-group":
-        case "delete-group":
-        case "update-group":
-        case "remove-newsletter":
-        case "insert-newsletter":
+        default:
             if (state.updateInProgress) {
                 return state
             }
     }
+
+    const current = structuredClone(state.history[0]);
 
 
     switch (action.type) {
@@ -89,38 +91,54 @@ export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutS
         case "add-group":
             return {
                 ...state,
-                layout: addNewGroup(state.layout, action.index ?? state.layout.groups.length)
+                history: [addNewGroup(current, action.index ?? current.groups.length), ...state.history]
             }
         case "update-group":
             return {
                 ...state,
-                layout: updateLayoutGroup(state.layout, action.groupIndex, action.mod)
+                history: [updateLayoutGroup(current, action.groupIndex, action.mod), ...state.history]
             }
         case "remove-newsletter":
             return {
                 ...state,
-                layout: deleteNewsletterFromGroup(state.layout, action.groupIndex, action.newsletterIndex)
+                history: [deleteNewsletterFromGroup(current, action.groupIndex, action.newsletterIndex), ...state.history]
             }
         case "insert-newsletter":
             return !state.selectedNewsletter ? state : {
                 ...state,
-                layout: insertNewsletterIntoGroup(state.layout, action.groupIndex, action.insertIndex, state.selectedNewsletter),
+                history: [insertNewsletterIntoGroup(current, action.groupIndex, action.insertIndex, state.selectedNewsletter), ...state.history],
                 selectedNewsletter: undefined
             }
         case "delete-group":
             return {
                 ...state,
-                layout: deleteGroup(state.layout, action.groupIndex)
+                history: [deleteGroup(current, action.groupIndex), ...state.history]
             }
         case "move-newsletter-back":
             return {
                 ...state,
-                layout: moveNewsletterTo(state.layout, action.groupIndex, action.newsletterIndex, action.newsletterIndex - 1)
+                history: [moveNewsletterTo(current, action.groupIndex, action.newsletterIndex, action.newsletterIndex - 1), ...state.history]
             }
         case "move-newsletter-forward":
             return {
                 ...state,
-                layout: moveNewsletterTo(state.layout, action.groupIndex, action.newsletterIndex, action.newsletterIndex + 1)
+                history: [moveNewsletterTo(current, action.groupIndex, action.newsletterIndex, action.newsletterIndex + 1), ...state.history]
+            }
+        case "undo":
+            if (state.history.length < 2) {
+                return state
+            }
+            return {
+                ...state,
+                history: state.history.slice(1) as [Layout, ...Layout[]]
+            }
+        case "reset":
+            if (state.history.length === 1) {
+                return state
+            }
+            return {
+                ...state,
+                history: [state.original]
             }
     }
 }

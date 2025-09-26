@@ -1,3 +1,4 @@
+import { History, Undo } from "@mui/icons-material";
 import { Alert, Box, Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import { Fragment, useReducer } from "react";
 import type { ApiResponse, Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
@@ -16,15 +17,16 @@ interface Props {
 export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }: Props) => {
 
     const [state, dispatch] = useReducer(layoutReducer, {
-        layout: originalLayout,
+        history: [originalLayout],
         feedback: undefined,
-        updateInProgress: false
+        updateInProgress: false,
+        original: originalLayout,
     })
 
     const {
-        feedback, updateInProgress, layout: localLayout, selectedNewsletter
+        feedback, updateInProgress, history, selectedNewsletter
     } = state
-
+    const [localLayout] = history;
 
     const handleSubmitUpdate = async () => {
         if (updateInProgress) {
@@ -55,6 +57,20 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     <Typography>Failed to update</Typography>
                     <Typography>If the problem persists, please contact Central Production</Typography>
                 </Alert>}
+                <Box marginLeft={'auto'} display={'flex'} gap={1}>
+                    <Button variant="outlined"
+                        disabled={updateInProgress || state.history.length < 2}
+                        startIcon={<Undo />}
+                        onClick={() => dispatch({ type: 'undo' })}>
+                        Undo
+                    </Button>
+                    <Button variant="outlined"
+                        disabled={updateInProgress || state.history.length === 1}
+                        startIcon={<History />}
+                        onClick={() => dispatch({ type: 'reset' })}>
+                        Reset
+                    </Button>
+                </Box>
             </Box>
 
             <Box display={'flex'} gap={1} paddingTop={2}>
