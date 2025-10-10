@@ -1,5 +1,5 @@
-import { History, Undo } from "@mui/icons-material";
-import { Alert, Box, Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
+import { History, Redo, Undo } from "@mui/icons-material";
+import { Alert, Badge, Box, Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import { Fragment, useReducer } from "react";
 import type { ApiResponse, Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
@@ -21,12 +21,15 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
         feedback: undefined,
         updateInProgress: false,
         original: originalLayout,
+        redoStack: [],
     })
 
     const {
-        feedback, updateInProgress, history, selectedNewsletter
+        feedback, updateInProgress, history, selectedNewsletter, redoStack
     } = state
-    const [localLayout] = history;
+    const [currentLayout] = history;
+    const hasHistory = history.length > 1;
+    const canRedo = redoStack.length > 0;
 
     const handleSubmitUpdate = async () => {
         if (updateInProgress) {
@@ -35,11 +38,10 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
         dispatch({ type: 'set-pending' })
         const result = await fetchPostApiData<ApiResponse<Layout>>(
             `/api/layouts/${editionId}`,
-            localLayout,
+            currentLayout,
         );
         dispatch({ type: 'handle-server-response', success: !!result?.ok })
     };
-
 
     return (
         <Box>
@@ -58,14 +60,25 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     <Typography>If the problem persists, please contact Central Production</Typography>
                 </Alert>}
                 <Box marginLeft={'auto'} display={'flex'} gap={1}>
+                    <Badge badgeContent={hasHistory ? history.length - 1 : undefined} color="secondary">
+                        <Button variant="outlined"
+                            disabled={updateInProgress || !hasHistory}
+                            startIcon={<Undo />}
+                            onClick={() => dispatch({ type: 'undo' })}>
+                            Undo
+                        </Button>
+                    </Badge>
+                    <Badge badgeContent={canRedo ? redoStack.length : undefined} color="secondary">
+                        <Button variant="outlined"
+                            disabled={updateInProgress || !canRedo}
+                            startIcon={<Redo />}
+                            onClick={() => dispatch({ type: 'redo' })}
+                        >
+                            Redo
+                        </Button>
+                    </Badge>
                     <Button variant="outlined"
-                        disabled={updateInProgress || state.history.length < 2}
-                        startIcon={<Undo />}
-                        onClick={() => dispatch({ type: 'undo' })}>
-                        Undo
-                    </Button>
-                    <Button variant="outlined"
-                        disabled={updateInProgress || state.history.length === 1}
+                        disabled={updateInProgress || !hasHistory}
                         startIcon={<History />}
                         onClick={() => dispatch({ type: 'reset' })}>
                         Reset
@@ -81,7 +94,7 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     stackProps={{ flex: 1 }}
                 />
                 <Stack flex={3}>
-                    {localLayout.groups.map((group, groupIndex) => (
+                    {currentLayout.groups.map((group, groupIndex) => (
                         <Fragment key={groupIndex}>
                             <Divider>
                                 <Button variant="contained"

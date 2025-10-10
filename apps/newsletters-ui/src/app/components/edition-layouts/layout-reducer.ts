@@ -43,6 +43,8 @@ export type LayoutAction =
     } | {
         type: 'undo';
     } | {
+        type: 'redo';
+    } | {
         type: 'reset';
     }
 
@@ -51,9 +53,11 @@ export type LayoutState = {
     updateInProgress: boolean;
     selectedNewsletter?: string;
     history: [Layout, ...Layout[]];
+    redoStack: Layout[];
     original: Layout;
 }
 
+const MAX_HISTORY_LENGTH = 30;
 
 export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutState {
 
@@ -69,7 +73,7 @@ export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutS
     }
 
     const current = structuredClone(state.history[0]);
-
+    const addToHistory = (layout: Layout): LayoutState['history'] => [layout, ...state.history].slice(0, MAX_HISTORY_LENGTH + 1) as LayoutState['history'];
 
     switch (action.type) {
         case "set-pending":
@@ -91,38 +95,45 @@ export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutS
         case "add-group":
             return {
                 ...state,
-                history: [addNewGroup(current, action.index ?? current.groups.length), ...state.history]
+                history: addToHistory(addNewGroup(current, action.index ?? current.groups.length)),
+                redoStack: [],
             }
         case "update-group":
             return {
                 ...state,
-                history: [updateLayoutGroup(current, action.groupIndex, action.mod), ...state.history]
+                history: addToHistory(updateLayoutGroup(current, action.groupIndex, action.mod)),
+                redoStack: [],
             }
         case "remove-newsletter":
             return {
                 ...state,
-                history: [deleteNewsletterFromGroup(current, action.groupIndex, action.newsletterIndex), ...state.history]
+                history: addToHistory(deleteNewsletterFromGroup(current, action.groupIndex, action.newsletterIndex)),
+                redoStack: [],
             }
         case "insert-newsletter":
             return !state.selectedNewsletter ? state : {
                 ...state,
-                history: [insertNewsletterIntoGroup(current, action.groupIndex, action.insertIndex, state.selectedNewsletter), ...state.history],
-                selectedNewsletter: undefined
+                history: addToHistory(insertNewsletterIntoGroup(current, action.groupIndex, action.insertIndex, state.selectedNewsletter)),
+                selectedNewsletter: undefined,
+                redoStack: [],
             }
         case "delete-group":
             return {
                 ...state,
-                history: [deleteGroup(current, action.groupIndex), ...state.history]
+                history: addToHistory(deleteGroup(current, action.groupIndex)),
+                redoStack: [],
             }
         case "move-newsletter-back":
             return {
                 ...state,
-                history: [moveNewsletterTo(current, action.groupIndex, action.newsletterIndex, action.newsletterIndex - 1), ...state.history]
+                history: addToHistory(moveNewsletterTo(current, action.groupIndex, action.newsletterIndex, action.newsletterIndex - 1)),
+                redoStack: [],
             }
         case "move-newsletter-forward":
             return {
                 ...state,
-                history: [moveNewsletterTo(current, action.groupIndex, action.newsletterIndex, action.newsletterIndex + 1), ...state.history]
+                history: addToHistory(moveNewsletterTo(current, action.groupIndex, action.newsletterIndex, action.newsletterIndex + 1)),
+                redoStack: [],
             }
         case "undo":
             if (state.history.length < 2) {
@@ -130,15 +141,28 @@ export function layoutReducer(state: LayoutState, action: LayoutAction): LayoutS
             }
             return {
                 ...state,
-                history: state.history.slice(1) as [Layout, ...Layout[]]
+                history: state.history.slice(1) as LayoutState['history'],
+                redoStack: [state.history[0], ...state.redoStack]
             }
+        case "redo": {
+            const [mostRecentRedo] = state.redoStack;
+            if (!mostRecentRedo) {
+                return state
+            }
+            return {
+                ...state,
+                history: [mostRecentRedo, ...state.history],
+                redoStack: state.redoStack.slice(1)
+            }
+        }
         case "reset":
             if (state.history.length === 1) {
                 return state
             }
             return {
                 ...state,
-                history: [state.original]
+                history: [state.original],
+                redoStack: [],
             }
     }
 }
