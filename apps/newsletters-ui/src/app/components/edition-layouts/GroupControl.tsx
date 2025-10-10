@@ -1,3 +1,4 @@
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import Add from "@mui/icons-material/Add";
 import { Box, Button, Card, IconButton } from "@mui/material";
 import type { Dispatch } from "react";
@@ -6,7 +7,6 @@ import type { LayoutGroup, NewsletterData } from "@newsletters-nx/newsletters-da
 import { StringInput } from "../SchemaForm/StringInput";
 import type { LayoutAction } from "./layout-reducer";
 import { NewsletterCard } from "./NewsletterCard";
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
 
 interface Props {
     dispatch: Dispatch<LayoutAction>;
