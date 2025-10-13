@@ -1,7 +1,7 @@
 import { History, Redo, Undo } from "@mui/icons-material";
 import { Alert, Badge, Box, Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import { Fragment, useReducer } from "react";
-import type { ApiResponse, Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
+import type { Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
 import { GroupControl } from "./GroupControl";
 import { layoutReducer } from "./layout-reducer";
@@ -36,11 +36,11 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
             return
         }
         dispatch({ type: 'set-pending' })
-        const result = await fetchPostApiData<ApiResponse<Layout>>(
+        const result = await fetchPostApiData<Layout>(
             `/api/layouts/${editionId}`,
             currentLayout,
         );
-        dispatch({ type: 'handle-server-response', success: !!result?.ok })
+        dispatch({ type: 'handle-server-response', success: !!result })
     };
 
     return (
