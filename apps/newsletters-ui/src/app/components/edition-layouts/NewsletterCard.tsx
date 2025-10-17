@@ -52,7 +52,7 @@ const statusToToolTipText = (
 
 const illustrationSize = (size: CardSize) => size === 'small' ? 40 : 80
 const cardWidth = (size: CardSize) => size === 'small' ? 180 : 220
-const cardMinHeight = (size: CardSize) => size === 'small' ? 80 : 120
+const cardMinHeight = (size: CardSize) => size === 'small' ? 145 : 185
 
 
 export const NewsletterCard = ({
@@ -95,7 +95,6 @@ export const NewsletterCard = ({
 						{numberSpan}
 						{newsletter.name}
 					</Link>
-
 					<Illustration
 						name={newsletter.name}
 						url={newsletter.illustrationCard ?? newsletter.illustrationCircle}

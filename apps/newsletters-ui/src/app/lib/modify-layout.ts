@@ -35,6 +35,24 @@ export const deleteNewsletterFromGroup = (layout: Layout, groupIndex: number, ne
     })
 }
 
+export const moveNewsletterTo = (layout: Layout, groupIndex: number, newsletterIndex: number, newIndex: number): Layout => {
+    const groupToUpdate = layout.groups[groupIndex];
+    if (!groupToUpdate) {
+        console.warn('invalid groupIndex', groupIndex, layout)
+        return layout
+    }
+    const newArray = [...groupToUpdate.newsletters]
+    const newslettersToMove = newArray.splice(newsletterIndex, 1);
+
+    return updateLayoutGroup(layout, groupIndex, {
+        newsletters: [
+            ...newArray.slice(0, newIndex),
+            ...newslettersToMove,
+            ...newArray.slice(newIndex),
+        ]
+    })
+}
+
 export const insertNewsletterIntoGroup = (layout: Layout, groupIndex: number, newsletterIndex: number, newsletterId: string): Layout => {
     const groupToUpdate = layout.groups[groupIndex];
     if (!groupToUpdate) {

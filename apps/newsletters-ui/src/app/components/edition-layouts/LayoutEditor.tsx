@@ -1,9 +1,10 @@
-import { Alert, Box, Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
-import { Fragment, useState } from "react";
+import { History, Redo, Undo } from "@mui/icons-material";
+import { Alert, Badge, Box, Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
+import { Fragment, useReducer } from "react";
 import type { Layout, NewsletterData } from "@newsletters-nx/newsletters-data-client";
 import { fetchPostApiData } from "../../api-requests/fetch-api-data";
-import { addNewGroup } from "../../lib/modify-layout";
 import { GroupControl } from "./GroupControl";
+import { layoutReducer } from "./layout-reducer";
 import { NewsletterPicker } from "./NewsletterPicker";
 
 interface Props {
@@ -12,43 +13,43 @@ interface Props {
     newsletters: NewsletterData[];
 }
 
-type FeedbackType = 'success' | 'failure'
 
 export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }: Props) => {
-    const [localLayout, setLocalLayout] = useState(originalLayout);
-    const [updateInProgress, setUpdateInProgress] = useState(false);
-    const [feedback, setFeedback] = useState<FeedbackType | undefined>(undefined);
-    const [selectedNewsletter, setSelectedNewsletter] = useState<string | undefined>(undefined)
 
-    const handleSubmitUpdate = async (updatedLayout: Layout) => {
+    const [state, dispatch] = useReducer(layoutReducer, {
+        history: [originalLayout],
+        feedback: undefined,
+        updateInProgress: false,
+        original: originalLayout,
+        redoStack: [],
+    })
+
+    const {
+        feedback, updateInProgress, history, selectedNewsletter, redoStack
+    } = state
+    const [currentLayout] = history;
+    const hasHistory = history.length > 1;
+    const canRedo = redoStack.length > 0;
+
+    const handleSubmitUpdate = async () => {
         if (updateInProgress) {
             return
         }
-        setUpdateInProgress(true)
-        const result = await fetchPostApiData(
+        dispatch({ type: 'set-pending' })
+        const result = await fetchPostApiData<Layout>(
             `/api/layouts/${editionId}`,
-            updatedLayout,
+            currentLayout,
         );
-        setUpdateInProgress(false)
-        setFeedback(result ? 'success' : 'failure')
+        dispatch({ type: 'handle-server-response', success: !!result })
     };
-
-    const handleChange = (layout: Layout) => {
-        if (updateInProgress) {
-            return
-        }
-        setFeedback(undefined)
-        setLocalLayout(layout)
-    }
 
     return (
         <Box>
             <Box display={'flex'} gap={2} minHeight={80} alignItems={'center'}>
                 <Button variant="contained"
                     disabled={updateInProgress}
-                    onClick={() => {
-                        void handleSubmitUpdate(localLayout)
-                    }}>Publish update</Button>
+                    onClick={() => void handleSubmitUpdate()}
+                >Publish update</Button>
                 {updateInProgress && <CircularProgress />}
                 {feedback === 'success' && <Alert severity="success">
                     <Typography>Layout updated</Typography>
@@ -58,38 +59,59 @@ export const LayoutEditor = ({ layout: originalLayout, newsletters, editionId }:
                     <Typography>Failed to update</Typography>
                     <Typography>If the problem persists, please contact Central Production</Typography>
                 </Alert>}
+                <Box marginLeft={'auto'} display={'flex'} gap={1}>
+                    <Badge badgeContent={hasHistory ? history.length - 1 : undefined} color="secondary">
+                        <Button variant="outlined"
+                            disabled={updateInProgress || !hasHistory}
+                            startIcon={<Undo />}
+                            onClick={() => dispatch({ type: 'undo' })}>
+                            Undo
+                        </Button>
+                    </Badge>
+                    <Badge badgeContent={canRedo ? redoStack.length : undefined} color="secondary">
+                        <Button variant="outlined"
+                            disabled={updateInProgress || !canRedo}
+                            startIcon={<Redo />}
+                            onClick={() => dispatch({ type: 'redo' })}
+                        >
+                            Redo
+                        </Button>
+                    </Badge>
+                    <Button variant="outlined"
+                        disabled={updateInProgress || !hasHistory}
+                        startIcon={<History />}
+                        onClick={() => dispatch({ type: 'reset' })}>
+                        Reset
+                    </Button>
+                </Box>
             </Box>
 
             <Box display={'flex'} gap={1} paddingTop={2}>
                 <NewsletterPicker
                     newsletters={newsletters}
                     selectedNewsletter={selectedNewsletter}
-                    setSelectedNewsletter={setSelectedNewsletter}
+                    setSelectedNewsletter={(selectedNewsletter => dispatch({ type: 'select-newsletter', selectedNewsletter }))}
                     stackProps={{ flex: 1 }}
                 />
                 <Stack flex={3}>
-                    {localLayout.groups.map((group, groupIndex) => (
+                    {currentLayout.groups.map((group, groupIndex) => (
                         <Fragment key={groupIndex}>
                             <Divider>
-                                <Button variant="contained" onClick={() => {
-                                    handleChange(addNewGroup(localLayout, groupIndex))
-                                }}>add group</Button>
+                                <Button variant="contained"
+                                    onClick={() => dispatch({ type: 'add-group', index: groupIndex })}
+                                >add group</Button>
                             </Divider>
                             <GroupControl
+                                dispatch={dispatch}
                                 groupIndex={groupIndex}
                                 group={group}
-                                setLocalLayout={handleChange}
-                                localLayout={localLayout}
                                 selectedNewsletter={selectedNewsletter}
-                                setSelectedNewsletter={setSelectedNewsletter}
                                 newsletters={newsletters}
                             />
                         </Fragment>
                     ))}
                     <Divider>
-                        <Button variant="contained" onClick={() => {
-                            handleChange(addNewGroup(localLayout, localLayout.groups.length))
-                        }}>add group</Button>
+                        <Button variant="contained" onClick={() => dispatch({ type: 'add-group' })}>add group</Button>
                     </Divider>
                 </Stack>
             </Box>
