@@ -33,7 +33,9 @@ export const GroupControl = ({
 				color="primary"
 				size="large"
 				aria-label="insert newsletter"
-				disabled={!selectedNewsletter}
+				disabled={
+					!selectedNewsletter || group.newsletters.includes(selectedNewsletter)
+				}
 				onClick={() => {
 					dispatch({ type: 'insert-newsletter', groupIndex, insertIndex });
 				}}
