@@ -28,7 +28,7 @@ const getInlineTransition = (
 ): CSSProperties | undefined => {
 	if (isNew) {
 		return {
-			transform: 'scale(10%)',
+			transform: 'scaleX(0%)',
 			transition: 'transform 0s',
 		};
 	}
@@ -85,10 +85,8 @@ export const AnimatedContainer = <DataType,>({
 	return (
 		<div
 			style={{
-				display: 'flex',
-				flexWrap: 'wrap',
+				display: 'contents',
 				position: 'relative',
-				gap: 5,
 			}}
 			ref={containerRef}
 		>

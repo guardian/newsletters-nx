@@ -85,7 +85,12 @@ export const GroupControl = ({
 					list={group.newsletters}
 					getId={(newsletterId) => newsletterId}
 					represent={(newsletterId, newsletterIndex) => (
-						<Fragment>
+						<Box
+							display={'flex'}
+							flexWrap={'wrap'}
+							gap={1}
+							alignItems={'center'}
+						>
 							<InsertButton insertIndex={newsletterIndex} />
 							<Box>
 								<Box display={'flex'} justifyContent={'space-between'}>
@@ -135,7 +140,7 @@ export const GroupControl = ({
 									)}
 								/>
 							</Box>
-						</Fragment>
+						</Box>
 					)}
 				/>
 				<InsertButton insertIndex={group.newsletters.length} />
