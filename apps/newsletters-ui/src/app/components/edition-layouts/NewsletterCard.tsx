@@ -11,14 +11,14 @@ import { Link } from 'react-router-dom';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { Illustration } from '../Illustration';
 
-
-type CardSize = 'medium' | 'small'
+type CardSize = 'medium' | 'small';
 
 interface NewsletterCardProps {
 	newsletterId: string;
 	index: number;
 	newsletter?: NewsletterData;
 	size?: CardSize;
+	noNumber?: boolean;
 }
 
 const statusToAlertVariant = (
@@ -49,17 +49,16 @@ const statusToToolTipText = (
 	}
 };
 
-
-const illustrationSize = (size: CardSize) => size === 'small' ? 40 : 80
-const cardWidth = (size: CardSize) => size === 'small' ? 180 : 220
-const cardMinHeight = (size: CardSize) => size === 'small' ? 145 : 185
-
+const illustrationSize = (size: CardSize) => (size === 'small' ? 40 : 80);
+const cardWidth = (size: CardSize) => (size === 'small' ? 180 : 220);
+const cardMinHeight = (size: CardSize) => (size === 'small' ? 145 : 185);
 
 export const NewsletterCard = ({
 	newsletterId,
 	newsletter,
 	index,
 	size = 'medium',
+	noNumber = false,
 }: NewsletterCardProps) => {
 	const { palette } = useTheme();
 	const paletteSet = newsletter ? palette.primary : palette.warning;
@@ -68,7 +67,7 @@ export const NewsletterCard = ({
 		? statusToToolTipText(newsletter.status)
 		: undefined;
 
-	const numberSpan = (
+	const numberSpan = noNumber ? null : (
 		<span>
 			{index + 1}
 			{'. '}
@@ -101,7 +100,10 @@ export const NewsletterCard = ({
 						height={illustrationSize(size)}
 						noCaption
 					/>
-					<Alert severity={statusToAlertVariant(newsletter.status)} sx={{ paddingY: 0 }}>
+					<Alert
+						severity={statusToAlertVariant(newsletter.status)}
+						sx={{ paddingY: 0 }}
+					>
 						{newsletter.status}{' '}
 						{tooltipText && (
 							<Tooltip title={tooltipText} arrow>
