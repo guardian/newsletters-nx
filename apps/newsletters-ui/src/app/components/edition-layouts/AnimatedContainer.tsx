@@ -36,6 +36,9 @@ const getInlineTransition = (
 	if (wasAt && nowAt) {
 		const xShift = wasAt.left - nowAt.left;
 		const yShift = wasAt.top - nowAt.top;
+		if (!xShift && !yShift) {
+			return undefined;
+		}
 		return {
 			transform: `translateX(${xShift}px) translateY(${yShift}px) `,
 			transition: 'transform 0s',
@@ -95,12 +98,8 @@ export const AnimatedContainer = <DataType,>({
 				const newPlace = ordering.now.indexOf(getId(item));
 				const wasAt = positionRef.current[oldPlace];
 				const nowAt = positionRef.current[newPlace];
-
 				return (
 					<div
-						data-old-left={wasAt?.left}
-						data-new-left={nowAt?.left}
-						data-old-top={wasAt?.top}
 						css={itemCss}
 						key={getId(item)}
 						style={
