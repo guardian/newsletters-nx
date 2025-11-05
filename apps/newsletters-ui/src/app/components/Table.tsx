@@ -62,15 +62,11 @@ export const Table = <TData extends object>({
 				{filterableColumns.length && (
 					<Grid item xs={12}>
 						<Grid container spacing={2} rowSpacing={2}>
-							{filterableColumns.map((column) => {
-								console.log('Rendering filter for column:', column);
-
-								return (
-									<Grid item xs={12} sm={6} md={4} key={`filter ${column.id}`}>
-										{column.render('Filter')}
-									</Grid>
-								);
-							})}
+							{filterableColumns.map((column) => (
+								<Grid item xs={12} sm={6} md={4} key={`filter ${column.id}`}>
+									{column.render('Filter')}
+								</Grid>
+							))}
 						</Grid>
 					</Grid>
 				)}
