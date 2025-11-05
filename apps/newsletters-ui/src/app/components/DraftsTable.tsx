@@ -75,7 +75,6 @@ export const DraftsTable = ({ drafts }: Props) => {
 			},
 			{
 				Header: 'Progress',
-				id: 'progress',
 				accessor: (row) => row.progress,
 				Cell: ({ cell: { value } }: { cell: { value: number } }) => (
 					<CircularProgressWithLabel value={value} />
