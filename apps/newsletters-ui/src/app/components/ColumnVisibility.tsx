@@ -1,10 +1,12 @@
 import type { ColumnInstance } from 'react-table';
 
-interface ColumnVisibilityProps {
-	column: ColumnInstance;
+interface ColumnVisibilityProps<TData extends object> {
+	column: ColumnInstance<TData>;
 }
 
-export const ColumnVisibility = ({ column }: ColumnVisibilityProps) => {
+export const ColumnVisibility = <TData extends object>({
+	column,
+}: ColumnVisibilityProps<TData>) => {
 	return (
 		<div key={column.id}>
 			<label>
