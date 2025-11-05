@@ -109,6 +109,7 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse
 	> {
+		void listId;
 		// todo - implement this. We don't want to delete published newsletters - we will probably move them to a deleted folder
 		//  this function is not exposed in the API layer; not required for MVP. Deletion will be an engineering task where required.
 		return Promise.resolve({

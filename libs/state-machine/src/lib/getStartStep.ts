@@ -6,7 +6,7 @@ export const getStartStepAndId = (
 ) => {
 	const role = isEdit ? 'EDIT_START' : 'CREATE_START';
 
-	const [id, step] = Object.entries(wizardLayout).find(([id, step]) => {
+	const [id, step] = Object.entries(wizardLayout).find(([, step]) => {
 		return step.role === role;
 	}) ?? [undefined, undefined];
 
