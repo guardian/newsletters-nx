@@ -74,7 +74,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 				<Grid item>
 					<Illustration
 						name={newsletter.name}
-						url={newsletter.illustrationCard ?? newsletter.illustrationCircle}
+						url={newsletter.illustrationCard ?? newsletter.illustrationSquare ?? newsletter.illustrationCircle}
 					/>
 				</Grid>
 			</Grid>

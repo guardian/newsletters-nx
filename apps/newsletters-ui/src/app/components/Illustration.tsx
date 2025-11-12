@@ -4,18 +4,25 @@ import { Stack, Typography } from '@mui/material';
 interface Props {
 	name: string;
 	url?: string;
+	height?: number;
+	noCaption?: boolean;
 }
 
-export const Illustration = ({ name, url }: Props) => {
-	const image = url ? (
-		<img src={url} alt="" height={200} />
-	) : (
-		<ImageNotSupportedIcon color="primary" sx={{ height: 200, width: 200 }} />
-	);
-
+export const Illustration = ({ name, url, height = 200, noCaption }: Props) => {
 	const captionText = url
 		? `Illustration for ${name}`
 		: `${name} has no illustration`;
+
+	const image = url ? (
+		<img src={url} alt={captionText} height={height} />
+	) : (
+		<ImageNotSupportedIcon
+			color="primary"
+			sx={{ height: height, width: height }}
+		/>
+	);
+
+
 
 	return (
 		<Stack
@@ -31,9 +38,11 @@ export const Illustration = ({ name, url }: Props) => {
 			}}
 		>
 			{image}
-			<Typography component={'figcaption'} variant="caption">
-				{captionText}
-			</Typography>
+			{!noCaption &&
+				<Typography component={'figcaption'} variant="caption">
+					{captionText}
+				</Typography>
+			}
 		</Stack>
 	);
 };

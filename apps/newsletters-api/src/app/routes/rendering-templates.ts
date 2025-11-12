@@ -1,7 +1,6 @@
-import type { FastifyInstance } from 'fastify';
+import type { Express } from 'express';
 import type {
 	EmailRenderingOutput,
-	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { getEmailRenderingHost } from '../../apiDeploymentSettings';
 import { newsletterStore } from '../../services/storage';
@@ -21,7 +20,7 @@ const emailRenderingHost = getEmailRenderingHost();
 const NEWSLETTER_RENDER_URL = `${emailRenderingHost}/data-article/render-template.json`;
 const TEMPLATES_LIST_URL = `${emailRenderingHost}/info/templates/`;
 
-export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
+export function registerRenderingTemplatesRoutes(app: Express) {
 	app.get('/api/rendering-templates', async (req, res) => {
 		const fetchResponse = await fetch(TEMPLATES_LIST_URL);
 		if (!fetchResponse.ok) {
@@ -35,10 +34,10 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 		}
 
 		const body = (await fetchResponse.json()) as RenderingTemplate[];
-		return makeSuccessResponse(body);
+		return res.send(makeSuccessResponse(body));
 	});
 
-	app.get<{ Params: { newsletterId: string } }>(
+	app.get<{ newsletterId: string }>(
 		'/api/rendering-templates/preview/:newsletterId',
 		async (req, res) => {
 			const { newsletterId } = req.params;
@@ -50,23 +49,27 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 					.send(makeErrorResponse(storageResponse.message));
 			}
 
-			const emailRenderingResponse = await fetch(NEWSLETTER_RENDER_URL, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(storageResponse.data),
-			});
+			try {
+				const emailRenderingResponse = await fetch(NEWSLETTER_RENDER_URL, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(storageResponse.data),
+				});
 
-			const emailRenderingJson =
-				(await emailRenderingResponse.json()) as EmailRenderingOutput;
-			return makeSuccessResponse(emailRenderingJson);
+				const emailRenderingJson =
+					(await emailRenderingResponse.json()) as EmailRenderingOutput;
+				return res.send(makeSuccessResponse(emailRenderingJson));
+			} catch (fetchFail) {
+				return res.status(500).send(makeErrorResponse('Failed to fetch from email rendering'))
+			}
 		},
 	);
 
-	app.post<{ Body: NewsletterData }>(
+	app.post(
 		'/api/rendering-templates/preview',
-		async (req) => {
+		async (req, res) => {
 			const emailRenderingResponse = await fetch(NEWSLETTER_RENDER_URL, {
 				method: 'POST',
 				headers: {
@@ -78,7 +81,7 @@ export function registerRenderingTemplatesRoutes(app: FastifyInstance) {
 			const emailRenderingJson =
 				(await emailRenderingResponse.json()) as EmailRenderingOutput;
 
-			return makeSuccessResponse(emailRenderingJson);
+			return res.send(makeSuccessResponse(emailRenderingJson));
 		},
 	);
 }

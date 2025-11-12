@@ -12,6 +12,7 @@ import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftDialog } from './EditDraftDialog';
 import { ExternalLinkButton } from './ExternalLinkButton';
+import { MultiSelectColumnFilter } from './MultiSelectColumnFilter';
 import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
 
@@ -22,7 +23,13 @@ export const DraftsTable = ({ drafts }: Props) => {
 	const [draftInDialog, setDraftInDialog] = useState<
 		DraftNewsletterData | undefined
 	>(undefined);
-	const [data, setData] = useState(
+
+	type DraftRow = DraftNewsletterData & {
+		wizardListId: DraftNewsletterData['listId'];
+		progress: number;
+	};
+
+	const [data, setData] = useState<DraftRow[]>(
 		drafts.map((draft) => ({
 			...draft,
 			wizardListId: draft['listId'],
@@ -35,14 +42,13 @@ export const DraftsTable = ({ drafts }: Props) => {
 		launchNewsletters: userCanLaunch,
 	} = usePermissions() ?? {};
 
-	const columns = useMemo<Column[]>(() => {
-		const infoColumns: Column[] = [
+	const columns = useMemo<Array<Column<DraftRow>>>(() => {
+		const infoColumns: Array<Column<DraftRow>> = [
 			{
 				Header: 'Draft ID number',
 				accessor: 'listId',
-				Cell: ({ cell: { value } }) => (
-					<Link to={`./${value as string}`}>{value}</Link>
-				),
+				Cell: ({ cell: { value } }) =>
+					value !== undefined ? <Link to={`./${value}`}>{value}</Link> : null,
 			},
 			{
 				Header: 'Newsletter Name',
@@ -51,30 +57,33 @@ export const DraftsTable = ({ drafts }: Props) => {
 			{
 				Header: 'Category',
 				accessor: 'category',
+				Filter: MultiSelectColumnFilter,
+				filter: 'includesValue',
 			},
 			{
 				Header: 'Design',
 				accessor: 'figmaDesignUrl',
 				Cell: ({ cell: { value } }) =>
-					value ? (
-						<ExternalLinkButton href={value as string} text="design" />
-					) : null,
+					value ? <ExternalLinkButton href={value} text="design" /> : null,
 			},
 			{
 				Header: 'Pillar',
 				accessor: 'theme',
 				sortType: 'basic',
+				Filter: MultiSelectColumnFilter,
+				filter: 'includesValue',
 			},
 			{
 				Header: 'Progress',
-				accessor: 'progress',
-				Cell: ({ cell: { value } }) => (
-					<CircularProgressWithLabel value={value as number} />
+				id: 'progress',
+				accessor: (row) => row.progress,
+				Cell: ({ cell: { value } }: { cell: { value: number } }) => (
+					<CircularProgressWithLabel value={value} />
 				),
 			},
 		];
 
-		const editColumns: Column[] = [
+		const editColumns: Array<Column<DraftRow>> = [
 			{
 				Header: 'Edit',
 				Cell: ({ row: { original } }) => {
@@ -127,7 +136,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 			},
 		];
 
-		const launchColumns: Column[] = [
+		const launchColumns: Array<Column<DraftRow>> = [
 			{
 				Header: 'Launch',
 				Cell: ({ row: { original } }) => {

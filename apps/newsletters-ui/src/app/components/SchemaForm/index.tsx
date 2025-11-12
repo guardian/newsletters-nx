@@ -1,6 +1,5 @@
-import type { z, ZodRawShape, ZodTypeAny } from 'zod';
-import { ZodArray, ZodObject, ZodString } from 'zod';
-import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
+import type { ReactNode } from 'react';
+import type { z, ZodTypeAny } from 'zod';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
 import type {
@@ -24,6 +23,7 @@ interface Props<T extends z.ZodRawShape> {
 	readOnlyKeys?: string[];
 	validationWarnings: Partial<Record<keyof T, string>>;
 	maxOptionsForRadioButtons?: number;
+	explanations?: Partial<Record<keyof T, ReactNode>>;
 }
 
 /**
@@ -42,6 +42,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	readOnlyKeys = [],
 	validationWarnings,
 	maxOptionsForRadioButtons = 0,
+	explanations = {},
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
@@ -75,6 +76,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 					showUnsupported={showUnsupported}
 					validationWarning={validationWarnings[field.key]}
 					maxOptionsForRadioButtons={maxOptionsForRadioButtons}
+					explanation={explanations[field.key]}
 				/>
 			))}
 		</article>

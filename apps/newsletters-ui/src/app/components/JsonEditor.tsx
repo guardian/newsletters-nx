@@ -9,27 +9,19 @@ import {
 	TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import type { z, ZodIssue, ZodObject, ZodRawShape } from 'zod';
+import type { Schema, ZodIssue } from 'zod';
 import { ZodIssuesReport } from './ZodIssuesReport';
 
-type JsonRecord = Record<string, unknown>;
+type JsonRecordOrArray = Record<string, unknown> | unknown[];
 
-interface Props<T extends ZodRawShape> {
-	originalData: SchemaObjectType<T>;
-	schema: ZodObject<T>;
-	submit: { (data: SchemaObjectType<T>): void };
+interface Props<T extends JsonRecordOrArray> {
+	originalData: T;
+	schema: Schema<T>;
+	submit: { (data: T): void | Promise<void> };
 }
 
-type SchemaObjectType<T extends z.ZodRawShape> = {
-	[k in keyof z.objectUtil.addQuestionMarks<{
-		[k in keyof T]: T[k]['_output'];
-	}>]: z.objectUtil.addQuestionMarks<{
-		[k in keyof T]: T[k]['_output'];
-	}>[k];
-};
-
 const getFormattedJsonString = (
-	data: JsonRecord,
+	data: JsonRecordOrArray,
 ): { ok: true; json: string } | { ok: false } => {
 	try {
 		const json = JSON.stringify(data, undefined, 4);
@@ -39,10 +31,9 @@ const getFormattedJsonString = (
 	}
 };
 
-const safeJsonParse = (value: string): JsonRecord | undefined => {
+const safeJsonParse = (value: string): JsonRecordOrArray | undefined => {
 	try {
-		const record = JSON.parse(value) as JsonRecord;
-		return record;
+		return JSON.parse(value) as JsonRecordOrArray;
 	} catch (err) {
 		return undefined;
 	}
@@ -80,7 +71,7 @@ const CheckResultMessage = (props: {
 	);
 };
 
-export const JsonEditor = <T extends ZodRawShape>({
+export const JsonEditor = <T extends JsonRecordOrArray>({
 	originalData,
 	schema,
 	submit,
@@ -142,12 +133,12 @@ export const JsonEditor = <T extends ZodRawShape>({
 		setFieldContents(originalJson ?? '{}');
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		checkJsonValidity();
 		checkSchema();
 		try {
 			const output = schema.parse(safeJsonParse(fieldContents));
-			submit(output);
+			await submit(output);
 		} catch (err) {
 			console.warn('submit fail');
 			console.log(err);
@@ -218,7 +209,7 @@ export const JsonEditor = <T extends ZodRawShape>({
 			<Container maxWidth="md" sx={{ marginTop: 3 }}>
 				<Button
 					variant="contained"
-					onClick={handleSubmit}
+					onClick={() => void handleSubmit()}
 					fullWidth
 					size="large"
 				>

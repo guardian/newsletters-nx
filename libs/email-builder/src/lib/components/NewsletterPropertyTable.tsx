@@ -41,7 +41,7 @@ export const NewsletterPropertyTable = ({ newsletter, properties }: Props) => (
 			{properties.map((property, index) => {
 				if (typeof property === 'string') {
 					return (
-						<tr key={index}>
+						<tr style={{textAlign: "left"}} key={index}>
 							<th>{property}</th>
 							<td>{propertyToString(newsletter[property])}</td>
 						</tr>
@@ -49,7 +49,7 @@ export const NewsletterPropertyTable = ({ newsletter, properties }: Props) => (
 				}
 
 				return (
-					<tr key={index}>
+					<tr style={{textAlign: "left"}} key={index}>
 						<th>{property.displayName}</th>
 						<td>{property.generate(newsletter)}</td>
 					</tr>

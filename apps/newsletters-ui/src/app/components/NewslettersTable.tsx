@@ -6,6 +6,7 @@ import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { formatCellDate, formatStatusCell } from './Cell';
 import { ExternalLinkButton } from './ExternalLinkButton';
+import { MultiSelectColumnFilter } from './MultiSelectColumnFilter';
 import { NavigateButton } from './NavigateButton';
 import { Table } from './Table';
 
@@ -18,13 +19,13 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 	const showEditOptions = shouldShowEditOptions(permissions);
 	const data = newsletters;
 
-	const columns = useMemo<Column[]>(() => {
-		const infoColumns: Column[] = [
+	const columns = useMemo<Array<Column<NewsletterData>>>(() => {
+		const infoColumns: Array<Column<NewsletterData>> = [
 			{
 				Header: 'Newsletter ID',
 				accessor: 'identityName',
 				Cell: ({ cell: { value } }) => (
-					<Link to={`/launched/${value as string}`}>{value}</Link>
+					<Link to={`/launched/${value}`}>{value}</Link>
 				),
 			},
 			{
@@ -34,6 +35,8 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 			{
 				Header: 'Category',
 				accessor: 'category',
+				Filter: MultiSelectColumnFilter,
+				filter: 'includesValue',
 			},
 			{
 				Header: 'Design',
@@ -41,13 +44,13 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				disableSortBy: true,
 				disableFilters: true,
 				Cell: ({ cell: { value } }) =>
-					value ? (
-						<ExternalLinkButton href={value as string} text="design" />
-					) : null,
+					value ? <ExternalLinkButton href={value} text="design" /> : null,
 			},
 			{
 				Header: 'Pillar',
 				accessor: 'theme',
+				Filter: MultiSelectColumnFilter,
+				filter: 'includesValue',
 			},
 			{
 				Header: 'Created',
@@ -59,10 +62,12 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				accessor: 'status',
 				sortType: 'basic',
 				Cell: formatStatusCell,
+				Filter: MultiSelectColumnFilter,
+				filter: 'includesValue',
 			},
 		];
 
-		const editColumn: Column = {
+		const editColumn: Column<NewsletterData> = {
 			Header: 'Edit',
 			Cell: ({ row: { original } }) => {
 				const newsletter = original as NewsletterData;

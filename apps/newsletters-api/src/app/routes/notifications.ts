@@ -1,5 +1,4 @@
-import type { FastifyInstance, FastifyReply } from 'fastify';
-import type { FastifyRequest } from 'fastify/types/request';
+import type { Express, Request, Response } from 'express';
 import type { NewsletterMessageId } from '@newsletters-nx/email-builder';
 import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import { makeEmailEnvInfo } from '../../services/notifications/email-env';
@@ -12,10 +11,10 @@ import {
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
 
-export function registerNotificationRoutes(app: FastifyInstance) {
-	const canTriggerNotification = async (
-		request: FastifyRequest,
-		reply: FastifyReply,
+export function registerNotificationRoutes(app: Express) {
+	const cannotTriggerNotification = async (
+		request: Request,
+		reply: Response,
 	) => {
 		const user = getUserProfile(request);
 		const hasLaunchAccess = await hasPermission(
@@ -31,14 +30,23 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 						'user does not have permission to send notifications',
 					),
 				);
+			return true
 		}
+
+		return false
 	};
 
-	app.get<{ Params: { newsletterId: string } }>(
+	app.get(
 		'/email/:newsletterId',
-		{ preValidation: canTriggerNotification },
 		async (req, res) => {
+
 			try {
+
+				const failedValidation = await cannotTriggerNotification(req, res);
+				if (failedValidation) {
+					return
+				}
+
 				const { newsletterId } = req.params;
 
 				const newsletterResponse = await newsletterStore.readByName(
@@ -81,11 +89,8 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 		},
 	);
 
-	app.get<{
-		Params: { newsletterId: string; action: string };
-	}>(
+	app.get(
 		'/api/email/:newsletterId/:action',
-		{ preValidation: canTriggerNotification },
 		async (req, res) => {
 			const { newsletterId, action } = req.params;
 
@@ -95,6 +100,12 @@ export function registerNotificationRoutes(app: FastifyInstance) {
 			};
 
 			try {
+
+				const failedValidation = await cannotTriggerNotification(req, res);
+				if (failedValidation) {
+					return
+				}
+
 				if (!Object.keys(actionMapping).includes(action)) {
 					return res.status(400).send(makeErrorResponse(`Not a valid action`));
 				}

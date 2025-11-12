@@ -2,7 +2,6 @@ import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 
 export const ART_WEEKLY_FIXTURE: Readonly<NewsletterData> = {
 	brazeCampaignCreationStatus: 'COMPLETED',
-	ophanCampaignCreationStatus: 'COMPLETED',
 	signupPageCreationStatus: 'COMPLETED',
 	tagCreationStatus: 'COMPLETED',
 	identityName: 'art-weekly',
