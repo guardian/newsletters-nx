@@ -1,8 +1,4 @@
-import type { FastifyInstance } from 'fastify';
-import type {
-	ApiResponse,
-	DraftWithId,
-} from '@newsletters-nx/newsletters-data-client';
+import type { Express } from 'express';
 import { permissionService } from '../../services/permissions';
 import { draftStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
@@ -12,29 +8,29 @@ import {
 	mapStorageFailureReasonToStatusCode,
 } from '../responses';
 
-export function registerDraftsRoutes(app: FastifyInstance) {
+export function registerDraftsRoutes(app: Express) {
 	app.get('/api/drafts', async (req, res) => {
 		const storageResponse = await draftStore.readAll();
 		if (storageResponse.ok) {
-			return makeSuccessResponse(storageResponse.data);
+			return res.send(makeSuccessResponse(storageResponse.data));
 		}
 		return res
 			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 			.send(makeErrorResponse(storageResponse.message));
 	});
 
-	app.get<{ Params: { listId: string } }>(
+	app.get(
 		'/api/drafts/:listId',
 		async (req, res) => {
 			const { listId } = req.params;
 			const idAsNumber = Number(listId);
 			if (isNaN(idAsNumber)) {
-				return makeErrorResponse('Non numerical id passed');
+				return res.status(400).send(makeErrorResponse('Non numerical id passed'));
 			}
 
 			const storageResponse = await draftStore.read(idAsNumber);
 			if (storageResponse.ok) {
-				return makeSuccessResponse(storageResponse.data);
+				return res.send(makeSuccessResponse(storageResponse.data));
 			}
 			return res
 				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
@@ -42,9 +38,9 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 		},
 	);
 
-	app.delete<{ Params: { listId: string } }>(
+	app.delete(
 		'/api/drafts/:listId',
-		async (req, res): Promise<ApiResponse<DraftWithId>> => {
+		async (req, res) => {
 			const user = getUserProfile(req);
 			const permissions = await permissionService.get(user.profile);
 
@@ -68,7 +64,7 @@ export function registerDraftsRoutes(app: FastifyInstance) {
 			const storageResponse = await draftStore.deleteItem(idAsNumber);
 
 			if (storageResponse.ok) {
-				return makeSuccessResponse(storageResponse.data);
+				return res.send(makeSuccessResponse(storageResponse.data));
 			}
 
 			return res

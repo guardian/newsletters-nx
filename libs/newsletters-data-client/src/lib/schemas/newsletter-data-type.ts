@@ -128,7 +128,12 @@ export const newsletterDataSchema = z.object({
 		.string()
 		.url()
 		.optional()
-		.describe('URL of image for all newsletters page(5:3 format)'),
+		.describe('URL of image the newsleter graphic/logo (5:3 format)'),
+	illustrationSquare: z
+		.string()
+		.url()
+		.optional()
+		.describe('URL of image the newsleter graphic/logo (1:1 format)'),
 
 	creationTimeStamp: z.number(),
 	cancellationTimeStamp: z.number().optional(),
@@ -163,9 +168,11 @@ export const newsletterDataSchema = z.object({
 	brazeCampaignCreationStatus: workflowStatusEnumSchema.describe(
 		'Braze campaign creation status',
 	),
-	ophanCampaignCreationStatus: workflowStatusEnumSchema.describe(
-		'Ophan campaign creation status',
-	),
+	ophanCampaignCreationStatus: workflowStatusEnumSchema
+		.optional()
+		.describe(
+			'Ophan campaign creation status',
+		),
 	signupPageCreationStatus: workflowStatusEnumSchema.describe(
 		'Sign up creation status',
 	),

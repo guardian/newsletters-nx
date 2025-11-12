@@ -23,6 +23,8 @@ fetch some `frontend` credentials from [Janus](https://janus.gutools.co.uk/crede
 
 `npm run dev`
 
+The app will be available at [here](https://newsletters-tool.local.dev-gutools.co.uk/)
+
 See the documentation for the [API](apps/newsletters-api/README.md) for the configuration options.
 
 ## Development

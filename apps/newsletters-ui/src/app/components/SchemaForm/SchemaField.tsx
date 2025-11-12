@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
 	z,
 	ZodArray,
@@ -46,6 +47,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	stringInputSettings?: StringInputSettings;
 	validationWarning?: string;
 	maxOptionsForRadioButtons: number;
+	explanation?: ReactNode;
 }
 
 const WrongValueTypeMessage = (props: { field: FieldDef }) => (
@@ -87,6 +89,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	stringInputSettings = {},
 	validationWarning,
 	maxOptionsForRadioButtons,
+	explanation = null,
 }: SchemaFieldProps<T>) {
 	const { key, value, zod, readOnly } = field;
 
@@ -118,7 +121,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		}
 
 		return (
-			<FieldWrapper>
+			<FieldWrapper explanation={explanation}>
 				<DateInput
 					{...standardProps}
 					value={parsed.value}
@@ -136,7 +139,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (options) {
 			if (options.length <= maxOptionsForRadioButtons) {
 				return (
-					<FieldWrapper>
+					<FieldWrapper explanation={explanation}>
 						<RadioSelectInput
 							{...standardProps}
 							value={value}
@@ -146,14 +149,14 @@ export function SchemaField<T extends z.ZodRawShape>({
 				);
 			}
 			return (
-				<FieldWrapper>
+				<FieldWrapper explanation={explanation}>
 					<SelectInput {...standardProps} value={value} options={options} />
 				</FieldWrapper>
 			);
 		}
 
 		return (
-			<FieldWrapper>
+			<FieldWrapper explanation={explanation}>
 				<StringInput
 					{...standardProps}
 					value={value ?? ''}
@@ -168,7 +171,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongValueTypeMessage field={field} />;
 		}
 		return (
-			<FieldWrapper>
+			<FieldWrapper explanation={explanation}>
 				<BooleanInput {...standardProps} value={value ?? false} />
 			</FieldWrapper>
 		);
@@ -181,7 +184,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 		if (zod.isOptional()) {
 			return (
-				<FieldWrapper>
+				<FieldWrapper explanation={explanation}>
 					<OptionalNumberInput
 						{...standardProps}
 						{...numberInputSettings}
@@ -192,7 +195,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		}
 
 		return (
-			<FieldWrapper>
+			<FieldWrapper explanation={explanation}>
 				<NumberInput
 					{...standardProps}
 					{...numberInputSettings}
@@ -213,7 +216,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 		if (options && options.length <= maxOptionsForRadioButtons) {
 			return (
-				<FieldWrapper>
+				<FieldWrapper explanation={explanation}>
 					<RadioSelectInput
 						{...standardProps}
 						value={value}
@@ -224,7 +227,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		}
 
 		return (
-			<FieldWrapper>
+			<FieldWrapper explanation={explanation}>
 				<SelectInput {...standardProps} value={value} options={options ?? []} />
 			</FieldWrapper>
 		);
@@ -235,7 +238,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongValueTypeMessage field={field} />;
 		}
 		return (
-			<FieldWrapper>
+			<FieldWrapper explanation={explanation}>
 				<SchemaRecordInput
 					{...standardProps}
 					recordSchema={innerZod}
@@ -251,7 +254,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				return <WrongValueTypeMessage field={field} />;
 			}
 			return (
-				<FieldWrapper>
+				<FieldWrapper explanation={explanation}>
 					<SchemaArrayInput {...standardProps} value={value ?? []} />
 				</FieldWrapper>
 			);
@@ -262,7 +265,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				return <WrongValueTypeMessage field={field} />;
 			}
 			return (
-				<FieldWrapper>
+				<FieldWrapper explanation={explanation}>
 					<SchemaRecordArrayInput
 						{...standardProps}
 						value={value ?? []}

@@ -1,5 +1,5 @@
 import type { ZodRawShape, ZodTypeAny } from 'zod';
-import { ZodObject, ZodOptional } from 'zod';
+import { z, ZodObject, ZodOptional } from 'zod';
 import type { DraftNewsletterData } from './schemas/draft-newsletter-data-type';
 import { draftNewsletterDataSchema } from './schemas/draft-newsletter-data-type';
 import type { NewsletterData } from './schemas/newsletter-data-type';
@@ -19,6 +19,22 @@ export type SupportedValue =
 	| PrimitiveRecord
 	| PrimitiveRecord[];
 export type FormDataRecord = Record<string, SupportedValue>;
+
+
+export const primitiveRecordSchema = z.record(z.union([z.string(), z.number(), z.boolean()]))
+
+export const supportedValueSchema = z.union([
+	z.string(),
+	z.number(),
+	z.null(),
+	z.boolean(),
+	z.undefined(),
+	z.date(),
+	z.string().array(),
+	primitiveRecordSchema,
+	primitiveRecordSchema.array()
+])
+
 
 const OBJECT_FIELDS_USING_RECORD_INPUT: Array<keyof NewsletterData> = [];
 
