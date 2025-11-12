@@ -36,14 +36,7 @@ interface Props {
 	language: string;
 }
 
-export type MerchandisingOverride =
-	| 'default'
-	| 'AUS'
-	| 'Culture'
-	| 'Features'
-	| 'Global'
-	| 'Sport'
-	| 'US';
+export type MerchandisingOverride = 'default' | 'AUS' | 'Global' | 'US';
 
 export const GeneratedCodeDataPoint = ({
 	newsletter,
@@ -56,15 +49,21 @@ export const GeneratedCodeDataPoint = ({
 		'default' as MerchandisingOverride,
 	);
 
-	const codeOverride = override === 'default' ? undefined : override;
+	const overrideMapping: Record<string, string> = {
+		Global: 'Newsletters',
+	};
+
+	const getOverride = (override: string): string =>
+		overrideMapping[override] ?? override;
+
+	const codeOverride =
+		getOverride(override) === 'default' ? undefined : getOverride(override);
+
 	const generatedValue = valueGenerator.generate(newsletter, codeOverride);
 
 	const valueKeyMapping = {
 		AUS: 'Australia',
-		Culture: 'Culture',
-		Features: 'Features',
 		Global: 'Global',
-		Sport: 'Sport',
 		US: 'US',
 		default: 'Default',
 	};
@@ -98,15 +97,7 @@ export const GeneratedCodeDataPoint = ({
 										setOverride(override.target.value as MerchandisingOverride)
 									}
 								>
-									{[
-										'default',
-										'AUS',
-										'Culture',
-										'Features',
-										'Global',
-										'Sport',
-										'US',
-									].map((item) => (
+									{['default', 'AUS', 'US', 'Global'].map((item) => (
 										<FormControlLabel
 											key={item}
 											value={item}
@@ -128,7 +119,10 @@ export const GeneratedCodeDataPoint = ({
 								<div dangerouslySetInnerHTML={{ __html: code.value }} />
 							</Box>
 							{includeCopyButton && (
-								<Button onClick={copyToClipBoard} startIcon={<CopyAllIcon />}>
+								<Button
+									onClick={() => void copyToClipBoard()}
+									startIcon={<CopyAllIcon />}
+								>
 									copy
 								</Button>
 							)}

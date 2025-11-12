@@ -8,7 +8,7 @@ import {
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
-import { type App, aws_ses, Duration, SecretValue } from 'aws-cdk-lib';
+import { type App, aws_ses, Duration, SecretValue, Tags } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import {
 	ApplicationListenerRule,
@@ -112,6 +112,8 @@ EOL`,
 			versioned: true,
 		});
 
+		Tags.of(dataStorageBucket).add('Name', bucketName);
+
 		const sesVerifiedIdentity = new EmailIdentity(this, 'EmailIdentity', {
 			identity: aws_ses.Identity.domain(domainNameTool),
 		});
@@ -194,7 +196,8 @@ EOL`,
 			app: toolAppName,
 			accessLogging: {
 				enabled: true,
-				prefix: `ELBLogs/${this.stack}/${toolAppName}/${this.stage}`,
+				// This is the prefix pattern DevX assume so that the logs can be shown on the Availability dashboard.
+				prefix: `application-load-balancer/${this.stage}/${this.stack}/${toolAppName}`,
 			},
 			applicationLogging: {
 				enabled: true,

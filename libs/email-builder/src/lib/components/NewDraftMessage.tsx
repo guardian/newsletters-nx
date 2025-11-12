@@ -19,7 +19,7 @@ export const NewDraftMessage = ({ pageLink, draft, user }: Props) => {
 			<p>{pageLink}</p>
 			{user && (
 				<p>
-					launched by:
+					Created by:
 					<UserDescription user={user} asLink />
 				</p>
 			)}

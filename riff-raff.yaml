@@ -22,10 +22,10 @@ deployments:
       amiParametersToTags:
         AMINewsletterstool:
           BuiltBy: amigo
-          Recipe: newsletters-node
+          Recipe: newsletters-node-ubuntu-22
         AMINewslettersapi:
           BuiltBy: amigo
-          Recipe: newsletters-node
+          Recipe: newsletters-node-ubuntu-22
       templateStagePaths:
         CODE: NewslettersTool-CODE.template.json
         PROD: NewslettersTool-PROD.template.json

@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import { css } from '@mui/material';
 import type { ReactNode } from 'react';
 import { appTheme } from '../../app-theme';
 
-const Styles = styled.div`
+const stylesCss = css`
 	font-family: 'roboto';
 
 	.left-aligned-step-button {
@@ -24,12 +24,13 @@ const Styles = styled.div`
 			}
 		}
 	}
-`;
+`
+
 
 interface DefaultStylesProps {
 	children: ReactNode;
 }
 
 export function DefaultStyles({ children }: DefaultStylesProps) {
-	return <Styles>{children}</Styles>;
+	return <div css={stylesCss}>{children}</div>;
 }

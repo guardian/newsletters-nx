@@ -1,5 +1,5 @@
 export * from './lib/api-response-type';
-export * from './lib/deriveNewsletterFields';
+export * from './lib/derive-newsletter-fields';
 export * from './lib/draft-service';
 export * from './lib/draft-storage';
 export * from './lib/draft-to-newsletter';
@@ -23,3 +23,4 @@ export * from './lib/user-profile';
 export * from './lib/wizard-button-type';
 export * from './lib/zod-helpers';
 export * from './lib/zod-helpers/user-data-schema';
+export * from './lib/layout-storage';

@@ -18,8 +18,10 @@ export const usePermissions = () => {
 	};
 
 	useEffect(() => {
-		void fetchAndSet();
-	}, []);
+		if (!userPermissions) {
+			void fetchAndSet();
+		}
+	});
 
 	return userPermissions;
 };

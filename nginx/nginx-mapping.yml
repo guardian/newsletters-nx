@@ -1,0 +1,4 @@
+name: newsletters
+mappings:
+  - port: 4200
+    prefix: newsletters-tool
