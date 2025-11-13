@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
+import { useUrlSyncedTableState } from '../hooks/useUrlSyncedTableState';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { formatCellDate, formatStatusCell } from './Cell';
 import { ExternalLinkButton } from './ExternalLinkButton';
@@ -18,6 +19,9 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 	const permissions = usePermissions();
 	const showEditOptions = shouldShowEditOptions(permissions);
 	const data = newsletters;
+
+	const { initialState, syncStateToUrl } =
+		useUrlSyncedTableState<NewsletterData>('identityName');
 
 	const columns = useMemo<Array<Column<NewsletterData>>>(() => {
 		const infoColumns: Array<Column<NewsletterData>> = [
@@ -88,5 +92,13 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 
 		return showEditOptions ? [...infoColumns, editColumn] : infoColumns;
 	}, [showEditOptions]);
-	return <Table data={data} columns={columns} defaultSortId="identityName" />;
+
+	return (
+		<Table
+			data={data}
+			columns={columns}
+			initialState={initialState}
+			onStateChange={syncStateToUrl}
+		/>
+	);
 };
