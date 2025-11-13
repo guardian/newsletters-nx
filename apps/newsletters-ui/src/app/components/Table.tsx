@@ -1,5 +1,12 @@
 import { Grid } from '@mui/material';
-import type { Cell, Column } from 'react-table';
+import { useEffect } from 'react';
+import type {
+	Cell,
+	Column,
+	IdType,
+	SortingRule,
+	TableState,
+} from 'react-table';
 import { useFilters, useGlobalFilter, useSortBy, useTable } from 'react-table';
 import { ContentWrapper } from '../ContentWrapper';
 import { tableStyle } from '../styles';
@@ -11,18 +18,20 @@ import { GlobalFilter } from './GlobalFilter';
 interface TableProps<TData extends object> {
 	data: TData[];
 	columns: Array<Column<TData>>;
-	defaultSortId?: string;
+	initialState?: Partial<TableState<TData>>;
+	onStateChange?: (state: {
+		sortBy: Array<SortingRule<TData>>;
+		filters: Array<{ id: string; value: string[] }>;
+		hiddenColumns: Array<IdType<TData>>;
+	}) => void;
 }
 
 export const Table = <TData extends object>({
 	data,
 	columns,
-	defaultSortId,
+	initialState,
+	onStateChange,
 }: TableProps<TData>) => {
-	const initialState = defaultSortId
-		? { sortBy: [{ id: defaultSortId, desc: false }] }
-		: {};
-
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -31,12 +40,24 @@ export const Table = <TData extends object>({
 		prepareRow,
 		allColumns,
 		setGlobalFilter,
+		state: { filters, sortBy, hiddenColumns = [] },
 	} = useTable<TData>(
 		{ columns, data, initialState },
 		useFilters,
 		useGlobalFilter,
 		useSortBy,
 	);
+
+	// Notify parent of state changes
+	useEffect(() => {
+		if (onStateChange) {
+			onStateChange({
+				sortBy,
+				filters: filters as Array<{ id: string; value: string[] }>,
+				hiddenColumns,
+			});
+		}
+	}, [sortBy, filters, hiddenColumns, onStateChange]);
 
 	const filterableColumns = allColumns.filter(
 		(column) => column.canFilter && column.filter !== undefined,
@@ -56,19 +77,21 @@ export const Table = <TData extends object>({
 				<Grid item xs={12} display={'flex'}>
 					<GlobalFilter setGlobalFilter={setGlobalFilter} />
 				</Grid>
-				<Grid item xs={12}>
-					<div>Apply Filters</div>
-				</Grid>
 				{filterableColumns.length && (
-					<Grid item xs={12}>
-						<Grid container spacing={2} rowSpacing={2}>
-							{filterableColumns.map((column) => (
-								<Grid item xs={12} sm={6} md={4} key={`filter ${column.id}`}>
-									{column.render('Filter')}
-								</Grid>
-							))}
+					<>
+						<Grid item xs={12}>
+							<div>Apply Filters</div>
 						</Grid>
-					</Grid>
+						<Grid item xs={12}>
+							<Grid container spacing={2} rowSpacing={2}>
+								{filterableColumns.map((column) => (
+									<Grid item xs={12} sm={6} md={4} key={`filter ${column.id}`}>
+										{column.render('Filter')}
+									</Grid>
+								))}
+							</Grid>
+						</Grid>
+					</>
 				)}
 			</Grid>
 			<table {...getTableProps()} css={tableStyle}>
@@ -86,7 +109,7 @@ export const Table = <TData extends object>({
 						prepareRow(row);
 						return (
 							<tr {...row.getRowProps()}>
-								{row.cells.map((cell: Cell<TData>, index) => (
+								{row.cells.map((cell: Cell<TData>) => (
 									<ColumnData cell={cell} key={`data ${cell.column.id}`} />
 								))}
 							</tr>

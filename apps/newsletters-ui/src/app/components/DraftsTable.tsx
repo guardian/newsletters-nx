@@ -8,6 +8,7 @@ import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
 import { usePermissions } from '../hooks/user-hooks';
+import { useUrlSyncedTableState } from '../hooks/useUrlSyncedTableState';
 import { CircularProgressWithLabel } from './CircularProgressWithLabel';
 import { DeleteDraftButton } from './DeleteDraftButton';
 import { EditDraftDialog } from './EditDraftDialog';
@@ -19,6 +20,7 @@ import { Table } from './Table';
 interface Props {
 	drafts: DraftNewsletterData[];
 }
+
 export const DraftsTable = ({ drafts }: Props) => {
 	const [draftInDialog, setDraftInDialog] = useState<
 		DraftNewsletterData | undefined
@@ -42,13 +44,20 @@ export const DraftsTable = ({ drafts }: Props) => {
 		launchNewsletters: userCanLaunch,
 	} = usePermissions() ?? {};
 
+	const { initialState, syncStateToUrl } =
+		useUrlSyncedTableState<DraftRow>('name');
+
 	const columns = useMemo<Array<Column<DraftRow>>>(() => {
 		const infoColumns: Array<Column<DraftRow>> = [
 			{
 				Header: 'Draft ID number',
 				accessor: 'listId',
 				Cell: ({ cell: { value } }) =>
-					value !== undefined ? <Link to={`./${value}`}>{value}</Link> : null,
+					value !== undefined ? (
+						<Link to={`./${value}`} state={{ from: '/drafts' }}>
+							{value}
+						</Link>
+					) : null,
 			},
 			{
 				Header: 'Newsletter Name',
@@ -165,9 +174,15 @@ export const DraftsTable = ({ drafts }: Props) => {
 			...(userCanLaunch ? launchColumns : []),
 		];
 	}, [data, userCanLaunch, userCanWriteToDrafts]);
+
 	return (
 		<>
-			<Table data={data} columns={columns} defaultSortId="name" />
+			<Table
+				data={data}
+				columns={columns}
+				initialState={initialState}
+				onStateChange={syncStateToUrl}
+			/>
 			<EditDraftDialog
 				draft={draftInDialog}
 				close={() => {
