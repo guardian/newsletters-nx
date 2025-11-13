@@ -29,7 +29,9 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Header: 'Newsletter ID',
 				accessor: 'identityName',
 				Cell: ({ cell: { value } }) => (
-					<Link to={`/launched/${value}`}>{value}</Link>
+					<Link to={`/launched/${value}`} state={{ from: '/launched' }}>
+						{value}
+					</Link>
 				),
 			},
 			{

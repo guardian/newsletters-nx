@@ -32,7 +32,7 @@ export const NavigateButton = (props: Props) => {
 		const state = location.state as LocationState | null;
 
 		if (
-			href === '..' &&
+			href?.startsWith('..') &&
 			state?.from &&
 			location.pathname.includes(state.from)
 		) {
