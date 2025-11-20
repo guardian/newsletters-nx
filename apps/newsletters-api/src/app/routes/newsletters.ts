@@ -46,7 +46,7 @@ export function registerReadNewsletterRoutes(app: Express) {
 					.send(makeErrorResponse(storageResponse.message));
 			}
 			const { signImages } = req.query;
-			if (isDynamicImageSigningEnabled() && queryParamToBoolean(signImages)) {
+			if (isDynamicImageSigningEnabled() && queryParamToBoolean(signImages as string | undefined)) {
 				const newsletterDataWithSignedImages = await Promise.all(
 					storageResponse.data.map(signTemplateImages),
 				);
@@ -66,7 +66,7 @@ export function registerReadNewsletterRoutes(app: Express) {
 				.send(makeErrorResponse(storageResponse.message));
 		}
 		const { signImages } = req.query;
-		if (isDynamicImageSigningEnabled() && queryParamToBoolean(signImages)) {
+		if (isDynamicImageSigningEnabled() && queryParamToBoolean(signImages as string | undefined)) {
 			const newsletterDataWithSignedImages = await signTemplateImages(
 				storageResponse.data,
 			);
