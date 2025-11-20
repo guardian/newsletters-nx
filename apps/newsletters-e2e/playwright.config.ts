@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 const isCI = !!process.env.CI;
 const baseURL = process.env.BASE_URL || 'http://localhost:4200';
+const apiURL = process.env.API_URL || 'http://localhost:3000';
 
 export default defineConfig({
   testDir: './src',
@@ -9,9 +10,7 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
-  
-  // Increase timeout for slow webServer startup
-  timeout: 60000, // 60 seconds per test
+  timeout: 60000,
   
   reporter: [
     ['html', { 
@@ -33,8 +32,6 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: isCI ? 'retain-on-failure' : 'off',
     viewport: { width: 1280, height: 720 },
-    
-    // Add more time for actions
     actionTimeout: 10000,
   },
 
@@ -45,13 +42,19 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    // Use the working command from your package.json
-    command: 'USE_IN_MEMORY_STORAGE=true npx nx serve newsletters-ui',
-    url: baseURL,
-    reuseExistingServer: !isCI,
-    timeout: 120000, // 2 minutes for server to start
-    stdout: 'pipe', // Show server output
-    stderr: 'pipe',
-  },
+  // Start BOTH API and UI servers
+  webServer: [
+    {
+      command: 'USE_IN_MEMORY_STORAGE=true npx nx serve newsletters-api',
+      url: apiURL,
+      reuseExistingServer: !isCI,
+      timeout: 120000,
+    },
+    {
+      command: 'USE_IN_MEMORY_STORAGE=true npx nx serve newsletters-ui',
+      url: baseURL,
+      reuseExistingServer: !isCI,
+      timeout: 120000,
+    },
+  ],
 });

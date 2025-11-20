@@ -18,8 +18,10 @@
 		"bundle:ui": "npx nx build newsletters-ui --configuration=production",
 		"upgrade-nx": "nx migrate latest && nx migrate --run-migrations",
 		"test:e2e": "nx e2e newsletters-e2e --skip-nx-cache",
-		"test:e2e:ui": "nx e2e newsletters-e2e --headed --skip-nx-cache",
-		"test:e2e:debug": "nx e2e newsletters-e2e --debug --skip-nx-cache"
+    	"test:e2e:ui": "nx e2e newsletters-e2e --headed --skip-nx-cache",
+    	"test:e2e:debug": "nx e2e newsletters-e2e --debug --skip-nx-cache",
+    	"test:e2e:api": "cd apps/newsletters-e2e && npx playwright test src/api",
+    	"test:e2e:ui-only": "cd apps/newsletters-e2e && npx playwright test src/ui"
 	},
 	"engines": {
 		"node": ">=16.19.0",
