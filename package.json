@@ -72,7 +72,7 @@
 		"@nrwl/react": "15.9.2",
 		"@nrwl/vite": "15.9.2",
 		"@nrwl/workspace": "15.9.2",
-		"@playwright/test": "^1.56.1",
+		"@playwright/test": "^1.40.0",
 		"@testing-library/react": "14.0.0",
 		"@types/jest": "29.4.0",
 		"@types/node": "^18.14.2",
