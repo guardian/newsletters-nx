@@ -2,7 +2,6 @@ import { defineConfig, devices } from '@playwright/test';
 
 const isCI = !!process.env.CI;
 const baseURL = process.env.BASE_URL || 'http://localhost:4200';
-const apiURL = process.env.API_URL || 'http://localhost:3000';
 
 export default defineConfig({
   testDir: './src',
@@ -42,10 +41,19 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: 'npm run dev',
-    url: baseURL,
-    reuseExistingServer: !isCI,
-    timeout: 180000, // 3 minutes for both servers to start
-  },
+  // CI: API is already started in GitHub Actions workflow
+  // Local: npm run dev starts both API and UI
+  webServer: isCI 
+    ? {
+        command: 'USE_IN_MEMORY_STORAGE=true npx nx serve newsletters-ui',
+        url: baseURL,
+        reuseExistingServer: false,
+        timeout: 120000,
+      }
+    : {
+        command: 'npm run dev',
+        url: baseURL,
+        reuseExistingServer: true,
+        timeout: 180000,
+      },
 });

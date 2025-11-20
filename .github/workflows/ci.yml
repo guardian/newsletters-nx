@@ -1,15 +1,12 @@
 name: CI
-
 on:
   push:
     branches:
       - main
   pull_request:
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
   cancel-in-progress: true
-
 jobs:
   # E2E tests run in parallel with build/test
   e2e-tests:
@@ -29,11 +26,40 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       
+      # NEW: Start API server in background
+      - name: Start API Server
+        run: |
+          USE_IN_MEMORY_STORAGE=true npx nx serve newsletters-api &
+          API_PID=$!
+          echo "API_PID=$API_PID" >> $GITHUB_ENV
+          echo "Waiting for API to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/api/newsletters > /dev/null 2>&1; then
+              echo "API server is ready on port 3000"
+              break
+            fi
+            echo "⏳ Waiting for API server... ($i/30)"
+            sleep 2
+          done
+          curl -s http://localhost:3000/api/newsletters || echo "API might not be fully ready"
+        env:
+          USE_IN_MEMORY_STORAGE: 'true'
+      
       - name: Run Playwright E2E tests
         run: npm run test:e2e
         env:
           USE_IN_MEMORY_STORAGE: 'true'
           CI: 'true'
+      
+      # Stop API server after tests
+      - name: Stop API Server
+        if: always()
+        run: |
+          if [ ! -z "$API_PID" ]; then
+            kill $API_PID 2>/dev/null || true
+          fi
+          # Also kill any remaining processes on port 3000
+          lsof -ti:3000 | xargs kill -9 2>/dev/null || true
       
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
