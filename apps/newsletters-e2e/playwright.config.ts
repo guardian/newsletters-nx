@@ -42,18 +42,10 @@ export default defineConfig({
     },
   ],
 
-  webServer: [
-    {
-      command: 'USE_IN_MEMORY_STORAGE=true npx nx serve newsletters-api --no-watch',
-      url: apiURL,
-      reuseExistingServer: !isCI,
-      timeout: 120000,
-    },
-    {
-      command: 'USE_IN_MEMORY_STORAGE=true npx nx serve newsletters-ui',
-      url: baseURL,
-      reuseExistingServer: !isCI,
-      timeout: 120000,
-    },
-  ],
+  webServer: {
+    command: 'npm run dev',
+    url: baseURL,
+    reuseExistingServer: !isCI,
+    timeout: 180000, // 3 minutes for both servers to start
+  },
 });
