@@ -11,6 +11,19 @@ This is a monorepo for:
 
 To run the UI and API locally with the default options:
 
+## Testing
+
+### Unit Tests
+```bash
+npm run tests
+```
+
+### E2E Tests
+```bash
+npm run test:e2e
+```
+see [E2E Testing Documentation] (apps/newsletters-e2e/README.md) for more details
+
 ### Run set-up script
 
 ```bash
