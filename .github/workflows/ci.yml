@@ -12,6 +12,9 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
+    env:
+      USE_IN_MEMORY_STORAGE: 'true'
+      CI: 'true'
     steps:
       - uses: actions/checkout@v3
       
@@ -29,7 +32,7 @@ jobs:
       # NEW: Start API server in background
       - name: Start API Server
         run: |
-          USE_IN_MEMORY_STORAGE=true npx nx serve newsletters-api &
+          npx nx serve newsletters-api &
           API_PID=$!
           echo "API_PID=$API_PID" >> $GITHUB_ENV
           echo "Waiting for API to be ready..."
@@ -42,14 +45,9 @@ jobs:
             sleep 2
           done
           curl -s http://localhost:3000/api/newsletters || echo "API might not be fully ready"
-        env:
-          USE_IN_MEMORY_STORAGE: 'true'
       
       - name: Run Playwright E2E tests
         run: npm run test:e2e
-        env:
-          USE_IN_MEMORY_STORAGE: 'true'
-          CI: 'true'
       
       # Stop API server after tests
       - name: Stop API Server
