@@ -13,6 +13,6 @@ test.describe('UI Tests', () => {
     await launchedButton.click();
     await page.waitForLoadState('networkidle');
     
-    console.log('✅ UI test passed - clicked Launched button');
+    console.log('UI test passed - clicked Launched button');
   });
 })
