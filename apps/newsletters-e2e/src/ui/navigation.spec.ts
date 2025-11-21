@@ -6,11 +6,13 @@ test.describe('UI Tests', () => {
     await page.waitForLoadState('networkidle');
     
     await expect(page).toHaveTitle(/Newsletter/i);
+
+    const launchedButton = page.getByRole('button', { name: 'Launched', exact: true });
     
-    const launchedButton = page.locator('//*[@id="root"]/div/div/header/div/div/div[2]/button[1]');
-    await launchedButton.waitFor({ state: 'visible' });
+    await expect(launchedButton).toBeVisible();
     await launchedButton.click();
+    await page.waitForLoadState('networkidle');
     
     console.log('✅ UI test passed - clicked Launched button');
   });
-});
+})

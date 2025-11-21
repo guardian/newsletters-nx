@@ -42,3 +42,28 @@ cdk/bin
 
 # Local environment files
 **/**/.env.local
+
+# newsletters-e2e
+
+# Playwright test results
+apps/newsletters-e2e/test-results/
+apps/newsletters-e2e/test-results/.last-run.json
+apps/newsletters-e2e/playwright-report/
+apps/newsletters-e2e/.cache/
+apps/newsletters-e2e/playwright/.auth/
+
+# Playwright artifacts (screenshots, videos, traces)
+**/test-results/
+**/playwright-report/
+**/.playwright/
+
+# Playwright state
+playwright/.auth/
+
+# HTML reports
+playwright-report/
+test-results/
+
+# Playwright trace files
+trace.zip
+*.trace.zip
