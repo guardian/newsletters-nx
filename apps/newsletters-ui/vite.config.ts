@@ -3,6 +3,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
+import path from 'path';
 
 export default defineConfig({
 	server: {
@@ -15,8 +16,14 @@ export default defineConfig({
 				secure: false,
 			},
 		},
+		fs: {
+			allow: [
+				// Allow serving files from project root (two levels up)
+				path.resolve(__dirname, '../..'),
+			],
+		},
 	},
-
+	
 	plugins: [
 		react(),
 		viteTsConfigPaths({
