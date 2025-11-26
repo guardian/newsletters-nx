@@ -43,7 +43,7 @@
 		"@mui/x-date-pickers": "^6.6.0",
 		"@types/react-table": "^7.7.14",
 		"aws-sdk": "^2.1354.0",
-		"body-parser": "^2.2.0",
+		"body-parser": "^2.2.1",
 		"dayjs": "^1.11.8",
 		"express": "^5.1.0",
 		"highlight.js": "^11.9.0",
