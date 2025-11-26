@@ -1,0 +1,32 @@
+{
+  "name": "newsletters-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/newsletters-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "playwright test",
+        "cwd": "apps/newsletters-e2e"
+      },
+      "cache": false
+    },
+    "e2e-headed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "playwright test --headed",
+        "cwd": "apps/newsletters-e2e"
+      },
+      "cache": false
+    },
+    "e2e-ui": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "playwright test --ui",
+        "cwd": "apps/newsletters-e2e"
+      },
+      "cache": false
+    }
+  }
+}
