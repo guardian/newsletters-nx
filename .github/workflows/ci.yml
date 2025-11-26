@@ -109,7 +109,7 @@ jobs:
 
   # Deploy job - waits for both E2E tests and build/test to pass
   deploy:
-    name: Deploy to riff-raff
+    name: Build, test and deploy to riff-raff
     runs-on: ubuntu-latest
     needs: [e2e-tests, build-and-test]  # Wait for both jobs
     permissions:
