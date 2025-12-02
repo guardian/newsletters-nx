@@ -9,7 +9,12 @@ import {
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
 import { type App, aws_ses, Duration, SecretValue, Tags } from 'aws-cdk-lib';
-import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
+import {
+	InstanceClass,
+	InstanceSize,
+	InstanceType,
+	UserData,
+} from 'aws-cdk-lib/aws-ec2';
 import {
 	ApplicationListenerRule,
 	ListenerAction,
@@ -43,14 +48,14 @@ export class NewslettersTool extends GuStack {
 		app: string,
 		bucketName: string,
 		readOnly: boolean,
-		userPermissions: string,
 		enableEmailService: string,
 	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
 
-		return [
+		const userData = UserData.forLinux();
+		const userDataCommand = [
 			'#!/bin/bash', // "Shebang" to instruct the program loader to run this as a bash script
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
 			'set +x', // Prevents shell from printing statements before execution
@@ -86,6 +91,9 @@ EOL`,
 			`systemctl enable newsletters-api`, // enable the service
 			`systemctl start newsletters-api`, // start the service
 		].join('\n');
+		userData.addCommands(userDataCommand);
+
+		return userData;
 	};
 
 	private setUpNodeEc2 = (props: NewslettersToolProps) => {
@@ -180,6 +188,7 @@ EOL`,
 				unhealthyInstancesAlarm: true,
 			},
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
+			instanceMetricGranularity: '5Minute',
 			// Minimum of 1 EC2 instance running at a time. If one fails, scales up to 2 before dropping back to 1 again
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			// Instructions to set up the environment in the instance
@@ -187,18 +196,12 @@ EOL`,
 				toolAppName,
 				bucketName,
 				false,
-				userPermissions.valueAsString,
 				enableEmailService,
 			),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy, sendEmailPolicy],
 			},
 			app: toolAppName,
-			accessLogging: {
-				enabled: true,
-				// This is the prefix pattern DevX assume so that the logs can be shown on the Availability dashboard.
-				prefix: `application-load-balancer/${this.stage}/${this.stack}/${toolAppName}`,
-			},
 			applicationLogging: {
 				enabled: true,
 				systemdUnitName: 'newsletters-api',
@@ -214,14 +217,9 @@ EOL`,
 				unhealthyInstancesAlarm: true,
 			},
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
+			instanceMetricGranularity: '5Minute',
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
-			userData: this.getUserData(
-				apiAppName,
-				bucketName,
-				true,
-				userPermissions.valueAsString,
-				'false',
-			),
+			userData: this.getUserData(apiAppName, bucketName, true, 'false'),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],
 			},
