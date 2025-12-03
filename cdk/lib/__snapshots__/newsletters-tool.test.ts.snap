@@ -2223,7 +2223,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
                 "",
                 [
                   "#!/bin/bash
-#!/bin/bash
 set -e
 set +x
 aws s3 cp s3://",
@@ -2413,7 +2412,6 @@ systemctl start newsletters-api",
                 "",
                 [
                   "#!/bin/bash
-#!/bin/bash
 set -e
 set +x
 aws s3 cp s3://",
