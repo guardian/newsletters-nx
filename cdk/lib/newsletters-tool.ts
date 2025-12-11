@@ -14,7 +14,6 @@ import {
 	InstanceSize,
 	InstanceType,
 	UserData,
-	SecurityGroup,
 } from 'aws-cdk-lib/aws-ec2';
 import {
 	ApplicationListenerRule,
@@ -305,21 +304,6 @@ EOL`,
 			domainName: domainNameApi,
 			ttl: Duration.hours(1),
 			resourceRecord: ec2AppApi.loadBalancer.loadBalancerDnsName,
-		});
-
-		// Need to add this security group temporarily to upgrade GuCDK
-		// See release notes: https://github.com/guardian/cdk/releases/tag/v61.5.0
-		const { vpc } = ec2AppTool;
-		const tempSecurityGroup = new SecurityGroup(this, 'WazuhSecurityGroup', {
-			vpc,
-			// Must keep the same description, else CloudFormation will try to replace the security group
-			// See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-securitygroup.html#cfn-ec2-securitygroup-groupdescription.
-			description: 'Allow outbound traffic from wazuh agent to manager',
-		});
-		this.overrideLogicalId(tempSecurityGroup, {
-			logicalId: 'WazuhSecurityGroup',
-			reason:
-				"Part one of updating to GuCDK 61.5.0+ whilst using Riff-Raff's ASG deployment type",
 		});
 	};
 }
