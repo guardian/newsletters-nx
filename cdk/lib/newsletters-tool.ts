@@ -9,7 +9,13 @@ import {
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
 import { type App, aws_ses, Duration, SecretValue, Tags } from 'aws-cdk-lib';
-import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
+import {
+	InstanceClass,
+	InstanceSize,
+	InstanceType,
+	UserData,
+	SecurityGroup,
+} from 'aws-cdk-lib/aws-ec2';
 import {
 	ApplicationListenerRule,
 	ListenerAction,
@@ -43,15 +49,14 @@ export class NewslettersTool extends GuStack {
 		app: string,
 		bucketName: string,
 		readOnly: boolean,
-		userPermissions: string,
 		enableEmailService: string,
 	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
 			GuDistributionBucketParameter.getInstance(this);
 
-		return [
-			'#!/bin/bash', // "Shebang" to instruct the program loader to run this as a bash script
+		const userData = UserData.forLinux();
+		const userDataCommand = [
 			'set -e', // Exits immediately if something returns a non-zero status (errors)
 			'set +x', // Prevents shell from printing statements before execution
 			`aws s3 cp s3://${distributionBucketParameter.valueAsString}/${this.stack}/${this.stage}/${app}/${app}.zip /tmp`, // copies zipped file from s3
@@ -86,6 +91,9 @@ EOL`,
 			`systemctl enable newsletters-api`, // enable the service
 			`systemctl start newsletters-api`, // start the service
 		].join('\n');
+		userData.addCommands(userDataCommand);
+
+		return userData;
 	};
 
 	private setUpNodeEc2 = (props: NewslettersToolProps) => {
@@ -180,6 +188,7 @@ EOL`,
 				unhealthyInstancesAlarm: true,
 			},
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
+			instanceMetricGranularity: '5Minute',
 			// Minimum of 1 EC2 instance running at a time. If one fails, scales up to 2 before dropping back to 1 again
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			// Instructions to set up the environment in the instance
@@ -187,18 +196,12 @@ EOL`,
 				toolAppName,
 				bucketName,
 				false,
-				userPermissions.valueAsString,
 				enableEmailService,
 			),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy, sendEmailPolicy],
 			},
 			app: toolAppName,
-			accessLogging: {
-				enabled: true,
-				// This is the prefix pattern DevX assume so that the logs can be shown on the Availability dashboard.
-				prefix: `application-load-balancer/${this.stage}/${this.stack}/${toolAppName}`,
-			},
 			applicationLogging: {
 				enabled: true,
 				systemdUnitName: 'newsletters-api',
@@ -214,14 +217,9 @@ EOL`,
 				unhealthyInstancesAlarm: true,
 			},
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
+			instanceMetricGranularity: '5Minute',
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
-			userData: this.getUserData(
-				apiAppName,
-				bucketName,
-				true,
-				userPermissions.valueAsString,
-				'false',
-			),
+			userData: this.getUserData(apiAppName, bucketName, true, 'false'),
 			roleConfiguration: {
 				additionalPolicies: [s3AccessPolicy],
 			},
@@ -307,6 +305,21 @@ EOL`,
 			domainName: domainNameApi,
 			ttl: Duration.hours(1),
 			resourceRecord: ec2AppApi.loadBalancer.loadBalancerDnsName,
+		});
+
+		// Need to add this security group temporarily to upgrade GuCDK
+		// See release notes: https://github.com/guardian/cdk/releases/tag/v61.5.0
+		const { vpc } = ec2AppTool;
+		const tempSecurityGroup = new SecurityGroup(this, 'WazuhSecurityGroup', {
+			vpc,
+			// Must keep the same description, else CloudFormation will try to replace the security group
+			// See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-securitygroup.html#cfn-ec2-securitygroup-groupdescription.
+			description: 'Allow outbound traffic from wazuh agent to manager',
+		});
+		this.overrideLogicalId(tempSecurityGroup, {
+			logicalId: 'WazuhSecurityGroup',
+			reason:
+				"Part one of updating to GuCDK 61.5.0+ whilst using Riff-Raff's ASG deployment type",
 		});
 	};
 }
