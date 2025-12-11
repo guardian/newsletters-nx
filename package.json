@@ -86,7 +86,7 @@
 		"@vitest/coverage-c8": "~0.25.8",
 		"@vitest/ui": "^0.25.8",
 		"babel-jest": "^29.4.1",
-		"esbuild": "0.17.5",
+		"esbuild": "0.25.0",
 		"eslint": "~8.15.0",
 		"eslint-config-prettier": "8.1.0",
 		"eslint-plugin-import": "2.27.5",
