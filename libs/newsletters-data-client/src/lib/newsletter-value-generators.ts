@@ -1,9 +1,8 @@
 import type { NewsletterData } from '..';
-import {generateBrazeTemplateString} from "./generate-braze-template";
-
+import { generateBrazeTemplateString } from './generate-braze-template';
 
 export type NewsletterValueGenerator = {
-	generate: { (newsletter: NewsletterData, 	override?: string): string };
+	generate: { (newsletter: NewsletterData, override?: string): string };
 	displayName: string;
 	description: string;
 };
@@ -17,10 +16,10 @@ export const embedIframeCode: NewsletterValueGenerator = {
 };
 
 export const brazeTemplateCode: NewsletterValueGenerator = {
-	generate: (newsletter: NewsletterData, 	override?: string) => generateBrazeTemplateString(newsletter, override),
+	generate: (newsletter: NewsletterData, override?: string) =>
+		generateBrazeTemplateString(newsletter, override),
 	displayName: 'Braze campaign template code',
-	description:
-		'The template code to use in the Braze campaign.',
+	description: 'The template code to use in the Braze campaign.',
 };
 
 // see https://github.com/guardian/identity/blob/main/identity-api/src/main/scala/com/gu/identity/api/mail/CmtModels.scala
@@ -77,7 +76,7 @@ export const emailContent: NewsletterValueGenerator = {
 // see https://github.com/guardian/frontend/blob/d67c1c03875bfb972de000305a922dade6c8285d/common/app/services/NewsletterService.scala#L31
 export const composerCampaignTagId: NewsletterValueGenerator = {
 	generate: ({ identityName }) => `campaign/email/${identityName}`,
-	displayName: 'Campaign Tag Id',
+	displayName: 'Composer Campaign Tag Id(path)',
 	description:
-		'The id to use when creating the Composer Campaign Tag (must be in this format to add the signup form to an article)',
+		'The id (AKA "path") to use when creating the Composer Campaign Tag. The Composer Campaign Tag path MUST be this to cause signup forms to appear in articles and sign-up pages.',
 };
