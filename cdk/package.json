@@ -28,7 +28,7 @@
     "source-map-support": "^0.5.20",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "typescript": "~4.9.4"
+    "typescript": "~5.5.2"
   },
   "prettier": "@guardian/prettier",
   "jest": {
@@ -38,6 +38,13 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
     "setupFilesAfterEnv": [
       "./jest.setup.js"
     ]

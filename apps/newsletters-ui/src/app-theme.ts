@@ -1,4 +1,4 @@
-import { headlineObjectStyles, palette } from '@guardian/source-foundations';
+import { headlineMedium34Object, palette } from '@guardian/source/foundations';
 import { createTheme } from '@mui/material';
 
 export const appTheme = createTheme({
@@ -23,7 +23,7 @@ export const appTheme = createTheme({
 			fontFamily: 'roboto, arial, sans-serif',
 		},
 		h1: {
-			...headlineObjectStyles.medium(),
+			...headlineMedium34Object,
 			margin: 0,
 		},
 		h2: {
