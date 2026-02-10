@@ -22,8 +22,8 @@ export default defineConfig({
 				path.resolve(__dirname, '../..'),
 			],
 		},
+		allowedHosts: ['newsletters-tool.local.dev-gutools.co.uk'],
 	},
-	
 	plugins: [
 		react(),
 		viteTsConfigPaths({

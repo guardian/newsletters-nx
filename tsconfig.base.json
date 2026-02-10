@@ -1,5 +1,5 @@
 {
-	"extends": "@guardian/tsconfig",
+	"extends": "./node_modules/@guardian/tsconfig/tsconfig.json",
 	"compileOnSave": false,
 	"compilerOptions": {
 		"rootDir": ".",

@@ -1,4 +1,4 @@
-import { palette, space } from '@guardian/source-foundations';
+import { palette, space } from '@guardian/source/foundations';
 import { Box, Typography } from '@mui/material';
 import { NavigateButton } from './NavigateButton';
 
