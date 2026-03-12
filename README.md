@@ -15,7 +15,7 @@ To run the UI and API locally with the default options:
 
 ### Unit Tests
 ```bash
-npm run tests
+npm run test
 ```
 
 ### E2E Tests
