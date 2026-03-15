@@ -73,7 +73,7 @@ Type=simple
 User=ubuntu
 StandardError=journal
 StandardOutput=journal
-ExecStart=/usr/bin/node /opt/${app}/dist/apps/newsletters-api/index.cjs
+ExecStart=/usr/bin/node /opt/${app}/dist/apps/newsletters-api/main.cjs
 Restart=on-failure
 Environment=STAGE=${this.stage}
 Environment=STACK=${this.stack}
