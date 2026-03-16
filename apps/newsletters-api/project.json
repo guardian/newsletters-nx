@@ -9,11 +9,13 @@
 			"outputs": ["{options.outputPath}"],
 			"options": {
 				"outputPath": "dist/apps/newsletters-api",
+				"outputFileName": "index.cjs",
 				"format": ["cjs"],
 				"main": "apps/newsletters-api/src/main.ts",
 				"tsConfig": "apps/newsletters-api/tsconfig.app.json",
 				"assets": ["apps/newsletters-api/src/assets"],
-				"generatePackageJson": true
+				"generatePackageJson": true,
+				"externalDependencies": "none"
 			}
 		},
 		"serve": {
