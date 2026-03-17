@@ -16,6 +16,13 @@
 		{
 			"files": ["*.js", "*.jsx"],
 			"rules": {}
+		},
+		{
+			"files": ["*.mjs"],
+			"parserOptions": {
+				"ecmaVersion": 2022,
+				"sourceType": "module"
+			}
 		}
 	]
 }

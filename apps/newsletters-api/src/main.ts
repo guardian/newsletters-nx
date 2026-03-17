@@ -1,5 +1,4 @@
-import bodyParser from 'body-parser';
-import ExpressApp from 'express';
+import ExpressApp, { json } from 'express';
 import {
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
@@ -23,14 +22,14 @@ import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
 const app = ExpressApp();
-app.use(setCacheControlHeaderMiddleware)
-app.use(bodyParser.json());
+app.use(setCacheControlHeaderMiddleware);
+app.use(json());
 
 registerHealthRoute(app);
 if (isServingUI()) {
 	// When running locally UI dev-server runs on :4200, even without this function.
 	// but the UI should also be served on :3000, like it is on PROD
-	// if registerUIServer is working locally, a ui route on :3000 (eg http://localhost:3000/launched) 
+	// if registerUIServer is working locally, a ui route on :3000 (eg http://localhost:3000/launched)
 	// should serve the index.html and static assets from: dist/apps/newsletters-ui (if built with nx:build)
 	registerUIServer(app);
 }
@@ -47,7 +46,6 @@ if (isServingReadEndpoints()) {
 	registerRenderingTemplatesRoutes(app);
 	registerReadLayoutRoutes(app);
 }
-
 
 const start = async () => {
 	try {
@@ -73,7 +71,7 @@ const start = async () => {
 		// TO DO - start was "intentionally asynchronous" - is that essential??
 		await new Promise(() => {
 			//
-		})
+		});
 	} catch (err) {
 		// Errors are logged here
 		console.error(err);

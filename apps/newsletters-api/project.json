@@ -5,26 +5,16 @@
 	"projectType": "application",
 	"targets": {
 		"build": {
-			"executor": "@nrwl/esbuild:esbuild",
-			"outputs": ["{options.outputPath}"],
+			"executor": "nx:run-commands",
+			"outputs": ["{workspaceRoot}/dist/apps/newsletters-api"],
 			"options": {
-				"outputPath": "dist/apps/newsletters-api",
-				"format": ["cjs"],
-				"main": "apps/newsletters-api/src/main.ts",
-				"tsConfig": "apps/newsletters-api/tsconfig.app.json",
-				"assets": ["apps/newsletters-api/src/assets"],
-				"generatePackageJson": true
+				"command": "node apps/newsletters-api/build.mjs"
 			}
 		},
 		"serve": {
-			"executor": "@nrwl/js:node",
+			"executor": "nx:run-commands",
 			"options": {
-				"buildTarget": "newsletters-api:build"
-			},
-			"configurations": {
-				"production": {
-					"buildTarget": "newsletters-api:build:production"
-				}
+				"command": "TS_NODE_PROJECT=apps/newsletters-api/tsconfig.app.json node --watch --require tsconfig-paths/register --require ts-node/register apps/newsletters-api/src/main.ts"
 			}
 		},
 		"lint": {
