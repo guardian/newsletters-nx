@@ -14,7 +14,7 @@
 		"serve": {
 			"executor": "nx:run-commands",
 			"options": {
-				"command": "TS_NODE_PROJECT=apps/newsletters-api/tsconfig.app.json node --watch --require tsconfig-paths/register --require ts-node/register apps/newsletters-api/src/main.ts"
+				"command": "npx tsx watch apps/newsletters-api/src/main.ts"
 			}
 		},
 		"lint": {
