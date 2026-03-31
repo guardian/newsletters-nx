@@ -117,6 +117,6 @@
 		"rollup@^2": "2.80.0",
 		"rollup@^3": "3.30.0",
 		"immutable@5": ">=5.1.5",
-		"handlebars@^4": "4.7.9"
+		"handlebars@^4": ">=4.7.9"
 	}
 }
