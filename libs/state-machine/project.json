@@ -11,7 +11,8 @@
 				"outputPath": "dist/libs/state-machine",
 				"main": "libs/state-machine/src/index.ts",
 				"tsConfig": "libs/state-machine/tsconfig.lib.json",
-				"assets": ["libs/state-machine/*.md"]
+				"assets": ["libs/state-machine/*.md"],
+				"rootDir": "."
 			}
 		},
 		"lint": {
