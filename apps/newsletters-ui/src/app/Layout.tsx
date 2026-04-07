@@ -2,7 +2,7 @@ import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Outlet } from 'react-router-dom';
-import { MainNav } from './components/MainNav';
+import { MainNav, StandMainNav } from './components/MainNav';
 
 const frameCss = css`
 	display: flex;
@@ -34,10 +34,9 @@ export function Layout(props: IRootRoute) {
 
 	useEffect(() => {
 		let hostname = 'user-telemetry.gutools.co.uk';
-		if(isOnCode){
+		if (isOnCode) {
 			hostname = 'user-telemetry.code.dev-gutools.co.uk';
-		}
-		else if(isOnLocal){
+		} else if (isOnLocal) {
 			hostname = 'user-telemetry.local.dev-gutools.co.uk';
 		}
 		const image = new Image();
@@ -46,7 +45,8 @@ export function Layout(props: IRootRoute) {
 
 	return (
 		<div css={frameCss}>
-			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+			{/* <MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} /> */}
+			<StandMainNav />
 			<Box pt={8} component={'main'}>
 				{props.outlet ? props.outlet : <Outlet />}
 			</Box>
