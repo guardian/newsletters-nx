@@ -2,7 +2,7 @@ import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Outlet } from 'react-router-dom';
-import { MainNav } from './components/MainNav';
+import { MainNav, StandMainNav } from './components/MainNav';
 import { isFeatureSwitchEnabled } from './featureSwitches';
 
 const frameCss = css`
@@ -48,9 +48,12 @@ export function Layout(props: IRootRoute) {
 
 	return (
 		<div css={frameCss}>
-			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+			{isUsingStand ? (
+				<StandMainNav />
+			) : (
+				<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+			)}
 			<Box sx={{ pt: 8 }} component={'main'}>
-				{isUsingStand && <>Stand Version</>}
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
