@@ -2,7 +2,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import viteTsConfigPaths from 'vite-tsconfig-paths';
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import path from 'path';
 
 export default defineConfig({
@@ -26,9 +26,7 @@ export default defineConfig({
 	},
 	plugins: [
 		react(),
-		viteTsConfigPaths({
-			root: '../../',
-		}),
+		nxViteTsPaths(),
 	],
 
 	// Uncomment this if you are using workers.

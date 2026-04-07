@@ -1,11 +1,11 @@
 {
 	"root": true,
-	"plugins": ["@nrwl/nx"],
+	"plugins": ["@nx"],
 	"overrides": [
 		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
 			"rules": {
-				"@nrwl/nx/enforce-module-boundaries": [
+				"@nx/enforce-module-boundaries": [
 					"error",
 					{
 						"enforceBuildableLibDependency": true,
@@ -23,7 +23,7 @@
 		{
 			"files": ["*.ts", "*.tsx"],
 			"extends": [
-				"plugin:@nrwl/nx/typescript",
+				"plugin:@nx/typescript",
 				"@guardian/eslint-config-typescript"
 			],
 			"settings": {
@@ -37,7 +37,7 @@
 		},
 		{
 			"files": ["*.js", "*.jsx"],
-			"extends": ["plugin:@nrwl/nx/javascript", "@guardian/eslint-config"],
+			"extends": ["plugin:@nx/javascript", "@guardian/eslint-config"],
 			"rules": {}
 		},
 		{
