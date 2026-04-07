@@ -1,3 +1,10 @@
+import { Avatar as StandAvatar } from '@guardian/stand/avatar';
+import {
+	TopBar,
+	TopBarContainerLeft,
+	TopBarNavigation,
+	TopBarToolName,
+} from '@guardian/stand/TopBar';
 import CodeIcon from '@mui/icons-material/Code';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
@@ -14,9 +21,10 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useProfile } from '../hooks/user-hooks';
 import { NewslettersBrandHeading } from './NewslettersBrandHeading';
+import '@guardian/stand/util/reset.css';
 
 interface Props {
 	isOnCode: boolean;
@@ -29,14 +37,24 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-	{ path: '/launched', label: 'Launched' },
-	{ path: '/drafts', label: 'Drafts' },
+	{ path: '/launched', label: 'Launched Newsletters' },
+	{ path: '/drafts', label: 'Draft Newsletters' },
 	{ path: '/templates', label: 'Email Templates' },
-	{ path: '/layouts', label: 'Layouts' },
+	{ path: '/layouts', label: 'All Newsletter Page Layouts' },
+	{
+		path: '/drafts/newsletter-data',
+		label: 'Create New Newsletter',
+	},
 ];
 
-const menuItemIsSelected = (path: string): boolean => {
-	return window.location.pathname.startsWith(path);
+const menuItemIsSelected = (path: string, pathname: string): boolean => {
+	if (!pathname.startsWith(path)) return false;
+	return !navLinks.some(
+		(link) =>
+			link.path !== path &&
+			pathname.startsWith(link.path) &&
+			link.path.length > path.length,
+	);
 };
 
 const ToolBarIcon = (props: {
@@ -55,6 +73,7 @@ const ToolBarIcon = (props: {
 
 const DesktopNavLinks = () => {
 	const navigate = useNavigate();
+	const { pathname } = useLocation();
 	return (
 		<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
 			{navLinks.map(({ path, label }) => (
@@ -66,9 +85,11 @@ const DesktopNavLinks = () => {
 					sx={{
 						my: 2,
 						color: 'white',
-						fontWeight: menuItemIsSelected(path) ? 'bold' : 'normal',
+						fontWeight: menuItemIsSelected(path, pathname) ? 'bold' : 'normal',
 						display: 'block',
-						borderBottomStyle: menuItemIsSelected(path) ? 'solid' : 'none',
+						borderBottomStyle: menuItemIsSelected(path, pathname)
+							? 'solid'
+							: 'none',
 						borderBottomWidth: '2px',
 						borderRadius: '0',
 					}}
@@ -83,6 +104,7 @@ const DesktopNavLinks = () => {
 const MobileBurgerNav = () => {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const navigate = useNavigate();
+	const { pathname } = useLocation();
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElNav(event.currentTarget);
 	};
@@ -128,7 +150,7 @@ const MobileBurgerNav = () => {
 							void navigate(path);
 							handleCloseNavMenu();
 						}}
-						selected={menuItemIsSelected(path)}
+						selected={menuItemIsSelected(path, pathname)}
 					>
 						<Typography sx={{ textAlign: 'center' }}>{label}</Typography>
 					</MenuItem>
@@ -171,5 +193,33 @@ export function MainNav({ isOnCode }: Props) {
 				</Toolbar>
 			</Container>
 		</AppBar>
+	);
+}
+
+export function StandMainNav() {
+	const userProfile = useProfile();
+	const userName = userProfile?.name ?? 'Logged in user';
+	const { pathname } = useLocation();
+
+	return (
+		<TopBar>
+			<TopBarToolName name="Newsletters" favicon={{ letter: 'N' }} />
+			<TopBarContainerLeft>
+				{navLinks.map(({ path, label }) => (
+					<TopBarNavigation
+						text={label}
+						href={path}
+						isSelected={menuItemIsSelected(path, pathname)}
+						key={label}
+					/>
+				))}
+			</TopBarContainerLeft>
+			<StandAvatar
+				src={userProfile?.picture ?? ''}
+				alt={userName}
+				initials={userName.charAt(0)}
+				size="sm"
+			/>
+		</TopBar>
 	);
 }
