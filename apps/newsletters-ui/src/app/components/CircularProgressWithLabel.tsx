@@ -1,7 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import type { CircularProgressProps } from '@mui/material/CircularProgress';
 import CircularProgress from '@mui/material/CircularProgress';
-import React from 'react';
 
 export function CircularProgressWithLabel(
 	props: CircularProgressProps & { value: number },

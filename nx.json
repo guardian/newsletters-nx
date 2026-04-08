@@ -16,10 +16,6 @@
 		"e2e": {
 			"cache": true
 		},
-		"@nx/vite:test": {
-			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-			"cache": true
-		},
 		"@nx/jest:jest": {
 			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
 			"cache": true,
@@ -35,6 +31,10 @@
 		},
 		"@nx/eslint:lint": {
 			"inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
+			"cache": true
+		},
+		"@nx/vitest:test": {
+			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
 			"cache": true
 		}
 	},
@@ -68,5 +68,6 @@
 			}
 		}
 	},
-	"useInferencePlugins": false
+	"useInferencePlugins": false,
+	"analytics": false
 }
