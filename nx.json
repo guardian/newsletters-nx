@@ -68,6 +68,5 @@
 			}
 		}
 	},
-	"useInferencePlugins": false,
-	"useLegacyCache": true
+	"useInferencePlugins": false
 }

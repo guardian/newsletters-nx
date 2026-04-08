@@ -98,7 +98,7 @@ describe('stateMachineButtonPressed', () => {
 				true,
 				mockStorage,
 			),
-		).rejects.toThrowError('Button poop not found in step step1');
+		).rejects.toThrow('Button poop not found in step step1');
 	});
 
 	it('should execute step and move to next step if next button is pressed', async () => {
