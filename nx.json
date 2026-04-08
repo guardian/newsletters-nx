@@ -1,71 +1,95 @@
 {
-	"$schema": "./node_modules/nx/schemas/nx-schema.json",
-	"tasksRunnerOptions": {
-		"default": {
-			"options": {
-				"runtimeCacheInputs": ["node -v"]
-			}
-		}
-	},
-	"targetDefaults": {
-		"build": {
-			"dependsOn": ["^build"],
-			"inputs": ["production", "^production"],
-			"cache": true
-		},
-		"e2e": {
-			"cache": true
-		},
-		"@nx/vite:test": {
-			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-			"cache": true
-		},
-		"@nx/jest:jest": {
-			"inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-			"cache": true,
-			"options": {
-				"passWithNoTests": true
-			},
-			"configurations": {
-				"ci": {
-					"ci": true,
-					"codeCoverage": true
-				}
-			}
-		},
-		"@nx/eslint:lint": {
-			"inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
-			"cache": true
-		}
-	},
-	"namedInputs": {
-		"default": ["{projectRoot}/**/*", "sharedGlobals"],
-		"production": [
-			"default",
-			"!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
-			"!{projectRoot}/tsconfig.spec.json",
-			"!{projectRoot}/jest.config.[jt]s",
-			"!{projectRoot}/.eslintrc.json",
-			"!{projectRoot}/src/test-setup.[jt]s"
-		],
-		"sharedGlobals": ["{workspaceRoot}/babel.config.json"]
-	},
-	"generators": {
-		"@nx/react": {
-			"application": {
-				"style": "@emotion/styled",
-				"linter": "eslint",
-				"bundler": "vite",
-				"babel": true
-			},
-			"component": {
-				"style": "@emotion/styled"
-			},
-			"library": {
-				"style": "@emotion/styled",
-				"linter": "eslint",
-				"unitTestRunner": "jest"
-			}
-		}
-	}
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "tasksRunnerOptions": {
+    "default": {
+      "options": {
+        "runtimeCacheInputs": [
+          "node -v"
+        ]
+      }
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ],
+      "cache": true
+    },
+    "e2e": {
+      "cache": true
+    },
+    "@nx/vite:test": {
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js"
+      ],
+      "cache": true
+    },
+    "@nx/jest:jest": {
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js"
+      ],
+      "cache": true,
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "@nx/eslint:lint": {
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json"
+      ],
+      "cache": true
+    }
+  },
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/src/test-setup.[jt]s"
+    ],
+    "sharedGlobals": [
+      "{workspaceRoot}/babel.config.json"
+    ]
+  },
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "style": "@emotion/styled",
+        "linter": "eslint",
+        "bundler": "vite",
+        "babel": true
+      },
+      "component": {
+        "style": "@emotion/styled"
+      },
+      "library": {
+        "style": "@emotion/styled",
+        "linter": "eslint",
+        "unitTestRunner": "jest"
+      }
+    }
+  },
+  "useInferencePlugins": false
 }
