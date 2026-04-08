@@ -6,6 +6,14 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import path from 'path';
 
 export default defineConfig({
+	root: __dirname,
+	build: {
+		outDir: '../../dist/apps/newsletters-ui',
+		reportCompressedSize: true,
+		commonjsOptions: {
+			transformMixedEsModules: true,
+		},
+	},
 	server: {
 		port: 4200,
 		host: 'localhost',
@@ -24,10 +32,7 @@ export default defineConfig({
 		},
 		allowedHosts: ['newsletters-tool.local.dev-gutools.co.uk'],
 	},
-	plugins: [
-		react(),
-		nxViteTsPaths(),
-	],
+	plugins: [react(), nxViteTsPaths()],
 
 	// Uncomment this if you are using workers.
 	// worker: {
@@ -42,6 +47,11 @@ export default defineConfig({
 		'import.meta.vitest': undefined,
 	},
 	test: {
+		reporters: ['default'],
+		coverage: {
+			reportsDirectory: '../../coverage/apps/newsletters-ui',
+			provider: 'v8',
+		},
 		globals: true,
 		cache: {
 			dir: '../../node_modules/.vitest',

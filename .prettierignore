@@ -3,3 +3,5 @@
 /dist
 /coverage
 /cdk/cdk.out
+
+/.nx/cache

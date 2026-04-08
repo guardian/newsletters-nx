@@ -67,3 +67,4 @@ test-results/
 # Playwright trace files
 trace.zip
 *.trace.zip
+.nx/cache

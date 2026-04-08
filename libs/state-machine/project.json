@@ -12,23 +12,18 @@
 				"main": "libs/state-machine/src/index.ts",
 				"tsConfig": "libs/state-machine/tsconfig.lib.json",
 				"assets": ["libs/state-machine/*.md"],
-				"rootDir": ".",
-				"updateBuildableProjectDepsInPackageJson": true
+				"rootDir": "."
 			}
 		},
 		"lint": {
-			"executor": "@nx/linter:eslint",
-			"outputs": ["{options.outputFile}"],
-			"options": {
-				"lintFilePatterns": ["libs/state-machine/**/*.ts"]
-			}
+			"executor": "@nx/eslint:lint",
+			"outputs": ["{options.outputFile}"]
 		},
 		"test": {
 			"executor": "@nx/jest:jest",
 			"outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
 			"options": {
-				"jestConfig": "libs/state-machine/jest.config.ts",
-				"passWithNoTests": true
+				"jestConfig": "libs/state-machine/jest.config.ts"
 			}
 		}
 	},
