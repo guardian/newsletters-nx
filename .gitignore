@@ -68,3 +68,4 @@ test-results/
 trace.zip
 *.trace.zip
 .nx/cache
+.nx/workspace-data
