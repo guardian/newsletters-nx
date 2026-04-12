@@ -4,7 +4,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { renderNewLaunchMessage } from '../components/NewLaunchMessage';
 import { getMessageConfig } from '../message-config';
-import type { MessageAboutNewsletterParams, MessageContent } from '../types';
+import type { MessageAboutNewsletterParams } from '../types';
 
 export async function buildNewsLetterLaunchMessage(
 	params: MessageAboutNewsletterParams,
@@ -18,12 +18,12 @@ export async function buildNewsLetterLaunchMessage(
 	);
 	const pageLink = `${messageConfig.toolHost}/launched/${newsletter.identityName}`;
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
+
 	const content = renderNewLaunchMessage({
 		pageLink,
 		newsletter,
 		user,
-	}) as MessageContent;
+	});
 
 	return { content, messageConfig };
 }

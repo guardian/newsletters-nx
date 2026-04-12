@@ -18,10 +18,83 @@ import type {
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
 
-export const IMMUTABLE_PROPERTIES: Readonly<string[]> = [
+export const IMMUTABLE_PROPERTIES: readonly string[] = [
 	'listId',
 	'identityName',
 ];
+
+export const getNewsletterModificationError = (
+	modifications: Partial<NewsletterData>,
+): UnsuccessfulStorageResponse | undefined => {
+	const problems: string[] = [];
+	const propertiesChanged = Object.keys(modifications);
+
+	const forbiddenKeyChanges = propertiesChanged.filter((property) =>
+		IMMUTABLE_PROPERTIES.includes(property),
+	);
+
+	if (forbiddenKeyChanges.length > 0) {
+		problems.push(
+			`Cannot change ${forbiddenKeyChanges
+				.map((key) => `"${key}"`)
+				.join(' or ')} on a newsletter.`,
+		);
+	}
+
+	if (!isPartialNewsletterData(modifications)) {
+		problems.push(
+			'Not all fields are of the required type or in the right format.',
+		);
+	}
+
+	if (problems.length === 0) {
+		return undefined;
+	}
+	return {
+		ok: false,
+		message: problems.join(' '),
+		reason: StorageRequestFailureReason.InvalidDataInput,
+	};
+};
+
+export const buildNewsletterNoItemError = (
+	listIdOrIdentityName: string | number,
+): UnsuccessfulStorageResponse => {
+	const message =
+		typeof listIdOrIdentityName === 'number'
+			? `No item with listId #${listIdOrIdentityName} found.`
+			: `No item with identityName "${listIdOrIdentityName}" found.`;
+
+	return {
+		ok: false,
+		message,
+		reason: StorageRequestFailureReason.NotFound,
+	};
+};
+
+export const stripNewsletterMeta = (
+	data: NewsletterDataWithMeta | NewsletterData,
+): NewsletterDataWithoutMeta => {
+	return stripMeta(data);
+};
+
+export const createNewNewsletterMeta = (user: UserProfile): MetaData => {
+	return createNewMeta(user);
+};
+
+export const updateNewsletterMeta = (
+	meta: MetaData,
+	user: UserProfile,
+): MetaData => {
+	return updateMeta(meta, user);
+};
+
+export const updateNewsletterMetaForLaunch = (
+	meta: MetaData,
+	user: UserProfile,
+): MetaData => {
+	return updateMeta(meta, user, true);
+};
 
 export abstract class NewsletterStorage {
 	abstract create(
@@ -82,70 +155,4 @@ export abstract class NewsletterStorage {
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
 		| UnsuccessfulStorageResponse
 	>;
-
-	getModificationError(
-		modifications: Partial<NewsletterData>,
-	): UnsuccessfulStorageResponse | undefined {
-		const problems: string[] = [];
-		const propertiesChanged = Object.keys(modifications);
-
-		const forbiddenKeyChanges = propertiesChanged.filter((property) =>
-			IMMUTABLE_PROPERTIES.includes(property),
-		);
-
-		if (forbiddenKeyChanges.length > 0) {
-			problems.push(
-				`Cannot change ${forbiddenKeyChanges
-					.map((key) => `"${key}"`)
-					.join(' or ')} on a newsletter.`,
-			);
-		}
-
-		if (!isPartialNewsletterData(modifications)) {
-			problems.push(
-				'Not all fields are of the required type or in the right format.',
-			);
-		}
-
-		if (problems.length === 0) {
-			return undefined;
-		}
-		return {
-			ok: false,
-			message: problems.join(' '),
-			reason: StorageRequestFailureReason.InvalidDataInput,
-		};
-	}
-
-	buildNoItemError(
-		listIdOrIdentityName: string | number,
-	): UnsuccessfulStorageResponse {
-		const message =
-			typeof listIdOrIdentityName === 'number'
-				? `No item with listId #${listIdOrIdentityName} found.`
-				: `No item with identityName "${listIdOrIdentityName}" found.`;
-
-		return {
-			ok: false,
-			message,
-			reason: StorageRequestFailureReason.NotFound,
-		};
-	}
-
-	stripMeta(
-		data: NewsletterDataWithMeta | NewsletterData,
-	): NewsletterDataWithoutMeta {
-		return stripMeta(data);
-	}
-
-	createNewMeta(user: UserProfile): MetaData {
-		return createNewMeta(user);
-	}
-
-	updateMeta(meta: MetaData, user: UserProfile): MetaData {
-		return updateMeta(meta, user);
-	}
-	updateMetaForLaunch(meta: MetaData, user: UserProfile): MetaData {
-		return updateMeta(meta, user, true);
-	}
 }

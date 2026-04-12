@@ -35,6 +35,7 @@ describe('sendEmailNotifications', () => {
 		);
 
 		expect(results.success).toBe(true);
+		// eslint-disable-next-line @typescript-eslint/unbound-method -- we're not calling the function here, just asserting that it hasn't been called in a test
 		expect(mockedClient.send).not.toHaveBeenCalled();
 	});
 
@@ -54,6 +55,7 @@ describe('sendEmailNotifications', () => {
 		);
 
 		expect(results.success).toBe(true);
+		// eslint-disable-next-line @typescript-eslint/unbound-method -- we're not explicitly calling the function here, just asserting that it has been called as part of the test
 		expect(mockedClient.send).toHaveBeenCalledTimes(1);
 	});
 });

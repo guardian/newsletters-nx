@@ -32,19 +32,11 @@
 						"project": "tsconfig.base.json"
 					}
 				}
-			},
-			"rules": {
-				"@typescript-eslint/no-extra-semi": "error",
-				"no-extra-semi": "off"
 			}
 		},
 		{
 			"files": ["*.js", "*.jsx"],
-			"extends": ["plugin:@nx/javascript", "@guardian/eslint-config"],
-			"rules": {
-				"@typescript-eslint/no-extra-semi": "error",
-				"no-extra-semi": "off"
-			}
+			"extends": ["plugin:@nx/javascript", "@guardian/eslint-config"]
 		},
 		{
 			"files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],

@@ -30,10 +30,15 @@ const WIZARD: WizardLayout = {
 	step3: {
 		staticMarkdown: 'This is step 3: static',
 		dynamicMarkdown(requestData, responseData) {
-			const valueFromResponse = responseData?.['key']
-				? responseData['key'].toString()
-				: '';
-			return `This is step 3: ${valueFromResponse}`;
+			const responseDataVal = responseData?.['key'];
+			const returnStrPrefix = 'This is step 3';
+			if (responseDataVal) {
+				const responseDataValType = typeof responseData['key'];
+				return responseDataValType === 'string'
+					? `${returnStrPrefix}: ${responseDataVal as string}`
+					: `${returnStrPrefix}: ${JSON.stringify(responseDataVal)}`;
+			}
+			return `${returnStrPrefix}`;
 		},
 		buttons: {},
 	},

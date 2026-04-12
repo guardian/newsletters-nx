@@ -98,7 +98,7 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 		}
 		return output;
 	} catch (err) {
-		console.warn('USER PROFILE PARSE FAILED - JSON error', err as unknown);
+		console.warn('USER PROFILE PARSE FAILED - JSON error', err);
 		console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
 		return {};
 	}

@@ -76,7 +76,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 		const editColumn: Column<NewsletterData> = {
 			Header: 'Edit',
 			Cell: ({ row: { original } }) => {
-				const newsletter = original as NewsletterData;
+				const newsletter = original;
 
 				return (
 					<NavigateButton

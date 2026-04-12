@@ -34,10 +34,9 @@ export function Layout(props: IRootRoute) {
 
 	useEffect(() => {
 		let hostname = 'user-telemetry.gutools.co.uk';
-		if(isOnCode){
+		if (isOnCode) {
 			hostname = 'user-telemetry.code.dev-gutools.co.uk';
-		}
-		else if(isOnLocal){
+		} else if (isOnLocal) {
 			hostname = 'user-telemetry.local.dev-gutools.co.uk';
 		}
 		const image = new Image();
@@ -48,7 +47,7 @@ export function Layout(props: IRootRoute) {
 		<div css={frameCss}>
 			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
 			<Box pt={8} component={'main'}>
-				{props.outlet ? props.outlet : <Outlet />}
+				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
 	);

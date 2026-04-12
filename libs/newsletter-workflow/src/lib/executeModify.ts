@@ -40,7 +40,7 @@ const doModify = async (
 		const formValidationError = validateIncomingFormData(
 			stepData.currentStepId,
 			stepData.formData,
-			stepLayout as WizardStepLayout<unknown>,
+			stepLayout as WizardStepLayout,
 		);
 
 		if (formValidationError) {

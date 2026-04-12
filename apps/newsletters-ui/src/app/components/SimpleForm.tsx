@@ -41,7 +41,6 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	initialData,
 	submit,
 	isDisabled,
-	message,
 	maxOptionsForRadioButtons,
 	stringConfig = {},
 	explanations = {},

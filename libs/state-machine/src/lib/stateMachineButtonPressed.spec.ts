@@ -191,7 +191,7 @@ describe('stateMachineButtonPressed', () => {
 				true,
 				mockStorage,
 			);
-			expect(executeStepMock).toHaveBeenCalled;
+			expect(executeStepMock).toHaveBeenCalled();
 			expect(result.currentStepId).toEqual('step1');
 			expect(result.errorMessage).toEqual(mockExecutionFailure.message);
 			resetMockHooksOnButton(nextButton);

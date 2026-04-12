@@ -4,7 +4,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { renderNewDraftMessage } from '../components/NewDraftMessage';
 import { getMessageConfig } from '../message-config';
-import type { MessageContent, NewDraftMessageParams } from '../types';
+import type { NewDraftMessageParams } from '../types';
 
 export async function buildNewDraftEmail(
 	params: NewDraftMessageParams,
@@ -19,12 +19,11 @@ export async function buildNewDraftEmail(
 
 	const pageLink = `${messageConfig.toolHost}/drafts/${draft.listId}`;
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
 	const content = renderNewDraftMessage({
 		pageLink,
 		draft,
 		user,
-	}) as MessageContent;
+	});
 
 	return { content, messageConfig };
 }

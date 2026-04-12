@@ -22,7 +22,7 @@ const getExtraValuesFromFormData = (
 	formData: FormDataRecord = {},
 ): Partial<NewsletterData> => {
 	const stringValue = (key: string): string | undefined =>
-		typeof formData[key] === 'string' ? (formData[key] as string) : undefined;
+		typeof formData[key] === 'string' ? (formData[key]) : undefined;
 
 	return DERIVED_FIELD_KEYS.reduce<Partial<NewsletterData>>(
 		(previousRecord, key) => {

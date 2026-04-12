@@ -13,7 +13,15 @@ import type {
 } from '../storage-response-types';
 import { StorageRequestFailureReason } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
-import { NewsletterStorage } from './NewsletterStorage';
+import type { NewsletterStorage } from './NewsletterStorage';
+import {
+	buildNewsletterNoItemError,
+	createNewNewsletterMeta,
+	getNewsletterModificationError,
+	stripNewsletterMeta,
+	updateNewsletterMeta,
+	updateNewsletterMetaForLaunch,
+} from './NewsletterStorage';
 import { objectToNewsletter } from './objectToNewsletter';
 import {
 	fetchObject,
@@ -250,9 +258,11 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
 		| UnsuccessfulStorageResponse
 	> {
-		const modificationError = this.getModificationError(modifications);
+		const modificationError = getNewsletterModificationError(modifications);
 
-		if (modificationError) return modificationError;
+		if (modificationError) {
+			return modificationError;
+		}
 
 		const newsletterToUpdate = await this.fetchNewsletter(listId);
 		if (!newsletterToUpdate) {
@@ -385,10 +395,10 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	private objectExists = objectExists(this);
 	private getListOfObjectsKeys = getListOfObjectsKeys(this);
 
-	getModificationError = NewsletterStorage.prototype.getModificationError;
-	buildNoItemError = NewsletterStorage.prototype.buildNoItemError;
-	stripMeta = NewsletterStorage.prototype.stripMeta;
-	createNewMeta = NewsletterStorage.prototype.createNewMeta;
-	updateMeta = NewsletterStorage.prototype.updateMeta;
-	updateMetaForLaunch = NewsletterStorage.prototype.updateMetaForLaunch;
+	getModificationError = getNewsletterModificationError;
+	buildNoItemError = buildNewsletterNoItemError;
+	stripMeta = stripNewsletterMeta;
+	createNewMeta = createNewNewsletterMeta;
+	updateMeta = updateNewsletterMeta;
+	updateMetaForLaunch = updateNewsletterMetaForLaunch;
 }

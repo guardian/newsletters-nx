@@ -39,7 +39,7 @@ export const getListOfObjectsKeys =
 		const { Contents = [] } = listOutput;
 		return Contents.map((item) => item.Key)
 			.filter((key) => typeof key === 'string')
-			.filter((item) => item !== s3NewsletterStorage.OBJECT_PREFIX) as string[];
+			.filter((item) => item !== s3NewsletterStorage.OBJECT_PREFIX);
 	};
 
 export const getNextId = async (
@@ -54,9 +54,9 @@ export const getNextId = async (
 
 const getStringId = (key: string): string => {
 	const filenameWithExtension = key.split(':').pop();
-	if (!filenameWithExtension) throw new Error('Unexpected key format');
+	if (!filenameWithExtension) {throw new Error('Unexpected key format');}
 	const stringId = filenameWithExtension.split('.')[0];
-	if (!stringId) throw new Error('Unexpected key format');
+	if (!stringId) {throw new Error('Unexpected key format');}
 	return stringId;
 };
 

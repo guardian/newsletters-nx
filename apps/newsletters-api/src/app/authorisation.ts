@@ -9,7 +9,7 @@ import { permissionService } from '../services/permissions';
 export const hasEditAccess = async (
 	profile: UserProfile | undefined,
 ): Promise<boolean> => {
-	if (!profile) return false;
+	if (!profile) {return false;}
 	const permissions = await permissionService.get(profile);
 	const { editTags, editNewsletters, editSignUpPage, editBraze, editOphan } =
 		permissions;
@@ -22,7 +22,7 @@ export const hasPermission = async (
 	profile: UserProfile | undefined,
 	permission: keyof UserPermissions,
 ): Promise<boolean> => {
-	if (!profile) return false;
+	if (!profile) {return false;}
 	const permissions = await permissionService.get(profile);
 	return permissions[permission];
 };
@@ -31,11 +31,11 @@ export const isAuthorisedToMakeRequestedNewsletterUpdate = async (
 	profile: UserProfile | undefined,
 	update: Partial<NewsletterData>,
 ): Promise<boolean> => {
-	if (!profile) return false;
+	if (!profile) {return false;}
 	const permissions = await permissionService.get(profile);
 	const { editNewsletters } = permissions;
 
-	if (editNewsletters) return true;
+	if (editNewsletters) {return true;}
 
 	const updateKeys = Object.keys(update);
 

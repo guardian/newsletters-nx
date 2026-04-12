@@ -20,7 +20,7 @@ export const RadioSelectInput: FunctionComponent<
 	}
 > = (props) => {
 	const { value, optional, options, inputHandler, label = 'value' } = props;
-	const handleChange = (event: SelectChangeEvent<string>) => {
+	const handleChange = (event: SelectChangeEvent) => {
 		if (event.target.value === EMPTY_STRING) {
 			return inputHandler(undefined);
 		}

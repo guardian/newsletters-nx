@@ -19,11 +19,11 @@ export async function buildBrazeUpdateRequestMessage(
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
+	 
 	const content = renderBrazeUpdateRequestMessage({
 		pageLink,
 		newsletter,
-	}) as MessageContent;
+	});
 
 	return { content, messageConfig };
 }

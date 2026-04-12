@@ -24,12 +24,12 @@ export async function buildSignupPageAndTagCreationRequestMessage(
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- render the component
+	 
 	const content = renderRequestTagAndSignUpPageCreationMessage({
 		pageLink,
 		newsletter,
 		user,
-	}) as MessageContent;
+	});
 
 	return { content, messageConfig };
 }

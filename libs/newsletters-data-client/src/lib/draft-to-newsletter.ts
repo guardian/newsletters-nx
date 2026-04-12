@@ -63,7 +63,7 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 		...draft,
 		renderingOptions: getDefaultedRenderingOptions(),
 		//prevent an explicit undefined status on the draft overriding the default
-		status: draft.status ? draft.status : defaultNewsletterValues.status,
+		status: draft.status ?? defaultNewsletterValues.status,
 	};
 };
 

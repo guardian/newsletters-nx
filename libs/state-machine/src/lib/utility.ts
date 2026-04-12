@@ -22,7 +22,7 @@ export const makeStepDataWithErrorMessage = (
 export const validateIncomingFormData = (
 	stepId: string,
 	formData: FormDataRecord | undefined,
-	wizardStepLayout: WizardStepLayout<unknown>,
+	wizardStepLayout: WizardStepLayout,
 ): { message: string; issues?: ZodIssue[] } | undefined => {
 	const formSchemaForIncomingStep = wizardStepLayout.schema;
 

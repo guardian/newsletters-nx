@@ -44,7 +44,7 @@ export async function stateMachineButtonPressed<
 			? buttonPressedDetails.stepToMoveTo
 			: buttonPressedDetails.stepToMoveTo(
 					wizardLayout,
-					currentStepLayout as WizardStepLayout<unknown>,
+					currentStepLayout as WizardStepLayout,
 					isEditPath,
 			  );
 
@@ -52,7 +52,7 @@ export async function stateMachineButtonPressed<
 		const incomingDataError = validateIncomingFormData(
 			incomingStepData.currentStepId,
 			incomingStepData.formData,
-			wizardLayout[incomingStepData.currentStepId] as WizardStepLayout<unknown>,
+			wizardLayout[incomingStepData.currentStepId] as WizardStepLayout,
 		);
 
 		if (incomingDataError) {
