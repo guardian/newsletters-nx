@@ -24,6 +24,7 @@ const SIMPLE_VALID_DRAFT: DraftNewsletterData = {
 const VALID_FORM_DATA_WITH_NESTED_OBJECT: FormDataRecord = {
 	name: 'test name',
 	'renderingOptions.linkListSubheading': ['frog', 'bird', 'snake'],
+	'renderingOptions.questionBlockSubheading': ['what', 'why'],
 	'renderingOptions.displayStandfirst': true,
 };
 
@@ -31,6 +32,7 @@ const VALID_DRAFT_WITH_NESTED_OBJECT: DraftNewsletterData = {
 	name: 'test name',
 	renderingOptions: {
 		linkListSubheading: ['frog', 'bird', 'snake'],
+		questionBlockSubheading: ['what', 'why'],
 		displayStandfirst: true,
 	},
 };

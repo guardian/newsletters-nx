@@ -46,6 +46,10 @@ export const renderingOptionsSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('Link list subheading'),
+	questionBlockSubheading: z
+		.array(z.string())
+		.optional()
+		.describe('Question block subheading'),
 	podcastSubheading: z
 		.array(z.string())
 		.optional()
