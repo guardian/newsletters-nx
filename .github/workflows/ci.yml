@@ -29,6 +29,9 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Build UI for E2e tests
+        run: npx nx build newsletters-ui
+
       # NEW: Start API server in background
       - name: Start API Server
         run: |
@@ -45,9 +48,6 @@ jobs:
             sleep 2
           done
           curl -s http://localhost:3000/api/newsletters || echo "API might not be fully ready"
-
-      - name: Build UI for E2e tests
-        run: npx nx build newsletters-ui
 
       - name: Run Playwright E2E tests
         run: npm run test:e2e

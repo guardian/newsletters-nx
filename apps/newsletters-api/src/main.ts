@@ -26,13 +26,7 @@ app.use(setCacheControlHeaderMiddleware);
 app.use(json());
 
 registerHealthRoute(app);
-if (isServingUI()) {
-	// When running locally UI dev-server runs on :4200, even without this function.
-	// but the UI should also be served on :3000, like it is on PROD
-	// if registerUIServer is working locally, a ui route on :3000 (eg http://localhost:3000/launched)
-	// should serve the index.html and static assets from: dist/apps/newsletters-ui (if built with nx:build)
-	registerUIServer(app);
-}
+
 if (isServingReadWriteEndpoints()) {
 	registerCurrentStepRoute(app);
 	registerUserRoute(app);
@@ -49,6 +43,9 @@ if (isServingReadEndpoints()) {
 
 const start = async () => {
 	try {
+		if (isServingUI()) {
+			await registerUIServer(app);
+		}
 		const options = {
 			port: 3000,
 
