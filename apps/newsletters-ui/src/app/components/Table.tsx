@@ -65,27 +65,34 @@ export const Table = <TData extends object>({
 
 	return (
 		<ContentWrapper>
-			<Grid container spacing={2} rowSpacing={2} paddingY={2}>
-				<Grid item xs={12}>
+			<Grid container spacing={2} rowSpacing={2} sx={{ paddingY: 2 }}>
+				<Grid size={12}>
 					<div>Hide/Show Columns</div>
 				</Grid>
-				<Grid item xs={12} display={'flex'} flexWrap={'wrap'}>
+				<Grid sx={{ display: 'flex', flexWrap: 'wrap' }} size={12}>
 					{allColumns.map((column) => (
 						<ColumnVisibility column={column} key={`visibility ${column.id}`} />
 					))}
 				</Grid>
-				<Grid item xs={12} display={'flex'}>
+				<Grid sx={{ display: 'flex' }} size={12}>
 					<GlobalFilter setGlobalFilter={setGlobalFilter} />
 				</Grid>
 				{filterableColumns.length && (
 					<>
-						<Grid item xs={12}>
+						<Grid size={12}>
 							<div>Apply Filters</div>
 						</Grid>
-						<Grid item xs={12}>
+						<Grid size={12}>
 							<Grid container spacing={2} rowSpacing={2}>
 								{filterableColumns.map((column) => (
-									<Grid item xs={12} sm={6} md={4} key={`filter ${column.id}`}>
+									<Grid
+										key={`filter ${column.id}`}
+										size={{
+											xs: 12,
+											sm: 6,
+											md: 4,
+										}}
+									>
 										{column.render('Filter')}
 									</Grid>
 								))}

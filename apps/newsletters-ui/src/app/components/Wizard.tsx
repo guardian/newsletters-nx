@@ -229,7 +229,7 @@ export const Wizard: React.FC<WizardProps> = ({
 	};
 
 	return (
-		<Box paddingY={2}>
+		<Box sx={{ paddingY: 2 }}>
 			<StepNav
 				currentStepId={serverData.currentStepId}
 				stepperConfig={stepperConfig}
@@ -250,7 +250,7 @@ export const Wizard: React.FC<WizardProps> = ({
 			)}
 
 			{serverData.errorMessage && (
-				<Box paddingBottom={2}>
+				<Box sx={{ paddingBottom: 2 }}>
 					<FailureAlert
 						errorMessage={serverData.errorMessage}
 						errorDetails={serverData.errorDetails}

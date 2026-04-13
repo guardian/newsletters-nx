@@ -34,32 +34,30 @@ export const TemplateList = ({ templates }: Props) => {
 			<Typography variant="subtitle2">
 				{templates.length} templates implemented in the email-rendering service.
 			</Typography>
-
 			<Box component="ul">
 				{templates.map((template) => (
 					<Grid
 						container
 						spacing={2}
 						component={'li'}
-						marginBottom={1}
+						sx={{ marginBottom: 1 }}
 						key={template.id}
 					>
-						<Grid item xs={8}>
+						<Grid size={8}>
 							<Link target="_blank" href={getChromaticURL(template)}>
 								<Typography>{template.title}</Typography>
 							</Link>
 						</Grid>
-						<Grid item xs={2}>
+						<Grid size={2}>
 							<Typography sx={{ fontWeight: 'bold' }}>
 								{template.status}
 							</Typography>
 						</Grid>
-						<Grid item xs={2}></Grid>
+						<Grid size={2}></Grid>
 					</Grid>
 				))}
 			</Box>
-
-			<Box maxWidth={'lg'}>
+			<Box sx={{ maxWidth: 'lg' }}>
 				<Alert severity="info">
 					<AlertTitle>Please note</AlertTitle>
 					<div>

@@ -8,10 +8,10 @@ import { ContentWrapper } from '../../ContentWrapper';
 import { LayoutsMapDisplay } from '../edition-layouts/LayoutsMapDisplay';
 
 export const LayoutMapView = () => {
-	const data = useLoaderData() as {
+	const data = useLoaderData<{
 		editionsLayouts: EditionsLayouts;
 		newsletters: NewsletterData[];
-	};
+	}>();
 
 	return (
 		<ContentWrapper>

@@ -19,7 +19,7 @@ export const LayoutDisplay = ({ newsletters, layout }: Props) => {
 					{section.subtitle && (
 						<Typography variant="overline">{section.subtitle}</Typography>
 					)}
-					<Box display={'flex'} flexWrap={'wrap'} gap={1}>
+					<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
 						{section.newsletters.map((newsletterId, index) => (
 							<NewsletterCard
 								key={index}

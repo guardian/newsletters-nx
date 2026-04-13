@@ -46,7 +46,13 @@ const ButtonGridItem = ({
 	};
 
 	return (
-		<Grid item xs={6} sm={4} display={'flex'}>
+		<Grid
+			sx={{ display: 'flex' }}
+			size={{
+				xs: 6,
+				sm: 4,
+			}}
+		>
 			<Button {...buttonProps} fullWidth size="large">
 				{content}
 			</Button>
@@ -55,17 +61,19 @@ const ButtonGridItem = ({
 };
 
 export function HomeMenu() {
-	const list = useLoaderData() as NewsletterData[];
+	const list = useLoaderData<NewsletterData[]>();
 	const permissions = usePermissions();
 	const navigate = useNavigate();
 
-	if (!permissions) {return null;}
+	if (!permissions) {
+		return null;
+	}
 
 	const showEditOptions = shouldShowEditOptions(permissions);
 
 	return (
 		<Container maxWidth={'lg'}>
-			<Grid container spacing={3} rowSpacing={6} paddingY={4}>
+			<Grid container spacing={3} rowSpacing={6} sx={{ paddingY: 4 }}>
 				<ButtonGridItem
 					path="/launched"
 					content={'View launched newsletters'}
@@ -81,7 +89,13 @@ export function HomeMenu() {
 				)}
 
 				{showEditOptions && (
-					<Grid item xs={6} sm={4} display={'flex'}>
+					<Grid
+						sx={{ display: 'flex' }}
+						size={{
+							xs: 6,
+							sm: 4,
+						}}
+					>
 						<ScrollingMenuButton
 							buttonText="update newsletter"
 							buttonProps={{
@@ -96,14 +110,20 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/launched/edit/${identityName}`);
+								void navigate(`/launched/edit/${identityName}`);
 							}}
 						/>
 					</Grid>
 				)}
 
 				{permissions.editNewsletters && (
-					<Grid item xs={6} sm={4} display={'flex'}>
+					<Grid
+						sx={{ display: 'flex' }}
+						size={{
+							xs: 6,
+							sm: 4,
+						}}
+					>
 						<ScrollingMenuButton
 							buttonText="set rendering options"
 							buttonProps={{
@@ -118,7 +138,7 @@ export function HomeMenu() {
 								id: newsletter.identityName,
 							}))}
 							handleSelect={(identityName) => {
-								navigate(`/launched/rendering-options/${identityName}`);
+								void navigate(`/launched/rendering-options/${identityName}`);
 							}}
 						/>
 					</Grid>

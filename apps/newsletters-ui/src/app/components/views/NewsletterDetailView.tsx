@@ -4,7 +4,7 @@ import { ContentWrapper } from '../../ContentWrapper';
 import { NewsletterDataDetails } from '../NewsletterDataDetails';
 
 export const NewsletterDetailView = () => {
-	const matchedItem = useLoaderData();
+	const matchedItem = useLoaderData<unknown>();
 	if (!matchedItem) {
 		return (
 			<ContentWrapper>

@@ -47,7 +47,7 @@ const LayoutOverview = ({
 			makeBlankLayout(),
 		);
 		if (result) {
-			navigate(`/layouts/${editionId.toLowerCase()}`);
+			void navigate(`/layouts/${editionId.toLowerCase()}`);
 		} else {
 			alert('failed to create layout');
 		}
@@ -60,7 +60,7 @@ const LayoutOverview = ({
 			{layout ? (
 				<Link to={`/layouts/${editionId.toLowerCase()}`}>{title}</Link>
 			) : (
-				<Box display={'flex'} alignItems={'flex-end'} gap={4}>
+				<Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 4 }}>
 					{title}
 
 					{permissions?.editLayouts && (
@@ -99,7 +99,7 @@ const LayoutOverview = ({
 
 export const LayoutsMapDisplay = ({ editionsLayouts, newsletters }: Props) => {
 	return (
-		<Stack divider={<Divider />} gap={2}>
+		<Stack divider={<Divider />} sx={{ gap: 2 }}>
 			{editionIds.map((editionId) => (
 				<LayoutOverview
 					key={editionId}

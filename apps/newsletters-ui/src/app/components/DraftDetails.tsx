@@ -102,7 +102,7 @@ export const DraftDetails = ({ draft }: Props) => {
 			)}
 
 			{issues.length > 0 && !hasBeenDeleted && (
-				<Box marginY={1}>
+				<Box sx={{ marginY: 1 }}>
 					<ZodIssuesReport
 						issues={issues}
 						caption={'Missing data needed before launch'}

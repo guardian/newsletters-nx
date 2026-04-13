@@ -3,7 +3,7 @@ import type { RenderingTemplate } from '../../loaders/rendering-templates';
 import { TemplateList } from '../TemplateList';
 
 export const TemplateListView = () => {
-	const list = useLoaderData();
+	const list = useLoaderData<unknown>();
 	if (!list || !Array.isArray(list)) {
 		return <nav>NO LIST</nav>;
 	}

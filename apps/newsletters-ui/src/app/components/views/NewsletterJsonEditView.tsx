@@ -4,7 +4,7 @@ import { ContentWrapper } from '../../ContentWrapper';
 import { NewsletterJsonEdit } from '../NewsletterJsonEdit';
 
 export const NewsletterJsonEditView = () => {
-	const matchedItem = useLoaderData();
+	const matchedItem = useLoaderData<unknown>();
 	if (!matchedItem) {
 		return <article>NOT FOUND!</article>;
 	}

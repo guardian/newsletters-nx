@@ -49,14 +49,14 @@ export const TemplatePreview = ({
 			</ButtonGroup>
 
 			<Box
-				width={'100%'}
-				minHeight={minHeight}
-				display={'flex'}
-				justifyContent={'center'}
-				paddingY={2}
 				sx={{
 					filter: isLoading ? 'blur(3px)' : undefined,
 					transition: 'filter .25s',
+					width: '100%',
+					minHeight: minHeight,
+					display: 'flex',
+					justifyContent: 'center',
+					paddingY: 2,
 				}}
 			>
 				{html && (

@@ -45,14 +45,16 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		if (response.ok) {
 			setItem(response.data);
 			setWaitingForResponse(false);
-			navigate(`/launched/${response.data.identityName}`);
+			void navigate(`/launched/${response.data.identityName}`);
 		} else {
 			setWaitingForResponse(false);
 			setErrorMessage(response.message);
 		}
 	};
 
-	if (permissions === undefined) {return null;}
+	if (permissions === undefined) {
+		return null;
+	}
 
 	const userSchema = getUserEditSchema(permissions);
 	return (

@@ -30,8 +30,8 @@ export const higherLevelDataPoint =
 		const displayValue = properyToString(value);
 
 		return (
-			<Grid container justifyContent={'space-between'} spacing={1}>
-				<Grid item xs={3} flexGrow={1} flexShrink={0}>
+			<Grid container sx={{ justifyContent: 'space-between' }} spacing={1}>
+				<Grid sx={{ flexGrow: 1, flexShrink: 0 }} size={3}>
 					<Typography variant="caption">{displayLabel}</Typography>
 					{tooltip && (
 						<Tooltip title={tooltip} arrow>
@@ -39,7 +39,7 @@ export const higherLevelDataPoint =
 						</Tooltip>
 					)}
 				</Grid>
-				<Grid item xs={9} flexShrink={1}>
+				<Grid sx={{ flexShrink: 1 }} size={9}>
 					{value && href ? (
 						<Link href={href}>{displayValue}</Link>
 					) : (

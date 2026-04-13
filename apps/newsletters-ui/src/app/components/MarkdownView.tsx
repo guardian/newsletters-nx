@@ -9,7 +9,7 @@ interface MarkdownViewProps {
 const isExternal = (href?: string) => !href?.startsWith('/');
 
 const LinkWithNewTabIfExternal = (props: {
-	children: ReactNode;
+	children?: ReactNode;
 	href?: string;
 }) => {
 	const extraProps = {
@@ -23,14 +23,14 @@ const LinkWithNewTabIfExternal = (props: {
 	);
 };
 
-const TypographyH2 = (props: { children: ReactNode }) => {
+const TypographyH2 = (props: { children?: ReactNode }) => {
 	return <Typography variant="h2">{props.children}</Typography>;
 };
-const TypographyH3 = (props: { children: ReactNode }) => {
+const TypographyH3 = (props: { children?: ReactNode }) => {
 	return <Typography variant="h3">{props.children}</Typography>;
 };
-const TypographyP = (props: { children: ReactNode }) => {
-	return <Typography marginBottom={1}>{props.children}</Typography>;
+const TypographyP = (props: { children?: ReactNode }) => {
+	return <Typography sx={{ marginBottom: 1 }}>{props.children}</Typography>;
 };
 
 export const MarkdownView: React.FC<MarkdownViewProps> = ({ markdown }) => {

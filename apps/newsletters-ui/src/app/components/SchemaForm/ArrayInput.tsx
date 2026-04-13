@@ -39,21 +39,25 @@ export const ArrayInput = ({
 	const handleAdd = () => change([...data, '']);
 
 	return (
-		<Box padding={2} border={1} borderColor={''} borderRadius={1}>
+		<Box sx={{ padding: 2, border: 1, borderColor: '', borderRadius: 1 }}>
 			<Badge badgeContent={data.length} color="primary">
 				<Typography sx={{ fontWeight: 700, fontSize: 12 }}>{label}</Typography>
 			</Badge>
-
-			<Grid container alignItems={'center'} rowSpacing={1} columnSpacing={2}>
+			<Grid
+				container
+				sx={{ alignItems: 'center' }}
+				rowSpacing={1}
+				columnSpacing={2}
+			>
 				{data.length === 0 && (
-					<Grid item xs={12}>
+					<Grid size={12}>
 						<Alert severity="info">No Items</Alert>
 					</Grid>
 				)}
 
 				{data.map((item, index) => (
 					<Fragment key={index}>
-						<Grid item xs={9}>
+						<Grid size={9}>
 							<TextField
 								variant="standard"
 								fullWidth
@@ -61,7 +65,7 @@ export const ArrayInput = ({
 								onChange={(event) => handleInput(event, index)}
 							/>
 						</Grid>
-						<Grid item xs={3}>
+						<Grid size={3}>
 							<Button
 								size="small"
 								color="error"
@@ -75,7 +79,7 @@ export const ArrayInput = ({
 					</Fragment>
 				))}
 
-				<Grid item xs={9}>
+				<Grid size={9}>
 					<Button
 						fullWidth
 						size="small"
@@ -88,7 +92,6 @@ export const ArrayInput = ({
 					</Button>
 				</Grid>
 			</Grid>
-
 			{validationWarning && (
 				<Alert severity="warning">{validationWarning}</Alert>
 			)}

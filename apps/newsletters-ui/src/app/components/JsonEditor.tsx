@@ -165,7 +165,12 @@ export const JsonEditor = <T extends JsonRecordOrArray>({
 	return (
 		<Box>
 			<Grid container>
-				<Grid item xs={12} md={3}>
+				<Grid
+					size={{
+						xs: 12,
+						md: 3,
+					}}
+				>
 					<Container>
 						<ButtonGroup sx={{ marginY: 2 }} orientation="vertical" fullWidth>
 							<Button variant="outlined" onClick={reset} color="warning">
@@ -182,7 +187,7 @@ export const JsonEditor = <T extends JsonRecordOrArray>({
 							</Button>
 						</ButtonGroup>
 
-						<Stack spacing={1} marginY={2}>
+						<Stack spacing={1} sx={{ marginY: 2 }}>
 							<CheckResultMessage
 								label="IS VALID JSON"
 								result={jsonCheckResult}
@@ -195,7 +200,12 @@ export const JsonEditor = <T extends JsonRecordOrArray>({
 						</Stack>
 					</Container>
 				</Grid>
-				<Grid item xs={12} md={9}>
+				<Grid
+					size={{
+						xs: 12,
+						md: 9,
+					}}
+				>
 					<TextField
 						spellCheck={false}
 						multiline
@@ -205,7 +215,6 @@ export const JsonEditor = <T extends JsonRecordOrArray>({
 					/>
 				</Grid>
 			</Grid>
-
 			<Container maxWidth="md" sx={{ marginTop: 3 }}>
 				<Button
 					variant="contained"
