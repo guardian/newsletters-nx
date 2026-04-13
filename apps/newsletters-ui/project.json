@@ -3,9 +3,10 @@
 	"$schema": "../../node_modules/nx/schemas/project-schema.json",
 	"sourceRoot": "apps/newsletters-ui/src",
 	"projectType": "application",
+	"tags": [],
 	"targets": {
 		"build": {
-			"executor": "@nrwl/vite:build",
+			"executor": "@nx/vite:build",
 			"outputs": ["{options.outputPath}"],
 			"defaultConfiguration": "production",
 			"options": {
@@ -21,7 +22,7 @@
 			}
 		},
 		"serve": {
-			"executor": "@nrwl/vite:dev-server",
+			"executor": "@nx/vite:dev-server",
 			"defaultConfiguration": "development",
 			"options": {
 				"buildTarget": "newsletters-ui:build"
@@ -38,20 +39,16 @@
 			}
 		},
 		"test": {
-			"executor": "@nrwl/vite:test",
-			"outputs": ["coverage/apps/newsletters-ui"],
+			"executor": "@nx/vitest:test",
+			"outputs": ["{workspaceRoot}/coverage/apps/newsletters-ui"],
 			"options": {
 				"passWithNoTests": true,
 				"reportsDirectory": "../../coverage/apps/newsletters-ui"
 			}
 		},
 		"lint": {
-			"executor": "@nrwl/linter:eslint",
-			"outputs": ["{options.outputFile}"],
-			"options": {
-				"lintFilePatterns": ["apps/newsletters-ui/**/*.{ts,tsx,js,jsx}"]
-			}
+			"executor": "@nx/eslint:lint",
+			"outputs": ["{options.outputFile}"]
 		}
-	},
-	"tags": []
+	}
 }

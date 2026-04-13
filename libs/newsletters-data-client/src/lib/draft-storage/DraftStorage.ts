@@ -24,6 +24,20 @@ export type DraftWithIdButNoMeta = DraftNewsletterData & {
 	meta: undefined;
 };
 
+export const stripDraftMeta = (
+	data: DraftWithIdAndMeta,
+): DraftWithIdButNoMeta => {
+	return stripMeta(data);
+};
+
+export const createNewDraftMeta = (user: UserProfile): MetaData => {
+	return createNewMeta(user);
+};
+
+export const updateDraftMeta = (meta: MetaData, user: UserProfile): MetaData => {
+	return updateMeta(meta, user);
+};
+
 export abstract class DraftStorage {
 	abstract create(
 		draft: DraftWithoutId,
@@ -65,16 +79,4 @@ export abstract class DraftStorage {
 		| SuccessfulStorageResponse<DraftWithIdButNoMeta[]>
 		| UnsuccessfulStorageResponse
 	>;
-
-	stripMeta(data: DraftWithIdAndMeta): DraftWithIdButNoMeta {
-		return stripMeta(data);
-	}
-
-	createNewMeta(user: UserProfile): MetaData {
-		return createNewMeta(user);
-	}
-
-	updateMeta(meta: MetaData, user: UserProfile): MetaData {
-		return updateMeta(meta, user);
-	}
 }

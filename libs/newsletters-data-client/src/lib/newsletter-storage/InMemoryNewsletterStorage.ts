@@ -12,7 +12,15 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
-import { NewsletterStorage } from './NewsletterStorage';
+import type { NewsletterStorage } from './NewsletterStorage';
+import {
+	buildNewsletterNoItemError,
+	createNewNewsletterMeta,
+	getNewsletterModificationError,
+	stripNewsletterMeta,
+	updateNewsletterMeta,
+	updateNewsletterMetaForLaunch,
+} from './NewsletterStorage';
 
 // TODO - serialise Drafts before returning
 // so objects in memory can't be directly modified outside the Storage
@@ -74,7 +82,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		);
 
 		if (!match) {
-			return Promise.resolve(this.buildNoItemError(listId));
+			return Promise.resolve(buildNewsletterNoItemError(listId));
 		}
 		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
 			ok: true,
@@ -89,7 +97,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		);
 
 		if (!match) {
-			return Promise.resolve(this.buildNoItemError(listId));
+			return Promise.resolve(buildNewsletterNoItemError(listId));
 		}
 		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
 			ok: true,
@@ -103,7 +111,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			(newsletter) => newsletter.identityName === identityName,
 		);
 		if (!match) {
-			return Promise.resolve(this.buildNoItemError(identityName));
+			return Promise.resolve(buildNewsletterNoItemError(identityName));
 		}
 		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
 			ok: true,
@@ -117,7 +125,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			(newsletter) => newsletter.identityName === identityName,
 		);
 		if (!match) {
-			return Promise.resolve(this.buildNoItemError(identityName));
+			return Promise.resolve(buildNewsletterNoItemError(identityName));
 		}
 		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
 			ok: true,
@@ -131,14 +139,14 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		modifications: Partial<NewsletterDataWithoutMeta>,
 		user: UserProfile,
 	) {
-		const modificationError = this.getModificationError(modifications);
+		const modificationError = getNewsletterModificationError(modifications);
 		if (modificationError) {
 			return Promise.resolve(modificationError);
 		}
 
 		const match = this.memory.find((item) => item.listId === listId);
 		if (!match) {
-			return Promise.resolve(this.buildNoItemError(listId));
+			return Promise.resolve(buildNewsletterNoItemError(listId));
 		}
 
 		const updatedItem: NewsletterDataWithMeta = {
@@ -161,7 +169,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	) {
 		const match = this.memory.find((item) => item.listId === listId);
 		if (!match) {
-			return Promise.resolve(this.buildNoItemError(listId));
+			return Promise.resolve(buildNewsletterNoItemError(listId));
 		}
 
 		if (
@@ -192,7 +200,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		const match = this.memory.find((item) => item.listId === listId);
 
 		if (!match) {
-			return Promise.resolve(this.buildNoItemError(listId));
+			return Promise.resolve(buildNewsletterNoItemError(listId));
 		}
 
 		this.memory.splice(this.memory.indexOf(match), 1);
@@ -222,10 +230,10 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return currentHighestListId + 1;
 	}
 
-	getModificationError = NewsletterStorage.prototype.getModificationError;
-	buildNoItemError = NewsletterStorage.prototype.buildNoItemError;
-	stripMeta = NewsletterStorage.prototype.stripMeta;
-	createNewMeta = NewsletterStorage.prototype.createNewMeta;
-	updateMeta = NewsletterStorage.prototype.updateMeta;
-	updateMetaForLaunch = NewsletterStorage.prototype.updateMetaForLaunch;
+	getModificationError = getNewsletterModificationError;
+	buildNoItemError = buildNewsletterNoItemError;
+	stripMeta = stripNewsletterMeta;
+	createNewMeta = createNewNewsletterMeta;
+	updateMeta = updateNewsletterMeta;
+	updateMetaForLaunch = updateNewsletterMetaForLaunch;
 }

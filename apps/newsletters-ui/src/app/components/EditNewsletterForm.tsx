@@ -52,7 +52,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		}
 	};
 
-	if (permissions === undefined) return null;
+	if (permissions === undefined) {return null;}
 
 	const userSchema = getUserEditSchema(permissions);
 	return (

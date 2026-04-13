@@ -24,7 +24,7 @@ describe('transformNewToOld', () => {
 			transformDataToLegacyNewsletter(dataWithEmptyName);
 		};
 
-		expect(attemptToTransformInvalidData).toThrowError(
+		expect(attemptToTransformInvalidData).toThrow(
 			TRANSFORM_ERROR_MESSAGE.input,
 		);
 	});

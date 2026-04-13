@@ -12,7 +12,7 @@ import type {
 	DraftWithIdButNoMeta,
 	DraftWithoutId,
 } from '../DraftStorage';
-import { DraftStorage } from '../DraftStorage';
+import { createNewDraftMeta, DraftStorage, stripDraftMeta, updateDraftMeta } from '../DraftStorage';
 import { errorToResponse } from './errorToResponse';
 import { objectToDraftWithMetaAndId } from './objectToDraftWithId';
 import {
@@ -274,7 +274,7 @@ export class S3DraftStorage extends DraftStorage {
 	private fetchObject = fetchObject(this);
 	private deleteObject = deleteObject(this);
 
-	stripMeta = DraftStorage.prototype.stripMeta;
-	createNewMeta = DraftStorage.prototype.createNewMeta;
-	updateMeta = DraftStorage.prototype.updateMeta;
+	stripMeta = stripDraftMeta;
+	createNewMeta = createNewDraftMeta;
+	updateMeta = updateDraftMeta;
 }

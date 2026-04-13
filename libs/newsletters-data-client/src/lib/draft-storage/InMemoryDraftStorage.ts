@@ -5,8 +5,13 @@ import type {
 	UnsuccessfulStorageResponse,
 } from '../storage-response-types';
 import type { UserProfile } from '../user-profile';
-import { DraftStorage } from './DraftStorage';
+import {
+	createNewDraftMeta,
+	stripDraftMeta,
+	updateDraftMeta,
+} from './DraftStorage';
 import type {
+	DraftStorage,
 	DraftWithId,
 	DraftWithIdAndMeta,
 	DraftWithIdButNoMeta,
@@ -152,7 +157,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 		return currentHighestListId + 1;
 	}
 
-	stripMeta = DraftStorage.prototype.stripMeta;
-	createNewMeta = DraftStorage.prototype.createNewMeta;
-	updateMeta = DraftStorage.prototype.updateMeta;
+	stripMeta = stripDraftMeta;
+	createNewMeta = createNewDraftMeta;
+	updateMeta = updateDraftMeta;
 }

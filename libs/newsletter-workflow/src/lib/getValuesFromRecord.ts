@@ -9,6 +9,6 @@ export const getStringValuesFromRecord = (
 		if (typeof value === 'undefined' || value == null) {
 			return '';
 		}
-		return value.toString();
+		return typeof value === 'string' ? value : JSON.stringify(value);
 	});
 };

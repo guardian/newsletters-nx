@@ -11,8 +11,8 @@ export const formatCellBoolean = ({ cell: { value } }: Cell<boolean>) => (
 );
 
 export const formatCellDate = ({ cell: { value } }: Cell<number>) => {
-	if (!value) return <span></span>;
-	if (value === MIGRATION_TIMESTAMP_VALUE) return <span>Unknown</span>;
+	if (!value) {return <span></span>;}
+	if (value === MIGRATION_TIMESTAMP_VALUE) {return <span>Unknown</span>;}
 	const date = new Date(value);
 	const isValid = !isNaN(date.valueOf());
 	const output = isValid ? date.toDateString() : '[INVALID DATE]';
@@ -38,7 +38,7 @@ export const formatStatusCell = ({
 	)}, Signup page status: ${formatStatus(
 		signupPageCreationStatus,
 	)}, Tag status: ${formatStatus(tagCreationStatus)}`;
-	if (!value) return <span></span>;
+	if (!value) {return <span></span>;}
 
 	const status = value.toLowerCase();
 	const statusCell =

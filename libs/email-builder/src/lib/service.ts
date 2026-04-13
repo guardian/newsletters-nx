@@ -66,8 +66,8 @@ export const sendEmailNotifications = async (
 	} catch (error) {
 		console.warn(
 			`send of ${params.messageTemplateId} email failed`,
-			error as unknown,
+			error,
 		);
-		return { error: error as unknown, success: false };
+		return { error: error, success: false };
 	}
 };

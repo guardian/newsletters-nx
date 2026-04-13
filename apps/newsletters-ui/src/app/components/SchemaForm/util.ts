@@ -48,10 +48,7 @@ export function eventToNumber(event: FormEvent, defaultValue = 0): number {
 	return isNaN(numericalValue) ? defaultValue : numericalValue;
 }
 
-export function eventToBoolean(
-	event: FormEvent,
-	defaultValue = false,
-): boolean {
+export function eventToBoolean(event: FormEvent): boolean {
 	return (event.target as HTMLInputElement).checked;
 }
 
@@ -135,7 +132,7 @@ export const fieldValueAsDisplayString = (field: FieldDef): string => {
 			if (Array.isArray(field.value)) {
 				return 'ARRAY';
 			}
-			return field.value ? field.value.toString() : 'NULL';
+			return field.value ? JSON.stringify(field.value) : 'NULL';
 		default:
 			return 'VALUE OF UNKNOWN TYPE';
 	}

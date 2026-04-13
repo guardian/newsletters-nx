@@ -59,7 +59,7 @@ export function HomeMenu() {
 	const permissions = usePermissions();
 	const navigate = useNavigate();
 
-	if (!permissions) return null;
+	if (!permissions) {return null;}
 
 	const showEditOptions = shouldShowEditOptions(permissions);
 

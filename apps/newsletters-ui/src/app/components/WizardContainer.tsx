@@ -5,7 +5,6 @@ import type { WizardProps } from './Wizard';
 
 export const WizardContainer: React.FC<WizardProps> = ({
 	wizardId,
-	id,
 }: WizardProps) => {
 	const { listId } = useParams();
 	return (

@@ -1,18 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import type {
-	Express,
-	Request,
-	Response,
-} from 'express'
+import type { Express, Request, Response } from 'express';
 import { static as serveStatic } from 'express';
 
-
 const routeMap = {
-	'/': [
-		'',
-		'/templates',
-	],
+	'/': ['', '/templates'],
 	'/launched': [
 		'',
 		'/:id',
@@ -31,30 +23,27 @@ const routeMap = {
 		'/launch-newsletter/:listId',
 		'/launch-newsletter',
 	],
-	'/layouts': [
-		'',
-		'/:id',
-		'/edit/:id',
-		'/edit-json/:id',
-	],
+	'/layouts': ['', '/:id', '/edit/:id', '/edit-json/:id'],
 };
 
-
-export function registerUIServer(app: Express) {
+export async function registerUIServer(app: Express) {
 	const pathToStaticFiles = path.join('./dist/apps/newsletters-ui');
 
-	app.use(serveStatic(pathToStaticFiles))
+	app.use(serveStatic(pathToStaticFiles));
 
-	const serveIndexHtml = async (req: Request, res: Response) => {
-		const pathToServedFile = path.join(pathToStaticFiles, 'index.html');
-		const handler = await fs.promises.open(pathToServedFile);
-		const buffer = await handler.readFile();
-		res.type('text/html').send(buffer);
+	const handler = await fs.promises.open(
+		path.join(pathToStaticFiles, 'index.html'),
+	);
+	const indexHtml = await handler.readFile();
+	await handler.close();
+
+	const serveIndexHtml = (_: Request, res: Response) => {
+		res.type('text/html').send(indexHtml);
 	};
 
 	Object.entries(routeMap).forEach(([routeName, paths]) => {
-		paths.forEach(path => {
-			app.get(`${routeName}${path}`, serveIndexHtml)
-		})
-	})
+		paths.forEach((path) => {
+			app.get(`${routeName}${path}`, serveIndexHtml);
+		});
+	});
 }

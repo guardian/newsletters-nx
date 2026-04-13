@@ -74,7 +74,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 		return makeResponse(
 			requestBody,
 			stepData,
-			nextStep as WizardStepLayout<unknown>,
+			nextStep as WizardStepLayout,
 		);
 	} catch (error) {
 		if (error instanceof StateMachineError) {
