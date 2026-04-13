@@ -49,7 +49,7 @@ export default defineConfig({
 	webServer: isCI
 		? {
 				command:
-					'npx nx build newsletters-ui && npx vite preview --config apps/newsletters-ui/vite.config.ts',
+					'npx vite preview --config ../newsletters-ui/vite.config.ts',
 				url: baseURL,
 				reuseExistingServer: false,
 				timeout: 300000,
