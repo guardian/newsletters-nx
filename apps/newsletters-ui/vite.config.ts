@@ -32,6 +32,16 @@ export default defineConfig({
 		},
 		allowedHosts: ['newsletters-tool.local.dev-gutools.co.uk'],
 	},
+	preview: {
+		port: 4200,
+		host: 'localhost',
+		proxy: {
+			'/api': {
+				target: 'http://localhost:3000',
+				secure: false,
+			},
+		},
+	},
 	plugins: [react(), nxViteTsPaths()],
 
 	// Uncomment this if you are using workers.
