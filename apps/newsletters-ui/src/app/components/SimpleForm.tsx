@@ -125,12 +125,12 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	};
 
 	return (
-		<Box elevation={3} padding={2} component={Paper} marginBottom={1.5}>
+		<Box sx={{ elevation: 3, padding: 2, marginBottom: 1.5 }} component={Paper}>
 			<Typography variant="h3" component={'legend'}>
 				{title}
 			</Typography>
 
-			<Box marginBottom={2}>
+			<Box sx={{ marginBottom: 2 }}>
 				<Button variant="outlined" onClick={handleReset} disabled={isDisabled}>
 					Reset
 				</Button>
@@ -146,7 +146,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				stringConfig={stringConfig}
 				explanations={explanations}
 			/>
-			<Box marginBottom={2}>
+			<Box sx={{ marginBottom: 2 }}>
 				<Button
 					variant="contained"
 					onClick={() => void handleSubmit()}

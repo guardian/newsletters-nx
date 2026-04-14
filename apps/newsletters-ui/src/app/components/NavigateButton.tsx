@@ -36,11 +36,11 @@ export const NavigateButton = (props: Props) => {
 			state?.from &&
 			location.pathname.includes(state.from)
 		) {
-			navigate(-1);
+			void navigate(-1);
 		} else if (href) {
-			navigate(href);
+			void navigate(href);
 		} else if (backTo) {
-			navigate(backTo);
+			void navigate(backTo);
 		}
 	};
 

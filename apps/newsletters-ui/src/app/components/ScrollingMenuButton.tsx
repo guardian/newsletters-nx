@@ -56,17 +56,13 @@ export function ScrollingMenuButton({
 			</Button>
 			<Menu
 				id={ariaMenuId}
-				MenuListProps={{
-					'aria-labelledby': buttonId,
+				slotProps={{
+					list: { 'aria-labelledby': buttonId },
+					paper: { style: { maxHeight: ITEM_HEIGHT * maxItemsInView } },
 				}}
 				anchorEl={anchorEl}
 				open={open}
 				onClose={handleClose}
-				PaperProps={{
-					style: {
-						maxHeight: ITEM_HEIGHT * maxItemsInView,
-					},
-				}}
 			>
 				{options.map((option) => (
 					<MenuItem

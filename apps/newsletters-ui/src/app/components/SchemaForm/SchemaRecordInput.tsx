@@ -50,16 +50,15 @@ export const SchemaRecordInput: FunctionComponent<
 		<FormGroup sx={{ flex: 1 }}>
 			<Badge badgeContent={badgeText} color="primary">
 				<Typography
-					flex={1}
+					sx={{ flex: 1, marginBottom: 1 }}
 					component={'legend'}
 					variant="subtitle2"
-					marginBottom={1}
 				>
 					{label}
 				</Typography>
 			</Badge>
 
-			<Box paddingLeft={3}>
+			<Box sx={{ paddingLeft: 3 }}>
 				{value && (
 					<>
 						<RecordInput

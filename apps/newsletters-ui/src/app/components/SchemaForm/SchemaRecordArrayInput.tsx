@@ -59,28 +59,32 @@ export const SchemaRecordArrayInput: FunctionComponent<
 	};
 
 	return (
-		<Box padding={2} border={1} borderColor={''} borderRadius={1}>
+		<Box sx={{ padding: 2, border: 1, borderColor: '', borderRadius: 1 }}>
 			<Badge badgeContent={value.length} color="primary">
 				<Typography sx={{ fontWeight: 700, fontSize: 12 }}>{label}</Typography>
 			</Badge>
-
-			<Grid container alignItems={'stretch'} rowSpacing={1} columnSpacing={2}>
+			<Grid
+				container
+				sx={{ alignItems: 'stretch' }}
+				rowSpacing={1}
+				columnSpacing={2}
+			>
 				{value.length === 0 && (
-					<Grid item xs={12}>
+					<Grid size={12}>
 						<Alert severity="info">No Items</Alert>
 					</Grid>
 				)}
 				{value.map((propertyValue, index) => {
 					return (
 						<Fragment key={index}>
-							<Grid item xs={12} mt={2}>
+							<Grid sx={{ mt: 2 }} size={12}>
 								<Divider>
 									<Typography variant="caption">
 										{recordSchema.description ?? 'item'} #{index + 1}
 									</Typography>
 								</Divider>
 							</Grid>
-							<Grid item xs={8}>
+							<Grid size={8}>
 								<RecordInput
 									record={propertyValue}
 									recordSchema={recordSchema}
@@ -91,14 +95,13 @@ export const SchemaRecordArrayInput: FunctionComponent<
 								/>
 							</Grid>
 							<Grid
-								item
-								xs={4}
 								sx={{
 									display: 'flex',
 									alignItems: 'center',
 									marginBottom: '22px',
 									flexDirection: 'row',
 								}}
+								size={4}
 							>
 								<Button
 									size="small"
@@ -117,7 +120,6 @@ export const SchemaRecordArrayInput: FunctionComponent<
 					);
 				})}
 			</Grid>
-
 			<Button
 				fullWidth
 				size="small"

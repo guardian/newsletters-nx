@@ -4,7 +4,7 @@ import { ContentWrapper } from '../../ContentWrapper';
 import { DraftDetails } from '../DraftDetails';
 
 export const DraftDetailView = () => {
-	const matchedItem = useLoaderData();
+	const matchedItem = useLoaderData<unknown>();
 	if (!matchedItem) {
 		return (
 			<ContentWrapper>

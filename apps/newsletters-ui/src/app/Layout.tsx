@@ -46,7 +46,7 @@ export function Layout(props: IRootRoute) {
 	return (
 		<div css={frameCss}>
 			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
-			<Box pt={8} component={'main'}>
+			<Box sx={{ pt: 8 }} component={'main'}>
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>

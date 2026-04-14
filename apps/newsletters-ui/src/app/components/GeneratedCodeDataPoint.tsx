@@ -73,17 +73,17 @@ export const GeneratedCodeDataPoint = ({
 	const code = hljs.highlight(generatedValue, { language });
 
 	return (
-		<Grid container justifyContent={'space-between'} spacing={1}>
-			<Grid item xs={3} flexGrow={1} flexShrink={0}>
+		<Grid container sx={{ justifyContent: 'space-between' }} spacing={1}>
+			<Grid sx={{ flexGrow: 1, flexShrink: 0 }} size={3}>
 				<Typography variant="caption">{valueGenerator.displayName}</Typography>
 				<Tooltip title={valueGenerator.description} arrow>
 					<Chip size="small" label="?" />
 				</Tooltip>
 			</Grid>
-			<Grid item xs={9} flexShrink={1}>
+			<Grid sx={{ flexShrink: 1 }} size={9}>
 				{showOverride && (
 					<Stack direction={'row'}>
-						<Box flex={1} display={'flex'} sx={{ p: 1 }}>
+						<Box sx={{ p: 1, flex: 1, display: 'flex' }}>
 							<FormControl fullWidth>
 								<FormLabel id="drr-override-group-label">
 									DRR Slot Set
@@ -115,7 +115,7 @@ export const GeneratedCodeDataPoint = ({
 				<Stack direction={'row'}>
 					{
 						<>
-							<Box flex={1} display={'flex'} sx={{ p: 1 }}>
+							<Box sx={{ p: 1, flex: 1, display: 'flex' }}>
 								<div dangerouslySetInnerHTML={{ __html: code.value }} />
 							</Box>
 							{includeCopyButton && (

@@ -8,10 +8,12 @@ interface Props {
 }
 
 export const defaultBoxProps: BoxProps = {
-	display: 'flex',
-	justifyContent: 'space-between',
-	marginBottom: 3,
-	maxWidth: 'sm',
+	sx: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		marginBottom: 3,
+		maxWidth: 'sm',
+	},
 };
 
 export const FieldWrapper = ({ children, explanation }: Props) => (

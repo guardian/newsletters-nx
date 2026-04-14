@@ -10,26 +10,27 @@ import { LayoutEditor } from '../edition-layouts/LayoutEditor';
 import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 
 export const EditLayoutView = () => {
-	const data = useLoaderData() as
-		| { layout: Layout; newsletters: NewsletterData[] }
-		| undefined;
-
+	const data = useLoaderData<
+		{ layout: Layout; newsletters: NewsletterData[] } | undefined
+	>();
 
 	const location = useLocation();
 	const permissions = usePermissions();
 	const editionId = location.pathname.split('/').pop()?.toUpperCase();
 
 	if (!data || !editionId) {
-		return (
-			<MissingLayoutContent editionId={editionId} />
-		);
+		return <MissingLayoutContent editionId={editionId} />;
 	}
 
 	return (
-		<ContentWrapper maxWidth='xl'>
+		<ContentWrapper maxWidth="xl">
 			<Typography variant="h2">Edit Layout for {editionId}</Typography>
 			{permissions?.editLayouts && (
-				<LayoutEditor editionId={editionId} layout={data.layout} newsletters={data.newsletters} />
+				<LayoutEditor
+					editionId={editionId}
+					layout={data.layout}
+					newsletters={data.newsletters}
+				/>
 			)}
 		</ContentWrapper>
 	);

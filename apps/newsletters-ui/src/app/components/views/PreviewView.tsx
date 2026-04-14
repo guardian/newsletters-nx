@@ -4,7 +4,7 @@ import { ContentWrapper } from '../../ContentWrapper';
 import { RenderingPreviewPage } from '../RenderingPreviewPage';
 
 export const PreviewView = () => {
-	const matchedItem = useLoaderData();
+	const matchedItem = useLoaderData<unknown>();
 	if (!matchedItem) {
 		return (
 			<ContentWrapper>

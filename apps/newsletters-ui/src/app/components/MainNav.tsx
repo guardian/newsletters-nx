@@ -61,7 +61,7 @@ const DesktopNavLinks = () => {
 				<Button
 					key={label}
 					onClick={() => {
-						navigate(path);
+						void navigate(path);
 					}}
 					sx={{
 						my: 2,
@@ -125,12 +125,12 @@ const MobileBurgerNav = () => {
 					<MenuItem
 						key={label}
 						onClick={() => {
-							navigate(path);
+							void navigate(path);
 							handleCloseNavMenu();
 						}}
 						selected={menuItemIsSelected(path)}
 					>
-						<Typography textAlign="center">{label}</Typography>
+						<Typography sx={{ textAlign: 'center' }}>{label}</Typography>
 					</MenuItem>
 				))}
 			</Menu>

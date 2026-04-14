@@ -237,9 +237,8 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 					show a generic template
 				</Typography>
 			</Alert>
-
 			<Grid container columnSpacing={2}>
-				<Grid item xs={4}>
+				<Grid size={4}>
 					<Typography variant="h3">Category and series tag</Typography>
 					<StateEditForm
 						formSchema={newsletterDataSchema.pick({
@@ -262,7 +261,7 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 					)}
 				</Grid>
 
-				<Grid item xs={8} paddingTop={3}>
+				<Grid sx={{ paddingTop: 3 }} size={8}>
 					<TemplatePreviewLoader
 						newsletterData={{
 							...originalItem,
@@ -273,8 +272,11 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 					/>
 				</Grid>
 			</Grid>
-
-			<Stack maxWidth={'md'} direction={'row'} spacing={2} marginBottom={2}>
+			<Stack
+				sx={{ maxWidth: 'md', marginBottom: 2 }}
+				direction={'row'}
+				spacing={2}
+			>
 				<Button
 					variant="outlined"
 					size="large"

@@ -6,7 +6,7 @@ import { NavigateButton } from '../NavigateButton';
 import { RenderingOptionsForm } from '../RenderingOptionsForm';
 
 export const RenderingOptionsView = () => {
-	const matchedItem = useLoaderData();
+	const matchedItem = useLoaderData<unknown>();
 	if (!matchedItem) {
 		return <article>NOT FOUND!</article>;
 	}
@@ -17,7 +17,7 @@ export const RenderingOptionsView = () => {
 
 	return (
 		<ContentWrapper maxWidth="xl">
-			<Box marginBottom={2}>
+			<Box sx={{ marginBottom: 2 }}>
 				<NavigateButton href="../" variant="outlined">
 					Back to List
 				</NavigateButton>

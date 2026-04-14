@@ -22,27 +22,25 @@ export const Illustration = ({ name, url, height = 200, noCaption }: Props) => {
 		/>
 	);
 
-
-
 	return (
 		<Stack
 			component={'figure'}
-			alignItems={'center'}
-			margin={0}
-			marginBottom={1}
-			padding={1}
 			sx={{
+				margin: 0,
+				marginBottom: 1,
+				padding: 1,
+				alignItems: 'center',
 				borderWidth: 1,
 				borderColor: 'primary.dark',
 				borderStyle: 'dashed',
 			}}
 		>
 			{image}
-			{!noCaption &&
+			{!noCaption && (
 				<Typography component={'figcaption'} variant="caption">
 					{captionText}
 				</Typography>
-			}
+			)}
 		</Stack>
 	);
 };

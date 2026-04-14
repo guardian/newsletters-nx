@@ -43,18 +43,18 @@ export const GeneratedDataPoint = ({
 	const valueIsUrl = isUrl(generatedValue);
 
 	return (
-		<Grid container justifyContent={'space-between'} spacing={1}>
-			<Grid item xs={3} flexGrow={1} flexShrink={0}>
+		<Grid container sx={{ justifyContent: 'space-between' }} spacing={1}>
+			<Grid sx={{ flexGrow: 1, flexShrink: 0 }} size={3}>
 				<Typography variant="caption">{valueGenerator.displayName}</Typography>
 				<Tooltip title={valueGenerator.description} arrow>
 					<Chip size="small" label="?" />
 				</Tooltip>
 			</Grid>
-			<Grid item xs={9} flexShrink={1}>
+			<Grid sx={{ flexShrink: 1 }} size={9}>
 				<Stack direction={'row'}>
 					{includeCopyButton ? (
 						<>
-							<Box flex={1} display={'flex'}>
+							<Box sx={{ flex: 1, display: 'flex' }}>
 								<textarea
 									style={{
 										width: '100%',

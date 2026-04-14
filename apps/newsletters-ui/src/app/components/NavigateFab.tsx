@@ -22,7 +22,7 @@ export const NavigateFab = (props: Props) => {
 
 	const onClick: MouseEventHandler = (event) => {
 		event.preventDefault();
-		navigate(href);
+		void navigate(href);
 	};
 
 	return (

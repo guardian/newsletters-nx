@@ -5,7 +5,7 @@ import { ContentWrapper } from '../../ContentWrapper';
 import { NewslettersTable } from '../NewslettersTable';
 
 export const NewslettersListView = () => {
-	const list = useLoaderData();
+	const list = useLoaderData<unknown>();
 	if (!list || !Array.isArray(list)) {
 		return <nav>NO LIST</nav>;
 	}

@@ -7,7 +7,7 @@ import { usePermissions } from '../../hooks/user-hooks';
 import { DraftsTable } from '../DraftsTable';
 
 export const DraftListView = () => {
-	const list = useLoaderData();
+	const list = useLoaderData<unknown>();
 	const { writeToDrafts: userCanWriteToDrafts } = usePermissions() ?? {};
 	if (!list || !Array.isArray(list)) {
 		return <nav>No Drafts</nav>;
@@ -25,12 +25,14 @@ export const DraftListView = () => {
 			{userCanWriteToDrafts && (
 				<Container maxWidth="lg">
 					<Stack
-						paddingX={1}
-						paddingBottom={1}
+						sx={{
+							paddingX: 1,
+							paddingBottom: 1,
+							justifyContent: 'flex-end',
+							alignItems: 'center',
+						}}
 						spacing={2}
 						direction={'row'}
-						justifyContent={'flex-end'}
-						alignItems={'center'}
 					>
 						<Button
 							variant="contained"

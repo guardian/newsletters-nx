@@ -5,9 +5,7 @@ import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import {
-	layoutSchema
-} from '@newsletters-nx/newsletters-data-client';
+import { layoutSchema } from '@newsletters-nx/newsletters-data-client';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { ContentWrapper } from '../../ContentWrapper';
 import { usePermissions } from '../../hooks/user-hooks';
@@ -16,9 +14,9 @@ import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 import { JsonEditor } from '../JsonEditor';
 
 export const EditLayoutJsonView = () => {
-	const data = useLoaderData() as
-		| { layout: Layout; newsletters: NewsletterData[] }
-		| undefined;
+	const data = useLoaderData<
+		{ layout: Layout; newsletters: NewsletterData[] } | undefined
+	>();
 
 	const [localLayout, setLocalLayout] = useState(data?.layout);
 	const location = useLocation();
@@ -26,9 +24,7 @@ export const EditLayoutJsonView = () => {
 	const editionId = location.pathname.split('/').pop()?.toUpperCase();
 
 	if (!data || !editionId) {
-		return (
-			<MissingLayoutContent editionId={editionId} />
-		);
+		return <MissingLayoutContent editionId={editionId} />;
 	}
 
 	const { layout: originalLayout, newsletters } = data;
@@ -57,7 +53,10 @@ export const EditLayoutJsonView = () => {
 					}}
 				/>
 			)}
-			<LayoutDisplay newsletters={newsletters} layout={localLayout ?? { groups: [] }} />
+			<LayoutDisplay
+				newsletters={newsletters}
+				layout={localLayout ?? { groups: [] }}
+			/>
 		</ContentWrapper>
 	);
 };
