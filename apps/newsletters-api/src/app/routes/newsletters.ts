@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import {
 	isNewsletterData,
 	isPartialNewsletterData,
@@ -24,7 +25,7 @@ import {
 export function registerReadNewsletterRoutes(app: Express) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
-	app.get('/api/legacy/newsletters', async (req, res) => {
+	app.get('/api/legacy/newsletters', async (_, res) => {
 		const storageResponse = await newsletterStore.list();
 		if (!storageResponse.ok) {
 			return res
@@ -80,6 +81,13 @@ export function registerReadNewsletterRoutes(app: Express) {
 }
 
 export function registerReadWriteNewsletterRoutes(app: Express) {
+	const fifteenMinutesInMilliseconds = 15 * 60 * 1000;
+	const writeNewsletterRateLimiter = rateLimit({
+		windowMs: fifteenMinutesInMilliseconds,
+		limit: 500,
+		standardHeaders: true,
+		legacyHeaders: false,
+	});
 	const doesNotHaveAccess = async (request: Request, reply: Response) => {
 		const user = getUserProfile(request);
 		const isAuthorised = await hasEditAccess(user.profile);
@@ -102,96 +110,110 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 		return false;
 	};
 
-	app.patch('/api/newsletters/:newsletterId', async (req, res) => {
-		const failedValidation = await doesNotHaveAccess(req, res);
-		if (failedValidation) {
-			return;
-		}
+	app.patch(
+		'/api/newsletters/:newsletterId',
+		writeNewsletterRateLimiter,
+		async (req, res) => {
+			const failedValidation = await doesNotHaveAccess(req, res);
+			if (failedValidation) {
+				return;
+			}
 
-		const user = getUserProfile(req);
+			const user = getUserProfile(req);
 
-		const { newsletterId } = req.params;
-		const modifications = req.body as unknown;
-		const newsletterIdAsNumber = Number(newsletterId);
+			const { newsletterId } = req.params;
+			const modifications = req.body as unknown;
+			const newsletterIdAsNumber = Number(newsletterId);
 
-		if (isNaN(newsletterIdAsNumber)) {
-			return res.status(400).send(makeErrorResponse(`Non numeric id provided`));
-		}
+			if (isNaN(newsletterIdAsNumber)) {
+				return res
+					.status(400)
+					.send(makeErrorResponse(`Non numeric id provided`));
+			}
 
-		replaceNullWithUndefinedForUnknown(modifications);
+			replaceNullWithUndefinedForUnknown(modifications);
 
-		if (!isPartialNewsletterData(modifications)) {
-			return res
-				.status(400)
-				.send(makeErrorResponse(`Not a valid partial newsletter`));
-		}
+			if (!isPartialNewsletterData(modifications)) {
+				return res
+					.status(400)
+					.send(makeErrorResponse(`Not a valid partial newsletter`));
+			}
 
-		// This test would never fail on the current implementation since
-		// user.profile must be defined or there would be an accessDeniedError.
-		// Kept in to preserve type-safety.
-		if (!user.profile) {
-			return res.status(403).send(makeErrorResponse('No user profile.'));
-		}
-		const storageResponse = await newsletterStore.update(
-			newsletterIdAsNumber,
-			modifications,
-			user.profile,
-		);
+			// This test would never fail on the current implementation since
+			// user.profile must be defined or there would be an accessDeniedError.
+			// Kept in to preserve type-safety.
+			if (!user.profile) {
+				return res.status(403).send(makeErrorResponse('No user profile.'));
+			}
+			const storageResponse = await newsletterStore.update(
+				newsletterIdAsNumber,
+				modifications,
+				user.profile,
+			);
 
-		if (!storageResponse.ok) {
-			return res
-				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-				.send(makeErrorResponse(storageResponse.message));
-		}
+			if (!storageResponse.ok) {
+				return res
+					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+					.send(makeErrorResponse(storageResponse.message));
+			}
 
-		return res.send(makeSuccessResponse(storageResponse.data));
-	});
+			return res.send(makeSuccessResponse(storageResponse.data));
+		},
+	);
 
-	app.post('/api/newsletters/:newsletterId', async (req, res) => {
-		const failedValidation = await doesNotHaveAccess(req, res);
-		if (failedValidation) {
-			return;
-		}
+	app.post(
+		'/api/newsletters/:newsletterId',
+		writeNewsletterRateLimiter,
+		async (req, res) => {
+			const failedValidation = await doesNotHaveAccess(req, res);
+			if (failedValidation) {
+				return;
+			}
 
-		const user = getUserProfile(req);
-		const accessDeniedError = await makeAccessDeniedApiResponse(
-			user.profile,
-			'editNewsletters',
-		);
-		if (accessDeniedError) {
-			return res.status(403).send(accessDeniedError);
-		}
+			const user = getUserProfile(req);
+			const accessDeniedError = await makeAccessDeniedApiResponse(
+				user.profile,
+				'editNewsletters',
+			);
+			if (accessDeniedError) {
+				return res.status(403).send(accessDeniedError);
+			}
 
-		const { newsletterId } = req.params;
-		const newsletter = req.body as unknown;
-		const newsletterIdAsNumber = Number(newsletterId);
+			const { newsletterId } = req.params;
+			const newsletter = req.body as unknown;
+			const newsletterIdAsNumber = Number(newsletterId);
 
-		if (isNaN(newsletterIdAsNumber)) {
-			return res.status(400).send(makeErrorResponse(`Non numeric id provided`));
-		}
+			if (isNaN(newsletterIdAsNumber)) {
+				return res
+					.status(400)
+					.send(makeErrorResponse(`Non numeric id provided`));
+			}
 
-		replaceNullWithUndefinedForUnknown(newsletter);
+			replaceNullWithUndefinedForUnknown(newsletter);
 
-		if (!isNewsletterData(newsletter)) {
-			return res.status(400).send(makeErrorResponse(`Not a valid newsletter`));
-		}
+			if (!isNewsletterData(newsletter)) {
+				return res
+					.status(400)
+					.send(makeErrorResponse(`Not a valid newsletter`));
+			}
 
-		if (!user.profile) {
-			return res.status(403).send(makeErrorResponse('No user profile'));
-		}
+			if (!user.profile) {
+				return res.status(403).send(makeErrorResponse('No user profile'));
+			}
 
-		const storageResponse = await newsletterStore.replace(
-			newsletterIdAsNumber,
-			newsletter,
-			user.profile,
-		);
+			const storageResponse = await newsletterStore.replace(
+				newsletterIdAsNumber,
+				newsletter,
+				user.profile,
+			);
 
-		if (!storageResponse.ok) {
-			return res
-				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-				.send(makeErrorResponse(storageResponse.message));
-		}
+			if (!storageResponse.ok) {
+				return res
+					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+					.send(makeErrorResponse(storageResponse.message));
+			}
 
-		return res.send(makeSuccessResponse(storageResponse.data));
-	});
+			return res.send(makeSuccessResponse(storageResponse.data));
+		},
+	);
 }
