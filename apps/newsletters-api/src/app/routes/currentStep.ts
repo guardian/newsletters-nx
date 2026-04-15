@@ -82,8 +82,7 @@ export function registerCurrentStepRoute(app: Express) {
 		);
 		if (!parsedBodyResult.success) {
 			console.error(
-				'invalid currentStepRouteRequest on ${req.path}',
-				req.path,
+				`invalid currentStepRouteRequest on ${req.path}`,
 				parsedBodyResult.error.issues,
 			);
 			const badDataError: CurrentStepRouteResponse = {

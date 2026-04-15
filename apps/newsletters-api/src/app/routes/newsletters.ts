@@ -118,7 +118,6 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 			if (failedValidation) {
 				return;
 			}
-
 			const user = getUserProfile(req);
 
 			const { newsletterId } = req.params;
@@ -169,7 +168,6 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 			if (failedValidation) {
 				return;
 			}
-
 			const user = getUserProfile(req);
 			const accessDeniedError = await makeAccessDeniedApiResponse(
 				user.profile,
