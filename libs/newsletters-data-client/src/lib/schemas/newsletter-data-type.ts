@@ -119,19 +119,15 @@ export const newsletterDataSchema = z.object({
 		.describe('Path to Sign up page'),
 	exampleUrl: z.string().optional().describe('Example url'),
 	designBriefDoc: z.string().optional().describe('Design brief doc'),
-	figmaDesignUrl: z.string().url().optional().describe('Figma design url'),
+	figmaDesignUrl: z.url().optional().describe('Figma design url'),
 	figmaIncludesThrashers: z
 		.boolean()
 		.describe('Does the figma design include thrashers?'),
 	illustrationCircle: z.string().optional(),
-	illustrationCard: z
-		.string()
-		.url()
+	illustrationCard: z.url()
 		.optional()
 		.describe('URL of image the newsleter graphic/logo (5:3 format)'),
-	illustrationSquare: z
-		.string()
-		.url()
+	illustrationSquare: z.url()
 		.optional()
 		.describe('URL of image the newsleter graphic/logo (1:1 format)'),
 
@@ -170,9 +166,7 @@ export const newsletterDataSchema = z.object({
 	),
 	ophanCampaignCreationStatus: workflowStatusEnumSchema
 		.optional()
-		.describe(
-			'Ophan campaign creation status',
-		),
+		.describe('Ophan campaign creation status'),
 	signupPageCreationStatus: workflowStatusEnumSchema.describe(
 		'Sign up creation status',
 	),

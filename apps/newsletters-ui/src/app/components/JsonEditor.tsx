@@ -61,8 +61,8 @@ const CheckResultMessage = (props: {
 					props.result === undefined
 						? 'warning'
 						: !props.result
-						? 'error'
-						: 'success'
+							? 'error'
+							: 'success'
 				}
 			>
 				{props.label}: {maybeBoolToString(props.result)}

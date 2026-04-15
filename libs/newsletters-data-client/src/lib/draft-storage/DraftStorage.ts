@@ -34,7 +34,10 @@ export const createNewDraftMeta = (user: UserProfile): MetaData => {
 	return createNewMeta(user);
 };
 
-export const updateDraftMeta = (meta: MetaData, user: UserProfile): MetaData => {
+export const updateDraftMeta = (
+	meta: MetaData,
+	user: UserProfile,
+): MetaData => {
 	return updateMeta(meta, user);
 };
 

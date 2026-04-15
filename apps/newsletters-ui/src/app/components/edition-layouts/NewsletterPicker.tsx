@@ -37,7 +37,7 @@ export const NewsletterPicker = ({
 					newsletter.identityName
 						.toLowerCase()
 						.includes(searchText.toLowerCase()),
-		  )
+			)
 		: newsletters;
 
 	return (
@@ -80,4 +80,3 @@ export const NewsletterPicker = ({
 		</Stack>
 	);
 };
-

@@ -1,9 +1,8 @@
 import type { NewsletterData } from '..';
-import {generateBrazeTemplateString} from "./generate-braze-template";
-
+import { generateBrazeTemplateString } from './generate-braze-template';
 
 export type NewsletterValueGenerator = {
-	generate: { (newsletter: NewsletterData, 	override?: string): string };
+	generate: { (newsletter: NewsletterData, override?: string): string };
 	displayName: string;
 	description: string;
 };
@@ -17,10 +16,10 @@ export const embedIframeCode: NewsletterValueGenerator = {
 };
 
 export const brazeTemplateCode: NewsletterValueGenerator = {
-	generate: (newsletter: NewsletterData, 	override?: string) => generateBrazeTemplateString(newsletter, override),
+	generate: (newsletter: NewsletterData, override?: string) =>
+		generateBrazeTemplateString(newsletter, override),
 	displayName: 'Braze campaign template code',
-	description:
-		'The template code to use in the Braze campaign.',
+	description: 'The template code to use in the Braze campaign.',
 };
 
 // see https://github.com/guardian/identity/blob/main/identity-api/src/main/scala/com/gu/identity/api/mail/CmtModels.scala

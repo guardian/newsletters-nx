@@ -1,4 +1,4 @@
-import type { Request, RequestHandler, Response } from 'express'
+import type { Request, RequestHandler, Response } from 'express';
 import { isServingUI } from '../apiDeploymentSettings';
 
 type TtlSettings = {
@@ -9,9 +9,7 @@ const newsletterTtl: TtlSettings = {
 	cacheMaxAge: 60,
 };
 
-export const getCacheControl = (
-	req: Request,
-): TtlSettings | undefined => {
+export const getCacheControl = (req: Request): TtlSettings | undefined => {
 	// the API instance serving the UI must always provide fresh data
 	if (isServingUI()) {
 		return undefined;
@@ -33,7 +31,7 @@ export const getCacheControl = (
 export const setCacheControlHeaderMiddleware: RequestHandler = (
 	req: Request,
 	res: Response,
-	next
+	next,
 ) => {
 	const cacheControl = getCacheControl(req);
 	if (cacheControl) {

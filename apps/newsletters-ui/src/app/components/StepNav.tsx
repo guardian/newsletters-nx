@@ -183,7 +183,7 @@ export const StepNav = ({
 										description,
 										isCurrent(step),
 										stepStatus,
-								  )
+									)
 						}
 						aria-live="polite"
 					>

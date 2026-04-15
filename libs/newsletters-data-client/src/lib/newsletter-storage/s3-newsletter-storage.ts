@@ -71,9 +71,8 @@ export class S3NewsletterStorage implements NewsletterStorage {
 		const newIdentifier = `${draft.identityName}:${nextId}.json`;
 
 		try {
-			const newsletterWithSameKeyExists = await this.objectExists(
-				newIdentifier,
-			);
+			const newsletterWithSameKeyExists =
+				await this.objectExists(newIdentifier);
 			if (newsletterWithSameKeyExists) {
 				return {
 					ok: false,

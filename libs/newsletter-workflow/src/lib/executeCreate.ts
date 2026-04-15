@@ -2,6 +2,7 @@ import { sendEmailNotifications } from '@newsletters-nx/email-builder';
 import type {
 	DraftNewsletterData,
 	DraftService,
+	FormDataRecord,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	draftNewsletterDataToFormData,
@@ -47,15 +48,16 @@ export const executeCreate: AsyncExecution<DraftService> = async (
 	if (!parseResult.success) {
 		return {
 			isFailure: true,
-			message: `Form data is invalid for schema: ${schema.description ?? '[no description]'
-				}`,
+			message: `Form data is invalid for schema: ${
+				schema.description ?? '[no description]'
+			}`,
 			details: { zodIssues: parseResult.error.issues },
 		};
 	}
 
 	const draft: DraftNewsletterData = formDataToDraftNewsletterData({
 		...getEmptySchemaData(newsletterDataSchema),
-		...parseResult.data,
+		...(parseResult.data as FormDataRecord),
 	});
 
 	const storageResponse = await draftService.draftStorage.create(

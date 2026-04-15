@@ -28,7 +28,7 @@ export class InMemoryDraftStorage implements DraftStorage {
 			? drafts.map((n) => ({
 					...n,
 					meta: makeBlankMeta(),
-			  }))
+				}))
 			: [];
 	}
 

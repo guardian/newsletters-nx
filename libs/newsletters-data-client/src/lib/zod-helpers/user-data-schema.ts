@@ -5,8 +5,7 @@ import type { UserPermissions } from '../user-profile';
 export const getUserEditSchema = (
 	permissions: UserPermissions,
 ): ZodObject<ZodRawShape> => {
-	const { editBraze, editTags, editSignUpPage, editNewsletters } =
-		permissions;
+	const { editBraze, editTags, editSignUpPage, editNewsletters } = permissions;
 	if (editNewsletters) {
 		return newsletterDataSchema.pick({
 			name: true,

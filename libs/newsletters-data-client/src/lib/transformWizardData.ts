@@ -1,4 +1,4 @@
-import type { ZodRawShape, ZodTypeAny } from 'zod';
+import type { ZodRawShape, ZodType } from 'zod';
 import { z, ZodObject, ZodOptional } from 'zod';
 import type { DraftNewsletterData } from './schemas/draft-newsletter-data-type';
 import { draftNewsletterDataSchema } from './schemas/draft-newsletter-data-type';
@@ -20,8 +20,10 @@ export type SupportedValue =
 	| PrimitiveRecord[];
 export type FormDataRecord = Record<string, SupportedValue>;
 
-
-export const primitiveRecordSchema = z.record(z.union([z.string(), z.number(), z.boolean()]))
+export const primitiveRecordSchema = z.record(
+	z.string(),
+	z.union([z.string(), z.number(), z.boolean()]),
+);
 
 export const supportedValueSchema = z.union([
 	z.string(),
@@ -32,9 +34,8 @@ export const supportedValueSchema = z.union([
 	z.date(),
 	z.string().array(),
 	primitiveRecordSchema,
-	primitiveRecordSchema.array()
-])
-
+	primitiveRecordSchema.array(),
+]);
 
 const OBJECT_FIELDS_USING_RECORD_INPUT: Array<keyof NewsletterData> = [];
 
@@ -119,14 +120,14 @@ const buildObjectValue = (
  * otherwise returns undefined.
  */
 const getObjectSchemaIfObject = (
-	field: ZodTypeAny,
+	field: ZodType,
 ): ZodObject<ZodRawShape> | undefined => {
 	if (field instanceof ZodObject) {
 		return field;
 	}
 
 	if (field instanceof ZodOptional) {
-		const deepUnwrapped = recursiveUnwrap(field as ZodOptional<ZodTypeAny>);
+		const deepUnwrapped = recursiveUnwrap(field as ZodOptional<ZodType>);
 		return deepUnwrapped instanceof ZodObject ? deepUnwrapped : undefined;
 	}
 

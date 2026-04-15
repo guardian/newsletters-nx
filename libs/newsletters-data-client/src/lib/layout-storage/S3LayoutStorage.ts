@@ -29,7 +29,7 @@ export class S3LayoutStorage implements LayoutStorage {
 	async create(
 		edition: EditionId,
 		layout: Layout,
-	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {		
+	): Promise<SuccessfulStorageResponse<Layout> | UnsuccessfulStorageResponse> {
 		const parseResult = layoutSchema.safeParse(layout);
 		if (!parseResult.success) {
 			return {

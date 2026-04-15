@@ -5,13 +5,7 @@ import type { z } from 'zod';
 import type { FieldDef, FieldValue, StringInputSettings } from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
 
-type SchemaObjectType<T extends z.ZodRawShape> = {
-	[k in keyof z.objectUtil.addQuestionMarks<{
-		[k in keyof T]: T[k]['_output'];
-	}>]: z.objectUtil.addQuestionMarks<{
-		[k in keyof T]: T[k]['_output'];
-	}>[k];
-};
+type SchemaObjectType<T extends z.ZodRawShape> = z.infer<z.ZodObject<T>>;
 
 interface Props<T extends z.ZodRawShape> {
 	title: string;
@@ -46,7 +40,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	explanations = {},
 }: Props<T>) {
 	const [parseInitialDataResult, setParseInitialDataResult] = useState<
-		z.SafeParseReturnType<typeof schema, SchemaObjectType<T>> | undefined
+		ReturnType<z.ZodObject<T>['safeParse']> | undefined
 	>(undefined);
 	const [data, setData] = useState<SchemaObjectType<T>>();
 	const [warnings, setWarnings] = useState<Partial<Record<keyof T, string>>>(
@@ -91,7 +85,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 		const issueMap: Partial<Record<keyof T, string>> = {};
 
 		if (parseResult.success) {
-			setData(parseResult.data as T);
+			setData(parseResult.data as unknown as SchemaObjectType<T>);
 		} else {
 			parseResult.error.issues.forEach((issue) => {
 				const { message, path, code } = issue;

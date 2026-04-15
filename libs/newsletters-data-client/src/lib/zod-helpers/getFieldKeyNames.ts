@@ -1,8 +1,8 @@
-import type { ZodTypeAny } from 'zod';
+import type { ZodType } from 'zod';
 import { ZodObject } from 'zod';
 import { recursiveUnwrap } from './recursiveUnwrap';
 
-export const getFieldKeyNames = (schema: ZodTypeAny): undefined | string[] => {
+export const getFieldKeyNames = (schema: ZodType): undefined | string[] => {
 	const unwrappedSchema = recursiveUnwrap(schema);
 	if (!(unwrappedSchema instanceof ZodObject)) {
 		return undefined;

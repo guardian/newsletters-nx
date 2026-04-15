@@ -1,9 +1,16 @@
 import type { z } from 'zod';
 import type { MetaData } from './meta-data-type';
 import { metaDataSchema } from './meta-data-type';
-import { newsletterDataSchema } from './newsletter-data-type';
+import {
+	newsletterDataSchema,
+	thrasherOptionsSchema,
+} from './newsletter-data-type';
+import { renderingOptionsSchema } from './rendering-options-data-type';
 
-export const draftNewsletterDataSchema = newsletterDataSchema.deepPartial();
+export const draftNewsletterDataSchema = newsletterDataSchema.partial().extend({
+	renderingOptions: renderingOptionsSchema.partial().optional(),
+	thrasherOptions: thrasherOptionsSchema.partial().optional(),
+});
 export type DraftNewsletterData = z.infer<typeof draftNewsletterDataSchema>;
 
 export function isDraftNewsletterData(

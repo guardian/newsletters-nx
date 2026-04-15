@@ -1,4 +1,4 @@
-import type { z } from 'zod';
+import type { z, ZodType } from 'zod';
 import {
 	ZodArray,
 	ZodBoolean,
@@ -39,7 +39,7 @@ export const getEmptySchemaData = (
 			return formData;
 		}
 		const zod = unwrapOptionals
-			? recursiveUnwrap(zodMaybeOptional)
+			? recursiveUnwrap(zodMaybeOptional as ZodType)
 			: zodMaybeOptional;
 		const mod: FormDataRecord = {};
 

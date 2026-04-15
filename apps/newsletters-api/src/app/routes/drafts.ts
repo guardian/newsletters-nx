@@ -19,57 +19,47 @@ export function registerDraftsRoutes(app: Express) {
 			.send(makeErrorResponse(storageResponse.message));
 	});
 
-	app.get(
-		'/api/drafts/:listId',
-		async (req, res) => {
-			const { listId } = req.params;
-			const idAsNumber = Number(listId);
-			if (isNaN(idAsNumber)) {
-				return res.status(400).send(makeErrorResponse('Non numerical id passed'));
-			}
+	app.get('/api/drafts/:listId', async (req, res) => {
+		const { listId } = req.params;
+		const idAsNumber = Number(listId);
+		if (isNaN(idAsNumber)) {
+			return res.status(400).send(makeErrorResponse('Non numerical id passed'));
+		}
 
-			const storageResponse = await draftStore.read(idAsNumber);
-			if (storageResponse.ok) {
-				return res.send(makeSuccessResponse(storageResponse.data));
-			}
+		const storageResponse = await draftStore.read(idAsNumber);
+		if (storageResponse.ok) {
+			return res.send(makeSuccessResponse(storageResponse.data));
+		}
+		return res
+			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+			.send(makeErrorResponse(storageResponse.message));
+	});
+
+	app.delete('/api/drafts/:listId', async (req, res) => {
+		const user = getUserProfile(req);
+		const permissions = await permissionService.get(user.profile);
+
+		if (!permissions.writeToDrafts) {
 			return res
-				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-				.send(makeErrorResponse(storageResponse.message));
-		},
-	);
+				.status(403)
+				.send(makeErrorResponse(`You don't have permission to delete drafts.`));
+		}
 
-	app.delete(
-		'/api/drafts/:listId',
-		async (req, res) => {
-			const user = getUserProfile(req);
-			const permissions = await permissionService.get(user.profile);
+		const { listId } = req.params;
+		const idAsNumber = Number(listId);
 
-			if (!permissions.writeToDrafts) {
-				return res
-					.status(403)
-					.send(
-						makeErrorResponse(`You don't have permission to delete drafts.`),
-					);
-			}
+		if (isNaN(idAsNumber)) {
+			return res.status(400).send(makeErrorResponse('Non numerical id passed'));
+		}
 
-			const { listId } = req.params;
-			const idAsNumber = Number(listId);
+		const storageResponse = await draftStore.deleteItem(idAsNumber);
 
-			if (isNaN(idAsNumber)) {
-				return res
-					.status(400)
-					.send(makeErrorResponse('Non numerical id passed'));
-			}
+		if (storageResponse.ok) {
+			return res.send(makeSuccessResponse(storageResponse.data));
+		}
 
-			const storageResponse = await draftStore.deleteItem(idAsNumber);
-
-			if (storageResponse.ok) {
-				return res.send(makeSuccessResponse(storageResponse.data));
-			}
-
-			return res
-				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-				.send(makeErrorResponse(storageResponse.message));
-		},
-	);
+		return res
+			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+			.send(makeErrorResponse(storageResponse.message));
+	});
 }

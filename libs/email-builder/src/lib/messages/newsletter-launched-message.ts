@@ -18,7 +18,6 @@ export async function buildNewsLetterLaunchMessage(
 	);
 	const pageLink = `${messageConfig.toolHost}/launched/${newsletter.identityName}`;
 
-
 	const content = renderNewLaunchMessage({
 		pageLink,
 		newsletter,

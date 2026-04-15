@@ -27,10 +27,10 @@ const builderFunctionNames = [
 ] as const;
 
 const automatedFrontSectionSchemaWithFunctionNames =
-	automatedFrontSectionSchema.merge(
+	automatedFrontSectionSchema.extend(
 		z.object({
-			partBuilderFunction: z.enum(builderFunctionNames),
-		}),
+        			partBuilderFunction: z.enum(builderFunctionNames),
+        		}).shape
 	);
 
 /**
@@ -42,10 +42,10 @@ const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
 	.omit({
 		url: true,
 	})
-	.merge(
+	.extend(
 		z.object({
-			onwardPath: readMoreSectionSchema.shape.onwardPath.unwrap(),
-		}),
+    			onwardPath: readMoreSectionSchema.shape.onwardPath.unwrap(),
+    		}).shape
 	);
 
 /**
@@ -54,18 +54,18 @@ const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
  * the preview editor.
  */
 export const dataCollectionRenderingOptionsSchema =
-	renderingOptionsSchema.merge(
+	renderingOptionsSchema.extend(
 		z.object({
-			readMoreSections: z
-				.array(readMoreSectionSchemaWithOnwardPath)
-				.optional()
-				.describe('"Read more" sections'),
+        			readMoreSections: z
+        				.array(readMoreSectionSchemaWithOnwardPath)
+        				.optional()
+        				.describe('"Read more" sections'),
 
-			automatedFrontSections: z
-				.array(automatedFrontSectionSchemaWithFunctionNames)
-				.optional()
-				.describe('Automated sections from Fronts'),
-		}),
+        			automatedFrontSections: z
+        				.array(automatedFrontSectionSchemaWithFunctionNames)
+        				.optional()
+        				.describe('Automated sections from Fronts'),
+        		}).shape
 	);
 
 // Exclude 'article-based-legacy' from the options presented:
@@ -102,13 +102,13 @@ const dataCollectionGroup = z
  * rules in the UI which aren't required for the data model to
  * work, but are desired for new Newsletters.
  */
-export const dataCollectionSchema = newsletterDataSchema.merge(
+export const dataCollectionSchema = newsletterDataSchema.extend(
 	z.object({
-		onlineArticle: onlineArticleSchema,
-		category: dataCollectionCategories,
-		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
-		signUpDescription: nonEmptyString().describe('Sign-up description'),
-		group: dataCollectionGroup,
-		regionFocus: regionFocusEnumSchema.unwrap(),
-	}),
+    		onlineArticle: onlineArticleSchema,
+    		category: dataCollectionCategories,
+    		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
+    		signUpDescription: nonEmptyString().describe('Sign-up description'),
+    		group: dataCollectionGroup,
+    		regionFocus: regionFocusEnumSchema.unwrap(),
+    	}).shape
 );

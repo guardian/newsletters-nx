@@ -15,8 +15,14 @@ interface Props {
 	newsletter: NewsletterData;
 }
 
-export const RequestBrazeSetUpMessage = ({ pageLink: pageEditLink, newsletter }: Props) => {
-	const pageDetailsLink = pageEditLink.split('/').filter(element => element !== 'edit').join('/');
+export const RequestBrazeSetUpMessage = ({
+	pageLink: pageEditLink,
+	newsletter,
+}: Props) => {
+	const pageDetailsLink = pageEditLink
+		.split('/')
+		.filter((element) => element !== 'edit')
+		.join('/');
 	return (
 		<MessageFormat
 			title={

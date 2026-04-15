@@ -48,16 +48,15 @@ export default defineConfig({
 	// Local: npm run dev starts both API and UI
 	webServer: isCI
 		? {
-				command:
-					'npx vite preview --config ../newsletters-ui/vite.config.ts',
+				command: 'npx vite preview --config ../newsletters-ui/vite.config.ts',
 				url: baseURL,
 				reuseExistingServer: false,
 				timeout: 300000,
-		  }
+			}
 		: {
 				command: 'npm run dev',
 				url: baseURL,
 				reuseExistingServer: true,
 				timeout: 180000,
-		  },
+			},
 });

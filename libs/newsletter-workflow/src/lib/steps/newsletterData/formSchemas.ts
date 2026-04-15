@@ -1,4 +1,4 @@
-import type { ZodObject, ZodRawShape } from 'zod';
+import type { ZodObject, ZodRawShape, ZodType } from 'zod';
 import { z } from 'zod';
 import type {
 	RenderingOptions,
@@ -13,10 +13,10 @@ import {
 const pickAndPrefixRenderingOption = (
 	fieldKeys: Array<keyof RenderingOptions>,
 ): ZodObject<ZodRawShape> => {
-	const shape: ZodRawShape = {};
+	const shape: Record<string, ZodType> = {};
 	fieldKeys.forEach((key) => {
-		shape[`renderingOptions.${key}`] =
-			dataCollectionRenderingOptionsSchema.shape[key];
+		shape[`renderingOptions.${key}`] = dataCollectionRenderingOptionsSchema
+			.shape[key] as ZodType;
 	});
 	return z.object(shape);
 };
@@ -24,9 +24,11 @@ const pickAndPrefixRenderingOption = (
 const pickAndPrefixThrasherOption = (
 	fieldKeys: Array<keyof ThrasherOptions>,
 ): ZodObject<ZodRawShape> => {
-	const shape: ZodRawShape = {};
+	const shape: Record<string, ZodType> = {};
 	fieldKeys.forEach((key) => {
-		shape[`thrasherOptions.${key}`] = thrasherOptionsSchema.shape[key];
+		shape[`thrasherOptions.${key}`] = thrasherOptionsSchema.shape[
+			key
+		] as ZodType;
 	});
 	return z.object(shape);
 };

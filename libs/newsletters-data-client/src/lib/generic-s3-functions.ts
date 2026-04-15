@@ -35,36 +35,35 @@ export const fetchObject =
 		);
 	};
 
-export const getListOfObjectsKeys =
-	(storage: S3StorageService) => async () => {
-		const listOutput = await storage.s3Client.send(
-			new ListObjectsCommand({
-				Bucket: storage.bucketName,
-				Prefix: storage.OBJECT_PREFIX,
-				MaxKeys: 500,
-			}),
-		);
-		const { Contents = [] } = listOutput;
-		return Contents.map((item) => item.Key)
-			.filter((key) => typeof key === 'string')
-			.filter((item) => item !== storage.OBJECT_PREFIX);
-	};
-
-export const getNextId = async (
-	storage: S3StorageService,
-): Promise<number> => {
-	const existingNewsletterIds = await getObjectKeyIdNumbers(
-		storage,
+export const getListOfObjectsKeys = (storage: S3StorageService) => async () => {
+	const listOutput = await storage.s3Client.send(
+		new ListObjectsCommand({
+			Bucket: storage.bucketName,
+			Prefix: storage.OBJECT_PREFIX,
+			MaxKeys: 500,
+		}),
 	);
+	const { Contents = [] } = listOutput;
+	return Contents.map((item) => item.Key)
+		.filter((key) => typeof key === 'string')
+		.filter((item) => item !== storage.OBJECT_PREFIX);
+};
+
+export const getNextId = async (storage: S3StorageService): Promise<number> => {
+	const existingNewsletterIds = await getObjectKeyIdNumbers(storage);
 	const currentHighestId = existingNewsletterIds.sort((a, b) => a - b).pop();
 	return currentHighestId ? currentHighestId + 1 : 1;
 };
 
 const getStringId = (key: string): string => {
 	const filenameWithExtension = key.split(':').pop();
-	if (!filenameWithExtension) {throw new Error('Unexpected key format');}
+	if (!filenameWithExtension) {
+		throw new Error('Unexpected key format');
+	}
 	const stringId = filenameWithExtension.split('.')[0];
-	if (!stringId) {throw new Error('Unexpected key format');}
+	if (!stringId) {
+		throw new Error('Unexpected key format');
+	}
 	return stringId;
 };
 

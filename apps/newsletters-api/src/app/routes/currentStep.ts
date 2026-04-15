@@ -75,85 +75,92 @@ const getAccessDeniedError = async (
  * @param app - Express instance to add the route to
  */
 export function registerCurrentStepRoute(app: Express) {
-	app.post(
-		'/api/currentstep',
-		async (req, res) => {
-			const user = getUserProfile(req);
-			const parsedBodyResult = currentStepRouteRequestSchema.safeParse(replaceNullWithUndefinedForUnknown(req.body))
-			if (!parsedBodyResult.success) {
-				console.error(`invalid currentStepRouteRequest on ${req.path}`, parsedBodyResult.error.issues)
-				const badDataError: CurrentStepRouteResponse = {
-					currentStepId: '',
-					errorMessage: "The application sent data that the server could not interpret",
-					errorDetails: {
-						zodIssues: parsedBodyResult.error.issues
-					},
-					hasPersistentError: true
-				}
+	app.post('/api/currentstep', async (req, res) => {
+		const user = getUserProfile(req);
+		const parsedBodyResult = currentStepRouteRequestSchema.safeParse(
+			replaceNullWithUndefinedForUnknown(req.body),
+		);
+		if (!parsedBodyResult.success) {
+			console.error(
+				`invalid currentStepRouteRequest on ${req.path}`,
+				parsedBodyResult.error.issues,
+			);
+			const badDataError: CurrentStepRouteResponse = {
+				currentStepId: '',
+				errorMessage:
+					'The application sent data that the server could not interpret',
+				errorDetails: {
+					zodIssues: parsedBodyResult.error.issues,
+				},
+				hasPersistentError: true,
+			};
 
-				return res.status(400).send(badDataError);
-			}
+			return res.status(400).send(badDataError);
+		}
 
-			const currentStepRouteRequest = parsedBodyResult.data;
-			const accessDeniedError = await getAccessDeniedError(user, currentStepRouteRequest);
-			if (accessDeniedError) {
-				return res.status(403).send(accessDeniedError);
-			}
+		const currentStepRouteRequest = parsedBodyResult.data;
+		const accessDeniedError = await getAccessDeniedError(
+			user,
+			currentStepRouteRequest,
+		);
+		if (accessDeniedError) {
+			return res.status(403).send(accessDeniedError);
+		}
 
-			const layout = newslettersWorkflowStepLayout[currentStepRouteRequest.wizardId];
+		const layout =
+			newslettersWorkflowStepLayout[currentStepRouteRequest.wizardId];
 
-			if (!layout) {
-				const errorResponse: CurrentStepRouteResponse = {
-					errorMessage: 'No layout found',
-					currentStepId: currentStepRouteRequest.stepId,
-					hasPersistentError: true,
-				};
-				return res.status(400).send(errorResponse);
-			}
+		if (!layout) {
+			const errorResponse: CurrentStepRouteResponse = {
+				errorMessage: 'No layout found',
+				currentStepId: currentStepRouteRequest.stepId,
+				hasPersistentError: true,
+			};
+			return res.status(400).send(errorResponse);
+		}
 
-			const serviceInterface = user.profile
-				? currentStepRouteRequest.wizardId === 'LAUNCH_NEWSLETTER'
-					? makelaunchServiceForUser(user.profile)
-					: makeDraftServiceForUser(
+		const serviceInterface = user.profile
+			? currentStepRouteRequest.wizardId === 'LAUNCH_NEWSLETTER'
+				? makelaunchServiceForUser(user.profile)
+				: makeDraftServiceForUser(
 						user.profile,
 						makeSesClient(),
 						makeEmailEnvInfo(),
 					)
-				: undefined;
+			: undefined;
 
-			if (!serviceInterface) {
+		if (!serviceInterface) {
+			const errorResponse: CurrentStepRouteResponse = {
+				errorMessage: 'FAILED to CONSTRUCT SERVICE',
+				currentStepId: currentStepRouteRequest.stepId,
+				hasPersistentError: true,
+			};
+			return res.status(500).send(errorResponse);
+		}
+
+		try {
+			const response = await handleWizardRequestAndReturnWizardResponse(
+				currentStepRouteRequest,
+				layout,
+				serviceInterface,
+			);
+			return res.send(response);
+		} catch (error) {
+			if (error instanceof StateMachineError) {
 				const errorResponse: CurrentStepRouteResponse = {
-					errorMessage: 'FAILED to CONSTRUCT SERVICE',
+					errorMessage: error.message,
 					currentStepId: currentStepRouteRequest.stepId,
-					hasPersistentError: true,
+					hasPersistentError: error.isPersistant,
 				};
-				return res.status(500).send(errorResponse);
+				return res.status(getHttpCode(error)).send(errorResponse);
 			}
 
-			try {
-				const response = await handleWizardRequestAndReturnWizardResponse(
-					currentStepRouteRequest,
-					layout,
-					serviceInterface,
-				)
-				return res.send(response);
-			} catch (error) {
-				if (error instanceof StateMachineError) {
-					const errorResponse: CurrentStepRouteResponse = {
-						errorMessage: error.message,
-						currentStepId: currentStepRouteRequest.stepId,
-						hasPersistentError: error.isPersistant,
-					};
-					return res.status(getHttpCode(error)).send(errorResponse);
-				}
-
-				const errorResponse: CurrentStepRouteResponse = {
-					errorMessage: 'UNHANDLED ERROR',
-					currentStepId: currentStepRouteRequest.stepId,
-					hasPersistentError: true,
-				};
-				return res.status(500).send(errorResponse);
-			}
-		},
-	);
+			const errorResponse: CurrentStepRouteResponse = {
+				errorMessage: 'UNHANDLED ERROR',
+				currentStepId: currentStepRouteRequest.stepId,
+				hasPersistentError: true,
+			};
+			return res.status(500).send(errorResponse);
+		}
+	});
 }

@@ -2,7 +2,7 @@ import type {
 	FormDataRecord,
 	WizardButtonType,
 } from '@newsletters-nx/newsletters-data-client';
-import { supportedValueSchema, } from '@newsletters-nx/newsletters-data-client';
+import { supportedValueSchema } from '@newsletters-nx/newsletters-data-client';
 import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
 import { z } from 'zod';
 
@@ -153,10 +153,12 @@ export const currentStepRouteRequestSchema = z.object({
 	id: z.string().optional(),
 	buttonId: z.string().optional(),
 	stepId: z.string(),
-	formData: z.record(supportedValueSchema).optional(),
+	formData: z.record(z.string(), supportedValueSchema).optional(),
 	stepToSkipToId: z.string().optional(),
-	buttonType: z.enum(['NEXT', 'PREVIOUS', 'EDIT', 'SKIP', 'LAUNCH', 'CANCEL']).optional(),
-})
+	buttonType: z
+		.enum(['NEXT', 'PREVIOUS', 'EDIT', 'SKIP', 'LAUNCH', 'CANCEL'])
+		.optional(),
+});
 
 /**
  * Interface for the response received from the server for a single step in the wizard.

@@ -39,7 +39,7 @@ const validNewsletters = newslettersData.filter((item) =>
 const newsletterStore: NewsletterStorage = isUsingInMemoryStore
 	? new InMemoryNewsletterStorage(
 			validNewsletters as unknown as NewsletterData[],
-	  )
+		)
 	: getS3NewsletterStore();
 
 const layoutStore: LayoutStorage = isUsingInMemoryStore
