@@ -11,15 +11,16 @@ export type NewsletterFieldsDerivedFromName =
 
 const allWhiteSpaceRegEx = new RegExp(/\W/, 'g');
 const replaceWhiteSpace = (input: string, replaceValue = '') =>
-	input.replace(allWhiteSpaceRegEx, replaceValue)
-		.replace(/[\s_-]+/g, replaceValue)
+	input
+		.replace(allWhiteSpaceRegEx, replaceValue)
+		.replace(/[\s_-]+/g, replaceValue);
 
 const removeNonAlphaNumericCharacters = (input: string) =>
 	input.replace(/[^a-zA-Z0-9\s]/g, '');
 export const deriveNewsletterFieldsFromName = (
 	name: string,
 ): Pick<NewsletterData, NewsletterFieldsDerivedFromName> => {
-	const sanitizedName = removeNonAlphaNumericCharacters(name)
+	const sanitizedName = removeNonAlphaNumericCharacters(name);
 	const lowerCased = sanitizedName.toLowerCase();
 	const trimmedLowerCase = lowerCased.trim();
 
@@ -27,7 +28,8 @@ export const deriveNewsletterFieldsFromName = (
 		identityName: replaceWhiteSpace(trimmedLowerCase, '-'),
 		brazeSubscribeEventNamePrefix: replaceWhiteSpace(trimmedLowerCase, '_'),
 		brazeNewsletterName: 'Editorial_' + replaceWhiteSpace(sanitizedName.trim()),
-		brazeSubscribeAttributeName: replaceWhiteSpace(sanitizedName) + '_Subscribe_Email',
+		brazeSubscribeAttributeName:
+			replaceWhiteSpace(sanitizedName) + '_Subscribe_Email',
 		brazeSubscribeAttributeNameAlternate: [
 			'email_subscribe_' + replaceWhiteSpace(trimmedLowerCase, '_'),
 		],

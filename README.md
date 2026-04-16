@@ -2,10 +2,10 @@
 
 This is a monorepo for:
 
--   defining the data model for editorial newsletters at the Guardian
--   serving an API to access the newsletter data
--   serving a user interface for editorial to manage their newsletters
--   the state-machine library used between UI and API
+- defining the data model for editorial newsletters at the Guardian
+- serving an API to access the newsletter data
+- serving a user interface for editorial to manage their newsletters
+- the state-machine library used between UI and API
 
 ## Running locally
 
@@ -14,14 +14,17 @@ To run the UI and API locally with the default options:
 ## Testing
 
 ### Unit Tests
+
 ```bash
 npm run test
 ```
 
 ### E2E Tests
+
 ```bash
 npm run test:e2e
 ```
+
 see [E2E Testing Documentation] (apps/newsletters-e2e/README.md) for more details
 
 ### Run set-up script
@@ -63,9 +66,9 @@ https://console.cloud.google.com/apis/credentials?project=newsletter-source-api
 
 By default, Guardian staff have "viewer" permissions, which lets them access the tool but not make any changes to the data. Spefic users can be granted extra permissions by updating the userPermissions data, which is held in the AWS Parameter store in the 'frontend' account (accessable via [Janus](https://janus.gutools.co.uk/)). There is a separate param for each stage:
 
--   /CODE/newsletters/newsletters-tool/userPermissions
--   /DEV/newsletters/newsletters-tool/userPermissions
--   /PROD/newsletters/newsletters-tool/userPermissions
+- /CODE/newsletters/newsletters-tool/userPermissions
+- /DEV/newsletters/newsletters-tool/userPermissions
+- /PROD/newsletters/newsletters-tool/userPermissions
 
 The API application will check for updates to the data once per 15 minute interval - so updates to the data take up to 15 minutes to take effect for the user in the UI.
 

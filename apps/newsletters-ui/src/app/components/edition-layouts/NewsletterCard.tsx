@@ -11,8 +11,7 @@ import { Link } from 'react-router-dom';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { Illustration } from '../Illustration';
 
-
-type CardSize = 'medium' | 'small'
+type CardSize = 'medium' | 'small';
 
 interface NewsletterCardProps {
 	newsletterId: string;
@@ -49,11 +48,9 @@ const statusToToolTipText = (
 	}
 };
 
-
-const illustrationSize = (size: CardSize) => size === 'small' ? 40 : 80
-const cardWidth = (size: CardSize) => size === 'small' ? 180 : 220
-const cardMinHeight = (size: CardSize) => size === 'small' ? 145 : 185
-
+const illustrationSize = (size: CardSize) => (size === 'small' ? 40 : 80);
+const cardWidth = (size: CardSize) => (size === 'small' ? 180 : 220);
+const cardMinHeight = (size: CardSize) => (size === 'small' ? 145 : 185);
 
 export const NewsletterCard = ({
 	newsletterId,
@@ -101,7 +98,10 @@ export const NewsletterCard = ({
 						height={illustrationSize(size)}
 						noCaption
 					/>
-					<Alert severity={statusToAlertVariant(newsletter.status)} sx={{ paddingY: 0 }}>
+					<Alert
+						severity={statusToAlertVariant(newsletter.status)}
+						sx={{ paddingY: 0 }}
+					>
 						{newsletter.status}{' '}
 						{tooltipText && (
 							<Tooltip title={tooltipText} arrow>

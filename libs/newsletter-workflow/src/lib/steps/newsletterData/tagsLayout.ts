@@ -60,14 +60,17 @@ export const tagsLayout: WizardStepLayout<DraftService> = {
 					return undefined;
 				}
 				const seriesTag = stepData.formData['seriesTag'] ?? undefined;
-				const seriesTagDescription = stepData.formData['seriesTagDescription'] ?? undefined;
+				const seriesTagDescription =
+					stepData.formData['seriesTagDescription'] ?? undefined;
 				if (seriesTag && !seriesTagDescription) {
 					return {
-						message: 'Series tag description is required if series tag specified',
+						message:
+							'Series tag description is required if series tag specified',
 					};
 				}
 				const composerTag = stepData.formData['composerTag'] ?? undefined;
-				const composerCampaignTag = stepData.formData['composerCampaignTag'] ?? undefined;
+				const composerCampaignTag =
+					stepData.formData['composerCampaignTag'] ?? undefined;
 				if (composerTag || composerCampaignTag) {
 					if (!composerTag) {
 						return {

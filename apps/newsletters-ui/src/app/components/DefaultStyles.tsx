@@ -24,8 +24,7 @@ const stylesCss = css`
 			}
 		}
 	}
-`
-
+`;
 
 interface DefaultStylesProps {
 	children: ReactNode;

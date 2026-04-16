@@ -21,8 +21,8 @@ export const higherLevelDataPoint =
 				? guardianUrl
 					? getGuardianUrl(value)
 					: url
-					? value
-					: undefined
+						? value
+						: undefined
 				: undefined;
 
 		const displayLabel =

@@ -15,7 +15,9 @@ export const signImage = async (
 	{ width = 650, dpr = 2 }: Props,
 ): Promise<string> => {
 	const salt = await getConfigValue('imageSalt');
-	if (!salt) {throw new Error(`imageSalt not found`);}
+	if (!salt) {
+		throw new Error(`imageSalt not found`);
+	}
 
 	return format(src, salt, {
 		quality: 85,
@@ -29,7 +31,9 @@ export const signTemplateImages = async (
 ): Promise<NewsletterData> => {
 	let signedImages = {};
 	const { renderingOptions } = newsletterData;
-	if (!renderingOptions) {return newsletterData;}
+	if (!renderingOptions) {
+		return newsletterData;
+	}
 	const { mainBannerUrl, subheadingBannerUrl, darkSubheadingBannerUrl } =
 		renderingOptions;
 	const imageKeyValueMapping = [
@@ -44,7 +48,7 @@ export const signTemplateImages = async (
 				? {
 						...signedImages,
 						[key]: await signImage(imageUrl, { dpr: 2, width: 650 }),
-				  }
+					}
 				: { ...signedImages, [key]: imageUrl };
 		}
 	}

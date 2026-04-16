@@ -6,7 +6,9 @@ import {
 	TableContainer,
 	TableRow,
 } from '@mui/material';
-import type { ZodIssue } from 'zod';
+import type { ZodError } from 'zod';
+
+type ZodIssue = ZodError['issues'][number];
 
 interface Props {
 	issues: ZodIssue[];
@@ -16,8 +18,6 @@ interface Props {
 const issueToMessage = (issue: ZodIssue): string => {
 	const { code } = issue;
 	switch (code) {
-		case 'invalid_date':
-			return 'This field needs to contain a valid date.';
 		case 'invalid_type': {
 			const { expected, message } = issue;
 			return message === 'Required'
@@ -27,19 +27,11 @@ const issueToMessage = (issue: ZodIssue): string => {
 				: message;
 		}
 
-		case 'invalid_literal':
 		case 'unrecognized_keys':
 		case 'invalid_union':
-		case 'invalid_union_discriminator':
-		case 'invalid_enum_value':
-		case 'invalid_arguments':
-		case 'invalid_return_type':
-		case 'invalid_string':
 		case 'too_small':
 		case 'too_big':
-		case 'invalid_intersection_types':
 		case 'not_multiple_of':
-		case 'not_finite':
 		case 'custom':
 		default:
 			return issue.message;

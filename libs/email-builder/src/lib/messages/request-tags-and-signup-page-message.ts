@@ -24,7 +24,6 @@ export async function buildSignupPageAndTagCreationRequestMessage(
 
 	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
 
-	 
 	const content = renderRequestTagAndSignUpPageCreationMessage({
 		pageLink,
 		newsletter,

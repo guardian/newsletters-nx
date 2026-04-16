@@ -46,7 +46,7 @@ export async function stateMachineButtonPressed<
 					wizardLayout,
 					currentStepLayout as WizardStepLayout,
 					isEditPath,
-			  );
+				);
 
 	if (shouldValidate) {
 		const incomingDataError = validateIncomingFormData(

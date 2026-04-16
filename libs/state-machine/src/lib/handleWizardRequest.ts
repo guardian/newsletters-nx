@@ -45,21 +45,27 @@ export async function handleWizardRequestAndReturnWizardResponse<
 						requestBody,
 						wizardLayout,
 						serviceInterface,
-				  )
+					)
 				: requestBody.buttonId !== undefined
-				? await stateMachineButtonPressed(
-						requestBody.buttonId,
-						{
-							currentStepId: requestBody.stepId,
-							formData: requestBody.formData,
-							id: requestBody.id,
-						},
-						wizardLayout,
-						!!requestBody.id,
-						validationTriggerButtonTypes.includes(requestBody.buttonType ?? ''),
-						serviceInterface,
-				  )
-				: await setupInitialState(requestBody, wizardLayout, serviceInterface);
+					? await stateMachineButtonPressed(
+							requestBody.buttonId,
+							{
+								currentStepId: requestBody.stepId,
+								formData: requestBody.formData,
+								id: requestBody.id,
+							},
+							wizardLayout,
+							!!requestBody.id,
+							validationTriggerButtonTypes.includes(
+								requestBody.buttonType ?? '',
+							),
+							serviceInterface,
+						)
+					: await setupInitialState(
+							requestBody,
+							wizardLayout,
+							serviceInterface,
+						);
 
 		const nextStep = wizardLayout[stepData.currentStepId];
 
@@ -71,11 +77,7 @@ export async function handleWizardRequestAndReturnWizardResponse<
 			);
 		}
 
-		return makeResponse(
-			requestBody,
-			stepData,
-			nextStep as WizardStepLayout,
-		);
+		return makeResponse(requestBody, stepData, nextStep as WizardStepLayout);
 	} catch (error) {
 		if (error instanceof StateMachineError) {
 			throw error;

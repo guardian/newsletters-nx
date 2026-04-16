@@ -2,9 +2,9 @@
 
 This library provides:
 
--   schemas and types used by other projects in this repo, notably the `newsletterDataSchema` and the `NewsletterData` type inferred from it
--   shared utility functions for handling newletter data
--   the class definitions for service classes used to interact with AWS services such as S3 and SES
+- schemas and types used by other projects in this repo, notably the `newsletterDataSchema` and the `NewsletterData` type inferred from it
+- shared utility functions for handling newletter data
+- the class definitions for service classes used to interact with AWS services such as S3 and SES
 
 ## Building
 
@@ -30,10 +30,10 @@ There is a [unit test for the schema validation function](libs/newsletters-data-
 
 If you do need to make a breaking change to the schema, such as adding a new required string field, this may have to be done in stages E.G. :
 
--   merge PR to add the new field as an optional property
--   backfill all existing newsletters to have the new field
--   run the script to update the fixture file
--   merge the PR to make the new field required - the test should fail if any newsletters in the fixture woudl be excluded
+- merge PR to add the new field as an optional property
+- backfill all existing newsletters to have the new field
+- run the script to update the fixture file
+- merge the PR to make the new field required - the test should fail if any newsletters in the fixture woudl be excluded
 
 ### Newsletter migration tool
 

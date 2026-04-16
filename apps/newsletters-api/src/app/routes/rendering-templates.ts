@@ -1,7 +1,5 @@
 import type { Express } from 'express';
-import type {
-	EmailRenderingOutput,
-} from '@newsletters-nx/newsletters-data-client';
+import type { EmailRenderingOutput } from '@newsletters-nx/newsletters-data-client';
 import { getEmailRenderingHost } from '../../apiDeploymentSettings';
 import { newsletterStore } from '../../services/storage';
 import {
@@ -62,26 +60,25 @@ export function registerRenderingTemplatesRoutes(app: Express) {
 					(await emailRenderingResponse.json()) as EmailRenderingOutput;
 				return res.send(makeSuccessResponse(emailRenderingJson));
 			} catch (fetchFail) {
-				return res.status(500).send(makeErrorResponse('Failed to fetch from email rendering'))
+				return res
+					.status(500)
+					.send(makeErrorResponse('Failed to fetch from email rendering'));
 			}
 		},
 	);
 
-	app.post(
-		'/api/rendering-templates/preview',
-		async (req, res) => {
-			const emailRenderingResponse = await fetch(NEWSLETTER_RENDER_URL, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(req.body),
-			});
+	app.post('/api/rendering-templates/preview', async (req, res) => {
+		const emailRenderingResponse = await fetch(NEWSLETTER_RENDER_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(req.body),
+		});
 
-			const emailRenderingJson =
-				(await emailRenderingResponse.json()) as EmailRenderingOutput;
+		const emailRenderingJson =
+			(await emailRenderingResponse.json()) as EmailRenderingOutput;
 
-			return res.send(makeSuccessResponse(emailRenderingJson));
-		},
-	);
+		return res.send(makeSuccessResponse(emailRenderingJson));
+	});
 }

@@ -15,5 +15,5 @@ export const getEmbargoDate = (
 	newsletter.signUpPageDate.valueOf() > sendTime
 		? newsletter.signUpPageDate.toLocaleDateString(undefined, {
 				dateStyle: 'long',
-		  })
+			})
 		: undefined;

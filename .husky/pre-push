@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Check workspace before pushing
 npx nx affected --target=format:check,lint,test,build --parallel=3
 

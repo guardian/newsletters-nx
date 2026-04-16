@@ -1,7 +1,7 @@
-import type { Request } from 'express'
+import type { Request } from 'express';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import { getTestJwtProfileDataIfUsing } from '../apiDeploymentSettings';
-import { getDeveloperProfile } from "../services/permissions/developer-profile-service";
+import { getDeveloperProfile } from '../services/permissions/developer-profile-service';
 
 const atob = (a: string) => Buffer.from(a, 'base64').toString('binary');
 
@@ -36,8 +36,10 @@ export const getUserProfile = (
 	const jwtProfile =
 		req.headers['x-amzn-oidc-data'] ?? getTestJwtProfileDataIfUsing();
 
-	if (USE_DEVELOPER_PROFILE && USE_DEVELOPER_PROFILE === "true") {
-		console.info('getUserProfile: USE_DEVELOPER_PROFILE is true, returning developer profile.');
+	if (USE_DEVELOPER_PROFILE && USE_DEVELOPER_PROFILE === 'true') {
+		console.info(
+			'getUserProfile: USE_DEVELOPER_PROFILE is true, returning developer profile.',
+		);
 		return getDeveloperProfile();
 	}
 

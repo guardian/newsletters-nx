@@ -45,18 +45,21 @@ export const getListOfObjectsKeys =
 export const getNextId = async (
 	s3NewsletterStorage: S3NewsletterStorage,
 ): Promise<number> => {
-	const existingNewsletterIds = await getObjectKeyIdNumbers(
-		s3NewsletterStorage,
-	);
+	const existingNewsletterIds =
+		await getObjectKeyIdNumbers(s3NewsletterStorage);
 	const currentHighestId = existingNewsletterIds.sort((a, b) => a - b).pop();
 	return currentHighestId ? currentHighestId + 1 : 1;
 };
 
 const getStringId = (key: string): string => {
 	const filenameWithExtension = key.split(':').pop();
-	if (!filenameWithExtension) {throw new Error('Unexpected key format');}
+	if (!filenameWithExtension) {
+		throw new Error('Unexpected key format');
+	}
 	const stringId = filenameWithExtension.split('.')[0];
-	if (!stringId) {throw new Error('Unexpected key format');}
+	if (!stringId) {
+		throw new Error('Unexpected key format');
+	}
 	return stringId;
 };
 

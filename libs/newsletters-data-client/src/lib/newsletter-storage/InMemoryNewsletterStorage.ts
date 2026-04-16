@@ -32,7 +32,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			? newsletters.map((n) => ({
 					...n,
 					meta: makeBlankMeta(),
-			  }))
+				}))
 			: [];
 	}
 

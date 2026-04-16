@@ -6,7 +6,7 @@ export const readMoreSectionSchema = z
 	.object({
 		subheading: nonEmptyString().describe('read more subheading'),
 		wording: nonEmptyString().describe('read more wording'),
-		url: z.string().url().optional().describe('read more url'),
+		url: z.url().optional().describe('read more url'),
 		onwardPath: urlPathString(
 			'Please add a Guardian URL from the slash e.g. https://www.theguardian.com/food should be /food',
 		).optional(),
@@ -26,7 +26,7 @@ export const automatedFrontSectionSchema = z.object({
 export const renderingOptionsSchema = z.object({
 	displayDate: z.boolean().describe('Display date?'),
 	displayStandfirst: z.boolean().describe('Display standfirst?'),
-	contactEmail: z.string().email().optional().describe('Contact email'),
+	contactEmail: z.email().optional().describe('Contact email'),
 	displayImageCaptions: z.boolean().describe('Display image captions?'),
 	includeBreakingNews: z
 		.boolean()
@@ -67,24 +67,16 @@ export const renderingOptionsSchema = z.object({
 		.optional()
 		.describe('The configuration for automated front sections'),
 
-	mainBannerUrl: z
-		.string()
-		.url()
+	mainBannerUrl: z.url()
 		.optional()
 		.describe('URL for the main banner'),
-	mainBannerMobileUrl: z
-		.string()
-		.url()
+	mainBannerMobileUrl: z.url()
 		.optional()
 		.describe('URL for the mobile size main banner'),
-	subheadingBannerUrl: z
-		.string()
-		.url()
+	subheadingBannerUrl: z.url()
 		.optional()
 		.describe('URL for standard subheading banner'),
-	darkSubheadingBannerUrl: z
-		.string()
-		.url()
+	darkSubheadingBannerUrl: z.url()
 		.optional()
 		.describe('URL for dark subheading banner'),
 });

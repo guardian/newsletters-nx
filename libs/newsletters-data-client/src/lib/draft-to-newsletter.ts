@@ -70,11 +70,11 @@ export const withDefaultNewsletterValuesAndDerivedFields = (
 export const getDraftNotReadyIssues = (draft: DraftNewsletterData) => {
 	const schemaToUse =
 		draft.category === 'article-based'
-			? dataCollectionSchema.merge(
+			? dataCollectionSchema.extend(
 					z.object({
-						renderingOptions: dataCollectionRenderingOptionsSchema,
-					}),
-			  )
+                						renderingOptions: dataCollectionRenderingOptionsSchema,
+                					}).shape
+				)
 			: dataCollectionSchema;
 
 	const draftWithDefaults = withDefaultNewsletterValuesAndDerivedFields(draft);
@@ -134,7 +134,7 @@ export const calculateProgress = (draft: DraftNewsletterData): number => {
 		RENDERING_OPTIONS_FIELD_COUNT === 0
 			? 1
 			: (RENDERING_OPTIONS_FIELD_COUNT - renderingOptionsIssuesCount) /
-			  RENDERING_OPTIONS_FIELD_COUNT;
+				RENDERING_OPTIONS_FIELD_COUNT;
 
 	// Arbitrary calculation - wieght the basic data as 1/4's of the total score
 	const combined = (basicDataRatio * 3 + renderingOptionsDataRatio) / 4;

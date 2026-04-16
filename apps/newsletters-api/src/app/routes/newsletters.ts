@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import {
 	isNewsletterData,
 	isPartialNewsletterData,
@@ -24,7 +25,7 @@ import {
 export function registerReadNewsletterRoutes(app: Express) {
 	// not using the makeSuccess function on this route as
 	// we are emulating the response of the legacy API
-	app.get('/api/legacy/newsletters', async (req, res) => {
+	app.get('/api/legacy/newsletters', async (_, res) => {
 		const storageResponse = await newsletterStore.list();
 		if (!storageResponse.ok) {
 			return res
@@ -35,26 +36,26 @@ export function registerReadNewsletterRoutes(app: Express) {
 		return res.send(storageResponse.data.map(transformDataToLegacyNewsletter));
 	});
 
-	app.get(
-		'/api/newsletters',
-		async (req, res) => {
-			const storageResponse = await newsletterStore.list();
+	app.get('/api/newsletters', async (req, res) => {
+		const storageResponse = await newsletterStore.list();
 
-			if (!storageResponse.ok) {
-				return res
-					.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
-					.send(makeErrorResponse(storageResponse.message));
-			}
-			const { signImages } = req.query;
-			if (isDynamicImageSigningEnabled() && queryParamToBoolean(signImages as string | undefined)) {
-				const newsletterDataWithSignedImages = await Promise.all(
-					storageResponse.data.map(signTemplateImages),
-				);
-				return res.send(makeSuccessResponse(newsletterDataWithSignedImages));
-			}
-			return res.send(makeSuccessResponse(storageResponse.data));
-		},
-	);
+		if (!storageResponse.ok) {
+			return res
+				.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
+				.send(makeErrorResponse(storageResponse.message));
+		}
+		const { signImages } = req.query;
+		if (
+			isDynamicImageSigningEnabled() &&
+			queryParamToBoolean(signImages as string | undefined)
+		) {
+			const newsletterDataWithSignedImages = await Promise.all(
+				storageResponse.data.map(signTemplateImages),
+			);
+			return res.send(makeSuccessResponse(newsletterDataWithSignedImages));
+		}
+		return res.send(makeSuccessResponse(storageResponse.data));
+	});
 
 	app.get('/api/newsletters/:newsletterId', async (req, res) => {
 		const { newsletterId } = req.params;
@@ -66,7 +67,10 @@ export function registerReadNewsletterRoutes(app: Express) {
 				.send(makeErrorResponse(storageResponse.message));
 		}
 		const { signImages } = req.query;
-		if (isDynamicImageSigningEnabled() && queryParamToBoolean(signImages as string | undefined)) {
+		if (
+			isDynamicImageSigningEnabled() &&
+			queryParamToBoolean(signImages as string | undefined)
+		) {
 			const newsletterDataWithSignedImages = await signTemplateImages(
 				storageResponse.data,
 			);
@@ -77,10 +81,14 @@ export function registerReadNewsletterRoutes(app: Express) {
 }
 
 export function registerReadWriteNewsletterRoutes(app: Express) {
-	const doesNotHaveAccess = async (
-		request: Request,
-		reply: Response,
-	) => {
+	const fifteenMinutesInMilliseconds = 15 * 60 * 1000;
+	const writeNewsletterRateLimiter = rateLimit({
+		windowMs: fifteenMinutesInMilliseconds,
+		limit: 500,
+		standardHeaders: true,
+		legacyHeaders: false,
+	});
+	const doesNotHaveAccess = async (request: Request, reply: Response) => {
 		const user = getUserProfile(request);
 		const isAuthorised = await hasEditAccess(user.profile);
 		const body = request.body as unknown;
@@ -88,7 +96,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 
 		if (!isPartialNewsletterData(update)) {
 			void reply.status(400).send(makeErrorResponse('invalid update data'));
-			return true
+			return true;
 		}
 
 		const isAuthorisedForUpdate =
@@ -97,18 +105,18 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 			void reply
 				.status(403)
 				.send(makeErrorResponse('You do not have edit access'));
-			return true
+			return true;
 		}
-		return false
+		return false;
 	};
 
 	app.patch(
 		'/api/newsletters/:newsletterId',
+		writeNewsletterRateLimiter,
 		async (req, res) => {
-
 			const failedValidation = await doesNotHaveAccess(req, res);
 			if (failedValidation) {
-				return
+				return;
 			}
 
 			const user = getUserProfile(req);
@@ -155,11 +163,11 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 
 	app.post(
 		'/api/newsletters/:newsletterId',
+		writeNewsletterRateLimiter,
 		async (req, res) => {
-
 			const failedValidation = await doesNotHaveAccess(req, res);
 			if (failedValidation) {
-				return
+				return;
 			}
 
 			const user = getUserProfile(req);

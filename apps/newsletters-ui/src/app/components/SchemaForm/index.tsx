@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { z, ZodTypeAny } from 'zod';
+import type { z, ZodType } from 'zod';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
 import type {
@@ -46,7 +46,9 @@ export function SchemaForm<T extends z.ZodRawShape>({
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
-		const zod: ZodTypeAny | undefined = schema.shape[key];
+		const zod: ZodType | undefined = schema.shape[key] as
+			| ZodType
+			| undefined;
 		if (!zod) {
 			continue;
 		}

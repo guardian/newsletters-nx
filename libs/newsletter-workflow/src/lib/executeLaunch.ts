@@ -22,7 +22,7 @@ const getExtraValuesFromFormData = (
 	formData: FormDataRecord = {},
 ): Partial<NewsletterData> => {
 	const stringValue = (key: string): string | undefined =>
-		typeof formData[key] === 'string' ? (formData[key]) : undefined;
+		typeof formData[key] === 'string' ? formData[key] : undefined;
 
 	return DERIVED_FIELD_KEYS.reduce<Partial<NewsletterData>>(
 		(previousRecord, key) => {
@@ -53,14 +53,12 @@ const sendOutEmailsAndUpdateStatus = async (
 			launchService.userProfile,
 		);
 
-	const [
-		brazeRequestEmailResult,
-		tagAndSignUpPageCreationEmailResult,
-	] = await Promise.all([
-		sendEmail('NEWSLETTER_LAUNCH'),
-		sendEmail('BRAZE_SET_UP_REQUEST'),
-		sendEmail('CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST'),
-	]);
+	const [brazeRequestEmailResult, tagAndSignUpPageCreationEmailResult] =
+		await Promise.all([
+			sendEmail('NEWSLETTER_LAUNCH'),
+			sendEmail('BRAZE_SET_UP_REQUEST'),
+			sendEmail('CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST'),
+		]);
 
 	return launchService.updateCreationStatus(newsletter, {
 		brazeCampaignCreationStatus: outputToStatus(brazeRequestEmailResult),

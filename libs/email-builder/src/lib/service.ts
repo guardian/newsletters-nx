@@ -64,10 +64,7 @@ export const sendEmailNotifications = async (
 		const output = await emailClient.send(command);
 		return { output, success: true };
 	} catch (error) {
-		console.warn(
-			`send of ${params.messageTemplateId} email failed`,
-			error,
-		);
+		console.warn(`send of ${params.messageTemplateId} email failed`, error);
 		return { error: error, success: false };
 	}
 };

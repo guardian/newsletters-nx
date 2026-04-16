@@ -12,7 +12,12 @@ import type {
 	DraftWithIdButNoMeta,
 	DraftWithoutId,
 } from '../DraftStorage';
-import { createNewDraftMeta, DraftStorage, stripDraftMeta, updateDraftMeta } from '../DraftStorage';
+import {
+	createNewDraftMeta,
+	DraftStorage,
+	stripDraftMeta,
+	updateDraftMeta,
+} from '../DraftStorage';
 import { errorToResponse } from './errorToResponse';
 import { objectToDraftWithMetaAndId } from './objectToDraftWithId';
 import {
