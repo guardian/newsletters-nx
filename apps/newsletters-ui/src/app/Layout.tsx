@@ -33,8 +33,8 @@ export function Layout(props: IRootRoute) {
 		!!host?.toLowerCase().split(':').includes('localhost') ||
 		!!host?.toLowerCase().split('.').includes('local');
 
-	const isUsingStand =
-		isFeatureSwitchEnabled('switch-stand') && (isOnCode || isOnLocal);
+	// const isUsingStand =
+	// 	isFeatureSwitchEnabled('switch-stand') && (isOnCode || isOnLocal);
 
 	const location = useLocation();
 
@@ -53,7 +53,6 @@ export function Layout(props: IRootRoute) {
 		<div css={frameCss}>
 			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
 			<Box sx={{ pt: 8 }} component={'main'}>
-				{isUsingStand && <>Stand Version</>}
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>

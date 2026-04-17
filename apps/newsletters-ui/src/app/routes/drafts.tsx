@@ -3,6 +3,7 @@ import { DraftDetailView } from '../components/views/DraftDetailView';
 import { DraftListView } from '../components/views/DraftListView';
 import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
+import { isFeatureSwitchEnabled } from '../featureSwitches';
 import { Layout } from '../Layout';
 import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
 
@@ -31,7 +32,15 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'newsletter-data',
-			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
+			element: (
+				<WizardContainer
+					wizardId={
+						isFeatureSwitchEnabled('use-stand')
+							? 'NEWSLETTER_DATA_REDESIGN'
+							: 'NEWSLETTER_DATA'
+					}
+				/>
+			),
 		},
 		{
 			path: 'launch-newsletter/:listId',
