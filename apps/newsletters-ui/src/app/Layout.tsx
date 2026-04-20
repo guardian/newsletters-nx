@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
-import { isFeatureSwitchEnabled } from './featureSwitches';
 
 const frameCss = css`
 	display: flex;
@@ -29,12 +28,7 @@ export function Layout(props: IRootRoute) {
 	// process.env.STAGE value, but that seems unnecessary.
 	const host = typeof window !== 'undefined' ? window.location.host : undefined;
 	const isOnCode = !!host?.toLowerCase().split('.').includes('code');
-	const isOnLocal =
-		!!host?.toLowerCase().split(':').includes('localhost') ||
-		!!host?.toLowerCase().split('.').includes('local');
-
-	const isUsingStand =
-		isFeatureSwitchEnabled('switch-stand') && (isOnCode || isOnLocal);
+	const isOnLocal = !!host?.toLowerCase().split(':').includes('localhost');
 
 	const location = useLocation();
 
@@ -53,7 +47,6 @@ export function Layout(props: IRootRoute) {
 		<div css={frameCss}>
 			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
 			<Box sx={{ pt: 8 }} component={'main'}>
-				{isUsingStand && <>Stand Version</>}
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
