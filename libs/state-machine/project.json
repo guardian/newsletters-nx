@@ -6,14 +6,18 @@
 	"tags": [],
 	"targets": {
 		"build": {
-			"executor": "@nx/js:tsc",
-			"outputs": ["{options.outputPath}"],
+			"executor": "nx:run-commands",
+			"outputs": ["{workspaceRoot}/dist/libs/state-machine"],
+			"inputs": ["production", "^production"],
+			"cache": true,
+			"dependsOn": ["^build"],
 			"options": {
-				"outputPath": "dist/libs/state-machine",
-				"main": "libs/state-machine/src/index.ts",
-				"tsConfig": "libs/state-machine/tsconfig.lib.json",
-				"assets": ["libs/state-machine/*.md"],
-				"rootDir": "."
+				"commands": [
+					"npx tsc -p libs/state-machine/tsconfig.lib.json",
+					"cp libs/state-machine/*.md dist/libs/state-machine/ 2>/dev/null || true"
+				],
+				"parallel": false,
+				"cwd": "{workspaceRoot}"
 			}
 		},
 		"lint": {
