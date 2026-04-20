@@ -3,7 +3,6 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DefaultStyles } from './app/components/DefaultStyles';
-import { checkFeatureSwitchURLParams } from './app/featureSwitches';
 import { draftRoute } from './app/routes/drafts';
 import { homeRoute } from './app/routes/home';
 import { launchedRoute } from './app/routes/launched';
@@ -12,8 +11,6 @@ import { appTheme } from './app-theme';
 import { addGuardianFonts } from './fonts';
 
 addGuardianFonts(document);
-
-checkFeatureSwitchURLParams();
 
 const router = createBrowserRouter([
 	homeRoute,
