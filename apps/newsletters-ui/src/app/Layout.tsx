@@ -29,9 +29,12 @@ export function Layout(props: IRootRoute) {
 	// process.env.STAGE value, but that seems unnecessary.
 	const host = typeof window !== 'undefined' ? window.location.host : undefined;
 	const isOnCode = !!host?.toLowerCase().split('.').includes('code');
-	const isOnLocal = !!host?.toLowerCase().split(':').includes('localhost') || !!host?.toLowerCase().split('.').includes('local');
+	const isOnLocal =
+		!!host?.toLowerCase().split(':').includes('localhost') ||
+		!!host?.toLowerCase().split('.').includes('local');
 
-	const isUsingStand = isFeatureSwitchEnabled('use-stand') && (isOnCode || isOnLocal);
+	const isUsingStand =
+		isFeatureSwitchEnabled('switch-stand') && (isOnCode || isOnLocal);
 
 	const location = useLocation();
 

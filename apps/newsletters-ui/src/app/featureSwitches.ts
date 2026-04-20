@@ -1,11 +1,12 @@
 export const featureSwitches = {
-	'use-stand': false,
-} as const;
+	'switch-stand': false,
+} as const satisfies Record<`switch-${string}`, boolean>;
 
 export type FeatureSwitchName = keyof typeof featureSwitches;
 
 // Check for enabling/disabling features via URL and store it in local storage.
-// The flags will be of the form ?feature=true or ?feature=false
+// The URL param and local storage must have `switch` prefixed to avoid any clashes
+// The URL params will be of the form ?switch-{featureName}=true or ?switch-{featureName}=false
 export const checkFeatureSwitchURLParams = () => {
 	const searchParams = new URLSearchParams(window.location.search);
 
@@ -17,6 +18,7 @@ export const checkFeatureSwitchURLParams = () => {
 };
 
 export const isFeatureSwitchEnabled = (feature: FeatureSwitchName): boolean => {
-	const storedSwitchValue = typeof window !== 'undefined' ? window.localStorage.getItem(feature) : null;
+	const storedSwitchValue =
+		typeof window !== 'undefined' ? window.localStorage.getItem(feature) : null;
 	return storedSwitchValue === 'true';
-}
+};
