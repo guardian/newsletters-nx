@@ -3,10 +3,12 @@ import {
 	ZodArray,
 	ZodBoolean,
 	ZodDate,
+	ZodEmail,
 	ZodEnum,
 	ZodNumber,
 	ZodOptional,
 	ZodString,
+	ZodURL,
 } from 'zod';
 import type { FormDataRecord } from '../transformWizardData';
 import { recursiveUnwrap } from './recursiveUnwrap';
@@ -43,7 +45,11 @@ export const getEmptySchemaData = (
 			: zodMaybeOptional;
 		const mod: FormDataRecord = {};
 
-		if (zod instanceof ZodString) {
+		if (
+			zod instanceof ZodString ||
+			zod instanceof ZodURL ||
+			zod instanceof ZodEmail
+		) {
 			const initalString =
 				populateStringsWithMinLength && zod.minLength
 					? '*'.repeat(zod.minLength)
