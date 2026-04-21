@@ -26,7 +26,7 @@ You can edit the name of the newsletter.
 			executeStep: executeModify,
 		},
 	},
-	schema: formSchemas.startDraftNewsletter,
+	schema: formSchemas.nameAndFrequency,
 	role: 'EDIT_START',
 	getInitialFormData: getDraftFromStorage,
 	canSkipTo: true,

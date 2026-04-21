@@ -10,7 +10,7 @@ import { promotionContentLayout } from './promotionContentLayout';
 import { tagsLayout } from './tagsLayout';
 import { targetingLayout } from './targetingLayout';
 
-export const redesignLayout: WizardLayout<DraftService> = {
+export const standRedesignLayout: WizardLayout<DraftService> = {
 	cancel: cancelLayout,
 	nameAndFrequencyLayout: nameAndFrequencyLayout,
 	editDraftNewsletter: editDraftNewsletterLayout,

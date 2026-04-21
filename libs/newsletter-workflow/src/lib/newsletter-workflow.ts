@@ -9,12 +9,12 @@ import {
 } from '@newsletters-nx/state-machine';
 import { launchLayout } from './steps/launchNewsletter';
 import { newsletterDataLayout } from './steps/newsletterData';
-import { redesignLayout } from './steps/redesignNewsletter';
 import { renderingOptionsLayout } from './steps/renderingOptions';
+import { standRedesignLayout } from './steps/standRedesignNewsletterData';
 
 export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 	NEWSLETTER_DATA: newsletterDataLayout,
-	NEWSLETTER_DATA_REDESIGN: redesignLayout,
+	NEWSLETTER_DATA_STAND_REDESIGN: standRedesignLayout,
 	LAUNCH_NEWSLETTER: launchLayout,
 	RENDERING_OPTIONS: renderingOptionsLayout,
 };
