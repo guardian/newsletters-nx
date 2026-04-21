@@ -9,7 +9,6 @@ import {
 } from '@newsletters-nx/state-machine';
 import { launchLayout } from './steps/launchNewsletter';
 import { newsletterDataLayout } from './steps/newsletterData';
-import { redesignLayout } from './steps/redesignNewsletter';
 import { renderingOptionsLayout } from './steps/renderingOptions';
 import { standRedesignLayout } from './steps/standRedesignNewsletterData';
 
