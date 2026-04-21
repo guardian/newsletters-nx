@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
-import { isFeatureSwitchEnabled } from './featureSwitches';
 
 const frameCss = css`
 	display: flex;
@@ -32,9 +31,6 @@ export function Layout(props: IRootRoute) {
 	const isOnLocal =
 		!!host?.toLowerCase().split(':').includes('localhost') ||
 		!!host?.toLowerCase().split('.').includes('local');
-
-	// const isUsingStand =
-	// 	isFeatureSwitchEnabled('switch-stand') && (isOnCode || isOnLocal);
 
 	const location = useLocation();
 

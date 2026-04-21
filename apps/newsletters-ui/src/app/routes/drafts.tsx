@@ -1,4 +1,5 @@
 import type { RouteObject } from 'react-router-dom';
+import { StandRedesignWizardContainer } from '../components/StandRedesignWizard';
 import { DraftDetailView } from '../components/views/DraftDetailView';
 import { DraftListView } from '../components/views/DraftListView';
 import { WizardContainer } from '../components/WizardContainer';
@@ -32,14 +33,10 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'newsletter-data',
-			element: (
-				<WizardContainer
-					wizardId={
-						isFeatureSwitchEnabled('use-stand')
-							? 'NEWSLETTER_DATA_REDESIGN'
-							: 'NEWSLETTER_DATA'
-					}
-				/>
+			element: isFeatureSwitchEnabled('switch-stand') ? (
+				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
+			) : (
+				<WizardContainer wizardId="NEWSLETTER_DATA" />
 			),
 		},
 		{

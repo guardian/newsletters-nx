@@ -10,6 +10,9 @@ import { launchedRoute } from './app/routes/launched';
 import { layoutsRoute } from './app/routes/layouts';
 import { appTheme } from './app-theme';
 import { addGuardianFonts } from './fonts';
+import '@guardian/stand/util/reset.css';
+import '@guardian/stand/fonts/MaterialSymbolsOutlined.css';
+import '@guardian/stand/fonts/OpenSans.css';
 
 addGuardianFonts(document);
 

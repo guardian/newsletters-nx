@@ -35,7 +35,11 @@ const pickAndPrefixThrasherOption = (
 
 export const formSchemas = {
 	nameAndFrequency: dataCollectionSchema
-		.pick({ name: true, frequency: true, regionFocus: true })
+		.pick({
+			name: true,
+			frequency: true,
+			regionFocus: true,
+		})
 		.describe('New newsletter set up'),
 
 	identityName: dataCollectionSchema
