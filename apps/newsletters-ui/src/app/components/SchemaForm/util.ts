@@ -8,6 +8,7 @@ import {
 	ZodNumber,
 	ZodObject,
 	ZodString,
+	ZodURL,
 } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
@@ -97,7 +98,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 		case 'undefined':
 			return field.zod.isOptional();
 		case 'string':
-			return innerZod instanceof ZodString;
+			return innerZod instanceof ZodString || innerZod instanceof ZodURL;
 		case 'number':
 			return innerZod instanceof ZodNumber;
 		case 'boolean':
