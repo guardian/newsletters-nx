@@ -4,10 +4,12 @@ import {
 	ZodArray,
 	ZodBoolean,
 	ZodDate,
+	ZodEmail,
 	ZodEnum,
 	ZodNumber,
 	ZodObject,
 	ZodString,
+	ZodURL,
 } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import {
@@ -131,7 +133,11 @@ export function SchemaField<T extends z.ZodRawShape>({
 		);
 	}
 
-	if (innerZod instanceof ZodString) {
+	if (
+		innerZod instanceof ZodString ||
+		innerZod instanceof ZodEmail ||
+		innerZod instanceof ZodURL
+	) {
 		if (typeof value !== 'string' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
 		}
