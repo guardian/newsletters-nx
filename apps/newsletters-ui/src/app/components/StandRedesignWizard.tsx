@@ -16,9 +16,9 @@ import type {
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
-import { MarkdownView } from './MarkdownView';
 import type { StringInputSettings } from './SchemaForm';
 import { SkipConfirmationDialog } from './SkipConfirmationDialog';
+import { StandRedesignMarkdownView } from './StandRedesignMarkdownView';
 import { StandRedesignStateEditForm } from './StandRedesignStateEditForm';
 import { StepNav } from './StepNav';
 import { WizardActionButton } from './WizardActionButton';
@@ -249,7 +249,9 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				handleStepClick={handleStepClick}
 				formData={formData}
 			/>
-			<MarkdownView markdown={serverData.markdownToDisplay ?? ''} />
+			<StandRedesignMarkdownView
+				markdown={serverData.markdownToDisplay ?? ''}
+			/>
 
 			{formSchema && formData && (
 				<StandRedesignStateEditForm

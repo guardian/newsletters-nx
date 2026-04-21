@@ -4,6 +4,7 @@ import { cancelLayout } from './cancelLayout';
 import { dateLayout } from './dateLayout';
 import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
 import { finishLayout } from './finishLayout';
+import { createDraftIntro } from './introLayout';
 import { nameAndFrequencyLayout } from './nameAndFrequencyLayout';
 import { productionDetailsLayout } from './productionDetailsLayout';
 import { promotionContentLayout } from './promotionContentLayout';
@@ -12,6 +13,7 @@ import { targetingLayout } from './targetingLayout';
 
 export const standRedesignLayout: WizardLayout<DraftService> = {
 	cancel: cancelLayout,
+	intro: createDraftIntro,
 	nameAndFrequencyLayout: nameAndFrequencyLayout,
 	editDraftNewsletter: editDraftNewsletterLayout,
 	productionDetails: productionDetailsLayout,
