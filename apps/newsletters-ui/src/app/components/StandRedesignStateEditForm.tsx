@@ -44,6 +44,10 @@ export const StandRedesignStateEditForm = ({
 			changeValue={changeFormData}
 			maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 			stringConfig={stringConfig}
+			// ToDo: fix the types on the explanations prop so the keys are typed
+			explanations={{
+				regionFocus: 'Which region is this newsletter mainly designed for?',
+			}}
 		/>
 	);
 };
