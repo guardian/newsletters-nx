@@ -1,3 +1,5 @@
+import { css } from '@emotion/react';
+import { baseSpacing } from '@guardian/stand';
 import { Alert, Box, Container, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -20,8 +22,8 @@ import type { StringInputSettings } from './SchemaForm';
 import { SkipConfirmationDialog } from './SkipConfirmationDialog';
 import { StandRedesignMarkdownView } from './StandRedesignMarkdownView';
 import { StandRedesignStateEditForm } from './StandRedesignStateEditForm';
-import { StepNav } from './StepNav';
-import { WizardActionButton } from './WizardActionButton';
+import { StandRedesignStepNav } from './StandRedesignStepNav';
+import { StandRedesignWizardActionButton } from './StandRedesignWizardActionButton';
 import { ZodIssuesReport } from './ZodIssuesReport';
 
 export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
@@ -241,47 +243,57 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	};
 
 	return (
-		<Box sx={{ paddingY: 2 }}>
-			<StepNav
+		<div
+			css={css`
+				display: flex;
+				gap: 40px;
+			`}
+		>
+			<StandRedesignStepNav
 				currentStepId={serverData.currentStepId}
 				stepperConfig={stepperConfig}
 				onEditTrack={typeof id !== 'undefined'}
 				handleStepClick={handleStepClick}
 				formData={formData}
 			/>
-			<StandRedesignMarkdownView
-				markdown={serverData.markdownToDisplay ?? ''}
-			/>
-
-			{formSchema && formData && (
-				<StandRedesignStateEditForm
-					formSchema={formSchema}
-					formData={formData}
-					setFormData={handleFormChange}
-					maxOptionsForRadioButtons={5}
-					stringConfig={stringConfig}
+			<div
+				css={css`
+					margin-top: ${baseSpacing['48-rem']};
+				`}
+			>
+				<StandRedesignMarkdownView
+					markdown={serverData.markdownToDisplay ?? ''}
 				/>
-			)}
 
-			{serverData.errorMessage && (
-				<Box sx={{ paddingBottom: 2 }}>
-					<FailureAlert
-						errorMessage={serverData.errorMessage}
-						errorDetails={serverData.errorDetails}
-						isPersistent={serverData.hasPersistentError}
+				{formSchema && formData && (
+					<StandRedesignStateEditForm
+						formSchema={formSchema}
+						formData={formData}
+						setFormData={handleFormChange}
+						maxOptionsForRadioButtons={5}
+						stringConfig={stringConfig}
 					/>
-				</Box>
-			)}
-			<Stack spacing={2} direction="row">
-				{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
-					<WizardActionButton
-						key={key}
-						button={button}
-						onClick={handleButtonClick}
-					/>
-				))}
-			</Stack>
+				)}
 
+				{serverData.errorMessage && (
+					<Box sx={{ paddingBottom: 2 }}>
+						<FailureAlert
+							errorMessage={serverData.errorMessage}
+							errorDetails={serverData.errorDetails}
+							isPersistent={serverData.hasPersistentError}
+						/>
+					</Box>
+				)}
+				<Stack spacing={2} direction="row">
+					{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
+						<StandRedesignWizardActionButton
+							key={key}
+							button={button}
+							onClick={handleButtonClick}
+						/>
+					))}
+				</Stack>
+			</div>
 			<SkipConfirmationDialog
 				currentStepId={serverData.currentStepId}
 				targetStepId={showSkipModalFor}
@@ -289,6 +301,6 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				handleConfirmSkip={handleConfirmSkip}
 				stepperConfig={stepperConfig}
 			/>
-		</Box>
+		</div>
 	);
 };
