@@ -3,7 +3,6 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DefaultStyles } from './app/components/DefaultStyles';
-import { checkFeatureSwitchURLParams } from './app/featureSwitches';
 import { draftRoute } from './app/routes/drafts';
 import { homeRoute } from './app/routes/home';
 import { launchedRoute } from './app/routes/launched';
@@ -15,8 +14,6 @@ import '@guardian/stand/fonts/MaterialSymbolsOutlined.css';
 import '@guardian/stand/fonts/OpenSans.css';
 
 addGuardianFonts(document);
-
-checkFeatureSwitchURLParams();
 
 const router = createBrowserRouter([
 	homeRoute,

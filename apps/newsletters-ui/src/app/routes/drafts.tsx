@@ -4,9 +4,14 @@ import { DraftDetailView } from '../components/views/DraftDetailView';
 import { DraftListView } from '../components/views/DraftListView';
 import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
-import { isFeatureSwitchEnabled } from '../featureSwitches';
+import {
+	checkFeatureSwitchURLParams,
+	isFeatureSwitchEnabled,
+} from '../featureSwitches';
 import { Layout } from '../Layout';
 import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
+
+checkFeatureSwitchURLParams();
 
 export const draftRoute: RouteObject = {
 	path: '/drafts',
