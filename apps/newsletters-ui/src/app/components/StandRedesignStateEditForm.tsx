@@ -1,4 +1,3 @@
-import { Box, Paper, Typography } from '@mui/material';
 import type { z } from 'zod';
 import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
@@ -38,18 +37,13 @@ export const StandRedesignStateEditForm = ({
 	};
 
 	return (
-		<Box sx={{ padding: 1, marginBottom: 2.5 }} component={Paper} elevation={2}>
-			<Typography variant="overline" component={'legend'}>
-				{formSchema.description}
-			</Typography>
-			<StandRedesignSchemaForm
-				schema={formSchema}
-				data={formData}
-				validationWarnings={getValidationWarnings(formData, formSchema)}
-				changeValue={changeFormData}
-				maxOptionsForRadioButtons={maxOptionsForRadioButtons}
-				stringConfig={stringConfig}
-			/>
-		</Box>
+		<StandRedesignSchemaForm
+			schema={formSchema}
+			data={formData}
+			validationWarnings={getValidationWarnings(formData, formSchema)}
+			changeValue={changeFormData}
+			maxOptionsForRadioButtons={maxOptionsForRadioButtons}
+			stringConfig={stringConfig}
+		/>
 	);
 };
