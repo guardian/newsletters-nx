@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import {
 	z,
 	ZodArray,
@@ -35,6 +34,15 @@ import type {
 } from './util';
 import { fieldValueAsDisplayString } from './util';
 
+export type StandardFormProps = {
+	label: string;
+	inputHandler: (newValue: FieldValue) => void;
+	readOnly?: boolean;
+	optional?: boolean;
+	error?: string;
+	description?: string;
+};
+
 // T is the shape of the schema passed as a prop to the `SchemaForm`
 // It is not currently used, but a better implementation or future feature may need it.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- could use the schema on a better implementations
@@ -47,7 +55,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	stringInputSettings?: StringInputSettings;
 	validationWarning?: string;
 	maxOptionsForRadioButtons: number;
-	explanation?: ReactNode;
+	explanation?: string;
 }
 
 const WrongValueTypeMessage = (props: { field: FieldDef }) => (
@@ -89,10 +97,11 @@ export function SchemaField<T extends z.ZodRawShape>({
 	stringInputSettings = {},
 	validationWarning,
 	maxOptionsForRadioButtons,
-	explanation = null,
+	explanation,
 }: SchemaFieldProps<T>) {
 	const { key, value, zod, readOnly } = field;
-
+	console.log(key, zod);
+	console.log(explanation);
 	const inputHandler = (newValue: FieldValue) => {
 		if (readOnly) {
 			return;
@@ -103,12 +112,14 @@ export function SchemaField<T extends z.ZodRawShape>({
 		change(newValue, field);
 	};
 
-	const standardProps = {
+	// ToDo: add a type to this so it matches within each component
+	const standardProps: StandardFormProps = {
 		label: zod.description ?? key,
 		inputHandler,
 		readOnly,
 		optional: zod.isOptional(),
 		error: validationWarning,
+		description: explanation,
 	};
 
 	const innerZod = recursiveUnwrap(zod);
