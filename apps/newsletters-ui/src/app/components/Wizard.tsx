@@ -16,7 +16,11 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import { MarkdownView } from './MarkdownView';
-import type { StringInputSettings } from './SchemaForm';
+import type {
+	StringCustomFieldComponent,
+	StringInputSettings,
+} from './SchemaForm';
+import { FrequencySelectInput } from './SchemaForm/FrequencySelectInput';
 import { SkipConfirmationDialog } from './SkipConfirmationDialog';
 import { StateEditForm } from './StateEditForm';
 import { StepNav } from './StepNav';
@@ -63,6 +67,12 @@ const FailureAlert = (props: {
 			)}
 		</Alert>
 	);
+};
+
+const wizardCustomComponents: Partial<
+	Record<string, StringCustomFieldComponent>
+> = {
+	frequency: FrequencySelectInput,
 };
 
 /**
@@ -246,6 +256,7 @@ export const Wizard: React.FC<WizardProps> = ({
 					setFormData={handleFormChange}
 					maxOptionsForRadioButtons={5}
 					stringConfig={stringConfig}
+					customComponents={wizardCustomComponents}
 				/>
 			)}
 
