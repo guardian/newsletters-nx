@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { baseSpacing } from '@guardian/stand';
+import { baseSpacing, semanticColors } from '@guardian/stand';
 import { Alert, Box, Container, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -293,6 +293,17 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						/>
 					))}
 				</Stack>
+			</div>
+			<div
+				css={css`
+					margin-top: ${baseSpacing['40-rem']};
+					background-color: ${semanticColors.bg['raised-level-1']};
+					padding: ${baseSpacing['16-rem']};
+				`}
+			>
+				<StandRedesignMarkdownView
+					markdown={serverData.markdownToDisplayInSidebar ?? ''}
+				/>
 			</div>
 			<SkipConfirmationDialog
 				currentStepId={serverData.currentStepId}
