@@ -106,6 +106,11 @@ export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
 	dynamicMarkdown?: {
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;
 	};
+	staticSideMarkdown?: string;
+	dynamicSideMarkdown?: {
+		(requestData?: WizardFormData, responseData?: WizardFormData): string;
+	};
+
 	buttons: Record<string, WizardStepLayoutButton<T>>;
 	schema?: ZodObject<ZodRawShape>;
 	fieldDisplayOptions?: Record<
@@ -166,6 +171,10 @@ export const currentStepRouteRequestSchema = z.object({
 export interface CurrentStepRouteResponse {
 	/** Markdown content to display for the current step. */
 	markdownToDisplay?: string;
+	/** Markdown content to display for the current step in the right side panel
+	 * (redesign only)
+	 */
+	markdownToDisplayInSidebar?: string;
 	/** Unique identifier for the current step. */
 	currentStepId: string;
 	/** Buttons to display for the current step. */
