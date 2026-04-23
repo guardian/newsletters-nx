@@ -28,16 +28,20 @@ This is the case for most newsletters, but you may prefer to offer the newslette
 Alternatively, you might want the first send on web to preview it, but subsequent sends to be email-only.
 
 ### Frequency
-Specify how regularly the newsletter will be sent e.g.
-- Every day
-- Every weekday
+Select how often your newsletter will be sent. This will be displayed on the sign-up page, in-article sign-ups and the all newsletters page.
+
+If your schedule doesn’t fit the options below, choose **Custom frequency**.
+
+Options:
+- Daily
+- Weekdays
 - Weekly
+- Twice weekly
 - Fortnightly
 - Monthly
-- Weekly during election season
-- Weekly for eight weeks (in the case of an asynchronous newsletter)
+- Custom frequency
 
-The frequency you specify will be shown on thrashers, on the sign up page, and on the all newsletters page.
+**Custom frequency examples**: Weekly during election season; Weekly for eight weeks; Every two weeks on a specific day
 
 ![Frequency](https://i.guim.co.uk/img/uploads/2023/09/15/frequency.png?quality=85&dpr=2&width=300&s=e8c4bdd12b9c2f1f48d35a2d9b1ef1c7)
 
@@ -51,7 +55,7 @@ const staticMarkdown = markdownTemplate.replace(
 export const productionDetailsLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
 	label: 'Production Details',
-	dynamicMarkdown(requestData, responseData) {
+	dynamicMarkdown(_, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
 		}
