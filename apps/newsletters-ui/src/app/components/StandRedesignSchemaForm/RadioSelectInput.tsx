@@ -20,13 +20,12 @@ export const StandRadioSelectInput: FunctionComponent<
 		label = 'value',
 		description,
 	} = props;
-	const valueAsString = value ?? EMPTY_STRING;
 
 	return (
 		<RadioGroup
 			label={label}
 			onChange={inputHandler}
-			value={valueAsString}
+			value={value}
 			description={description ?? ''}
 		>
 			{/* Haven't seen this used but have preserved this way of doing it */}
