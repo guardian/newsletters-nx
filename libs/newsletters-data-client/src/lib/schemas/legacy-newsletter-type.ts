@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z, ZodOptional } from 'zod';
 import { nonEmptyString } from '../zod-helpers/schema-helpers';
 import { emailEmbedSchema } from './email-embed-data-type';
 import { themeEnumSchema } from './theme-enum-data-type';
@@ -129,5 +129,5 @@ export function isLegacyCancelledNewsletter(
 export function isPropertyOptionalOnLegacy(
 	property: keyof LegacyNewsletter,
 ): boolean {
-	return legacyNewsletterSchema.shape[property].isOptional();
+	return legacyNewsletterSchema.shape[property] instanceof ZodOptional;
 }

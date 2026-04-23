@@ -6,6 +6,7 @@ import type {
 	FieldDef,
 	FieldValue,
 	NumberInputSettings,
+	StringCustomFieldComponent,
 	StringInputSettings,
 } from './util';
 
@@ -24,6 +25,7 @@ interface Props<T extends z.ZodRawShape> {
 	validationWarnings: Partial<Record<keyof T, string>>;
 	maxOptionsForRadioButtons?: number;
 	explanations?: Partial<Record<keyof T, ReactNode>>;
+	customComponents?: Partial<Record<keyof T, StringCustomFieldComponent>>;
 }
 
 /**
@@ -43,12 +45,11 @@ export function SchemaForm<T extends z.ZodRawShape>({
 	validationWarnings,
 	maxOptionsForRadioButtons = 0,
 	explanations = {},
+	customComponents = {},
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
-		const zod: ZodType | undefined = schema.shape[key] as
-			| ZodType
-			| undefined;
+		const zod: ZodType | undefined = schema.shape[key] as ZodType | undefined;
 		if (!zod) {
 			continue;
 		}
@@ -79,6 +80,7 @@ export function SchemaForm<T extends z.ZodRawShape>({
 					validationWarning={validationWarnings[field.key]}
 					maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 					explanation={explanations[field.key]}
+					customComponent={customComponents[field.key as keyof T]}
 				/>
 			))}
 		</article>

@@ -2,7 +2,12 @@ import { Box, Button, Paper, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import type { z } from 'zod';
-import type { FieldDef, FieldValue, StringInputSettings } from './SchemaForm';
+import type {
+	FieldDef,
+	FieldValue,
+	StringCustomFieldComponent,
+	StringInputSettings,
+} from './SchemaForm';
 import { getModification, SchemaForm } from './SchemaForm';
 
 type SchemaObjectType<T extends z.ZodRawShape> = z.infer<z.ZodObject<T>>;
@@ -18,6 +23,7 @@ interface Props<T extends z.ZodRawShape> {
 	maxOptionsForRadioButtons?: number;
 	stringConfig?: Partial<Record<keyof T, StringInputSettings>>;
 	explanations?: Partial<Record<keyof T, ReactNode>>;
+	customComponents?: Partial<Record<keyof T, StringCustomFieldComponent>>;
 }
 
 /**
@@ -38,6 +44,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 	maxOptionsForRadioButtons,
 	stringConfig = {},
 	explanations = {},
+	customComponents = {},
 }: Props<T>) {
 	const [parseInitialDataResult, setParseInitialDataResult] = useState<
 		ReturnType<z.ZodObject<T>['safeParse']> | undefined
@@ -139,6 +146,7 @@ export function SimpleForm<T extends z.ZodRawShape>({
 				maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 				stringConfig={stringConfig}
 				explanations={explanations}
+				customComponents={customComponents}
 			/>
 			<Box sx={{ marginBottom: 2 }}>
 				<Button
