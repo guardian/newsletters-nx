@@ -100,8 +100,6 @@ export function SchemaField<T extends z.ZodRawShape>({
 	explanation,
 }: SchemaFieldProps<T>) {
 	const { key, value, zod, readOnly } = field;
-	console.log(key, zod);
-	console.log(explanation);
 	const inputHandler = (newValue: FieldValue) => {
 		if (readOnly) {
 			return;
@@ -112,7 +110,6 @@ export function SchemaField<T extends z.ZodRawShape>({
 		change(newValue, field);
 	};
 
-	// ToDo: add a type to this so it matches within each component
 	const standardProps: StandardFormProps = {
 		label: zod.description ?? key,
 		inputHandler,
@@ -158,26 +155,16 @@ export function SchemaField<T extends z.ZodRawShape>({
 				);
 			}
 			return (
-				<>
-					{explanation}
-					<StandSelectInput
-						{...standardProps}
-						value={value}
-						options={options}
-					/>
-				</>
+				<StandSelectInput {...standardProps} value={value} options={options} />
 			);
 		}
 
 		return (
-			<>
-				{explanation}
-				<StandStringInput
-					{...standardProps}
-					value={value ?? ''}
-					inputType={stringInputSettings.inputType}
-				/>
-			</>
+			<StandStringInput
+				{...standardProps}
+				value={value ?? ''}
+				inputType={stringInputSettings.inputType}
+			/>
 		);
 	}
 
@@ -185,12 +172,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (typeof value !== 'boolean' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
 		}
-		return (
-			<>
-				{explanation}
-				<StandBooleanInput {...standardProps} value={value ?? false} />
-			</>
-		);
+		return <StandBooleanInput {...standardProps} value={value ?? false} />;
 	}
 
 	if (innerZod instanceof ZodNumber) {
@@ -200,26 +182,20 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 		if (zod.isOptional()) {
 			return (
-				<>
-					{explanation}
-					<StandOptionalNumberInput
-						{...standardProps}
-						{...numberInputSettings}
-						value={value}
-					/>
-				</>
+				<StandOptionalNumberInput
+					{...standardProps}
+					{...numberInputSettings}
+					value={value}
+				/>
 			);
 		}
 
 		return (
-			<>
-				{explanation}
-				<StandNumberInput
-					{...standardProps}
-					{...numberInputSettings}
-					value={value ?? 0}
-				/>
-			</>
+			<StandNumberInput
+				{...standardProps}
+				{...numberInputSettings}
+				value={value ?? 0}
+			/>
 		);
 	}
 

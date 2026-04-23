@@ -1,12 +1,14 @@
 import { Checkbox } from '@guardian/stand/checkbox';
 import type { FunctionComponent } from 'react';
+import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 
 export const StandBooleanInput: FunctionComponent<
-	FieldProps & {
-		value: boolean;
-		inputHandler: { (value: boolean): void };
-	}
+	FieldProps &
+		StandardFormProps & {
+			value: boolean;
+			inputHandler: { (value: boolean): void };
+		}
 > = (props) => {
 	const { label, value, inputHandler, optional, readOnly } = props;
 

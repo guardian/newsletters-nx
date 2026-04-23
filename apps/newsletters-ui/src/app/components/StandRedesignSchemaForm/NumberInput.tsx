@@ -1,15 +1,17 @@
 import { TextInput } from '@guardian/stand/text-input';
 import type { FormEventHandler, FunctionComponent } from 'react';
+import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
 export const StandNumberInput: FunctionComponent<
-	FieldProps & {
-		value: number;
-		inputHandler: { (value: number): void };
-		max?: number;
-		min?: number;
-	}
+	FieldProps &
+		StandardFormProps & {
+			value: number;
+			inputHandler: { (value: number): void };
+			max?: number;
+			min?: number;
+		}
 > = (props) => {
 	const { max, min } = props;
 
@@ -27,6 +29,7 @@ export const StandNumberInput: FunctionComponent<
 	return (
 		<TextInput
 			label={props.label}
+			description={props.description}
 			type="number"
 			value={props.value.toString()}
 			onInput={sendValue}
