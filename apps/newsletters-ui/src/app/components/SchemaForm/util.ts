@@ -4,10 +4,12 @@ import {
 	ZodArray,
 	ZodBoolean,
 	ZodDate,
+	ZodEmail,
 	ZodEnum,
 	ZodNumber,
 	ZodObject,
 	ZodString,
+	ZodURL,
 } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
@@ -75,7 +77,12 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 		return value instanceof Date;
 	}
 
-	if (innerZod instanceof ZodArray && innerZod.element instanceof ZodString) {
+	if (
+		innerZod instanceof ZodArray &&
+		(innerZod.element instanceof ZodString ||
+			innerZod.element instanceof ZodURL ||
+			innerZod.element instanceof ZodEmail)
+	) {
 		return isStringArray(value);
 	}
 
@@ -97,7 +104,11 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 		case 'undefined':
 			return field.zod.isOptional();
 		case 'string':
-			return innerZod instanceof ZodString;
+			return (
+				innerZod instanceof ZodString ||
+				innerZod instanceof ZodURL ||
+				innerZod instanceof ZodEmail
+			);
 		case 'number':
 			return innerZod instanceof ZodNumber;
 		case 'boolean':
