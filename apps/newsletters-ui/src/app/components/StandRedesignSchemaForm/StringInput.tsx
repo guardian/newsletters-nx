@@ -1,6 +1,7 @@
 import { TextArea } from '@guardian/stand/text-area';
 import { TextInput } from '@guardian/stand/text-input';
 import type { FormEventHandler } from 'react';
+import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 import { eventToString } from './util';
 
@@ -13,11 +14,12 @@ import { eventToString } from './util';
 
 const tabAndCrPattern = /["\n"|"\t"]/g;
 
-type Props = FieldProps & {
-	value: string;
-	inputHandler: { (value: string): void };
-	inputType?: 'textInput' | 'textArea';
-};
+type Props = FieldProps &
+	StandardFormProps & {
+		value: string;
+		inputHandler: { (value: string): void };
+		inputType?: 'textInput' | 'textArea';
+	};
 
 export const StandStringInput = (props: Props) => {
 	const { inputType = 'textInput' } = props;
@@ -32,6 +34,7 @@ export const StandStringInput = (props: Props) => {
 		return (
 			<TextInput
 				label={props.label}
+				description={props.description}
 				onInput={sendValue}
 				value={props.value}
 				isInvalid={!!props.error}

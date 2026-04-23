@@ -2,18 +2,20 @@ import { Checkbox } from '@guardian/stand/checkbox';
 import { TextInput } from '@guardian/stand/text-input';
 import type { FormEventHandler, FunctionComponent } from 'react';
 import { useState } from 'react';
+import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
 
 export const StandOptionalNumberInput: FunctionComponent<
-	FieldProps & {
-		value: number | undefined;
-		inputHandler: { (value: number | undefined): void };
-		max?: number;
-		min?: number;
-	}
+	FieldProps &
+		StandardFormProps & {
+			value: number | undefined;
+			inputHandler: { (value: number | undefined): void };
+			max?: number;
+			min?: number;
+		}
 > = (props) => {
-	const { value, label, min, max } = props;
+	const { value, label, description, min, max } = props;
 	const [storedNumber, setStoredNumber] = useState(value ?? 0);
 
 	const sendNumberValue: FormEventHandler<HTMLInputElement> = (event) => {
@@ -40,6 +42,7 @@ export const StandOptionalNumberInput: FunctionComponent<
 		<>
 			<TextInput
 				label={label}
+				description={description}
 				type={'number'}
 				value={props.value?.toString() ?? storedNumber.toString()}
 				onInput={sendNumberValue}
@@ -52,7 +55,7 @@ export const StandOptionalNumberInput: FunctionComponent<
 				isSelected={typeof props.value === 'undefined'}
 				onChange={toggleUndefined}
 			>
-				{`${label ?? ''} undefined`}
+				{label}
 			</Checkbox>
 		</>
 	);
