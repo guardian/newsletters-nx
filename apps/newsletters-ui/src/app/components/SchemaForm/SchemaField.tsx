@@ -8,6 +8,7 @@ import {
 	ZodEnum,
 	ZodNumber,
 	ZodObject,
+	ZodOptional,
 	ZodString,
 	ZodURL,
 } from 'zod';
@@ -102,7 +103,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (readOnly) {
 			return;
 		}
-		if (zod.isOptional() && newValue === '') {
+		if (zod instanceof ZodOptional && newValue === '') {
 			return change(undefined, field);
 		}
 		change(newValue, field);
@@ -112,7 +113,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		label: zod.description ?? key,
 		inputHandler,
 		readOnly,
-		optional: zod.isOptional(),
+		optional: zod instanceof ZodOptional,
 		error: validationWarning,
 	};
 
@@ -200,7 +201,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongValueTypeMessage field={field} />;
 		}
 
-		if (zod.isOptional()) {
+		if (zod instanceof ZodOptional) {
 			return (
 				<FieldWrapper explanation={explanation}>
 					<OptionalNumberInput
