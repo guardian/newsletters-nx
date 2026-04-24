@@ -34,9 +34,6 @@ export function Layout(props: IRootRoute) {
 		!!host?.toLowerCase().split(':').includes('localhost') ||
 		!!host?.toLowerCase().split('.').includes('local');
 
-	const isUsingStand =
-		isFeatureSwitchEnabled('switch-stand') && (isOnCode || isOnLocal);
-
 	const location = useLocation();
 	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
 
