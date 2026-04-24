@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
+import { StandMainNav } from './components/StandMainNav';
+import { isFeatureSwitchEnabled } from './featureSwitches';
 
 const frameCss = css`
 	display: flex;
@@ -33,6 +35,7 @@ export function Layout(props: IRootRoute) {
 		!!host?.toLowerCase().split('.').includes('local');
 
 	const location = useLocation();
+	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
 
 	useEffect(() => {
 		let hostname = 'user-telemetry.gutools.co.uk';
@@ -47,7 +50,11 @@ export function Layout(props: IRootRoute) {
 
 	return (
 		<div css={frameCss}>
-			<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+			{isUsingStand ? (
+				<StandMainNav />
+			) : (
+				<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+			)}
 			<Box sx={{ pt: 8 }} component={'main'}>
 				{props.outlet ?? <Outlet />}
 			</Box>
