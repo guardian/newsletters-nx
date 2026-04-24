@@ -45,22 +45,6 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 
 	const [initialState, setInitialState] =
 		useState<NewsletterData>(originalItem);
-	const emailRenderingManagedNewsletters = [
-		'afternoon-update',
-		'cotton-capital',
-		'the-guide-staying-in',
-		'fashion-statement',
-		'five-great-reads',
-		'morning-mail',
-		'soccer-with-jonathan-wilson',
-		'pushing-buttons',
-		'morning-briefing',
-		'green-light',
-		'afternoon-update',
-	];
-	const { identityName } = originalItem;
-	const hasEmailRenderingTemplate =
-		emailRenderingManagedNewsletters.includes(identityName);
 	const [subset, setSubset] = useState<FormDataRecord>({
 		category: initialState.category,
 		seriesTag: initialState.seriesTag,
@@ -218,13 +202,6 @@ export const RenderingOptionsForm = ({ originalItem }: Props) => {
 					</Button>
 				</DialogActions>
 			</Dialog>
-			{hasEmailRenderingTemplate && (
-				<Alert severity="error">
-					This newsletter’s rendering options are managed by email rendering. To
-					make changes to <strong>{initialState.name}</strong>, please contact
-					the development team
-				</Alert>
-			)}
 			<Typography variant="h2">{initialState.name}</Typography>
 			<Typography variant="subtitle1">email-rendering settings</Typography>
 			<Alert severity={initialState.seriesTag ? 'info' : 'warning'}>
