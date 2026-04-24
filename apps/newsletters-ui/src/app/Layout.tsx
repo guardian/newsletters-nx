@@ -2,7 +2,8 @@ import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Outlet } from 'react-router-dom';
-import { MainNav, StandMainNav } from './components/MainNav';
+import { MainNav } from './components/MainNav';
+import { StandMainNav } from './components/StandMainNav';
 import { isFeatureSwitchEnabled } from './featureSwitches';
 
 const frameCss = css`
@@ -34,6 +35,7 @@ export function Layout(props: IRootRoute) {
 		!!host?.toLowerCase().split('.').includes('local');
 
 	const location = useLocation();
+	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
 
 	useEffect(() => {
 		let hostname = 'user-telemetry.gutools.co.uk';

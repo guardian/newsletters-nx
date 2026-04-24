@@ -1,10 +1,3 @@
-import { Avatar as StandAvatar } from '@guardian/stand/avatar';
-import {
-	TopBar,
-	TopBarContainerLeft,
-	TopBarNavigation,
-	TopBarToolName,
-} from '@guardian/stand/TopBar';
 import CodeIcon from '@mui/icons-material/Code';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
@@ -48,7 +41,9 @@ const navLinks: NavLink[] = [
 ];
 
 const menuItemIsSelected = (path: string, pathname: string): boolean => {
-	if (!pathname.startsWith(path)) return false;
+	if (!pathname.startsWith(path)) {
+		return false;
+	}
 	return !navLinks.some(
 		(link) =>
 			link.path !== path &&
@@ -193,33 +188,5 @@ export function MainNav({ isOnCode }: Props) {
 				</Toolbar>
 			</Container>
 		</AppBar>
-	);
-}
-
-export function StandMainNav() {
-	const userProfile = useProfile();
-	const userName = userProfile?.name ?? 'Logged in user';
-	const { pathname } = useLocation();
-
-	return (
-		<TopBar>
-			<TopBarToolName name="Newsletters" favicon={{ letter: 'N' }} />
-			<TopBarContainerLeft>
-				{navLinks.map(({ path, label }) => (
-					<TopBarNavigation
-						text={label}
-						href={path}
-						isSelected={menuItemIsSelected(path, pathname)}
-						key={label}
-					/>
-				))}
-			</TopBarContainerLeft>
-			<StandAvatar
-				src={userProfile?.picture ?? ''}
-				alt={userName}
-				initials={userName.charAt(0)}
-				size="sm"
-			/>
-		</TopBar>
 	);
 }
