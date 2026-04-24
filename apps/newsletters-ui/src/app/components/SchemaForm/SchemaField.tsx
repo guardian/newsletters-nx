@@ -8,6 +8,7 @@ import {
 	ZodEnum,
 	ZodNumber,
 	ZodObject,
+	ZodOptional,
 	ZodString,
 	ZodURL,
 } from 'zod';
@@ -33,6 +34,7 @@ import type {
 	FieldDef,
 	FieldValue,
 	NumberInputSettings,
+	StringCustomFieldComponent,
 	StringInputSettings,
 } from './util';
 import { fieldValueAsDisplayString } from './util';
@@ -50,6 +52,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	validationWarning?: string;
 	maxOptionsForRadioButtons: number;
 	explanation?: ReactNode;
+	customComponent?: StringCustomFieldComponent;
 }
 
 const WrongValueTypeMessage = (props: { field: FieldDef }) => (
@@ -92,6 +95,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	validationWarning,
 	maxOptionsForRadioButtons,
 	explanation = null,
+	customComponent,
 }: SchemaFieldProps<T>) {
 	const { key, value, zod, readOnly } = field;
 
@@ -99,7 +103,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (readOnly) {
 			return;
 		}
-		if (zod.isOptional() && newValue === '') {
+		if (zod instanceof ZodOptional && newValue === '') {
 			return change(undefined, field);
 		}
 		change(newValue, field);
@@ -109,7 +113,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		label: zod.description ?? key,
 		inputHandler,
 		readOnly,
-		optional: zod.isOptional(),
+		optional: zod instanceof ZodOptional,
 		error: validationWarning,
 	};
 
@@ -140,6 +144,15 @@ export function SchemaField<T extends z.ZodRawShape>({
 	) {
 		if (typeof value !== 'string' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
+		}
+
+		if (customComponent) {
+			const CustomComponent = customComponent;
+			return (
+				<FieldWrapper explanation={explanation}>
+					<CustomComponent {...standardProps} value={value} />
+				</FieldWrapper>
+			);
 		}
 
 		if (options) {
@@ -188,7 +201,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongValueTypeMessage field={field} />;
 		}
 
-		if (zod.isOptional()) {
+		if (zod instanceof ZodOptional) {
 			return (
 				<FieldWrapper explanation={explanation}>
 					<OptionalNumberInput
