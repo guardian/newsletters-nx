@@ -27,7 +27,7 @@ There is a guide to help you set up the newsletter for some of the filed. If you
 	buttons: {
 		next: {
 			buttonType: 'NEXT',
-			label: 'Start',
+			label: 'Continue',
 			stepToMoveTo: getNextStepId,
 		},
 	},

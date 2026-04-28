@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import {
 	z,
 	ZodArray,
@@ -35,6 +34,15 @@ import type {
 } from './util';
 import { fieldValueAsDisplayString } from './util';
 
+export type StandardFormProps = {
+	label: string;
+	inputHandler: (newValue: FieldValue) => void;
+	readOnly?: boolean;
+	optional?: boolean;
+	error?: string;
+	description?: string;
+};
+
 // T is the shape of the schema passed as a prop to the `SchemaForm`
 // It is not currently used, but a better implementation or future feature may need it.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- could use the schema on a better implementations
@@ -47,7 +55,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	stringInputSettings?: StringInputSettings;
 	validationWarning?: string;
 	maxOptionsForRadioButtons: number;
-	explanation?: ReactNode;
+	explanation?: string;
 }
 
 const WrongValueTypeMessage = (props: { field: FieldDef }) => (
@@ -89,10 +97,9 @@ export function SchemaField<T extends z.ZodRawShape>({
 	stringInputSettings = {},
 	validationWarning,
 	maxOptionsForRadioButtons,
-	explanation = null,
+	explanation,
 }: SchemaFieldProps<T>) {
 	const { key, value, zod, readOnly } = field;
-
 	const inputHandler = (newValue: FieldValue) => {
 		if (readOnly) {
 			return;
@@ -103,12 +110,13 @@ export function SchemaField<T extends z.ZodRawShape>({
 		change(newValue, field);
 	};
 
-	const standardProps = {
+	const standardProps: StandardFormProps = {
 		label: zod.description ?? key,
 		inputHandler,
 		readOnly,
 		optional: zod.isOptional(),
 		error: validationWarning,
+		description: explanation,
 	};
 
 	const innerZod = recursiveUnwrap(zod);
@@ -147,26 +155,16 @@ export function SchemaField<T extends z.ZodRawShape>({
 				);
 			}
 			return (
-				<>
-					{explanation}
-					<StandSelectInput
-						{...standardProps}
-						value={value}
-						options={options}
-					/>
-				</>
+				<StandSelectInput {...standardProps} value={value} options={options} />
 			);
 		}
 
 		return (
-			<>
-				{explanation}
-				<StandStringInput
-					{...standardProps}
-					value={value ?? ''}
-					inputType={stringInputSettings.inputType}
-				/>
-			</>
+			<StandStringInput
+				{...standardProps}
+				value={value ?? ''}
+				inputType={stringInputSettings.inputType}
+			/>
 		);
 	}
 
@@ -174,12 +172,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (typeof value !== 'boolean' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
 		}
-		return (
-			<>
-				{explanation}
-				<StandBooleanInput {...standardProps} value={value ?? false} />
-			</>
-		);
+		return <StandBooleanInput {...standardProps} value={value ?? false} />;
 	}
 
 	if (innerZod instanceof ZodNumber) {
@@ -189,26 +182,20 @@ export function SchemaField<T extends z.ZodRawShape>({
 
 		if (zod.isOptional()) {
 			return (
-				<>
-					{explanation}
-					<StandOptionalNumberInput
-						{...standardProps}
-						{...numberInputSettings}
-						value={value}
-					/>
-				</>
+				<StandOptionalNumberInput
+					{...standardProps}
+					{...numberInputSettings}
+					value={value}
+				/>
 			);
 		}
 
 		return (
-			<>
-				{explanation}
-				<StandNumberInput
-					{...standardProps}
-					{...numberInputSettings}
-					value={value ?? 0}
-				/>
-			</>
+			<StandNumberInput
+				{...standardProps}
+				{...numberInputSettings}
+				value={value ?? 0}
+			/>
 		);
 	}
 

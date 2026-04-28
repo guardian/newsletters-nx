@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { css } from '@emotion/react';
+import { baseSpacing } from '@guardian/stand';
 import type { z, ZodType } from 'zod';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
@@ -23,7 +24,7 @@ interface Props<T extends z.ZodRawShape> {
 	readOnlyKeys?: string[];
 	validationWarnings: Partial<Record<keyof T, string>>;
 	maxOptionsForRadioButtons?: number;
-	explanations?: Partial<Record<keyof T, ReactNode>>;
+	explanations?: Partial<Record<keyof T, string>>;
 }
 
 /**
@@ -64,7 +65,14 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 	}
 
 	return (
-		<article>
+		<div
+			css={css`
+				display: flex;
+				flex-direction: column;
+				gap: ${baseSpacing['32-rem']};
+				margin-bottom: ${baseSpacing['40-rem']};
+			`}
+		>
 			{fields.map((field) => (
 				<SchemaField
 					key={field.key}
@@ -79,6 +87,6 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 					explanation={explanations[field.key]}
 				/>
 			))}
-		</article>
+		</div>
 	);
 }
