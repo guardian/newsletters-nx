@@ -27,6 +27,5 @@ The first step is to enter the name of your newsletter. For example,  **Down to 
 	schema: formSchemas.nameAndFrequency,
 	canSkipTo: true,
 	skippingWillPersistLocalChanges: true,
-	role: 'CREATE_START',
 	executeSkip: executeCreate,
 };
