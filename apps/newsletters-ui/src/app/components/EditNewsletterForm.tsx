@@ -5,6 +5,7 @@ import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
+import { FrequencySelectInput } from './SchemaForm/FrequencySelectInput';
 import { SimpleForm } from './SimpleForm';
 
 interface Props {
@@ -64,6 +65,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 				initialData={item}
 				submit={requestUpdate}
 				schema={userSchema}
+				customComponents={{ frequency: FrequencySelectInput }}
 				submitButtonText="Update Newsletter"
 				isDisabled={waitingForResponse}
 				maxOptionsForRadioButtons={5}

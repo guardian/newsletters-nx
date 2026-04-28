@@ -1,13 +1,16 @@
-import type { FormEvent } from 'react';
-import type { ZodTypeAny } from 'zod';
+import type { FormEvent, FunctionComponent } from 'react';
+import type { ZodType } from 'zod';
 import {
 	ZodArray,
 	ZodBoolean,
 	ZodDate,
+	ZodEmail,
 	ZodEnum,
 	ZodNumber,
 	ZodObject,
+	ZodOptional,
 	ZodString,
+	ZodURL,
 } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
@@ -18,7 +21,7 @@ import {
 } from '../../util';
 
 export interface FieldDef {
-	zod: ZodTypeAny;
+	zod: ZodType;
 	key: string;
 	value: unknown;
 	readOnly?: boolean;
@@ -43,6 +46,13 @@ export type StringInputSettings = {
 	inputType?: 'textInput' | 'textArea';
 };
 
+export type StringCustomFieldComponent = FunctionComponent<
+	FieldProps & {
+		value?: string;
+		inputHandler: (value?: string) => void;
+	}
+>;
+
 export function eventToNumber(event: FormEvent, defaultValue = 0): number {
 	const numericalValue = Number((event.target as HTMLInputElement).value);
 	return isNaN(numericalValue) ? defaultValue : numericalValue;
@@ -60,7 +70,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	const innerZod = recursiveUnwrap(field.zod);
 
 	if (innerZod instanceof ZodEnum) {
-		if (field.zod.isOptional() && typeof value === 'undefined') {
+		if (field.zod instanceof ZodOptional && typeof value === 'undefined') {
 			return true;
 		}
 
@@ -75,7 +85,12 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 		return value instanceof Date;
 	}
 
-	if (innerZod instanceof ZodArray && innerZod.element instanceof ZodString) {
+	if (
+		innerZod instanceof ZodArray &&
+		(innerZod.element instanceof ZodString ||
+			innerZod.element instanceof ZodURL ||
+			innerZod.element instanceof ZodEmail)
+	) {
 		return isStringArray(value);
 	}
 
@@ -85,7 +100,7 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	}
 
 	if (innerZod instanceof ZodObject) {
-		if (field.zod.isOptional() && typeof value === 'undefined') {
+		if (field.zod instanceof ZodOptional && typeof value === 'undefined') {
 			return true;
 		}
 		// TODO - use field.recordSchema to validate item?
@@ -95,9 +110,13 @@ function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 
 	switch (typeof value) {
 		case 'undefined':
-			return field.zod.isOptional();
+			return field.zod instanceof ZodOptional;
 		case 'string':
-			return innerZod instanceof ZodString;
+			return (
+				innerZod instanceof ZodString ||
+				innerZod instanceof ZodURL ||
+				innerZod instanceof ZodEmail
+			);
 		case 'number':
 			return innerZod instanceof ZodNumber;
 		case 'boolean':
