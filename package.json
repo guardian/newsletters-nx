@@ -38,7 +38,7 @@
 		"@emotion/styled": "^11.14.1",
 		"@guardian/image": "^1.1.0",
 		"@guardian/source": "^12.2.1",
-		"@guardian/stand": "^0.0.27",
+		"@guardian/stand": "0.0.31",
 		"@mui/icons-material": "^9.0.0",
 		"@mui/material": "^9.0.0",
 		"@mui/x-date-pickers": "^9.0.0",
