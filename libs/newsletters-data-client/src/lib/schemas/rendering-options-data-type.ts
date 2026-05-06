@@ -40,10 +40,10 @@ export const renderingOptionsSchema = z.object({
 		.boolean()
 		.optional()
 		.describe('Display Newsletter name above headline?'),
-	unorderedListStyle: z
+	bulletListStyle: z
 		.enum(['bulleted', 'lined'])
 		.optional()
-		.describe('Unordered list style'),
+		.describe('Display unordered list as bullets or lines'),
 
 	paletteOverride: themeEnumSchema.optional().describe('Palette override'),
 	linkListSubheading: z
