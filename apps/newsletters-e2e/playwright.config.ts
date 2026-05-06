@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const isCI = !!process.env.CI;
-const baseURL = process.env.BASE_URL || 'http://localhost:4200';
+const baseURL = process.env.BASE_URL ?? 'http://localhost:4200';
 
 export default defineConfig({
 	testDir: './src',
@@ -58,5 +58,9 @@ export default defineConfig({
 				url: baseURL,
 				reuseExistingServer: true,
 				timeout: 180000,
+				env: {
+					USE_DEVELOPER_PROFILE: 'true',
+					USE_IN_MEMORY_STORAGE: 'true',
+				},
 			},
 });

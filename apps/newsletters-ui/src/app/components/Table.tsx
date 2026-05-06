@@ -69,11 +69,7 @@ export const Table = <TData extends object>({
 				<Grid size={12}>
 					<div>Hide/Show Columns</div>
 				</Grid>
-				<Grid
-					sx={{ display: 'flex', flexWrap: 'wrap' }}
-					size={12}
-					data-testid="column-filters-container"
-				>
+				<Grid sx={{ display: 'flex', flexWrap: 'wrap' }} size={12}>
 					{allColumns.map((column) => (
 						<ColumnVisibility column={column} key={`visibility ${column.id}`} />
 					))}
@@ -115,7 +111,7 @@ export const Table = <TData extends object>({
 						</tr>
 					))}
 				</thead>
-				<tbody {...getTableBodyProps()}>
+				<tbody {...getTableBodyProps()} data-testid="launched-newsletters-table">
 					{rows.map((row) => {
 						prepareRow(row);
 						return (

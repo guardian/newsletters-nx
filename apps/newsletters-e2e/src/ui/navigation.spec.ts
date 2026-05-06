@@ -17,26 +17,65 @@ test.describe('UI Tests', () => {
 
 			await expect(launchedButton).toBeVisible();
 			await launchedButton.click();
+
+			await expect(page).toHaveURL('/launched');
+		});
+
+		test('should load home page and click Drafts button', async ({ page }) => {
+			await page.goto('/');
 			await page.waitForLoadState('networkidle');
 
-			// run some general assertions on the launched newsletters page
+			await expect(page).toHaveTitle(/Newsletter/i);
 
-			// check the page title
-			const pageTitle = page.getByText('View launched newsletters');
-			await expect(pageTitle).toBeVisible();
+			const draftsButton = page.getByRole('button', {
+				name: 'Drafts',
+				exact: true,
+			});
 
-			/*
-			// check the column filters
-			const columnFilterContainer = page.getByTestId(
-				'column-filters-container',
-			);
+			await expect(draftsButton).toBeVisible();
+			await draftsButton.click();
 
-			const filterCheckboxes = await columnFilterContainer
-				.getByRole('checkbox')
-				.all();
+			await expect(page).toHaveURL('/drafts');
+		});
 
-			console.log('column filter length = ', filterCheckboxes.length);
-			*/
+		test('should load home page and click Email Templates button', async ({
+			page,
+		}) => {
+			await page.goto('/');
+			await page.waitForLoadState('networkidle');
+
+			await expect(page).toHaveTitle(/Newsletter/i);
+
+			const emailTemplatesButton = page.getByRole('button', {
+				name: 'Email Templates',
+				exact: true,
+			});
+
+			await expect(emailTemplatesButton).toBeVisible();
+			await emailTemplatesButton.click();
+
+			await expect(page).toHaveURL('/templates');
+		});
+
+		test('should load home page and click Layouts button', async ({
+			page,
+		}) => {
+			await page.goto('/');
+			await page.waitForLoadState('networkidle');
+
+			await expect(page).toHaveTitle(/Newsletter/i);
+
+			const layoutsButton = page.getByRole('button', {
+				name: 'Layouts',
+				exact: true,
+			});
+
+			await expect(layoutsButton).toBeVisible();
+			await layoutsButton.click();
+
+			await expect(page).toHaveURL('/layouts');
 		});
 	});
 });
+
+//Email Templates
