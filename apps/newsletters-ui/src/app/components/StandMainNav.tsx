@@ -88,6 +88,7 @@ export function StandMainNav() {
 				name="Newsletter"
 				href="/"
 				hoverText="Back to dashboard"
+				collapsedHoverText="Home"
 				favicon={{
 					icon: 'email',
 					theme: {
