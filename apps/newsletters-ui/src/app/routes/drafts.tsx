@@ -1,10 +1,17 @@
 import type { RouteObject } from 'react-router-dom';
+import { StandRedesignWizardContainer } from '../components/StandRedesignWizard';
 import { DraftDetailView } from '../components/views/DraftDetailView';
 import { DraftListView } from '../components/views/DraftListView';
 import { WizardContainer } from '../components/WizardContainer';
 import { ErrorPage } from '../ErrorPage';
+import {
+	checkFeatureSwitchURLParams,
+	isFeatureSwitchEnabled,
+} from '../featureSwitches';
 import { Layout } from '../Layout';
 import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
+
+checkFeatureSwitchURLParams();
 
 export const draftRoute: RouteObject = {
 	path: '/drafts',
@@ -31,7 +38,11 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'newsletter-data',
-			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
+			element: isFeatureSwitchEnabled('switch-stand') ? (
+				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
+			) : (
+				<WizardContainer wizardId="NEWSLETTER_DATA" />
+			),
 		},
 		{
 			path: 'launch-newsletter/:listId',

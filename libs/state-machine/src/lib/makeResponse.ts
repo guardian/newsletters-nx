@@ -43,14 +43,24 @@ export const makeResponse = (
 	state: WizardStepData,
 	nextWizardStepLayout: WizardStepLayout,
 ): CurrentStepRouteResponse => {
-	const { staticMarkdown, dynamicMarkdown } = nextWizardStepLayout;
+	const {
+		staticMarkdown,
+		dynamicMarkdown,
+		staticSideMarkdown,
+		dynamicSideMarkdown,
+	} = nextWizardStepLayout;
 
 	const markdown = dynamicMarkdown
 		? dynamicMarkdown(requestBody.formData, state.formData)
 		: staticMarkdown;
 
+	const sideMarkdown = dynamicSideMarkdown
+		? dynamicSideMarkdown(requestBody.formData, state.formData)
+		: staticSideMarkdown;
+
 	return {
 		markdownToDisplay: markdown,
+		markdownToDisplayInSidebar: sideMarkdown,
 		currentStepId: state.currentStepId,
 		buttons: convertWizardStepLayoutButtonsToWizardButtons(
 			nextWizardStepLayout.buttons,

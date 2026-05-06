@@ -10,9 +10,11 @@ import {
 import { launchLayout } from './steps/launchNewsletter';
 import { newsletterDataLayout } from './steps/newsletterData';
 import { renderingOptionsLayout } from './steps/renderingOptions';
+import { standRedesignLayout } from './steps/standRedesignNewsletterData';
 
 export const newslettersWorkflowStepLayout: Record<string, WizardLayout> = {
 	NEWSLETTER_DATA: newsletterDataLayout,
+	NEWSLETTER_DATA_STAND_REDESIGN: standRedesignLayout,
 	LAUNCH_NEWSLETTER: launchLayout,
 	RENDERING_OPTIONS: renderingOptionsLayout,
 };

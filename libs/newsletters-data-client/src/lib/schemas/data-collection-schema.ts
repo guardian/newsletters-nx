@@ -29,8 +29,8 @@ const builderFunctionNames = [
 const automatedFrontSectionSchemaWithFunctionNames =
 	automatedFrontSectionSchema.extend(
 		z.object({
-        			partBuilderFunction: z.enum(builderFunctionNames),
-        		}).shape
+			partBuilderFunction: z.enum(builderFunctionNames),
+		}).shape,
 	);
 
 /**
@@ -44,8 +44,8 @@ const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
 	})
 	.extend(
 		z.object({
-    			onwardPath: readMoreSectionSchema.shape.onwardPath.unwrap(),
-    		}).shape
+			onwardPath: readMoreSectionSchema.shape.onwardPath.unwrap(),
+		}).shape,
 	);
 
 /**
@@ -56,16 +56,16 @@ const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
 export const dataCollectionRenderingOptionsSchema =
 	renderingOptionsSchema.extend(
 		z.object({
-        			readMoreSections: z
-        				.array(readMoreSectionSchemaWithOnwardPath)
-        				.optional()
-        				.describe('"Read more" sections'),
+			readMoreSections: z
+				.array(readMoreSectionSchemaWithOnwardPath)
+				.optional()
+				.describe('"Read more" sections'),
 
-        			automatedFrontSections: z
-        				.array(automatedFrontSectionSchemaWithFunctionNames)
-        				.optional()
-        				.describe('Automated sections from Fronts'),
-        		}).shape
+			automatedFrontSections: z
+				.array(automatedFrontSectionSchemaWithFunctionNames)
+				.optional()
+				.describe('Automated sections from Fronts'),
+		}).shape,
 	);
 
 // Exclude 'article-based-legacy' from the options presented:
@@ -104,11 +104,11 @@ const dataCollectionGroup = z
  */
 export const dataCollectionSchema = newsletterDataSchema.extend(
 	z.object({
-    		onlineArticle: onlineArticleSchema,
-    		category: dataCollectionCategories,
-    		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
-    		signUpDescription: nonEmptyString().describe('Sign-up description'),
-    		group: dataCollectionGroup,
-    		regionFocus: regionFocusEnumSchema.unwrap(),
-    	}).shape
+		onlineArticle: onlineArticleSchema,
+		category: dataCollectionCategories,
+		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
+		signUpDescription: nonEmptyString().describe('Sign-up description'),
+		group: dataCollectionGroup,
+		regionFocus: regionFocusEnumSchema.unwrap().describe('Region focus'),
+	}).shape,
 );
