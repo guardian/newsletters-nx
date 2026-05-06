@@ -40,6 +40,10 @@ export const renderingOptionsSchema = z.object({
 		.boolean()
 		.optional()
 		.describe('Display Newsletter name above headline?'),
+	unorderedListStyle: z
+		.enum(['bulleted', 'lined'])
+		.optional()
+		.describe('Unordered list style'),
 
 	paletteOverride: themeEnumSchema.optional().describe('Palette override'),
 	linkListSubheading: z
@@ -67,16 +71,17 @@ export const renderingOptionsSchema = z.object({
 		.optional()
 		.describe('The configuration for automated front sections'),
 
-	mainBannerUrl: z.url()
-		.optional()
-		.describe('URL for the main banner'),
-	mainBannerMobileUrl: z.url()
+	mainBannerUrl: z.url().optional().describe('URL for the main banner'),
+	mainBannerMobileUrl: z
+		.url()
 		.optional()
 		.describe('URL for the mobile size main banner'),
-	subheadingBannerUrl: z.url()
+	subheadingBannerUrl: z
+		.url()
 		.optional()
 		.describe('URL for standard subheading banner'),
-	darkSubheadingBannerUrl: z.url()
+	darkSubheadingBannerUrl: z
+		.url()
 		.optional()
 		.describe('URL for dark subheading banner'),
 });
