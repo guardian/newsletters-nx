@@ -62,8 +62,8 @@ export default defineConfig({
 					USE_DEVELOPER_PROFILE: 'true',
 					USE_IN_MEMORY_STORAGE: 'true',
 					USE_LOCAL_USER_PERMISSIONS: 'true',
-					LOCAL_USER_PROFILE_EMAIL: 'e2e-test@guardian.co.uk',
-					USER_PERMISSIONS: '{"e2e-test"example.com":0}',
+					LOCAL_USER_PROFILE_EMAIL: 'e2e-test@example.com',
+					USER_PERMISSIONS: '{"e2e-test@example.com":0}',
 				},
 			},
 });
