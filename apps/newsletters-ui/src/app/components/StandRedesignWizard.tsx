@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { baseSpacing, semanticColors } from '@guardian/stand';
-import { Alert, Box, Container, Stack, Typography } from '@mui/material';
+import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
@@ -31,9 +31,7 @@ export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
 }: WizardProps) => {
 	const { listId } = useParams();
 	return (
-		<Container>
 			<StandRedesignWizard wizardId={wizardId} id={listId} />
-		</Container>
 	);
 };
 
@@ -245,6 +243,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	return (
 		<div
 			css={css`
+				height: 100%;
 				display: flex;
 				gap: 40px;
 			`}
@@ -256,11 +255,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				handleStepClick={handleStepClick}
 				formData={formData}
 			/>
-			<div
-				css={css`
-					margin-top: ${baseSpacing['48-rem']};
-				`}
-			>
+			<div>
 				<StandRedesignMarkdownView
 					markdown={serverData.markdownToDisplay ?? ''}
 				/>
