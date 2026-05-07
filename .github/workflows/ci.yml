@@ -15,6 +15,7 @@ jobs:
     env:
       USE_IN_MEMORY_STORAGE: 'true'
       CI: 'true'
+      USE_DEVELOPER_PROFILE: 'true'
     steps:
       - uses: actions/checkout@v3
 
