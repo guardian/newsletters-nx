@@ -3,9 +3,6 @@ import { baseColors, semanticColors } from '@guardian/stand';
 import { Icon } from '@guardian/stand/icon';
 import { Typography } from '@guardian/stand/typography'
 import { CheckCircleOutlined, CircleSharp, WarningAmberOutlined } from '@mui/icons-material';
-import {
-	Stepper
-} from '@mui/material';
 import { useState } from 'react';
 import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
@@ -24,7 +21,6 @@ interface Props {
 }
 
 type StepProps = {
-	key: string;
 	isCurrent: boolean;
 	stepStatus?: StepStatus;
 	index: number;
@@ -60,28 +56,32 @@ const CompletionCaption = (props: { status: StepStatus; isDisabled: boolean}) =>
 	}
 };
 
-const ariaLabelForNonButtonStep = (
+const buildStepAriaLabel = (
 	description: string,
 	active: boolean,
 	status?: StepStatus,
 ): string => {
+
+	const statusDescription =
+		status === StepStatus.Complete
+			? 'complete'
+			: status === StepStatus.Incomplete
+				? 'incomplete'
+				: status === StepStatus.Optional
+					? 'optional'
+					: undefined;
+
+	const parts = [description];
+
+	if (statusDescription) {
+		parts.push(statusDescription);
+	}
+
 	if (active) {
-		return `${description} (current step)`;
+		parts.push('current step');
 	}
 
-	let statusDecription = '';
-	switch (status) {
-		case StepStatus.Complete:
-			statusDecription = '(complete)';
-			break;
-		case StepStatus.Incomplete:
-			statusDecription = '(incomplete)';
-			break;
-		case StepStatus.Optional:
-			statusDecription = '(optional)';
-	}
-
-	return `${description} ${statusDecription}`;
+	return parts.join(', ');
 };
 
 export const StandRedesignStepNav = ({
@@ -156,39 +156,40 @@ export const StandRedesignStepNav = ({
 		!isCurrent(step);
 
 	return (
-		<Stepper
-			sx={{ flexWrap: 'wrap' }}
+		<nav
 			css={css`
 				border-right: 1px solid ${semanticColors.border.strong};
+				display: flex;
+				flex-direction: column;
 			`}
-			nonLinear={stepperConfig.isNonLinear}
-			connector={null}
-			component={'nav'}
-			orientation="vertical"
+			aria-label="Newsletter creation steps"
 		>
+			<ol css={css`list-style: none; padding: 0; margin: 0;`}>
 			{filteredStepList.map((step, index) => {
 				const stepStatus = completionRecord[step.id];
 				const description = step.label ?? step.id;
 				const isDisabled = !shouldRenderAsButton(step);
 				return (
+					<li key={step.id}>
 					<Step isDisabled={isDisabled}
-								key={step.id}
 					      onClick={() => handleStepClick(step.id)}
 								index={index}
 								isCurrent={isCurrent(step)}
 								stepStatus={stepStatus}
-								ariaLabel={ariaLabelForNonButtonStep(description, isCurrent(step), stepStatus)}
+								ariaLabel={buildStepAriaLabel(description, isCurrent(step), stepStatus)}
 								description={description}
 					/>
+					</li>
 				);
 			})}
-		</Stepper>
+			</ol>
+		</nav>
 	);
 };
 
 
 
-export const Step = ({key, isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, description}: StepProps ) => {
+export const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, description}: StepProps ) => {
 
 	const descriptionTypographyColor =
 		isCurrent || !isDisabled ? semanticColors.text.strong : semanticColors.text.disabled;
@@ -218,8 +219,8 @@ export const Step = ({key, isDisabled, isCurrent, index, stepStatus, onClick, ar
 		<Button
 			css={buttonStyles}
 			isDisabled={isDisabled}
-			key={key}
 			aria-label={ariaLabel}
+			aria-current={isCurrent ? 'step' : undefined}
 			onClick={() => onClick()}
 		>{({isHovered}) => (
 			<>
