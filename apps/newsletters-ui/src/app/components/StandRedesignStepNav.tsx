@@ -1,12 +1,13 @@
 import { css } from '@emotion/react'
-import { semanticColors } from '@guardian/stand';
+import { baseColors, semanticColors } from '@guardian/stand';
 import { Icon } from '@guardian/stand/icon';
 import { Typography } from '@guardian/stand/typography'
-import { CheckCircleOutlined, WarningAmberOutlined } from '@mui/icons-material';
+import { CheckCircleOutlined, CircleSharp, WarningAmberOutlined } from '@mui/icons-material';
 import {
 	Stepper
 } from '@mui/material';
 import { useState } from 'react';
+import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
 import type {
 	StepListing,
@@ -22,28 +23,38 @@ interface Props {
 	formData?: WizardFormData;
 }
 
-const CompletionCaption = (props: { status: StepStatus | undefined }) => {
+type StepProps = {
+	key: string;
+	isCurrent: boolean;
+	stepStatus?: StepStatus;
+	index: number;
+	onClick: () => void;
+	ariaLabel: string;
+	isDisabled: boolean;
+	description: string;
+}
+
+const CompletionCaption = (props: { status: StepStatus; isDisabled: boolean}) => {
 	switch (props.status) {
-		case undefined:
 		case StepStatus.NoFields:
 			return null;
 		case StepStatus.Optional:
 			return (
 				<div css={css`display: flex; gap: 6px; align-items: center;`}>
-					<Typography variant="body-sm" theme={{color: semanticColors.text.weak}} element="span">Optional</Typography> <Icon fill={semanticColors.text.success} size={"sm"} theme={{sm: {size: '16px'}}} ><WarningAmberOutlined/></Icon>
+					<Typography variant="body-sm" theme={{color: props.isDisabled ? semanticColors.text.disabled :  semanticColors.text.weak}} element="span">Optional</Typography> <Icon fill={props.isDisabled ? semanticColors.text.disabled : semanticColors.text['success-inverse']} size={"sm"} theme={{sm: {size: '16px'}}} ><CircleSharp/></Icon>
 				</div>
 
 			);
 		case StepStatus.Complete:
 			return (
 				<div css={css`display: flex; gap: 6px; align-items: center;`}>
-					<Typography variant="body-sm" theme={{color: semanticColors.text.weak}} element="span">Complete</Typography> <Icon fill={semanticColors.text.success} size={"sm"} theme={{sm: {size: '16px'}}} ><CheckCircleOutlined/></Icon>
+					<Typography variant="body-sm" theme={{color: props.isDisabled ? semanticColors.text.disabled :  semanticColors.text.weak}} element="span">Complete</Typography> <Icon fill={props.isDisabled ? semanticColors.text.disabled : semanticColors.text.success} size={"sm"} theme={{sm: {size: '16px'}}} ><CheckCircleOutlined/></Icon>
 				</div>
 			);
 		case StepStatus.Incomplete:
 			return (
 				<div css={css`display: flex; gap: 6px; align-items: center;`}>
-					<Typography variant="body-sm" theme={{color: semanticColors.text.weak}} element="span">Incomplete </Typography> <Icon fill={semanticColors.text.error} size={"sm"} theme={{sm: {size: '16px'}}} ><WarningAmberOutlined/></Icon>
+					<Typography variant="body-sm" theme={{color: props.isDisabled ? semanticColors.text.disabled : semanticColors.text.weak}} element="span">Incomplete </Typography> <Icon fill={props.isDisabled ? semanticColors.text.disabled : semanticColors.text.error} size={"sm"} theme={{sm: {size: '16px'}}} ><WarningAmberOutlined/></Icon>
 				</div>
 			);
 	}
@@ -158,36 +169,94 @@ export const StandRedesignStepNav = ({
 			{filteredStepList.map((step, index) => {
 				const stepStatus = completionRecord[step.id];
 				const description = step.label ?? step.id;
-
+				const isDisabled = !shouldRenderAsButton(step);
 				return (
-					<div
-						role={shouldRenderAsButton(step) ? 'button' : undefined}
-						key={step.id}
-						aria-label={ariaLabelForNonButtonStep(description, isCurrent(step), stepStatus)}
-						onClick={shouldRenderAsButton(step) ? () => handleStepClick(step.id) : undefined}
-					>
-
-							<div css={css`height: 72px;
-								border-bottom: 1px solid ${semanticColors.border.weak};
-								display: grid;
-								grid-template-columns: 32px 270px;
-							`}>
-								<Typography element="div" theme={{color: isCurrent(step) ? semanticColors.text['stronger-inverse'] : semanticColors.text.strong}}
-														cssOverrides={css`width: 32px;
-															height: 100%;
-															background-color: ${isCurrent(step) ? semanticColors.fill.selected : 'transparent'};
-															border-right: 1px solid ${semanticColors.border.weak};
-															display: flex; align-items: center; justify-content: center;`}>
-									{index}
-								</Typography>
-								<div css={css`gap: 4px; display: flex; flex-direction: column; justify-content: center; margin-left:12px`}>
-								<Typography element="div" variant="heading-md">{description}</Typography>
-									<CompletionCaption status={stepStatus} />
-								</div>
-							</div>
-					</div>
+					<Step isDisabled={isDisabled}
+								key={step.id}
+					      onClick={() => handleStepClick(step.id)}
+								index={index}
+								isCurrent={isCurrent(step)}
+								stepStatus={stepStatus}
+								ariaLabel={ariaLabelForNonButtonStep(description, isCurrent(step), stepStatus)}
+								description={description}
+					/>
 				);
 			})}
 		</Stepper>
 	);
 };
+
+
+
+export const Step = ({key, isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, description}: StepProps ) => {
+
+	const descriptionTypographyColor =
+		isCurrent || !isDisabled ? semanticColors.text.strong : semanticColors.text.disabled;
+	const backgroundColor =
+		isCurrent ? semanticColors.bg["raised-level-1"] : baseColors.neutral["900"]
+
+	const buttonStyles = css`
+		appearance: none;
+		-webkit-appearance: none;
+		background-color: ${backgroundColor} ;
+		height: 72px;
+		border: none;
+		border-bottom: 1px solid ${semanticColors.border.weak};
+		display: grid;
+		grid-template-columns: 32px 270px;
+		padding: 0;
+		margin: 0;
+		font: inherit;
+		color: inherit;
+		text-align: left;
+		width: 100%;
+		&[data-pressed] {
+			background-color: ${semanticColors.bg["raised-level-1"]};
+		}
+	`;
+	return (
+		<Button
+			css={buttonStyles}
+			isDisabled={isDisabled}
+			key={key}
+			aria-label={ariaLabel}
+			onClick={() => onClick()}
+		>{({isHovered}) => (
+			<>
+				<Typography
+					element="div"
+					theme={{
+						color: isHovered || isCurrent ? semanticColors.text['stronger-inverse'] : isDisabled ? semanticColors.text.disabled : semanticColors.text.strong
+					}}
+					cssOverrides={css`
+					width: 32px;
+					height: 100%;
+					background-color: ${isCurrent || isHovered
+						? semanticColors.fill.selected
+						: 'transparent'};
+					border-right: 1px solid ${semanticColors.border.weak};
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				`}
+				>
+					{index}
+				</Typography>
+				<div
+					css={css`
+					gap: 4px;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					margin-left: 12px;
+				`}
+				>
+					<Typography element="div" theme={{color: descriptionTypographyColor}} variant="heading-md">
+						{description}
+					</Typography>
+					{stepStatus !== undefined && <CompletionCaption status={stepStatus} isDisabled={isDisabled && !isCurrent} />}
+				</div>
+			</>
+		)}
+		</Button>
+	)};
