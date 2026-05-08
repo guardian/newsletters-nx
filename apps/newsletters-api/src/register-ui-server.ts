@@ -26,16 +26,32 @@ const routeMap = {
 	'/layouts': ['', '/:id', '/edit/:id', '/edit-json/:id'],
 };
 
+const readIndexHtml = async (filePath: string): Promise<Buffer | null> => {
+	try {
+		const handler = await fs.promises.open(filePath);
+		const content = await handler.readFile();
+		await handler.close();
+		return content;
+	} catch {
+		return null;
+	}
+};
+
 export async function registerUIServer(app: Express) {
 	const pathToStaticFiles = path.join('./dist/apps/newsletters-ui');
 
 	app.use(serveStatic(pathToStaticFiles));
 
-	const handler = await fs.promises.open(
+	const indexHtml = await readIndexHtml(
 		path.join(pathToStaticFiles, 'index.html'),
 	);
-	const indexHtml = await handler.readFile();
-	await handler.close();
+
+	if (!indexHtml) {
+		console.warn(
+			'registerUIServer: index.html not found — UI routes not registered. In production, run `npm run build` first.',
+		);
+		return;
+	}
 
 	const serveIndexHtml = (_: Request, res: Response) => {
 		res.type('text/html').send(indexHtml);
