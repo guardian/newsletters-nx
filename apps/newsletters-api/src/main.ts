@@ -5,6 +5,7 @@ import {
 	isServingUI,
 } from './apiDeploymentSettings';
 import { setCacheControlHeaderMiddleware } from './app/headers';
+import { registerBrazeRoutes } from './app/routes/braze';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
@@ -39,6 +40,7 @@ if (isServingReadEndpoints()) {
 	registerDraftsRoutes(app);
 	registerRenderingTemplatesRoutes(app);
 	registerReadLayoutRoutes(app);
+	registerBrazeRoutes(app);
 }
 
 const start = async () => {

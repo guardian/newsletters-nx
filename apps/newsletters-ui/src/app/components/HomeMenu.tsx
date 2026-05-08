@@ -149,6 +149,11 @@ export function HomeMenu() {
 					content={'View Newsletter Layouts'}
 					variant="outlined"
 				/>
+				<ButtonGridItem
+					path="/braze-sync"
+					content={'Braze URL Review'}
+					variant="outlined"
+				/>
 			</Grid>
 		</Container>
 	);

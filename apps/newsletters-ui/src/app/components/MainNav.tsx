@@ -33,6 +33,7 @@ const navLinks: NavLink[] = [
 	{ path: '/drafts', label: 'Drafts' },
 	{ path: '/templates', label: 'Email Templates' },
 	{ path: '/layouts', label: 'Layouts' },
+	{ path: '/braze-sync', label: 'Braze URLs' },
 ];
 
 const menuItemIsSelected = (path: string): boolean => {

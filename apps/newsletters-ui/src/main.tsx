@@ -3,6 +3,7 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DefaultStyles } from './app/components/DefaultStyles';
+import { brazeRoute } from './app/routes/braze';
 import { draftRoute } from './app/routes/drafts';
 import { homeRoute } from './app/routes/home';
 import { launchedRoute } from './app/routes/launched';
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
 	draftRoute,
 	launchedRoute,
 	layoutsRoute,
+	brazeRoute,
 ]);
 
 const root = ReactDOM.createRoot(

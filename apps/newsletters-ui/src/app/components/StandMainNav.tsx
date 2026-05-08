@@ -25,6 +25,7 @@ const navLinks: NavLink[] = [
 		path: '/drafts/newsletter-data',
 		label: 'Create New Newsletter',
 	},
+	{ path: '/braze-sync', label: 'Braze URL Review' },
 ];
 
 const menuItemIsSelected = (path: string, pathname: string): boolean => {
