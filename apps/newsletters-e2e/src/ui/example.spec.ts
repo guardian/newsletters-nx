@@ -1,4 +1,14 @@
 /*
+ * This is here as an example of how to use the
+ *
+ * - createDraftNewsletter
+ * - updateDraftNewsletter
+ * - deleteDraftNewsletter
+ *
+ * methods. Once they are all used inside real
+ * tests then this file can be deleted
+ */
+/*
 import { test, expect } from '@playwright/test';
 import {
 	createDraftNewsletter,
@@ -19,7 +29,7 @@ test.describe('Draft newsletter', () => {
 
 	test('appears in the drafts list', async ({ page }) => {
 		await page.goto('/');
-		// ... your assertions
+		// rest of your test and assertions
 	});
 
 	test('can be updated with production details', async ({ request, page }) => {
@@ -31,7 +41,7 @@ test.describe('Draft newsletter', () => {
 			theme: 'news',
 			group: 'News in depth',
 		});
-		// ... your assertions
+		// rest of your test and assertions
 	});
 });
 */
