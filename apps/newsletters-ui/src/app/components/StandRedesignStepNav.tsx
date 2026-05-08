@@ -202,6 +202,7 @@ export const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLab
 		background-color: ${backgroundColor} ;
 		height: 72px;
 		border: none;
+		cursor: ${isDisabled ? 'default' : 'pointer'};
 		border-bottom: 1px solid ${semanticColors.border.weak};
 		display: grid;
 		grid-template-columns: 32px 270px;
@@ -216,6 +217,7 @@ export const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLab
 		}
 	`;
 	return (
+		// Use a button instead of a link here because it is a single page application
 		<Button
 			css={buttonStyles}
 			isDisabled={isDisabled}
