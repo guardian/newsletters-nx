@@ -1,9 +1,9 @@
 export interface BrazeCampaign {
 	id: string;
 	name: string;
-	is_active: boolean;
+	is_api_campaign: boolean;
 	tags: string[];
-	[key: string]: unknown;
+	last_edited: string;
 }
 
 interface BrazeCampaignListResponse {
@@ -44,13 +44,19 @@ export const fetchCampaignPage = async (
 	url.searchParams.set('per_page', '100');
 	url.searchParams.set('include_archived', String(includeArchived));
 
-	const response = await fetch(url.toString(), {
-		method: 'GET',
-		headers: {
-			Authorization: `Bearer ${apiKey}`,
-			'Content-Type': 'application/json',
-		},
-	});
+	let response: Response;
+	try {
+		response = await fetch(url.toString(), {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${apiKey}`,
+				'Content-Type': 'application/json',
+			},
+		});
+	} catch (err) {
+		console.error(`Fetch failed for campaigns page ${page}:`, err);
+		throw err;
+	}
 
 	if (!response.ok) {
 		throw new Error(
@@ -67,14 +73,93 @@ export const fetchCampaignPage = async (
 	}
 
 	return { campaigns: data.campaigns, raw: data };
-};
+}
+
+export interface BrazeCampaignMessage {
+	channel: string;
+	name: string;
+	// Control group variants only have channel, name and type
+	type?: string;
+	subject?: string;
+	body?: string;
+	from?: string;
+	reply_to?: string;
+	title?: string | null;
+	preheader?: string;
+	amp_body?: string;
+	custom_plain_text?: string | null;
+	should_inline_css?: boolean;
+	should_whitespace_preheader?: boolean;
+	headers?: Record<string, string> | null;
+}
 
 export interface BrazeCampaignDetails {
 	message: string;
 	name: string;
+	description: string;
+	created_at: string;
+	updated_at: string;
+	first_sent: string;
+	last_sent: string;
+	archived: boolean;
 	enabled: boolean;
-	messages: Record<string, Record<string, unknown>>;
-	[key: string]: unknown;
+	draft: boolean;
+	has_post_launch_draft: boolean;
+	schedule_type: string;
+	channels: string[];
+	tags: string[];
+	teams: string[];
+	messages: Record<string, BrazeCampaignMessage>;
+	conversion_behaviors: Array<{ window: number; type: string }>;
+}
+
+const RETRYABLE_CODES = new Set(['UND_ERR_CONNECT_TIMEOUT', 'ECONNRESET', 'ETIMEDOUT']);
+
+const isRetryable = (err: unknown): boolean => {
+	if (err && typeof err === 'object' && 'cause' in err) {
+		const cause = (err as { cause?: { code?: string } }).cause;
+		return Boolean(cause?.code && RETRYABLE_CODES.has(cause.code));
+	}
+	return false;
+};
+
+const sleep = (ms: number): Promise<void> =>
+	new Promise((resolve) => setTimeout(resolve, ms));
+
+async function withRetry<T>(
+	fn: () => Promise<T>,
+	label: string,
+	maxAttempts = 3,
+): Promise<T> {
+	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+		try {
+			return await fn();
+		} catch (err) {
+			if (attempt < maxAttempts && isRetryable(err)) {
+				const delay = 1000 * 2 ** (attempt - 1); // 1 s, 2 s
+				console.warn(
+					`${label}: attempt ${attempt} failed (${(err as { cause?: { code?: string } }).cause?.code}), retrying in ${delay}ms…`,
+				);
+				await sleep(delay);
+			} else {
+				throw err;
+			}
+		}
+	}
+	// unreachable, but satisfies TypeScript
+	throw new Error(`${label}: all ${maxAttempts} attempts failed`);
+}
+
+async function pMap<T, U>(
+	items: T[],
+	fn: (item: T) => Promise<U>,
+	concurrency: number,
+): Promise<U[]> {
+	const results: U[] = [];
+	for (const item of items) {
+		results.push(await fn(item));
+	}
+	return results;
 }
 
 export const getCampaignDetails = async (
@@ -85,13 +170,23 @@ export const getCampaignDetails = async (
 	const url = new URL('/campaigns/details', host);
 	url.searchParams.set('campaign_id', campaignId);
 
-	const response = await fetch(url.toString(), {
-		method: 'GET',
-		headers: {
-			Authorization: `Bearer ${apiKey}`,
-			'Content-Type': 'application/json',
-		},
-	});
+	let response: Response;
+	try {
+		response = await withRetry(
+			() =>
+				fetch(url.toString(), {
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${apiKey}`,
+						'Content-Type': 'application/json',
+					},
+				}),
+			`getCampaignDetails(${campaignId})`,
+		);
+	} catch (err) {
+		console.error(`Fetch failed for campaign details ${campaignId}:`, err);
+		throw err;
+	}
 
 	if (!response.ok) {
 		throw new Error(
@@ -110,12 +205,7 @@ export const getCampaignDetails = async (
 	return data;
 };
 
-const isEditorialAndActive = (campaign: BrazeCampaign): boolean =>
-	campaign.is_active &&
-	campaign.name.startsWith('Editorial') &&
-	campaign.tags.includes('Type/Editorial');
-
-export const getAllCampaigns = async (): Promise<BrazeCampaign[]> => {
+export const getAllCampaigns = async (): Promise<BrazeCampaignDetails[]> => {
 	const { apiKey, host } = getBrazeConfig();
 
 	const allCampaigns: BrazeCampaign[] = [];
@@ -124,7 +214,7 @@ export const getAllCampaigns = async (): Promise<BrazeCampaign[]> => {
 
 	while (hasMore) {
 		const { campaigns } = await fetchCampaignPage(host, apiKey, page);
-		allCampaigns.push(...campaigns.filter(isEditorialAndActive));
+		allCampaigns.push(...campaigns);
 
 		if (campaigns.length < 100) {
 			hasMore = false;
@@ -133,7 +223,7 @@ export const getAllCampaigns = async (): Promise<BrazeCampaign[]> => {
 		}
 	}
 
-	return allCampaigns;
+	return pMap(allCampaigns, (c) => getCampaignDetails(c.id), 5);
 };
 
 export { getBrazeConfig };

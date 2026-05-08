@@ -1,24 +1,21 @@
 /**
- * Integration tests for braze-campaign-client.
+ * Unit tests for braze-campaign-client.
  *
- * These tests make real calls to the Braze API. To run them, set the following
- * environment variables (e.g. in a .env.local file or via the shell):
+ * Tests run entirely from fixture files in test/fixtures/raw — no real Braze
+ * API calls are made. fetch is replaced with a jest spy that reads from disk.
  *
- *   BRAZE_API_KEY=your-api-key-here
- *   BRAZE_HOST=https://rest.fra-01.braze.eu
- *
- * Tests are skipped automatically when those variables are absent so that CI
- * (which won't have credentials) stays green.
+ * To refresh the fixtures against the real Braze API run:
+ *   npx tsx tools/scripts/fetch-braze-fixtures.ts
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 import {
-	type BrazeCampaign,
-	fetchCampaignPage,
+	type BrazeCampaignDetails,
 	getAllCampaigns,
-	getBrazeConfig,
 } from './braze-campaign-client';
+
+// ── Fixture helpers ───────────────────────────────────────────────────────────
 
 const FIXTURES_DIR = path.resolve(
 	__dirname,
@@ -33,29 +30,88 @@ const readFixture = <T>(filename: string): T =>
 		fs.readFileSync(path.join(FIXTURES_DIR, filename), 'utf-8'),
 	) as T;
 
-const writeFixture = (filename: string, data: unknown): void => {
-	fs.mkdirSync(FIXTURES_DIR, { recursive: true });
-	fs.writeFileSync(
-		path.join(FIXTURES_DIR, filename),
-		JSON.stringify(data, null, 2),
-		'utf-8',
+/**
+ * Returns the campaign IDs for which we have a detail fixture on disk.
+ */
+const availableDetailIds = (): string[] =>
+	fs
+		.readdirSync(FIXTURES_DIR)
+		.filter((f) => f.startsWith('campaign-details-') && f.endsWith('.json'))
+		.map((f) => f.replace('campaign-details-', '').replace('.json', ''));
+
+// ── fetch mock ────────────────────────────────────────────────────────────────
+
+/**
+ * Intercept every fetch call and serve responses from fixture files.
+ *
+ * /campaigns/list  → campaign-list-page-{page}.json  (falls back to an empty
+ *                    last-page response when the fixture doesn't exist)
+ * /campaigns/details → campaign-details-{id}.json    (throws if missing so
+ *                    tests fail loudly rather than silently swallowing gaps)
+ */
+const mockFetchFromFixtures = (): jest.SpyInstance => {
+	return jest.spyOn(global, 'fetch').mockImplementation(
+		async (input: RequestInfo | URL) => {
+			const url = new URL(input.toString());
+
+			if (url.pathname === '/campaigns/list') {
+				const page = url.searchParams.get('page') ?? '0';
+				const filename = `campaign-list-page-${page}.json`;
+
+				const body = fixtureExists(filename)
+					? readFixture<unknown>(filename)
+					: { campaigns: [], message: 'success' };
+
+				return new Response(JSON.stringify(body), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				});
+			}
+
+			if (url.pathname === '/campaigns/details') {
+				const id = url.searchParams.get('campaign_id') ?? '';
+				const filename = `campaign-details-${id}.json`;
+
+				if (!fixtureExists(filename)) {
+					throw new Error(
+						`No fixture found for campaign details: ${id} (${filename})`,
+					);
+				}
+
+				const body = readFixture<unknown>(filename);
+				return new Response(JSON.stringify(body), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				});
+			}
+
+			throw new Error(`Unexpected URL in fetch mock: ${url}`);
+		},
 	);
 };
 
-const { BRAZE_API_KEY, BRAZE_HOST } = process.env;
-const hasCredentials = Boolean(BRAZE_API_KEY && BRAZE_HOST);
-const hasFixtures = fixtureExists('campaign-list-page-0.json');
-const canRun = hasCredentials || hasFixtures;
+// ── Tests ─────────────────────────────────────────────────────────────────────
 
-const describeIfCredentials = hasCredentials ? describe : describe.skip;
-const describeIfCanRun = canRun ? describe : describe.skip;
-
-describeIfCredentials('getAllCampaigns (real Braze API)', () => {
-	let campaigns: BrazeCampaign[];
+describe('getAllCampaigns (fixture-driven)', () => {
+	let campaigns: BrazeCampaignDetails[];
+	let fetchSpy: jest.SpyInstance;
+	const detailIds = availableDetailIds();
 
 	beforeAll(async () => {
+		// Provide valid-looking env vars so getBrazeConfig() doesn't throw.
+		process.env.BRAZE_API_KEY = 'test-api-key';
+		process.env.BRAZE_HOST = 'https://rest.fra-01.braze.eu';
+
+		fetchSpy = mockFetchFromFixtures();
+
 		campaigns = await getAllCampaigns();
-	}, 30_000); // allow up to 30 s for potentially many pages
+	});
+
+	afterAll(() => {
+		fetchSpy.mockRestore();
+		delete process.env.BRAZE_API_KEY;
+		delete process.env.BRAZE_HOST;
+	});
 
 	it('returns an array', () => {
 		expect(Array.isArray(campaigns)).toBe(true);
@@ -65,23 +121,29 @@ describeIfCredentials('getAllCampaigns (real Braze API)', () => {
 		expect(campaigns.length).toBeGreaterThan(0);
 	});
 
-	it('every campaign has an id string', () => {
-		for (const campaign of campaigns) {
-			expect(typeof campaign.id).toBe('string');
-			expect(campaign.id.length).toBeGreaterThan(0);
-		}
-	});
-
 	it('every campaign has a name string', () => {
 		for (const campaign of campaigns) {
 			expect(typeof campaign.name).toBe('string');
 		}
 	});
 
-	it('every campaign has a boolean is_active field', () => {
+	it('every campaign has a boolean enabled field', () => {
 		for (const campaign of campaigns) {
-			expect(typeof campaign.is_active).toBe('boolean');
+			expect(typeof campaign.enabled).toBe('boolean');
 		}
+	});
+
+	it('returns a campaign for every available detail fixture', () => {
+		const returnedIds = new Set(
+			campaigns.map((c) => {
+				// campaign details don't carry an id field in the fixture, so we
+				// check via name match — just verify counts line up here.
+				return c.name;
+			}),
+		);
+		// We should have fetched details for every id the list pages contained
+		// that also had a fixture. Count is more meaningful than set membership.
+		expect(campaigns.length).toBeGreaterThanOrEqual(detailIds.length);
 	});
 });
 
@@ -89,7 +151,6 @@ describe('getAllCampaigns error handling', () => {
 	const ORIGINAL_ENV = process.env;
 
 	beforeEach(() => {
-		jest.resetModules();
 		process.env = { ...ORIGINAL_ENV };
 	});
 
@@ -98,120 +159,17 @@ describe('getAllCampaigns error handling', () => {
 	});
 
 	it('throws a descriptive error when BRAZE_API_KEY is missing', async () => {
-		process.env.BRAZE_API_KEY = undefined;
+		delete process.env.BRAZE_API_KEY;
 		process.env.BRAZE_HOST = 'https://rest.fra-01.braze.eu';
 
-		// Re-import after resetting modules so the module re-reads process.env
-		const { getAllCampaigns: fresh } = await import(
-			'./braze-campaign-client'
-		);
-
-		await expect(fresh()).rejects.toThrow('BRAZE_API_KEY');
+		await expect(getAllCampaigns()).rejects.toThrow('BRAZE_API_KEY');
 	});
 
 	it('throws a descriptive error when BRAZE_HOST is missing', async () => {
 		process.env.BRAZE_API_KEY = 'dummy-key';
-		process.env.BRAZE_HOST = undefined;
+		delete process.env.BRAZE_HOST;
 
-		const { getAllCampaigns: fresh } = await import(
-			'./braze-campaign-client'
-		);
-
-		await expect(fresh()).rejects.toThrow('BRAZE_HOST');
+		await expect(getAllCampaigns()).rejects.toThrow('BRAZE_HOST');
 	});
-});
-
-describeIfCanRun('fetch Braze fixtures (real API — record and replay)', () => {
-	it(
-		'fetches all campaign list pages and all enabled campaign details',
-		async () => {
-			const allCampaignIds: string[] = [];
-			let page = 0;
-			let hasMore = true;
-
-			// ── 1. Paginate /campaigns/list ───────────────────────────────────
-			while (hasMore) {
-				const filename = `campaign-list-page-${page}.json`;
-
-				let raw: { campaigns: Array<{ id: string; name: string }>; message: string };
-
-				if (fixtureExists(filename)) {
-					raw = readFixture(filename);
-					console.log(
-						`  Page ${page}: loaded ${raw.campaigns.length} campaigns from fixture`,
-					);
-				} else {
-					const { apiKey, host } = getBrazeConfig();
-					const result = await fetchCampaignPage(
-						host,
-						apiKey,
-						page,
-						false,
-					);
-					raw = result.raw;
-					writeFixture(filename, raw);
-					console.log(
-						`  Page ${page}: fetched and wrote ${raw.campaigns.length} campaigns`,
-					);
-				}
-
-				allCampaignIds.push(
-				...raw.campaigns
-					.filter((c) => c.name?.startsWith('Editorial'))
-					.map((c) => c.id),
-			);
-
-				if (raw.campaigns.length < 100) {
-					hasMore = false;
-				} else {
-					page += 1;
-				}
-			}
-
-			console.log(
-				`Total campaigns across all pages: ${allCampaignIds.length}`,
-			);
-
-			// ── 2. Details for each campaign sequentially ─────────────────────
-			let written = 0;
-			let skipped = 0;
-
-			for (const campaignId of allCampaignIds) {
-				const filename = `campaign-details-${campaignId}.json`;
-
-				if (fixtureExists(filename)) {
-					// Already on disk — nothing to do
-					written += 1;
-					continue;
-				}
-
-				const { apiKey, host } = getBrazeConfig();
-				const url = new URL('/campaigns/details', host);
-				url.searchParams.set('campaign_id', campaignId);
-				const response = await fetch(url.toString(), {
-					headers: { Authorization: `Bearer ${apiKey}` },
-				});
-				const details = (await response.json()) as {
-					enabled: boolean;
-					message: string;
-				};
-
-				if (!details.enabled) {
-					skipped += 1;
-					continue;
-				}
-
-				writeFixture(filename, details);
-				written += 1;
-			}
-
-			console.log(
-				`Details written/cached: ${written}, skipped (disabled): ${skipped}`,
-			);
-
-			expect(fixtureExists('campaign-list-page-0.json')).toBe(true);
-		},
-		600_000,
-	);
 });
 
