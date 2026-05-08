@@ -255,7 +255,11 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				handleStepClick={handleStepClick}
 				formData={formData}
 			/>
-			<div>
+			<div
+				css={css`
+					margin-top: ${baseSpacing['48-rem']};
+				`}
+			>
 				<StandRedesignMarkdownView
 					markdown={serverData.markdownToDisplay ?? ''}
 				/>
