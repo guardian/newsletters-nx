@@ -188,9 +188,28 @@ export const StandRedesignStepNav = ({
 };
 
 
+const StepNumber = ({stepNumber, isHovered, isCurrent, isDisabled}: {stepNumber: number; isHovered: boolean; isCurrent: boolean; isDisabled: boolean}) =>
+	<Typography
+	element="div"
+	theme={{
+		color: isHovered || isCurrent ? semanticColors.text['stronger-inverse'] : isDisabled ? semanticColors.text.disabled : semanticColors.text.strong
+	}}
+	cssOverrides={css`
+					width: 32px;
+					height: 100%;
+					background-color: ${isCurrent || isHovered
+		? semanticColors.fill.selected
+		: 'transparent'};
+					border-right: 1px solid ${semanticColors.border.weak};
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				`}
+>
+	{stepNumber}
+</Typography>
 
-export const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, description}: StepProps ) => {
-
+const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, description}: StepProps ) => {
 	const descriptionTypographyColor =
 		isCurrent || !isDisabled ? semanticColors.text.strong : semanticColors.text.disabled;
 	const backgroundColor =
@@ -205,7 +224,7 @@ export const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLab
 		cursor: ${isDisabled ? 'default' : 'pointer'};
 		border-bottom: 1px solid ${semanticColors.border.weak};
 		display: grid;
-		grid-template-columns: 32px 270px;
+		grid-template-columns: 32px 233px;
 		padding: 0;
 		margin: 0;
 		font: inherit;
@@ -226,25 +245,7 @@ export const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLab
 			onClick={() => onClick()}
 		>{({isHovered}) => (
 			<>
-				<Typography
-					element="div"
-					theme={{
-						color: isHovered || isCurrent ? semanticColors.text['stronger-inverse'] : isDisabled ? semanticColors.text.disabled : semanticColors.text.strong
-					}}
-					cssOverrides={css`
-					width: 32px;
-					height: 100%;
-					background-color: ${isCurrent || isHovered
-						? semanticColors.fill.selected
-						: 'transparent'};
-					border-right: 1px solid ${semanticColors.border.weak};
-					display: flex;
-					align-items: center;
-					justify-content: center;
-				`}
-				>
-					{index}
-				</Typography>
+				<StepNumber stepNumber={index} isHovered={isHovered} isCurrent={isCurrent} isDisabled={isDisabled}/>
 				<div
 					css={css`
 					gap: 4px;
