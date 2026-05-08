@@ -43,6 +43,9 @@ cdk/bin
 # Local environment files
 **/**/.env.local
 
+# Braze real-data fixtures (contain real campaign names and email body content)
+test/fixtures/raw/
+
 # newsletters-e2e
 
 # Playwright test results

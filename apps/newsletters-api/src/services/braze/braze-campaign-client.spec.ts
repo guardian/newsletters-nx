@@ -11,12 +11,44 @@
  * (which won't have credentials) stays green.
  */
 
-import { type BrazeCampaign, getAllCampaigns } from './braze-campaign-client';
+import * as fs from 'fs';
+import * as path from 'path';
+import {
+	type BrazeCampaign,
+	fetchCampaignPage,
+	getAllCampaigns,
+	getBrazeConfig,
+} from './braze-campaign-client';
+
+const FIXTURES_DIR = path.resolve(
+	__dirname,
+	'../../../../../test/fixtures/raw',
+);
+
+const fixtureExists = (filename: string): boolean =>
+	fs.existsSync(path.join(FIXTURES_DIR, filename));
+
+const readFixture = <T>(filename: string): T =>
+	JSON.parse(
+		fs.readFileSync(path.join(FIXTURES_DIR, filename), 'utf-8'),
+	) as T;
+
+const writeFixture = (filename: string, data: unknown): void => {
+	fs.mkdirSync(FIXTURES_DIR, { recursive: true });
+	fs.writeFileSync(
+		path.join(FIXTURES_DIR, filename),
+		JSON.stringify(data, null, 2),
+		'utf-8',
+	);
+};
 
 const { BRAZE_API_KEY, BRAZE_HOST } = process.env;
 const hasCredentials = Boolean(BRAZE_API_KEY && BRAZE_HOST);
+const hasFixtures = fixtureExists('campaign-list-page-0.json');
+const canRun = hasCredentials || hasFixtures;
 
 const describeIfCredentials = hasCredentials ? describe : describe.skip;
+const describeIfCanRun = canRun ? describe : describe.skip;
 
 describeIfCredentials('getAllCampaigns (real Braze API)', () => {
 	let campaigns: BrazeCampaign[];
@@ -87,5 +119,99 @@ describe('getAllCampaigns error handling', () => {
 
 		await expect(fresh()).rejects.toThrow('BRAZE_HOST');
 	});
+});
+
+describeIfCanRun('fetch Braze fixtures (real API — record and replay)', () => {
+	it(
+		'fetches all campaign list pages and all enabled campaign details',
+		async () => {
+			const allCampaignIds: string[] = [];
+			let page = 0;
+			let hasMore = true;
+
+			// ── 1. Paginate /campaigns/list ───────────────────────────────────
+			while (hasMore) {
+				const filename = `campaign-list-page-${page}.json`;
+
+				let raw: { campaigns: Array<{ id: string; name: string }>; message: string };
+
+				if (fixtureExists(filename)) {
+					raw = readFixture(filename);
+					console.log(
+						`  Page ${page}: loaded ${raw.campaigns.length} campaigns from fixture`,
+					);
+				} else {
+					const { apiKey, host } = getBrazeConfig();
+					const result = await fetchCampaignPage(
+						host,
+						apiKey,
+						page,
+						false,
+					);
+					raw = result.raw;
+					writeFixture(filename, raw);
+					console.log(
+						`  Page ${page}: fetched and wrote ${raw.campaigns.length} campaigns`,
+					);
+				}
+
+				allCampaignIds.push(
+				...raw.campaigns
+					.filter((c) => c.name?.startsWith('Editorial'))
+					.map((c) => c.id),
+			);
+
+				if (raw.campaigns.length < 100) {
+					hasMore = false;
+				} else {
+					page += 1;
+				}
+			}
+
+			console.log(
+				`Total campaigns across all pages: ${allCampaignIds.length}`,
+			);
+
+			// ── 2. Details for each campaign sequentially ─────────────────────
+			let written = 0;
+			let skipped = 0;
+
+			for (const campaignId of allCampaignIds) {
+				const filename = `campaign-details-${campaignId}.json`;
+
+				if (fixtureExists(filename)) {
+					// Already on disk — nothing to do
+					written += 1;
+					continue;
+				}
+
+				const { apiKey, host } = getBrazeConfig();
+				const url = new URL('/campaigns/details', host);
+				url.searchParams.set('campaign_id', campaignId);
+				const response = await fetch(url.toString(), {
+					headers: { Authorization: `Bearer ${apiKey}` },
+				});
+				const details = (await response.json()) as {
+					enabled: boolean;
+					message: string;
+				};
+
+				if (!details.enabled) {
+					skipped += 1;
+					continue;
+				}
+
+				writeFixture(filename, details);
+				written += 1;
+			}
+
+			console.log(
+				`Details written/cached: ${written}, skipped (disabled): ${skipped}`,
+			);
+
+			expect(fixtureExists('campaign-list-page-0.json')).toBe(true);
+		},
+		600_000,
+	);
 });
 
