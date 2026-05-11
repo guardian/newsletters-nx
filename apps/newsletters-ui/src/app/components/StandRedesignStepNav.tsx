@@ -3,6 +3,7 @@ import { baseColors, semanticColors } from '@guardian/stand';
 import { Icon } from '@guardian/stand/icon';
 import { Typography } from '@guardian/stand/typography'
 import { CheckCircleOutlined, CircleSharp, WarningAmberOutlined } from '@mui/icons-material';
+import type { ReactNode} from 'react';
 import { useState } from 'react';
 import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
@@ -30,28 +31,62 @@ type StepProps = {
 	description: string;
 }
 
-const CompletionCaption = (props: { status: StepStatus; isDisabled: boolean}) => {
-	switch (props.status) {
+type StatusRowProps = {
+	label: string;
+	icon: ReactNode;
+	iconColor: string;
+	isDisabled: boolean;
+};
+
+const StatusRow = ({ label, icon, iconColor, isDisabled }: StatusRowProps) => (
+	<div css={css`display: flex; gap: 6px; align-items: center;`}>
+		<Typography
+			variant="body-sm"
+			element="span"
+			theme={{ color: isDisabled ? semanticColors.text.disabled : semanticColors.text.weak }}
+		>
+			{label}
+		</Typography>
+		<Icon
+			fill={isDisabled ? semanticColors.text.disabled : iconColor}
+			size="sm"
+			theme={{ sm: { size: '16px' } }}
+		>
+			{icon}
+		</Icon>
+	</div>
+);
+
+const CompletionCaption = ({status, isDisabled}: { status: StepStatus; isDisabled: boolean}) => {
+	switch (status) {
 		case StepStatus.NoFields:
 			return null;
 		case StepStatus.Optional:
 			return (
-				<div css={css`display: flex; gap: 6px; align-items: center;`}>
-					<Typography variant="body-sm" theme={{color: props.isDisabled ? semanticColors.text.disabled :  semanticColors.text.weak}} element="span">Optional</Typography> <Icon fill={props.isDisabled ? semanticColors.text.disabled : semanticColors.text['success-inverse']} size={"sm"} theme={{sm: {size: '16px'}}} ><CircleSharp/></Icon>
-				</div>
-
+				<StatusRow
+					label="Optional"
+					isDisabled={isDisabled}
+					iconColor={semanticColors.text['success-inverse']}
+					icon={<CircleSharp />}
+				/>
 			);
 		case StepStatus.Complete:
 			return (
-				<div css={css`display: flex; gap: 6px; align-items: center;`}>
-					<Typography variant="body-sm" theme={{color: props.isDisabled ? semanticColors.text.disabled :  semanticColors.text.weak}} element="span">Complete</Typography> <Icon fill={props.isDisabled ? semanticColors.text.disabled : semanticColors.text.success} size={"sm"} theme={{sm: {size: '16px'}}} ><CheckCircleOutlined/></Icon>
-				</div>
+				<StatusRow
+					label="Complete"
+					isDisabled={isDisabled}
+					iconColor={semanticColors.text.success}
+					icon={<CheckCircleOutlined />}
+				/>
 			);
 		case StepStatus.Incomplete:
 			return (
-				<div css={css`display: flex; gap: 6px; align-items: center;`}>
-					<Typography variant="body-sm" theme={{color: props.isDisabled ? semanticColors.text.disabled : semanticColors.text.weak}} element="span">Incomplete </Typography> <Icon fill={props.isDisabled ? semanticColors.text.disabled : semanticColors.text.error} size={"sm"} theme={{sm: {size: '16px'}}} ><WarningAmberOutlined/></Icon>
-				</div>
+				<StatusRow
+					label="Incomplete"
+					isDisabled={isDisabled}
+					iconColor={semanticColors.text.error}
+					icon={<WarningAmberOutlined />}
+				/>
 			);
 	}
 };
