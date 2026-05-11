@@ -206,13 +206,14 @@ export const StandRedesignStepNav = ({
 				const isDisabled = !shouldRenderAsButton(step);
 				return (
 					<li key={step.id}>
-					<Step isDisabled={isDisabled}
-					      onClick={() => handleStepClick(step.id)}
-								index={index}
-								isCurrent={isCurrent(step)}
-								stepStatus={stepStatus}
-								ariaLabel={buildStepAriaLabel(description, isCurrent(step), stepStatus)}
-								description={description}
+					<Step
+						isDisabled={isDisabled}
+						onClick={() => handleStepClick(step.id)}
+						index={index}
+						isCurrent={isCurrent(step)}
+						stepStatus={stepStatus}
+						ariaLabel={buildStepAriaLabel(description, isCurrent(step), stepStatus)}
+						description={description}
 					/>
 					</li>
 				);
