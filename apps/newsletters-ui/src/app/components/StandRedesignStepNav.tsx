@@ -1,9 +1,13 @@
-import { css } from '@emotion/react'
+import { css } from '@emotion/react';
 import { baseColors, semanticColors } from '@guardian/stand';
 import { Icon } from '@guardian/stand/icon';
-import { Typography } from '@guardian/stand/typography'
-import { CheckCircleOutlined, CircleSharp, WarningAmberOutlined } from '@mui/icons-material';
-import type { ReactNode} from 'react';
+import { Typography } from '@guardian/stand/typography';
+import {
+	CheckCircleOutlined,
+	CircleSharp,
+	WarningAmberOutlined,
+} from '@mui/icons-material';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
@@ -29,7 +33,7 @@ type StepProps = {
 	ariaLabel: string;
 	isDisabled: boolean;
 	description: string;
-}
+};
 
 type StatusRowProps = {
 	label: string;
@@ -39,11 +43,21 @@ type StatusRowProps = {
 };
 
 const StatusRow = ({ label, icon, iconColor, isDisabled }: StatusRowProps) => (
-	<div css={css`display: flex; gap: 6px; align-items: center;`}>
+	<div
+		css={css`
+			display: flex;
+			gap: 6px;
+			align-items: center;
+		`}
+	>
 		<Typography
 			variant="body-sm"
 			element="span"
-			theme={{ color: isDisabled ? semanticColors.text.disabled : semanticColors.text.weak }}
+			theme={{
+				color: isDisabled
+					? semanticColors.text.disabled
+					: semanticColors.text.weak,
+			}}
 		>
 			{label}
 		</Typography>
@@ -57,7 +71,13 @@ const StatusRow = ({ label, icon, iconColor, isDisabled }: StatusRowProps) => (
 	</div>
 );
 
-const CompletionCaption = ({status, isDisabled}: { status: StepStatus; isDisabled: boolean}) => {
+const CompletionCaption = ({
+	status,
+	isDisabled,
+}: {
+	status: StepStatus;
+	isDisabled: boolean;
+}) => {
 	switch (status) {
 		case StepStatus.NoFields:
 			return null;
@@ -96,7 +116,6 @@ const buildStepAriaLabel = (
 	active: boolean,
 	status?: StepStatus,
 ): string => {
-
 	const statusDescription =
 		status === StepStatus.Complete
 			? 'complete'
@@ -199,63 +218,99 @@ export const StandRedesignStepNav = ({
 			`}
 			aria-label="Newsletter creation steps"
 		>
-			<ol css={css`list-style: none; padding: 0; margin: 0;`}>
-			{filteredStepList.map((step, index) => {
-				const stepStatus = completionRecord[step.id];
-				const description = step.label ?? step.id;
-				const isDisabled = !shouldRenderAsButton(step);
-				return (
-					<li key={step.id}>
-					<Step
-						isDisabled={isDisabled}
-						onClick={() => handleStepClick(step.id)}
-						index={index}
-						isCurrent={isCurrent(step)}
-						stepStatus={stepStatus}
-						ariaLabel={buildStepAriaLabel(description, isCurrent(step), stepStatus)}
-						description={description}
-					/>
-					</li>
-				);
-			})}
+			<ol
+				css={css`
+					list-style: none;
+					padding: 0;
+					margin: 0;
+				`}
+			>
+				{filteredStepList.map((step, index) => {
+					const stepStatus = completionRecord[step.id];
+					const description = step.label ?? step.id;
+					const isDisabled = !shouldRenderAsButton(step);
+					return (
+						<li key={step.id}>
+							<Step
+								isDisabled={isDisabled}
+								onClick={() => handleStepClick(step.id)}
+								index={index}
+								isCurrent={isCurrent(step)}
+								stepStatus={stepStatus}
+								ariaLabel={buildStepAriaLabel(
+									description,
+									isCurrent(step),
+									stepStatus,
+								)}
+								description={description}
+							/>
+						</li>
+					);
+				})}
 			</ol>
 		</nav>
 	);
 };
 
-
-const StepNumber = ({stepNumber, isHovered, isCurrent, isDisabled}: {stepNumber: number; isHovered: boolean; isCurrent: boolean; isDisabled: boolean}) =>
+const StepNumber = ({
+	stepNumber,
+	isHovered,
+	isCurrent,
+	isDisabled,
+}: {
+	stepNumber: number;
+	isHovered: boolean;
+	isCurrent: boolean;
+	isDisabled: boolean;
+}) => (
 	<Typography
-	element="div"
-	theme={{
-		color: isHovered || isCurrent ? semanticColors.text['stronger-inverse'] : isDisabled ? semanticColors.text.disabled : semanticColors.text.strong
-	}}
-	cssOverrides={css`
-					width: 32px;
-					height: 100%;
-					background-color: ${isCurrent || isHovered
-		? semanticColors.fill.selected
-		: 'transparent'};
-					border-right: 1px solid ${semanticColors.border.weak};
-					display: flex;
-					align-items: center;
-					justify-content: center;
-				`}
->
-	{stepNumber}
-</Typography>
+		element="div"
+		theme={{
+			color:
+				isHovered || isCurrent
+					? semanticColors.text['stronger-inverse']
+					: isDisabled
+						? semanticColors.text.disabled
+						: semanticColors.text.strong,
+		}}
+		cssOverrides={css`
+			width: 32px;
+			height: 100%;
+			background-color: ${isCurrent || isHovered
+				? semanticColors.fill.selected
+				: 'transparent'};
+			border-right: 1px solid ${semanticColors.border.weak};
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		`}
+	>
+		{stepNumber}
+	</Typography>
+);
 
-const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, description}: StepProps ) => {
+const Step = ({
+	isDisabled,
+	isCurrent,
+	index,
+	stepStatus,
+	onClick,
+	ariaLabel,
+	description,
+}: StepProps) => {
 	const descriptionTypographyColor =
-		isCurrent || !isDisabled ? semanticColors.text.strong : semanticColors.text.disabled;
-	const backgroundColor =
-		isCurrent ? semanticColors.bg["raised-level-1"] : baseColors.neutral["900"]
+		isCurrent || !isDisabled
+			? semanticColors.text.strong
+			: semanticColors.text.disabled;
+	const backgroundColor = isCurrent
+		? semanticColors.bg['raised-level-1']
+		: baseColors.neutral['900'];
 
 	const buttonStyles = css`
 		// override UA styles
 		appearance: none;
 		-webkit-appearance: none;
-		background-color: ${backgroundColor} ;
+		background-color: ${backgroundColor};
 		font: inherit;
 		color: inherit;
 		border: none;
@@ -270,7 +325,7 @@ const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, des
 		text-align: left;
 		width: 100%;
 		&[data-pressed] {
-			background-color: ${semanticColors.bg["raised-level-1"]};
+			background-color: ${semanticColors.bg['raised-level-1']};
 		}
 	`;
 	return (
@@ -281,24 +336,40 @@ const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, des
 			aria-label={ariaLabel}
 			aria-current={isCurrent ? 'step' : undefined}
 			onClick={() => onClick()}
-		>{({isHovered}) => (
-			<>
-				<StepNumber stepNumber={index} isHovered={isHovered} isCurrent={isCurrent} isDisabled={isDisabled}/>
-				<div
-					css={css`
-					gap: 4px;
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-					margin-left: 12px;
-				`}
-				>
-					<Typography element="div" theme={{color: descriptionTypographyColor}} variant="heading-md">
-						{description}
-					</Typography>
-					{stepStatus !== undefined && <CompletionCaption status={stepStatus} isDisabled={isDisabled && !isCurrent} />}
-				</div>
-			</>
-		)}
+		>
+			{({ isHovered }) => (
+				<>
+					<StepNumber
+						stepNumber={index}
+						isHovered={isHovered}
+						isCurrent={isCurrent}
+						isDisabled={isDisabled}
+					/>
+					<div
+						css={css`
+							gap: 4px;
+							display: flex;
+							flex-direction: column;
+							justify-content: center;
+							margin-left: 12px;
+						`}
+					>
+						<Typography
+							element="div"
+							theme={{ color: descriptionTypographyColor }}
+							variant="heading-md"
+						>
+							{description}
+						</Typography>
+						{stepStatus !== undefined && (
+							<CompletionCaption
+								status={stepStatus}
+								isDisabled={isDisabled && !isCurrent}
+							/>
+						)}
+					</div>
+				</>
+			)}
 		</Button>
-	)};
+	);
+};

@@ -30,9 +30,7 @@ export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
 	wizardId,
 }: WizardProps) => {
 	const { listId } = useParams();
-	return (
-			<StandRedesignWizard wizardId={wizardId} id={listId} />
-	);
+	return <StandRedesignWizard wizardId={wizardId} id={listId} />;
 };
 
 /**
