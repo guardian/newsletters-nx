@@ -252,19 +252,21 @@ const Step = ({isDisabled, isCurrent, index, stepStatus, onClick, ariaLabel, des
 		isCurrent ? semanticColors.bg["raised-level-1"] : baseColors.neutral["900"]
 
 	const buttonStyles = css`
+		// override UA styles
 		appearance: none;
 		-webkit-appearance: none;
 		background-color: ${backgroundColor} ;
-		height: 72px;
+		font: inherit;
+		color: inherit;
 		border: none;
+		padding: 0;
+		margin: 0;
+		// our own styles
+		height: 72px;
 		cursor: ${isDisabled ? 'default' : 'pointer'};
 		border-bottom: 1px solid ${semanticColors.border.weak};
 		display: grid;
 		grid-template-columns: 32px 233px;
-		padding: 0;
-		margin: 0;
-		font: inherit;
-		color: inherit;
 		text-align: left;
 		width: 100%;
 		&[data-pressed] {
