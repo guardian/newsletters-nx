@@ -28,7 +28,7 @@ interface Props {
 type StepProps = {
 	isCurrent: boolean;
 	stepStatus?: StepStatus;
-	index: number;
+	stepNumber: number;
 	onClick: () => void;
 	ariaLabel: string;
 	isDisabled: boolean;
@@ -234,7 +234,7 @@ export const StandRedesignStepNav = ({
 							<Step
 								isDisabled={isDisabled}
 								onClick={() => handleStepClick(step.id)}
-								index={index}
+								stepNumber={index}
 								isCurrent={isCurrent(step)}
 								stepStatus={stepStatus}
 								ariaLabel={buildStepAriaLabel(
@@ -292,7 +292,7 @@ const StepNumber = ({
 const Step = ({
 	isDisabled,
 	isCurrent,
-	index,
+	stepNumber,
 	stepStatus,
 	onClick,
 	ariaLabel,
@@ -340,7 +340,7 @@ const Step = ({
 			{({ isHovered }) => (
 				<>
 					<StepNumber
-						stepNumber={index}
+						stepNumber={stepNumber}
 						isHovered={isHovered}
 						isCurrent={isCurrent}
 						isDisabled={isDisabled}
