@@ -1,17 +1,23 @@
 import { expect, test } from '@playwright/test';
 import {
+	cleanupStaleTestDrafts,
 	createDraftNewsletter,
 	deleteDraftNewsletter,
 } from '../../helpers/draft-newsletter';
 
+const DRAFT_NAME_PREFIX = 'Draft newsletter - playwright test';
+
 test.describe('Top nav - drafts', () => {
 	let listId: number;
+	let draftName: string;
 
-	test.beforeEach(async ({ request }) => {
-		listId = await createDraftNewsletter(
-			request,
-			'Draft newsletter - playwright test',
-		);
+	test.beforeAll(async ({ request }) => {
+		await cleanupStaleTestDrafts(request, DRAFT_NAME_PREFIX);
+	});
+
+	test.beforeEach(async ({ request }, testInfo) => {
+		draftName = `${DRAFT_NAME_PREFIX} - ${testInfo.title}`;
+		listId = await createDraftNewsletter(request, draftName);
 	});
 
 	test.afterEach(async ({ request }) => {
@@ -69,7 +75,7 @@ test.describe('Top nav - drafts', () => {
 
 		const newsletterTableEntry = page
 			.locator('table td:nth-child(2)')
-			.getByText('Draft newsletter - playwright test');
+			.getByText(draftName, { exact: true });
 		await expect(newsletterTableEntry).toBeVisible();
 	});
 
@@ -77,11 +83,11 @@ test.describe('Top nav - drafts', () => {
 		await page.goto('/drafts');
 
 		const searchInput = page.getByLabel('Search for Newsletters');
-		await searchInput.fill('Draft newsletter - playwright test');
+		await searchInput.fill(draftName);
 
 		const newsletterTableEntry = page
 			.locator('table td:nth-child(2)')
-			.getByText('Draft newsletter - playwright test');
+			.getByText(draftName, { exact: true });
 		await expect(newsletterTableEntry).toBeVisible();
 
 		const tableRows = page.locator('table tbody tr');

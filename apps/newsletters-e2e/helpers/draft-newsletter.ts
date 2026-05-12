@@ -174,3 +174,38 @@ export async function deleteDraftNewsletter(
 		);
 	}
 }
+
+/**
+ * Deletes all draft newsletters by name match
+ * call at the start of beforeEach hooks to clean up stale entries
+ * left over from interupted test runs
+ */
+export async function cleanupStaleTestDrafts(
+	request: APIRequestContext,
+	namePrefix: string,
+): Promise<void> {
+	const response = await request.get(`${API_BASE}/api/drafts`);
+	if (!response.ok()) {
+		return;
+	}
+	const body = (await response.json()) as {
+		ok: boolean;
+		data: Array<{ listId: number; name?: string }>;
+	};
+
+	const stale = body.data.filter((newsletter) =>
+		newsletter.name?.startsWith(namePrefix),
+	);
+
+	await Promise.all(
+		stale.map(async (d) => {
+			const res = await request.delete(`${API_BASE}/api/drafts/${d.listId}`);
+			if (!res.ok() && res.status() !== 404) {
+				// ignore 404 errors, another parrelel test may have already deleted the newsletter
+				console.warn(
+					`Failed to delete stale draft ${d.listId}: ${res.status()}`,
+				);
+			}
+		}),
+	);
+}

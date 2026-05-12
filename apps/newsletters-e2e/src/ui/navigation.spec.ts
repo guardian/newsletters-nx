@@ -78,4 +78,3 @@ test.describe('UI Tests', () => {
 	});
 });
 
-//Email Templates

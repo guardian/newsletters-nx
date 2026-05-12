@@ -1,24 +1,7 @@
 import { expect, test } from '@playwright/test';
-import {
-	createDraftNewsletter,
-	deleteDraftNewsletter,
-} from '../../helpers/draft-newsletter';
 
 test.describe('Top nav - launched', () => {
-	let listId: number;
-
-	test.beforeEach(async ({ request }) => {
-		listId = await createDraftNewsletter(
-			request,
-			'Launched newsletter - playwright test',
-		);
-	});
-
-	test.afterEach(async ({ request }) => {
-		await deleteDraftNewsletter(request, listId);
-	});
-
-	test('appears in the laucnhed list', async ({ page }) => {
+	test('appears in the launched list', async ({ page }) => {
 		await page.goto('/');
 		const launchedButton = page
 			.locator('header')
