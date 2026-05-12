@@ -4,6 +4,7 @@
  * - createDraftNewsletter
  * - updateDraftNewsletter
  * - deleteDraftNewsletter
+ * - cleanupStaleTestDrafts
  *
  * methods. Once they are all used inside real
  * tests then this file can be deleted
@@ -14,10 +15,15 @@ import {
 	createDraftNewsletter,
 	deleteDraftNewsletter,
 	updateDraftNewsletter,
+	cleanupStaleTestDrafts,
 } from '../../helpers/draft-newsletter';
 
 test.describe('Draft newsletter', () => {
 	let listId: number;
+
+	test.beforeAll(async ({ request }) => {
+		await cleanupStaleTestDrafts(request, 'My Test Newsletter');
+	});
 
 	test.beforeEach(async ({ request }) => {
 		listId = await createDraftNewsletter(request, 'My Test Newsletter');
