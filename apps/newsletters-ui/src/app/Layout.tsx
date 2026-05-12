@@ -1,5 +1,6 @@
+import { Layout as StandLayout } from '@guardian/stand/layout';
 import { Box, css } from '@mui/material';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Outlet } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
@@ -49,15 +50,20 @@ export function Layout(props: IRootRoute) {
 	}, [isOnCode, isOnLocal, location.pathname]);
 
 	return (
-		<div css={frameCss}>
+		<>
 			{isUsingStand ? (
-				<StandMainNav />
+				<StandLayout>
+					<StandMainNav />
+					{props.outlet ?? <Outlet />}
+				</StandLayout>
 			) : (
-				<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+				<div css={frameCss}>
+					<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+					<Box sx={{ pt: 8 }} component={'main'}>
+						{props.outlet ?? <Outlet />}
+					</Box>
+				</div>
 			)}
-			<Box sx={{ pt: 8 }} component={'main'}>
-				{props.outlet ?? <Outlet />}
-			</Box>
-		</div>
+		</>
 	);
 }

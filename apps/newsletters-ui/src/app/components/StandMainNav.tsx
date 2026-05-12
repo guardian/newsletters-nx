@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { baseColors, semanticColors, semanticSizing } from '@guardian/stand';
 import { Avatar as StandAvatar } from '@guardian/stand/avatar';
 import type { TopBarTheme } from '@guardian/stand/TopBar';
@@ -83,7 +84,12 @@ export function StandMainNav() {
 	const { pathname } = useLocation();
 
 	return (
-		<TopBar theme={topBarTheme}>
+		<TopBar
+			theme={topBarTheme}
+			cssOverrides={css`
+				grid-area: topbar;
+			`}
+		>
 			<TopBarToolName
 				name="Newsletter"
 				href="/"

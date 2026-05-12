@@ -153,7 +153,7 @@ export const StandRedesignStepNav = ({
 
 	return (
 		<Stepper
-			sx={{ flexWrap: 'wrap' }}
+			sx={{ flexWrap: 'wrap', gridArea: 'sidebar' }}
 			nonLinear={stepperConfig.isNonLinear}
 			connector={null}
 			component={'nav'}

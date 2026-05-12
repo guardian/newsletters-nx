@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
-import { baseSpacing, semanticColors } from '@guardian/stand';
-import { Alert, Box, Container, Stack, Typography } from '@mui/material';
+import { Grid, Item } from '@guardian/stand/grid';
+import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
@@ -30,11 +30,7 @@ export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
 	wizardId,
 }: WizardProps) => {
 	const { listId } = useParams();
-	return (
-		<Container>
-			<StandRedesignWizard wizardId={wizardId} id={listId} />
-		</Container>
-	);
+	return <StandRedesignWizard wizardId={wizardId} id={listId} />;
 };
 
 /**
@@ -243,12 +239,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	};
 
 	return (
-		<div
-			css={css`
-				display: flex;
-				gap: 40px;
-			`}
-		>
+		<>
 			<StandRedesignStepNav
 				currentStepId={serverData.currentStepId}
 				stepperConfig={stepperConfig}
@@ -256,62 +247,62 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				handleStepClick={handleStepClick}
 				formData={formData}
 			/>
-			<div
-				css={css`
-					margin-top: ${baseSpacing['48-rem']};
+			<Grid
+				as="main"
+				cssOverrides={css`
+					grid-area: main;
 				`}
 			>
-				<StandRedesignMarkdownView
-					markdown={serverData.markdownToDisplay ?? ''}
-				/>
-
-				{formSchema && formData && (
-					<StandRedesignStateEditForm
-						formSchema={formSchema}
-						formData={formData}
-						setFormData={handleFormChange}
-						maxOptionsForRadioButtons={5}
-						stringConfig={stringConfig}
+				<Item size={{ sm: 12, md: 11, lg: 6 }} offset={{ lg: 1 }}>
+					<StandRedesignMarkdownView
+						markdown={serverData.markdownToDisplay ?? ''}
 					/>
-				)}
 
-				{serverData.errorMessage && (
-					<Box sx={{ paddingBottom: 2 }}>
-						<FailureAlert
-							errorMessage={serverData.errorMessage}
-							errorDetails={serverData.errorDetails}
-							isPersistent={serverData.hasPersistentError}
+					{formSchema && formData && (
+						<StandRedesignStateEditForm
+							formSchema={formSchema}
+							formData={formData}
+							setFormData={handleFormChange}
+							maxOptionsForRadioButtons={5}
+							stringConfig={stringConfig}
 						/>
-					</Box>
-				)}
-				<Stack spacing={2} direction="row">
-					{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
-						<StandRedesignWizardActionButton
-							key={key}
-							button={button}
-							onClick={handleButtonClick}
-						/>
-					))}
-				</Stack>
-			</div>
-			<div
-				css={css`
-					margin-top: ${baseSpacing['40-rem']};
-					background-color: ${semanticColors.bg['raised-level-1']};
-					padding: ${baseSpacing['16-rem']};
-				`}
-			>
-				<StandRedesignMarkdownView
-					markdown={serverData.markdownToDisplayInSidebar ?? ''}
-				/>
-			</div>
-			<SkipConfirmationDialog
-				currentStepId={serverData.currentStepId}
-				targetStepId={showSkipModalFor}
-				handleCancelSkip={handleCancelSkip}
-				handleConfirmSkip={handleConfirmSkip}
-				stepperConfig={stepperConfig}
-			/>
-		</div>
+					)}
+
+					{serverData.errorMessage && (
+						<Box sx={{ paddingBottom: 2 }}>
+							<FailureAlert
+								errorMessage={serverData.errorMessage}
+								errorDetails={serverData.errorDetails}
+								isPersistent={serverData.hasPersistentError}
+							/>
+						</Box>
+					)}
+					<Stack spacing={2} direction="row">
+						{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
+							<StandRedesignWizardActionButton
+								key={key}
+								button={button}
+								onClick={handleButtonClick}
+							/>
+						))}
+					</Stack>
+				</Item>
+				<Item size={{ lg: 4 }} offset={{ lg: 1 }}>
+					<StandRedesignMarkdownView
+						markdown={serverData.markdownToDisplayInSidebar ?? ''}
+					/>
+				</Item>
+				<Item>
+					<p>Some paragraph</p>
+					<SkipConfirmationDialog
+						currentStepId={serverData.currentStepId}
+						targetStepId={showSkipModalFor}
+						handleCancelSkip={handleCancelSkip}
+						handleConfirmSkip={handleConfirmSkip}
+						stepperConfig={stepperConfig}
+					/>
+				</Item>
+			</Grid>
+		</>
 	);
 };
