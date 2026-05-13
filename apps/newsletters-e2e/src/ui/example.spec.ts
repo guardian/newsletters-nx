@@ -5,6 +5,7 @@
  * - updateDraftNewsletter
  * - deleteDraftNewsletter
  * - cleanupStaleTestDrafts
+ * - patchNewsletter
  *
  * methods. Once they are all used inside real
  * tests then this file can be deleted
@@ -16,6 +17,7 @@ import {
 	deleteDraftNewsletter,
 	updateDraftNewsletter,
 	cleanupStaleTestDrafts,
+	patchNewsletter
 } from '../../helpers/draft-newsletter';
 
 test.describe('Draft newsletter', () => {
@@ -30,6 +32,11 @@ test.describe('Draft newsletter', () => {
 	});
 
 	test.afterEach(async ({ request }) => {
+		await patchNewsletter(request, 9001, {
+			name: 'Playwright Article Test',
+			status: 'live',
+		});
+
 		await deleteDraftNewsletter(request, listId);
 	});
 

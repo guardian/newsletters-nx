@@ -176,6 +176,27 @@ export async function deleteDraftNewsletter(
 }
 
 /**
+ * Partially updates a draft newsletter using PATCH
+ * Useful in afterEach test hooks to reset the state of the newsletter
+ */
+export async function patchNewsletter(
+	request: APIRequestContext,
+	listId: number,
+	data: Record<string, unknown>,
+): Promise<void> {
+	const response = await request.patch(
+		`${API_BASE}/api/newsletters/${listId}`,
+		{ data },
+	);
+	if (!response.ok()) {
+		const body = await response.text();
+		throw new Error(
+			`Failed to path newsletter ${listId} (${response.status()}): ${body}`,
+		);
+	}
+}
+
+/**
  * Deletes all draft newsletters by name match
  * call at the start of beforeAll hook to clean up stale entries
  * left over from interrupted test runs
