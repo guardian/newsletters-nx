@@ -1,13 +1,8 @@
 import { css } from '@emotion/react';
 import { baseColors, semanticColors } from '@guardian/stand';
+import type { IconProps } from '@guardian/stand/icon';
 import { Icon } from '@guardian/stand/icon';
 import { Typography } from '@guardian/stand/typography';
-import {
-	CheckCircleOutlined,
-	CircleSharp,
-	WarningAmberOutlined,
-} from '@mui/icons-material';
-import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
@@ -35,9 +30,11 @@ type StepProps = {
 	description: string;
 };
 
+type StandIconSymbol = IconProps['symbol'];
+
 type StatusRowProps = {
 	label: string;
-	icon: ReactNode;
+	icon: StandIconSymbol;
 	iconColor: string;
 	isDisabled: boolean;
 };
@@ -65,9 +62,8 @@ const StatusRow = ({ label, icon, iconColor, isDisabled }: StatusRowProps) => (
 			fill={isDisabled ? semanticColors.text.disabled : iconColor}
 			size="sm"
 			theme={{ sm: { size: '16px' } }}
-		>
-			{icon}
-		</Icon>
+			symbol={icon}
+		/>
 	</div>
 );
 
@@ -87,7 +83,7 @@ const CompletionCaption = ({
 					label="Optional"
 					isDisabled={isDisabled}
 					iconColor={semanticColors.text['success-inverse']}
-					icon={<CircleSharp />}
+					icon="circle"
 				/>
 			);
 		case StepStatus.Complete:
@@ -96,7 +92,7 @@ const CompletionCaption = ({
 					label="Complete"
 					isDisabled={isDisabled}
 					iconColor={semanticColors.text.success}
-					icon={<CheckCircleOutlined />}
+					icon="check_circle"
 				/>
 			);
 		case StepStatus.Incomplete:
@@ -105,7 +101,7 @@ const CompletionCaption = ({
 					label="Incomplete"
 					isDisabled={isDisabled}
 					iconColor={semanticColors.text.error}
-					icon={<WarningAmberOutlined />}
+					icon="warning"
 				/>
 			);
 	}
