@@ -116,14 +116,21 @@ const buildStepAriaLabel = (
 	active: boolean,
 	status?: StepStatus,
 ): string => {
-	const statusDescription =
-		status === StepStatus.Complete
-			? 'complete'
-			: status === StepStatus.Incomplete
-				? 'incomplete'
-				: status === StepStatus.Optional
-					? 'optional'
-					: undefined;
+	const statusDescription = (() => {
+		switch (status) {
+			case StepStatus.Complete:
+				return 'complete';
+
+			case StepStatus.Incomplete:
+				return 'incomplete';
+
+			case StepStatus.Optional:
+				return 'optional';
+
+			default:
+				return undefined;
+		}
+	})();
 
 	const parts = [description];
 
