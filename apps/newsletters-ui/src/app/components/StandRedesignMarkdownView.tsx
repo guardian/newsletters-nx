@@ -70,7 +70,7 @@ const UlMarginOverride = (props: { children?: ReactNode }) => {
 		<ul
 			css={css`
 				margin-bottom: ${baseSpacing['40-rem']};
-
+				padding-left: 1.5em;
 				p {
 					margin-bottom: ${baseSpacing['12-rem']};
 				}
