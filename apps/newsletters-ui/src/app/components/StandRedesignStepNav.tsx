@@ -342,7 +342,7 @@ const Step = ({
 			isDisabled={isDisabled}
 			aria-label={ariaLabel}
 			aria-current={isCurrent ? 'step' : undefined}
-			onClick={() => onClick()}
+			onPress={() => onClick()}
 		>
 			{({ isHovered }) => (
 				<>
