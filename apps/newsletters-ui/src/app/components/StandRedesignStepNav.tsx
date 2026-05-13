@@ -24,7 +24,7 @@ type StepProps = {
 	isCurrent: boolean;
 	stepStatus?: StepStatus;
 	stepNumber: number;
-	onClick: () => void;
+	onPress: () => void;
 	ariaLabel: string;
 	isDisabled: boolean;
 	description: string;
@@ -236,7 +236,7 @@ export const StandRedesignStepNav = ({
 						<li key={step.id}>
 							<Step
 								isDisabled={isDisabled}
-								onClick={() => handleStepClick(step.id)}
+								onPress={() => handleStepClick(step.id)}
 								stepNumber={index}
 								isCurrent={isCurrent(step)}
 								stepStatus={stepStatus}
@@ -297,7 +297,7 @@ const Step = ({
 	isCurrent,
 	stepNumber,
 	stepStatus,
-	onClick,
+	onPress,
 	ariaLabel,
 	description,
 }: StepProps) => {
@@ -338,7 +338,7 @@ const Step = ({
 			isDisabled={isDisabled}
 			aria-label={ariaLabel}
 			aria-current={isCurrent ? 'step' : undefined}
-			onPress={() => onClick()}
+			onPress={onPress}
 		>
 			{({ isHovered }) => (
 				<>
