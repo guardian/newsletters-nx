@@ -177,8 +177,8 @@ export async function deleteDraftNewsletter(
 
 /**
  * Deletes all draft newsletters by name match
- * call at the start of beforeEach hooks to clean up stale entries
- * left over from interupted test runs
+ * call at the start of beforeAll hook to clean up stale entries
+ * left over from interrupted test runs
  */
 export async function cleanupStaleTestDrafts(
 	request: APIRequestContext,
@@ -201,7 +201,7 @@ export async function cleanupStaleTestDrafts(
 		stale.map(async (d) => {
 			const res = await request.delete(`${API_BASE}/api/drafts/${d.listId}`);
 			if (!res.ok() && res.status() !== 404) {
-				// ignore 404 errors, another parrelel test may have already deleted the newsletter
+				// ignore 404 errors, another parallel test may have already deleted the newsletter
 				console.warn(
 					`Failed to delete stale draft ${d.listId}: ${res.status()}`,
 				);
