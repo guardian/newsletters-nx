@@ -111,7 +111,7 @@ export const Table = <TData extends object>({
 						</tr>
 					))}
 				</thead>
-				<tbody {...getTableBodyProps()}>
+				<tbody {...getTableBodyProps()} data-testid="launched-newsletters-table">
 					{rows.map((row) => {
 						prepareRow(row);
 						return (

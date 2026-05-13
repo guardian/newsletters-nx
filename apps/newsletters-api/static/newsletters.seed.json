@@ -1,0 +1,48 @@
+[
+	{
+		"identityName": "playwright-launched-seed",
+		"name": "Playwright Launched Seed",
+		"category": "article-based",
+		"description": "Culpa necessitatibus aspernatur consectetur. explicabo deleniti cupiditate hic velit dolores voluptatem. odit minima commodi explicabo doloremque similique.",
+		"signUpDescription": "Ducimus iste minima architecto atque.",
+		"frequency": "Weekly",
+		"status": "paused",
+		"restricted": false,
+		"emailConfirmation": false,
+		"brazeNewsletterName": "Editorial_VanCoordinatorAu",
+		"brazeSubscribeAttributeName": "VanCoordinatorAu_Subscribe_Email",
+		"brazeSubscribeEventNamePrefix": "van_coordinator_au",
+		"theme": "opinion",
+		"group": "Sport",
+		"regionFocus": "AU",
+		"listIdV1": 3666,
+		"listId": 2280,
+		"exampleUrl": "/world/series/series-van-coordinator/latest/email",
+		"signupPage": "/global/sign-up-for-the-van-coordinator-newsletter-our-free-email",
+		"signUpEmbedDescription": "We'll send you Van Coordinator weekly",
+		"campaignName": "VanCoordinatorAu",
+		"campaignCode": "vancoordinatorAU_email",
+		"brazeSubscribeAttributeNameAlternate": [
+			"email_subscribe_van_coordinator_AU"
+		],
+		"creationTimeStamp": 1647134612452,
+		"figmaIncludesThrashers": false,
+		"launchDate": "1970-01-02T00:21:18.876Z",
+		"signUpPageDate": "1970-01-02T00:21:18.876Z",
+		"thrasherDate": "1970-01-02T00:21:18.876Z",
+		"privateUntilLaunch": false,
+		"onlineArticle": "Web for all sends",
+		"illustrationCard": "https://i.guim.co.uk/img/media/dc41d329183de03943d483df5e68f91a0f263a4e/0_0_5000_3000/500.jpg?width=250&quality=45&s=419ffb0a03b5f5c9cef62cd80c52053e",
+		"brazeCampaignCreationStatus": "COMPLETED",
+		"ophanCampaignCreationStatus": "COMPLETED",
+		"signupPageCreationStatus": "COMPLETED",
+		"tagCreationStatus": "NOT_REQUESTED",
+		"renderingOptions": {
+			"displayDate": true,
+			"displayStandfirst": false,
+			"contactEmail": "rerum@example.com",
+			"displayImageCaptions": true,
+			"mainBannerUrl": "https://i.guim.co.uk/img/uploads/2022/10/21/default-newsletter-main-banner.png?dpr=2&quality=100&width=600&s=618cf82b457a343bf56650ad7acaad59"
+		}
+	}
+]
