@@ -55,7 +55,7 @@ export function Layout(props: IRootRoute) {
 			) : (
 				<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
 			)}
-			<Box sx={{ pt: 8 }} component={'main'}>
+			<Box sx={{ pt: isUsingStand ? 0 : 8 }} component={'main'}>
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
