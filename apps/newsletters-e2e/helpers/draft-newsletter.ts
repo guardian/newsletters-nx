@@ -191,7 +191,7 @@ export async function patchNewsletter(
 	if (!response.ok()) {
 		const body = await response.text();
 		throw new Error(
-			`Failed to path newsletter ${listId} (${response.status()}): ${body}`,
+			`Failed to patch newsletter ${listId} (${response.status()}): ${body}`,
 		);
 	}
 }
