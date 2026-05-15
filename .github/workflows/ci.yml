@@ -100,6 +100,9 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
+      - name: Upgrade npm
+        run: npm install -g npm@11
+
       - name: Install deps
         run: npm ci
 
@@ -136,6 +139,9 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
+
+      - name: Upgrade npm
+        run: npm install -g npm@11
 
         # Install then build production-ready bundled files
       - name: Install deps
