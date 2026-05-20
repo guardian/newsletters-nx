@@ -218,6 +218,7 @@ export const StandRedesignStepNav = ({
 				border-right: 1px solid ${semanticColors.border.strong};
 				display: flex;
 				flex-direction: column;
+				height: 100%;
 			`}
 			aria-label="Newsletter creation steps"
 		>

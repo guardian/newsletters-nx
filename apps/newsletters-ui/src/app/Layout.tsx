@@ -1,3 +1,4 @@
+import { Layout as StandLayout } from '@guardian/stand/layout';
 import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
@@ -35,6 +36,9 @@ export function Layout(props: IRootRoute) {
 		!!host?.toLowerCase().split('.').includes('local');
 
 	const location = useLocation();
+	const isNewsletterData = location.pathname.includes(
+		'/drafts/newsletter-data',
+	);
 	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
 
 	useEffect(() => {
@@ -48,14 +52,25 @@ export function Layout(props: IRootRoute) {
 		image.src = `https://${hostname}/guardian-tool-accessed?app=newsletters-tool&path=${location.pathname}`;
 	}, [isOnCode, isOnLocal, location.pathname]);
 
+	const Nav = isUsingStand ? (
+		<StandMainNav />
+	) : (
+		<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
+	);
+
+	if (isUsingStand && isNewsletterData) {
+		return (
+			<StandLayout>
+				<StandLayout.TopBar>{Nav}</StandLayout.TopBar>
+				{props.outlet ?? <Outlet />}
+			</StandLayout>
+		);
+	}
+
 	return (
 		<div css={frameCss}>
-			{isUsingStand ? (
-				<StandMainNav />
-			) : (
-				<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
-			)}
-			<Box sx={{ pt: isUsingStand ? 0 : 8 }} component={'main'}>
+			{Nav}
+			<Box sx={{ pt: 8 }} component={'main'}>
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
