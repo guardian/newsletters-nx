@@ -98,7 +98,13 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 	markdown,
 }) => {
 	return (
-		<div className="markdown-block">
+		<div className="markdown-block" css={css`
+			img {
+				max-width: 100%;
+				height: auto;
+				display: block;
+			}
+		`}>
 			<ReactMarkdown
 				components={{
 					a: LinkWithNewTabIfExternal,
