@@ -70,7 +70,7 @@ const UlMarginOverride = (props: { children?: ReactNode }) => {
 		<ul
 			css={css`
 				margin-bottom: ${baseSpacing['40-rem']};
-
+				padding-left: 1.5em;
 				p {
 					margin-bottom: ${baseSpacing['12-rem']};
 				}
@@ -98,7 +98,13 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 	markdown,
 }) => {
 	return (
-		<div className="markdown-block">
+		<div className="markdown-block" css={css`
+			img {
+				max-width: 100%;
+				height: auto;
+				display: block;
+			}
+		`}>
 			<ReactMarkdown
 				components={{
 					a: LinkWithNewTabIfExternal,
