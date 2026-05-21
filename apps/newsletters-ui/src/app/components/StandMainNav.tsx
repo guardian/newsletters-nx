@@ -87,6 +87,7 @@ export function StandMainNav() {
 			<TopBarToolName
 				name="Newsletter"
 				href="/"
+				collapsedHoverText={'Back'}
 				hoverText="Back to dashboard"
 				favicon={{
 					icon: 'email',
