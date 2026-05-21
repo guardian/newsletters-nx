@@ -1,4 +1,4 @@
-import { Option, Select } from '@guardian/stand/select';
+import { Option, Select } from '@guardian/stand/Select';
 import type { FunctionComponent } from 'react';
 import type { Key } from 'react-aria-components';
 import type { StandardFormProps } from './SchemaField';

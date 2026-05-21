@@ -1,4 +1,4 @@
-import { TextInput } from '@guardian/stand/text-input';
+import { TextInput } from '@guardian/stand/TextInput';
 import type { FormEventHandler, FunctionComponent } from 'react';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';

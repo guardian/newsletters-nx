@@ -1,4 +1,4 @@
-import { Button } from '@guardian/stand/button';
+import { Button } from '@guardian/stand/Button';
 import type { WizardButtonType } from '@newsletters-nx/newsletters-data-client';
 import type { WizardButton } from '@newsletters-nx/state-machine';
 

@@ -1,4 +1,4 @@
-import { Checkbox } from '@guardian/stand/checkbox';
+import { Checkbox } from '@guardian/stand/Checkbox';
 import type { FunctionComponent } from 'react';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
