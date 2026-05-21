@@ -1,5 +1,5 @@
-import { TextArea } from '@guardian/stand/text-area';
-import { TextInput } from '@guardian/stand/text-input';
+import { TextArea } from '@guardian/stand/TextArea';
+import { TextInput } from '@guardian/stand/TextInput';
 import type { FormEventHandler } from 'react';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';

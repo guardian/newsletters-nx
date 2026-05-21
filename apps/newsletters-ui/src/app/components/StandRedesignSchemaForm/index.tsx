@@ -69,8 +69,8 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 			css={css`
 				display: flex;
 				flex-direction: column;
-				gap: ${baseSpacing['32-rem']};
-				margin-bottom: ${baseSpacing['40-rem']};
+				gap: ${baseSpacing['32Rem']};
+				margin-bottom: ${baseSpacing['40Rem']};
 			`}
 		>
 			{fields.map((field) => (

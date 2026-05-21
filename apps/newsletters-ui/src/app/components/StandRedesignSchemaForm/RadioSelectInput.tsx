@@ -1,4 +1,4 @@
-import { Radio, RadioGroup } from '@guardian/stand/radio-group';
+import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
 import type { FunctionComponent } from 'react';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';

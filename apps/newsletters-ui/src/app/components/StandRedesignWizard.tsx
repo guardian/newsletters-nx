@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
-import { Grid, Item } from '@guardian/stand/grid';
-import { Layout } from '@guardian/stand/layout';
+import { Grid, Item } from '@guardian/stand/Grid';
+import { Layout } from '@guardian/stand/Layout';
 import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -242,19 +242,21 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 
 	return (
 		<>
-			<Layout.Sidebar as='div'>
-			<StandRedesignStepNav
-				currentStepId={serverData.currentStepId}
-				stepperConfig={stepperConfig}
-				onEditTrack={typeof id !== 'undefined'}
-				handleStepClick={handleStepClick}
-				formData={formData}
-			/>
+			<Layout.Sidebar as="div">
+				<StandRedesignStepNav
+					currentStepId={serverData.currentStepId}
+					stepperConfig={stepperConfig}
+					onEditTrack={typeof id !== 'undefined'}
+					handleStepClick={handleStepClick}
+					formData={formData}
+				/>
 			</Layout.Sidebar>
 			<Layout.Main as="main">
-				<Grid cssOverrides={css`
-					margin-top: ${baseSpacing['48-rem']};
-				`}>
+				<Grid
+					cssOverrides={css`
+						margin-top: ${baseSpacing['48Rem']};
+					`}
+				>
 					<Item size={{ sm: 12, md: 11, lg: 6 }} offset={{ lg: 1 }}>
 						<StandRedesignMarkdownView
 							markdown={serverData.markdownToDisplay ?? ''}

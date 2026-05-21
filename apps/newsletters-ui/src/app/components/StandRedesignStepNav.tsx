@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
 import { baseColors, semanticColors } from '@guardian/stand';
-import type { IconProps } from '@guardian/stand/icon';
-import { Icon } from '@guardian/stand/icon';
-import { Typography } from '@guardian/stand/typography';
+import type { IconProps } from '@guardian/stand/Icon';
+import { Icon } from '@guardian/stand/Icon';
+import { Typography } from '@guardian/stand/Typography';
 import { useState } from 'react';
 import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
@@ -48,7 +48,7 @@ const StatusRow = ({ label, icon, iconColor, isDisabled }: StatusRowProps) => (
 		`}
 	>
 		<Typography
-			variant="body-sm"
+			variant="bodySm"
 			element="span"
 			theme={{
 				color: isDisabled
@@ -82,7 +82,7 @@ const CompletionCaption = ({
 				<StatusRow
 					label="Optional"
 					isDisabled={isDisabled}
-					iconColor={semanticColors.text['success-inverse']}
+					iconColor={semanticColors.text.successInverse}
 					icon="circle"
 				/>
 			);
@@ -272,7 +272,7 @@ const StepNumber = ({
 		theme={{
 			color:
 				isHovered || isCurrent
-					? semanticColors.text['stronger-inverse']
+					? semanticColors.text.strongerInverse
 					: isDisabled
 						? semanticColors.text.disabled
 						: semanticColors.text.strong,
@@ -307,7 +307,7 @@ const Step = ({
 			? semanticColors.text.strong
 			: semanticColors.text.disabled;
 	const backgroundColor = isCurrent
-		? semanticColors.bg['raised-level-1']
+		? semanticColors.bg.raisedLevel1
 		: baseColors.neutral['900'];
 
 	const buttonStyles = css`
@@ -329,7 +329,7 @@ const Step = ({
 		text-align: left;
 		width: 100%;
 		&[data-pressed] {
-			background-color: ${semanticColors.bg['raised-level-1']};
+			background-color: ${semanticColors.bg.raisedLevel1};
 		}
 	`;
 	return (
@@ -361,7 +361,7 @@ const Step = ({
 						<Typography
 							element="div"
 							theme={{ color: descriptionTypographyColor }}
-							variant="heading-md"
+							variant="headingMd"
 						>
 							{description}
 						</Typography>

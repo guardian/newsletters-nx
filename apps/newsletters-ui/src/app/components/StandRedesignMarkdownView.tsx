@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
-import { Typography } from '@guardian/stand/typography';
+import { Typography } from '@guardian/stand/Typography';
 import type { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -29,9 +29,9 @@ const TypographyH2 = (props: { children?: ReactNode }) => {
 	return (
 		<Typography
 			element="h2"
-			variant="heading-2xl"
+			variant="heading2Xl"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['16-rem']};
+				margin-bottom: ${baseSpacing['16Rem']};
 			`}
 		>
 			{props.children}
@@ -42,9 +42,9 @@ const TypographyH3 = (props: { children?: ReactNode }) => {
 	return (
 		<Typography
 			element="h3"
-			variant="heading-md"
+			variant="headingMd"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['12-rem']};
+				margin-bottom: ${baseSpacing['12Rem']};
 			`}
 		>
 			{props.children}
@@ -55,9 +55,9 @@ const TypographyP = (props: { children?: ReactNode }) => {
 	return (
 		<Typography
 			element="p"
-			variant="body-md"
+			variant="bodyMd"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['40-rem']};
+				margin-bottom: ${baseSpacing['40Rem']};
 			`}
 		>
 			{props.children}
@@ -69,10 +69,10 @@ const UlMarginOverride = (props: { children?: ReactNode }) => {
 	return (
 		<ul
 			css={css`
-				margin-bottom: ${baseSpacing['40-rem']};
+				margin-bottom: ${baseSpacing['40Rem']};
 				padding-left: 1.5em;
 				p {
-					margin-bottom: ${baseSpacing['12-rem']};
+					margin-bottom: ${baseSpacing['12Rem']};
 				}
 			`}
 		>
@@ -84,9 +84,9 @@ const TypographyStrong = (props: { children?: ReactNode }) => {
 	return (
 		<Typography
 			element="span"
-			variant="body-bold-md"
+			variant="bodyBoldMd"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['40-rem']};
+				margin-bottom: ${baseSpacing['40Rem']};
 			`}
 		>
 			{props.children}
@@ -98,13 +98,16 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 	markdown,
 }) => {
 	return (
-		<div className="markdown-block" css={css`
-			img {
-				max-width: 100%;
-				height: auto;
-				display: block;
-			}
-		`}>
+		<div
+			className="markdown-block"
+			css={css`
+				img {
+					max-width: 100%;
+					height: auto;
+					display: block;
+				}
+			`}
+		>
 			<ReactMarkdown
 				components={{
 					a: LinkWithNewTabIfExternal,

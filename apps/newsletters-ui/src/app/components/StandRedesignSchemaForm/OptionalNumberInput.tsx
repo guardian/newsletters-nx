@@ -1,5 +1,5 @@
-import { Checkbox } from '@guardian/stand/checkbox';
-import { TextInput } from '@guardian/stand/text-input';
+import { Checkbox } from '@guardian/stand/Checkbox';
+import { TextInput } from '@guardian/stand/TextInput';
 import type { FormEventHandler, FunctionComponent } from 'react';
 import { useState } from 'react';
 import type { StandardFormProps } from './SchemaField';

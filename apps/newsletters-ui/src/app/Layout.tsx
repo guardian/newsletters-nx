@@ -1,4 +1,4 @@
-import { Layout as StandLayout } from '@guardian/stand/layout';
+import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
