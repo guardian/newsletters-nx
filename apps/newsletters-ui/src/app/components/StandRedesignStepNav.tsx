@@ -3,6 +3,7 @@ import { baseColors, semanticColors } from '@guardian/stand';
 import type { IconProps } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
+import {from} from '@guardian/stand/utils';
 import { useState } from 'react';
 import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
@@ -158,6 +159,7 @@ export const StandRedesignStepNav = ({
 	const [completionRecord, setCompletionRecord] = useState<
 		Partial<Record<string, StepStatus>>
 	>({});
+	const [open, setOpen] = useState(false);
 
 	const filteredStepList = stepperConfig.steps.filter((step) => {
 		if (step.parentStepId) {
@@ -213,14 +215,60 @@ export const StandRedesignStepNav = ({
 		!isCurrent(step);
 
 	return (
+		<>
+			<Button
+				onClick={() => setOpen((current) => {return !current})}
+				aria-expanded={open}
+				aria-controls="step-nav-list"
+				aria-label="Toggle step navigation"
+				css={css`
+					// remove default border.
+					appearance: none;
+					-webkit-appearance: none;
+					border: 0;
+					border-radius: 0;
+					margin: 0;
+					font: inherit;
+					color: inherit;
+					//own styles
+					border-bottom: 2px solid ${semanticColors.border.weak};
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+					align-items: center;
+					height: 72px;
+					padding: 0 16px;
+					width: 100%;
+					background-color: ${semanticColors.bg.raisedLevel1};
+
+					${from.md} {
+						display: none;
+					}
+
+					&[data-hovered] {
+						background-color: ${semanticColors.bg.raisedLevel2};
+					}
+
+					&[data-pressed] {
+						background-color: ${baseColors.neutral["750"]};
+					}
+				`}
+			>
+				<Typography element="div" variant={'bodyBoldSm'}>Create newsletter / {currentStep?.label}</Typography>
+				{open ? <Icon size="md" symbol="keyboard_arrow_up"/> : <Icon size="md" symbol="keyboard_arrow_down"/>}
+			</Button>
 		<nav
 			css={css`
 				border-right: 1px solid ${semanticColors.border.strong};
-				display: flex;
 				flex-direction: column;
 				height: 100%;
+				display: ${open ? 'flex' : 'none'};
+				${from.md} {
+					display:flex;
+				}
 			`}
 			aria-label="Newsletter creation steps"
+			id="step-nav-list"
 		>
 			<ol
 				css={css`
@@ -253,6 +301,7 @@ export const StandRedesignStepNav = ({
 				})}
 			</ol>
 		</nav>
+		</>
 	);
 };
 
@@ -325,7 +374,7 @@ const Step = ({
 		cursor: ${isDisabled ? 'default' : 'pointer'};
 		border-bottom: 1px solid ${semanticColors.border.weak};
 		display: grid;
-		grid-template-columns: 32px 233px;
+		grid-template-columns: 32px 1fr;
 		text-align: left;
 		width: 100%;
 		&[data-pressed] {
