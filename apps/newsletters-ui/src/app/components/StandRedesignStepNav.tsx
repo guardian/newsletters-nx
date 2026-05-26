@@ -40,6 +40,17 @@ type StatusRowProps = {
 	isDisabled: boolean;
 };
 
+const buttonStyleReset = css`
+	appearance: none;
+	-webkit-appearance: none;
+	background-color: transparent;
+	font: inherit;
+	color: inherit;
+	border: none;
+	padding: 0;
+	margin: 0;
+`;
+
 const StatusRow = ({ label, icon, iconColor, isDisabled }: StatusRowProps) => (
 	<div
 		css={css`
@@ -221,16 +232,7 @@ export const StandRedesignStepNav = ({
 				aria-expanded={open}
 				aria-controls="step-nav-list"
 				aria-label="Toggle step navigation"
-				css={css`
-					// remove default border.
-					appearance: none;
-					-webkit-appearance: none;
-					border: 0;
-					border-radius: 0;
-					margin: 0;
-					font: inherit;
-					color: inherit;
-					//own styles
+				css={[buttonStyleReset, css`
 					border-bottom: 2px solid ${semanticColors.border.weak};
 					display: flex;
 					flex-direction: row;
@@ -252,7 +254,8 @@ export const StandRedesignStepNav = ({
 					&[data-pressed] {
 						background-color: ${baseColors.neutral["750"]};
 					}
-				`}
+				`]
+			}
 			>
 				<Typography element="div" variant={'bodyBoldSm'}>Create newsletter / {currentStep?.label}</Typography>
 				{open ? <Icon size="md" symbol="keyboard_arrow_up"/> : <Icon size="md" symbol="keyboard_arrow_down"/>}
@@ -360,16 +363,7 @@ const Step = ({
 		: baseColors.neutral['900'];
 
 	const buttonStyles = css`
-		// override UA styles
-		appearance: none;
-		-webkit-appearance: none;
 		background-color: ${backgroundColor};
-		font: inherit;
-		color: inherit;
-		border: none;
-		padding: 0;
-		margin: 0;
-		// our own styles
 		height: 72px;
 		cursor: ${isDisabled ? 'default' : 'pointer'};
 		border-bottom: 1px solid ${semanticColors.border.weak};
@@ -384,7 +378,7 @@ const Step = ({
 	return (
 		// Use a button instead of a link here because it is a single page application
 		<Button
-			css={buttonStyles}
+			css={[buttonStyleReset, buttonStyles]}
 			isDisabled={isDisabled}
 			aria-label={ariaLabel}
 			aria-current={isCurrent ? 'step' : undefined}
