@@ -3,8 +3,8 @@ import { baseColors, semanticColors } from '@guardian/stand';
 import type { IconProps } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
-import {from} from '@guardian/stand/utils';
-import { useState } from 'react';
+import { from } from '@guardian/stand/utils';
+import { useId, useState } from 'react';
 import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
 import type {
@@ -172,6 +172,8 @@ export const StandRedesignStepNav = ({
 	>({});
 	const [open, setOpen] = useState(false);
 
+	const stepNavId = useId();
+
 	const filteredStepList = stepperConfig.steps.filter((step) => {
 		if (step.parentStepId) {
 			return false;
@@ -228,10 +230,9 @@ export const StandRedesignStepNav = ({
 	return (
 		<>
 			<Button
-				onClick={() => setOpen((current) => {return !current})}
+				onPress={() => setOpen((current) => {return !current})}
 				aria-expanded={open}
-				aria-controls="step-nav-list"
-				aria-label="Toggle step navigation"
+				aria-controls={stepNavId}
 				css={[buttonStyleReset, css`
 					border-bottom: 2px solid ${semanticColors.border.weak};
 					display: flex;
@@ -271,7 +272,7 @@ export const StandRedesignStepNav = ({
 				}
 			`}
 			aria-label="Newsletter creation steps"
-			id="step-nav-list"
+			id={stepNavId}
 		>
 			<ol
 				css={css`
