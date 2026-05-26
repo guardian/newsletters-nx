@@ -232,6 +232,7 @@ export const StandRedesignStepNav = ({
 			<Button
 				onPress={() => setOpen((current) => {return !current})}
 				aria-expanded={open}
+				aria-label={`Toggle step navigation${currentStep?.label ? ', step ' + currentStep.label : ''}, currently ${open ? 'expanded' : 'collapsed'}` }
 				aria-controls={stepNavId}
 				css={[buttonStyleReset, css`
 					border-bottom: 2px solid ${semanticColors.border.weak};
