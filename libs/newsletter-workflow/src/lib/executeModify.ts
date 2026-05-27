@@ -2,11 +2,11 @@ import type {
 	DraftService,
 	DraftWithId,
 	LaunchService,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import {
 	draftNewsletterDataToFormData,
 	formDataToDraftNewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import type {
 	AsyncExecution,
 	WizardExecutionFailure,

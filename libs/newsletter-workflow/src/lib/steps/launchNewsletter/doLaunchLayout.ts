@@ -1,6 +1,5 @@
 import type { LaunchService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeLaunch } from '../../executeLaunch';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -36,7 +35,6 @@ export const doLaunchLayout: WizardStepLayout<LaunchService> = {
 			buttonType: 'LAUNCH',
 			label: 'Request Launch',
 			stepToMoveTo: 'finish',
-			executeStep: executeLaunch,
 		},
 	},
 };

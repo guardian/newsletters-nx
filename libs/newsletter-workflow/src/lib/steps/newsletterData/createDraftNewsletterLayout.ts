@@ -1,7 +1,6 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
 
 export const createDraftNewsletterLayout: WizardStepLayout<DraftService> = {
@@ -21,11 +20,9 @@ The first step is to enter the name of your newsletter. For example,  **Down to 
 			buttonType: 'NEXT',
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeCreate,
 		},
 	},
 	schema: formSchemas.startDraftNewsletter,
 	canSkipTo: true,
 	skippingWillPersistLocalChanges: true,
-	executeSkip: executeCreate,
 };

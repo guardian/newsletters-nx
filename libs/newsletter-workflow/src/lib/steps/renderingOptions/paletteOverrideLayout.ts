@@ -4,7 +4,6 @@ import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
@@ -36,16 +35,13 @@ export const paletteOverrideLayout: WizardStepLayout<DraftService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModify,
 		},
 		finish: {
 			buttonType: 'NEXT',
 			label: 'Next',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.newsletterPaletteOverride,
 	canSkipTo: true,
-	executeSkip: executeModify,
 };

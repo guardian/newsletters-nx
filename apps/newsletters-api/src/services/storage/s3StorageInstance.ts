@@ -2,7 +2,7 @@ import {
 	S3DraftStorage,
 	S3LayoutStorage,
 	S3NewsletterStorage,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import { getS3Client } from './s3-client-factory';
 
 const getS3BucketName = (): string => {

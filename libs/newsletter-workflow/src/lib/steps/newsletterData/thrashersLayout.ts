@@ -4,8 +4,6 @@ import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -46,13 +44,11 @@ export const thrashersLayout: WizardStepLayout<DraftService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeSkip,
 		},
 		next: {
 			buttonType: 'NEXT',
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.thrashers,
@@ -62,5 +58,4 @@ export const thrashersLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	canSkipTo: true,
-	executeSkip: executeSkip,
 };

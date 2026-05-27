@@ -1,4 +1,4 @@
-import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client';
+import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client/server';
 
 export const makeInMemoryStorageInstance = () =>
 	new InMemoryDraftStorage([

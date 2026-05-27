@@ -4,8 +4,6 @@ import {
 	getNextStepId,
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -30,7 +28,7 @@ Alternatively, you might want the first send on web to preview it, but subsequen
 ### Frequency
 Select how often your newsletter will be sent. This will be displayed on the sign-up page, in-article sign-ups and the all newsletters page.
 
-If your schedule doesn’t fit the options below, choose **Custom frequency**.
+If your schedule doesn't fit the options below, choose **Custom frequency**.
 
 Options:
 - Daily
@@ -67,16 +65,13 @@ export const productionDetailsLayout: WizardStepLayout<DraftService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeSkip,
 		},
 		finish: {
 			buttonType: 'NEXT',
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.productionDetails,
 	canSkipTo: true,
-	executeSkip,
 };

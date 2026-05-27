@@ -1,5 +1,5 @@
 import type { Express } from 'express';
-import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
+import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow/server';
 import { replaceNullWithUndefinedForUnknown } from '@newsletters-nx/newsletters-data-client';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
 import type {
