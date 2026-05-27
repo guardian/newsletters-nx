@@ -3,7 +3,8 @@ import { baseColors, semanticColors } from '@guardian/stand';
 import type { IconProps } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
-import { useState } from 'react';
+import { from } from '@guardian/stand/utils';
+import { useId, useState } from 'react';
 import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
 import type {
@@ -38,6 +39,17 @@ type StatusRowProps = {
 	iconColor: string;
 	isDisabled: boolean;
 };
+
+const buttonStyleReset = css`
+	appearance: none;
+	-webkit-appearance: none;
+	background-color: transparent;
+	font: inherit;
+	color: inherit;
+	border: none;
+	padding: 0;
+	margin: 0;
+`;
 
 const StatusRow = ({ label, icon, iconColor, isDisabled }: StatusRowProps) => (
 	<div
@@ -158,6 +170,9 @@ export const StandRedesignStepNav = ({
 	const [completionRecord, setCompletionRecord] = useState<
 		Partial<Record<string, StepStatus>>
 	>({});
+	const [open, setOpen] = useState(false);
+
+	const stepNavId = useId();
 
 	const filteredStepList = stepperConfig.steps.filter((step) => {
 		if (step.parentStepId) {
@@ -213,14 +228,51 @@ export const StandRedesignStepNav = ({
 		!isCurrent(step);
 
 	return (
+		<>
+			<Button
+				onPress={() => setOpen((prev) => {return !prev})}
+				aria-expanded={open}
+				aria-controls={stepNavId}
+				css={[buttonStyleReset, css`
+					border-bottom: 2px solid ${semanticColors.border.weak};
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+					align-items: center;
+					height: 72px;
+					padding: 0 16px;
+					width: 100%;
+					background-color: ${semanticColors.bg.raisedLevel1};
+
+					${from.md} {
+						display: none;
+					}
+
+					&[data-hovered] {
+						background-color: ${semanticColors.bg.raisedLevel2};
+					}
+
+					&[data-pressed] {
+						background-color: ${baseColors.neutral["750"]};
+					}
+				`]
+			}
+			>
+				<Typography element="div" variant={'bodyBoldSm'}>Create newsletter / {currentStep?.label}</Typography>
+				{open ? <Icon size="md" symbol="keyboard_arrow_up"/> : <Icon size="md" symbol="keyboard_arrow_down"/>}
+			</Button>
 		<nav
 			css={css`
 				border-right: 1px solid ${semanticColors.border.strong};
-				display: flex;
 				flex-direction: column;
 				height: 100%;
+				display: ${open ? 'flex' : 'none'};
+				${from.md} {
+					display:flex;
+				}
 			`}
 			aria-label="Newsletter creation steps"
+			id={stepNavId}
 		>
 			<ol
 				css={css`
@@ -253,6 +305,7 @@ export const StandRedesignStepNav = ({
 				})}
 			</ol>
 		</nav>
+		</>
 	);
 };
 
@@ -311,21 +364,12 @@ const Step = ({
 		: baseColors.neutral['900'];
 
 	const buttonStyles = css`
-		// override UA styles
-		appearance: none;
-		-webkit-appearance: none;
 		background-color: ${backgroundColor};
-		font: inherit;
-		color: inherit;
-		border: none;
-		padding: 0;
-		margin: 0;
-		// our own styles
 		height: 72px;
 		cursor: ${isDisabled ? 'default' : 'pointer'};
 		border-bottom: 1px solid ${semanticColors.border.weak};
 		display: grid;
-		grid-template-columns: 32px 233px;
+		grid-template-columns: 32px 1fr;
 		text-align: left;
 		width: 100%;
 		&[data-pressed] {
@@ -335,7 +379,7 @@ const Step = ({
 	return (
 		// Use a button instead of a link here because it is a single page application
 		<Button
-			css={buttonStyles}
+			css={[buttonStyleReset, buttonStyles]}
 			isDisabled={isDisabled}
 			aria-label={ariaLabel}
 			aria-current={isCurrent ? 'step' : undefined}
