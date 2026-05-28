@@ -187,6 +187,7 @@ async function completePromotionContentStep(page: Page, name: string) {
 	await expect(page.getByLabel('Sign-up description')).toBeVisible();
 	await expect(page.getByLabel('Sign up embed description')).toBeVisible();
 	await expect(page.getByLabel('Sign-up success message')).toBeVisible();
+	await expect(page.getByLabel('Sign-up highlight card title')).toBeVisible();
 	await expect(
 		page.getByLabel('URL of image the newsleter graphic/logo (5:3 format)'),
 	).toBeVisible();
@@ -199,6 +200,9 @@ async function completePromotionContentStep(page: Page, name: string) {
 	await page
 		.getByLabel('Sign up embed description')
 		.fill(`Embed description for ${name}.`);
+	await page
+		.getByLabel('Sign-up highlight card title')
+		.fill(`Highlight card for ${name}`);
 
 	await page.getByRole('button', { name: 'Save and Continue' }).click();
 }

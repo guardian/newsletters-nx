@@ -383,6 +383,7 @@
 		"tagCreationStatus": "COMPLETED",
 		"seriesTag": "tests/series/playwright-article-test-email",
 		"mailSuccessDescription": "You are signed up for Playwright Article Test.",
+		"highlightCardTitle": "Playwright Article Test highlight",
 		"renderingOptions": {
 			"displayDate": false,
 			"displayStandfirst": false,
@@ -422,6 +423,7 @@
 		"ophanCampaignCreationStatus": "COMPLETED",
 		"signupPageCreationStatus": "COMPLETED",
 		"tagCreationStatus": "COMPLETED",
-		"mailSuccessDescription": "You are signed up for Playwright Fronts Test."
+		"mailSuccessDescription": "You are signed up for Playwright Fronts Test.",
+		"highlightCardTitle": "Playwright Fronts Test highlight"
 	}
 ]

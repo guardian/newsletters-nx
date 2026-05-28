@@ -161,6 +161,10 @@ export const newsletterDataSchema = z.object({
 		.string()
 		.optional()
 		.describe('Sign-up success message'),
+	highlightCardTitle: z
+		.string()
+		.optional()
+		.describe('Sign-up highlight card title'),
 	brazeCampaignCreationStatus: workflowStatusEnumSchema.describe(
 		'Braze campaign creation status',
 	),

@@ -21,6 +21,7 @@ test.describe('Edit article-based newsletter', () => {
 			signUpEmbedDescription:
 				'Sign up for the Playwright Article Test newsletter.',
 			mailSuccessDescription: 'You are signed up for Playwright Article Test.',
+			highlightCardTitle: 'Playwright Article Test highlight',
 			seriesTag: 'tests/series/playwright-article-test-email',
 			composerTag: null,
 			composerCampaignTag: null,
@@ -72,6 +73,11 @@ test.describe('Edit article-based newsletter', () => {
 		await page
 			.getByLabel('Sign-up success message')
 			.fill('Thanks for signing up to Updated Article Test!');
+
+		await page
+			.getByLabel('Sign-up highlight card title')
+			.fill('Updated Article Test highlight');
+
 
 		await page
 			.getByLabel('Series tag (path)')

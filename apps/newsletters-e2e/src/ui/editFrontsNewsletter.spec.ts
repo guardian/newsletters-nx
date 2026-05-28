@@ -21,6 +21,7 @@ test.describe('Edit fronts-based newsletter', () => {
 			signUpEmbedDescription:
 				'Sign up for the Playwright Fronts Test newsletter.',
 			mailSuccessDescription: 'You are signed up for Playwright Fronts Test.',
+			highlightCardTitle: 'Playwright Fronts Test highlight',
 			composerTag: null,
 			composerCampaignTag: null,
 			signupPage: '/global/sign-up-for-playwright-fronts-test',
@@ -69,6 +70,10 @@ test.describe('Edit fronts-based newsletter', () => {
 		await page
 			.getByLabel('Sign-up success message')
 			.fill('Thanks for signing up to Updated Fronts Test!');
+
+		await page
+			.getByLabel('Sign-up highlight card title')
+			.fill('Updated Fronts Test highlight');
 
 		await page
 			.getByLabel('Composer tag(s)')

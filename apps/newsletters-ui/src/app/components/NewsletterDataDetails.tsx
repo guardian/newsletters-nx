@@ -110,6 +110,7 @@ export const NewsletterDataDetails = ({ newsletter }: Props) => {
 					tooltip="The short message to display when the user signs up using a sign up embed."
 				/>
 				<DataPoint property="mailSuccessDescription" />
+				<DataPoint property="highlightCardTitle" />
 			</DetailAccordian>
 			<DetailAccordian title="Tags">
 				<DataPoint property="seriesTag" />

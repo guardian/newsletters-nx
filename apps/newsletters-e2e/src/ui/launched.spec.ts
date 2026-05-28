@@ -104,6 +104,11 @@ test.describe('Top nav - launched', () => {
 		});
 		await expect(signSuccessMessage).toBeEditable();
 
+		const signUpHighlightCardTitle = page.getByRole('textbox', {
+			name: 'Sign-up highlight card title',
+		});
+		await expect(signUpHighlightCardTitle).toBeEditable();
+
 		const brazeNewsletterName = page.getByRole('textbox', {
 			name: 'brazeNewsletterName',
 		});

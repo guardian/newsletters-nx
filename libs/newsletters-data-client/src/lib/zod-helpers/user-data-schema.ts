@@ -25,6 +25,7 @@ export const getUserEditSchema = (
 			signUpDescription: true,
 			signUpEmbedDescription: true,
 			mailSuccessDescription: true,
+			highlightCardTitle: true,
 			brazeCampaignCreationStatus: true,
 			brazeNewsletterName: true,
 			brazeSubscribeAttributeName: true,
@@ -49,6 +50,7 @@ export const getUserEditSchema = (
 			signupPage: true,
 			signUpDescription: true,
 			signUpEmbedDescription: true,
+			highlightCardTitle: true,
 			restricted: true,
 		});
 	}
