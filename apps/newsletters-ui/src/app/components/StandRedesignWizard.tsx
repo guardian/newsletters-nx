@@ -242,7 +242,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 
 	return (
 		<>
-			<Layout.Sidebar as="div">
+			<Layout.Sidebar as="div" layoutSmBreakpoint="above-grid">
 				<StandRedesignStepNav
 					currentStepId={serverData.currentStepId}
 					stepperConfig={stepperConfig}
