@@ -1,10 +1,10 @@
-import type { NewsletterMessageId } from '@newsletters-nx/email-builder';
-import { sendEmailNotifications } from '@newsletters-nx/email-builder';
+import type { NewsletterMessageId } from '@newsletters-nx/email-builder/server';
+import { sendEmailNotifications } from '@newsletters-nx/email-builder/server';
 import type {
 	FormDataRecord,
 	LaunchService,
 	NewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import type { AsyncExecution } from '@newsletters-nx/state-machine';
 import { parseToNumber } from './util';
 

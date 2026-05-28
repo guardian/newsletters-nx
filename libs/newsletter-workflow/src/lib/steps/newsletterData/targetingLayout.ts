@@ -4,8 +4,6 @@ import {
 	getPreviousOrStartStepId,
 } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -24,7 +22,7 @@ Please then select a group for **{{name}}** to be listed under on the [Manage My
 
 ### Choose the Geo Focus for {{name}}
 
-What’s the geo focus of **{{name}}**? UK, US, Australia, Europe or International?
+What's the geo focus of **{{name}}**? UK, US, Australia, Europe or International?
 
 `.trim();
 
@@ -48,16 +46,13 @@ export const targetingLayout: WizardStepLayout<DraftService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrStartStepId,
-			executeStep: executeSkip,
 		},
 		finish: {
 			buttonType: 'NEXT',
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.targeting,
 	canSkipTo: true,
-	executeSkip: executeSkip,
 };

@@ -21,11 +21,20 @@
 			"@newsletters-nx/email-builder": [
 				"./libs/email-builder/src/index.ts"
 			],
+			"@newsletters-nx/email-builder/server": [
+				"./libs/email-builder/src/server.ts"
+			],
 			"@newsletters-nx/newsletter-workflow": [
 				"./libs/newsletter-workflow/src/index.ts"
 			],
+			"@newsletters-nx/newsletter-workflow/server": [
+				"./libs/newsletter-workflow/src/server.ts"
+			],
 			"@newsletters-nx/newsletters-data-client": [
 				"./libs/newsletters-data-client/src/index.ts"
+			],
+			"@newsletters-nx/newsletters-data-client/server": [
+				"./libs/newsletters-data-client/src/server.ts"
 			],
 			"@newsletters-nx/state-machine": [
 				"./libs/state-machine/src/index.ts"

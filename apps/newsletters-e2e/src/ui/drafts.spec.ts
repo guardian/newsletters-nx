@@ -7,7 +7,7 @@ import {
 
 const DRAFT_NAME_PREFIX = 'Draft newsletter - playwright test';
 
-test.describe('Top nav - drafts', () => {
+test.describe.serial('Top nav - drafts', () => {
 	let listId: number;
 	let draftName: string;
 

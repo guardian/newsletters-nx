@@ -2,7 +2,7 @@ import type { Express } from 'express';
 import {
 	editionIdSchema,
 	layoutSchema,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import { permissionService } from '../../services/permissions';
 import { layoutStore } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';

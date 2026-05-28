@@ -9,14 +9,14 @@ import type {
 	NewsletterData,
 	NewsletterStorage,
 	UserProfile,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import {
 	DraftService,
 	InMemoryLayoutStorage,
 	InMemoryNewsletterStorage,
 	isNewsletterData,
 	LaunchService,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import layoutsData from '../../../static/layouts.local.json';
 import newslettersSeedData from '../../../static/newsletters.seed.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';

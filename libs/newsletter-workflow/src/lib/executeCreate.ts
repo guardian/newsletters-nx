@@ -1,15 +1,15 @@
-import { sendEmailNotifications } from '@newsletters-nx/email-builder';
+import { sendEmailNotifications } from '@newsletters-nx/email-builder/server';
 import type {
 	DraftNewsletterData,
 	DraftService,
 	FormDataRecord,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import {
 	draftNewsletterDataToFormData,
 	formDataToDraftNewsletterData,
 	getEmptySchemaData,
 	newsletterDataSchema,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import {
 	StateMachineError,
 	StateMachineErrorCode,

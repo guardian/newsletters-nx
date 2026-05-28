@@ -1,7 +1,6 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeCreate } from '../../executeCreate';
 import { formSchemas } from './formSchemas';
 
 export const nameAndFrequencyLayout: WizardStepLayout<DraftService> = {
@@ -28,11 +27,9 @@ The frequency you specify will be shown on the sign up page, and on the all news
 			buttonType: 'NEXT',
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeCreate,
 		},
 	},
 	schema: formSchemas.nameAndFrequency,
 	canSkipTo: true,
 	skippingWillPersistLocalChanges: true,
-	executeSkip: executeCreate,
 };

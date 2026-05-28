@@ -1,7 +1,6 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import { getPreviousOrEditStartStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -26,7 +25,6 @@ const finishLayout: WizardStepLayout<DraftService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeModify,
 		},
 	},
 	dynamicMarkdown(requestData, responseData) {
@@ -41,7 +39,6 @@ const finishLayout: WizardStepLayout<DraftService> = {
 			.replace(regExPatterns.name, name)
 			.replace(regExPatterns.listId, listId);
 	},
-	executeSkip: executeModify,
 };
 
 export { finishLayout };

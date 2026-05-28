@@ -1,8 +1,8 @@
-import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client';
+import { draftNewsletterDataToFormData } from '@newsletters-nx/newsletters-data-client/server';
 import type {
 	DraftService,
 	FormDataRecord,
-} from '@newsletters-nx/newsletters-data-client';
+} from '@newsletters-nx/newsletters-data-client/server';
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
 import {
 	StateMachineError,

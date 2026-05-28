@@ -4,8 +4,6 @@ import {
 	getPreviousOrEditStartStepId,
 } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeModify } from '../../executeModify';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
@@ -17,7 +15,7 @@ const markdownTemplate = `
 
 When will the first send of **{{name}}** be? Please specify date. This needs to be in the UK timezone for the system.
 
-We will automatically add a testing period for the newsletter of 1 week before the first send so you can try out the template in Composer. Please also mark if the newsletter should be private if it’s confidential.
+We will automatically add a testing period for the newsletter of 1 week before the first send so you can try out the template in Composer. Please also mark if the newsletter should be private if it's confidential.
 
 ### Promotion
 
@@ -49,16 +47,13 @@ export const dateLayout: WizardStepLayout<DraftService> = {
 			buttonType: 'PREVIOUS',
 			label: 'Back to previous step',
 			stepToMoveTo: getPreviousOrEditStartStepId,
-			executeStep: executeSkip,
 		},
 		finish: {
 			buttonType: 'NEXT',
 			label: 'Save and Continue',
 			stepToMoveTo: getNextStepId,
-			executeStep: executeModify,
 		},
 	},
 	schema: formSchemas.promotionDates,
 	canSkipTo: true,
-	executeSkip: executeSkip,
 };

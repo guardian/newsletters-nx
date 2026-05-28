@@ -1,6 +1,5 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
-import { executeSkip } from '../../executeSkip';
 import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
@@ -40,7 +39,6 @@ const finishLayout: WizardStepLayout<DraftService> = {
 			.replace(regExPatterns.listId, listId);
 	},
 	canSkipTo: true,
-	executeSkip: executeSkip,
 };
 
 export { finishLayout };
