@@ -37,6 +37,7 @@
 		"ophanCampaignCreationStatus": "COMPLETED",
 		"signupPageCreationStatus": "COMPLETED",
 		"tagCreationStatus": "NOT_REQUESTED",
+		"highlightCardTitle": "Playwright launched highlight",
 		"renderingOptions": {
 			"displayDate": true,
 			"displayStandfirst": false,

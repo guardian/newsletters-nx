@@ -55,6 +55,7 @@ interface SignUpPageFields {
 	signUpEmbedDescription: string;
 	signUpHeadline?: string;
 	mailSuccessDescription?: string;
+	highlightCardTitle?: string;
 }
 
 type StepFormDataMap = {
