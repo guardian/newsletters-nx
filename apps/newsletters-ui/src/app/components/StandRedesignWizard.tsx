@@ -307,7 +307,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 							background: ${semanticColors.bg.raisedLevel1};
 							padding: ${baseSpacing['16Px']}
 							`}
-							key={field.toString()}
+							key={field}
 							>
 								<StandRedesignMarkdownView
 									markdown={markdown}
