@@ -123,11 +123,8 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				});
 				setCurrentStepHasBeenChanged(false);
 				setShowSkipModalFor(undefined);
-				if (noted) {
-					setNotedFields(noted);
-				} else {
-					setNotedFields([]);
-				}
+				setNotedFields(noted ?? []);
+
 			} catch (error: unknown /* FIXME! */) {
 				setServerErrorMessage('Wizard failed');
 				console.error('Error invoking next step of wizard:', error);
