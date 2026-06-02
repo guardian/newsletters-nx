@@ -8,8 +8,7 @@ import ReactMarkdown from 'react-markdown';
 
 interface MarkdownViewProps {
 	markdown: string;
-	addIconToH3?: IconProps['symbol'];
-	id?: string ;
+	addHeadingIcon?: IconProps['symbol'];
 }
 
 const isExternal = (href?: string) => !href?.startsWith('/');
@@ -106,7 +105,7 @@ const TypographyStrong = (props: { children?: ReactNode }) => {
 
 export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 	markdown,
-	addIconToH3,
+	addHeadingIcon,
 }) => {
 	return (
 		<div
@@ -123,17 +122,17 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 				components={{
 					a: LinkWithNewTabIfExternal,
 					h1: ({ children }) => (
-						<H2 iconVariant={addIconToH3}>
+						<H2 iconVariant={addHeadingIcon}>
 							{children}
 						</H2>
 					),
 					h2: ({ children }) => (
-						<H2 iconVariant={addIconToH3}>
+						<H2 iconVariant={addHeadingIcon}>
 							{children}
 						</H2>
 					),
 					h3: ({ children }) => (
-						<H3 iconVariant={addIconToH3}>
+						<H3 iconVariant={addHeadingIcon}>
 							{children}
 						</H3>
 					),

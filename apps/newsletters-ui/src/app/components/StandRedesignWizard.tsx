@@ -311,7 +311,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 							>
 								<StandRedesignMarkdownView
 									markdown={markdown}
-									addIconToH3="text_snippet"
+									addHeadingIcon="text_snippet"
 								/>
 							</div>)}
 					</Item>
