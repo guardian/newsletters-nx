@@ -72,4 +72,5 @@ export const promotionContentLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	canSkipTo: true,
+	canSkipFrom: true,
 };

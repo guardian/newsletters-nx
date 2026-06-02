@@ -31,7 +31,7 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 					role: step.role,
 					parentStepId: step.parentStepId,
 					canSkipTo: step.canSkipTo,
-					canSkipFrom: !!step.executeSkip,
+					canSkipFrom: step.canSkipFrom ?? !!step.executeSkip,
 					skippingWillPersistLocalChanges: step.skippingWillPersistLocalChanges,
 					schema: step.schema,
 					isOptional:

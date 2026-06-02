@@ -120,6 +120,7 @@ export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
 		}
 	>;
 	canSkipTo?: boolean;
+	canSkipFrom?: boolean;
 	skippingWillPersistLocalChanges?: boolean;
 	executeSkip?: AsyncExecution<T> | Execution<T>;
 	getInitialFormData?: {

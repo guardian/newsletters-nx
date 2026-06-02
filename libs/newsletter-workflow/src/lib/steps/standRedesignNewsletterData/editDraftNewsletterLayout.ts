@@ -27,4 +27,5 @@ You can edit the name of the newsletter.
 	role: 'EDIT_START',
 	getInitialFormData: getDraftFromStorage,
 	canSkipTo: true,
+	canSkipFrom: true,
 };

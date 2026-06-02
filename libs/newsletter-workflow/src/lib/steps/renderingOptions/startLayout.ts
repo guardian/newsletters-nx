@@ -23,5 +23,6 @@ This wizard is to choose the options for how an article-based newsletter will ap
 		},
 	},
 	role: 'EDIT_START',
+	canSkipFrom: true,
 	getInitialFormData: getDraftFromStorage,
 };

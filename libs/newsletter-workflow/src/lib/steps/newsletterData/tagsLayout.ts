@@ -87,4 +87,5 @@ export const tagsLayout: WizardStepLayout<DraftService> = {
 	},
 	schema: formSchemas.tags,
 	canSkipTo: true,
+	canSkipFrom: true,
 };

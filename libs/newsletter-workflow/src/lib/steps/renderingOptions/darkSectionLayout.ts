@@ -49,4 +49,5 @@ export const darkSectionLayout: WizardStepLayout<DraftService> = {
 	},
 	schema: formSchemas.darkTheme,
 	canSkipTo: true,
+	canSkipFrom: true,
 };

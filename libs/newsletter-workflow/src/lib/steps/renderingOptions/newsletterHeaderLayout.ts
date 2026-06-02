@@ -61,4 +61,5 @@ export const newsletterHeaderLayout: WizardStepLayout<DraftService> = {
 	},
 	schema: formSchemas.newsletterHeader,
 	canSkipTo: true,
+	canSkipFrom: true,
 };

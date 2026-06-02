@@ -51,4 +51,5 @@ export const readMoreLayout: WizardStepLayout<DraftService> = {
 	},
 	schema: formSchemas.readMore,
 	canSkipTo: true,
+	canSkipFrom: true,
 };
