@@ -144,6 +144,24 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongValueTypeMessage field={field} />;
 		}
 
+		// Custom handling for frequency field to use radio input with custom option
+		if (key === 'frequency') {
+			return (
+				<StandRadioSelectInput
+					{...standardProps}
+					value={value}
+					options={[
+						'Weekly',
+						'Every fortnight',
+						'Every weekday',
+						'Monthly',
+						'Every day',
+					]}
+					otherInputLabel="Custom (please specify)"
+				/>
+			);
+		}
+
 		if (options) {
 			if (options.length <= maxOptionsForRadioButtons) {
 				return (
