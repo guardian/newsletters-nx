@@ -78,7 +78,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 		>
 			{fields.map((field) => (
 				<SchemaField
-					notedField={notedFields.includes(field.key)}
+					isNoted={notedFields.includes(field.key)}
 					key={field.key}
 					options={options[field.key]}
 					numberInputSettings={numberConfig[field.key]}

@@ -57,7 +57,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	validationWarning?: string;
 	maxOptionsForRadioButtons: number;
 	explanation?: string;
-	notedField?: boolean;
+	isNoted?: boolean;
 }
 
 const WrongValueTypeMessage = (props: { field: FieldDef }) => (
@@ -95,7 +95,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	change,
 	options,
 	showUnsupported = false,
-	notedField = false,
+	isNoted = false,
 	numberInputSettings = {},
 	stringInputSettings = {},
 	validationWarning,
@@ -158,13 +158,13 @@ export function SchemaField<T extends z.ZodRawShape>({
 				);
 			}
 			return (
-				<StandSelectInput {...standardProps} value={value} isNoted={notedField} options={options} />
+				<StandSelectInput {...standardProps} value={value} isNoted={isNoted} options={options} />
 			);
 		}
 
 		return (
 			<StandStringInput
-				isNoted={notedField}
+				isNoted={isNoted}
 				{...standardProps}
 				value={value ?? ''}
 				inputType={stringInputSettings.inputType}
