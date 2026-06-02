@@ -292,3 +292,78 @@ test.describe('Create draft newsletter journey', () => {
 		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
 	});
 });
+
+test.describe('Wizard step nav skip functionality', () => {
+	let draftName: string;
+
+	test.beforeAll(async ({ request }) => {
+		await cleanupStaleTestDrafts(request, DRAFT_NAME_PREFIX);
+	});
+
+	// eslint-disable-next-line no-empty-pattern -- stuck between 'no-empty-pattern' (eslint) and 'First argument must use the object destructuring pattern' (playwright)
+	test.beforeEach(({}, testInfo) => {
+		draftName = `${DRAFT_NAME_PREFIX} - ${testInfo.title}`;
+	});
+
+	test.afterEach(async ({ request }) => {
+		await cleanupStaleTestDrafts(request, draftName);
+	});
+
+	test('step nav items are not clickable on a non-skippable step', async ({
+		page,
+	}) => {
+		await page.goto(CREATE_URL);
+
+		// The intro step does not have canSkipFrom, so other steps should not
+		// be rendered as buttons - they should be static labels.
+		await expect(
+			page.locator('.left-aligned-step-button'),
+		).not.toBeVisible();
+	});
+
+	test('step nav items become skip buttons when on a skippable step', async ({
+		page,
+	}) => {
+		await page.goto(CREATE_URL);
+		await completeIntroStep(page);
+		await completeNameStep(page, draftName);
+
+		// Wait for the production details step to confirm the wizard has advanced.
+		await expect(
+			page.getByRole('heading', { name: /Production details/ }),
+		).toBeVisible();
+
+		await expect(
+			page.locator('.left-aligned-step-button').filter({ hasText: 'Launch/Promotion Dates' }),
+		).toBeVisible();
+		await expect(
+			page.locator('.left-aligned-step-button').filter({ hasText: 'Targeting' }),
+		).toBeVisible();
+		await expect(
+			page.locator('.left-aligned-step-button').filter({ hasText: 'Tag Setup' }),
+		).toBeVisible();
+	});
+
+	test('clicking a step nav button navigates to that step', async ({
+		page,
+	}) => {
+		await page.goto(CREATE_URL);
+		await completeIntroStep(page);
+		await completeNameStep(page, draftName);
+
+		// Wait for the production details step to confirm the wizard has advanced.
+		await expect(
+			page.getByRole('heading', { name: /Production details/ }),
+		).toBeVisible();
+
+		// Skip from Production Details to Targeting.
+		await page
+			.locator('.left-aligned-step-button')
+			.filter({ hasText: 'Targeting' })
+			.click();
+
+		await expect(
+			page.getByRole('heading', { name: /Targeting/ }),
+		).toBeVisible();
+	});
+});
