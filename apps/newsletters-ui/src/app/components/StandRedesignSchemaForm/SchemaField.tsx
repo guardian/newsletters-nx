@@ -15,7 +15,7 @@ import {
 	isStringArray,
 } from '../../util';
 import { StandBooleanInput } from './BooleanInput';
-import { DateInput } from './DateInput';
+import { StandDateInput } from './DateInput';
 import { FieldWrapper } from './FieldWrapper';
 import { StandNumberInput } from './NumberInput';
 import { StandOptionalNumberInput } from './OptionalNumberInput';
@@ -129,13 +129,11 @@ export function SchemaField<T extends z.ZodRawShape>({
 		}
 
 		return (
-			<FieldWrapper explanation={explanation}>
-				<DateInput
-					{...standardProps}
-					value={parsed.value}
-					type={stringInputSettings.inputType}
-				/>
-			</FieldWrapper>
+			<StandDateInput
+				{...standardProps}
+				value={parsed.value}
+				type={stringInputSettings.inputType}
+			/>
 		);
 	}
 

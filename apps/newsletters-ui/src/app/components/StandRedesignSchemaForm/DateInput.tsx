@@ -1,34 +1,42 @@
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs, { locale } from 'dayjs';
+import { DatePicker as StandDatePicker } from '@guardian/stand/DatePicker';
+import type { DateValue } from '@internationalized/date';
+import { CalendarDate } from '@internationalized/date';
 import type { FunctionComponent } from 'react';
 import type { FieldProps } from './util';
-import 'dayjs/locale/en-gb';
 
-export const DateInput: FunctionComponent<
+// Converts the internal value from the DatePicker (DateValue) to a JS Date, which is what the form schema expects
+// NB: DateValue is an instant without a time (and therefore without a timezone), but JS Date is a date with a time in the local timezone.
+// This means that the resulting Date may be a different day depending on the user's timezone, but this corresponds to the old behaviour of the DateInput
+const inputDateToDate = (inputDate: DateValue): Date => {
+	return new Date(inputDate.year, inputDate.month - 1, inputDate.day);
+};
+
+// Converts a JS Date to a CalendarDate, which is what the StandDatePicker expects
+const dateToCalendarDate = (date: Date): CalendarDate => {
+	return new CalendarDate(
+		date.getFullYear(),
+		date.getMonth() + 1,
+		date.getDate(),
+	);
+};
+
+export const StandDateInput: FunctionComponent<
 	FieldProps & {
 		value: Date | undefined;
 		inputHandler: { (value: Date): void };
 		type?: HTMLInputElement['type'];
 	}
 > = (props) => {
-	const value =
-		props.value instanceof Date ? dayjs(props.value.toDateString()) : null;
-	void locale('en-gb');
 	return (
-		<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-			<DatePicker
-				label={props.label}
-				value={value}
-				disabled={props.readOnly}
-				onChange={(date) => {
-					if (date && date.toString() !== 'Invalid Date') {
-						props.inputHandler(new Date(date.format('YYYY-MM-DD')));
-					}
-				}}
-				readOnly={props.readOnly}
-			/>
-		</LocalizationProvider>
+		<StandDatePicker
+			label={props.label}
+			value={props.value ? dateToCalendarDate(props.value) : undefined}
+			isDisabled={props.readOnly}
+			onChange={(date) => {
+				if (date) {
+					props.inputHandler(inputDateToDate(date));
+				}
+			}}
+		/>
 	);
 };
