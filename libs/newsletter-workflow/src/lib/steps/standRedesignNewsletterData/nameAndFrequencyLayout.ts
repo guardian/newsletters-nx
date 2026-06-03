@@ -4,7 +4,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { formSchemas } from './formSchemas';
 
 export const nameAndFrequencyLayout: WizardStepLayout<DraftService, typeof formSchemas.nameAndFrequency.shape> = {
-	staticMarkdown: `# Enter the newsletter's name
+	staticMarkdown: `# Name and frequency
 `,
 
 	staticSideMarkdown: [{ markdown: `### Frequency
