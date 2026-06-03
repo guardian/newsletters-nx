@@ -1,6 +1,7 @@
 import { TextArea } from '@guardian/stand/TextArea';
 import { TextInput } from '@guardian/stand/TextInput';
 import type { FormEventHandler } from 'react';
+import { NotedLabel } from './NotedLabel';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 import { eventToString } from './util';
@@ -41,6 +42,7 @@ export const StandStringInput = (props: Props) => {
 				error={props.error}
 				isDisabled={props.readOnly}
 				isRequired={!props.optional}
+				renderLabel={props.isNoted ? NotedLabel : undefined }
 			/>
 		);
 	}
