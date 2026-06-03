@@ -14,7 +14,7 @@ async function completeNameStep(page: Page, name: string) {
 	await expect(
 		page.getByRole('heading', { name: "Enter the newsletter's name" }),
 	).toBeVisible();
-	const nameInput = page.getByRole('textbox', { name: 'Name' });
+	const nameInput = page.getByRole('textbox', { name: 'Name the newsletter' });
 	await expect(nameInput).toBeVisible();
 
 	await nameInput.fill(name);
@@ -285,10 +285,10 @@ test.describe('Create draft newsletter journey', () => {
 
 		await completeIntroStep(page);
 
-		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
+		await expect(page.getByRole('textbox', { name: 'Name the newsletter' })).toBeVisible();
 		await page.getByRole('button', { name: 'Save and Continue' }).click();
 
 		await expect(page.getByRole('alert')).toBeVisible();
-		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
+		await expect(page.getByRole('textbox', { name: 'Name the newsletter' })).toBeVisible();
 	});
 });
