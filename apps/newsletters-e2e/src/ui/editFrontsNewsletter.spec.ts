@@ -56,9 +56,7 @@ test.describe('Edit fronts-based newsletter', () => {
 			.getByLabel('Name the newsletter *', { exact: true })
 			.fill('Updated Fronts Test');
 
-		await page.locator(
-			'[aria-labelledby="select-input-label-Set the frequency"]',
-		).click();
+		await page.getByTestId('frequency-select').click();
 
 		await page.getByRole('option', { name: 'Fortnightly' }).click();
 
