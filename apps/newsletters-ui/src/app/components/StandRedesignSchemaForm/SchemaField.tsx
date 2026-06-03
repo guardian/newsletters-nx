@@ -197,7 +197,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (typeof value !== 'boolean' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
 		}
-		return <StandBooleanInput {...standardProps} value={value ?? false} />;
+		return <StandBooleanInput isNoted={isNoted} {...standardProps} value={value ?? false} />;
 	}
 
 	if (innerZod instanceof ZodNumber) {
@@ -211,6 +211,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					{...standardProps}
 					{...numberInputSettings}
 					value={value}
+					isNoted={isNoted}
 				/>
 			);
 		}
@@ -220,6 +221,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				{...standardProps}
 				{...numberInputSettings}
 				value={value ?? 0}
+				isNoted={isNoted}
 			/>
 		);
 	}
@@ -239,6 +241,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					{...standardProps}
 					value={value}
 					options={options}
+					isNoted={isNoted}
 				/>
 			);
 		}
@@ -248,6 +251,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				{...standardProps}
 				value={value}
 				options={options ?? []}
+				isNoted={isNoted}
 			/>
 		);
 	}

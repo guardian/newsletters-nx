@@ -1,5 +1,6 @@
 import { TextInput } from '@guardian/stand/TextInput';
 import type { FormEventHandler, FunctionComponent } from 'react';
+import { NotedLabel } from './NotedLabel';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
@@ -37,6 +38,7 @@ export const StandNumberInput: FunctionComponent<
 			error={props.error}
 			isRequired={!props.optional}
 			isDisabled={props.readOnly}
+			renderLabel={props.isNoted ? NotedLabel : undefined}
 		/>
 	);
 };
