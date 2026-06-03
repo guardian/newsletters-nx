@@ -258,11 +258,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				/>
 			</Layout.Sidebar>
 			<Layout.Main as="main">
-				<Grid
-					cssOverrides={css`
-						margin-top: ${baseSpacing['48Rem']};
-					`}
-				>
+				<Grid>
 					<Item size={{ sm: 12, md: 11, lg: 6 }} offset={{ lg: 1 }}>
 						<StandRedesignMarkdownView
 							markdown={serverData.markdownToDisplay ?? ''}
