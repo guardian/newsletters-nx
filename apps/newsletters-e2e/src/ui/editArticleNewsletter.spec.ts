@@ -59,7 +59,7 @@ test.describe('Edit article-based newsletter', () => {
 			.getByLabel('Name *', { exact: true })
 			.fill('Updated Article Test');
 
-		await page.getByLabel('Frequency', { exact: true }).click();
+		await page.getByLabel('Set the frequency', { exact: true }).click();
 		await page.getByRole('option', { name: 'Fortnightly' }).click();
 
 		await page

@@ -59,7 +59,7 @@ async function completeProductionDetailsStep(
 	await articleLocationGroup.getByRole('radio', { name: 'Email only' }).click();
 
 	const frequencyCombobox = page
-		.locator('label', { hasText: /^Frequency$/ })
+		.locator('label', { hasText: /^frequency$/ })
 		.locator('..')
 		.getByRole('combobox');
 	await expect(frequencyCombobox).toBeVisible();
