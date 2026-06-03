@@ -6,7 +6,7 @@ import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
-import  {
+import {
 	getFieldDisplayOptions,
 	getFormSchema,
 	getNotedFields,
@@ -114,7 +114,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 
 				setServerData(data);
 				const schema = getFormSchema(wizardId, data.currentStepId);
-				const noted = getNotedFields(wizardId, data.currentStepId)
+				const noted = getNotedFields(wizardId, data.currentStepId);
 				const blank = schema ? getEmptySchemaData(schema) : undefined;
 
 				setFormData({
@@ -124,7 +124,6 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				setCurrentStepHasBeenChanged(false);
 				setShowSkipModalFor(undefined);
 				setNotedFields(noted ?? []);
-
 			} catch (error: unknown /* FIXME! */) {
 				setServerErrorMessage('Wizard failed');
 				console.error('Error invoking next step of wizard:', error);
@@ -299,18 +298,19 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						</Stack>
 					</Item>
 					<Item size={{ lg: 4 }} offset={{ lg: 1 }}>
-						{serverData.markdownToDisplayInSidebar?.map(({field, markdown}) =>
-							<div css={css`
-							background: ${semanticColors.bg.raisedLevel1};
-							padding: ${baseSpacing['16Px']}
-							`}
-							key={field}
-							>
-								<StandRedesignMarkdownView
-									markdown={markdown}
-									addHeadingIcon="text_snippet"
-								/>
-							</div>)}
+						{serverData.markdownToDisplayInSidebar?.map(
+							({ field, markdown }) => (
+								<div
+									css={css`
+										background: ${semanticColors.bg.raisedLevel1};
+										padding: ${baseSpacing['16Px']};
+									`}
+									key={field}
+								>
+									<StandRedesignMarkdownView markdown={markdown} />
+								</div>
+							),
+						)}
 					</Item>
 					<Item>
 						<SkipConfirmationDialog
