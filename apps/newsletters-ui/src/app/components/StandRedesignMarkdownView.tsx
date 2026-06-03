@@ -28,11 +28,28 @@ const LinkWithNewTabIfExternal = (props: {
 	);
 };
 
+const H1 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) => {
+	return (
+		<Typography
+			element="h1"
+			variant="heading2Xl"
+			cssOverrides={css`
+				margin-bottom: ${baseSpacing['16Rem']};
+				display: inline-flex;
+				align-items: center;
+				gap: 7px;
+			`}
+		>
+			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
+		</Typography>
+	);
+};
+
 const H2 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) => {
 	return (
 		<Typography
 			element="h2"
-			variant="heading2Xl"
+			variant="headingLg"
 			cssOverrides={css`
 				margin-bottom: ${baseSpacing['16Rem']};
 				display: inline-flex;
@@ -122,9 +139,9 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 				components={{
 					a: LinkWithNewTabIfExternal,
 					h1: ({ children }) => (
-						<H2 iconVariant={addHeadingIcon}>
+						<H1 iconVariant={addHeadingIcon}>
 							{children}
-						</H2>
+						</H1>
 					),
 					h2: ({ children }) => (
 						<H2 iconVariant={addHeadingIcon}>
