@@ -102,6 +102,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	maxOptionsForRadioButtons,
 	explanation,
 }: SchemaFieldProps<T>) {
+	console.log(isNoted)
 	const { key, value, zod, readOnly } = field;
 	const inputHandler = (newValue: FieldValue) => {
 		if (readOnly) {
@@ -151,6 +152,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (key === 'frequency') {
 			return (
 				<StandRadioSelectInput
+					isNoted={isNoted}
 					{...standardProps}
 					value={value}
 					options={[
@@ -169,6 +171,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			if (options.length <= maxOptionsForRadioButtons) {
 				return (
 					<StandRadioSelectInput
+						isNoted={isNoted}
 						{...standardProps}
 						value={value}
 						options={options}
