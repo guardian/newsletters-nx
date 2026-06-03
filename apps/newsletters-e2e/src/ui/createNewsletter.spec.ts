@@ -322,8 +322,6 @@ test.describe('Wizard step nav skip functionality', () => {
 	}) => {
 		await page.goto(CREATE_URL);
 
-		// The intro step does not have canSkipFrom, so other steps should not
-		// be rendered as buttons - they should be static labels.
 		await expect(page.locator('.left-aligned-step-button')).not.toBeVisible();
 	});
 
