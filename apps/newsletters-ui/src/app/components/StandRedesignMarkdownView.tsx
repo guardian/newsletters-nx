@@ -1,11 +1,14 @@
 import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
+import type { IconProps } from '@guardian/stand/Icon';
+import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
 import type { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 interface MarkdownViewProps {
 	markdown: string;
+	addHeadingIcon?: IconProps['symbol'];
 }
 
 const isExternal = (href?: string) => !href?.startsWith('/');
@@ -25,29 +28,35 @@ const LinkWithNewTabIfExternal = (props: {
 	);
 };
 
-const TypographyH2 = (props: { children?: ReactNode }) => {
+const H2 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) => {
 	return (
 		<Typography
 			element="h2"
 			variant="heading2Xl"
 			cssOverrides={css`
 				margin-bottom: ${baseSpacing['16Rem']};
+				display: inline-flex;
+				align-items: center;
+				gap: 7px;
 			`}
 		>
-			{props.children}
+			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
 		</Typography>
 	);
 };
-const TypographyH3 = (props: { children?: ReactNode }) => {
+const H3 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode }) => {
 	return (
-		<Typography
+			<Typography
 			element="h3"
 			variant="headingMd"
 			cssOverrides={css`
 				margin-bottom: ${baseSpacing['12Rem']};
+				display: inline-flex;
+				align-items: center;
+				gap: 7px;
 			`}
 		>
-			{props.children}
+			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
 		</Typography>
 	);
 };
@@ -96,6 +105,7 @@ const TypographyStrong = (props: { children?: ReactNode }) => {
 
 export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 	markdown,
+	addHeadingIcon,
 }) => {
 	return (
 		<div
@@ -111,9 +121,21 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 			<ReactMarkdown
 				components={{
 					a: LinkWithNewTabIfExternal,
-					h1: TypographyH2,
-					h2: TypographyH2,
-					h3: TypographyH3,
+					h1: ({ children }) => (
+						<H2 iconVariant={addHeadingIcon}>
+							{children}
+						</H2>
+					),
+					h2: ({ children }) => (
+						<H2 iconVariant={addHeadingIcon}>
+							{children}
+						</H2>
+					),
+					h3: ({ children }) => (
+						<H3 iconVariant={addHeadingIcon}>
+							{children}
+						</H3>
+					),
 					p: TypographyP,
 					ul: UlMarginOverride,
 					strong: TypographyStrong,

@@ -97,7 +97,17 @@ export type WizardStepLayoutButton<
 	executeStep?: AsyncExecution<T> | Execution<T>;
 };
 
-export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
+export interface WizardStepLayout<
+	T extends GenericStorageInterface = unknown,
+	S extends ZodRawShape = ZodRawShape,
+> extends BaseWizardStepLayout<T> {
+	schema?: ZodObject<S>;
+	staticSideMarkdown?: Array<{field: keyof S & string; markdown: string}>;
+}
+
+export interface BaseWizardStepLayout<
+	T extends GenericStorageInterface = unknown,
+> {
 	indicateStepsCompleteOnThisWizard?: boolean;
 	label?: string;
 	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT';
@@ -106,10 +116,7 @@ export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
 	dynamicMarkdown?: {
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;
 	};
-	staticSideMarkdown?: string;
-	dynamicSideMarkdown?: {
-		(requestData?: WizardFormData, responseData?: WizardFormData): string;
-	};
+	staticSideMarkdown?: Array<{field: string;  markdown: string}>;
 
 	buttons: Record<string, WizardStepLayoutButton<T>>;
 	schema?: ZodObject<ZodRawShape>;
@@ -132,7 +139,7 @@ export interface WizardStepLayout<T extends GenericStorageInterface = unknown> {
 
 export type WizardLayout<
 	T extends GenericStorageInterface = GenericStorageInterface,
-> = Record<string, WizardStepLayout<T>>;
+> = Record<string, BaseWizardStepLayout<T>>;
 
 /**
  * Interface for the data payload sent to by the client for a single step in the wizard.
@@ -174,7 +181,7 @@ export interface CurrentStepRouteResponse {
 	/** Markdown content to display for the current step in the right side panel
 	 * (redesign only)
 	 */
-	markdownToDisplayInSidebar?: string;
+	markdownToDisplayInSidebar?: Array<{field: string;  markdown:string}>;
 	/** Unique identifier for the current step. */
 	currentStepId: string;
 	/** Buttons to display for the current step. */
