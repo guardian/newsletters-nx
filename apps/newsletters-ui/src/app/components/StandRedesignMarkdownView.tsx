@@ -82,9 +82,9 @@ const TypographyP = (props: { children?: ReactNode }) => {
 	return (
 		<Typography
 			element="p"
-			variant="bodyMd"
+			variant="bodySm"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['40Rem']};
+				margin-bottom: ${baseSpacing['20Rem']};
 			`}
 		>
 			{props.children}
