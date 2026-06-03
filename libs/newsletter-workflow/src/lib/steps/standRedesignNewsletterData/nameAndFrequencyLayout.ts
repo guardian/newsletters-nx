@@ -30,7 +30,6 @@ The frequency you specify will be shown on the sign up page, and on the all news
 		},
 	},
 	schema: formSchemas.nameAndFrequency,
-	canSkipTo: true,
-	canSkipFrom: true,
+	canSkip: true,
 	skippingWillPersistLocalChanges: true,
 };

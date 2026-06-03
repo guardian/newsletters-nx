@@ -38,8 +38,7 @@ const finishLayout: WizardStepLayout<DraftService> = {
 			.replace(regExPatterns.name, name)
 			.replace(regExPatterns.listId, listId);
 	},
-	canSkipTo: true,
-	canSkipFrom: true,
+	canSkip: true,
 };
 
 export { finishLayout };

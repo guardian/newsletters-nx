@@ -57,6 +57,5 @@ export const thrashersLayout: WizardStepLayout<DraftService> = {
 			textArea: true,
 		},
 	},
-	canSkipTo: true,
-	canSkipFrom: true,
+	canSkip: true,
 };

@@ -48,7 +48,7 @@ export async function stateMachineSkipPressed<
 		);
 	}
 
-	if (!stepSkippingTo.canSkipTo) {
+	if (!stepSkippingTo.canSkip) {
 		throw new StateMachineError(
 			`step ${requestBody.stepToSkipToId} cannot be skipped to`,
 			StateMachineErrorCode.Unhandled,

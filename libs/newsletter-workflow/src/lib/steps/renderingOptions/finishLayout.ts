@@ -18,7 +18,7 @@ const staticMarkdown = markdownTemplate.replace(regExPatterns.name, '');
 
 const finishLayout: WizardStepLayout<DraftService> = {
 	indicateStepsCompleteOnThisWizard: true,
-	canSkipFrom: true,
+	canSkip: true,
 	staticMarkdown: staticMarkdown,
 	label: 'Finish',
 	buttons: {

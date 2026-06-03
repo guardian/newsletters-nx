@@ -242,7 +242,11 @@ test.describe('Create draft newsletter journey', () => {
 		await expect(
 			page.getByRole('heading', { name: "You're finished!" }),
 		).toBeVisible();
-		await expect(page.getByText(`Congratulations, you have reached the end of the wizard for newsletter ${draftName}`)).toBeVisible();
+		await expect(
+			page.getByText(
+				`Congratulations, you have reached the end of the wizard for newsletter ${draftName}`,
+			),
+		).toBeVisible();
 
 		await expect(
 			page.getByRole('link', { name: 'rendering options' }),
@@ -271,7 +275,11 @@ test.describe('Create draft newsletter journey', () => {
 		await expect(
 			page.getByRole('heading', { name: "You're finished!" }),
 		).toBeVisible();
-		await expect(page.getByText(`Congratulations, you have reached the end of the wizard for newsletter ${draftName}`)).toBeVisible();
+		await expect(
+			page.getByText(
+				`Congratulations, you have reached the end of the wizard for newsletter ${draftName}`,
+			),
+		).toBeVisible();
 
 		await expect(
 			page.getByRole('link', { name: 'rendering options' }),
@@ -316,9 +324,7 @@ test.describe('Wizard step nav skip functionality', () => {
 
 		// The intro step does not have canSkipFrom, so other steps should not
 		// be rendered as buttons - they should be static labels.
-		await expect(
-			page.locator('.left-aligned-step-button'),
-		).not.toBeVisible();
+		await expect(page.locator('.left-aligned-step-button')).not.toBeVisible();
 	});
 
 	test('step nav items become skip buttons when on a skippable step', async ({
@@ -334,13 +340,19 @@ test.describe('Wizard step nav skip functionality', () => {
 		).toBeVisible();
 
 		await expect(
-			page.locator('.left-aligned-step-button').filter({ hasText: 'Launch/Promotion Dates' }),
+			page
+				.locator('.left-aligned-step-button')
+				.filter({ hasText: 'Launch/Promotion Dates' }),
 		).toBeVisible();
 		await expect(
-			page.locator('.left-aligned-step-button').filter({ hasText: 'Targeting' }),
+			page
+				.locator('.left-aligned-step-button')
+				.filter({ hasText: 'Targeting' }),
 		).toBeVisible();
 		await expect(
-			page.locator('.left-aligned-step-button').filter({ hasText: 'Tag Setup' }),
+			page
+				.locator('.left-aligned-step-button')
+				.filter({ hasText: 'Tag Setup' }),
 		).toBeVisible();
 	});
 
