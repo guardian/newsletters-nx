@@ -53,10 +53,13 @@ test.describe('Edit fronts-based newsletter', () => {
 		await expect(page).toHaveURL(EDIT_URL_PATTERN);
 
 		await page
-			.getByLabel('Name *', { exact: true })
+			.getByLabel('Name the newsletter *', { exact: true })
 			.fill('Updated Fronts Test');
 
-		await page.getByLabel('Frequency').click();
+		await page.locator(
+			'[aria-labelledby="select-input-label-Set the frequency"]',
+		).click();
+
 		await page.getByRole('option', { name: 'Fortnightly' }).click();
 
 		await page

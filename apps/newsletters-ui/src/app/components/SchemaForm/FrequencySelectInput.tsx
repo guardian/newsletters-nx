@@ -85,6 +85,7 @@ export const FrequencySelectInput: FunctionComponent<
 				{label}
 			</InputLabel>
 			<Select
+				data-testid="frequency-select"
 				labelId={`select-input-label-${label}`}
 				value={selectValue}
 				label={label}

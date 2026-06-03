@@ -49,11 +49,12 @@ test.describe('Top nav - launched', () => {
 
 		await expect(page).toHaveURL('/launched/edit/playwright-launched-seed');
 
-		const nameInput = page.getByRole('textbox', { name: 'Name', exact: true });
+		const nameInput = page.getByRole('textbox', { name: 'Name the newsletter', exact: true });
 		await expect(nameInput).toBeEditable();
 
-		const frequencyDropDown = page.getByRole('combobox', { name: 'Frequency' });
-		await expect(frequencyDropDown).toBeEditable();
+		const frequencyDropDown = page.getByTestId('frequency-select');
+		await expect(frequencyDropDown).toBeVisible();
+		await expect(frequencyDropDown).toBeEnabled();
 
 		const regionRadioOption = page.getByRole('radio', { name: 'UK' });
 		await expect(regionRadioOption).toBeEditable();
