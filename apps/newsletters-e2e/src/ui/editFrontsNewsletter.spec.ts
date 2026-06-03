@@ -56,7 +56,7 @@ test.describe('Edit fronts-based newsletter', () => {
 			.getByLabel('Name *', { exact: true })
 			.fill('Updated Fronts Test');
 
-		await page.getByLabel('Set the frequency').click();
+		await page.getByLabel('Frequency').click();
 		await page.getByRole('option', { name: 'Fortnightly' }).click();
 
 		await page

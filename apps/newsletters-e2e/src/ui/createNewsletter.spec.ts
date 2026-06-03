@@ -14,7 +14,7 @@ async function completeNameStep(page: Page, name: string) {
 	await expect(
 		page.getByRole('heading', { name: "Enter the newsletter's name" }),
 	).toBeVisible();
-	const nameInput = page.getByRole('textbox', { name: 'Name the newsletter' });
+	const nameInput = page.getByRole('textbox', { name: 'Name' });
 	await expect(nameInput).toBeVisible();
 
 	await nameInput.fill(name);
@@ -59,7 +59,7 @@ async function completeProductionDetailsStep(
 	await articleLocationGroup.getByRole('radio', { name: 'Email only' }).click();
 
 	const frequencyCombobox = page
-		.locator('label', { hasText: /^frequency$/ })
+		.locator('label', { hasText: /^Frequency$/ })
 		.locator('..')
 		.getByRole('combobox');
 	await expect(frequencyCombobox).toBeVisible();
@@ -285,10 +285,10 @@ test.describe('Create draft newsletter journey', () => {
 
 		await completeIntroStep(page);
 
-		await expect(page.getByRole('textbox', { name: 'Name the newsletter' })).toBeVisible();
+		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
 		await page.getByRole('button', { name: 'Save and Continue' }).click();
 
 		await expect(page.getByRole('alert')).toBeVisible();
-		await expect(page.getByRole('textbox', { name: 'Name the newsletter' })).toBeVisible();
+		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
 	});
 });

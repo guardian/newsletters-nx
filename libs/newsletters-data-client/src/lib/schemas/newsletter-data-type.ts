@@ -74,7 +74,7 @@ export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
  */
 export const newsletterDataSchema = z.object({
 	identityName: kebabOrUnderscoreCasedString().describe('identity name'),
-	name: nonEmptyString().describe('Name the newsletter'),
+	name: nonEmptyString(),
 	category: newsletterCategoriesSchema,
 	restricted: z.boolean().describe('Restricted'),
 	/** The status for the newsletter:
@@ -104,7 +104,7 @@ export const newsletterDataSchema = z.object({
 		'Sign up embed description',
 	),
 	regionFocus: regionFocusEnumSchema.describe('Region focus'),
-	frequency: nonEmptyString().describe('Set the frequency'),
+	frequency: nonEmptyString(),
 	listId: z.number(),
 	listIdV1: z.number(),
 	campaignName: z.string().optional(),
