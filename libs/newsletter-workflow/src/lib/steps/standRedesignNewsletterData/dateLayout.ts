@@ -55,5 +55,5 @@ export const dateLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.promotionDates,
-	canSkipTo: true,
+	canSkip: true,
 };

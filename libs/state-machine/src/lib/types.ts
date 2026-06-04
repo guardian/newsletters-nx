@@ -126,7 +126,7 @@ export interface BaseWizardStepLayout<
 			textArea?: boolean;
 		}
 	>;
-	canSkipTo?: boolean;
+	canSkip?: boolean;
 	skippingWillPersistLocalChanges?: boolean;
 	executeSkip?: AsyncExecution<T> | Execution<T>;
 	getInitialFormData?: {

@@ -30,8 +30,8 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 					label: step.label,
 					role: step.role,
 					parentStepId: step.parentStepId,
-					canSkipTo: step.canSkipTo,
-					canSkipFrom: !!step.executeSkip,
+					canSkipTo: !!step.canSkip,
+					canSkipFrom: !!(step.canSkip ?? step.executeSkip),
 					skippingWillPersistLocalChanges: step.skippingWillPersistLocalChanges,
 					schema: step.schema,
 					isOptional:
@@ -48,7 +48,7 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 	// a WizardStepLayout in the WizardLayout.
 	// Since WizardLayout is defined as a record of WizardLayouts, we can't add
 	// any additional "meta" properties to it, without changing that definition.
-	const isNonLinear = Object.values(wizard).some((step) => step.canSkipTo);
+	const isNonLinear = Object.values(wizard).some((step) => step.canSkip);
 	const indicateStepsComplete = Object.values(wizard).some(
 		(step) => step.indicateStepsCompleteOnThisWizard,
 	);

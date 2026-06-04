@@ -45,5 +45,5 @@ export const imageLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.images,
-	canSkipTo: true,
+	canSkip: true,
 };
