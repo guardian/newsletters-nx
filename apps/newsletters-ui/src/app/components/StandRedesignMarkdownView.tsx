@@ -34,7 +34,6 @@ const H1 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) =>
 			element="h1"
 			variant="heading2Xl"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['16Rem']};
 				display: inline-flex;
 				align-items: center;
 				gap: 7px;

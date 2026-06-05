@@ -5,7 +5,8 @@ import { formSchemas } from './formSchemas';
 
 export const nameAndFrequencyLayout: WizardStepLayout<DraftService, typeof formSchemas.nameAndFrequency.shape> = {
 	staticMarkdown: `# Name and frequency
-	`,
+`,
+
 
 	staticSideMarkdown: [{ markdown: `### Frequency
 

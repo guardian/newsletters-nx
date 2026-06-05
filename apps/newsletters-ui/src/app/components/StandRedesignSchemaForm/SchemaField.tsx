@@ -102,7 +102,6 @@ export function SchemaField<T extends z.ZodRawShape>({
 	maxOptionsForRadioButtons,
 	explanation,
 }: SchemaFieldProps<T>) {
-	console.log(isNoted)
 	const { key, value, zod, readOnly } = field;
 	const inputHandler = (newValue: FieldValue) => {
 		if (readOnly) {
