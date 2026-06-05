@@ -7,6 +7,7 @@ import {
 	RadioGroup,
 } from '@mui/material';
 import type { FunctionComponent } from 'react';
+import { useId } from 'react';
 import type { FieldProps } from './util';
 
 const EMPTY_STRING = '';
@@ -20,6 +21,7 @@ export const RadioSelectInput: FunctionComponent<
 	}
 > = (props) => {
 	const { value, optional, options, inputHandler, label = 'value' } = props;
+	const labelId = useId();
 	const handleChange = (event: SelectChangeEvent) => {
 		if (event.target.value === EMPTY_STRING) {
 			return inputHandler(undefined);
@@ -30,11 +32,11 @@ export const RadioSelectInput: FunctionComponent<
 
 	return (
 		<FormControl fullWidth>
-			<FormLabel id={`radio-input-label-${label}-${options.toString()}`}>
+			<FormLabel id={labelId}>
 				{label}
 			</FormLabel>
 			<RadioGroup
-				aria-labelledby={`radio-input-label-${label}-${options.toString()}`}
+				aria-labelledby={labelId}
 				name={`radio-input-group-${label}`}
 				value={valueAsString}
 				onChange={handleChange}
