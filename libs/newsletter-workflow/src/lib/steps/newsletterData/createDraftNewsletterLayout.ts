@@ -23,6 +23,6 @@ The first step is to enter the name of your newsletter. For example,  **Down to 
 		},
 	},
 	schema: formSchemas.startDraftNewsletter,
-	canSkipTo: true,
+	canSkip: true,
 	skippingWillPersistLocalChanges: true,
 };

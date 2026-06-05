@@ -32,5 +32,4 @@ There is a guide to help you set up the newsletter for some of the filed. If you
 		},
 	},
 	role: 'CREATE_START',
-	canSkipTo: true,
 };
