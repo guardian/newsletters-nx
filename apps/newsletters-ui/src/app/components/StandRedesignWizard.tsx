@@ -258,11 +258,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				/>
 			</Layout.Sidebar>
 			<Layout.Main as="main">
-				<Grid
-					cssOverrides={css`
-						margin-top: ${baseSpacing['48Rem']};
-					`}
-				>
+				<Grid>
 					<Item size={{ sm: 12, md: 11, lg: 6 }} offset={{ lg: 1 }}>
 						<StandRedesignMarkdownView
 							markdown={serverData.markdownToDisplay ?? ''}
@@ -299,6 +295,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						</Stack>
 					</Item>
 					<Item size={{ lg: 4 }} offset={{ lg: 1 }}>
+						<div css={css`display: flex; flex-direction: column; gap: ${baseSpacing['20Px']};`}>
 						{serverData.markdownToDisplayInSidebar?.map(({field, markdown}) =>
 							<div css={css`
 							background: ${semanticColors.bg.raisedLevel1};
@@ -311,6 +308,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 									addHeadingIcon="text_snippet"
 								/>
 							</div>)}
+						</div>
 					</Item>
 					<Item>
 						<SkipConfirmationDialog

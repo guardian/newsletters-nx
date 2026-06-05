@@ -2,6 +2,7 @@ import { Checkbox } from '@guardian/stand/Checkbox';
 import { TextInput } from '@guardian/stand/TextInput';
 import type { FormEventHandler, FunctionComponent } from 'react';
 import { useState } from 'react';
+import { NotedLabel } from './NotedLabel';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 import { eventToNumber } from './util';
@@ -50,6 +51,7 @@ export const StandOptionalNumberInput: FunctionComponent<
 				error={props.error}
 				isRequired={!props.optional}
 				isDisabled={typeof props.value === 'undefined' || props.readOnly}
+				renderLabel={props.isNoted ? NotedLabel : undefined}
 			/>
 			<Checkbox
 				isSelected={typeof props.value === 'undefined'}

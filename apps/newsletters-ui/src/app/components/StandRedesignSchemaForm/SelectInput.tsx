@@ -1,6 +1,7 @@
 import { Option, Select } from '@guardian/stand/Select';
 import type { FunctionComponent } from 'react';
 import type { Key } from 'react-aria-components';
+import { NotedLabel } from './NotedLabel';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 
@@ -36,6 +37,7 @@ export const StandSelectInput: FunctionComponent<
 			description={description}
 			value={valueAsString}
 			onChange={handleChange}
+			renderLabel={props.isNoted ? NotedLabel : undefined}
 		>
 			{optional && <Option value={{ EMPTY_STRING }}>[none]</Option>}
 			{options.map((option) => (

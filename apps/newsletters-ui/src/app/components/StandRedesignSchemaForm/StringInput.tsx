@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { TextArea } from '@guardian/stand/TextArea';
 import { TextInput } from '@guardian/stand/TextInput';
 import type { FormEventHandler } from 'react';
@@ -35,6 +36,7 @@ export const StandStringInput = (props: Props) => {
 		return (
 			<TextInput
 				label={props.label}
+				cssOverrides={css`max-width: 450px`}
 				description={props.description}
 				onInput={sendValue}
 				value={props.value}
