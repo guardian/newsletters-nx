@@ -7,8 +7,7 @@ export const nameAndFrequencyLayout: WizardStepLayout<DraftService, typeof formS
 	staticMarkdown: `# Name and frequency
 `,
 
-
-	staticSideMarkdown: [{ markdown: `### Frequency
+	staticSideMarkdown: [{ markdown: `### :icon{symbol="text_snippet"}  Frequency
 
 The frequency you specify will be shown on the sign up page, and on the all newsletters page.
 

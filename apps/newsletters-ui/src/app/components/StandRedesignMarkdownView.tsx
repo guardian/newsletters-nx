@@ -1,14 +1,33 @@
 import { css } from '@emotion/react';
-import { baseSpacing } from '@guardian/stand';
+import { semanticSpacing, semanticTypography } from '@guardian/stand';
 import type { IconProps } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
+import { convertTypographyToEmotionStringStyle } from '@guardian/stand/utils';
+import type { Element } from 'hast';
+import type { TextDirective } from 'mdast-util-directive';
 import type { ReactNode } from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkDirective from 'remark-directive';
+import type { Plugin } from 'unified';
+import { visit } from 'unist-util-visit';
+
+// Converts :icon{symbol="text_snippet"} text directives into hast <icon> elements
+const remarkIconDirective: Plugin = () => (tree) => {
+	visit(tree, 'textDirective', (node: TextDirective) => {
+		if (node.name !== 'icon') {
+			return;
+		}
+		node.data = {
+			hName: 'icon',
+			hProperties: node.attributes ?? {},
+		};
+	});
+};
 
 interface MarkdownViewProps {
 	markdown: string;
-	addHeadingIcon?: IconProps['symbol'];
 }
 
 const isExternal = (href?: string) => !href?.startsWith('/');
@@ -37,7 +56,7 @@ const H1 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) =>
 				display: inline-flex;
 				align-items: center;
 				gap: 7px;
-				margin-bottom: ${baseSpacing['40Px']};
+				margin-bottom: ${semanticSpacing.stackMd};
 			`}
 		>
 			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
@@ -49,31 +68,31 @@ const H2 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) =>
 	return (
 		<Typography
 			element="h2"
-			variant="headingLg"
+			variant="headingMd"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['16Rem']};
+				margin-bottom: ${semanticSpacing.stackSm};
 				display: inline-flex;
 				align-items: center;
 				gap: 7px;
 			`}
 		>
-			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
+			{props.children}
 		</Typography>
 	);
 };
-const H3 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode }) => {
+const H3 = (props: { children?: ReactNode }) => {
 	return (
-			<Typography
+		<Typography
 			element="h3"
-			variant="headingMd"
+			variant="headingSm"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['12Rem']};
+				margin-bottom: ${semanticSpacing.stackSm};
 				display: inline-flex;
 				align-items: center;
 				gap: 7px;
 			`}
 		>
-			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
+			{props.children}
 		</Typography>
 	);
 };
@@ -83,7 +102,7 @@ const TypographyP = (props: { children?: ReactNode }) => {
 			element="p"
 			variant="bodySm"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['20Rem']};
+				margin-bottom: ${semanticSpacing.stackXl};
 			`}
 		>
 			{props.children}
@@ -95,10 +114,11 @@ const UlMarginOverride = (props: { children?: ReactNode }) => {
 	return (
 		<ul
 			css={css`
-				margin-bottom: ${baseSpacing['40Rem']};
+				${convertTypographyToEmotionStringStyle(semanticTypography.bodyMd)}
+				margin-bottom: ${semanticSpacing.stackXl};
 				padding-left: 1.5em;
 				p {
-					margin-bottom: ${baseSpacing['12Rem']};
+					margin-bottom: ${semanticSpacing.stackSm};
 				}
 			`}
 		>
@@ -112,7 +132,7 @@ const TypographyStrong = (props: { children?: ReactNode }) => {
 			element="span"
 			variant="bodyBoldMd"
 			cssOverrides={css`
-				margin-bottom: ${baseSpacing['40Rem']};
+				margin-bottom: ${semanticSpacing.stackXl};
 			`}
 		>
 			{props.children}
@@ -122,7 +142,6 @@ const TypographyStrong = (props: { children?: ReactNode }) => {
 
 export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 	markdown,
-	addHeadingIcon,
 }) => {
 	return (
 		<div
@@ -136,27 +155,28 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 			`}
 		>
 			<ReactMarkdown
-				components={{
-					a: LinkWithNewTabIfExternal,
-					h1: ({ children }) => (
-						<H1 iconVariant={addHeadingIcon}>
-							{children}
-						</H1>
-					),
-					h2: ({ children }) => (
-						<H2 iconVariant={addHeadingIcon}>
-							{children}
-						</H2>
-					),
-					h3: ({ children }) => (
-						<H3 iconVariant={addHeadingIcon}>
-							{children}
-						</H3>
-					),
-					p: TypographyP,
-					ul: UlMarginOverride,
-					strong: TypographyStrong,
-				}}
+				remarkPlugins={[remarkDirective, remarkIconDirective]}
+				components={
+					{
+						a: LinkWithNewTabIfExternal,
+						h1: ({ children }) => <H1>{children}</H1>,
+						h2: ({ children }) => <H2>{children}</H2>,
+						h3: ({ children }) => <H3>{children}</H3>,
+						p: TypographyP,
+						ul: UlMarginOverride,
+						strong: TypographyStrong,
+						icon: ({ node }: { node?: Element }) => (
+							<Icon
+								cssOverrides={css`
+									vertical-align: middle;
+								`}
+								size="sm"
+								aria-hidden={true}
+								symbol={node?.properties.symbol as IconProps['symbol']}
+							/>
+						),
+					} as React.ComponentProps<typeof ReactMarkdown>['components']
+				}
 			>
 				{markdown}
 			</ReactMarkdown>
