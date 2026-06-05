@@ -6,7 +6,7 @@ import {
 } from '@newsletters-nx/state-machine';
 import { formSchemas } from './formSchemas';
 
-type ProductionDetailsLayout = WizardStepLayout<DraftService, typeof formSchemas.productionDetails.shape>
+type ProductionDetailsLayout = WizardStepLayout<DraftService, typeof formSchemas.productionDetails.shape>;
 
 const staticSideMarkdown: ProductionDetailsLayout['staticSideMarkdown'] = [
 	{field: 'category', markdown: `
@@ -24,7 +24,7 @@ This is the case for most newsletters, but you may prefer to offer the newslette
 
 Alternatively, you might want the first send on web to preview it, but subsequent sends to be email-only.
 `}
-]
+	];
 
 const staticMarkdown = `
 # Production details
