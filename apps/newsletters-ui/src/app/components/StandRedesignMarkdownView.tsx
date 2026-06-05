@@ -56,7 +56,7 @@ const H1 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) =>
 				display: inline-flex;
 				align-items: center;
 				gap: 7px;
-				margin-bottom: ${semanticSpacing.stackMd};
+				margin-bottom: ${semanticSpacing.stackXl};
 			`}
 		>
 			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
