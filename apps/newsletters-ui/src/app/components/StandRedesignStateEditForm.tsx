@@ -51,6 +51,8 @@ export const StandRedesignStateEditForm = ({
 			// ToDo: fix the types on the explanations prop so the keys are typed
 			explanations={{
 				regionFocus: 'Which region is this newsletter mainly designed for?',
+				frequency: 'How regularly will this newsletter land in reader’s inboxes?',
+				name: 'What will readers call it?',
 			}}
 		/>
 	);

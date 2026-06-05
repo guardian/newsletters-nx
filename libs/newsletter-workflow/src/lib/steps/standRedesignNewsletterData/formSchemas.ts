@@ -38,7 +38,6 @@ export const formSchemas = {
 		.pick({
 			name: true,
 			frequency: true,
-			regionFocus: true,
 		})
 		.describe('New newsletter set up'),
 
@@ -57,6 +56,7 @@ export const formSchemas = {
 		.pick({
 			theme: true,
 			group: true,
+			regionFocus: true,
 		})
 		.describe('Set targeting options'),
 

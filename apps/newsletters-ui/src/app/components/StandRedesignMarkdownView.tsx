@@ -47,23 +47,24 @@ const LinkWithNewTabIfExternal = (props: {
 	);
 };
 
-const H1 = (props: { children?: ReactNode }) => {
+const H1 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) => {
 	return (
 		<Typography
 			element="h1"
 			variant="heading2Xl"
 			cssOverrides={css`
-				margin-bottom: ${semanticSpacing.stackMd};
 				display: inline-flex;
 				align-items: center;
 				gap: 7px;
+				margin-bottom: ${semanticSpacing.stackMd};
 			`}
 		>
-			{props.children}
+			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
 		</Typography>
 	);
 };
-const H2 = (props: { children?: ReactNode }) => {
+
+const H2 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) => {
 	return (
 		<Typography
 			element="h2"
@@ -99,7 +100,7 @@ const TypographyP = (props: { children?: ReactNode }) => {
 	return (
 		<Typography
 			element="p"
-			variant="bodyMd"
+			variant="bodySm"
 			cssOverrides={css`
 				margin-bottom: ${semanticSpacing.stackXl};
 			`}

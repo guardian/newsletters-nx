@@ -4,10 +4,7 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { formSchemas } from './formSchemas';
 
 export const nameAndFrequencyLayout: WizardStepLayout<DraftService, typeof formSchemas.nameAndFrequency.shape> = {
-	staticMarkdown: `# Enter the newsletter's name
-
-The first step is to enter the name of your newsletter. For example,  **Down to Earth**.
-
+	staticMarkdown: `# Name and frequency
 `,
 
 	staticSideMarkdown: [{ markdown: `### :icon{symbol="text_snippet"}  Frequency
