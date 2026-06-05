@@ -102,7 +102,7 @@ const TypographyP = (props: { children?: ReactNode }) => {
 			element="p"
 			variant="bodySm"
 			cssOverrides={css`
-				margin-bottom: ${semanticSpacing.stackXl};
+				margin-bottom: ${semanticSpacing.stackMd};
 			`}
 		>
 			{props.children}
