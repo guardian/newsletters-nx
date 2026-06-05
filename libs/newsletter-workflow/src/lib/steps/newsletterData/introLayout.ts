@@ -27,5 +27,4 @@ Welcome! This wizard will shortly guide you through the process of creating a ne
 		},
 	},
 	role: 'CREATE_START',
-	canSkipTo: true,
 };

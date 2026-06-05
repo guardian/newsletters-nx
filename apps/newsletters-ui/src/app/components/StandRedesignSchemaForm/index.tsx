@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
 import type { z, ZodType } from 'zod';
+import type { NotedFields } from '../StandRedesignWizard';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { SchemaField } from './SchemaField';
 import type {
@@ -25,6 +26,7 @@ interface Props<T extends z.ZodRawShape> {
 	validationWarnings: Partial<Record<keyof T, string>>;
 	maxOptionsForRadioButtons?: number;
 	explanations?: Partial<Record<keyof T, string>>;
+	notedFields?: NotedFields;
 }
 
 /**
@@ -41,6 +43,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 	showUnsupported = false,
 	excludedKeys = [],
 	readOnlyKeys = [],
+	notedFields = [],
 	validationWarnings,
 	maxOptionsForRadioButtons = 0,
 	explanations = {},
@@ -75,6 +78,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 		>
 			{fields.map((field) => (
 				<SchemaField
+					isNoted={notedFields.includes(field.key)}
 					key={field.key}
 					options={options[field.key]}
 					numberInputSettings={numberConfig[field.key]}

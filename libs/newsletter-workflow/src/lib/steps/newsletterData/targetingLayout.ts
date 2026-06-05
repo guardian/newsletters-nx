@@ -54,5 +54,5 @@ export const targetingLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.targeting,
-	canSkipTo: true,
+	canSkip: true,
 };

@@ -43,5 +43,5 @@ export const paletteOverrideLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.newsletterPaletteOverride,
-	canSkipTo: true,
+	canSkip: true,
 };

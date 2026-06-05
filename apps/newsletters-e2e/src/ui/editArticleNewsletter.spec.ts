@@ -56,10 +56,10 @@ test.describe('Edit article-based newsletter', () => {
 		await expect(page).toHaveURL(EDIT_URL_PATTERN);
 
 		await page
-			.getByLabel('Name *', { exact: true })
+			.getByLabel('Name the newsletter *', { exact: true })
 			.fill('Updated Article Test');
 
-		await page.getByLabel('Frequency', { exact: true }).click();
+		await page.getByTestId('frequency-select').click();
 		await page.getByRole('option', { name: 'Fortnightly' }).click();
 
 		await page

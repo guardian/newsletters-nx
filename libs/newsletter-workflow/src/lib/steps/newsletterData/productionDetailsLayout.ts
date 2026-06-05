@@ -73,5 +73,5 @@ export const productionDetailsLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.productionDetails,
-	canSkipTo: true,
+	canSkip: true,
 };

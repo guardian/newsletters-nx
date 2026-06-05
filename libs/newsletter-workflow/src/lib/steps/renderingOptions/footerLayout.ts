@@ -47,5 +47,5 @@ export const footerLayout: WizardStepLayout<DraftService> = {
 		},
 	},
 	schema: formSchemas.footer,
-	canSkipTo: true,
+	canSkip: true,
 };

@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { baseSpacing } from '@guardian/stand';
+import { baseSpacing, semanticColors } from '@guardian/stand';
 import { Grid, Item } from '@guardian/stand/Grid';
 import { Layout } from '@guardian/stand/Layout';
 import { Alert, Box, Stack, Typography } from '@mui/material';
@@ -9,6 +9,7 @@ import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
 	getFieldDisplayOptions,
 	getFormSchema,
+	getNotedFields,
 	getStartStepId,
 	getStepperConfig,
 } from '@newsletters-nx/newsletter-workflow';
@@ -35,6 +36,7 @@ export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
 	return <StandRedesignWizard wizardId={wizardId} id={listId} />;
 };
 
+export type NotedFields = string[];
 /**
  * Interface for the props passed to the `Wizard` component.
  */
@@ -90,6 +92,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const [formData, setFormData] = useState<WizardFormData | undefined>(
 		undefined,
 	);
+	const [notedFields, setNotedFields] = useState<string[]>([]);
 	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
 		useState(false);
 	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
@@ -111,6 +114,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 
 				setServerData(data);
 				const schema = getFormSchema(wizardId, data.currentStepId);
+				const noted = getNotedFields(wizardId, data.currentStepId);
 				const blank = schema ? getEmptySchemaData(schema) : undefined;
 
 				setFormData({
@@ -119,6 +123,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				});
 				setCurrentStepHasBeenChanged(false);
 				setShowSkipModalFor(undefined);
+				setNotedFields(noted ?? []);
 			} catch (error: unknown /* FIXME! */) {
 				setServerErrorMessage('Wizard failed');
 				console.error('Error invoking next step of wizard:', error);
@@ -252,11 +257,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				/>
 			</Layout.Sidebar>
 			<Layout.Main as="main">
-				<Grid
-					cssOverrides={css`
-						margin-top: ${baseSpacing['48Rem']};
-					`}
-				>
+				<Grid>
 					<Item size={{ sm: 12, md: 11, lg: 6 }} offset={{ lg: 1 }}>
 						<StandRedesignMarkdownView
 							markdown={serverData.markdownToDisplay ?? ''}
@@ -265,6 +266,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						{formSchema && formData && (
 							<StandRedesignStateEditForm
 								formSchema={formSchema}
+								notedFields={notedFields}
 								formData={formData}
 								setFormData={handleFormChange}
 								maxOptionsForRadioButtons={5}
@@ -292,9 +294,17 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						</Stack>
 					</Item>
 					<Item size={{ lg: 4 }} offset={{ lg: 1 }}>
-						<StandRedesignMarkdownView
-							markdown={serverData.markdownToDisplayInSidebar ?? ''}
-						/>
+						<div css={css`display: flex; flex-direction: column; gap: ${baseSpacing['20Px']};`}>
+						{serverData.markdownToDisplayInSidebar?.map(({field, markdown}) =>
+							<div css={css`
+							background: ${semanticColors.bg.raisedLevel1};
+							padding: ${baseSpacing['16Px']}
+							`}
+							key={field}
+							>
+								<StandRedesignMarkdownView markdown={markdown} />
+							</div>)}
+						</div>
 					</Item>
 					<Item>
 						<SkipConfirmationDialog

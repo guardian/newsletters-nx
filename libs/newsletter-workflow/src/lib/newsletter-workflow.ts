@@ -66,3 +66,18 @@ export const getFieldDisplayOptions = (
 	const step = wizard[stepId];
 	return step?.fieldDisplayOptions;
 };
+
+export const getNotedFields = (
+	wizardId: keyof typeof newslettersWorkflowStepLayout,
+	stepId: string,
+): string[] | undefined => {
+	const wizard = newslettersWorkflowStepLayout[wizardId];
+	if (!wizard) {
+		return undefined;
+	}
+	const step = wizard[stepId];
+	if (!step?.staticSideMarkdown) {
+		return undefined;
+	}
+	return step.staticSideMarkdown.map(({field}) => field.toString());
+}

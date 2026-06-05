@@ -41,6 +41,7 @@ export type StandardFormProps = {
 	optional?: boolean;
 	error?: string;
 	description?: string;
+	isNoted?: boolean;
 };
 
 // T is the shape of the schema passed as a prop to the `SchemaForm`
@@ -56,6 +57,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	validationWarning?: string;
 	maxOptionsForRadioButtons: number;
 	explanation?: string;
+	isNoted?: boolean;
 }
 
 const WrongValueTypeMessage = (props: { field: FieldDef }) => (
@@ -93,6 +95,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	change,
 	options,
 	showUnsupported = false,
+	isNoted = false,
 	numberInputSettings = {},
 	stringInputSettings = {},
 	validationWarning,
@@ -146,6 +149,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (key === 'frequency') {
 			return (
 				<StandRadioSelectInput
+					isNoted={isNoted}
 					{...standardProps}
 					value={value}
 					options={[
@@ -164,6 +168,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			if (options.length <= maxOptionsForRadioButtons) {
 				return (
 					<StandRadioSelectInput
+						isNoted={isNoted}
 						{...standardProps}
 						value={value}
 						options={options}
@@ -171,12 +176,13 @@ export function SchemaField<T extends z.ZodRawShape>({
 				);
 			}
 			return (
-				<StandSelectInput {...standardProps} value={value} options={options} />
+				<StandSelectInput {...standardProps} value={value} isNoted={isNoted} options={options} />
 			);
 		}
 
 		return (
 			<StandStringInput
+				isNoted={isNoted}
 				{...standardProps}
 				value={value ?? ''}
 				inputType={stringInputSettings.inputType}
@@ -188,7 +194,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (typeof value !== 'boolean' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
 		}
-		return <StandBooleanInput {...standardProps} value={value ?? false} />;
+		return <StandBooleanInput isNoted={isNoted} {...standardProps} value={value ?? false} />;
 	}
 
 	if (innerZod instanceof ZodNumber) {
@@ -202,6 +208,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					{...standardProps}
 					{...numberInputSettings}
 					value={value}
+					isNoted={isNoted}
 				/>
 			);
 		}
@@ -211,6 +218,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				{...standardProps}
 				{...numberInputSettings}
 				value={value ?? 0}
+				isNoted={isNoted}
 			/>
 		);
 	}
@@ -230,6 +238,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					{...standardProps}
 					value={value}
 					options={options}
+					isNoted={isNoted}
 				/>
 			);
 		}
@@ -239,6 +248,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				{...standardProps}
 				value={value}
 				options={options ?? []}
+				isNoted={isNoted}
 			/>
 		);
 	}
