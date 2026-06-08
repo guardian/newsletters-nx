@@ -3,7 +3,7 @@ import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
 import { TextInput } from '@guardian/stand/TextInput';
 import type { TextInputProps } from '@guardian/stand/TextInput';
 import { useEffect, useState } from 'react';
-import type { FormEventHandler, FunctionComponent} from 'react';
+import type { FormEventHandler, FunctionComponent } from 'react';
 import { NotedLabel } from './NotedLabel';
 import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
@@ -72,9 +72,13 @@ export const StandRadioSelectInput: FunctionComponent<
 			<RadioGroup
 				label={label}
 				onChange={handleRadioChange}
-				value={radioGroupValue}
+				value={
+					!optional && radioGroupValue === EMPTY_STRING
+						? undefined
+						: radioGroupValue
+				}
 				description={description ?? ''}
-				renderLabel={props.isNoted ? NotedLabel : undefined }
+				renderLabel={props.isNoted ? NotedLabel : undefined}
 			>
 				{/* Haven't seen this used but have preserved this way of doing it */}
 				{optional && <Radio value={EMPTY_STRING}>[none]</Radio>}
