@@ -1,3 +1,4 @@
+import { AlertBanner } from '@guardian/stand/AlertBanner';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
@@ -24,6 +25,13 @@ const frameCss = css`
 interface IRootRoute {
 	outlet?: undefined | React.ReactNode;
 }
+
+const StandAlertBanner = ({ isOnCode }: { isOnCode: boolean }) => (
+	<AlertBanner level="information" showIcon>
+		Environment: {isOnCode ? 'CODE' : 'LOCAL'} - Changes will not impact
+		https://www.theguardian.com/
+	</AlertBanner>
+);
 
 export function Layout(props: IRootRoute) {
 	// Not ideal to use the host name to determine environment.
@@ -61,6 +69,11 @@ export function Layout(props: IRootRoute) {
 	if (isUsingStand && isNewsletterData) {
 		return (
 			<StandLayout>
+				{(isOnCode || isOnLocal) && (
+					<StandLayout.AlertBanner>
+						<StandAlertBanner isOnCode={isOnCode} />
+					</StandLayout.AlertBanner>
+				)}
 				<StandLayout.TopBar>{Nav}</StandLayout.TopBar>
 				{props.outlet ?? <Outlet />}
 			</StandLayout>
@@ -69,6 +82,9 @@ export function Layout(props: IRootRoute) {
 
 	return (
 		<div css={frameCss}>
+			{(isOnCode || isOnLocal) && isUsingStand && (
+				<StandAlertBanner isOnCode={isOnCode} />
+			)}
 			{Nav}
 			<Box sx={{ pt: 8 }} component={'main'}>
 				{props.outlet ?? <Outlet />}

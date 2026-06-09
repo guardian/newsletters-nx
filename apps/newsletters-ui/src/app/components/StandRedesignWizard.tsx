@@ -1,7 +1,8 @@
 import { css } from '@emotion/react';
-import { baseSpacing, semanticColors } from '@guardian/stand';
+import { baseSpacing, semanticColors, semanticGrid } from '@guardian/stand';
 import { Grid, Item } from '@guardian/stand/Grid';
 import { Layout } from '@guardian/stand/Layout';
+import { from } from '@guardian/stand/utils';
 import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -256,9 +257,28 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 					formData={formData}
 				/>
 			</Layout.Sidebar>
-			<Layout.Main as="main">
-				<Grid>
-					<Item size={{ sm: 12, md: 11, lg: 6 }} offset={{ lg: 1 }}>
+			<Layout.Main as="main" paddingTop={false} paddingBottom={false}>
+				<Grid
+					// This makes the grid take the full height of the main content area, allowing the border to stretch to the bottom of the page even if the content is short
+					css={css`
+						height: 100%;
+					`}
+				>
+					<Item
+						size={{ sm: 12, md: 11, lg: 6 }}
+						offset={{ lg: 1 }}
+						css={css`
+							margin-top: ${semanticGrid.margin.topSmPx};
+
+							${from.md} {
+								margin-top: ${semanticGrid.margin.topMdPx};
+							}
+
+							${from.lg} {
+								margin-top: ${semanticGrid.margin.topLgPx};
+							}
+						`}
+					>
 						<StandRedesignMarkdownView
 							markdown={serverData.markdownToDisplay ?? ''}
 						/>
@@ -293,20 +313,60 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 							))}
 						</Stack>
 					</Item>
-					<Item size={{ lg: 4 }} offset={{ lg: 1 }}>
-						<div css={css`display: flex; flex-direction: column; gap: ${baseSpacing['20Px']};`}>
-						{serverData.markdownToDisplayInSidebar?.map(({field, markdown}) =>
-							<div css={css`
-							background: ${semanticColors.bg.raisedLevel1};
-							padding: ${baseSpacing['16Px']}
+					<Item
+						size={{ lg: 1 }}
+						cssOverrides={css`
+							display: none;
+							${from.lg} {
+								border-right: 1px solid ${semanticColors.border.weak};
+								display: block;
+							}
+						`}
+					></Item>
+					<Item
+						size={{ lg: 4 }}
+						cssOverrides={css`
+							${from.lg} {
+								margin-top: ${semanticGrid.margin.topLgPx};
+							}
+						`}
+					>
+						<div
+							css={css`
+								display: flex;
+								flex-direction: column;
+								gap: ${baseSpacing['20Px']};
 							`}
-							key={field}
-							>
-								<StandRedesignMarkdownView markdown={markdown} />
-							</div>)}
+						>
+							{serverData.markdownToDisplayInSidebar?.map(
+								({ field, markdown }) => (
+									<div
+										css={css`
+											background: ${semanticColors.bg.raisedLevel1};
+											padding: ${baseSpacing['16Px']};
+										`}
+										key={field}
+									>
+										<StandRedesignMarkdownView markdown={markdown} />
+									</div>
+								),
+							)}
 						</div>
 					</Item>
-					<Item>
+					<Item
+						size={{ lg: 7 }}
+						cssOverrides={css`
+							margin-bottom: ${semanticGrid.margin.bottomSmPx};
+
+							${from.md} {
+								margin-bottom: ${semanticGrid.margin.bottomMdPx};
+							}
+
+							${from.lg} {
+								margin-bottom: ${semanticGrid.margin.bottomLgPx};
+							}
+						`}
+					>
 						<SkipConfirmationDialog
 							currentStepId={serverData.currentStepId}
 							targetStepId={showSkipModalFor}
@@ -315,6 +375,18 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 							stepperConfig={stepperConfig}
 						/>
 					</Item>
+					<Item
+						size={{ lg: 1 }}
+						cssOverrides={css`
+							display: none;
+							${from.lg} {
+								/* use negative margin to align with the top of the previous item i.e overriding the gap */
+								margin-top: -${baseSpacing['16Rem']};
+								border-right: 1px solid ${semanticColors.border.weak};
+								display: block;
+							}
+						`}
+					></Item>
 				</Grid>
 			</Layout.Main>
 		</>
