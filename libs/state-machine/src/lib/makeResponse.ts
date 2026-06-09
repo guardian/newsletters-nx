@@ -59,8 +59,8 @@ const sideMarkdown = dynamicSideMarkdown
 	: staticSideMarkdown;
 
 return {
-	markdownToDisplay: markdown,
-	markdownToDisplayInSidebar: sideMarkdown,
+		markdownToDisplay: markdown,
+		markdownToDisplayInSidebar: sideMarkdown,
 		currentStepId: state.currentStepId,
 		buttons: convertWizardStepLayoutButtonsToWizardButtons(
 			nextWizardStepLayout.buttons,
