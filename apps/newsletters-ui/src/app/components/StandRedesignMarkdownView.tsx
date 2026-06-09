@@ -56,7 +56,7 @@ const H1 = (props: {iconVariant?: IconProps['symbol']; children?: ReactNode}) =>
 				display: inline-flex;
 				align-items: center;
 				gap: 7px;
-				margin-bottom: ${semanticSpacing.stackMd};
+				margin-bottom: ${semanticSpacing.stackXl};
 			`}
 		>
 			{props.iconVariant && <Icon aria-hidden={true} symbol={props.iconVariant}/>}{props.children}
@@ -102,7 +102,7 @@ const TypographyP = (props: { children?: ReactNode }) => {
 			element="p"
 			variant="bodySm"
 			cssOverrides={css`
-				margin-bottom: ${semanticSpacing.stackXl};
+				margin-bottom: ${semanticSpacing.stackMd};
 			`}
 		>
 			{props.children}

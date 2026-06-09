@@ -105,7 +105,7 @@ const dataCollectionGroup = z
 export const dataCollectionSchema = newsletterDataSchema.extend(
 	z.object({
 		onlineArticle: onlineArticleSchema,
-		category: dataCollectionCategories,
+		category: dataCollectionCategories.describe('Type of newsletter'),
 		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
 		signUpDescription: nonEmptyString().describe('Sign-up description'),
 		group: dataCollectionGroup,

@@ -8,6 +8,7 @@
 		"dev-api": "USE_IN_MEMORY_STORAGE='true' NEWSLETTERS_UI_SERVE='false' nx run newsletters-api:serve ",
 		"dev:s3": "USE_IN_MEMORY_STORAGE='false' nx run-many --target=serve --all",
 		"lint": "nx run-many --target=lint --all",
+		"lint:util": "NODE_OPTIONS='--max-old-space-size=8192' nx run util:lint",
 		"build": "nx run-many --target=build --all",
 		"test": "nx run-many --target=test --all",
 		"generate:lib": "npx nx generate @nx/workspace:library --setParserOptionsProject --standaloneConfig --testEnvironment=node --",

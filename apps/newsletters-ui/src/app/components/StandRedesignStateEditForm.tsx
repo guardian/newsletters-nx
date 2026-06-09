@@ -53,6 +53,8 @@ export const StandRedesignStateEditForm = ({
 				regionFocus: 'Which region is this newsletter mainly designed for?',
 				frequency: 'How regularly will this newsletter land in reader’s inboxes?',
 				name: 'What will readers call it?',
+				category: 'What data will be used to populate *The newsletter*?',
+				onlineArticle: 'Where will readers access the newsletter?'
 			}}
 		/>
 	);
