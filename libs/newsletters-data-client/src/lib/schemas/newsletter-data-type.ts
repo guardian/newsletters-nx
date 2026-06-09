@@ -27,7 +27,7 @@ export type RegionFocus = z.infer<typeof regionFocusEnumSchema>;
 
 export const onlineArticleSchema = z
 	.enum(['Email only', 'Web for first send only', 'Web for all sends'])
-	.describe('Location of article');
+	.describe('Location of newsletter');
 export type OnlineArticle = z.infer<typeof onlineArticleSchema>;
 
 export const singleThrasherLocation = z
@@ -75,7 +75,7 @@ export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 export const newsletterDataSchema = z.object({
 	identityName: kebabOrUnderscoreCasedString().describe('identity name'),
 	name: nonEmptyString().describe('Name the newsletter'),
-	category: newsletterCategoriesSchema,
+	category: newsletterCategoriesSchema.describe('Type of newsletter'),
 	restricted: z.boolean().describe('Restricted'),
 	/** The status for the newsletter:
 	 *

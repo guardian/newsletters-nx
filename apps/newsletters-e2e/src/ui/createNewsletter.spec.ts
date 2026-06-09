@@ -25,7 +25,7 @@ async function completeProductionDetailsStep(
 	page: Page,
 	category: 'article-based' | 'fronts-based' | 'manual-send' | 'other',
 ) {
-	const categoryGroup = page.getByRole('radiogroup', { name: 'category' });
+	const categoryGroup = page.getByRole('radiogroup', { name: /type of newsletter/i });
 	await expect(categoryGroup).toBeVisible();
 	await expect(
 		categoryGroup.getByRole('radio', { name: 'article-based' }),
@@ -41,7 +41,7 @@ async function completeProductionDetailsStep(
 	).toBeVisible();
 
 	const articleLocationGroup = page
-		.locator('label', { hasText: /^Location of article$/ })
+		.locator('label', { hasText: /^Location of newsletter$/ })
 		.locator('..');
 	await expect(articleLocationGroup).toBeVisible();
 	await expect(
