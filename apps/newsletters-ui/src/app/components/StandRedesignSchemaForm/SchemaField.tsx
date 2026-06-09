@@ -120,6 +120,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		optional: zod.isOptional(),
 		error: validationWarning,
 		description: explanation,
+		isNoted,
 	};
 
 	const innerZod = recursiveUnwrap(zod);

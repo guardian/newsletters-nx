@@ -8,16 +8,27 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
-const markdownTemplate = `
-## Tell us about your launch date and promotion plans for {{name}}
+type DateLayout = WizardStepLayout<DraftService,  typeof formSchemas.promotionDates.shape>
 
-### Launch
+const markdownTemplate = `
+# Launch / Promotion details
+`.trim();
+
+const staticMarkdown = markdownTemplate.replace(
+	regExPatterns.name,
+	'the newsletter',
+);
+
+const sideMarkdownTemplates: DateLayout['staticSideMarkdown'] = [
+	{field: 'launchDate', markdown: `
+## :icon{symbol="text_snippet"} Launch
 
 When will the first send of **{{name}}** be? Please specify date. This needs to be in the UK timezone for the system.
 
 We will automatically add a testing period for the newsletter of 1 week before the first send so you can try out the template in Composer. Please also mark if the newsletter should be private if it's confidential.
-
-### Promotion
+`}, { field: `signUpPageDate`,
+		markdown: `
+## :icon{symbol="text_snippet"} Promotion
 
 Will **{{name}}** be promoted (e.g. on thrashers) ahead of the launch day?
 If so:
@@ -25,12 +36,15 @@ If so:
 - What date will the sign up page go live?
 
 - What date will the thrashers go live?
-`.trim();
+` }
+]
 
-const staticMarkdown = markdownTemplate.replace(
+const staticSideMarkdown = sideMarkdownTemplates.map(({field, markdown}) => {
+	return {field, markdown: markdown.replace(
 	regExPatterns.name,
 	'the newsletter',
-);
+)}})
+
 
 export const dateLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
@@ -41,6 +55,19 @@ export const dateLayout: WizardStepLayout<DraftService> = {
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
 		return markdownTemplate.replace(regExPatterns.name, name);
+	},
+	staticSideMarkdown,
+	dynamicSideMarkdown(requestData, responseData) {
+		if (!responseData) {
+			return staticSideMarkdown;
+		}
+		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
+		return sideMarkdownTemplates.map(({field, markdown}) => {
+			return {field, markdown: markdown.replace(
+					regExPatterns.name,
+					name,
+				)}
+		})
 	},
 	buttons: {
 		back: {

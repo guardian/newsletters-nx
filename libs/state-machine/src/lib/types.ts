@@ -103,6 +103,7 @@ export interface WizardStepLayout<
 > extends BaseWizardStepLayout<T> {
 	schema?: ZodObject<S>;
 	staticSideMarkdown?: Array<{field: keyof S & string; markdown: string}>;
+	dynamicSideMarkdown?: {(requestData?: WizardFormData, responseData?: WizardFormData): Array<{field: keyof S & string; markdown: string}>};
 }
 
 export interface BaseWizardStepLayout<
