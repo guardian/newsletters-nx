@@ -118,6 +118,7 @@ export interface BaseWizardStepLayout<
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;
 	};
 	staticSideMarkdown?: Array<{field: string;  markdown: string}>;
+	dynamicSideMarkdown?: {(requestData?: WizardFormData, responseData?: WizardFormData): Array<{field: string; markdown: string}>};
 
 	buttons: Record<string, WizardStepLayoutButton<T>>;
 	schema?: ZodObject<ZodRawShape>;
