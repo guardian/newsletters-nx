@@ -7,6 +7,10 @@
 	"deno.enable": false,
 	"deno.unstable": false,
 	"deno.enablePaths": ["./tools/scripts/deno"],
+	// We currently use ESLint v8 with .eslintrc.json,
+	// so we need to disable the new flat config support
+	// to allow the ide to find the config file and work properly
+	"eslint.useFlatConfig": false,
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit"
 	},
