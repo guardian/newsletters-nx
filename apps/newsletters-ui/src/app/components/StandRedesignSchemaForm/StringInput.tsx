@@ -40,6 +40,7 @@ export const StandStringInput = (props: Props) => {
 				description={props.description}
 				onInput={sendValue}
 				value={props.value}
+				placeholder={props.placeholder}
 				isInvalid={!!props.error}
 				error={props.error}
 				isDisabled={props.readOnly}

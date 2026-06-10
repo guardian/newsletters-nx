@@ -8,31 +8,38 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
+type TagsLayout = WizardStepLayout<DraftService, typeof formSchemas.tags.shape>
+
 const markdownTemplate = `
-## Specify the tag setup for {{name}}
+# Propose the tags for the newsletter
 
-### Series Tag
-
-Please share the series tag URL & description for the newsletter.
-
-For example: [tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the What's On newsletter.
-
-### Composer tag relationship for newsletter embeds
-
-In Composer, we now have a feature where a newsletter signup embed is proposed to the user once a tag is added to the article - find out more [here](https://docs.google.com/document/d/1HC_Y6kOStrBNwQR322N8NdiCuhyIjlUke5RWmsRUcpM/edit).
-
-For example, the **Games (video games only)** tag recommends the user adds the **Pushing Buttons (newsletter signup)** campaign tag, which displays the sign up embed for Pushing Buttons.
-
-Which tag(s) would you like to propose the sign up embed for **{{name}}**?
-
+## Share ideas for tags with central production
 `.trim();
+
+const staticSideMarkdown: TagsLayout['staticSideMarkdown'] = [{field: 'seriesTag' , markdown:`
+## :icon{symbol="text_snippet"} Tag suggestions
+This section allows you to suggest the tags you think will work best to promote the newsletter.
+
+Central Production will review the tags and confirm the final recommendation. They will set up any new tags in tag manager.
+
+The request to set up these tags will not sent till you select “finish”.
+`}, {field: 'seriesTag', markdown: `
+## :icon{symbol="text_snippet"} Series Tag
+Please share the series tag URL & description for the newsletter.
+For example [tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the What's On newsletter.
+`}, {field: 'composerTag', markdown: `
+## :icon{symbol="text_snippet"} Composer tag relationship for newsletter embeds
+In Composer, we now have a feature where a newsletter signup embed is proposed to the user once a tag is added to the article
+
+For example, the Games (video games only) tag recommends the user adds the Pushing Buttons (newsletter signup) campaign tag, which displays the sign up embed for Pushing Buttons.
+`}]
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
 	'the newsletter',
 );
 
-export const tagsLayout: WizardStepLayout<DraftService> = {
+export const tagsLayout: TagsLayout = {
 	staticMarkdown,
 	label: 'Tag Setting',
 	dynamicMarkdown(requestData, responseData) {
@@ -42,6 +49,7 @@ export const tagsLayout: WizardStepLayout<DraftService> = {
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
 		return markdownTemplate.replace(regExPatterns.name, name);
 	},
+	staticSideMarkdown,
 	buttons: {
 		back: {
 			buttonType: 'PREVIOUS',
