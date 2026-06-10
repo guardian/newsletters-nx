@@ -1,7 +1,10 @@
+import { css } from '@emotion/react'
 import { DatePicker as StandDatePicker } from '@guardian/stand/DatePicker';
 import type { DateValue } from '@internationalized/date';
 import { CalendarDate } from '@internationalized/date';
 import type { FunctionComponent } from 'react';
+import { NotedLabel } from './NotedLabel';
+import type { StandardFormProps } from './SchemaField';
 import type { FieldProps } from './util';
 
 // Converts the internal value from the DatePicker (DateValue) to a JS Date, which is what the form schema expects
@@ -21,7 +24,7 @@ const dateToCalendarDate = (date: Date): CalendarDate => {
 };
 
 export const StandDateInput: FunctionComponent<
-	FieldProps & {
+	FieldProps & StandardFormProps &{
 		value: Date | undefined;
 		inputHandler: { (value: Date): void };
 		type?: HTMLInputElement['type'];
@@ -30,8 +33,13 @@ export const StandDateInput: FunctionComponent<
 	return (
 		<StandDatePicker
 			label={props.label}
+			renderLabel={props.isNoted ? NotedLabel : undefined}
 			value={props.value ? dateToCalendarDate(props.value) : undefined}
 			isDisabled={props.readOnly}
+			cssOverrides={css`
+				max-width: 220px;
+			`}
+			description={props.description}
 			onChange={(date) => {
 				if (date) {
 					props.inputHandler(inputDateToDate(date));

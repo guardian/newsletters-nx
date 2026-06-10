@@ -149,8 +149,8 @@ export const newsletterDataSchema = z.object({
 		.optional()
 		.describe('Composer campaign tag description'),
 
-	launchDate: z.coerce.date().describe('Launch date'),
-	signUpPageDate: z.coerce.date().describe('Sign up page date'),
+	launchDate: z.coerce.date().describe('Enter launch date'),
+	signUpPageDate: z.coerce.date().describe('Enter sign up page date'),
 	thrasherDate: z.coerce.date().describe('Thrasher date'),
 	privateUntilLaunch: z.boolean().describe('Needs to be private until launch?'),
 	onlineArticle: onlineArticleSchema.optional(),

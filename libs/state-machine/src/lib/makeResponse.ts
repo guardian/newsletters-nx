@@ -47,16 +47,20 @@ export const makeResponse = (
 		staticMarkdown,
 		dynamicMarkdown,
 		staticSideMarkdown,
+		dynamicSideMarkdown,
 	} = nextWizardStepLayout;
 
-	const markdown = dynamicMarkdown
-		? dynamicMarkdown(requestBody.formData, state.formData)
-		: staticMarkdown;
+const markdown = dynamicMarkdown
+	? dynamicMarkdown(requestBody.formData, state.formData)
+	: staticMarkdown;
 
+const sideMarkdown = dynamicSideMarkdown
+	? dynamicSideMarkdown(requestBody.formData, state.formData)
+	: staticSideMarkdown;
 
-	return {
+return {
 		markdownToDisplay: markdown,
-		markdownToDisplayInSidebar: staticSideMarkdown,
+		markdownToDisplayInSidebar: sideMarkdown,
 		currentStepId: state.currentStepId,
 		buttons: convertWizardStepLayoutButtonsToWizardButtons(
 			nextWizardStepLayout.buttons,
