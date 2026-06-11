@@ -3,6 +3,7 @@ import { semanticSpacing, semanticTypography } from '@guardian/stand';
 import type { IconProps } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import type { TypographyProps } from '@guardian/stand/Typography';
+import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { convertTypographyToEmotionStringStyle } from '@guardian/stand/utils';
 import type { Element } from 'hast';
@@ -22,6 +23,19 @@ const remarkIconDirective: Plugin = () => (tree) => {
 		}
 		node.data = {
 			hName: 'icon',
+			hProperties: node.attributes ?? {},
+		};
+	});
+};
+
+// Converts :link[text]{href="https://example.com" target="_blank"} text directives into @guardian/stand Link components
+const remarkLinkDirective: Plugin = () => (tree) => {
+	visit(tree, 'textDirective', (node: TextDirective) => {
+		if (node.name !== 'link') {
+			return;
+		}
+		node.data = {
+			hName: 'link',
 			hProperties: node.attributes ?? {},
 		};
 	});
@@ -161,7 +175,11 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 			`}
 		>
 			<ReactMarkdown
-				remarkPlugins={[remarkDirective, remarkIconDirective]}
+				remarkPlugins={[
+					remarkDirective,
+					remarkIconDirective,
+					remarkLinkDirective,
+				]}
 				components={
 					{
 						a: LinkWithNewTabIfExternal,
@@ -180,6 +198,15 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 								aria-hidden={true}
 								symbol={node?.properties.symbol as IconProps['symbol']}
 							/>
+						),
+						link: ({ node, children }) => (
+							<Link
+								typography="bodySm"
+								href={node?.properties.href as string}
+								target={node?.properties.target as string | undefined}
+							>
+								{children}
+							</Link>
 						),
 					} as React.ComponentProps<typeof ReactMarkdown>['components']
 				}

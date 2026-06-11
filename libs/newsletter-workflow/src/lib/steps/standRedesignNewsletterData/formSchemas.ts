@@ -54,9 +54,9 @@ export const formSchemas = {
 
 	targeting: dataCollectionSchema
 		.pick({
+			regionFocus: true,
 			theme: true,
 			group: true,
-			regionFocus: true,
 		})
 		.describe('Set targeting options'),
 
