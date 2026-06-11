@@ -76,17 +76,17 @@ test.describe('Top nav - launched', () => {
 		await expect(image1x1).toBeEditable();
 
 		const seriesTagPath = page.getByRole('textbox', {
-			name: 'Series tag (path)',
+			name: 'Add the series tag',
 		});
 		await expect(seriesTagPath).toBeEditable();
 
 		const composerTags = page.getByRole('textbox', {
-			name: 'Composer tag(s)',
+			name: 'Campaign tag',
 		});
 		await expect(composerTags).toBeEditable();
 
 		const composerCampaignTagDesc = page.getByRole('textbox', {
-			name: 'Composer campaign tag',
+			name: 'Campaign tag',
 		});
 		await expect(composerCampaignTagDesc).toBeEditable();
 

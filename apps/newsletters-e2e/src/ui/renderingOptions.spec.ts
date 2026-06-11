@@ -44,7 +44,7 @@ test.describe('Rendering options', () => {
 
 	test('can edit rendering options fields and save', async ({ page }) => {
 		await page
-			.getByLabel('Series tag (path)')
+			.getByLabel('Add the series tag')
 			.fill('tests/series/playwright-article-rendering');
 
 		await page.getByRole('checkbox', { name: 'Display date?' }).check();
@@ -127,7 +127,7 @@ test.describe('Rendering options', () => {
 		await page.reload();
 		await expect(page).toHaveURL(RENDERING_OPTIONS_URL_PATTERN);
 
-		await expect(page.getByLabel('Series tag (path)')).toHaveValue(
+		await expect(page.getByLabel('Add the series tag')).toHaveValue(
 			'tests/series/playwright-article-rendering',
 		);
 		await expect(
