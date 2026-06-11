@@ -281,6 +281,8 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 					>
 						<StandRedesignMarkdownView
 							markdown={serverData.markdownToDisplay ?? ''}
+							bottomSpacing={'stackXl'}
+							componentTypographyOverrides={{H2: 'bodyMd'}}
 						/>
 
 						{formSchema && formData && (
