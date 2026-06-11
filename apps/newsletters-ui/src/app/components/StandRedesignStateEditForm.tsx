@@ -51,7 +51,12 @@ export const StandRedesignStateEditForm = ({
 			// ToDo: fix the types on the explanations prop so the keys are typed
 			explanations={{
 				regionFocus: 'Which region is this newsletter mainly designed for?',
-				frequency: 'How regularly will this newsletter land in reader’s inboxes?',
+				theme:
+					'Choose the section the newsletter will live, for example "Football Daily" will go in the "Sport" pillar',
+				group:
+					'When a reader sees the newsletters in their account which, group should it be added to?',
+				frequency:
+					'How regularly will this newsletter land in reader’s inboxes?',
 				name: 'What will readers call it?',
 				category: 'What data will be used to populate *The newsletter*?',
 				onlineArticle: 'Where will readers access the newsletter?',
