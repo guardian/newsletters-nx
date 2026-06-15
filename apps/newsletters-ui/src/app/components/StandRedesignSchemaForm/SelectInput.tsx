@@ -38,6 +38,7 @@ export const StandSelectInput: FunctionComponent<
 			value={valueAsString}
 			onChange={handleChange}
 			renderLabel={props.isNoted ? NotedLabel : undefined}
+			placeholder={props.placeholder}
 		>
 			{optional && <Option value={{ EMPTY_STRING }}>[none]</Option>}
 			{options.map((option) => (

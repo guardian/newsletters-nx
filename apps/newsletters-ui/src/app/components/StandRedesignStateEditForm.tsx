@@ -1,4 +1,5 @@
 import type { z } from 'zod';
+import type { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
 import type {
@@ -29,7 +30,7 @@ export const StandRedesignStateEditForm = ({
 	maxOptionsForRadioButtons,
 	stringConfig = {},
 }: Props) => {
-	const changeFormData = (value: FieldValue, field: FieldDef) => {
+	const changeFormData = (value: FieldValue, field: FieldDef<typeof newsletterDataSchema.shape>) => {
 		const mod = getModification(value, field);
 		const revisedData = {
 			...formData,
@@ -62,6 +63,14 @@ export const StandRedesignStateEditForm = ({
 				onlineArticle: 'Where will readers access the newsletter?',
 				launchDate: 'When will the newsletter first send to readers?',
 				signUpPageDate: 'When should promotions go live?',
+				seriesTag: 'This is usually always the name of the newsletter and determines where it sits on the website.',
+				seriesTagDescription: 'Reader facing, one sentence, description of what the newsletter is about ',
+				composerTag: 'Add the newsletter name and then (newsletter sign up)',
+			}}
+			placeholders={{
+				seriesTag: 'e.g Feast / Feast Newsletter',
+				seriesTagDescription: 'e.g A weekly email about food news, trends and recipes',
+				composerTag: 'Today In Focus (newsletter sign up)',
 			}}
 		/>
 	);

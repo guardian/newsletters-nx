@@ -3,6 +3,7 @@ import { semanticSpacing, semanticTypography } from '@guardian/stand';
 import type { IconProps } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import { Link } from '@guardian/stand/Link';
+import type { TypographyProps } from '@guardian/stand/Typography';
 import { Typography } from '@guardian/stand/Typography';
 import { convertTypographyToEmotionStringStyle } from '@guardian/stand/utils';
 import type { Element } from 'hast';
@@ -42,6 +43,8 @@ const remarkLinkDirective: Plugin = () => (tree) => {
 
 interface MarkdownViewProps {
 	markdown: string;
+	bottomSpacing?: keyof typeof semanticSpacing;
+	componentTypographyOverrides?: Partial<Record<'H1' | 'H2' | 'H3', TypographyProps['variant']>>;
 }
 
 const isExternal = (href?: string) => !href?.startsWith('/');
@@ -61,37 +64,28 @@ const LinkWithNewTabIfExternal = (props: {
 	);
 };
 
-const H1 = (props: {
-	iconVariant?: IconProps['symbol'];
-	children?: ReactNode;
-}) => {
+const H1 = (props: {typographyVariant?: TypographyProps['variant']; children?: ReactNode}) => {
 	return (
 		<Typography
 			element="h1"
-			variant="heading2Xl"
+			variant={props.typographyVariant ?? 'heading2Xl'}
 			cssOverrides={css`
 				display: inline-flex;
 				align-items: center;
 				gap: 7px;
-				margin-bottom: ${semanticSpacing.stackXl};
+				margin-bottom: ${semanticSpacing.stackSm};
 			`}
 		>
-			{props.iconVariant && (
-				<Icon aria-hidden={true} symbol={props.iconVariant} />
-			)}
 			{props.children}
 		</Typography>
 	);
 };
 
-const H2 = (props: {
-	iconVariant?: IconProps['symbol'];
-	children?: ReactNode;
-}) => {
+const H2 = (props: {typographyVariant?: TypographyProps['variant']; children?: ReactNode}) => {
 	return (
 		<Typography
 			element="h2"
-			variant="headingMd"
+			variant={props.typographyVariant ?? 'headingMd'}
 			cssOverrides={css`
 				margin-bottom: ${semanticSpacing.stackSm};
 				display: inline-flex;
@@ -103,11 +97,11 @@ const H2 = (props: {
 		</Typography>
 	);
 };
-const H3 = (props: { children?: ReactNode }) => {
+const H3 = (props: {typographyVariant?: TypographyProps['variant']; children?: ReactNode }) => {
 	return (
 		<Typography
 			element="h3"
-			variant="headingSm"
+			variant={props.typographyVariant ?? 'headingSm'}
 			cssOverrides={css`
 				margin-bottom: ${semanticSpacing.stackSm};
 				display: inline-flex;
@@ -165,6 +159,8 @@ const TypographyStrong = (props: { children?: ReactNode }) => {
 
 export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 	markdown,
+	bottomSpacing,
+	componentTypographyOverrides,
 }) => {
 	return (
 		<div
@@ -175,6 +171,7 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 					height: auto;
 					display: block;
 				}
+				margin-bottom: ${bottomSpacing ? semanticSpacing[bottomSpacing]: undefined };
 			`}
 		>
 			<ReactMarkdown
@@ -186,9 +183,9 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 				components={
 					{
 						a: LinkWithNewTabIfExternal,
-						h1: ({ children }) => <H1>{children}</H1>,
-						h2: ({ children }) => <H2>{children}</H2>,
-						h3: ({ children }) => <H3>{children}</H3>,
+						h1: ({ children }) => <H1 typographyVariant={componentTypographyOverrides?.H1}>{children}</H1>,
+						h2: ({ children }) => <H2 typographyVariant={componentTypographyOverrides?.H2}>{children}</H2>,
+						h3: ({ children }) => <H3 typographyVariant={componentTypographyOverrides?.H3}>{children}</H3>,
 						p: TypographyP,
 						ul: UlMarginOverride,
 						strong: TypographyStrong,

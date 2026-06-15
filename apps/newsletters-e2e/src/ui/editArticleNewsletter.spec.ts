@@ -80,15 +80,15 @@ test.describe('Edit article-based newsletter', () => {
 
 
 		await page
-			.getByLabel('Series tag (path)')
+			.getByLabel('Add the series tag')
 			.fill('tests/series/playwright-article-updated');
 
 		await page
-			.getByLabel('Composer tag(s)')
+			.getByLabel('Campaign tag')
 			.fill('tests/playwright-article-test');
 
 		await page
-			.getByLabel('Composer campaign tag description')
+			.getByLabel('Campaign description')
 			.fill('playwright-article-test-campaign');
 
 		await page

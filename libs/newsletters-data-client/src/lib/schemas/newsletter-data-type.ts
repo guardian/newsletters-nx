@@ -138,16 +138,16 @@ export const newsletterDataSchema = z.object({
 		'Please add the path of the series tag e.g. for https://www.theguardian.com/world/series/first-edition just use world/series/first-edition. Can only include lower-case letters, number and dashes, separated by slashes',
 	)
 		.optional()
-		.describe('Series tag (path)'),
+		.describe('Add the series tag'),
 	seriesTagDescription: z
 		.string()
 		.optional()
-		.describe('The Series tag description'),
-	composerTag: z.string().optional().describe('Composer tag(s)'),
+		.describe('Add the Series tag description'),
+	composerTag: z.string().optional().describe('Campaign tag'),
 	composerCampaignTag: z
 		.string()
 		.optional()
-		.describe('Composer campaign tag description'),
+		.describe('Campaign description'),
 
 	launchDate: z.coerce.date().describe('Enter launch date'),
 	signUpPageDate: z.coerce.date().describe('Enter sign up page date'),

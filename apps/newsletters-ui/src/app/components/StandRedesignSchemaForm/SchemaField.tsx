@@ -37,6 +37,7 @@ import { fieldValueAsDisplayString } from './util';
 export type StandardFormProps = {
 	label: string;
 	inputHandler: (newValue: FieldValue) => void;
+	placeholder?: string;
 	readOnly?: boolean;
 	optional?: boolean;
 	error?: string;
@@ -58,6 +59,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	maxOptionsForRadioButtons: number;
 	explanation?: string;
 	isNoted?: boolean;
+	placeholder?: string;
 }
 
 const WrongValueTypeMessage = (props: { field: FieldDef }) => (
@@ -101,6 +103,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	validationWarning,
 	maxOptionsForRadioButtons,
 	explanation,
+	placeholder,
 }: SchemaFieldProps<T>) {
 	const { key, value, zod, readOnly } = field;
 	const inputHandler = (newValue: FieldValue) => {
@@ -177,13 +180,14 @@ export function SchemaField<T extends z.ZodRawShape>({
 				);
 			}
 			return (
-				<StandSelectInput {...standardProps} value={value} isNoted={isNoted} options={options} />
+				<StandSelectInput placeholder={placeholder} {...standardProps} value={value} isNoted={isNoted} options={options} />
 			);
 		}
 
 		return (
 			<StandStringInput
 				isNoted={isNoted}
+				placeholder={placeholder}
 				{...standardProps}
 				value={value ?? ''}
 				inputType={stringInputSettings.inputType}
@@ -247,6 +251,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		return (
 			<StandSelectInput
 				{...standardProps}
+				placeholder={placeholder}
 				value={value}
 				options={options ?? []}
 				isNoted={isNoted}

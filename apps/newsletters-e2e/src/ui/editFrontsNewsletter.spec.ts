@@ -77,11 +77,11 @@ test.describe('Edit fronts-based newsletter', () => {
 			.fill('Updated Fronts Test highlight');
 
 		await page
-			.getByLabel('Composer tag(s)')
+			.getByLabel('Campaign tag')
 			.fill('tests/playwright-fronts-test');
 
 		await page
-			.getByLabel('Composer campaign tag description')
+			.getByLabel('Campaign description')
 			.fill('playwright-fronts-test-campaign');
 
 		await page
