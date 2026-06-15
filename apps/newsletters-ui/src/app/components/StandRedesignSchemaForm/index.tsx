@@ -26,6 +26,7 @@ interface Props<T extends z.ZodRawShape> {
 	validationWarnings: Partial<Record<keyof T, string>>;
 	maxOptionsForRadioButtons?: number;
 	explanations?: Partial<Record<keyof T, string>>;
+	placeholders?: Partial<Record<keyof T, string>>;
 	notedFields?: NotedFields;
 }
 
@@ -47,6 +48,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 	validationWarnings,
 	maxOptionsForRadioButtons = 0,
 	explanations = {},
+	placeholders = {},
 }: Props<T>) {
 	const fields: FieldDef[] = [];
 	for (const key in schema.shape) {
@@ -89,6 +91,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 					validationWarning={validationWarnings[field.key]}
 					maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 					explanation={explanations[field.key]}
+					placeholder={placeholders[field.key]}
 				/>
 			))}
 		</div>

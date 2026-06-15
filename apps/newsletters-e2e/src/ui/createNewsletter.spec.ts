@@ -133,11 +133,11 @@ async function completeTargetingStep(page: Page) {
 }
 
 async function completeTagsStep(page: Page) {
-	await expect(page.getByLabel('Series tag (path)')).toBeVisible();
-	await expect(page.getByLabel('The Series tag description')).toBeVisible();
-	await expect(page.getByLabel('Composer tag(s)')).toBeVisible();
+	await expect(page.getByLabel(/^Add the series tag$/)).toBeVisible();
+	await expect(page.getByLabel('add the series tag description')).toBeVisible();
+	await expect(page.getByLabel('Campaign tag')).toBeVisible();
 	await expect(
-		page.getByLabel('Composer campaign tag description'),
+		page.getByLabel('Campaign description'),
 	).toBeVisible();
 
 	await page.getByRole('button', { name: 'Save and Continue' }).click();
