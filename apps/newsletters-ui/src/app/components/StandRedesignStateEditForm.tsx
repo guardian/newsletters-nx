@@ -61,7 +61,7 @@ export const StandRedesignStateEditForm = ({
 		illustrationCard: 'Search the grid for the 5:4 art work which will accompany the newsletter',
 		mailSuccessDescription: 'The text a reader sees when they have signed up for a newsletter',
 	};
-	const placeholders: Partial<Record<keyof typeof newsletterDataSchema.shape, string>> = {
+	const placeholders: Partial<Record<keyof newsletterDataSchema['shape'], string>> = {
 		seriesTag: 'e.g Feast / Feast Newsletter',
 		seriesTagDescription: 'e.g A weekly email about food news, trends and recipes',
 		composerTag: 'Today In Focus (newsletter sign up)',
