@@ -53,6 +53,7 @@ export const StandRedesignStateEditForm = ({
 		composerTag: 'Add the newsletter name and then (newsletter sign up)',
 		signUpHeadline: 'The larger text at the top of the newsletter sign up.',
 		signUpDescription: 'The smaller text below the headline',
+		signUpEmbedDescription: 'Search the grid for the 5:4 art work which will accompany the newsletter',
 		illustrationCard: 'Search the grid for the 5:4 art work which will accompany the newsletter',
 		mailSuccessDescription: 'The text a reader sees when they have signed up for a newsletter',
 	};
