@@ -48,7 +48,7 @@ export const StandRedesignStateEditForm = ({
 			'When a reader sees the newsletters in their account which, group should it be added to?',
 		frequency: 'How regularly will this newsletter land in reader’s inboxes?',
 		name: 'What will readers call it?',
-		category: 'What data will be used to populate *The newsletter*?',
+		category: 'What data will be used to populate this newsletter?',
 		onlineArticle: 'Where will readers access the newsletter?',
 		launchDate: 'When will the newsletter first send to readers?',
 		signUpPageDate: 'When should promotions go live?',
