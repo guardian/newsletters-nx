@@ -11,7 +11,7 @@ import { formSchemas } from './formSchemas';
 type PromotionContentLayout = WizardStepLayout<DraftService, typeof formSchemas.promotionContent.shape>
 
 const markdownTemplate = `
-# Sign up page for {{name}}.\
+# Sign up page for {{name}}.
 
 ## Define the sign up page text
 `.trim();
@@ -32,7 +32,8 @@ Example image with highlighted sections:
 ## :icon{symbol="text_snippet"}  Sign up embed description
 
 This text is used on the in-article embeds and on the newsletters page:
-** IMAGE **
+
+![newsletter sign up](https://uploads.guim.co.uk/2026/06/16/Newsletter-Signup-Desktop.png)
 `}, {
 	field: 'illustrationCard',
 		markdown: `
