@@ -42,6 +42,10 @@ export const StandRedesignStateEditForm = ({
 
 	const explanations: Partial<Record<keyof typeof newsletterDataSchema.shape, string>> = {
 		regionFocus: 'Which region is this newsletter mainly designed for?',
+		theme:
+			'Choose the section the newsletter will live, for example "Football Daily" will go in the "Sport" pillar',
+		group:
+			'When a reader sees the newsletters in their account which, group should it be added to?',
 		frequency: 'How regularly will this newsletter land in reader’s inboxes?',
 		name: 'What will readers call it?',
 		category: 'What data will be used to populate *The newsletter*?',
