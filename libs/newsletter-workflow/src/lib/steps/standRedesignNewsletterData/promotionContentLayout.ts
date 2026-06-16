@@ -8,41 +8,54 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
-const markdownTemplate = `
-## Promotion copy and image for {{name}}.
+type PromotionContentLayout = WizardStepLayout<DraftService, typeof formSchemas.promotionContent.shape>
 
-### Sign up page text
-Please enter the headline, description and sign-up success message for the sign up page:
+const markdownTemplate = `
+# Sign up page for {{name}}.\
+
+## Define the sign up page text
+`.trim();
+
+const staticSideMarkdown: PromotionContentLayout['staticSideMarkdown'] = [
+	{field: 'signUpHeadline', markdown: `
+## :icon{symbol="text_snippet"} Sign up page text
+
+Example image with highlighted sections:
+- Headline
+- Description
+- Success Message
 
 ![Headline and Description](https://i.guim.co.uk/img/uploads/2023/10/06/signUpImageWithBoarderTwo.png?quality=85&dpr=2&width=300&s=002979e840129ac072654cb66367d971)
 
-### Specify the sign up embed description and Sign up success message
+`},
+	{field: 'signUpEmbedDescription', markdown: `
+## :icon{symbol="text_snippet"}  Sign up embed description
 
-Please enter the description for the sign up embeds - this text is used on the in-article embeds and on the [newsletters page](https://www.theguardian.com/email-newsletters):
+This text is used on the in-article embeds and on the newsletters page:
+** IMAGE **
+`}, {
+	field: 'illustrationCard',
+		markdown: `
+## :icon{symbol="text_snippet"} Illustration for the newsletters page
 
-![Sign Up Embed Description](https://i.guim.co.uk/img/uploads/2023/04/20/signUp-embed.png?quality=85&dpr=2&width=300&s=48b7b65b3dcbff5fcd4b78c562a4175e)
-
-### Illustration for the newsletters page
-
-To provide an image to use on the all newsletters page, upload the image (in the appropriate aspect ratio 5:3) via the [s3 Uploader service](https://s3-uploader.gutools.co.uk/).
-Once uploaded, copy the **vanity url** and paste it into the field below. Please note:
-
- - When used on the theguardian.com or other platforms, images are optimised and resized by our image service to be displayed at the most approriate file size for the usage.
-
- - If the orginal image is too large for the image service to process, it will fail and the original version will be used on the page. This can harm the pages performance, especially for users on mobile devices.
-
-**Please make sure** that the image you are uploading does not exceed the limits described in [this documentation from our image service](https://www.fastly.com/documentation/reference/io/#limitations-and-constraints).
-
-`.trim();
+To provide an image to use on the all newsletters page, upload the image (in the appropriate aspect ratio 5:3) via the
+s3 Uploader service. Once uploaded, copy the vanity url and paste it into the field below. Please note:
+- When used on the theguardian.com or other platforms, images are optimised and resized by our image service to be displayed at the most approriate file size for the usage.
+- If the orginal image is too large for the image service to process, it will fail and the original version will be used on the page. This can harm the pages performance, especially for users on mobile devices.
+- Please make sure that the image you are uploading does not exceed the limits described in this documentation from our image service.
+`
+	}
+]
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
 	'the newsletter',
 );
 
-export const promotionContentLayout: WizardStepLayout<DraftService> = {
+export const promotionContentLayout: PromotionContentLayout = {
 	staticMarkdown,
 	label: 'Promotion copy and images',
+	staticSideMarkdown: staticSideMarkdown,
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;

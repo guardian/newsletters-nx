@@ -101,7 +101,7 @@ export const newsletterDataSchema = z.object({
 	signUpHeadline: z.string().optional().describe('Sign up headline'),
 	signUpDescription: nonEmptyString().describe('Sign up description'),
 	signUpEmbedDescription: nonEmptyString().describe(
-		'Sign up embed description',
+		'Embed description',
 	),
 	regionFocus: regionFocusEnumSchema.describe('Region focus'),
 	frequency: nonEmptyString().describe('Set the frequency'),
@@ -160,11 +160,11 @@ export const newsletterDataSchema = z.object({
 	mailSuccessDescription: z
 		.string()
 		.optional()
-		.describe('Sign-up success message'),
+		.describe('Success message'),
 	highlightCardTitle: z
 		.string()
 		.optional()
-		.describe('Sign-up highlight card title'),
+		.describe('Highlight card message'),
 	brazeCampaignCreationStatus: workflowStatusEnumSchema.describe(
 		'Braze campaign creation status',
 	),

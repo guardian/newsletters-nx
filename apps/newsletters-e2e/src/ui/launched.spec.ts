@@ -95,18 +95,16 @@ test.describe('Top nav - launched', () => {
 		});
 		await expect(pathToSignupPage).toBeEditable();
 
-		const signUpDescription = page.getByRole('textbox', {
-			name: 'Sign up description',
-		});
+		const signUpDescription = page.getByLabel('Sign up description');
 		await expect(signUpDescription).toBeEditable();
 
 		const signSuccessMessage = page.getByRole('textbox', {
-			name: 'Sign-up success message',
+			name: 'Success message',
 		});
 		await expect(signSuccessMessage).toBeEditable();
 
 		const signUpHighlightCardTitle = page.getByRole('textbox', {
-			name: 'Sign-up highlight card title',
+			name: 'Highlight card message',
 		});
 		await expect(signUpHighlightCardTitle).toBeEditable();
 

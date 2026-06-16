@@ -52,6 +52,7 @@ export const StandStringInput = (props: Props) => {
 
 	return (
 		<TextArea
+			theme={{shared: {height: '88px'}}}
 			label={props.label}
 			onInput={sendValue}
 			value={props.value}
