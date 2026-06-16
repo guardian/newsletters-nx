@@ -1,9 +1,9 @@
-import type {
-	FormDataRecord,
+import type  {
+	FormDataRecord, newsletterDataSchema,
 	WizardButtonType,
 } from '@newsletters-nx/newsletters-data-client';
 import { supportedValueSchema } from '@newsletters-nx/newsletters-data-client';
-import type { ZodIssue, ZodObject, ZodRawShape } from 'zod';
+import type { ZodIssue, ZodRawShape } from 'zod';
 import { z } from 'zod';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- needs to be completely generic?
@@ -101,7 +101,6 @@ export interface WizardStepLayout<
 	T extends GenericStorageInterface = unknown,
 	S extends ZodRawShape = ZodRawShape,
 > extends BaseWizardStepLayout<T> {
-	schema?: ZodObject<S>;
 	staticSideMarkdown?: Array<{field: keyof S & string; markdown: string}>;
 	dynamicSideMarkdown?: {(requestData?: WizardFormData, responseData?: WizardFormData): Array<{field: keyof S & string; markdown: string}>};
 }
@@ -121,7 +120,7 @@ export interface BaseWizardStepLayout<
 	dynamicSideMarkdown?: {(requestData?: WizardFormData, responseData?: WizardFormData): Array<{field: string; markdown: string}>};
 
 	buttons: Record<string, WizardStepLayoutButton<T>>;
-	schema?: ZodObject<ZodRawShape>;
+	schema?: typeof newsletterDataSchema;
 	fieldDisplayOptions?: Record<
 		string,
 		{
