@@ -11,7 +11,7 @@ import {
 	ZodURL,
 } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
-import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
+import type { PrimitiveRecord} from '@newsletters-nx/newsletters-data-client';
 import {
 	isPrimitiveRecord,
 	isPrimitiveRecordArray,
