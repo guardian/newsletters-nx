@@ -40,7 +40,7 @@ export const StandRedesignStateEditForm = ({
 		setFormData(revisedData);
 	};
 
-	const explanations: Partial<Record<keyof typeof newsletterDataSchema.shape, string>> = {
+	const explanations: Partial<Record<keyof newsletterDataSchema['shape'], string>> = {
 		regionFocus: 'Which region is this newsletter mainly designed for?',
 		theme:
 			'Choose the section the newsletter will live, for example "Football Daily" will go in the "Sport" pillar',
