@@ -79,5 +79,5 @@ export const getNotedFields = (
 	if (!step?.staticSideMarkdown) {
 		return undefined;
 	}
-	return step.staticSideMarkdown.map(({field}) => field.toString());
+	return step.staticSideMarkdown.map(({field}) => field).filter((field) => field !== undefined);
 }

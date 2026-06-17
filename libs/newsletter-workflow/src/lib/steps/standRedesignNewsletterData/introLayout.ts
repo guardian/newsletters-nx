@@ -1,6 +1,7 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { formSchemas } from './formSchemas';
 
 export const createDraftIntro: WizardStepLayout<DraftService> = {
 	staticMarkdown: `# Introduction
@@ -31,4 +32,7 @@ The below will guide you through in the first stage of creating a newsletter.
 		},
 	},
 	role: 'CREATE_START',
+	canSkip: true,
+	isIntro: true,
+	schema: formSchemas.intro
 };

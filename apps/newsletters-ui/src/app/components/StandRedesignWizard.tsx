@@ -341,13 +341,13 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 							`}
 						>
 							{serverData.markdownToDisplayInSidebar?.map(
-								({ field, markdown }) => (
+								({ field, markdown }, index) => (
 									<div
 										css={css`
 											background: ${semanticColors.bg.raisedLevel1};
 											padding: ${baseSpacing['16Px']};
 										`}
-										key={field}
+										key={field ?? `markdown-${index}`}
 									>
 										<StandRedesignMarkdownView markdown={markdown} />
 									</div>

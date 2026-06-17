@@ -23,7 +23,7 @@ This section allows you to suggest the tags you think will work best to promote 
 Central Production will review the tags and confirm the final recommendation. They will set up any new tags in tag manager.
 
 The request to set up these tags will not sent till you select “finish”.
-`}, {field: 'seriesTag', markdown: `
+`}, {markdown: `
 ## :icon{symbol="text_snippet"} Series Tag
 Please share the series tag URL & description for the newsletter.
 For example [tv-and-radio/series/what-s-on-tv](https://www.theguardian.com/tv-and-radio/series/what-s-on-tv) for the What's On newsletter.

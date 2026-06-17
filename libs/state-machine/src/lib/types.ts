@@ -102,8 +102,8 @@ export interface WizardStepLayout<
 	S extends ZodRawShape = ZodRawShape,
 > extends BaseWizardStepLayout<T> {
 	schema?: ZodObject<S>;
-	staticSideMarkdown?: Array<{field: keyof S & string; markdown: string}>;
-	dynamicSideMarkdown?: {(requestData?: WizardFormData, responseData?: WizardFormData): Array<{field: keyof S & string; markdown: string}>};
+	staticSideMarkdown?: Array<{field?: keyof S & string; markdown: string}>;
+	dynamicSideMarkdown?: {(requestData?: WizardFormData, responseData?: WizardFormData): Array<{field?: keyof S & string; markdown: string}>};
 }
 
 export interface BaseWizardStepLayout<
@@ -117,8 +117,8 @@ export interface BaseWizardStepLayout<
 	dynamicMarkdown?: {
 		(requestData?: WizardFormData, responseData?: WizardFormData): string;
 	};
-	staticSideMarkdown?: Array<{field: string;  markdown: string}>;
-	dynamicSideMarkdown?: {(requestData?: WizardFormData, responseData?: WizardFormData): Array<{field: string; markdown: string}>};
+	staticSideMarkdown?: Array<{field?: string;  markdown: string}>;
+	dynamicSideMarkdown?: {(requestData?: WizardFormData, responseData?: WizardFormData): Array<{field?: string; markdown: string}>};
 
 	buttons: Record<string, WizardStepLayoutButton<T>>;
 	schema?: ZodObject<ZodRawShape>;
@@ -137,6 +137,7 @@ export interface BaseWizardStepLayout<
 			storageInstance: T,
 		): Promise<FormDataRecord>;
 	};
+	isIntro?: boolean;
 }
 
 export type WizardLayout<
@@ -183,7 +184,7 @@ export interface CurrentStepRouteResponse {
 	/** Markdown content to display for the current step in the right side panel
 	 * (redesign only)
 	 */
-	markdownToDisplayInSidebar?: Array<{field: string;  markdown:string}>;
+	markdownToDisplayInSidebar?: Array<{field?: string;  markdown:string}>;
 	/** Unique identifier for the current step. */
 	currentStepId: string;
 	/** Buttons to display for the current step. */

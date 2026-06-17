@@ -1,5 +1,5 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
-import type { WizardLayout } from '@newsletters-nx/state-machine';
+import type { AsyncExecution, WizardLayout } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
@@ -14,17 +14,41 @@ import { promotionContentLayout } from './promotionContentLayout';
 import { tagsLayout } from './tagsLayout';
 import { targetingLayout } from './targetingLayout';
 
+const executeCreateOrModify: AsyncExecution<DraftService> = async (
+	stepData,
+	stepLayout,
+	service,
+) => {
+	const listId = stepData.formData?.listId;
+
+	if (typeof listId === 'number') {
+		return executeModify(stepData, stepLayout, service);
+	}
+
+	return executeCreate(stepData, stepLayout, service);
+};
+
 export const standRedesignLayout: WizardLayout<DraftService> = {
 	cancel: cancelLayout,
-	intro: createDraftIntro,
+	intro: {
+		executeSkip: executeCreateOrModify,
+		...createDraftIntro,
+		buttons: {
+			...createDraftIntro.buttons,
+			next: {
+				...createDraftIntro.buttons['next']!,
+				executeStep: executeCreateOrModify,
+			},
+		},
+	},
 	nameAndFrequencyLayout: {
 		...nameAndFrequencyLayout,
-		executeSkip: executeCreate,
+		executeSkip: executeSkip,
 		buttons: {
 			...nameAndFrequencyLayout.buttons,
 			next: {
 				...nameAndFrequencyLayout.buttons['next']!,
-				executeStep: executeCreate,
+				executeStep: executeModify,
 			},
 		},
 	},
