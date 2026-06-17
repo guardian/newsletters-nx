@@ -9,7 +9,7 @@ export type StepListing = {
 	parentStepId?: WizardStepLayout['parentStepId'];
 	canSkipTo?: boolean;
 	canSkipFrom?: boolean;
-	isIntro: boolean;
+	isIntro?: boolean;
 	skippingWillPersistLocalChanges?: boolean;
 	schema?: ZodObject<ZodRawShape>;
 	isOptional: boolean;
