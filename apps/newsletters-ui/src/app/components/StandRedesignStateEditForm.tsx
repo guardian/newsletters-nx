@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import type { NewsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
 import type {
@@ -40,7 +40,7 @@ export const StandRedesignStateEditForm = ({
 		setFormData(revisedData);
 	};
 
-	const explanations: Partial<Record<keyof NewsletterDataSchema, string>> = {
+	const explanations: Partial<Record<keyof NewsletterData, string>> = {
 		regionFocus: 'Which region is this newsletter mainly designed for?',
 		theme:
 			'Choose the section the newsletter will live, for example "Football Daily" will go in the "Sport" pillar',
@@ -60,7 +60,7 @@ export const StandRedesignStateEditForm = ({
 		illustrationCard: 'Search the grid for the 5:4 art work which will accompany the newsletter',
 		mailSuccessDescription: 'The text a reader sees when they have signed up for a newsletter',
 	};
-	const placeholders: Partial<Record<keyof NewsletterDataSchema, string>> = {
+	const placeholders: Partial<Record<keyof NewsletterData, string>> = {
 		seriesTag: 'e.g Feast / Feast Newsletter',
 		seriesTagDescription: 'e.g A weekly email about food news, trends and recipes',
 		composerTag: 'Today In Focus (newsletter sign up)',

@@ -67,7 +67,6 @@ export const newsletterCategoriesSchema = z
 	.describe('Production category');
 export type NewsletterCategory = z.infer<typeof newsletterCategoriesSchema>;
 
-export type NewsletterDataSchema = z.infer<typeof newsletterDataSchema>;
 /**
  * NOT FINAL - this schema a placeholder to test the data transformation structure.
  * Edits to this schema would need to be reflected in the transform function.
