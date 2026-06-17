@@ -10,7 +10,7 @@ type ProductionDetailsLayout = WizardStepLayout<DraftService, typeof formSchemas
 
 const staticSideMarkdown: ProductionDetailsLayout['staticSideMarkdown'] = [
 	{field: 'category', markdown: `
-## :icon{symbol="text_snippet"} Type of Newsletter
+## Type of Newsletter
 Editorial newsletters can be produced in three ways:
 - **article-based**: Each chapter of the newsletter is written as a composer article.
 - **fronts-based**: The newsletters are generated from a fronts page.

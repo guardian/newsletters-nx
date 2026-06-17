@@ -67,15 +67,15 @@ test.describe('Edit article-based newsletter', () => {
 			.fill('Updated sign up description for E2E tests.');
 
 		await page
-			.getByLabel('Sign up embed description')
+			.getByLabel('Embed description')
 			.fill('Updated sign up embed description for E2E tests.');
 
 		await page
-			.getByLabel('Sign-up success message')
+			.getByLabel('Success message')
 			.fill('Thanks for signing up to Updated Article Test!');
 
 		await page
-			.getByLabel('Sign-up highlight card title')
+			.getByLabel('Highlight card message')
 			.fill('Updated Article Test highlight');
 
 

@@ -52,13 +52,17 @@ export const StandStringInput = (props: Props) => {
 
 	return (
 		<TextArea
+			theme={{shared: {height: '88px'}}}
+			description={props.description}
 			label={props.label}
 			onInput={sendValue}
 			value={props.value}
 			isInvalid={!!props.error}
+			placeholder={props.placeholder}
 			error={props.error}
 			isDisabled={props.readOnly}
 			isRequired={!props.optional}
+			renderLabel={props.isNoted ? NotedLabel : undefined }
 		/>
 	);
 };

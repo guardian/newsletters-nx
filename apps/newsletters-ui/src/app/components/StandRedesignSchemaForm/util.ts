@@ -8,9 +8,10 @@ import {
 	ZodNumber,
 	ZodObject,
 	ZodString,
+	ZodURL,
 } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
-import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
+import type { PrimitiveRecord} from '@newsletters-nx/newsletters-data-client';
 import {
 	isPrimitiveRecord,
 	isPrimitiveRecordArray,
@@ -75,7 +76,10 @@ function fieldValueIsRightType<T extends ZodRawShape>(value: FieldValue, field: 
 		return value instanceof Date;
 	}
 
-	if (innerZod instanceof ZodArray && innerZod.element instanceof ZodString) {
+	if (
+		innerZod instanceof ZodArray &&
+		(innerZod.element instanceof ZodString || innerZod.element instanceof ZodURL)
+	) {
 		return isStringArray(value);
 	}
 
@@ -97,7 +101,7 @@ function fieldValueIsRightType<T extends ZodRawShape>(value: FieldValue, field: 
 		case 'undefined':
 			return field.zod.isOptional();
 		case 'string':
-			return innerZod instanceof ZodString;
+			return innerZod instanceof ZodString || innerZod instanceof ZodURL;
 		case 'number':
 			return innerZod instanceof ZodNumber;
 		case 'boolean':

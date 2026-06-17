@@ -65,15 +65,15 @@ test.describe('Edit fronts-based newsletter', () => {
 			.fill('Updated sign up description for fronts E2E tests.');
 
 		await page
-			.getByLabel('Sign up embed description')
+			.getByLabel('Embed description')
 			.fill('Updated sign up embed description for fronts E2E tests.');
 
 		await page
-			.getByLabel('Sign-up success message')
+			.getByLabel('Success message')
 			.fill('Thanks for signing up to Updated Fronts Test!');
 
 		await page
-			.getByLabel('Sign-up highlight card title')
+			.getByLabel('Highlight card message')
 			.fill('Updated Fronts Test highlight');
 
 		await page

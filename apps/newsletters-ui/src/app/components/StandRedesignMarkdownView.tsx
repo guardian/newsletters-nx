@@ -70,7 +70,6 @@ const H1 = (props: {typographyVariant?: TypographyProps['variant']; children?: R
 			element="h1"
 			variant={props.typographyVariant ?? 'heading2Xl'}
 			cssOverrides={css`
-				display: inline-flex;
 				align-items: center;
 				gap: 7px;
 				margin-bottom: ${semanticSpacing.stackSm};
@@ -88,7 +87,6 @@ const H2 = (props: {typographyVariant?: TypographyProps['variant']; children?: R
 			variant={props.typographyVariant ?? 'headingMd'}
 			cssOverrides={css`
 				margin-bottom: ${semanticSpacing.stackSm};
-				display: inline-flex;
 				align-items: center;
 				gap: 7px;
 			`}
@@ -104,7 +102,6 @@ const H3 = (props: {typographyVariant?: TypographyProps['variant']; children?: R
 			variant={props.typographyVariant ?? 'headingSm'}
 			cssOverrides={css`
 				margin-bottom: ${semanticSpacing.stackSm};
-				display: inline-flex;
 				align-items: center;
 				gap: 7px;
 			`}
@@ -131,7 +128,7 @@ const UlMarginOverride = (props: { children?: ReactNode }) => {
 	return (
 		<ul
 			css={css`
-				${convertTypographyToEmotionStringStyle(semanticTypography.bodyMd)}
+				${convertTypographyToEmotionStringStyle(semanticTypography.bodySm)}
 				margin-bottom: ${semanticSpacing.stackXl};
 				padding-left: 1.5em;
 				p {
@@ -147,7 +144,7 @@ const TypographyStrong = (props: { children?: ReactNode }) => {
 	return (
 		<Typography
 			element="span"
-			variant="bodyBoldMd"
+			variant="bodyBoldSm"
 			cssOverrides={css`
 				margin-bottom: ${semanticSpacing.stackXl};
 			`}

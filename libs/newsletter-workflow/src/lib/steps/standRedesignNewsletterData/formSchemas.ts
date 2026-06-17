@@ -90,6 +90,7 @@ export const formSchemas = {
 			signUpDescription: true,
 			signUpEmbedDescription: true,
 			mailSuccessDescription: true,
+			highlightCardTitle: true,
 			illustrationCard: true,
 			illustrationSquare: true,
 		})

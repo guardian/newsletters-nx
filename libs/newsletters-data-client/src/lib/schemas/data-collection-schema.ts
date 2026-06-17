@@ -106,8 +106,8 @@ export const dataCollectionSchema = newsletterDataSchema.extend(
 	z.object({
 		onlineArticle: onlineArticleSchema,
 		category: dataCollectionCategories.describe('Type of newsletter'),
-		signUpHeadline: nonEmptyString().describe('Sign-up headline'),
-		signUpDescription: nonEmptyString().describe('Sign-up description'),
+		signUpHeadline: nonEmptyString().describe('Headline'),
+		signUpDescription: nonEmptyString().describe('Description'),
 		group: dataCollectionGroup,
 		regionFocus: regionFocusEnumSchema.unwrap().describe('Region focus'),
 	}).shape,

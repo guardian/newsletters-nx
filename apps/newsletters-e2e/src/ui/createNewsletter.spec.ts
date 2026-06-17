@@ -181,11 +181,11 @@ async function completeThrasherStep(page: Page) {
 }
 
 async function completePromotionContentStep(page: Page, name: string) {
-	await expect(page.getByLabel('Sign-up headline')).toBeVisible();
-	await expect(page.getByLabel('Sign-up description')).toBeVisible();
-	await expect(page.getByLabel('Sign up embed description')).toBeVisible();
-	await expect(page.getByLabel('Sign-up success message')).toBeVisible();
-	await expect(page.getByLabel('Sign-up highlight card title')).toBeVisible();
+	await expect(page.getByLabel('Headline')).toBeVisible();
+	await expect(page.getByLabel(/^Description/)).toBeVisible();
+	await expect(page.getByLabel('Embed description')).toBeVisible();
+	await expect(page.getByLabel('Success message')).toBeVisible();
+	await expect(page.getByLabel('Highlight card message')).toBeVisible();
 	await expect(
 		page.getByLabel('URL of image the newsleter graphic/logo (5:3 format)'),
 	).toBeVisible();
@@ -193,13 +193,13 @@ async function completePromotionContentStep(page: Page, name: string) {
 		page.getByLabel('URL of image the newsleter graphic/logo (1:1 format)'),
 	).toBeVisible();
 
-	await page.getByLabel('Sign-up headline').fill(`${name} newsletter`);
-	await page.getByLabel('Sign-up description').fill(`Sign up for ${name}.`);
+	await page.getByLabel('Headline').fill(`${name} newsletter`);
+	await page.getByLabel(/^Description/).fill(`Sign up for ${name}.`);
 	await page
-		.getByLabel('Sign up embed description')
+		.getByLabel('Embed description')
 		.fill(`Embed description for ${name}.`);
 	await page
-		.getByLabel('Sign-up highlight card title')
+		.getByLabel('Highlight card message')
 		.fill(`Highlight card for ${name}`);
 
 	await page.getByRole('button', { name: 'Save and Continue' }).click();

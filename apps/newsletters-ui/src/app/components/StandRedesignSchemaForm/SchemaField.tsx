@@ -7,6 +7,7 @@ import {
 	ZodNumber,
 	ZodObject,
 	ZodString,
+	ZodURL,
 } from 'zod';
 import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
 import {
@@ -144,7 +145,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		);
 	}
 
-	if (innerZod instanceof ZodString) {
+	if (innerZod instanceof ZodString || innerZod instanceof ZodURL) {
 		if (typeof value !== 'string' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
 		}
@@ -275,7 +276,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	}
 
 	if (innerZod instanceof ZodArray) {
-		if (innerZod.element instanceof ZodString) {
+		if (innerZod.element instanceof ZodString || innerZod.element instanceof ZodURL) {
 			if (!isStringArray(value) && typeof value !== 'undefined') {
 				return <WrongValueTypeMessage field={field} />;
 			}
