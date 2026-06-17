@@ -39,7 +39,7 @@
 		"@emotion/styled": "^11.14.1",
 		"@guardian/image": "^1.1.0",
 		"@guardian/source": "^12.2.1",
-		"@guardian/stand": "0.0.48",
+		"@guardian/stand": "0.0.52",
 		"@internationalized/date": "^3.12.2",
 		"@mui/icons-material": "^9.0.0",
 		"@mui/material": "^9.0.0",

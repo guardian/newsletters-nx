@@ -23,11 +23,11 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import type { StringInputSettings } from './SchemaForm';
-import { SkipConfirmationDialog } from './SkipConfirmationDialog';
 import { StandRedesignMarkdownView } from './StandRedesignMarkdownView';
 import { StandRedesignStateEditForm } from './StandRedesignStateEditForm';
 import { StandRedesignStepNav } from './StandRedesignStepNav';
 import { StandRedesignWizardActionButton } from './StandRedesignWizardActionButton';
+import { SkipConfirmationDialog } from './StandSkipConfirmationDialog';
 import { ZodIssuesReport } from './ZodIssuesReport';
 
 export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
@@ -285,7 +285,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						<StandRedesignMarkdownView
 							markdown={serverData.markdownToDisplay ?? ''}
 							bottomSpacing={'stackXl'}
-							componentTypographyOverrides={{H2: 'bodyMd'}}
+							componentTypographyOverrides={{ H2: 'bodyMd' }}
 						/>
 
 						{formSchema && formData && (
@@ -362,42 +362,15 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 							)}
 						</div>
 					</Item>
-					<Item
-						size={{ lg: 7 }}
-						cssOverrides={css`
-							margin-bottom: ${semanticGrid.margin.bottomSmPx};
-
-							${from.md} {
-								margin-bottom: ${semanticGrid.margin.bottomMdPx};
-							}
-
-							${from.lg} {
-								margin-bottom: ${semanticGrid.margin.bottomLgPx};
-							}
-						`}
-					>
-						<SkipConfirmationDialog
-							currentStepId={serverData.currentStepId}
-							targetStepId={showSkipModalFor}
-							handleCancelSkip={handleCancelSkip}
-							handleConfirmSkip={handleConfirmSkip}
-							stepperConfig={stepperConfig}
-						/>
-					</Item>
-					<Item
-						size={{ lg: 1 }}
-						cssOverrides={css`
-							display: none;
-							${from.lg} {
-								/* use negative margin to align with the top of the previous item i.e overriding the gap */
-								margin-top: -${baseSpacing['16Rem']};
-								border-right: 1px solid ${semanticColors.border.weak};
-								display: block;
-							}
-						`}
-					></Item>
 				</Grid>
 			</Layout.Main>
+			<SkipConfirmationDialog
+				currentStepId={serverData.currentStepId}
+				targetStepId={showSkipModalFor}
+				handleCancelSkip={handleCancelSkip}
+				handleConfirmSkip={handleConfirmSkip}
+				stepperConfig={stepperConfig}
+			/>
 		</>
 	);
 };
