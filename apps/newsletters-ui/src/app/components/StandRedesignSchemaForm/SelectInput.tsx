@@ -39,6 +39,8 @@ export const StandSelectInput: FunctionComponent<
 			onChange={handleChange}
 			renderLabel={props.isNoted ? NotedLabel : undefined}
 			placeholder={props.placeholder}
+			error={props.error}
+			isInvalid={!!props.error}
 		>
 			{optional && <Option value={{ EMPTY_STRING }}>[none]</Option>}
 			{options.map((option) => (

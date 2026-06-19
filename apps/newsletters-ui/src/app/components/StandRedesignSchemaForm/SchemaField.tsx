@@ -143,7 +143,6 @@ export function SchemaField<T extends z.ZodRawShape>({
 				{...standardProps}
 				value={parsed.value}
 				type={stringInputSettings.inputType}
-				error={changed ? validationWarning : undefined}
 			/>
 		);
 	}
