@@ -47,7 +47,6 @@ export const StandDateInput: FunctionComponent<
 			}}
 			error={props.error}
 			isInvalid={!!props.error}
-			validationBehavior='aria'
 		/>
 	);
 };
