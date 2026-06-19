@@ -96,7 +96,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const [notedFields, setNotedFields] = useState<string[]>([]);
 	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
 		useState(false);
-	const [showValidationWarningsFromSubmitError, setShowValidationWarningsFromSubmitError] =
+	const [hasServerErrorMessages, setHasServerErrorMessages] =
 		useState(false);
 	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
 		undefined,
@@ -124,7 +124,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 					...blank,
 					...data.formData,
 				});
-				setShowValidationWarningsFromSubmitError(!!data.errorMessage);
+				setHasServerErrorMessages(!!data.errorMessage);
 				setCurrentStepHasBeenChanged(false);
 				setShowSkipModalFor(undefined);
 				setNotedFields(noted ?? []);
@@ -296,7 +296,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 								setFormData={handleFormChange}
 								changed={
 									currentStepHasBeenChanged ||
-									showValidationWarningsFromSubmitError
+									hasServerErrorMessages
 								}
 								maxOptionsForRadioButtons={5}
 								stringConfig={stringConfig}
