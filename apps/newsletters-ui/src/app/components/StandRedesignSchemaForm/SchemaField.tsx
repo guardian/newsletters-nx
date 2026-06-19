@@ -273,6 +273,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					{...standardProps}
 					recordSchema={innerZod}
 					value={value}
+					changed={changed}
 				/>
 			</FieldWrapper>
 		);
@@ -301,6 +302,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 						value={value ?? []}
 						recordSchema={innerZod.element}
 						maxOptionsForRadioButtons={maxOptionsForRadioButtons}
+						changed={changed}
 					/>
 				</FieldWrapper>
 			);
