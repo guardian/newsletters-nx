@@ -5,6 +5,7 @@ import {
 	isServingUI,
 } from './apiDeploymentSettings';
 import { setCacheControlHeaderMiddleware } from './app/headers';
+import { requestLoggingMiddleware } from './app/request-logging';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import { registerDraftsRoutes } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
@@ -24,6 +25,7 @@ import { registerUIServer } from './register-ui-server';
 const app = ExpressApp();
 app.use(setCacheControlHeaderMiddleware);
 app.use(json());
+app.use(requestLoggingMiddleware);
 
 registerHealthRoute(app);
 
