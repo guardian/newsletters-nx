@@ -15,10 +15,10 @@ export const SchemaRecordInput: FunctionComponent<
 		value: PrimitiveRecord | undefined;
 		inputHandler: { (newValue: FieldValue): void };
 		recordSchema: ZodObject<ZodRawShape>;
-		changed: boolean;
+		showErrors: boolean;
 	}
 > = (props) => {
-	const { changed, value, label, inputHandler, recordSchema, readOnly, optional } =
+	const { showErrors, value, label, inputHandler, recordSchema, readOnly, optional } =
 		props;
 
 	const sendValue = (data: PrimitiveRecord) => {
@@ -66,7 +66,7 @@ export const SchemaRecordInput: FunctionComponent<
 							recordSchema={recordSchema}
 							record={value}
 							editRecord={sendValue}
-							changed={changed}
+							showErrors={showErrors}
 						/>
 						{optional && (
 							<Button

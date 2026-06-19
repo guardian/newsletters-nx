@@ -294,7 +294,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 								notedFields={notedFields}
 								formData={formData}
 								setFormData={handleFormChange}
-								changed={
+								showErrors={
 									currentStepHasBeenChanged ||
 									hasServerErrorMessages
 								}

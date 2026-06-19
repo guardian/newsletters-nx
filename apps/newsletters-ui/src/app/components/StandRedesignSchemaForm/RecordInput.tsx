@@ -9,7 +9,7 @@ interface Props {
 	recordSchema: ZodObject<ZodRawShape>;
 	editRecord: { (record: PrimitiveRecord): void };
 	maxOptionsForRadioButtons?: number;
-	changed: boolean;
+	showErrors: boolean;
 }
 
 export const RecordInput = ({
@@ -17,7 +17,7 @@ export const RecordInput = ({
 	recordSchema,
 	editRecord,
 	maxOptionsForRadioButtons,
-	changed,
+	showErrors,
 }: Props) => {
 	const warnings = getValidationWarnings(record, recordSchema);
 	return (
@@ -37,7 +37,7 @@ export const RecordInput = ({
 				}
 				return editRecord({ ...record, ...mod });
 			}}
-			changed={changed}
+			showErrors={showErrors}
 			maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 		/>
 	);

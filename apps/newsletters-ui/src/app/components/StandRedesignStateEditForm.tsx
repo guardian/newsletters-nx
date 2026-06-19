@@ -17,7 +17,7 @@ interface Props {
 	formSchema: z.ZodObject<z.ZodRawShape>;
 	formData: WizardFormData;
 	setFormData: { (newData: WizardFormData): void };
-	changed: boolean;
+	showErrors: boolean;
 	maxOptionsForRadioButtons?: number;
 	stringConfig?: Partial<Record<string, StringInputSettings>>;
 	notedFields?: NotedFields;
@@ -27,7 +27,7 @@ export const StandRedesignStateEditForm = ({
 	formSchema,
 	formData,
 	setFormData,
-	changed,
+	showErrors,
 	notedFields,
 	maxOptionsForRadioButtons,
 	stringConfig = {},
@@ -78,7 +78,7 @@ export const StandRedesignStateEditForm = ({
 			schema={formSchema}
 			data={formData}
 			validationWarnings={getValidationWarnings(formData, formSchema)}
-			changed={changed}
+			showErrors={showErrors}
 			changeValue={changeFormData}
 			maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 			stringConfig={stringConfig}
