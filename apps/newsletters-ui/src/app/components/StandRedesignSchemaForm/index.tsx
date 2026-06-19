@@ -11,6 +11,7 @@ import type {
 	StringInputSettings,
 } from './util';
 
+
 export * from './util';
 
 interface Props<T extends z.ZodRawShape> {
@@ -23,7 +24,7 @@ interface Props<T extends z.ZodRawShape> {
 	showUnsupported?: boolean;
 	excludedKeys?: string[];
 	readOnlyKeys?: string[];
-	validationWarnings: Partial<Record<keyof T, string>>;
+	validationWarnings: Record<string, string>;
 	maxOptionsForRadioButtons?: number;
 	explanations?: Partial<Record<keyof T, string>>;
 	placeholders?: Partial<Record<keyof T, string>>;

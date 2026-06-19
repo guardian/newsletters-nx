@@ -46,6 +46,7 @@ export const StandStringInput = (props: Props) => {
 				isDisabled={props.readOnly}
 				isRequired={!props.optional}
 				renderLabel={props.isNoted ? NotedLabel : undefined }
+				validationBehavior='aria'
 			/>
 		);
 	}
@@ -57,9 +58,10 @@ export const StandStringInput = (props: Props) => {
 			label={props.label}
 			onInput={sendValue}
 			value={props.value}
-			isInvalid={!!props.error}
 			placeholder={props.placeholder}
+			validationBehavior={'aria'}
 			error={props.error}
+			isInvalid={!!props.error}
 			isDisabled={props.readOnly}
 			isRequired={!props.optional}
 			renderLabel={props.isNoted ? NotedLabel : undefined }
