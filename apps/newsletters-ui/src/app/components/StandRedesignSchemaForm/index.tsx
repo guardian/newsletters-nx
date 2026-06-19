@@ -25,6 +25,7 @@ interface Props<T extends z.ZodRawShape> {
 	excludedKeys?: string[];
 	readOnlyKeys?: string[];
 	validationWarnings: Record<string, string>;
+	changed: boolean;
 	maxOptionsForRadioButtons?: number;
 	explanations?: Partial<Record<keyof T, string>>;
 	placeholders?: Partial<Record<keyof T, string>>;
@@ -47,6 +48,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 	readOnlyKeys = [],
 	notedFields = [],
 	validationWarnings,
+	changed,
 	maxOptionsForRadioButtons = 0,
 	explanations = {},
 	placeholders = {},
@@ -90,6 +92,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 					field={field}
 					showUnsupported={showUnsupported}
 					validationWarning={validationWarnings[field.key]}
+					changed={changed}
 					maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 					explanation={explanations[field.key]}
 					placeholder={placeholders[field.key]}

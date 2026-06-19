@@ -57,6 +57,7 @@ interface SchemaFieldProps<T extends z.ZodRawShape> {
 	numberInputSettings?: NumberInputSettings;
 	stringInputSettings?: StringInputSettings;
 	validationWarning?: string;
+	changed: boolean;
 	maxOptionsForRadioButtons: number;
 	explanation?: string;
 	isNoted?: boolean;
@@ -102,6 +103,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 	numberInputSettings = {},
 	stringInputSettings = {},
 	validationWarning,
+	changed,
 	maxOptionsForRadioButtons,
 	explanation,
 	placeholder,
@@ -122,7 +124,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		inputHandler,
 		readOnly,
 		optional: zod.isOptional(),
-		error: validationWarning,
+		error: changed ? validationWarning : undefined,
 		description: explanation,
 		isNoted,
 	};
@@ -141,7 +143,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 				{...standardProps}
 				value={parsed.value}
 				type={stringInputSettings.inputType}
-				error={validationWarning}
+				error={changed ? validationWarning : undefined}
 			/>
 		);
 	}
