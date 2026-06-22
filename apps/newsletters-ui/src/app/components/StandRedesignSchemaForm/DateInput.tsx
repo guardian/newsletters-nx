@@ -45,6 +45,8 @@ export const StandDateInput: FunctionComponent<
 					props.inputHandler(inputDateToDate(date));
 				}
 			}}
+			error={props.error}
+			isInvalid={!!props.error}
 		/>
 	);
 };

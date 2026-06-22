@@ -159,7 +159,7 @@ export const StepNav = ({
 			component={'nav'}
 		>
 			{filteredStepList.map((step) => {
-				const stepStatus = completionRecord[step.id];
+				const stepStatus = !step.isIntro ? completionRecord[step.id] : undefined;
 				const description = step.label ?? step.id;
 				const isButton = shouldRenderAsButton(step);
 

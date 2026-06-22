@@ -96,6 +96,8 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const [notedFields, setNotedFields] = useState<string[]>([]);
 	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
 		useState(false);
+	const [hasServerErrorMessages, setHasServerErrorMessages] =
+		useState(false);
 	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
 		undefined,
 	);
@@ -122,6 +124,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 					...blank,
 					...data.formData,
 				});
+				setHasServerErrorMessages(!!data.errorMessage);
 				setCurrentStepHasBeenChanged(false);
 				setShowSkipModalFor(undefined);
 				setNotedFields(noted ?? []);
@@ -291,6 +294,10 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 								notedFields={notedFields}
 								formData={formData}
 								setFormData={handleFormChange}
+								showErrors={
+									currentStepHasBeenChanged ||
+									hasServerErrorMessages
+								}
 								maxOptionsForRadioButtons={5}
 								stringConfig={stringConfig}
 							/>
@@ -341,13 +348,13 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 							`}
 						>
 							{serverData.markdownToDisplayInSidebar?.map(
-								({ field, markdown }) => (
+								({ field, markdown }, index) => (
 									<div
 										css={css`
 											background: ${semanticColors.bg.raisedLevel1};
 											padding: ${baseSpacing['16Px']};
 										`}
-										key={field}
+										key={field ?? `markdown-${index}`}
 									>
 										<StandRedesignMarkdownView markdown={markdown} />
 									</div>

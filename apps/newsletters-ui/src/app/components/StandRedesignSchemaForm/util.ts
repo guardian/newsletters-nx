@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import type { ZodRawShape, ZodTypeAny } from 'zod';
+import type { ZodTypeAny } from 'zod';
 import {
 	ZodArray,
 	ZodBoolean,
@@ -18,9 +18,9 @@ import {
 	isStringArray,
 } from '../../util';
 
-export interface FieldDef<T extends ZodRawShape = ZodRawShape> {
+export interface FieldDef {
 	zod: ZodTypeAny;
-	key: keyof T & string;
+	key: string;
 	value: unknown;
 	readOnly?: boolean;
 }
@@ -57,7 +57,7 @@ export function eventToString(event: FormEvent): string {
 	return (event.target as HTMLInputElement).value;
 }
 
-function fieldValueIsRightType<T extends ZodRawShape>(value: FieldValue, field: FieldDef<T>): boolean {
+function fieldValueIsRightType(value: FieldValue, field: FieldDef): boolean {
 	const innerZod = recursiveUnwrap(field.zod);
 
 	if (innerZod instanceof ZodEnum) {
@@ -111,9 +111,9 @@ function fieldValueIsRightType<T extends ZodRawShape>(value: FieldValue, field: 
 	}
 }
 
-export function getModification<T extends ZodRawShape> (
+export function getModification (
 	value: FieldValue,
-	field: FieldDef<T>,
+	field: FieldDef,
 ): Record<string, FieldValue> {
 	if (fieldValueIsRightType(value, field)) {
 		const mod: Record<string, FieldValue> = {};

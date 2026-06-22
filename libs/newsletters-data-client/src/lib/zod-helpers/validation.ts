@@ -1,11 +1,11 @@
 import type { ZodObject, ZodRawShape } from 'zod';
 
 export const getValidationWarnings = (
-	data: Partial<Record<string, unknown>>,
+	data: Record<string, unknown>,
 	schema: ZodObject<ZodRawShape>,
-): Partial<Record<string, string>> => {
+): Record<string, string> => {
 	const parseResult = schema.safeParse(data);
-	const validationWarnings: Partial<Record<string, string>> = {};
+	const validationWarnings: Record<string, string> = {};
 
 	if (!parseResult.success) {
 		parseResult.error.issues.forEach((issue) => {

@@ -79,6 +79,8 @@ export const StandRadioSelectInput: FunctionComponent<
 				}
 				description={description ?? ''}
 				renderLabel={props.isNoted ? NotedLabel : undefined}
+				error={props.error}
+				isInvalid={!!props.error}
 			>
 				{/* Haven't seen this used but have preserved this way of doing it */}
 				{optional && <Radio value={EMPTY_STRING}>[none]</Radio>}

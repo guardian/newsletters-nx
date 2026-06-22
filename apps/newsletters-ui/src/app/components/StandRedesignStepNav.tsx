@@ -282,7 +282,7 @@ export const StandRedesignStepNav = ({
 				`}
 			>
 				{filteredStepList.map((step, index) => {
-					const stepStatus = completionRecord[step.id];
+					const stepStatus = !step.isIntro ? completionRecord[step.id]: undefined;
 					const description = step.label ?? step.id;
 					const isDisabled = !shouldRenderAsButton(step);
 					return (

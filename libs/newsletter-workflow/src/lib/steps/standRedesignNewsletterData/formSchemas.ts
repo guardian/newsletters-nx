@@ -34,6 +34,7 @@ const pickAndPrefixThrasherOption = (
 };
 
 export const formSchemas = {
+	intro: dataCollectionSchema.pick({}).describe('Intro step'),
 	nameAndFrequency: dataCollectionSchema
 		.pick({
 			name: true,
