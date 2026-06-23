@@ -44,9 +44,15 @@ export function Layout(props: IRootRoute) {
 		!!host?.toLowerCase().split('.').includes('local');
 
 	const location = useLocation();
-	const isNewsletterData = location.pathname.includes(
-		'/drafts/newsletter-data',
-	);
+
+	const isWizardRoute = (() => {
+		const wizardRoutes = [
+			'/drafts/newsletter-data',
+			'/drafts/newsletter-data-rendering',
+			'/drafts/launch-newsletter',
+		];
+		return wizardRoutes.some((route) => location.pathname.includes(route));
+	})();
 	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
 
 	useEffect(() => {
@@ -66,7 +72,7 @@ export function Layout(props: IRootRoute) {
 		<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
 	);
 
-	if (isUsingStand && isNewsletterData) {
+	if (isUsingStand && isWizardRoute) {
 		return (
 			<StandLayout>
 				{(isOnCode || isOnLocal) && (
