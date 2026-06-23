@@ -39,7 +39,7 @@ const reviewLayout: WizardStepLayout<DraftService> = {
 
 		return markdownTemplate.replace(regExPatterns.name, name);
 	},
-	canSkip: true,
+	canSkip: false,
 };
 
 export { reviewLayout };

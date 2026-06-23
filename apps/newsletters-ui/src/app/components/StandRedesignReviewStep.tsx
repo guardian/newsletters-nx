@@ -190,7 +190,6 @@ export const StandRedesignReviewStep: React.FC<Props> = ({
 					<div css={sectionContentStyles}>
 						{/* fields */}
 						{group.fields.map(({ key, label, zod }) => (
-							// flex container with label on left and value on right
 							<div key={key} css={contentContainerStyles}>
 								<Typography
 									variant="bodyBoldSm"

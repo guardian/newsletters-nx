@@ -10,7 +10,7 @@ import { Layout } from '@guardian/stand/Layout';
 import { from } from '@guardian/stand/utils';
 import { Alert, Box, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
 	getFieldDisplayOptions,
@@ -157,6 +157,8 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 		setListId(undefined);
 	}, [wizardId, id, fetchStep]);
 
+	const navigate = useNavigate();
+
 	if (serverData === undefined) {
 		return <p>'loading'</p>;
 	}
@@ -204,6 +206,11 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const handleButtonClick =
 		(buttonId: string, buttonType: WizardButtonType) => () => {
 			if (showSkipModalFor) {
+				return;
+			}
+			const navigateTo = serverData.buttons?.[buttonId]?.navigateTo;
+			if (navigateTo) {
+				void navigate(navigateTo);
 				return;
 			}
 			void fetchStep({

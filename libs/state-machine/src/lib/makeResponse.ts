@@ -2,6 +2,7 @@ import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 	WizardButton,
+	WizardFormData,
 	WizardStepData,
 	WizardStepLayout,
 	WizardStepLayoutButton,
@@ -9,6 +10,7 @@ import type {
 
 const convertWizardStepLayoutButtonsToWizardButtons = (
 	layoutButtons: WizardStepLayout['buttons'],
+	formData: WizardFormData | undefined,
 ): CurrentStepRouteResponse['buttons'] => {
 	const convertButton = (
 		index: string,
@@ -18,6 +20,7 @@ const convertWizardStepLayoutButtonsToWizardButtons = (
 			id: index,
 			label: input.label,
 			buttonType: input.buttonType,
+			navigateTo: input.getNavigateTo?.(formData),
 		};
 	};
 
@@ -64,6 +67,7 @@ export const makeResponse = (
 		currentStepId: state.currentStepId,
 		buttons: convertWizardStepLayoutButtonsToWizardButtons(
 			nextWizardStepLayout.buttons,
+			state.formData,
 		),
 		errorMessage: state.errorMessage,
 		errorDetails: state.errorDetails,

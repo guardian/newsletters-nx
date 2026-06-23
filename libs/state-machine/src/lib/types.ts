@@ -40,6 +40,8 @@ export interface WizardButton {
 	label: string;
 	/** Type of the button, mapped to a specific background and border color. */
 	buttonType: WizardButtonType;
+	/** When set, clicking the button navigates to this URL instead of advancing the wizard. */
+	navigateTo?: string;
 }
 
 export interface WizardStepData {
@@ -92,6 +94,9 @@ export type WizardStepLayoutButton<
 	buttonType: WizardButtonType;
 	label: string;
 	stepToMoveTo: string | FindStepIdFunction;
+	/** When set, clicking the button navigates to this URL instead of advancing the wizard.
+	 *  Receives the current formData so dynamic URLs (e.g. containing an id) can be constructed. */
+	getNavigateTo?: (formData: WizardFormData | undefined) => string;
 	onAfterStepStartValidate?: AsyncValidator<T> | Validator<T>;
 	onBeforeStepChangeValidate?: AsyncValidator<T> | Validator<T>;
 	executeStep?: AsyncExecution<T> | Execution<T>;

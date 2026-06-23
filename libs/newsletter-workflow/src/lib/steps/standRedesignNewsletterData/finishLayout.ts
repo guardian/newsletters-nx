@@ -22,7 +22,20 @@ const finishLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown: staticMarkdown,
 	indicateStepsCompleteOnThisWizard: true,
 	label: 'Finish',
-	buttons: {},
+	buttons: {
+		launch: {
+			buttonType: 'NEXT',
+			label: 'Go to launch wizard',
+			stepToMoveTo: 'finish',
+			getNavigateTo: (formData) => {
+				const listId =
+					typeof formData?.listId === 'number' ? formData.listId : undefined;
+				return typeof listId === 'number'
+					? `/drafts/launch-newsletter/${listId}`
+					: '/drafts/launch-newsletter';
+			},
+		},
+	},
 	dynamicMarkdown(requestData, responseData) {
 		if (!responseData) {
 			return staticMarkdown;
@@ -38,7 +51,7 @@ const finishLayout: WizardStepLayout<DraftService> = {
 			.replace(regExPatterns.name, name)
 			.replace(regExPatterns.listId, listId);
 	},
-	canSkip: true,
+	canSkip: false,
 };
 
 export { finishLayout };
