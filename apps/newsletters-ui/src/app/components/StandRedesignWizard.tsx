@@ -1,5 +1,10 @@
 import { css } from '@emotion/react';
-import { baseSpacing, semanticColors, semanticGrid } from '@guardian/stand';
+import {
+	baseSpacing,
+	semanticColors,
+	semanticGrid,
+	semanticSpacing,
+} from '@guardian/stand';
 import { Grid, Item } from '@guardian/stand/Grid';
 import { Layout } from '@guardian/stand/Layout';
 import { from } from '@guardian/stand/utils';
@@ -24,6 +29,7 @@ import type {
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import type { StringInputSettings } from './SchemaForm';
 import { StandRedesignMarkdownView } from './StandRedesignMarkdownView';
+import { StandRedesignReviewStep } from './StandRedesignReviewStep';
 import { StandRedesignStateEditForm } from './StandRedesignStateEditForm';
 import { StandRedesignStepNav } from './StandRedesignStepNav';
 import { StandRedesignWizardActionButton } from './StandRedesignWizardActionButton';
@@ -96,8 +102,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const [notedFields, setNotedFields] = useState<string[]>([]);
 	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
 		useState(false);
-	const [hasServerErrorMessages, setHasServerErrorMessages] =
-		useState(false);
+	const [hasServerErrorMessages, setHasServerErrorMessages] = useState(false);
 	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
 		undefined,
 	);
@@ -294,10 +299,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 								notedFields={notedFields}
 								formData={formData}
 								setFormData={handleFormChange}
-								showErrors={
-									currentStepHasBeenChanged ||
-									hasServerErrorMessages
-								}
+								showErrors={currentStepHasBeenChanged || hasServerErrorMessages}
 								maxOptionsForRadioButtons={5}
 								stringConfig={stringConfig}
 							/>
@@ -321,6 +323,19 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 								/>
 							))}
 						</Stack>
+						{serverData.isReviewStep && formData && (
+							<div
+								css={css`
+									margin-top: ${semanticSpacing.stackXl};
+								`}
+							>
+								<StandRedesignReviewStep
+									wizardId={wizardId}
+									formData={formData}
+									handleStepClick={handleStepClick}
+								/>
+							</div>
+						)}
 					</Item>
 					<Item
 						size={{ lg: 1 }}

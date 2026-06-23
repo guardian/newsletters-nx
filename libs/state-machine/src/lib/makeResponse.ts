@@ -50,15 +50,15 @@ export const makeResponse = (
 		dynamicSideMarkdown,
 	} = nextWizardStepLayout;
 
-const markdown = dynamicMarkdown
-	? dynamicMarkdown(requestBody.formData, state.formData)
-	: staticMarkdown;
+	const markdown = dynamicMarkdown
+		? dynamicMarkdown(requestBody.formData, state.formData)
+		: staticMarkdown;
 
-const sideMarkdown = dynamicSideMarkdown
-	? dynamicSideMarkdown(requestBody.formData, state.formData)
-	: staticSideMarkdown;
+	const sideMarkdown = dynamicSideMarkdown
+		? dynamicSideMarkdown(requestBody.formData, state.formData)
+		: staticSideMarkdown;
 
-return {
+	return {
 		markdownToDisplay: markdown,
 		markdownToDisplayInSidebar: sideMarkdown,
 		currentStepId: state.currentStepId,
@@ -68,5 +68,6 @@ return {
 		errorMessage: state.errorMessage,
 		errorDetails: state.errorDetails,
 		formData: state.formData,
+		isReviewStep: nextWizardStepLayout.isReviewStep,
 	};
 };
