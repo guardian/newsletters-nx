@@ -2,6 +2,7 @@ import type {
 	CurrentStepRouteRequest,
 	CurrentStepRouteResponse,
 	WizardButton,
+	WizardFormData,
 	WizardStepData,
 	WizardStepLayout,
 	WizardStepLayoutButton,
@@ -9,6 +10,7 @@ import type {
 
 const convertWizardStepLayoutButtonsToWizardButtons = (
 	layoutButtons: WizardStepLayout['buttons'],
+	formData: WizardFormData | undefined,
 ): CurrentStepRouteResponse['buttons'] => {
 	const convertButton = (
 		index: string,
@@ -18,6 +20,7 @@ const convertWizardStepLayoutButtonsToWizardButtons = (
 			id: index,
 			label: input.label,
 			buttonType: input.buttonType,
+			navigateTo: input.getNavigateTo?.(formData),
 		};
 	};
 
@@ -50,23 +53,25 @@ export const makeResponse = (
 		dynamicSideMarkdown,
 	} = nextWizardStepLayout;
 
-const markdown = dynamicMarkdown
-	? dynamicMarkdown(requestBody.formData, state.formData)
-	: staticMarkdown;
+	const markdown = dynamicMarkdown
+		? dynamicMarkdown(requestBody.formData, state.formData)
+		: staticMarkdown;
 
-const sideMarkdown = dynamicSideMarkdown
-	? dynamicSideMarkdown(requestBody.formData, state.formData)
-	: staticSideMarkdown;
+	const sideMarkdown = dynamicSideMarkdown
+		? dynamicSideMarkdown(requestBody.formData, state.formData)
+		: staticSideMarkdown;
 
-return {
+	return {
 		markdownToDisplay: markdown,
 		markdownToDisplayInSidebar: sideMarkdown,
 		currentStepId: state.currentStepId,
 		buttons: convertWizardStepLayoutButtonsToWizardButtons(
 			nextWizardStepLayout.buttons,
+			state.formData,
 		),
 		errorMessage: state.errorMessage,
 		errorDetails: state.errorDetails,
 		formData: state.formData,
+		isReviewStep: nextWizardStepLayout.isReviewStep,
 	};
 };

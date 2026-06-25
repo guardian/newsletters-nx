@@ -8,6 +8,7 @@ import { createDraftIntro } from './introLayout';
 import { nameAndFrequencyLayout } from './nameAndFrequencyLayout';
 import { productionDetailsLayout } from './productionDetailsLayout';
 import { promotionContentLayout } from './promotionContentLayout';
+import { reviewLayout } from './reviewLayout';
 import { tagsLayout } from './tagsLayout';
 import { targetingLayout } from './targetingLayout';
 
@@ -21,5 +22,6 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 	targeting: targetingLayout,
 	tags: tagsLayout,
 	signUpPage: promotionContentLayout,
+	review: reviewLayout,
 	finish: finishLayout,
 };

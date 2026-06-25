@@ -30,11 +30,19 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'newsletter-data/:listId',
-			element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
+			element: isFeatureSwitchEnabled('switch-stand') ? (
+				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
+			) : (
+				<WizardContainer wizardId="NEWSLETTER_DATA" />
+			),
 		},
 		{
 			path: 'newsletter-data-rendering/:listId',
-			element: <WizardContainer wizardId="RENDERING_OPTIONS" />,
+			element: isFeatureSwitchEnabled('switch-stand') ? (
+				<StandRedesignWizardContainer wizardId="RENDERING_OPTIONS" />
+			) : (
+				<WizardContainer wizardId="RENDERING_OPTIONS" />
+			),
 		},
 		{
 			path: 'newsletter-data',
@@ -46,11 +54,19 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'launch-newsletter/:listId',
-			element: <WizardContainer wizardId="LAUNCH_NEWSLETTER" />,
+			element: isFeatureSwitchEnabled('switch-stand') ? (
+				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
+			) : (
+				<WizardContainer wizardId="LAUNCH_NEWSLETTER" />
+			),
 		},
 		{
 			path: 'launch-newsletter',
-			element: <WizardContainer wizardId="LAUNCH_NEWSLETTER" />,
+			element: isFeatureSwitchEnabled('switch-stand') ? (
+				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
+			) : (
+				<WizardContainer wizardId="LAUNCH_NEWSLETTER" />
+			),
 		},
 	],
 };

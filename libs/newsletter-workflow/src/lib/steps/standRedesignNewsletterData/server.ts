@@ -1,5 +1,8 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
-import type { AsyncExecution, WizardLayout } from '@newsletters-nx/state-machine';
+import type {
+	AsyncExecution,
+	WizardLayout,
+} from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
@@ -11,6 +14,7 @@ import { createDraftIntro } from './introLayout';
 import { nameAndFrequencyLayout } from './nameAndFrequencyLayout';
 import { productionDetailsLayout } from './productionDetailsLayout';
 import { promotionContentLayout } from './promotionContentLayout';
+import { reviewLayout } from './reviewLayout';
 import { tagsLayout } from './tagsLayout';
 import { targetingLayout } from './targetingLayout';
 
@@ -134,6 +138,21 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			},
 			next: {
 				...promotionContentLayout.buttons['next']!,
+				executeStep: executeModify,
+			},
+		},
+	},
+	review: {
+		...reviewLayout,
+		executeSkip,
+		buttons: {
+			...reviewLayout.buttons,
+			back: {
+				...reviewLayout.buttons['back']!,
+				executeStep: executeSkip,
+			},
+			next: {
+				...reviewLayout.buttons['next']!,
 				executeStep: executeModify,
 			},
 		},

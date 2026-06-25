@@ -151,7 +151,7 @@ export const newsletterDataSchema = z.object({
 
 	launchDate: z.coerce.date().describe('Enter launch date'),
 	signUpPageDate: z.coerce.date().describe('Enter sign up page date'),
-	thrasherDate: z.coerce.date().describe('Thrasher date'),
+	thrasherDate: z.coerce.date().optional().describe('Thrasher date'),
 	privateUntilLaunch: z.boolean().describe('Needs to be private until launch?'),
 	onlineArticle: onlineArticleSchema.optional(),
 

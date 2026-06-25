@@ -11,7 +11,7 @@ export const StandRedesignWizardActionButton = ({ button, onClick }: Props) => {
 	const primaryActions: WizardButtonType[] = ['NEXT', 'LAUNCH'];
 
 	const variant = primaryActions.includes(button.buttonType)
-		? 'secondary'
+		? 'primary'
 		: 'tertiary';
 
 	return (
