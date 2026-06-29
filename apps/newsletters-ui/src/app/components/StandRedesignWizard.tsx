@@ -7,8 +7,9 @@ import {
 } from '@guardian/stand';
 import { Grid, Item } from '@guardian/stand/Grid';
 import { Layout } from '@guardian/stand/Layout';
+import { Typography } from '@guardian/stand/Typography';
 import { from } from '@guardian/stand/utils';
-import { Alert, Box, Stack, Typography } from '@mui/material';
+import { Alert } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
@@ -74,13 +75,17 @@ const FailureAlert = (props: {
 				<ZodIssuesReport issues={errorDetails.zodIssues} />
 			)}
 			{errorDetails?.problemList && (
-				<Stack spacing={1} component={'ul'}>
+				<div
+					css={css`
+						display: flex;
+						flex-direction: column;
+						gap: ${semanticSpacing.stackXs};
+					`}
+				>
 					{errorDetails.problemList.map((problem, index) => (
-						<Typography key={index} component={'li'}>
-							{problem}
-						</Typography>
+						<Typography key={index}>{problem}</Typography>
 					))}
-				</Stack>
+				</div>
 			)}
 		</Alert>
 	);
@@ -103,6 +108,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
 		useState(false);
 	const [hasServerErrorMessages, setHasServerErrorMessages] = useState(false);
+	const [showAllErrors, setShowAllErrors] = useState(false);
 	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
 		undefined,
 	);
@@ -131,6 +137,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				});
 				setHasServerErrorMessages(!!data.errorMessage);
 				setCurrentStepHasBeenChanged(false);
+				setShowAllErrors(false);
 				setShowSkipModalFor(undefined);
 				setNotedFields(noted ?? []);
 			} catch (error: unknown /* FIXME! */) {
@@ -213,6 +220,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				void navigate(navigateTo);
 				return;
 			}
+			setShowAllErrors(true);
 			void fetchStep({
 				wizardId: wizardId,
 				id: id,
@@ -284,6 +292,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						offset={{ lg: 1 }}
 						css={css`
 							margin-top: ${semanticGrid.margin.topSmPx};
+							margin-bottom: ${semanticSpacing.stackMd};
 
 							${from.md} {
 								margin-top: ${semanticGrid.margin.topMdPx};
@@ -291,6 +300,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 
 							${from.lg} {
 								margin-top: ${semanticGrid.margin.topLgPx};
+								margin-bottom: ${semanticGrid.margin.bottomLgPx};
 							}
 						`}
 					>
@@ -302,26 +312,37 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 
 						{formSchema && formData && (
 							<StandRedesignStateEditForm
+								key={serverData.currentStepId}
 								formSchema={formSchema}
 								notedFields={notedFields}
 								formData={formData}
 								setFormData={handleFormChange}
-								showErrors={currentStepHasBeenChanged || hasServerErrorMessages}
+								showErrors={showAllErrors || hasServerErrorMessages}
 								maxOptionsForRadioButtons={5}
 								stringConfig={stringConfig}
 							/>
 						)}
 
 						{serverData.errorMessage && (
-							<Box sx={{ paddingBottom: 2 }}>
+							<div
+								css={css`
+									margin-bottom: ${semanticSpacing.stackMd};
+								`}
+							>
 								<FailureAlert
 									errorMessage={serverData.errorMessage}
 									errorDetails={serverData.errorDetails}
 									isPersistent={serverData.hasPersistentError}
 								/>
-							</Box>
+							</div>
 						)}
-						<Stack spacing={2} direction="row">
+						<div
+							css={css`
+								display: flex;
+								flex-direction: row;
+								gap: ${semanticSpacing.stackMd};
+							`}
+						>
 							{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
 								<StandRedesignWizardActionButton
 									key={key}
@@ -329,7 +350,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 									onClick={handleButtonClick}
 								/>
 							))}
-						</Stack>
+						</div>
 						{serverData.isReviewStep && formData && (
 							<div
 								css={css`
@@ -357,6 +378,12 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 					<Item
 						size={{ lg: 4 }}
 						cssOverrides={css`
+							margin-bottom: ${semanticGrid.margin.bottomSmPx};
+
+							${from.md} {
+								margin-bottom: ${semanticGrid.margin.bottomMdPx};
+							}
+
 							${from.lg} {
 								margin-top: ${semanticGrid.margin.topLgPx};
 							}

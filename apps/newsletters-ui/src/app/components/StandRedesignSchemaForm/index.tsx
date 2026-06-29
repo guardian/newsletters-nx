@@ -11,7 +11,6 @@ import type {
 	StringInputSettings,
 } from './util';
 
-
 export * from './util';
 
 interface Props<T extends z.ZodRawShape> {
@@ -26,6 +25,7 @@ interface Props<T extends z.ZodRawShape> {
 	readOnlyKeys?: string[];
 	validationWarnings: Record<string, string>;
 	showErrors: boolean;
+	touchedFields?: Set<string>;
 	maxOptionsForRadioButtons?: number;
 	explanations?: Partial<Record<keyof T, string>>;
 	placeholders?: Partial<Record<keyof T, string>>;
@@ -49,6 +49,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 	notedFields = [],
 	validationWarnings,
 	showErrors,
+	touchedFields,
 	maxOptionsForRadioButtons = 0,
 	explanations = {},
 	placeholders = {},
@@ -92,7 +93,7 @@ export function StandRedesignSchemaForm<T extends z.ZodRawShape>({
 					field={field}
 					showUnsupported={showUnsupported}
 					validationWarning={validationWarnings[field.key]}
-					showErrors={showErrors}
+					showErrors={showErrors || (touchedFields?.has(field.key) ?? false)}
 					maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 					explanation={explanations[field.key]}
 					placeholder={placeholders[field.key]}

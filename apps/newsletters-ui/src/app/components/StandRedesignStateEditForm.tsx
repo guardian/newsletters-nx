@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { z } from 'zod';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
@@ -32,6 +33,8 @@ export const StandRedesignStateEditForm = ({
 	maxOptionsForRadioButtons,
 	stringConfig = {},
 }: Props) => {
+	const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
+
 	const changeFormData = (value: FieldValue, field: FieldDef) => {
 		const mod = getModification(value, field);
 		const revisedData = {
@@ -39,6 +42,7 @@ export const StandRedesignStateEditForm = ({
 			...mod,
 		};
 
+		setTouchedFields((prev) => new Set(prev).add(field.key));
 		setFormData(revisedData);
 	};
 
@@ -54,23 +58,31 @@ export const StandRedesignStateEditForm = ({
 		onlineArticle: 'Where will readers access the newsletter?',
 		launchDate: 'When will the newsletter first send to readers?',
 		signUpPageDate: 'When should promotions go live?',
-		seriesTag: 'This is usually always the name of the newsletter and determines where it sits on the website.',
-		seriesTagDescription: 'Reader facing, one sentence, description of what the newsletter is about ',
+		seriesTag:
+			'This is usually always the name of the newsletter and determines where it sits on the website.',
+		seriesTagDescription:
+			'Reader facing, one sentence, description of what the newsletter is about ',
 		composerTag: 'Add the newsletter name and then (newsletter sign up)',
 		signUpHeadline: 'The larger text at the top of the newsletter sign up.',
 		signUpDescription: 'The smaller text below the headline',
-		illustrationCard: 'Search the grid for the 5:4 art work which will accompany the newsletter',
-		mailSuccessDescription: 'The text a reader sees when they have signed up for a newsletter',
+		illustrationCard:
+			'Search the grid for the 5:4 art work which will accompany the newsletter',
+		mailSuccessDescription:
+			'The text a reader sees when they have signed up for a newsletter',
 	};
 	const placeholders: Partial<Record<keyof NewsletterData, string>> = {
 		seriesTag: 'e.g Feast / Feast Newsletter',
-		seriesTagDescription: 'e.g A weekly email about food news, trends and recipes',
+		seriesTagDescription:
+			'e.g A weekly email about food news, trends and recipes',
 		composerTag: 'Today In Focus (newsletter sign up)',
-		signUpHeadline: 'e.g Sign up for the First Edition newsletter: our free daily news email',
-		signUpDescription: 'e.g Archie Bland and Nimo Omer take you through the top stories and what they mean.',
-		mailSuccessDescription: 'e.g Subscription confirmed. We’ll send you First Edition every weekday.',
+		signUpHeadline:
+			'e.g Sign up for the First Edition newsletter: our free daily news email',
+		signUpDescription:
+			'e.g Archie Bland and Nimo Omer take you through the top stories and what they mean.',
+		mailSuccessDescription:
+			'e.g Subscription confirmed. We’ll send you First Edition every weekday.',
 		illustrationCard: 'URL of the newsletter graphic 5:4',
-		illustrationSquare: 'URL of the newsletter graphic 1:1'
+		illustrationSquare: 'URL of the newsletter graphic 1:1',
 	};
 
 	return (
@@ -79,6 +91,7 @@ export const StandRedesignStateEditForm = ({
 			data={formData}
 			validationWarnings={getValidationWarnings(formData, formSchema)}
 			showErrors={showErrors}
+			touchedFields={touchedFields}
 			changeValue={changeFormData}
 			maxOptionsForRadioButtons={maxOptionsForRadioButtons}
 			stringConfig={stringConfig}
