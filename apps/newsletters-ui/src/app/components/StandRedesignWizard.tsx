@@ -7,8 +7,9 @@ import {
 } from '@guardian/stand';
 import { Grid, Item } from '@guardian/stand/Grid';
 import { Layout } from '@guardian/stand/Layout';
+import { Typography } from '@guardian/stand/Typography';
 import { from } from '@guardian/stand/utils';
-import { Alert, Box, Stack, Typography } from '@mui/material';
+import { Alert } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
@@ -74,13 +75,17 @@ const FailureAlert = (props: {
 				<ZodIssuesReport issues={errorDetails.zodIssues} />
 			)}
 			{errorDetails?.problemList && (
-				<Stack spacing={1} component={'ul'}>
+				<div
+					css={css`
+						display: flex;
+						flex-direction: column;
+						gap: ${semanticSpacing.stackXs};
+					`}
+				>
 					{errorDetails.problemList.map((problem, index) => (
-						<Typography key={index} component={'li'}>
-							{problem}
-						</Typography>
+						<Typography key={index}>{problem}</Typography>
 					))}
-				</Stack>
+				</div>
 			)}
 		</Alert>
 	);
@@ -313,15 +318,25 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						)}
 
 						{serverData.errorMessage && (
-							<Box sx={{ paddingBottom: 2 }}>
+							<div
+								css={css`
+									margin-bottom: ${semanticSpacing.stackMd};
+								`}
+							>
 								<FailureAlert
 									errorMessage={serverData.errorMessage}
 									errorDetails={serverData.errorDetails}
 									isPersistent={serverData.hasPersistentError}
 								/>
-							</Box>
+							</div>
 						)}
-						<Stack spacing={2} direction="row">
+						<div
+							css={css`
+								display: flex;
+								flex-direction: row;
+								gap: ${semanticSpacing.stackMd};
+							`}
+						>
 							{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
 								<StandRedesignWizardActionButton
 									key={key}
@@ -329,7 +344,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 									onClick={handleButtonClick}
 								/>
 							))}
-						</Stack>
+						</div>
 						{serverData.isReviewStep && formData && (
 							<div
 								css={css`
