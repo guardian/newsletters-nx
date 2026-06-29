@@ -292,6 +292,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						offset={{ lg: 1 }}
 						css={css`
 							margin-top: ${semanticGrid.margin.topSmPx};
+							margin-bottom: ${semanticSpacing.stackMd};
 
 							${from.md} {
 								margin-top: ${semanticGrid.margin.topMdPx};
@@ -299,6 +300,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 
 							${from.lg} {
 								margin-top: ${semanticGrid.margin.topLgPx};
+								margin-bottom: ${semanticGrid.margin.bottomLgPx};
 							}
 						`}
 					>
@@ -376,6 +378,12 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 					<Item
 						size={{ lg: 4 }}
 						cssOverrides={css`
+							margin-bottom: ${semanticGrid.margin.bottomSmPx};
+
+							${from.md} {
+								margin-bottom: ${semanticGrid.margin.bottomMdPx};
+							}
+
 							${from.lg} {
 								margin-top: ${semanticGrid.margin.topLgPx};
 							}
