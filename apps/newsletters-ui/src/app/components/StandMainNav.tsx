@@ -7,37 +7,15 @@ import {
 	TopBarNavigation,
 	TopBarToolName,
 } from '@guardian/stand/TopBar';
+import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useProfile } from '../hooks/user-hooks';
+import { usePermissions, useProfile } from '../hooks/user-hooks';
 import '@guardian/stand/util/reset.css';
 
 interface NavLink {
 	path: string;
 	label: string;
 }
-
-const navLinks: NavLink[] = [
-	{ path: '/launched', label: 'Launched Newsletters' },
-	{ path: '/drafts', label: 'Draft Newsletters' },
-	{ path: '/templates', label: 'Email Templates' },
-	{ path: '/layouts', label: 'All Newsletter Page Layouts' },
-	{
-		path: '/drafts/newsletter-data',
-		label: 'Create New Newsletter',
-	},
-];
-
-const menuItemIsSelected = (path: string, pathname: string): boolean => {
-	if (!pathname.startsWith(path)) {
-		return false;
-	}
-	return !navLinks.some(
-		(link) =>
-			link.path !== path &&
-			pathname.startsWith(link.path) &&
-			link.path.length > path.length,
-	);
-};
 
 const topBarTheme: TopBarTheme = {
 	backgroundColor: baseColors.cyan[200],
@@ -80,7 +58,32 @@ const topBarTheme: TopBarTheme = {
 export function StandMainNav() {
 	const userProfile = useProfile();
 	const userName = userProfile?.name ?? 'Logged in user';
+	const permissions = usePermissions();
 	const { pathname } = useLocation();
+
+	const navLinks: NavLink[] = [
+		{ path: '/launched', label: 'Launched Newsletters' },
+		{ path: '/drafts', label: 'Draft Newsletters' },
+		{ path: '/templates', label: 'Email Templates' },
+		{ path: '/layouts', label: 'Newsletter Layouts' },
+		permissions?.writeToDrafts
+			? { path: '/drafts/newsletter-data', label: 'Create New Newsletter' }
+			: null,
+	].filter((link): link is NavLink => link !== null);
+
+	const menuItemIsSelected = useMemo(() => {
+		return (path: string, pathname: string): boolean => {
+			if (!pathname.startsWith(path)) {
+				return false;
+			}
+			return !navLinks.some(
+				(link) =>
+					link.path !== path &&
+					pathname.startsWith(link.path) &&
+					link.path.length > path.length,
+			);
+		};
+	}, [navLinks]);
 
 	return (
 		<TopBar theme={topBarTheme}>
