@@ -3,9 +3,11 @@ import {
 	ZodArray,
 	ZodBoolean,
 	ZodDate,
+	ZodEmail,
 	ZodEnum,
 	ZodNumber,
 	ZodObject,
+	ZodOptional,
 	ZodString,
 	ZodURL,
 } from 'zod';
@@ -113,7 +115,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (readOnly) {
 			return;
 		}
-		if (zod.isOptional() && newValue === '') {
+		if (zod instanceof ZodOptional && newValue === '') {
 			return change(undefined, field);
 		}
 		change(newValue, field);
@@ -123,7 +125,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 		label: zod.description ?? key,
 		inputHandler,
 		readOnly,
-		optional: zod.isOptional(),
+		optional: zod instanceof ZodOptional,
 		error: showErrors ? validationWarning : undefined,
 		description: explanation,
 		isNoted,
@@ -147,7 +149,11 @@ export function SchemaField<T extends z.ZodRawShape>({
 		);
 	}
 
-	if (innerZod instanceof ZodString || innerZod instanceof ZodURL) {
+	if (
+		innerZod instanceof ZodString ||
+		innerZod instanceof ZodURL ||
+		innerZod instanceof ZodEmail
+	) {
 		if (typeof value !== 'string' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
 		}
@@ -183,7 +189,13 @@ export function SchemaField<T extends z.ZodRawShape>({
 				);
 			}
 			return (
-				<StandSelectInput placeholder={placeholder} {...standardProps} value={value} isNoted={isNoted} options={options} />
+				<StandSelectInput
+					placeholder={placeholder}
+					{...standardProps}
+					value={value}
+					isNoted={isNoted}
+					options={options}
+				/>
 			);
 		}
 
@@ -202,7 +214,13 @@ export function SchemaField<T extends z.ZodRawShape>({
 		if (typeof value !== 'boolean' && typeof value !== 'undefined') {
 			return <WrongValueTypeMessage field={field} />;
 		}
-		return <StandBooleanInput isNoted={isNoted} {...standardProps} value={value ?? false} />;
+		return (
+			<StandBooleanInput
+				isNoted={isNoted}
+				{...standardProps}
+				value={value ?? false}
+			/>
+		);
 	}
 
 	if (innerZod instanceof ZodNumber) {
@@ -210,7 +228,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 			return <WrongValueTypeMessage field={field} />;
 		}
 
-		if (zod.isOptional()) {
+		if (zod instanceof ZodOptional) {
 			return (
 				<StandOptionalNumberInput
 					{...standardProps}
@@ -279,7 +297,11 @@ export function SchemaField<T extends z.ZodRawShape>({
 	}
 
 	if (innerZod instanceof ZodArray) {
-		if (innerZod.element instanceof ZodString || innerZod.element instanceof ZodURL) {
+		if (
+			innerZod.element instanceof ZodString ||
+			innerZod.element instanceof ZodURL ||
+			innerZod.element instanceof ZodEmail
+		) {
 			if (!isStringArray(value) && typeof value !== 'undefined') {
 				return <WrongValueTypeMessage field={field} />;
 			}
