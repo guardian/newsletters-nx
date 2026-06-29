@@ -108,6 +108,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
 		useState(false);
 	const [hasServerErrorMessages, setHasServerErrorMessages] = useState(false);
+	const [showAllErrors, setShowAllErrors] = useState(false);
 	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
 		undefined,
 	);
@@ -136,6 +137,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				});
 				setHasServerErrorMessages(!!data.errorMessage);
 				setCurrentStepHasBeenChanged(false);
+				setShowAllErrors(false);
 				setShowSkipModalFor(undefined);
 				setNotedFields(noted ?? []);
 			} catch (error: unknown /* FIXME! */) {
@@ -218,6 +220,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				void navigate(navigateTo);
 				return;
 			}
+			setShowAllErrors(true);
 			void fetchStep({
 				wizardId: wizardId,
 				id: id,
@@ -307,11 +310,12 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 
 						{formSchema && formData && (
 							<StandRedesignStateEditForm
+								key={serverData.currentStepId}
 								formSchema={formSchema}
 								notedFields={notedFields}
 								formData={formData}
 								setFormData={handleFormChange}
-								showErrors={currentStepHasBeenChanged || hasServerErrorMessages}
+								showErrors={showAllErrors || hasServerErrorMessages}
 								maxOptionsForRadioButtons={5}
 								stringConfig={stringConfig}
 							/>
