@@ -9,7 +9,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-## Palette override for {{name}}
+# Palette override for {{name}}
 
 The Palette for a newsletter is usually driven by the Pillar it appears under, but that can be overridden here.
 

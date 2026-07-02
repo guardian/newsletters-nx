@@ -58,7 +58,7 @@ export const promotionContentLayout: WizardStepLayout<DraftService> = {
 		},
 		next: {
 			buttonType: 'NEXT',
-			label: 'Save and Continue',
+			label: 'Save and continue',
 			stepToMoveTo: getNextStepId,
 		},
 	},

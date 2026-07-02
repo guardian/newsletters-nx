@@ -8,7 +8,10 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
-type PromotionContentLayout = WizardStepLayout<DraftService, typeof formSchemas.promotionContent.shape>
+type PromotionContentLayout = WizardStepLayout<
+	DraftService,
+	typeof formSchemas.promotionContent.shape
+>;
 
 const markdownTemplate = `
 # Sign up page for {{name}}.
@@ -17,7 +20,9 @@ const markdownTemplate = `
 `.trim();
 
 const staticSideMarkdown: PromotionContentLayout['staticSideMarkdown'] = [
-	{field: 'signUpHeadline', markdown: `
+	{
+		field: 'signUpHeadline',
+		markdown: `
 ## :icon{symbol="text_snippet"} Sign up page text
 
 Example image with highlighted sections:
@@ -27,15 +32,20 @@ Example image with highlighted sections:
 
 ![Headline and Description](https://i.guim.co.uk/img/uploads/2023/10/06/signUpImageWithBoarderTwo.png?quality=85&dpr=2&width=300&s=002979e840129ac072654cb66367d971)
 
-`},
-	{field: 'signUpEmbedDescription', markdown: `
+`,
+	},
+	{
+		field: 'signUpEmbedDescription',
+		markdown: `
 ## :icon{symbol="text_snippet"}  Sign up embed description
 
 This text is used on the in-article embeds and on the newsletters page:
 
 ![newsletter sign up](https://uploads.guim.co.uk/2026/06/16/Newsletter-Signup-Desktop.png)
-`}, {
-	field: 'illustrationCard',
+`,
+	},
+	{
+		field: 'illustrationCard',
 		markdown: `
 ## :icon{symbol="text_snippet"} Illustration for the newsletters page
 
@@ -44,9 +54,9 @@ s3 Uploader service. Once uploaded, copy the vanity url and paste it into the fi
 - When used on the theguardian.com or other platforms, images are optimised and resized by our image service to be displayed at the most approriate file size for the usage.
 - If the orginal image is too large for the image service to process, it will fail and the original version will be used on the page. This can harm the pages performance, especially for users on mobile devices.
 - Please make sure that the image you are uploading does not exceed the limits described in this documentation from our image service.
-`
-	}
-]
+`,
+	},
+];
 
 const staticMarkdown = markdownTemplate.replace(
 	regExPatterns.name,
@@ -72,7 +82,7 @@ export const promotionContentLayout: PromotionContentLayout = {
 		},
 		next: {
 			buttonType: 'NEXT',
-			label: 'Save and Continue',
+			label: 'Save and continue',
 			stepToMoveTo: getNextStepId,
 		},
 	},

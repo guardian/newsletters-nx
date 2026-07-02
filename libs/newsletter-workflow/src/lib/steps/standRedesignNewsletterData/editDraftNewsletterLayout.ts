@@ -19,7 +19,7 @@ You can edit the name of the newsletter.
 		},
 		next: {
 			buttonType: 'NEXT',
-			label: 'Save and Continue',
+			label: 'Save and continue',
 			stepToMoveTo: getNextStepId,
 		},
 	},
