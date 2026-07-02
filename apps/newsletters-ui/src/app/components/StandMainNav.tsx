@@ -62,12 +62,12 @@ export function StandMainNav() {
 	const { pathname } = useLocation();
 
 	const navLinks: NavLink[] = [
-		{ path: '/launched', label: 'Launched Newsletters' },
-		{ path: '/drafts', label: 'Draft Newsletters' },
-		{ path: '/templates', label: 'Email Templates' },
-		{ path: '/layouts', label: 'Newsletter Layouts' },
+		{ path: '/launched', label: 'Launched newsletters' },
+		{ path: '/drafts', label: 'Draft newsletters' },
+		{ path: '/templates', label: 'Email templates' },
+		{ path: '/layouts', label: 'Newsletter layouts' },
 		permissions?.writeToDrafts
-			? { path: '/drafts/newsletter-data', label: 'Create New Newsletter' }
+			? { path: '/drafts/newsletter-data', label: 'Create new newsletter' }
 			: null,
 	].filter((link): link is NavLink => link !== null);
 

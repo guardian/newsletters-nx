@@ -18,14 +18,16 @@ async function completeNameStep(page: Page, name: string) {
 	await expect(nameInput).toBeVisible();
 
 	await nameInput.fill(name);
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeProductionDetailsStep(
 	page: Page,
 	category: 'article-based' | 'fronts-based' | 'manual-send' | 'other',
 ) {
-	const categoryGroup = page.getByRole('radiogroup', { name: /type of newsletter/i });
+	const categoryGroup = page.getByRole('radiogroup', {
+		name: /type of newsletter/i,
+	});
 	await expect(categoryGroup).toBeVisible();
 	await expect(
 		categoryGroup.getByRole('radio', { name: 'article-based' }),
@@ -58,8 +60,7 @@ async function completeProductionDetailsStep(
 
 	await articleLocationGroup.getByRole('radio', { name: 'Email only' }).click();
 
-	const frequencyCombobox = page
-		.getByTestId('frequency-select')
+	const frequencyCombobox = page.getByTestId('frequency-select');
 	await expect(frequencyCombobox).toBeVisible();
 
 	await categoryGroup
@@ -67,7 +68,7 @@ async function completeProductionDetailsStep(
 		.click();
 	await frequencyCombobox.click();
 	await page.getByRole('option', { name: 'Weekly', exact: true }).click();
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeDatesStep(page: Page) {
@@ -96,7 +97,7 @@ async function completeDatesStep(page: Page) {
 	await thrasherDateInput.click();
 	await thrasherDateInput.pressSequentially(futureDate);
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeTargetingStep(page: Page) {
@@ -129,18 +130,16 @@ async function completeTargetingStep(page: Page) {
 	await expect(regionFocusGroup).toBeVisible();
 	await regionFocusGroup.getByRole('radio', { name: 'UK' }).click();
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeTagsStep(page: Page) {
 	await expect(page.getByLabel(/^Add the series tag$/)).toBeVisible();
 	await expect(page.getByLabel('add the series tag description')).toBeVisible();
 	await expect(page.getByLabel('Campaign tag')).toBeVisible();
-	await expect(
-		page.getByLabel('Campaign description'),
-	).toBeVisible();
+	await expect(page.getByLabel('Campaign description')).toBeVisible();
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeThrasherStep(page: Page) {
@@ -177,7 +176,7 @@ async function completeThrasherStep(page: Page) {
 	await expect(multiThrashersAddButton).toBeVisible();
 	await expect(multiThrashersAddButton).toBeEnabled();
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completePromotionContentStep(page: Page, name: string) {
@@ -202,7 +201,7 @@ async function completePromotionContentStep(page: Page, name: string) {
 		.getByLabel('Highlight card message')
 		.fill(`Highlight card for ${name}`);
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 // ─── Tests ───
@@ -292,7 +291,7 @@ test.describe('Create draft newsletter journey', () => {
 		await completeIntroStep(page);
 
 		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
-		await page.getByRole('button', { name: 'Save and Continue' }).click();
+		await page.getByRole('button', { name: 'Save and continue' }).click();
 
 		await expect(page.getByRole('alert')).toBeVisible();
 		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();

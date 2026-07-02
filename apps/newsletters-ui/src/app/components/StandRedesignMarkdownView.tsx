@@ -1,5 +1,9 @@
 import { css } from '@emotion/react';
-import { semanticSpacing, semanticTypography } from '@guardian/stand';
+import {
+	semanticColors,
+	semanticSpacing,
+	semanticTypography,
+} from '@guardian/stand';
 import type { IconProps } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import { Link } from '@guardian/stand/Link';
@@ -44,7 +48,12 @@ const remarkLinkDirective: Plugin = () => (tree) => {
 interface MarkdownViewProps {
 	markdown: string;
 	bottomSpacing?: keyof typeof semanticSpacing;
-	componentTypographyOverrides?: Partial<Record<'H1' | 'H2' | 'H3', TypographyProps['variant']>>;
+	componentTypographyOverrides?: Partial<
+		Record<
+			'H1' | 'H2' | 'H3' | 'P' | 'STRONG' | 'LI' | 'LI_STRONG',
+			TypographyProps['variant']
+		>
+	>;
 }
 
 const isExternal = (href?: string) => !href?.startsWith('/');
@@ -64,7 +73,10 @@ const LinkWithNewTabIfExternal = (props: {
 	);
 };
 
-const H1 = (props: {typographyVariant?: TypographyProps['variant']; children?: ReactNode}) => {
+const H1 = (props: {
+	typographyVariant?: TypographyProps['variant'];
+	children?: ReactNode;
+}) => {
 	return (
 		<Typography
 			element="h1"
@@ -80,7 +92,10 @@ const H1 = (props: {typographyVariant?: TypographyProps['variant']; children?: R
 	);
 };
 
-const H2 = (props: {typographyVariant?: TypographyProps['variant']; children?: ReactNode}) => {
+const H2 = (props: {
+	typographyVariant?: TypographyProps['variant'];
+	children?: ReactNode;
+}) => {
 	return (
 		<Typography
 			element="h2"
@@ -95,7 +110,10 @@ const H2 = (props: {typographyVariant?: TypographyProps['variant']; children?: R
 		</Typography>
 	);
 };
-const H3 = (props: {typographyVariant?: TypographyProps['variant']; children?: ReactNode }) => {
+const H3 = (props: {
+	typographyVariant?: TypographyProps['variant'];
+	children?: ReactNode;
+}) => {
 	return (
 		<Typography
 			element="h3"
@@ -110,11 +128,14 @@ const H3 = (props: {typographyVariant?: TypographyProps['variant']; children?: R
 		</Typography>
 	);
 };
-const TypographyP = (props: { children?: ReactNode }) => {
+const TypographyP = (props: {
+	typographyVariant?: TypographyProps['variant'];
+	children?: ReactNode;
+}) => {
 	return (
 		<Typography
 			element="p"
-			variant="bodySm"
+			variant={props.typographyVariant ?? 'bodyMd'}
 			cssOverrides={css`
 				margin-bottom: ${semanticSpacing.stackMd};
 			`}
@@ -128,9 +149,11 @@ const UlMarginOverride = (props: { children?: ReactNode }) => {
 	return (
 		<ul
 			css={css`
-				${convertTypographyToEmotionStringStyle(semanticTypography.bodySm)}
 				margin-bottom: ${semanticSpacing.stackXl};
 				padding-left: 1.5em;
+				:last-child {
+					margin-bottom: 0;
+				}
 				p {
 					margin-bottom: ${semanticSpacing.stackSm};
 				}
@@ -140,11 +163,39 @@ const UlMarginOverride = (props: { children?: ReactNode }) => {
 		</ul>
 	);
 };
-const TypographyStrong = (props: { children?: ReactNode }) => {
+
+const TypographyLi = (props: {
+	typographyVariant?: TypographyProps['variant'];
+	typographyStrongVariant?: TypographyProps['variant'];
+	children?: ReactNode;
+}) => {
+	return (
+		<li
+			css={css`
+				${convertTypographyToEmotionStringStyle(
+					semanticTypography[props.typographyVariant ?? 'bodyMd'],
+				)}
+
+				b {
+					${convertTypographyToEmotionStringStyle(
+						semanticTypography[props.typographyStrongVariant ?? 'bodyBoldMd'],
+					)}
+				}
+			`}
+		>
+			{props.children}
+		</li>
+	);
+};
+
+const TypographyStrong = (props: {
+	typographyVariant?: TypographyProps['variant'];
+	children?: ReactNode;
+}) => {
 	return (
 		<Typography
-			element="span"
-			variant="bodyBoldSm"
+			element="b"
+			variant={props.typographyVariant ?? 'bodyBoldMd'}
 			cssOverrides={css`
 				margin-bottom: ${semanticSpacing.stackXl};
 			`}
@@ -168,7 +219,9 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 					height: auto;
 					display: block;
 				}
-				margin-bottom: ${bottomSpacing ? semanticSpacing[bottomSpacing]: undefined };
+				margin-bottom: ${bottomSpacing
+					? semanticSpacing[bottomSpacing]
+					: undefined};
 			`}
 		>
 			<ReactMarkdown
@@ -180,12 +233,44 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 				components={
 					{
 						a: LinkWithNewTabIfExternal,
-						h1: ({ children }) => <H1 typographyVariant={componentTypographyOverrides?.H1}>{children}</H1>,
-						h2: ({ children }) => <H2 typographyVariant={componentTypographyOverrides?.H2}>{children}</H2>,
-						h3: ({ children }) => <H3 typographyVariant={componentTypographyOverrides?.H3}>{children}</H3>,
-						p: TypographyP,
+						h1: ({ children }) => (
+							<H1 typographyVariant={componentTypographyOverrides?.H1}>
+								{children}
+							</H1>
+						),
+						h2: ({ children }) => (
+							<H2 typographyVariant={componentTypographyOverrides?.H2}>
+								{children}
+							</H2>
+						),
+						h3: ({ children }) => (
+							<H3 typographyVariant={componentTypographyOverrides?.H3}>
+								{children}
+							</H3>
+						),
+						p: ({ children }) => (
+							<TypographyP typographyVariant={componentTypographyOverrides?.P}>
+								{children}
+							</TypographyP>
+						),
 						ul: UlMarginOverride,
-						strong: TypographyStrong,
+						li: ({ children }) => (
+							<TypographyLi
+								typographyVariant={componentTypographyOverrides?.LI}
+								typographyStrongVariant={
+									componentTypographyOverrides?.LI_STRONG
+								}
+							>
+								{children}
+							</TypographyLi>
+						),
+						strong: ({ children }) => (
+							<TypographyStrong
+								typographyVariant={componentTypographyOverrides?.STRONG}
+							>
+								{children}
+							</TypographyStrong>
+						),
 						icon: ({ node }: { node?: Element }) => (
 							<Icon
 								cssOverrides={css`
@@ -201,6 +286,10 @@ export const StandRedesignMarkdownView: React.FC<MarkdownViewProps> = ({
 								typography="bodySm"
 								href={node?.properties.href as string}
 								target={node?.properties.target as string | undefined}
+								cssOverrides={css`
+									/* this needs to be fixed in stand */
+									color: ${semanticColors.fill.link};
+								`}
 							>
 								{children}
 							</Link>
