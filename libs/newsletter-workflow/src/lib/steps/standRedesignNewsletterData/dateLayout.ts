@@ -8,7 +8,10 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from './formSchemas';
 
-type DateLayout = WizardStepLayout<DraftService,  typeof formSchemas.promotionDates.shape>
+type DateLayout = WizardStepLayout<
+	DraftService,
+	typeof formSchemas.promotionDates.shape
+>;
 
 const markdownTemplate = `
 # Launch / Promotion details
@@ -20,13 +23,18 @@ const staticMarkdown = markdownTemplate.replace(
 );
 
 const sideMarkdownTemplates: DateLayout['staticSideMarkdown'] = [
-	{field: 'launchDate', markdown: `
+	{
+		field: 'launchDate',
+		markdown: `
 ## :icon{symbol="text_snippet"} Launch
 
 When will the first send of **{{name}}** be? Please specify date. This needs to be in the UK timezone for the system.
 
 We will automatically add a testing period for the newsletter of 1 week before the first send so you can try out the template in Composer. Please also mark if the newsletter should be private if it's confidential.
-`}, { field: `signUpPageDate`,
+`,
+	},
+	{
+		field: `signUpPageDate`,
 		markdown: `
 ## :icon{symbol="text_snippet"} Promotion
 
@@ -36,15 +44,16 @@ If so:
 - What date will the sign up page go live?
 
 - What date will the thrashers go live?
-` }
-]
+`,
+	},
+];
 
-const staticSideMarkdown = sideMarkdownTemplates.map(({field, markdown}) => {
-	return {field, markdown: markdown.replace(
-	regExPatterns.name,
-	'the newsletter',
-)}})
-
+const staticSideMarkdown = sideMarkdownTemplates.map(({ field, markdown }) => {
+	return {
+		field,
+		markdown: markdown.replace(regExPatterns.name, 'the newsletter'),
+	};
+});
 
 export const dateLayout: WizardStepLayout<DraftService> = {
 	staticMarkdown,
@@ -62,12 +71,9 @@ export const dateLayout: WizardStepLayout<DraftService> = {
 			return staticSideMarkdown;
 		}
 		const [name = 'NAME'] = getStringValuesFromRecord(responseData, ['name']);
-		return sideMarkdownTemplates.map(({field, markdown}) => {
-			return {field, markdown: markdown.replace(
-					regExPatterns.name,
-					name,
-				)}
-		})
+		return sideMarkdownTemplates.map(({ field, markdown }) => {
+			return { field, markdown: markdown.replace(regExPatterns.name, name) };
+		});
 	},
 	buttons: {
 		back: {
@@ -77,7 +83,7 @@ export const dateLayout: WizardStepLayout<DraftService> = {
 		},
 		finish: {
 			buttonType: 'NEXT',
-			label: 'Save and Continue',
+			label: 'Save and continue',
 			stepToMoveTo: getNextStepId,
 		},
 	},

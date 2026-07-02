@@ -82,7 +82,7 @@ export const targetingLayout: WizardStepLayout<DraftService> = {
 		},
 		finish: {
 			buttonType: 'NEXT',
-			label: 'Save and Continue',
+			label: 'Save and continue',
 			stepToMoveTo: getNextStepId,
 		},
 	},

@@ -9,7 +9,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-## Rendering Podcast sections in {{name}}
+# Rendering Podcast sections in {{name}}
 
 You may want to display some sections in **{{name}}** as Podcast sections.
 

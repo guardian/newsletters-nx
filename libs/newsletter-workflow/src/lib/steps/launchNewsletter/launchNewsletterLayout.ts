@@ -5,7 +5,7 @@ import { getStringValuesFromRecord } from '../../getValuesFromRecord';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-## Launch {{name}}
+# Launch {{name}}
 
 This wizard will guide you through the process of putting your draft newsletter, **{{name}}** live.
 

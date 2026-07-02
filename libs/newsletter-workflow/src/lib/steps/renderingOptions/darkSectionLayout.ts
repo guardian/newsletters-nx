@@ -9,7 +9,7 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-## Rendering Dark sections in {{name}}
+# Rendering Dark sections in {{name}}
 
 You may want to display some elements in {{name}} as Dark sections.
 

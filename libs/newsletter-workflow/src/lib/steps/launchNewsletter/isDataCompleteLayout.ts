@@ -7,7 +7,7 @@ import { appendListToMarkdown, isStringArray } from '../../markdown-util';
 import { regExPatterns } from '../../regExPatterns';
 
 const markdownTemplate = `
-## Is {{name}} ready to launch?
+# Is {{name}} ready to launch?
 
 {{answer}}
 

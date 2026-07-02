@@ -306,8 +306,6 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 					>
 						<StandRedesignMarkdownView
 							markdown={serverData.markdownToDisplay ?? ''}
-							bottomSpacing={'stackXl'}
-							componentTypographyOverrides={{ H2: 'bodyMd' }}
 						/>
 
 						{formSchema && formData && (
@@ -326,7 +324,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 						{serverData.errorMessage && (
 							<div
 								css={css`
-									margin-bottom: ${semanticSpacing.stackMd};
+									margin-top: ${semanticSpacing.stackMd};
 								`}
 							>
 								<FailureAlert
@@ -341,6 +339,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 								display: flex;
 								flex-direction: row;
 								gap: ${semanticSpacing.stackMd};
+								margin-top: ${semanticSpacing.stackXl};
 							`}
 						>
 							{Object.entries(serverData.buttons ?? {}).map(([key, button]) => (
@@ -405,7 +404,15 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 										`}
 										key={field ?? `markdown-${index}`}
 									>
-										<StandRedesignMarkdownView markdown={markdown} />
+										<StandRedesignMarkdownView
+											markdown={markdown}
+											componentTypographyOverrides={{
+												P: 'bodySm',
+												STRONG: 'bodyBoldSm',
+												LI: 'bodySm',
+												LI_STRONG: 'bodyBoldSm',
+											}}
+										/>
 									</div>
 								),
 							)}

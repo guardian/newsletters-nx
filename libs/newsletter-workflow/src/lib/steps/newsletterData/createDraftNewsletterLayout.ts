@@ -18,7 +18,7 @@ The first step is to enter the name of your newsletter. For example,  **Down to 
 		},
 		next: {
 			buttonType: 'NEXT',
-			label: 'Save and Continue',
+			label: 'Save and continue',
 			stepToMoveTo: getNextStepId,
 		},
 	},

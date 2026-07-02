@@ -9,22 +9,22 @@ import { regExPatterns } from '../../regExPatterns';
 import { formSchemas } from '../newsletterData/formSchemas';
 
 const markdownTemplate = `
-## Specify the header setup for {{name}}
+# Specify the header setup for {{name}}
 
-### Main Banner
+## Main Banner
 
 The main banner is the image that appears at the top of the newsletter.
 To specify a specify a banner, upload the image via the [s3 Uploader service](https://s3-uploader.gutools.co.uk/).
 
 Once uploaded, copy the **vanity url** and paste it into the field below.
 
-### Date
+## Date
 
 Should the publication date display in each edition?
 
 This is typically shown for daily emails, but not for weekly ones.
 
-### Standfirst
+## Standfirst
 
 Would you like this to be displayed?
 

@@ -26,7 +26,7 @@ async function completeNameFrequencyStep(
 	await expect(frequencyRadioGroup).toBeVisible();
 	await frequencyRadioGroup.getByText(frequency).click();
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeProductionDetailsStep(
@@ -58,7 +58,7 @@ async function completeProductionDetailsStep(
 
 	await articleLocationGroup.getByText('Email only').click();
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeDatesStep(page: Page) {
@@ -85,7 +85,7 @@ async function completeDatesStep(page: Page) {
 	await signUpDateInput.getByRole('spinbutton').first().click();
 	await signUpDateInput.pressSequentially(futureDate);
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeTargetingStep(page: Page) {
@@ -115,7 +115,7 @@ async function completeTargetingStep(page: Page) {
 	await groupSelect.click();
 	await page.getByRole('option', { name: 'News in depth' }).click();
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeTagsStep(page: Page) {
@@ -130,7 +130,7 @@ async function completeTagsStep(page: Page) {
 	await expect(page.getByLabel('Campaign tag').first()).toBeVisible();
 	await expect(page.getByLabel('Campaign description').first()).toBeVisible();
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completePromotionContentStep(page: Page, name: string) {
@@ -159,7 +159,7 @@ async function completePromotionContentStep(page: Page, name: string) {
 		.getByLabel('Highlight card message')
 		.fill(`Highlight card for ${name}`);
 
-	await page.getByRole('button', { name: 'Save and Continue' }).click();
+	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
 
 async function completeReviewPage(page: Page) {
@@ -257,7 +257,7 @@ test.describe('Create draft newsletter journey', () => {
 		await completeIntroStep(page);
 
 		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
-		await page.getByRole('button', { name: 'Save and Continue' }).click();
+		await page.getByRole('button', { name: 'Save and continue' }).click();
 
 		await expect(page.getByRole('alert')).toBeVisible();
 		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
