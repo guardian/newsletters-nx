@@ -73,7 +73,7 @@ async function completeProductionDetailsStep(
 
 async function completeDatesStep(page: Page) {
 	const launchDateInput = page
-		.getByRole('group', { name: 'Launch date' })
+		.getByRole('group', { name: 'Launch date', exact: true })
 		.first();
 	const signUpDateInput = page
 		.getByRole('group', { name: 'Sign up page date' })
@@ -209,13 +209,9 @@ async function completePromotionContentStep(page: Page, name: string) {
 test.describe('Create draft newsletter journey', () => {
 	let draftName: string;
 
-	test.beforeAll(async ({ request }) => {
-		await cleanupStaleTestDrafts(request, DRAFT_NAME_PREFIX);
-	});
-
-	// eslint-disable-next-line no-empty-pattern -- stuck between 'no-empty-pattern' (eslint) and 'First argument must use the object destructuring pattern' (playwright)
-	test.beforeEach(({}, testInfo) => {
+	test.beforeEach(async ({ request }, testInfo) => {
 		draftName = `${DRAFT_NAME_PREFIX} - ${testInfo.title}`;
+		await cleanupStaleTestDrafts(request, draftName);
 	});
 
 	test.afterEach(async ({ request }) => {
@@ -301,13 +297,9 @@ test.describe('Create draft newsletter journey', () => {
 test.describe('Wizard step nav skip functionality', () => {
 	let draftName: string;
 
-	test.beforeAll(async ({ request }) => {
-		await cleanupStaleTestDrafts(request, DRAFT_NAME_PREFIX);
-	});
-
-	// eslint-disable-next-line no-empty-pattern -- stuck between 'no-empty-pattern' (eslint) and 'First argument must use the object destructuring pattern' (playwright)
-	test.beforeEach(({}, testInfo) => {
+	test.beforeEach(async ({ request }, testInfo) => {
 		draftName = `${DRAFT_NAME_PREFIX} - ${testInfo.title}`;
+		await cleanupStaleTestDrafts(request, draftName);
 	});
 
 	test.afterEach(async ({ request }) => {
