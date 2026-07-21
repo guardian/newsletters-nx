@@ -58,6 +58,22 @@ jobs:
       - name: Run Playwright E2E tests
         run: npm run test:e2e
 
+      # Sometimes the 'Run Playwright E2E tests' step may not fail even if some tests fail, so we double check by reading the summary report.
+      - name: Double check Playwright E2E tests
+        env:
+          PLAYWRIGHT_SUMMARY_REPORT_PATH: dist/.playwright/apps/newsletters-e2e/playwright-report/summary.txt
+          PLAYWRIGHT_SUMMARY_SUCCESS_VALUE: passed
+        run: |
+          # Fail if the playwright summary report does not indicate success.
+          # This is a workaround for an intermittent issue where the 'Run Playwright E2E tests' step may not fail even if some tests fail.
+          if  [ -f "$PLAYWRIGHT_SUMMARY_REPORT_PATH" ] && [ "$PLAYWRIGHT_SUMMARY_SUCCESS_VALUE" = "$(cat $PLAYWRIGHT_SUMMARY_REPORT_PATH)" ]; then
+            echo "E2E tests succeeded."
+            exit 0
+          else
+            echo "E2E tests failed with status '$(cat $PLAYWRIGHT_SUMMARY_REPORT_PATH)'. Check the Playwright report for details."
+            exit 1
+          fi
+
       # Stop API server after tests
       - name: Stop API Server
         if: always()
