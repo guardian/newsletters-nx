@@ -60,6 +60,7 @@ jobs:
 
       # Sometimes the 'Run Playwright E2E tests' step may not fail even if some tests fail, so we double check by reading the summary report.
       - name: Double check Playwright E2E tests
+        if: always()
         env:
           PLAYWRIGHT_SUMMARY_REPORT_PATH: dist/.playwright/apps/newsletters-e2e/playwright-report/summary.txt
           PLAYWRIGHT_SUMMARY_SUCCESS_VALUE: passed
