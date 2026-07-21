@@ -67,7 +67,7 @@ async function completeDatesStep(page: Page) {
 	).toBeVisible();
 
 	const launchDateInput = page
-		.getByRole('group', { name: 'Launch date' })
+		.getByRole('group', { name: 'This breaks the tests' })
 		.first();
 	const signUpDateInput = page
 		.getByRole('group', { name: 'Sign up page date' })
