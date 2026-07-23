@@ -22,6 +22,14 @@ export default defineConfig({
 			},
 		],
 		['list'],
+		[
+			'./reporters/summary-reporter.ts',
+			{
+				outputFile: isCI
+					? '../../dist/.playwright/apps/newsletters-e2e/playwright-report/summary.txt'
+					: './playwright-report/summary.txt',
+			},
+		],
 	],
 
 	outputDir: isCI
