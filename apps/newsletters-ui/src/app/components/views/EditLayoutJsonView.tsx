@@ -1,11 +1,11 @@
 import { Typography } from '@mui/material';
-import { useState } from 'react';
-import { useLoaderData, useLocation } from 'react-router-dom';
 import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { layoutSchema } from '@newsletters-nx/newsletters-data-client';
+import { useState } from 'react';
+import { useLoaderData, useLocation } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { ContentWrapper } from '../../ContentWrapper';
 import { usePermissions } from '../../hooks/user-hooks';

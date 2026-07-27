@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
-import { useLoaderData } from 'react-router-dom';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { useLoaderData } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { NewslettersTable } from '../NewslettersTable';
 

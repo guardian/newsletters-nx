@@ -1,8 +1,8 @@
 import { Alert, Link, Snackbar, Typography } from '@mui/material';
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
 import { FrequencySelectInput } from './SchemaForm/FrequencySelectInput';

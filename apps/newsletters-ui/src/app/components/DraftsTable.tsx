@@ -1,11 +1,11 @@
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Button } from '@mui/material';
+import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getEditDraftWizardLinks } from '../get-draft-edit-wizard-links';
 import { usePermissions } from '../hooks/user-hooks';
 import { useUrlSyncedTableState } from '../hooks/useUrlSyncedTableState';

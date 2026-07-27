@@ -1,6 +1,6 @@
-import type { ZodObject, ZodRawShape } from 'zod';
 import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
+import type { ZodObject, ZodRawShape } from 'zod';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { StandRedesignSchemaForm } from '.';
 

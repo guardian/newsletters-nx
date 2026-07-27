@@ -12,7 +12,6 @@ import {
 	Typography,
 } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useEffect, useMemo, useState } from 'react';
 import type {
 	FormDataRecord,
 	NewsletterData,
@@ -24,6 +23,7 @@ import {
 	newsletterDataSchema,
 	renderingOptionsSchema,
 } from '@newsletters-nx/newsletters-data-client';
+import { useEffect, useMemo, useState } from 'react';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { requestNotification } from '../api-requests/request-notification';
 import { StateEditForm } from './StateEditForm';

@@ -1,5 +1,4 @@
 import { Alert, Badge, Box, Grid, Stack, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	brazeSubscribeEventName,
@@ -8,6 +7,7 @@ import {
 	embedIframeCode,
 	getPropertyDescription,
 } from '@newsletters-nx/newsletters-data-client';
+import { useEffect, useState } from 'react';
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { DetailAccordian } from './DetailAccordian';

@@ -1,5 +1,5 @@
-import type { Express } from 'express';
 import type { EmailRenderingOutput } from '@newsletters-nx/newsletters-data-client';
+import type { Express } from 'express';
 import { getEmailRenderingHost } from '../../apiDeploymentSettings';
 import { newsletterStore } from '../../services/storage';
 import {

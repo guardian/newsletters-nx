@@ -1,3 +1,5 @@
+import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
+import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import type { FormEvent, FunctionComponent } from 'react';
 import type { ZodType } from 'zod';
 import {
@@ -12,8 +14,6 @@ import {
 	ZodString,
 	ZodURL,
 } from 'zod';
-import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
-import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import {
 	isPrimitiveRecord,
 	isPrimitiveRecordArray,

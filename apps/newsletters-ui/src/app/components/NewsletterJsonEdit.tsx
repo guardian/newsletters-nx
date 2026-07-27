@@ -1,7 +1,7 @@
 import { Alert, Snackbar, Typography } from '@mui/material';
-import { useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
+import { useState } from 'react';
 import { replaceNewsletter } from '../api-requests/replace-newsletter';
 import { usePermissions } from '../hooks/user-hooks';
 import { JsonEditor } from './JsonEditor';

@@ -5,13 +5,13 @@ import {
 	Stepper,
 	Typography,
 } from '@mui/material';
-import { useState } from 'react';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
 import type {
 	StepListing,
 	StepperConfig,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { useState } from 'react';
 
 interface Props {
 	currentStepId?: string;

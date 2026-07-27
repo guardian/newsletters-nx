@@ -13,16 +13,16 @@ import {
 	Tooltip,
 	Typography,
 } from '@mui/material';
+import type {
+	NewsletterData,
+	NewsletterValueGenerator,
+} from '@newsletters-nx/newsletters-data-client';
 import hljs from 'highlight.js/lib/core';
 import 'highlight.js/styles/github.css';
 import django from 'highlight.js/lib/languages/django';
 import javascript from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
 import { useState } from 'react';
-import type {
-	NewsletterData,
-	NewsletterValueGenerator,
-} from '@newsletters-nx/newsletters-data-client';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('django', django);

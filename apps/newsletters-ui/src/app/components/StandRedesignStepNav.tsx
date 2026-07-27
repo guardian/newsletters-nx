@@ -4,14 +4,14 @@ import type { IconProps } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
 import { from } from '@guardian/stand/utils';
-import { useId, useState } from 'react';
-import { Button } from 'react-aria-components';
 import { resolveStepStatus, StepStatus } from '@newsletters-nx/state-machine';
 import type {
 	StepListing,
 	StepperConfig,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
+import { useId, useState } from 'react';
+import { Button } from 'react-aria-components';
 
 interface Props {
 	currentStepId?: string;

@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Button, Container, Stack, Typography } from '@mui/material';
-import { useLoaderData } from 'react-router-dom';
 import { isDraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { useLoaderData } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { usePermissions } from '../../hooks/user-hooks';
 import { DraftsTable } from '../DraftsTable';

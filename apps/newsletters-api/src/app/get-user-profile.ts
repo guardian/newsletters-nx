@@ -1,5 +1,5 @@
-import type { Request } from 'express';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
+import type { Request } from 'express';
 import { getTestJwtProfileDataIfUsing } from '../apiDeploymentSettings';
 import { getDeveloperProfile } from '../services/permissions/developer-profile-service';
 

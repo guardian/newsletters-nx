@@ -1,9 +1,9 @@
 import { ButtonGroup, Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
 import type {
 	EmailRenderingOutput,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchApiData } from '../api-requests/fetch-api-data';
 import { NavigateButton } from './NavigateButton';
 import { TemplatePreview } from './TemplatePreview';
