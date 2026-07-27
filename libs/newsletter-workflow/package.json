@@ -1,5 +1,5 @@
 {
-	"name": "newsletters-nx/newsletter-workflow",
+	"name": "@newsletters-nx/newsletter-workflow",
 	"version": "0.0.0",
 	"license": "MIT",
 	"scripts": {
