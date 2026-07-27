@@ -5,16 +5,16 @@
 		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
 			"parserOptions": {
-				"project": ["libs/newsletter-workflow/tsconfig.*?.json"]
+				"project": ["tsconfig.lib.json"]
 			},
 			"rules": {}
 		},
 		{
-			"files": ["*.ts", "*.tsx"],
-			"rules": {}
-		},
-		{
-			"files": ["*.js", "*.jsx"],
+			"files": ["*.spec.ts", "*.spec.tsx"],
+			"parserOptions": {
+				"project": ["tsconfig.spec.json"],
+				"jest": true
+			},
 			"rules": {}
 		}
 	]

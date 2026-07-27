@@ -1,31 +1,9 @@
 {
 	"root": true,
-	"plugins": ["@nx"],
 	"overrides": [
 		{
-			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-			"rules": {
-				"@nx/enforce-module-boundaries": [
-					"error",
-					{
-						"enforceBuildableLibDependency": true,
-						"allow": [],
-						"depConstraints": [
-							{
-								"sourceTag": "*",
-								"onlyDependOnLibsWithTags": ["*"]
-							}
-						]
-					}
-				]
-			}
-		},
-		{
 			"files": ["*.ts", "*.tsx"],
-			"extends": [
-				"plugin:@nx/typescript",
-				"@guardian/eslint-config-typescript"
-			],
+			"extends": ["@guardian/eslint-config-typescript"],
 			"settings": {
 				"import/resolver": {
 					"typescript": {
@@ -36,7 +14,7 @@
 		},
 		{
 			"files": ["*.js", "*.jsx"],
-			"extends": ["plugin:@nx/javascript", "@guardian/eslint-config"]
+			"extends": ["@guardian/eslint-config"]
 		},
 		{
 			"files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],

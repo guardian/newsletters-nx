@@ -3,18 +3,18 @@
 	"ignorePatterns": ["!**/*"],
 	"overrides": [
 		{
-			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-			"rules": {}
-		},
-		{
 			"files": ["*.ts", "*.tsx"],
 			"rules": {},
 			"parserOptions": {
-				"project": ["libs/state-machine/tsconfig.*?.json"]
+				"project": ["tsconfig.lib.json"]
 			}
 		},
 		{
-			"files": ["*.js", "*.jsx"],
+			"files": ["*.spec.ts", "*.spec.tsx"],
+			"parserOptions": {
+				"project": ["tsconfig.spec.json"],
+				"jest": true
+			},
 			"rules": {}
 		}
 	]

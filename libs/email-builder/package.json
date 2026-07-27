@@ -1,0 +1,9 @@
+{
+	"name": "newsletters-nx/email-builder",
+	"version": "0.0.0",
+	"license": "MIT",
+	"scripts": {
+		"lint": "eslint -c ./.eslintrc.json ./src",
+		"test": "jest --config=./jest.config.ts"
+	}
+}

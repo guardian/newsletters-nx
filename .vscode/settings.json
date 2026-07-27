@@ -11,6 +11,16 @@
 	// so we need to disable the new flat config support
 	// to allow the ide to find the config file and work properly
 	"eslint.useFlatConfig": false,
+	"eslint.workingDirectories": [
+		"./apps/newsletters-api",
+		"./apps/newsletters-e2e",
+		"./apps/newsletters-ui",
+		"./libs/email-builder",
+		"./libs/newsletter-workflow",
+		"./libs/newsletters-data-client",
+		"./libs/state-machine",
+		"./libs/util"
+	],
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit"
 	},

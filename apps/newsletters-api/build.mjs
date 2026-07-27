@@ -1,17 +1,27 @@
 import { build } from 'esbuild';
 import { cpSync, mkdirSync } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-mkdirSync('dist/apps/newsletters-api', { recursive: true });
+const WORKSPACE_ROOT = path.join(
+	path.dirname(fileURLToPath(import.meta.url)),
+	'../..',
+);
+const DIST_ROOT = path.join(WORKSPACE_ROOT, 'dist/apps/newsletters-api');
+
+mkdirSync(DIST_ROOT, {
+	recursive: true,
+});
 
 await build({
-	entryPoints: ['apps/newsletters-api/src/main.ts'],
+	entryPoints: ['src/main.ts'],
 	bundle: true,
 	platform: 'node',
 	format: 'cjs',
-	outfile: 'dist/apps/newsletters-api/index.cjs',
-	tsconfig: 'apps/newsletters-api/tsconfig.app.json',
+	outfile: path.join(DIST_ROOT, 'index.cjs'),
+	tsconfig: 'tsconfig.app.json',
 });
 
-cpSync('apps/newsletters-api/src/assets', 'dist/apps/newsletters-api/assets', {
+cpSync('src/assets', path.join(DIST_ROOT, 'assets'), {
 	recursive: true,
 });

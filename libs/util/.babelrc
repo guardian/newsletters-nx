@@ -1,7 +1,7 @@
 {
 	"presets": [
 		[
-			"@nx/js/babel",
+			"@babel/preset-env",
 			{
 				"useBuiltIns": "usage"
 			}
