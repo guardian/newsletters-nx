@@ -138,5 +138,6 @@
 		"flatted@^3": "3.4.2",
 		"@typescript-eslint/eslint-plugin": "$@typescript-eslint/eslint-plugin",
 		"@typescript-eslint/parser": "$@typescript-eslint/parser"
-	}
+	},
+	"packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72"
 }
