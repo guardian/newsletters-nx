@@ -6,3 +6,4 @@ allowBuilds:
   nx: true
   unrs-resolver: true
 engineStrict: true
+ignoreWorkspaceRootCheck: true
