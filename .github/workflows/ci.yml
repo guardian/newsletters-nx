@@ -33,7 +33,7 @@ jobs:
         run: pnpm ci
 
       - name: Install Playwright Browsers
-        run: pnx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Build UI for E2e tests
         run: pnpm --filter=@newsletters-nx/newsletters-ui build
