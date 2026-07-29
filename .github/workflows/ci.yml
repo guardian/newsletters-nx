@@ -106,6 +106,8 @@ jobs:
             dist/.playwright/apps/newsletters-e2e/test-results/
             apps/newsletters-e2e/test-results/
           retention-days: 7
+          # We want to upload '.last-run.json'
+          include-hidden-files: true
 
   # Build, lint, and unit test job
   build-and-test:
