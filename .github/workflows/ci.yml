@@ -118,6 +118,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: pnpm/action-setup@v6
+
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
@@ -154,6 +156,8 @@ jobs:
         with:
           role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
           aws-region: eu-west-1
+
+      - uses: pnpm/action-setup@v6
 
       - uses: actions/setup-node@v3
         with:
