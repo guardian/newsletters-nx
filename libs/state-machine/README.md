@@ -17,8 +17,16 @@ You can edit a [live version of the diagram here](https://mermaid.live/edit#pako
 
 ## Running unit tests
 
-Run `nx test state-machine` to execute the unit tests via [Jest](https://jestjs.io).
+From the workspace root, i.e: `/newsletters-nx/`:
+
+```
+pnpm --filter=@newsletters-nx/state-machine test
+```
 
 ## Running lint
 
-Run `nx lint state-machine` to execute the lint via [ESLint](https://eslint.org/).
+From the workspace root, i.e: `/newsletters-nx/`:
+
+```
+pnpm --filter=@newsletters-nx/state-machine lint
+```
