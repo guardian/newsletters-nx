@@ -3,6 +3,3 @@
 /dist
 /coverage
 /cdk/cdk.out
-
-/.nx/cache
-/.nx/workspace-data

@@ -3,7 +3,6 @@ packages:
   - 'libs/*'
 allowBuilds:
   esbuild: true
-  nx: true
   unrs-resolver: true
 engineStrict: true
 ignoreWorkspaceRootCheck: true
