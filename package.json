@@ -12,7 +12,6 @@
 		"build": "pnpm -r build",
 		"test": "pnpm -r --parallel --aggregate-output test",
 		"prepare": "husky",
-		"generate-newsletters": "./tools/scripts/generate-newsletters.sh",
 		"postinstall": "npm install --prefix cdk",
 		"bundle:api": "pnpm --filter=@newsletters-nx/newsletters-api bundle",
 		"bundle:ui": "pnpm --filter=@newsletters-nx/newsletters-ui bundle",
