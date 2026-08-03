@@ -27,8 +27,8 @@ export const RequestBrazeSetUpMessage = ({
 		<MessageFormat
 			title={
 				<>
-					Please create a new Braze campaign for newsletter "
-					{newsletter.identityName}"
+					Please create a new Braze campaign for newsletter &quot;
+					{newsletter.identityName}&quot;
 				</>
 			}
 		>
@@ -59,9 +59,9 @@ export const RequestBrazeSetUpMessage = ({
 			</p>
 
 			<p>
-				Note that the "temporary sign Up URL" will not be available immediately
-				after a newsletter is launched as the site can take 1-3 hours to update
-				its list of newsletters.
+				Note that the &quot;temporary sign Up URL&quot; will not be available
+				immediately after a newsletter is launched as the site can take 1-3
+				hours to update its list of newsletters.
 			</p>
 
 			<p>

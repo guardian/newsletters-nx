@@ -23,8 +23,8 @@ export const RequestBrazeUpdateMessage = ({ pageLink, newsletter }: Props) => {
 		<MessageFormat
 			title={
 				<>
-					Please update the Braze campaign for newsletter "
-					{newsletter.identityName}"
+					Please update the Braze campaign for newsletter &quot;
+					{newsletter.identityName}&quot;
 				</>
 			}
 		>

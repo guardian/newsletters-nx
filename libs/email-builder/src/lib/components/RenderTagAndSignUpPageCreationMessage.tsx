@@ -41,12 +41,14 @@ export const RequestTagAndSignUpPageMessage = ({
 	return (
 		<MessageFormat title={title}>
 			<p>
-				Can you please complete the following tasks to support the launch of "
-				{newsletter.name}"?
+				Can you please complete the following tasks to support the launch of
+				&quot;
+				{newsletter.name}&quot;?
 			</p>
 			{user && (
 				<p>
-					"{newsletter.name}" was launched by <UserDescription user={user} /> (
+					&quot;{newsletter.name}&quot; was launched by{' '}
+					<UserDescription user={user} /> (
 					<UserDescription user={user} asLink />
 					).
 				</p>
