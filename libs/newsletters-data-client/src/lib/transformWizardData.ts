@@ -127,7 +127,7 @@ const getObjectSchemaIfObject = (
 	}
 
 	if (field instanceof ZodOptional) {
-		const deepUnwrapped = recursiveUnwrap(field as ZodOptional<ZodType>);
+		const deepUnwrapped = recursiveUnwrap(field);
 		return deepUnwrapped instanceof ZodObject ? deepUnwrapped : undefined;
 	}
 

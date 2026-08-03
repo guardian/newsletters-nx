@@ -7,7 +7,7 @@ export const recursiveUnwrap = (field: ZodType): ZodType => {
 	}
 	const unwrapped = field.unwrap() as ZodType;
 	if (unwrapped instanceof ZodOptional) {
-		return recursiveUnwrap(unwrapped as ZodOptional<ZodType>);
+		return recursiveUnwrap(unwrapped);
 	}
 	return unwrapped;
 };
