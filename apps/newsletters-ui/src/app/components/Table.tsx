@@ -53,7 +53,7 @@ export const Table = <TData extends object>({
 		if (onStateChange) {
 			onStateChange({
 				sortBy,
-				filters: filters as Array<{ id: string; value: string[] }>,
+				filters: filters,
 				hiddenColumns,
 			});
 		}
@@ -104,6 +104,7 @@ export const Table = <TData extends object>({
 			<table {...getTableProps()} css={tableStyle}>
 				<thead>
 					{headerGroups.map((headerGroup) => (
+						// eslint-disable-next-line react/jsx-key -- key already included by ...headerGroup.getHeaderGroupProps()
 						<tr {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column) => (
 								<ColumnHeader column={column} key={`header ${column.id}`} />
@@ -111,10 +112,14 @@ export const Table = <TData extends object>({
 						</tr>
 					))}
 				</thead>
-				<tbody {...getTableBodyProps()} data-testid="launched-newsletters-table">
+				<tbody
+					{...getTableBodyProps()}
+					data-testid="launched-newsletters-table"
+				>
 					{rows.map((row) => {
 						prepareRow(row);
 						return (
+							// eslint-disable-next-line react/jsx-key -- key already included by ...row.getRowProps()
 							<tr {...row.getRowProps()}>
 								{row.cells.map((cell: Cell<TData>) => (
 									<ColumnData cell={cell} key={`data ${cell.column.id}`} />

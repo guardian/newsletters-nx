@@ -11,6 +11,14 @@ export default defineConfig([
 				project: './tsconfig.app.json',
 			},
 		},
+		rules: {
+			// TODO: Remove and revisit set-state-in-effect issues.
+			'react-hooks/set-state-in-effect': 'warn',
+			// TODO: Remove and revisit static-components issues.
+			'react-hooks/static-components': 'warn',
+			// Typescript already does this.
+			'react/prop-types': 'off',
+		},
 	},
 	{
 		// Config files

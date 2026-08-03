@@ -70,13 +70,15 @@ const formatValueWithZod = (value: unknown, zod: ZodTypeAny): string => {
 		innerZod instanceof ZodURL ||
 		innerZod instanceof ZodNumber
 	) {
-		return value === '' ? emptyValueDisplay : String(value as string | number);
+		// eslint-disable-next-line @typescript-eslint/no-base-to-string -- We have an enum/string/url or number.
+		return value === '' ? emptyValueDisplay : String(value);
 	}
 	// fallback for any unhandled types
 	if (typeof value === 'object') {
 		return JSON.stringify(value);
 	}
-	return value === '' ? emptyValueDisplay : String(value as string | number);
+	// eslint-disable-next-line @typescript-eslint/no-base-to-string -- We know value is not an object.
+	return value === '' ? emptyValueDisplay : String(value);
 };
 
 const sectionStyles = css`

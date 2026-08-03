@@ -167,7 +167,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const navigate = useNavigate();
 
 	if (serverData === undefined) {
-		return <p>'loading'</p>;
+		return <p>&apos;loading&apos;</p>;
 	}
 
 	if (serverErrorMessage) {

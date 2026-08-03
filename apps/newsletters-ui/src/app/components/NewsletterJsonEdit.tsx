@@ -57,12 +57,13 @@ export const NewsletterJsonEdit = ({ originalItem }: Props) => {
 				</Typography>
 				<ul>
 					<Typography component={'li'}>
-						This tool is for editing an existing newsletter - it can't be used
-						to create a new one or to copy/duplicate the newsletter
+						This tool is for editing an existing newsletter - it can&apos;t be
+						used to create a new one or to copy/duplicate the newsletter
 					</Typography>
 					<Typography component={'li'}>
-						the "listId" and "identityName" fields in the JSON below will be
-						ignored as the API will not allow these values to be edited.
+						the &quot;listId&quot; and &quot;identityName&quot; fields in the
+						JSON below will be ignored as the API will not allow these values to
+						be edited.
 					</Typography>
 				</ul>
 			</Alert>

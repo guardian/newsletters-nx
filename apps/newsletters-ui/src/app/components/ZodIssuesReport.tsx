@@ -22,7 +22,7 @@ const issueToMessage = (issue: ZodIssue): string => {
 			const { expected, message } = issue;
 			return message === 'Required'
 				? `This is a required field (of type "${
-						expected as string
+						expected
 				  }") but no value is set`
 				: message;
 		}

@@ -142,7 +142,7 @@ export const Wizard: React.FC<WizardProps> = ({
 	}, [wizardId, id, fetchStep]);
 
 	if (serverData === undefined) {
-		return <p>'loading'</p>;
+		return <p>&apos;loading&apos;</p>;
 	}
 
 	if (serverErrorMessage) {
