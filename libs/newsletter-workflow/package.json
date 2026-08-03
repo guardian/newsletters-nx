@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"license": "MIT",
 	"scripts": {
-		"lint": "eslint -c ./.eslintrc.json ./src",
+		"lint": "eslint -c ./eslint.config.mjs ./src",
 		"test": "jest --config=./jest.config.ts --passWithNoTests"
 	}
 }

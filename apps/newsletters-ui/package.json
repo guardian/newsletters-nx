@@ -7,6 +7,6 @@
 		"bundle": "vite build --mode=production",
 		"serve": "vite serve",
 		"test": "vitest --watch=false --coverage.reportsDirectory=../../coverage/apps/newsletters-ui --passWithNoTests",
-		"lint": "eslint -c ./.eslintrc.json ./src"
+		"lint": "eslint -c ./eslint.config.mjs ./src"
 	}
 }
