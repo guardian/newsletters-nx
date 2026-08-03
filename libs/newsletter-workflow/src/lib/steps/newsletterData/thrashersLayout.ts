@@ -11,7 +11,7 @@ import { formSchemas } from './formSchemas';
 const markdownTemplate = `
 ## Thrasher requests for {{name}}
 
-If you would like to request a thrasher be created, please tick the "Single thrasher required?" and add the detials below. The description will appear as shown belowxs:
+If you would like to request a thrasher be created, please tick the "Single thrasher required?" and add the detials below. The description will appear as shown below:
 
 ![Thrasher description](https://i.guim.co.uk/img/uploads/2023/05/16/single-thrasher.png?quality=85&dpr=2&width=300&s=d30c77a6c732f5e85af3e11318128f2e)
 

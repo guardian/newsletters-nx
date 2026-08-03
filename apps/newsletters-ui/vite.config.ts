@@ -1,9 +1,7 @@
-/* eslint-disable -- We want default export for config files */
-/// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import path from 'path';
 import react from '@vitejs/plugin-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
-import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	root: __dirname,

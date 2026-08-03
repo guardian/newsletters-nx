@@ -1,9 +1,9 @@
 /** @jest-config-loader ts-node */
 /** @jest-config-loader-options {"transpileOnly": true} */
+import type { Config } from 'jest';
 import { pathsToModuleNameMapper } from 'ts-jest';
 import { compilerOptions } from '../../tsconfig.base.json';
-import type { Config } from 'jest';
-/* eslint-disable -- We want default export for config files */
+
 export default {
 	displayName: 'newsletters-api',
 	globals: {},
