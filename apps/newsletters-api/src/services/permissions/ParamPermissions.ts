@@ -17,10 +17,7 @@ const getPermissionsData = async (): Promise<
 		const value = await getConfigValue('userPermissions', {
 			maxAge: TIME_BETWEEN_PERMISSIONS_PARAM_CHECKS,
 		});
-		return permissionsDataSchema.parse(JSON.parse(value)) as Record<
-			string,
-			UserAccessLevel
-		>;
+		return permissionsDataSchema.parse(JSON.parse(value));
 	} catch (error) {
 		console.warn('getPermissionsData failed');
 		console.warn(error);
