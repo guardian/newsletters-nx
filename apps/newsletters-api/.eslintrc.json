@@ -5,16 +5,16 @@
 		{
 			"files": ["*.ts", "*.tsx"],
 			"parserOptions": {
-				"project": ["apps/newsletters-api/tsconfig.*?.json"]
+				"project": ["tsconfig.app.json"]
 			},
 			"rules": {}
 		},
 		{
-			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-			"rules": {}
-		},
-		{
-			"files": ["*.js", "*.jsx"],
+			"files": ["*.spec.ts", "*.spec.tsx"],
+			"parserOptions": {
+				"project": ["tsconfig.spec.json"],
+				"jest": true
+			},
 			"rules": {}
 		},
 		{

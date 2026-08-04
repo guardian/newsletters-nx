@@ -1,10 +1,10 @@
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Badge, Box, Button, FormGroup, Typography } from '@mui/material';
-import type { FunctionComponent } from 'react';
-import type { ZodObject, ZodRawShape } from 'zod';
 import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
+import type { FunctionComponent } from 'react';
+import type { ZodObject, ZodRawShape } from 'zod';
 import { isPrimitiveRecord } from '../../util';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for RecordInput
 import { RecordInput } from './RecordInput';

@@ -1,7 +1,7 @@
 import { Box, Paper, Typography } from '@mui/material';
-import type { z } from 'zod';
 import { getValidationWarnings } from '@newsletters-nx/newsletters-data-client';
 import type { WizardFormData } from '@newsletters-nx/state-machine';
+import type { z } from 'zod';
 import type {
 	FieldDef,
 	FieldValue,

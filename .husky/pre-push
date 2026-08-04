@@ -1,3 +1,4 @@
 # Check workspace before pushing
-npx nx affected --target=format:check,lint,test,build --parallel=3
-
+pnpm -r lint
+pnpm -r test
+pnpm -r build

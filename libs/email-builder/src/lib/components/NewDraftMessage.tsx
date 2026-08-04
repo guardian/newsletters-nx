@@ -1,8 +1,8 @@
-import { renderToStaticMarkup } from 'react-dom/server';
 import type {
 	DraftWithId,
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
+import { renderToStaticMarkup } from 'react-dom/server';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
 import { UserDescription } from './UserDescription';

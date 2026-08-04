@@ -1,0 +1,13 @@
+{
+	"name": "@newsletters-nx/newsletters-api",
+	"version": "0.0.0",
+	"license": "MIT",
+	"scripts": {
+		"build": "node build.mjs",
+		"bundle": "node build.mjs",
+		"serve": "tsx watch --env-file-if-exists=.env.local src/main.ts",
+		"lint": "eslint -c ./.eslintrc.json ./src",
+		"test": "jest --config=./jest.config.ts",
+		"format": "prettier . --write"
+	}
+}

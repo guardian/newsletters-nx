@@ -6,18 +6,17 @@ End-to-end functional tests for the Newsletters application using Playwright.
 
 ### Locally
 
+From the workspace root: `/newsletters-nx/`
+
 ```bash
 # Run all tests (headless)
-npm run test:e2e
+pnpm run test:e2e
 
 # Run with browser visible
-npm run test:e2e:ui
-
-# Run in headed mode
-npm run test:e2e -- --headed
+pnpm run test:e2e:ui
 
 # Debug tests
-npm run test:e2e:debug
+pnpm run test:e2e:debug
 ```
 
 ### In CI
@@ -50,8 +49,10 @@ Tests run with:
 
 ### Locally
 
+From the workspace root: `/newsletters-nx/`
+
 ```bash
-npx playwright show-report playwright-report
+pnpm exec playwright show-report apps/newsletters-e2e/playwright-report
 ```
 
 ### CI
@@ -86,11 +87,6 @@ lsof -ti:4200 | xargs kill -9
 **Playwright browsers not installed:**
 
 ```bash
-npx playwright install --with-deps chromium
-```
-
-**Tests are cached:**
-
-```bash
-npx nx reset
+# From workspace root: e.g /newsletters-nx
+pnpm exec playwright install --with-deps chromium
 ```

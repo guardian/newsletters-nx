@@ -1,7 +1,7 @@
 import type { ButtonTypeMap } from '@mui/material';
 import { Button } from '@mui/material';
 import type { MouseEventHandler, ReactNode } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type LocationState = {
 	from?: string;

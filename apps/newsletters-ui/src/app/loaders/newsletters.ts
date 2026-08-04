@@ -1,8 +1,8 @@
-import type { LoaderFunction } from 'react-router';
 import type {
 	DraftNewsletterData,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import type { LoaderFunction } from 'react-router-dom';
 import { fetchApiData } from '../api-requests/fetch-api-data';
 
 export const listLoader: LoaderFunction = async (): Promise<

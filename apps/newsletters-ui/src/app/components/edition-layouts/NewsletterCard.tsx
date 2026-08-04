@@ -7,8 +7,8 @@ import {
 	Typography,
 	useTheme,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { Link } from 'react-router-dom';
 import { Illustration } from '../Illustration';
 
 type CardSize = 'medium' | 'small';

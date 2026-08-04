@@ -1,4 +1,3 @@
-import type { Express } from 'express';
 import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow/server';
 import { replaceNullWithUndefinedForUnknown } from '@newsletters-nx/newsletters-data-client';
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
@@ -12,6 +11,7 @@ import {
 	StateMachineError,
 	StateMachineErrorCode,
 } from '@newsletters-nx/state-machine';
+import type { Express } from 'express';
 import { makeEmailEnvInfo } from '../../services/notifications/email-env';
 import { makeSesClient } from '../../services/notifications/email-service';
 import { permissionService } from '../../services/permissions';

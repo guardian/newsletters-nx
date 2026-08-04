@@ -10,8 +10,8 @@ import {
 	DialogContentText,
 	DialogTitle,
 } from '@mui/material';
-import { useState } from 'react';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { useState } from 'react';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
 
 interface Props {

@@ -11,16 +11,11 @@
 		"importHelpers": true,
 		"target": "es2015",
 		"module": "esnext",
-		"lib": [
-			"es2017",
-			"dom"
-		],
+		"lib": ["es2017", "dom"],
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
 		"paths": {
-			"@newsletters-nx/email-builder": [
-				"./libs/email-builder/src/index.ts"
-			],
+			"@newsletters-nx/email-builder": ["./libs/email-builder/src/index.ts"],
 			"@newsletters-nx/email-builder/server": [
 				"./libs/email-builder/src/server.ts"
 			],
@@ -36,18 +31,11 @@
 			"@newsletters-nx/newsletters-data-client/server": [
 				"./libs/newsletters-data-client/src/server.ts"
 			],
-			"@newsletters-nx/state-machine": [
-				"./libs/state-machine/src/index.ts"
-			],
-			"@newsletters-nx/util": [
-				"./libs/util/src/index.ts"
-			]
+			"@newsletters-nx/state-machine": ["./libs/state-machine/src/index.ts"],
+			"@newsletters-nx/util": ["./libs/util/src/index.ts"]
 		},
 		"strictNullChecks": true,
 		"incremental": false
 	},
-	"exclude": [
-		"node_modules",
-		"tmp"
-	]
+	"exclude": ["node_modules", "tmp"]
 }

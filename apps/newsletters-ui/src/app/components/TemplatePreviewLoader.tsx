@@ -1,10 +1,10 @@
 import { Alert, Box, Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
 import type {
 	EmailRenderingOutput,
 	EmailRenderingWarning,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchPostApiData } from '../api-requests/fetch-api-data';
 import { TemplatePreview } from './TemplatePreview';
 

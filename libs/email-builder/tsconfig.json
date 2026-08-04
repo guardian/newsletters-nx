@@ -7,6 +7,7 @@
 		"strict": true,
 		"jsxImportSource": "@emotion/react"
 	},
+	"extends": "../../tsconfig.base.json",
 	"references": [
 		{
 			"path": "./tsconfig.lib.json"
@@ -14,6 +15,5 @@
 		{
 			"path": "./tsconfig.spec.json"
 		}
-	],
-	"extends": "../../tsconfig.base.json"
+	]
 }

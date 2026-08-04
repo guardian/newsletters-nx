@@ -1,9 +1,9 @@
-import { renderToStaticMarkup } from 'react-dom/server';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	emailContent,
 	emailEndpoint,
 } from '@newsletters-nx/newsletters-data-client';
+import { renderToStaticMarkup } from 'react-dom/server';
 import type { MessageContent } from '../types';
 import { MessageFormat } from './MessageFormat';
 import { NewsletterPropertyTable } from './NewsletterPropertyTable';

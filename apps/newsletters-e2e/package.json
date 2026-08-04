@@ -1,0 +1,10 @@
+{
+	"name": "@newsletters-nx/newsletters-e2e",
+	"version": "0.0.0",
+	"license": "MIT",
+	"scripts": {
+		"e2e": "playwright test",
+		"e2e-headed": "playwright test --headed",
+		"e2e-ui": "playwright test --ui"
+	}
+}

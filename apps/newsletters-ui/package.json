@@ -1,0 +1,12 @@
+{
+	"name": "@newsletters-nx/newsletters-ui",
+	"version": "0.0.0",
+	"license": "MIT",
+	"scripts": {
+		"build": "vite build",
+		"bundle": "vite build --mode=production",
+		"serve": "vite serve",
+		"test": "vitest --watch=false --coverage.reportsDirectory=../../coverage/apps/newsletters-ui --passWithNoTests",
+		"lint": "eslint -c ./.eslintrc.json ./src"
+	}
+}

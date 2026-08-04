@@ -7,27 +7,20 @@ This is a monorepo for:
 - serving a user interface for editorial to manage their newsletters
 - the state-machine library used between UI and API
 
+It uses [pnpm workspaces](https://pnpm.io/workspaces) to manage its packages.
+
 ## Running locally
 
 To run the UI and API locally with the default options:
 
-## Testing
-
-### Unit Tests
-
-```bash
-npm run test
-```
-
-### E2E Tests
-
-```bash
-npm run test:e2e
-```
-
 see [E2E Testing Documentation] (apps/newsletters-e2e/README.md) for more details
 
 ### Run set-up script
+
+This will:
+
+- create a `.env.local` file in `./apps/newsletters-api/` based on a template `.env.local.example.txt` file in the same folder.
+- run `dev-nginx` and register `newsletters-tool.local.dev-gutools.co.uk`. More info [here](https://github.com/guardian/dev-nginx)
 
 ```bash
 ./scripts/setup.sh
@@ -37,11 +30,26 @@ see [E2E Testing Documentation] (apps/newsletters-e2e/README.md) for more detail
 
 fetch some `frontend` credentials from [Janus](https://janus.gutools.co.uk/credentials?permissionId=frontend-dev&tzOffset=1)
 
-`npm run dev`
+`pnpm run dev`
 
 The app will be available at [here](https://newsletters-tool.local.dev-gutools.co.uk/)
+The api will be available at [here](https://localhost:3000/)
 
 See the documentation for the [API](apps/newsletters-api/README.md) for the configuration options.
+
+## Testing
+
+### Unit Tests
+
+```bash
+pnpm run test
+```
+
+### E2E Tests
+
+```bash
+pnpm run test:e2e
+```
 
 ## Development
 

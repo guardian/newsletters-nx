@@ -9,11 +9,11 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
-import { Fragment, useReducer } from 'react';
 import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { Fragment, useReducer } from 'react';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { GroupControl } from './GroupControl';
 import { layoutReducer } from './layout-reducer';

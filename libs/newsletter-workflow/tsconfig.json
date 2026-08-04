@@ -2,6 +2,12 @@
 	"extends": "../../tsconfig.base.json",
 	"files": [],
 	"include": [],
+	"compilerOptions": {
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true
+	},
 	"references": [
 		{
 			"path": "./tsconfig.lib.json"
@@ -9,11 +15,5 @@
 		{
 			"path": "./tsconfig.spec.json"
 		}
-	],
-	"compilerOptions": {
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true
-	}
+	]
 }

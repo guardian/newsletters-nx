@@ -1,7 +1,7 @@
 import type { FabProps } from '@mui/material';
 import { Fab } from '@mui/material';
 import type { MouseEventHandler, ReactNode } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 type Props = FabProps & {
 	href?: string;

@@ -1,0 +1,8 @@
+packages:
+  - 'apps/*'
+  - 'libs/*'
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
+engineStrict: true
+ignoreWorkspaceRootCheck: true

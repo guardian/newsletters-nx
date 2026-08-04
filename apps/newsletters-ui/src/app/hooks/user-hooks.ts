@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import type {
 	UserPermissions,
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
+import { useEffect, useState } from 'react';
 import { fetchApiData } from '../api-requests/fetch-api-data';
 
 export const usePermissions = () => {

@@ -10,8 +10,8 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
-import { useState } from 'react';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { useState } from 'react';
 import { StringInput } from '../SchemaForm/StringInput';
 
 interface Props {

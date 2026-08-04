@@ -1,7 +1,7 @@
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { usePermissions } from '../hooks/user-hooks';
 import { useUrlSyncedTableState } from '../hooks/useUrlSyncedTableState';
 import { shouldShowEditOptions } from '../services/authorisation';

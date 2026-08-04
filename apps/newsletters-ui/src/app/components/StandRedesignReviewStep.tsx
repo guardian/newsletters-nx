@@ -7,6 +7,11 @@ import {
 } from '@guardian/stand';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
+import type { WizardId } from '@newsletters-nx/newsletter-workflow';
+import { getStepperConfig } from '@newsletters-nx/newsletter-workflow';
+import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
+import type { WizardFormData } from '@newsletters-nx/state-machine';
+import type { ZodTypeAny } from 'zod';
 import {
 	ZodArray,
 	ZodBoolean,
@@ -17,11 +22,6 @@ import {
 	ZodString,
 	ZodURL,
 } from 'zod';
-import type { ZodTypeAny } from 'zod';
-import type { WizardId } from '@newsletters-nx/newsletter-workflow';
-import { getStepperConfig } from '@newsletters-nx/newsletter-workflow';
-import { recursiveUnwrap } from '@newsletters-nx/newsletters-data-client';
-import type { WizardFormData } from '@newsletters-nx/state-machine';
 
 const emptyValueDisplay = '-';
 const formatValueWithZod = (value: unknown, zod: ZodTypeAny): string => {

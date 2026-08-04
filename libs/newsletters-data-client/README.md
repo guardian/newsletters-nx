@@ -8,11 +8,19 @@ This library provides:
 
 ## Building
 
-Run `nx build newsletters-data-client` to build the library.
+From the workspace root, i.e: `/newsletters-nx/`:
+
+```
+pnpm --filter=@newsletters-nx/newsletters-data-client build
+```
 
 ## Running unit tests
 
-Run `nx test newsletters-data-client` to execute the unit tests via [Jest](https://jestjs.io).
+From the workspace root, i.e: `/newsletters-nx/`:
+
+```
+pnpm --filter=@newsletters-nx/newsletters-data-client test
+```
 
 ## How not to break the API
 
@@ -34,9 +42,3 @@ If you do need to make a breaking change to the schema, such as adding a new req
 - backfill all existing newsletters to have the new field
 - run the script to update the fixture file
 - merge the PR to make the new field required - the test should fail if any newsletters in the fixture woudl be excluded
-
-### Newsletter migration tool
-
-The [newsletter migration tool](https://github.com/guardian/newsletters-migration-tool) is a utility for performing bulk updates on the newsletter data in s3.
-
-The migration tool has its own version of the `newsletterDataSchema` and associated functions. Before using it in production, ensure it has been updated to match the versions used in this project.

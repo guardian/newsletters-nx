@@ -1,5 +1,5 @@
 {
-	"extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+	"extends": ["../../.eslintrc.json"],
 	"ignorePatterns": [
 		"!**/*",
 		"**/vite.config.*.timestamp*",
@@ -9,16 +9,16 @@
 		{
 			"files": ["*.ts", "*.tsx"],
 			"parserOptions": {
-				"project": ["apps/newsletters-ui/tsconfig.*?.json"]
+				"project": ["tsconfig.app.json"]
 			},
 			"rules": {}
 		},
 		{
-			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-			"rules": {}
-		},
-		{
-			"files": ["*.js", "*.jsx"],
+			"files": ["*.spec.ts", "*.spec.tsx"],
+			"parserOptions": {
+				"project": ["tsconfig.spec.json"],
+				"jest": true
+			},
 			"rules": {}
 		}
 	]

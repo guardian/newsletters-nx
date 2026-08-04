@@ -1,12 +1,12 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import Add from '@mui/icons-material/Add';
 import { Box, Button, Card, IconButton } from '@mui/material';
-import type { Dispatch } from 'react';
-import { Fragment } from 'react';
 import type {
 	LayoutGroup,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import type { Dispatch } from 'react';
+import { Fragment } from 'react';
 import { StringInput } from '../SchemaForm/StringInput';
 import type { LayoutAction } from './layout-reducer';
 import { NewsletterCard } from './NewsletterCard';

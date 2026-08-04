@@ -8,11 +8,11 @@ import {
 	Grid,
 	Typography,
 } from '@mui/material';
+import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
+import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import { Fragment } from 'react';
 import type { FunctionComponent } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
-import { getEmptySchemaData } from '@newsletters-nx/newsletters-data-client';
-import type { PrimitiveRecord } from '@newsletters-nx/newsletters-data-client';
 import { isPrimitiveRecord } from '../../util';
 // eslint-disable-next-line import/no-cycle -- schemaForm renders recursively for SchemaRecordArrayInput
 import { RecordInput } from './RecordInput';

@@ -1,9 +1,9 @@
-import type { LoaderFunction } from 'react-router';
 import type {
 	EditionsLayouts,
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import type { LoaderFunction } from 'react-router-dom';
 import { fetchApiData } from '../api-requests/fetch-api-data';
 
 export const mapLoader: LoaderFunction = async (): Promise<{

@@ -1,9 +1,9 @@
-import { renderToStaticMarkup } from 'react-dom/server';
 import type {
 	NewsletterData,
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
 import { composerCampaignTagId } from '@newsletters-nx/newsletters-data-client';
+import { renderToStaticMarkup } from 'react-dom/server';
 import type { MessageContent } from '../types';
 import { getEmbargoDate } from '../util';
 import { MessageFormat } from './MessageFormat';

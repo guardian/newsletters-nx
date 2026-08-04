@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
-import { useLoaderData } from 'react-router-dom';
 import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { useLoaderData } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { EditNewsletterForm } from '../EditNewsletterForm';
 import { NavigateButton } from '../NavigateButton';
