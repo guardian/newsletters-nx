@@ -15,7 +15,7 @@ export function useUrlSyncedTableState<TData extends object>(
 			const sort = params.get('sort');
 			const order = params.get('order');
 			if (sort) {
-				sortBy.push({ id: sort as IdType<TData>, desc: order === 'desc' });
+				sortBy.push({ id: sort, desc: order === 'desc' });
 			}
 
 			params.forEach((value, key) => {
@@ -27,7 +27,7 @@ export function useUrlSyncedTableState<TData extends object>(
 
 			const hidden = params.get('hidden');
 			const hiddenColumns: Array<IdType<TData>> = hidden
-				? (hidden.split(',') as Array<IdType<TData>>)
+				? (hidden.split(','))
 				: [];
 
 			return { sortBy, filters, hiddenColumns };

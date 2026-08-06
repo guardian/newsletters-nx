@@ -6,7 +6,7 @@
 		"build": "node build.mjs",
 		"bundle": "node build.mjs",
 		"serve": "tsx watch --env-file-if-exists=.env.local src/main.ts",
-		"lint": "eslint -c ./.eslintrc.json ./src",
+		"lint": "eslint -c ./eslint.config.mjs ./src",
 		"test": "jest --config=./jest.config.ts",
 		"format": "prettier . --write"
 	}

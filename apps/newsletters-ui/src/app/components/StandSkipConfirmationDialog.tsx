@@ -34,8 +34,9 @@ export const SkipConfirmationDialog = ({
 				/>
 				<Dialog.Header>Discard changes to {currentStepLabel}?</Dialog.Header>
 				<Dialog.Content>
-					Skipping to "{targetStepLabel}" will discard the changes made on "
-					{currentStepLabel}".
+					Skipping to &quot;{targetStepLabel}&quot; will discard the changes
+					made on &quot;
+					{currentStepLabel}&quot;.
 				</Dialog.Content>
 				<Dialog.Buttons>
 					<Button variant="tertiary" slot="close" onPress={handleCancelSkip}>

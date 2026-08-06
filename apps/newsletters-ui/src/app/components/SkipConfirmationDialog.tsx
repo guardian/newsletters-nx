@@ -37,8 +37,8 @@ export const SkipConfirmationDialog = ({
 			<DialogTitle>Discard changes to {currentStepLabel}?</DialogTitle>
 			<DialogContent>
 				<DialogContentText>
-					Skipping to "{targetStepLabel}" will discard the changes made on
-					"currentStepLabel".
+					Skipping to &quot;{targetStepLabel}&quot; will discard the changes
+					made on &quot;currentStepLabel&quot;.
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>

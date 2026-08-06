@@ -13,7 +13,7 @@ import { convertTypographyToEmotionStringStyle } from '@guardian/stand/utils';
 import type { Element } from 'hast';
 import type { TextDirective } from 'mdast-util-directive';
 import type { ReactNode } from 'react';
-import React from 'react';
+import type React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkDirective from 'remark-directive';
 import type { Plugin } from 'unified';

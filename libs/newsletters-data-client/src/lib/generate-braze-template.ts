@@ -28,7 +28,7 @@ const getMerchandisingContent = (
 		);
 	}
 
-	return getDrrSlotSet('Newsletters' as DrrSlotKey);
+	return getDrrSlotSet('Newsletters');
 };
 
 export const generateBrazeTemplateString = (

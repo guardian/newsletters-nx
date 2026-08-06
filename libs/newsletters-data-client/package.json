@@ -7,7 +7,7 @@
 		"build": "pnpm tsc:build && pnpm copy-assets",
 		"tsc:build": "tsc -p tsconfig.lib.json --outDir ../../dist",
 		"copy-assets": "cp ./README.md ./package.json ../../dist/libs/newsletters-data-client",
-		"lint": "eslint -c ./.eslintrc.json ./src",
+		"lint": "eslint -c ./eslint.config.mjs ./src",
 		"test": "jest --config=./jest.config.ts"
 	},
 	"types": "./src/index.d.ts",

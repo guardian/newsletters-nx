@@ -44,6 +44,7 @@ export const StandSelectInput: FunctionComponent<
 		>
 			{optional && <Option value={{ EMPTY_STRING }}>[none]</Option>}
 			{options.map((option) => (
+				// eslint-disable-next-line react/jsx-key -- There are no unique values to use as keys.
 				<Option value={{ option }}>{option}</Option>
 			))}
 		</Select>

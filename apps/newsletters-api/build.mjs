@@ -1,7 +1,7 @@
-import { build } from 'esbuild';
 import { cpSync, mkdirSync } from 'fs';
-import { fileURLToPath } from 'url';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { build } from 'esbuild';
 
 const WORKSPACE_ROOT = path.join(
 	path.dirname(fileURLToPath(import.meta.url)),

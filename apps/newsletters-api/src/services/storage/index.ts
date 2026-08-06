@@ -3,7 +3,6 @@ import { resolve } from 'path';
 import type { SESClient } from '@aws-sdk/client-ses';
 import type {
 	DraftStorage,
-	EditionsLayouts,
 	EmailEnvInfo,
 	LayoutStorage,
 	NewsletterData,
@@ -55,13 +54,11 @@ const validNewsletters = newslettersData.filter((item) =>
 	isNewsletterData(item),
 );
 const newsletterStore: NewsletterStorage = isUsingInMemoryStore
-	? new InMemoryNewsletterStorage(
-			validNewsletters as unknown as NewsletterData[],
-		)
+	? new InMemoryNewsletterStorage(validNewsletters)
 	: getS3NewsletterStore();
 
 const layoutStore: LayoutStorage = isUsingInMemoryStore
-	? new InMemoryLayoutStorage(layoutsData as unknown as EditionsLayouts)
+	? new InMemoryLayoutStorage(layoutsData)
 	: getS3LayoutStore();
 
 const makelaunchServiceForUser = (userProfile: UserProfile) =>

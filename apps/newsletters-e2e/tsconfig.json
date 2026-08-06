@@ -6,5 +6,10 @@
 		"allowJs": true,
 		"types": ["node", "@playwright/test"]
 	},
+	"references": [
+		{
+			"path": "./tsconfig.conf.json"
+		}
+	],
 	"include": ["**/*.ts", "**/*.js", "playwright.config.ts"]
 }

@@ -4,15 +4,14 @@ import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import { properyToString } from '../render-newsletter-properties';
 import { getGuardianUrl } from '../util';
 
-export const higherLevelDataPoint =
-	(newsletter: NewsletterData) =>
-	(props: {
+export const higherLevelDataPoint = (newsletter: NewsletterData) =>
+	function Render(props: {
 		label?: string;
 		property: keyof NewsletterData;
 		tooltip?: string;
 		url?: boolean;
 		guardianUrl?: boolean;
-	}) => {
+	}) {
 		const { label, property, tooltip, url, guardianUrl } = props;
 		const value = newsletter[props.property];
 
