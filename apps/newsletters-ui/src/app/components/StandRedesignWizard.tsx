@@ -8,8 +8,8 @@ import {
 import { Grid, Item } from '@guardian/stand/Grid';
 import { Layout } from '@guardian/stand/Layout';
 import { Typography } from '@guardian/stand/Typography';
+import { UserFeedbackSummary } from '@guardian/stand/UserFeedbackSummary';
 import { from } from '@guardian/stand/utils';
-import { Alert } from '@mui/material';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import {
 	getFieldDisplayOptions,
@@ -35,7 +35,7 @@ import { StandRedesignStateEditForm } from './StandRedesignStateEditForm';
 import { StandRedesignStepNav } from './StandRedesignStepNav';
 import { StandRedesignWizardActionButton } from './StandRedesignWizardActionButton';
 import { SkipConfirmationDialog } from './StandSkipConfirmationDialog';
-import { ZodIssuesReport } from './ZodIssuesReport';
+import { StandZodIssuesReport } from './StandZodIssuesReport';
 
 export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
 	wizardId,
@@ -62,17 +62,21 @@ const FailureAlert = (props: {
 
 	if (isPersistent) {
 		return (
-			<Alert severity="error">
-				Sorry, this wizard has failed: {errorMessage}
-			</Alert>
+			<UserFeedbackSummary
+				level="error"
+				role="alert"
+				title={`Sorry, this wizard has failed: ${errorMessage}`}
+			/>
 		);
 	}
 	return (
-		<Alert severity="warning">
-			{' '}
-			Please try again: {errorMessage}
+		<UserFeedbackSummary
+			level="warning"
+			role="alert"
+			title={`Please try again: ${errorMessage}`}
+		>
 			{errorDetails?.zodIssues && (
-				<ZodIssuesReport issues={errorDetails.zodIssues} />
+				<StandZodIssuesReport issues={errorDetails.zodIssues} />
 			)}
 			{errorDetails?.problemList && (
 				<div
@@ -87,7 +91,7 @@ const FailureAlert = (props: {
 					))}
 				</div>
 			)}
-		</Alert>
+		</UserFeedbackSummary>
 	);
 };
 
