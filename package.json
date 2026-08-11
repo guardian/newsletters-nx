@@ -107,19 +107,5 @@
 		"vite-tsconfig-paths": "^6.1.1",
 		"vitest": "^4.0.0"
 	},
-	"overrides": {
-		"js-yaml@^3": "3.15.0",
-		"js-yaml@^4": "4.3.0",
-		"brace-expansion@^1": "1.1.16",
-		"brace-expansion@^2": "2.1.2",
-		"brace-expansion@^5": "5.0.8",
-		"fast-uri": ">=3.1.1",
-		"qs": "6.15.1",
-		"handlebars@^4": ">=4.7.9",
-		"minimatch@^3": "3.1.4",
-		"minimatch@^5": "5.1.8",
-		"path-to-regexp@^8": "8.4.0",
-		"flatted@^3": "3.4.2"
-	},
 	"packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72"
 }
