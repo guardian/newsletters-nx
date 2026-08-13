@@ -21,3 +21,4 @@ overrides:
   'minimatch@^5': '^5.1.8'
   'path-to-regexp@^8': '^8.4.0'
   'flatted@^3': '^3.4.2'
+  'form-data': '>=4.0.6'

@@ -103,7 +103,7 @@
 		"tsx": "^4.22.0",
 		"typescript": "^6.0.2",
 		"unist-util-visit": "5.1.0",
-		"vite": "^8.0.8",
+		"vite": "^8.0.16",
 		"vite-tsconfig-paths": "^6.1.1",
 		"vitest": "^4.0.0"
 	},
