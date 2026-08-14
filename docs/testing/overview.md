@@ -4,17 +4,17 @@ The most useful behavioural coverage for contributors is in [`apps/newsletters-e
 
 ## Feature-to-test map
 
-| Feature area | Main tests | What they demonstrate |
-| --- | --- | --- |
-| Draft list and search | [`drafts.spec.ts`](../../apps/newsletters-e2e/src/ui/drafts.spec.ts) | Draft headings, table columns, search, and presence of created drafts |
-| Draft creation (legacy wizard) | [`createNewsletter.spec.ts`](../../apps/newsletters-e2e/src/ui/createNewsletter.spec.ts) | End-to-end completion of the older draft wizard for article-based and fronts-based newsletters |
-| Draft creation (Stand redesign) | [`createNewsletterStandRedesign.spec.ts`](../../apps/newsletters-e2e/src/ui/createNewsletterStandRedesign.spec.ts) | Current redesigned setup flow, review step, step navigation, and validation |
-| Launch-ready launched newsletters | [`launched.spec.ts`](../../apps/newsletters-e2e/src/ui/launched.spec.ts) | Navigating to launched newsletters and opening edit actions |
-| Editing launched data | [`editArticleNewsletter.spec.ts`](../../apps/newsletters-e2e/src/ui/editArticleNewsletter.spec.ts), [`editFrontsNewsletter.spec.ts`](../../apps/newsletters-e2e/src/ui/editFrontsNewsletter.spec.ts) | Field-level editing for different newsletter categories |
-| Rendering options | [`renderingOptions.spec.ts`](../../apps/newsletters-e2e/src/ui/renderingOptions.spec.ts) | Updating rendering fields and persisting them |
-| Layout browsing | [`layouts.spec.ts`](../../apps/newsletters-e2e/src/ui/layouts.spec.ts) | Edition headings, newsletter cards, and links from layouts into launched newsletters |
-| Basic navigation | [`navigation.spec.ts`](../../apps/newsletters-e2e/src/ui/navigation.spec.ts) | Top-level menu behaviour |
-| API access | [`api/newsletters.spec.ts`](../../apps/newsletters-e2e/src/api/newsletters.spec.ts) | Basic newsletter API retrieval |
+| Feature area                      | Main tests                                                                                                                                                                                           | What they demonstrate                                                                          |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Draft list and search             | [`drafts.spec.ts`](../../apps/newsletters-e2e/src/ui/drafts.spec.ts)                                                                                                                                 | Draft headings, table columns, search, and presence of created drafts                          |
+| Draft creation (legacy wizard)    | [`createNewsletter.spec.ts`](../../apps/newsletters-e2e/src/ui/createNewsletter.spec.ts)                                                                                                             | End-to-end completion of the older draft wizard for article-based and fronts-based newsletters |
+| Draft creation (Stand redesign)   | [`createNewsletterStandRedesign.spec.ts`](../../apps/newsletters-e2e/src/ui/createNewsletterStandRedesign.spec.ts)                                                                                   | Current redesigned setup flow, review step, step navigation, and validation                    |
+| Launch-ready launched newsletters | [`launched.spec.ts`](../../apps/newsletters-e2e/src/ui/launched.spec.ts)                                                                                                                             | Navigating to launched newsletters and opening edit actions                                    |
+| Editing launched data             | [`editArticleNewsletter.spec.ts`](../../apps/newsletters-e2e/src/ui/editArticleNewsletter.spec.ts), [`editFrontsNewsletter.spec.ts`](../../apps/newsletters-e2e/src/ui/editFrontsNewsletter.spec.ts) | Field-level editing for different newsletter categories                                        |
+| Rendering options                 | [`renderingOptions.spec.ts`](../../apps/newsletters-e2e/src/ui/renderingOptions.spec.ts)                                                                                                             | Updating rendering fields and persisting them                                                  |
+| Layout browsing                   | [`layouts.spec.ts`](../../apps/newsletters-e2e/src/ui/layouts.spec.ts)                                                                                                                               | Edition headings, newsletter cards, and links from layouts into launched newsletters           |
+| Basic navigation                  | [`navigation.spec.ts`](../../apps/newsletters-e2e/src/ui/navigation.spec.ts)                                                                                                                         | Top-level menu behaviour                                                                       |
+| API access                        | [`api/newsletters.spec.ts`](../../apps/newsletters-e2e/src/api/newsletters.spec.ts)                                                                                                                  | Basic newsletter API retrieval                                                                 |
 
 ## Lower-level tests
 
