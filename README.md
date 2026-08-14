@@ -9,6 +9,8 @@ This is a monorepo for:
 
 It uses [pnpm workspaces](https://pnpm.io/workspaces) to manage its packages.
 
+For contributor-facing documentation about the product features, workflows, and architecture, see [`docs/README.md`](docs/README.md).
+
 ## Running locally
 
 To run the UI and API locally with the default options:
