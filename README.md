@@ -9,12 +9,6 @@ This is a monorepo for:
 
 It uses [pnpm workspaces](https://pnpm.io/workspaces) to manage its packages.
 
-## Development
-
-**NOTE** Merging changes to the 'newsletters-data-client' library can impact the newsletters data used in PROD by other Guardian applications. Please check the notes at the [README for that project](libs/newsletters-data-client/README.md) for more details.
-
-**NOTE** Any changes to the legacy API data structure should be communicated to the [Data Design](mailto:data.design@theguardian.com) **before** merging to main.
-
 ## UI Tool Deployment
 
 The newsletters-tool is deployed to PROD
@@ -22,6 +16,32 @@ https://newsletters-tool.gutools.co.uk/
 
 CODE environment (for testing) deployed to:
 https://newsletters-tool.code.dev-gutools.co.uk/
+
+## Before you change anything
+
+**NOTE** Merging changes to the 'newsletters-data-client' library can impact the newsletters data used in PROD by other Guardian applications. Please check the notes at the [README for that project](libs/newsletters-data-client/README.md) for more details.
+
+**NOTE** Any changes to the legacy API data structure should be communicated to the [Data Design](mailto:data.design@theguardian.com) **before** merging to main.
+
+## Quick start
+
+```bash
+./scripts/setup.sh
+```
+
+Then fetch some `frontend` credentials from [Janus](https://janus.gutools.co.uk/credentials?permissionId=frontend-dev&tzOffset=1) and run:
+
+```bash
+pnpm run dev
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup, testing and deployment details.
+
+## More
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) - setup, testing, deployment
+- [apps/newsletters-api/README.md](apps/newsletters-api/README.md) - API docs
+- [apps/newsletters-e2e/README.md](apps/newsletters-e2e/README.md) - E2E testing docs
 
 ## User Permissions for the UI Tool
 
