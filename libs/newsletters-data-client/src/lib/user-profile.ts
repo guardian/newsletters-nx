@@ -43,7 +43,6 @@ export type UserPermissions = {
 	writeToDrafts: boolean;
 	viewMetaData: boolean;
 	editBraze: boolean;
-	editOphan: boolean;
 	editTags: boolean;
 	editSignUpPage: boolean;
 	editLayouts: boolean;
@@ -82,7 +81,6 @@ export const levelToPermissions = (
 			UserAccessLevel.CentralProduction,
 		].includes(accessLevel),
 		editBraze: [UserAccessLevel.BrazeEditor].includes(accessLevel),
-		editOphan: [UserAccessLevel.OphanEditor].includes(accessLevel),
 		editTags: [UserAccessLevel.CentralProduction].includes(accessLevel),
 		editSignUpPage: [UserAccessLevel.CentralProduction].includes(accessLevel),
 	};
