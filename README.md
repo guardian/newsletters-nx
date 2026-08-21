@@ -1,85 +1,71 @@
 # NewslettersNx
 
-This is a monorepo for:
+Developer landing page for the Guardian newsletter tool monorepo.
 
-- defining the data model for editorial newsletters at the Guardian
-- serving an API to access the newsletter data
-- serving a user interface for editorial to manage their newsletters
-- the state-machine library used between UI and API
+## What is in this repo?
 
-It uses [pnpm workspaces](https://pnpm.io/workspaces) to manage its packages.
+- `apps/newsletters-ui` — the React UI for draft and launched newsletters
+- `apps/newsletters-api` — the Express API and optional UI host
+- `apps/newsletters-e2e` — Playwright end-to-end tests
+- `libs/newsletter-workflow`, `libs/state-machine`, `libs/newsletters-data-client`, `libs/email-builder` — the launch workflow, shared state machine, schemas/storage, and notification email code
+
+See [`docs/architecture.md`](docs/architecture.md) for the repo map and runtime boundaries.
 
 ## Running locally
 
-To run the UI and API locally with the default options:
+Prerequisites:
 
-see [E2E Testing Documentation] (apps/newsletters-e2e/README.md) for more details
+- Node version from [`.nvmrc`](.nvmrc)
+- `pnpm`
+- Guardian frontend credentials from Janus for local sign-in
 
-### Run set-up script
-
-This will:
-
-- create a `.env.local` file in `./apps/newsletters-api/` based on a template `.env.local.example.txt` file in the same folder.
-- run `dev-nginx` and register `newsletters-tool.local.dev-gutools.co.uk`. More info [here](https://github.com/guardian/dev-nginx)
+### Set up local config
 
 ```bash
 ./scripts/setup.sh
 ```
 
-### Run the app
+This copies `apps/newsletters-api/env.local.example.txt` to `.env.local` and offers to register the local hostname from [`nginx/nginx-mapping.yml`](nginx/nginx-mapping.yml).
 
-fetch some `frontend` credentials from [Janus](https://janus.gutools.co.uk/credentials?permissionId=frontend-dev&tzOffset=1)
-
-`pnpm run dev`
-
-The app will be available at [here](https://newsletters-tool.local.dev-gutools.co.uk/)
-The api will be available at [here](https://localhost:3000/)
-
-See the documentation for the [API](apps/newsletters-api/README.md) for the configuration options.
-
-## Testing
-
-### Unit Tests
+### Start the app
 
 ```bash
-pnpm run test
+pnpm run dev
 ```
 
-### E2E Tests
+- UI: <https://newsletters-tool.local.dev-gutools.co.uk/>
+- API: <https://localhost:3000/>
+
+More API-specific configuration lives in [`apps/newsletters-api/README.md`](apps/newsletters-api/README.md).
+
+## Testing and validation
+
+From the repo root:
 
 ```bash
+pnpm run lint
+pnpm run test
+pnpm run build
 pnpm run test:e2e
 ```
 
-## Development
+If you change infrastructure in `cdk/`, also run:
 
-**NOTE** Merging changes to the 'newsletters-data-client' library can impact the newsletters data used in PROD by other Guardian applications. Please check the notes at the [README for that project](libs/newsletters-data-client/README.md) for more details.
+```bash
+npm --prefix cdk run lint
+npm --prefix cdk run test
+npm --prefix cdk run synth
+```
 
-**NOTE** Any changes to the legacy API data structure should be communicated to the [Data Design](mailto:data.design@theguardian.com) **before** merging to main.
+## Docs
 
-## UI Tool Deployment
+- [`docs/README.md`](docs/README.md) — docs index
+- [`docs/architecture.md`](docs/architecture.md) — monorepo map, runtime boundaries, and integrations
+- [`docs/deployment.md`](docs/deployment.md) — CI/CD, CDK, RiffRaff, environments, and rollback pointers
+- [`docs/launch-flow.md`](docs/launch-flow.md) — draft to launched newsletter lifecycle
+- [`AGENTS.md`](AGENTS.md) — repo-specific working conventions and change boundaries
 
-The newsletters-tool is deployed to PROD
-https://newsletters-tool.gutools.co.uk/
+## Important repo-specific notes
 
-CODE environment (for testing) deployed to:
-https://newsletters-tool.code.dev-gutools.co.uk/
-
-Continuous Integration (CI) is configured on this Repo. Merging to main will trigger redeployment to of PROD using [RiffRaff](https://riffraff.gutools.co.uk/). To deploy a build to CODE, push your branch to github and create a PR (draft will do). The build can be selected and deployed from [RiffRaff's deploy page](https://riffraff.gutools.co.uk/deployment/request) (project=newsletters::newsletters-tool).
-
-## User Permissions for the UI Tool
-
-Users need to log to a Guardian account in using google auth to access the UI. The web application auth configuration in the google console can be accessed (requires membership of the newsletters admin group) at
-https://console.cloud.google.com/apis/credentials?project=newsletter-source-api
-
-By default, Guardian staff have "viewer" permissions, which lets them access the tool but not make any changes to the data. Spefic users can be granted extra permissions by updating the userPermissions data, which is held in the AWS Parameter store in the 'frontend' account (accessable via [Janus](https://janus.gutools.co.uk/)). There is a separate param for each stage:
-
-- /CODE/newsletters/newsletters-tool/userPermissions
-- /DEV/newsletters/newsletters-tool/userPermissions
-- /PROD/newsletters/newsletters-tool/userPermissions
-
-The API application will check for updates to the data once per 15 minute interval - so updates to the data take up to 15 minutes to take effect for the user in the UI.
-
-**TO DO** - it would be peferable for access to the Tool to be managed using the existing [Permissions system](https://github.com/guardian/permissions).
-
-[![](https://mermaid.ink/img/pako:eNplUc1ugzAMfhUr5_ICHDZR6KoeNiFtPSUcMmJKNEg2J6hCpe8-U4q0ajlZ8ffjz76I2hsUqWg6f65bTRE-CuWA3xaS5Gk6BiQoyTe2wwmypZVJ-Ybn0GGMSCE5HqrqBu78CaybYCvl3vtTh5ANsa2qO-uG-fRmTCErD0D4M2CISrkWtUnh0Sp_9GDCqpPPOoWUpSbdQ4iecG0Vs8PAOgF0XWMIYHTUU34n_gu0u7R6hfIc80SW0HDZeFoHfIbrwt_NfOenF5kt4gU6i6b60x0xTHtZIjG_XwUqsRE9Uq-t4U1fZrgSscUelUi5NJq-lFDuyjg9RP8-ulqkkQbciOGbE2Bh9YnDirTRXeBfNJZjvy6nu13w-gtKPpnr?type=png)](https://mermaid.live/edit#pako:eNplUc1ugzAMfhUr5_ICHDZR6KoeNiFtPSUcMmJKNEg2J6hCpe8-U4q0ajlZ8ffjz76I2hsUqWg6f65bTRE-CuWA3xaS5Gk6BiQoyTe2wwmypZVJ-Ybn0GGMSCE5HqrqBu78CaybYCvl3vtTh5ANsa2qO-uG-fRmTCErD0D4M2CISrkWtUnh0Sp_9GDCqpPPOoWUpSbdQ4iecG0Vs8PAOgF0XWMIYHTUU34n_gu0u7R6hfIc80SW0HDZeFoHfIbrwt_NfOenF5kt4gU6i6b60x0xTHtZIjG_XwUqsRE9Uq-t4U1fZrgSscUelUi5NJq-lFDuyjg9RP8-ulqkkQbciOGbE2Bh9YnDirTRXeBfNJZjvy6nu13w-gtKPpnr)
+- Changes under [`libs/newsletters-data-client`](libs/newsletters-data-client/README.md) can hide live newsletters from the API if schema validation becomes stricter than the data already stored in S3.
+- Changes to the legacy API data shape should still be coordinated with Data Design, as noted in the shared schemas and transform layer under `libs/newsletters-data-client`.
