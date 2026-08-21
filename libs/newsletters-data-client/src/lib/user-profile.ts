@@ -33,7 +33,6 @@ export enum UserAccessLevel {
 	Viewer,
 	CentralProduction,
 	BrazeEditor,
-	OphanEditor,
 }
 
 export type UserPermissions = {
@@ -71,7 +70,6 @@ export const levelToPermissions = (
 			UserAccessLevel.Drafter,
 			UserAccessLevel.CentralProduction,
 			UserAccessLevel.BrazeEditor,
-			UserAccessLevel.OphanEditor,
 		].includes(accessLevel),
 		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
