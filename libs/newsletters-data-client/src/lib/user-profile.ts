@@ -40,17 +40,14 @@ export type UserPermissions = {
 	useJsonEditor: boolean;
 	launchNewsletters: boolean;
 	writeToDrafts: boolean;
-	viewMetaData: boolean;
+	// This is not checked anywhere!!
 	editBraze: boolean;
 	editTags: boolean;
 	editSignUpPage: boolean;
 	editLayouts: boolean;
 };
 
-export const permissionsDataSchema = z.record(
-	z.string(),
-	z.int().min(0),
-);
+export const permissionsDataSchema = z.record(z.string(), z.int().min(0));
 
 export const levelToPermissions = (
 	accessLevel: UserAccessLevel,
@@ -71,7 +68,6 @@ export const levelToPermissions = (
 			UserAccessLevel.CentralProduction,
 			UserAccessLevel.BrazeEditor,
 		].includes(accessLevel),
-		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
 		editLayouts: [
 			UserAccessLevel.Developer,
