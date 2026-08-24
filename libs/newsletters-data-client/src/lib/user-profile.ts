@@ -27,12 +27,9 @@ export type UserProfile = Partial<{
 }>;
 
 export enum UserAccessLevel {
-	Developer,
-	Editor,
-	Drafter,
-	Viewer,
-	CentralProduction,
-	BrazeEditor,
+	Developer, // Can do everything
+	Editor, // Can edit and launch newsletters
+	Viewer, // Read-only access
 }
 
 export type UserPermissions = {
@@ -40,10 +37,6 @@ export type UserPermissions = {
 	useJsonEditor: boolean;
 	launchNewsletters: boolean;
 	writeToDrafts: boolean;
-	// This is not checked anywhere!!
-	editBraze: boolean;
-	editTags: boolean;
-	editSignUpPage: boolean;
 	editLayouts: boolean;
 };
 
@@ -61,21 +54,12 @@ export const levelToPermissions = (
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
 		].includes(accessLevel),
-		writeToDrafts: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-			UserAccessLevel.Drafter,
-			UserAccessLevel.CentralProduction,
-			UserAccessLevel.BrazeEditor,
-		].includes(accessLevel),
+		writeToDrafts: [UserAccessLevel.Developer, UserAccessLevel.Editor].includes(
+			accessLevel,
+		),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
-		editLayouts: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-			UserAccessLevel.CentralProduction,
-		].includes(accessLevel),
-		editBraze: [UserAccessLevel.BrazeEditor].includes(accessLevel),
-		editTags: [UserAccessLevel.CentralProduction].includes(accessLevel),
-		editSignUpPage: [UserAccessLevel.CentralProduction].includes(accessLevel),
+		editLayouts: [UserAccessLevel.Developer, UserAccessLevel.Editor].includes(
+			accessLevel,
+		),
 	};
 };
