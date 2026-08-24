@@ -14,8 +14,8 @@ flowchart TB
 
     subgraph nx["newsletters-nx (this repo)"]
         ui["newsletters-ui<br>React SPA"]
-        api["newsletters-api<br>Express"]
-        roapi["readonly-newsletters<br>API-key only"]
+        api["newsletters-api<br>Express<br>(newsletters-tool)"]
+        roapi["newsletters-api<br>2nd deployment<br>(readonly-newsletters)"]
     end
 
     s3[("S3 data bucket<br>draft-storage/<br>launched-newsletters/")]
@@ -44,26 +44,32 @@ flowchart TB
     class er,braze,dotcom,humans external
 ```
 
-### Key boundary
+### Key boundaries
 
 `newsletters-nx` **does not** create Braze campaigns, tags, or sign-up pages directly.  
 It stores newsletter data and sends notification emails to people/teams who complete those manual steps.
+
+`readonly-newsletters` is **not a separate application**. It is the same
+`newsletters-api` code deployed a second time with the UI and write routes
+switched off (`NEWSLETTERS_API_READ=true`, `NEWSLETTERS_UI_SERVE=false`), gated
+by an `X-Gu-API-Key` header instead of Google auth.
 
 For launch details, see [Launch flow](./launch-flow.md).  
 For email-rendering internals, see [email-rendering architecture](https://github.com/guardian/email-rendering/blob/main/docs/architecture.md).
 
 ### Packages and responsibilities
 
-| Package | Responsibility |
-| --- | --- |
-| [`apps/newsletters-api`](../apps/newsletters-api) | Main backend API: storage, auth/authorisation, workflow routes, and (normally) serving the UI bundle |
-| [`apps/newsletters-ui`](../apps/newsletters-ui) | React SPA for creating, editing, launching, and managing newsletters |
-| [`apps/newsletters-e2e`](../apps/newsletters-e2e) | Playwright end-to-end tests |
-| [`libs/newsletters-data-client`](../libs/newsletters-data-client) | Core newsletter schemas, data services, storage abstractions, and derived fields |
-| [`libs/state-machine`](../libs/state-machine) | Generic wizard/state-machine engine |
-| [`libs/newsletter-workflow`](../libs/newsletter-workflow) | Newsletter-specific wizard definitions and launch workflow |
-| [`libs/email-builder`](../libs/email-builder) | Notification email content and rendering |
-| [`libs/util`](../libs/util) | Shared utilities (including runtime config helpers) |
+| Package | Responsibility | README |
+| --- | --- | --- |
+| [`apps/newsletters-api`](../apps/newsletters-api) | Main backend API: storage, auth/authorisation, workflow routes, and (normally) serving the UI bundle | [↗](../apps/newsletters-api/README.md) |
+| [`apps/newsletters-ui`](../apps/newsletters-ui) | React SPA for creating, editing, launching, and managing newsletters | — |
+| [`apps/newsletters-e2e`](../apps/newsletters-e2e) | Playwright end-to-end tests | [↗](../apps/newsletters-e2e/README.md) |
+| [`libs/newsletters-data-client`](../libs/newsletters-data-client) | Core newsletter schemas, data services, storage abstractions, and derived fields | [↗](../libs/newsletters-data-client/README.md) |
+| [`libs/state-machine`](../libs/state-machine) | Generic wizard/state-machine engine | [↗](../libs/state-machine/README.md) |
+| [`libs/newsletter-workflow`](../libs/newsletter-workflow) | Newsletter-specific wizard definitions and launch workflow | [↗](../libs/newsletter-workflow/README.md) |
+| [`libs/email-builder`](../libs/email-builder) | Notification email content and rendering | [↗](../libs/email-builder/README.md) |
+| [`libs/util`](../libs/util) | Shared utilities (including runtime config helpers) | [↗](../libs/util/README.md) |
+| [`cdk`](../cdk) | AWS infrastructure definitions | [↗](../cdk/README.md) |
 
 ### Dependency direction
 
@@ -92,3 +98,4 @@ Within libs, `newsletter-workflow` composes `state-machine` and `newsletters-dat
 - [Launch flow](./launch-flow.md)
 - [Auth and permissions](./auth-and-permissions.md)
 - [Deployment](./deployment.md)
+- [Local development](./local-development.md)

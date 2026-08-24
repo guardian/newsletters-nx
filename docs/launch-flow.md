@@ -45,21 +45,21 @@ sequenceDiagram
 
 ## Step-by-step behaviour
 
-## 1) Create launched record
+### 1) Create launched record
 
 The launch service reads the draft, applies defaults/derived values, merges user-edited launch values, and writes the launched record to launched storage.
 
-## 2) Delete draft
+### 2) Delete draft
 
 After a successful launch write, the draft is deleted on a best-effort basis.  
 If deletion fails, launch still succeeds (with warning/logging).
 
-## 3) Send notifications
+### 3) Send notifications
 
 Launch triggers notification emails (for example launch/Braze/Central Production handoffs).  
 These notifications represent requests to downstream teams, not direct provisioning by this system.
 
-## 4) Set status fields
+### 4) Set status fields
 
 `*CreationStatus` fields are set from notification results (e.g. `REQUESTED`/`NOT_REQUESTED` semantics in current implementation).
 
@@ -76,18 +76,23 @@ In particular:
 
 ## Known caveats
 
-- Status values reflect this system’s request path, not guaranteed downstream completion.
-- If email sending is disabled by environment/config, status behaviour may still indicate request success from the app’s perspective.
-- In the current implementation (`executeLaunch.ts`), three notification emails
-  are sent in parallel via `Promise.all`, but the result array is destructured
-  into only two variables. This means the result of the first email
-  (`NEWSLETTER_LAUNCH`) is mislabelled as the Braze result, the second
-  (`BRAZE_SET_UP_REQUEST`) is mislabelled as the tag/sign-up result, and the
-  third (`CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST`) result is discarded
-  entirely. `brazeCampaignCreationStatus`, `tagCreationStatus`, and
-  `signupPageCreationStatus` should be read with this in mind until it's fixed.
+- Status values reflect this system's request path, not guaranteed downstream completion.
+- If email sending is disabled by environment/config (`ENABLE_EMAIL_SERVICE`), status behaviour may still indicate request success from the app's perspective.
+- **Notification results are mislabelled.** In
+  [`executeLaunch.ts`](../libs/newsletter-workflow/src/lib/executeLaunch.ts)
+  three emails are sent via `Promise.all`, but the result array is destructured
+  into only two variables:
+
+  | Email sent | Result is assigned to |
+  | --- | --- |
+  | `NEWSLETTER_LAUNCH` | `brazeCampaignCreationStatus` |
+  | `BRAZE_SET_UP_REQUEST` | `tagCreationStatus` **and** `signupPageCreationStatus` |
+  | `CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST` | discarded |
+
+  Read those three status fields with this in mind until it is fixed.
 
 ## Post-launch Braze update requests
 
-After launch, Braze-related fields can be updated and a separate Braze update notification can be requested from the UI workflow.  
+After launch, Braze-related fields can be updated and a separate Braze update
+notification can be requested via `GET /api/email/:newsletterId/brazeUpdate`.
 This is a distinct path from the initial launch notification set.
