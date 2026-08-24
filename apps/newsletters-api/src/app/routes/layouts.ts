@@ -52,7 +52,7 @@ export function registerWriteLayoutRoutes(app: Express) {
 		const user = getUserProfile(req);
 		const permissions = await permissionService.get(user.profile);
 
-		if (!permissions.editLayouts) {
+		if (!permissions.editNewsletters) {
 			return res
 				.status(403)
 				.send(makeErrorResponse(`You don't have permission to edit layouts.`));

@@ -35,7 +35,6 @@ export enum UserAccessLevel {
 export type UserPermissions = {
 	editNewsletters: boolean;
 	useJsonEditor: boolean;
-	editLayouts: boolean;
 };
 
 export const permissionsDataSchema = z.record(z.string(), z.int().min(0));
@@ -49,8 +48,5 @@ export const levelToPermissions = (
 			UserAccessLevel.Editor,
 		].includes(accessLevel),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
-		editLayouts: [UserAccessLevel.Developer, UserAccessLevel.Editor].includes(
-			accessLevel,
-		),
 	};
 };

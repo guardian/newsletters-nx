@@ -44,7 +44,7 @@ export const EditLayoutJsonView = () => {
 	return (
 		<ContentWrapper>
 			<Typography variant="h2">Edit Layout JSON for {editionId}</Typography>
-			{permissions?.editLayouts && (
+			{permissions?.editNewsletters && (
 				<JsonEditor
 					schema={layoutSchema}
 					originalData={originalLayout}
