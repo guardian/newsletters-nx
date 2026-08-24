@@ -39,10 +39,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 		})),
 	);
 
-	const {
-		editNewsletters: userCanEditNewsletter,
-		launchNewsletters: userCanLaunch,
-	} = usePermissions() ?? {};
+	const { editNewsletters: userCanEditNewsletter } = usePermissions() ?? {};
 
 	const { initialState, syncStateToUrl } =
 		useUrlSyncedTableState<DraftRow>('name');
@@ -171,9 +168,9 @@ export const DraftsTable = ({ drafts }: Props) => {
 		return [
 			...infoColumns,
 			...(userCanEditNewsletter ? editColumns : []),
-			...(userCanLaunch ? launchColumns : []),
+			...(userCanEditNewsletter ? launchColumns : []),
 		];
-	}, [data, userCanLaunch, userCanEditNewsletter]);
+	}, [data, userCanEditNewsletter]);
 
 	return (
 		<>

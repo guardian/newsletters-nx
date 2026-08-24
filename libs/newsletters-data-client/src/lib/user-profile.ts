@@ -35,7 +35,6 @@ export enum UserAccessLevel {
 export type UserPermissions = {
 	editNewsletters: boolean;
 	useJsonEditor: boolean;
-	launchNewsletters: boolean;
 	editLayouts: boolean;
 };
 
@@ -46,10 +45,6 @@ export const levelToPermissions = (
 ): UserPermissions => {
 	return {
 		editNewsletters: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-		].includes(accessLevel),
-		launchNewsletters: [
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
 		].includes(accessLevel),

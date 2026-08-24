@@ -45,7 +45,7 @@ const getAccessDeniedError = async (
 
 	switch (wizardId) {
 		case 'LAUNCH_NEWSLETTER':
-			if (!permissions.launchNewsletters) {
+			if (!permissions.editNewsletters) {
 				return {
 					errorMessage: 'You do not have permissions to launch a newsletter',
 					currentStepId: stepId,
