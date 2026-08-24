@@ -56,7 +56,7 @@ const getAccessDeniedError = async (
 
 		case 'NEWSLETTER_DATA':
 		case 'RENDERING_OPTIONS':
-			if (!permissions.writeToDrafts) {
+			if (!permissions.editNewsletters) {
 				return {
 					errorMessage: 'You do not have permissions to create or edit drafts.',
 					currentStepId: stepId,

@@ -36,7 +36,6 @@ export type UserPermissions = {
 	editNewsletters: boolean;
 	useJsonEditor: boolean;
 	launchNewsletters: boolean;
-	writeToDrafts: boolean;
 	editLayouts: boolean;
 };
 
@@ -54,9 +53,6 @@ export const levelToPermissions = (
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
 		].includes(accessLevel),
-		writeToDrafts: [UserAccessLevel.Developer, UserAccessLevel.Editor].includes(
-			accessLevel,
-		),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
 		editLayouts: [UserAccessLevel.Developer, UserAccessLevel.Editor].includes(
 			accessLevel,

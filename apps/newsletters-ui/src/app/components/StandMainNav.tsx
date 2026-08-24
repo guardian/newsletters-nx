@@ -66,7 +66,7 @@ export function StandMainNav() {
 		{ path: '/drafts', label: 'Draft newsletters' },
 		{ path: '/templates', label: 'Email templates' },
 		{ path: '/layouts', label: 'Newsletter layouts' },
-		permissions?.writeToDrafts
+		permissions?.editNewsletters
 			? { path: '/drafts/newsletter-data', label: 'Create new newsletter' }
 			: null,
 	].filter((link): link is NavLink => link !== null);

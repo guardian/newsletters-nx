@@ -7,7 +7,7 @@ import { Container } from '@mui/system';
 import type { OverridableStringUnion } from '@mui/types';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import type { ReactNode } from 'react';
-import { useLoaderData , useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { ScrollingMenuButton } from './ScrollingMenuButton';
@@ -79,7 +79,7 @@ export function HomeMenu() {
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 
-				{permissions.writeToDrafts && (
+				{permissions.editNewsletters && (
 					<ButtonGridItem
 						path="/drafts/newsletter-data"
 						content={'Create newsletter'}

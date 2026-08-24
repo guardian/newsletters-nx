@@ -40,7 +40,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 	);
 
 	const {
-		writeToDrafts: userCanWriteToDrafts,
+		editNewsletters: userCanEditNewsletter,
 		launchNewsletters: userCanLaunch,
 	} = usePermissions() ?? {};
 
@@ -170,10 +170,10 @@ export const DraftsTable = ({ drafts }: Props) => {
 
 		return [
 			...infoColumns,
-			...(userCanWriteToDrafts ? editColumns : []),
+			...(userCanEditNewsletter ? editColumns : []),
 			...(userCanLaunch ? launchColumns : []),
 		];
-	}, [data, userCanLaunch, userCanWriteToDrafts]);
+	}, [data, userCanLaunch, userCanEditNewsletter]);
 
 	return (
 		<>

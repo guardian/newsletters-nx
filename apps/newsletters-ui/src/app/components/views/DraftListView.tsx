@@ -8,7 +8,7 @@ import { DraftsTable } from '../DraftsTable';
 
 export const DraftListView = () => {
 	const list = useLoaderData<unknown>();
-	const { writeToDrafts: userCanWriteToDrafts } = usePermissions() ?? {};
+	const { editNewsletters: userCanEditNewsletter } = usePermissions() ?? {};
 	if (!list || !Array.isArray(list)) {
 		return <nav>No Drafts</nav>;
 	}
@@ -22,7 +22,7 @@ export const DraftListView = () => {
 			</Typography>
 			<DraftsTable drafts={drafts} />
 
-			{userCanWriteToDrafts && (
+			{userCanEditNewsletter && (
 				<Container maxWidth="lg">
 					<Stack
 						sx={{
