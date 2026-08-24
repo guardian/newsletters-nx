@@ -87,6 +87,7 @@ Within libs, `newsletter-workflow` composes `state-machine` and `newsletters-dat
 
 ## Related docs
 
+- [Docs index](./README.md)
 - [Data model](./data-model.md)
 - [Launch flow](./launch-flow.md)
 - [Auth and permissions](./auth-and-permissions.md)
