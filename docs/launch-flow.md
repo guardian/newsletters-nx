@@ -13,6 +13,36 @@ When a user launches a newsletter, the workflow does four things:
 
 This flow is initiated by the launch wizard (`doLaunch` step) and executed server-side.
 
+## Sequence
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as newsletters-ui<br>(doLaunch step)
+    participant Exec as executeLaunch
+    participant Launch as LaunchService
+    participant Draft as Draft storage
+    participant Newsletter as Newsletter storage
+    participant SES as SES (email-builder)
+
+    User->>UI: Click "Request Launch"
+    UI->>Exec: submit doLaunch step
+    Exec->>Launch: launchDraft(draftId, extraValues)
+    Launch->>Draft: readWithMeta(draftId)
+    Draft-->>Launch: draft data
+    Launch->>Launch: apply defaults/derived fields<br>+ merge extraValues
+    Launch->>Newsletter: create(launched record)
+    Newsletter-->>Launch: created newsletter
+    Launch->>Draft: deleteItem(draftId)
+    Note right of Draft: best-effort - failure is logged but doesn't fail launch
+    Launch-->>Exec: created newsletter
+    Exec-->>UI: launch success response
+    Note over Exec,SES: Not awaited — UI response doesn't wait on notifications
+    Exec->>SES: send 3 notification emails in parallel<br>(launch / Braze / Central Production)
+    SES-->>Exec: 3 results (only 2 captured — see caveats)
+    Exec->>Newsletter: updateCreationStatus(REQUESTED/NOT_REQUESTED)
+```
+
 ## Step-by-step behaviour
 
 ## 1) Create launched record
@@ -48,8 +78,14 @@ In particular:
 
 - Status values reflect this system’s request path, not guaranteed downstream completion.
 - If email sending is disabled by environment/config, status behaviour may still indicate request success from the app’s perspective.
-- In the current implementation, launch sends three notification emails but only
-  two Promise results are captured for status mapping;
+- In the current implementation (`executeLaunch.ts`), three notification emails
+  are sent in parallel via `Promise.all`, but the result array is destructured
+  into only two variables. This means the result of the first email
+  (`NEWSLETTER_LAUNCH`) is mislabelled as the Braze result, the second
+  (`BRAZE_SET_UP_REQUEST`) is mislabelled as the tag/sign-up result, and the
+  third (`CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST`) result is discarded
+  entirely. `brazeCampaignCreationStatus`, `tagCreationStatus`, and
+  `signupPageCreationStatus` should be read with this in mind until it's fixed.
 
 ## Post-launch Braze update requests
 
