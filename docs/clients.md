@@ -24,7 +24,7 @@ Served by the read-only `newsletters-api` deployment (`readonly-newsletters`) at
 | Endpoint | Contents |
 | --- | --- |
 | `/api/newsletters` | Current newsletter data (v2 shape) |
-| `/api/legacy/newsletters` | Legacy newsletter shape, kept for backwards compatibility |
+| `/api/legacy/newsletters` | Deprecated v1 newsletter shape. No known active consumers — see [Data model](./data-model.md#compatibility--downstream-consumers) |
 | `/api/layouts` | Edition layouts |
 
 The full surface is described in [`open-api.yaml`](../apps/newsletters-api/open-api.yaml).
@@ -35,23 +35,22 @@ The full surface is described in [`open-api.yaml`](../apps/newsletters-api/open-
 | --- | --- |
 | Newsletters / editorial teams | Create, edit, and launch newsletters; configure rendering options and edition layouts |
 | Central Production | Receive launch and set-up notification emails and complete the manual Braze and sign-up page work |
-| Data Design | Consume the legacy API structure; must be told before any change to it |
 
 ## Who consumes the API
 
 | Client | Uses | For |
 | --- | --- | --- |
-| [`guardian/frontend`](https://github.com/guardian/frontend) | `/api/newsletters`, `/api/legacy/newsletters`, `/api/layouts` | Newsletter sign-up embeds, the email-newsletters index page, and edition layout pages (`NewsletterApi.scala`, `NewsletterSignupAgent.scala`) |
+| [`guardian/frontend`](https://github.com/guardian/frontend) | `/api/newsletters`, `/api/layouts` | Newsletter sign-up embeds, the email-newsletters index page, and edition layout pages (`NewsletterApi.scala`, `NewsletterSignupAgent.scala`) |
 | [`guardian/dotcom-rendering`](https://github.com/guardian/dotcom-rendering) | Newsletter data passed through from `frontend` | Rendering sign-up pages and in-article newsletter sign-up blocks |
-| [`guardian/identity`](https://github.com/guardian/identity) | `/api/newsletters`, `/api/legacy/newsletters` | Resolving newsletters for subscription management in the identity API (`NewslettersSourceClient.scala`) |
+| [`guardian/identity`](https://github.com/guardian/identity) | `/api/newsletters` | Resolving newsletters for subscription management in the identity API (`NewslettersSourceClient.scala`) |
 | [`guardian/email-rendering`](https://github.com/guardian/email-rendering) | Newsletter data and rendering options | Rendering newsletter emails and previews |
-| [`guardian/ophan`](https://github.com/guardian/ophan) | `/api/newsletters`, `/api/legacy/newsletters` | Mapping email campaign codes for analytics |
+| [`guardian/ophan`](https://github.com/guardian/ophan) | `/api/newsletters` | Mapping email campaign codes for analytics |
 | [`guardian/ophan-data-lake`](https://github.com/guardian/ophan-data-lake) | `/api/newsletters` | Daily ingest of newsletter data into BigQuery |
 | [`guardian/targeted-experiences`](https://github.com/guardian/targeted-experiences) | `/api/newsletters` | Resolving Braze subscribe attribute names |
 | [`guardian/csnx`](https://github.com/guardian/csnx) | Types only (`@guardian/newsletter-types`) | Shared TypeScript types for the API response |
 | [`guardian/interactives`](https://github.com/guardian/interactives) | `/api/newsletters` | Project scaffolding that needs the newsletter list |
 
-This list reflects what is visible in the `guardian` org and may not be exhaustive.
+This list reflects what is visible in the `guardian` org and may not be exhaustive. No client in it is known to read `/api/legacy/newsletters`.
 
 ## Access
 

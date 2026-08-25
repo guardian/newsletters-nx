@@ -41,4 +41,4 @@ Consumers such as [`dotcom-rendering`](https://github.com/guardian/dotcom-render
 
 ## Non-TypeScript clients
 
-Scala clients (`frontend`, `identity`, `ophan`) define their own case classes and are not covered by this package. Breaking changes need to be coordinated with those teams directly — and any change to the legacy API structure must be communicated to Data Design before merging. See [Clients](./clients.md).
+Scala clients (`frontend`, `identity`, `ophan`) define their own case classes and are not covered by this package. Breaking changes need to be coordinated with those teams directly. See [Clients](./clients.md).

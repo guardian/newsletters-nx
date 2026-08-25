@@ -43,7 +43,4 @@ The usual first stops:
 can affect newsletter data used in PROD by other Guardian applications.** Read
 [that package's README](libs/newsletters-data-client/README.md) first.
 
-⚠️ **Changes to the legacy API data structure must be communicated to
-[Data Design](mailto:data.design@theguardian.com) before merging to `main`.**
-
 Merging to `main` deploys to PROD.

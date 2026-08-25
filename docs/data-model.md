@@ -60,9 +60,17 @@ There is also a set of **computed display/runtime values** used for UI and notif
 
 ## Compatibility / downstream consumers
 
-A legacy-compatible transformation exists for older consumers (v1-style shape).
-There are currently no known active downstream consumers, so this path is a
-candidate for removal once ownership confirms no external dependency remains.
+A legacy-compatible transformation exists for older consumers (v1-style shape),
+served at `/api/legacy/newsletters`.
+
+It has **no known active downstream consumers**. No client listed in
+[Clients](./clients.md#who-consumes-the-api) reads it, and the Data Design
+sign-off that used to be required for changes to the legacy shape no longer
+applies. The route, `transformDataToLegacyNewsletter`, and the legacy schema are
+therefore candidates for removal.
+
+The `listIdV1` field on the current (v2) newsletter data is a separate thing and
+is still used by downstream systems — it is not part of this deprecation.
 
 ## What to update when changing the model
 
