@@ -1,38 +1,59 @@
-# Deployment
+# Deploying
 
-CDK stacks, RiffRaff, the CODE and PROD environments, and the CI workflows.
+How to get a change onto CODE or PROD. For what the infrastructure actually
+consists of, see [Infrastructure](./infrastructure.md).
 
-## CDK
+## Deploy to PROD
 
-Infrastructure is [@guardian/cdk](https://github.com/guardian/cdk) in [`cdk/`](../cdk). [`cdk/bin/cdk.ts`](../cdk/bin/cdk.ts) instantiates the `NewslettersTool` stack twice, once per stage:
+**Merging to `main` deploys to PROD.** There is no separate promotion step, so
+make sure your change is ready before you merge.
 
-| Stage | Tool                                      | Read-only API                                 |
-| ----- | ----------------------------------------- | --------------------------------------------- |
-| CODE  | `newsletters-tool.code.dev-gutools.co.uk` | `readonly-newsletters.code.dev-gutools.co.uk` |
-| PROD  | `newsletters-tool.gutools.co.uk`          | `readonly-newsletters.gutools.co.uk`          |
+## Deploy a branch to CODE
 
-Stack `newsletters`, region `eu-west-1`. [`cdk/lib/newsletters-tool.ts`](../cdk/lib/newsletters-tool.ts) creates two `GuNodeApp`s on t4g.micro, each scaling 1–2 instances, plus the S3 data bucket, IAM policies for bucket and SES access, SES domain identities, CloudWatch alarms to the `newsletters-alerts` SNS topic, and CNAMEs.
+1. Push your branch and open a pull request — a draft PR is fine
+2. Wait for CI to finish (the deploy job uploads the build to RiffRaff)
+3. Go to [RiffRaff](https://riffraff.gutools.co.uk/deployment/request), pick
+   project `newsletters::newsletters-tool`, choose your build, and deploy to CODE
 
-The deployed stages in this stack are **CODE** and **PROD**. `STAGE=DEV` values
-seen in local `.env` examples are for local runtime behaviour, not a deployed CDK
-stage in this repo. See [Local development](./local-development.md).
+## Change infrastructure
 
-The two apps are protected differently. The tool sits behind Google auth. The read-only API has no user auth at all — instead two listener rules on its load balancer allow requests carrying an `X-Gu-API-Key` header matching the `readOnlyEndpointApiKey` SSM parameter, and return a fixed 403 to everything else.
+Infrastructure lives in [`cdk/`](../cdk). Run these from that directory:
 
-Instance configuration is injected as environment variables through user data — `NEWSLETTER_BUCKET_NAME`, `STAGE`, `STACK`, `APP`, `ENABLE_EMAIL_SERVICE`, plus the flags that differentiate the two deployments: `NEWSLETTERS_API_READ`, `NEWSLETTERS_UI_SERVE` and `ENABLE_DYNAMIC_IMAGE_SIGNING`. The tool's `ENABLE_EMAIL_SERVICE` value is read from the per-stage `enableEmailService` SSM parameter; the read-only API is always passed `'false'`.
+| Command               | Use it to                                           |
+| --------------------- | --------------------------------------------------- |
+| `npm run diff`        | See what your change would do to a deployed stack   |
+| `npm run synth`       | Generate the CloudFormation templates               |
+| `npm run test`        | Run the snapshot test                               |
+| `npm run test-update` | Regenerate the snapshot after an intentional change |
+| `npm run lint`        | Lint the CDK code                                   |
 
-Scripts: `npm run synth`, `diff`, `test`, `test-update`, `lint` (run from `cdk/`). The stack has a snapshot test, so infrastructure changes need `npm run test-update`.
+The stack has a snapshot test, so **any infrastructure change needs
+`npm run test-update`** or CI will fail. Commit the updated snapshot.
 
-## RiffRaff and CI
+## What CI does
 
-[`riff-raff.yaml`](../riff-raff.yaml) declares one CloudFormation deployment and two autoscaling deployments, both depending on it, for stages CODE and PROD. AMIs come from Amigo (`newsletters-node-24-ubuntu-22`).
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on pushes to
+`main` and on every pull request:
 
-[`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on pushes to `main` and on pull requests, with three jobs:
+| Job                        | What it does                                                                                                                  |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| E2E Tests                  | Playwright against a locally started API using in-memory storage and a fake user profile                                      |
+| Build, lint and unit tests | `pnpm lint`, `pnpm test`, plus CDK lint, test and synth                                                                       |
+| Deploy                     | Needs both jobs above. Bundles the UI and API, synths the templates, and uploads to RiffRaff via `guardian/actions-riff-raff` |
 
-- **E2E Tests** — Playwright against a locally started API using in-memory storage and a fake user profile
-- **Build, lint and unit tests** — `pnpm lint`, `pnpm test`, plus CDK lint/test/synth
-- **Deploy** — needs both of the above, bundles the UI and API, synths the templates and uploads to RiffRaff via `guardian/actions-riff-raff`
+`check-labels.yaml` is a separate PR-labelling check, unrelated to deployment.
 
-**Merging to `main` deploys to PROD.** To deploy a branch to CODE, push it and open a PR (draft is fine), then pick the build in [RiffRaff](https://riffraff.gutools.co.uk/deployment/request) under project `newsletters::newsletters-tool`.
+See [Testing](./testing.md) for more on the test jobs.
 
-`check-labels.yaml` is a separate PR-labelling check.
+## Troubleshooting
+
+**CDK snapshot test failing** — you changed infrastructure without regenerating
+the snapshot. Run `npm run test-update` from `cdk/`.
+
+**Your build isn't in RiffRaff** — the deploy job only runs after both test jobs
+pass. Check CI first.
+
+**Something works locally but not on CODE/PROD** — local runs with `STAGE=DEV`,
+in-memory storage and a fake user profile. Deployed stages use S3, real SSM
+config and Google auth. See [Local development](./local-development.md) and
+[Infrastructure](./infrastructure.md).

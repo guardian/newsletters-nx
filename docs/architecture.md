@@ -59,21 +59,22 @@ For email-rendering internals, see [email-rendering architecture](https://github
 
 ### Packages and responsibilities
 
-| Package | Responsibility | README |
-| --- | --- | --- |
-| [`apps/newsletters-api`](../apps/newsletters-api) | Main backend API: storage, auth/authorisation, workflow routes, and (normally) serving the UI bundle | [↗](../apps/newsletters-api/README.md) |
-| [`apps/newsletters-ui`](../apps/newsletters-ui) | React SPA for creating, editing, launching, and managing newsletters | — |
-| [`apps/newsletters-e2e`](../apps/newsletters-e2e) | Playwright end-to-end tests | [↗](../apps/newsletters-e2e/README.md) |
-| [`libs/newsletters-data-client`](../libs/newsletters-data-client) | Core newsletter schemas, data services, storage abstractions, and derived fields | [↗](../libs/newsletters-data-client/README.md) |
-| [`libs/state-machine`](../libs/state-machine) | Generic wizard/state-machine engine | [↗](../libs/state-machine/README.md) |
-| [`libs/newsletter-workflow`](../libs/newsletter-workflow) | Newsletter-specific wizard definitions and launch workflow | [↗](../libs/newsletter-workflow/README.md) |
-| [`libs/email-builder`](../libs/email-builder) | Notification email content and rendering | [↗](../libs/email-builder/README.md) |
-| [`libs/util`](../libs/util) | Shared utilities (including runtime config helpers) | [↗](../libs/util/README.md) |
-| [`cdk`](../cdk) | AWS infrastructure definitions | [↗](../cdk/README.md) |
+| Package                                                           | Responsibility                                                                                       | README                                         |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [`apps/newsletters-api`](../apps/newsletters-api)                 | Main backend API: storage, auth/authorisation, workflow routes, and (normally) serving the UI bundle | [↗](../apps/newsletters-api/README.md)         |
+| [`apps/newsletters-ui`](../apps/newsletters-ui)                   | React SPA for creating, editing, launching, and managing newsletters                                 | —                                              |
+| [`apps/newsletters-e2e`](../apps/newsletters-e2e)                 | Playwright end-to-end tests                                                                          | [↗](../apps/newsletters-e2e/README.md)         |
+| [`libs/newsletters-data-client`](../libs/newsletters-data-client) | Core newsletter schemas, data services, storage abstractions, and derived fields                     | [↗](../libs/newsletters-data-client/README.md) |
+| [`libs/state-machine`](../libs/state-machine)                     | Generic wizard/state-machine engine                                                                  | [↗](../libs/state-machine/README.md)           |
+| [`libs/newsletter-workflow`](../libs/newsletter-workflow)         | Newsletter-specific wizard definitions and launch workflow                                           | [↗](../libs/newsletter-workflow/README.md)     |
+| [`libs/email-builder`](../libs/email-builder)                     | Notification email content and rendering                                                             | [↗](../libs/email-builder/README.md)           |
+| [`libs/util`](../libs/util)                                       | Shared utilities (including runtime config helpers)                                                  | [↗](../libs/util/README.md)                    |
+| [`cdk`](../cdk)                                                   | AWS infrastructure definitions                                                                       | [↗](../cdk/README.md)                          |
 
 ### Dependency direction
 
 Dependencies are one-way:
+
 - apps depend on libs
 - libs do not depend on apps
 
@@ -81,21 +82,18 @@ Within libs, `newsletter-workflow` composes `state-machine` and `newsletters-dat
 
 ## External services
 
-| Service | Used for |
-| --- | --- |
-| **S3** | Persistent storage for draft and launched newsletter data |
-| **SSM Parameter Store** | Per-stage runtime configuration (permissions, recipients, feature/config values) |
-| **SES** | Sending notification emails for draft/launch/Braze/Central Production workflows |
-| **Secrets Manager** | OIDC client secret and other deployment-time secrets |
-| **email-rendering** | Template discovery and newsletter preview/rendering |
-| **theguardian.com** | Consumes launched data for sign-up page usage (no direct API integration from this repo) |
-| **Braze** | Consumes rendered newsletter content; campaign setup is manual |
+| Service                 | Used for                                                                                 |
+| ----------------------- | ---------------------------------------------------------------------------------------- |
+| **S3**                  | Persistent storage for draft and launched newsletter data                                |
+| **SSM Parameter Store** | Per-stage runtime configuration (permissions, recipients, feature/config values)         |
+| **SES**                 | Sending notification emails for draft/launch/Braze/Central Production workflows          |
+| **Secrets Manager**     | OIDC client secret and other deployment-time secrets                                     |
+| **email-rendering**     | Template discovery and newsletter preview/rendering                                      |
+| **theguardian.com**     | Consumes launched data for sign-up page usage (no direct API integration from this repo) |
+| **Braze**               | Consumes rendered newsletter content; campaign setup is manual                           |
 
 ## Related docs
 
-- [Docs index](./README.md)
-- [Data model](./data-model.md)
-- [Launch flow](./launch-flow.md)
-- [Auth and permissions](./auth-and-permissions.md)
-- [Deployment](./deployment.md)
-- [Local development](./local-development.md)
+- [Data model](./data-model.md) — the shape of the data flowing through this system
+- [Launch flow](./launch-flow.md) — the handoff from this repo to the manual downstream steps
+- [Infrastructure](./infrastructure.md) — how the two API deployments are actually built
