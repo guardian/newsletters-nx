@@ -83,13 +83,13 @@ In particular:
   three emails are sent via `Promise.all`, but the result array is destructured
   into only two variables:
 
-  | Email sent | Result is assigned to |
-  | --- | --- |
-  | `NEWSLETTER_LAUNCH` | `brazeCampaignCreationStatus` |
-  | `BRAZE_SET_UP_REQUEST` | `tagCreationStatus` **and** `signupPageCreationStatus` |
-  | `CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST` | discarded |
+    | Email sent                                        | Result is assigned to                                  |
+    | ------------------------------------------------- | ------------------------------------------------------ |
+    | `NEWSLETTER_LAUNCH`                               | `brazeCampaignCreationStatus`                          |
+    | `BRAZE_SET_UP_REQUEST`                            | `tagCreationStatus` **and** `signupPageCreationStatus` |
+    | `CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST` | discarded                                              |
 
-  Read those three status fields with this in mind until it is fixed.
+    Read those three status fields with this in mind until it is fixed.
 
 ## Post-launch Braze update requests
 

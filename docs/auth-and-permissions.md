@@ -21,6 +21,7 @@ permissions entirely. See [Local development](./local-development.md#configurati
 Permissions are being migrated away from SSM to the Guardian permissions system.
 
 Tracking issue:
+
 - https://github.com/guardian/newsletters-nx/issues/538
 
 This document is intentionally brief while that migration is in flight.  

@@ -24,9 +24,9 @@ The model uses two closely related shapes:
     - includes launch-time identity fields
     - stored under launched storage paths
 
-| Type | Schema | Typical identifier | Storage area |
-| --- | --- | --- | --- |
-| Draft | draft schema (partial) | `listId` | `draft-storage/` |
+| Type     | Schema                       | Typical identifier              | Storage area            |
+| -------- | ---------------------------- | ------------------------------- | ----------------------- |
+| Draft    | draft schema (partial)       | `listId`                        | `draft-storage/`        |
 | Launched | newsletter schema (complete) | `identityName` (+ list linkage) | `launched-newsletters/` |
 
 ## Storage model
