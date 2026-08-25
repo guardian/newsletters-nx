@@ -1,14 +1,16 @@
 # NewslettersNx
 
-This monorepo powers Guardian editorial newsletters:
-- newsletter data model and storage
-- newsletters API
-- editorial management UI
-- shared workflow/state-machine libraries
+The tooling behind Guardian editorial newsletters: a React management UI, an
+Express API, and the shared libraries that define, validate and store newsletter
+data.
 
-It uses [pnpm workspaces](https://pnpm.io/workspaces) to manage its packages.
+It's a [pnpm workspace](https://pnpm.io/workspaces) monorepo.
 
 ## Quick start
+
+You need Node, pnpm and [dev-nginx](https://github.com/guardian/dev-nginx). You
+do **not** need AWS credentials — the default setup uses in-memory storage and a
+fake user profile.
 
 From the repo root:
 
@@ -18,29 +20,30 @@ pnpm install
 pnpm run dev
 ```
 
-The app will be available at https://newsletters-tool.local.dev-gutools.co.uk/.
-The API will be available at http://localhost:3000/.
+- UI: https://newsletters-tool.local.dev-gutools.co.uk/
+- API: http://localhost:3000/
 
-For configuration, local auth/permissions, and troubleshooting, see [Local development](docs/local-development.md).
+If that didn't work, or you need to change configuration or permission levels,
+see [Local development](docs/local-development.md).
 
-## Documentation
+## Where to go next
 
-Start with the [docs index](docs/README.md). Common entry points:
+**[📖 Documentation index](docs/README.md)** — the map of everything.
 
-- [Architecture](docs/architecture.md)
-- [Local development](docs/local-development.md)
-- [Deployment](docs/deployment.md)
-- [Auth and permissions](docs/auth-and-permissions.md)
-- [Launch flow](docs/launch-flow.md)
-- [Data model](docs/data-model.md)
-- [Testing](docs/testing.md)
+The usual first stops:
 
-## Testing
+- [Architecture](docs/architecture.md) — what this repo is and isn't responsible for
+- [Local development](docs/local-development.md) — setup, configuration, gotchas
+- [Testing](docs/testing.md) — how to run the tests
+- [Deployment](docs/deployment.md) — how changes reach CODE and PROD
 
-See [Testing](docs/testing.md) for the testing strategy, commands, and CI behaviour.
+## Before you merge
 
-## Development
+⚠️ **Changes to [`libs/newsletters-data-client`](libs/newsletters-data-client)
+can affect newsletter data used in PROD by other Guardian applications.** Read
+[that package's README](libs/newsletters-data-client/README.md) first.
 
-**NOTE** Merging changes to the 'newsletters-data-client' library can impact the newsletters data used in PROD by other Guardian applications. Please check the notes at the [README for that project](libs/newsletters-data-client/README.md) for more details.
+⚠️ **Changes to the legacy API data structure must be communicated to
+[Data Design](mailto:data.design@theguardian.com) before merging to `main`.**
 
-**NOTE** Any changes to the legacy API data structure should be communicated to the [Data Design](mailto:data.design@theguardian.com) **before** merging to main.
+Merging to `main` deploys to PROD.

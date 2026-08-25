@@ -1,27 +1,20 @@
 # Documentation
 
-Reference docs for how `newsletters-nx` works. For getting the app running locally, start with the [root README](../README.md).
+To get the app running, start with the [root README](../README.md).
 
-## Choose a path
+- [Local development](./local-development.md) — setup, configuration, gotchas
+- [Testing](./testing.md) — the test layers, commands, and what CI checks
+- [Deployment](./deployment.md) — how to ship a change to CODE or PROD
+- [Infrastructure](./infrastructure.md) — CDK stacks, stages, the two deployed apps, RiffRaff
+- [Architecture](./architecture.md) — how the packages fit together, and what this repo is and isn't responsible for
+- [Launch flow](./launch-flow.md) — what happens when a newsletter is launched
+- [Auth and permissions](./auth-and-permissions.md) — how access control works today
+- [Data model](./data-model.md) — how newsletter data is shaped, stored and changed
 
-- **New to this repo**: [Architecture](./architecture.md) then [Local development](./local-development.md)
-- **Changing newsletter behaviour/data**: [Data model](./data-model.md) and [Launch flow](./launch-flow.md)
-- **Working on access control**: [Auth and permissions](./auth-and-permissions.md)
-- **Deploying or debugging environments**: [Deployment](./deployment.md)
-- **Verifying changes before merge**: [Testing](./testing.md)
-
-| Doc | What it covers |
-| --- | --- |
-| [Architecture](./architecture.md) | How this repo fits into Guardian's newsletter ecosystem, package responsibilities, and external services |
-| [Local development](./local-development.md) | Getting set up, configuration, and running the tests |
-| [Data model](./data-model.md) | How newsletter data is shaped, validated, stored, and transformed |
-| [Launch flow](./launch-flow.md) | What happens when a draft newsletter is launched, and what launch statuses mean |
-| [Auth and permissions](./auth-and-permissions.md) | How authentication and authorisation currently work (and where permissions are moving) |
-| [Deployment](./deployment.md) | CDK stacks, RiffRaff, CODE/PROD environments, and CI workflows |
-| [Testing](./testing.md) | Testing layers, commands, and CI expectations |
+Package-level detail lives in each package's own README.
 
 ## Contributing to these docs
 
-- Keep docs close to the code they describe; prefer linking to source over duplicating it.
-- If a doc describes something still in flux (e.g. a migration in progress), say so explicitly and link the tracking issue.
-- Update the relevant doc(s) as part of the PR that changes the behaviour they describe, not as a follow-up.
+Update the relevant doc in the same PR as the change it describes. Prefer
+linking to source over duplicating it, and if something is mid-migration, say so
+and link the tracking issue.
