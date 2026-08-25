@@ -14,6 +14,14 @@ From the workspace root, i.e: `/newsletters-nx/`:
 pnpm --filter=@newsletters-nx/newsletters-data-client build
 ```
 
+## Running unit tests
+
+From the workspace root, i.e: `/newsletters-nx/`:
+
+```
+pnpm --filter=@newsletters-nx/newsletters-data-client test
+```
+
 ## How not to break the API
 
 Merging changes to this library, especially to the `newsletterDataSchema` or the sub-schemas it uses, can potentially make newsletters disappear from the API data in production. Merging changes will not change the data persisted in s3, but the `newsletterDataSchema` is used validate that data and filter out any items that do not conform to the schema.

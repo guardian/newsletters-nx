@@ -1,17 +1,23 @@
 # Newsletters API
 
-The Express backend: storage, auth and authorisation, workflow routes, and
-serving the UI bundle.
+See [Local development](../../docs/local-development.md) for setup, environment variables and permission levels.
 
-For setup, environment variables and permission levels, see
-[Local development](../../docs/local-development.md).
+## Running locally
 
-## Serving the UI
+The API should be run locally from the _workspace_ root rather than the _project_ root - IE /newsletters-nx/ not /newsletters-nx/apps/newsletters-api/
+From the _workspace_ root: `pnpm run dev` will run the API on http://localhost:3000/
 
-On the default configuration the API serves the UI on its index page, so
-http://localhost:3000/ shows the UI while API responses stay on their own paths,
-e.g. http://localhost:3000/api/newsletters.
+On the default configuration, the API serves a the UI on its index page, so http://localhost:3000/ will display the UI, but the API response can be accessed at their path, e.g. http://localhost:3000/api/newsletters
 
-Set `NEWSLETTERS_UI_SERVE=false` to turn that off — this is how the
-`readonly-newsletters` deployment runs. See
-[Infrastructure](../../docs/infrastructure.md#the-two-apps).
+### Configuring the local instance with environment variables
+
+Local environment variables can be set by:
+
+- Copying **apps/newsletters-api/env.local.example.txt** and rename it **.env.local** (This file will be .gitignored), or
+- setting them on the command line, eg `NEWSLETTERS_UI_SERVE=false pnpm run dev`
+
+By default, the local application uses an in-memory storage system (so data you enter will not persist when the application restarts). To use an S3 bucket for storage instead, you will need to set the environment variables for the s3 parameters. You will need credentials for the right AWS account (IE the account the S3 bucket it in) from [Janus](https://janus.gutools.co.uk/), for the API to be able to access the bucket and read/write files.
+
+⚠ Avoid committing the names of S3 bucket into the repository. **.env.local** is gitignored. You should not need to enter them in any other files.
+
+⚠☣☢ Do not give your local instance access to the PROD S3 bucket containing the live data! ⚠☣☢

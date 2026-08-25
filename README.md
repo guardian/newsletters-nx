@@ -58,4 +58,7 @@ which of the parallel `Stand*` components to change.
 can affect newsletter data used in PROD by other Guardian applications.** Read
 [that package's README](libs/newsletters-data-client/README.md) first.
 
+⚠️ **Any changes to the legacy API data structure must be communicated to
+[Data Design](mailto:data.design@theguardian.com) _before_ merging to main.**
+
 Merging to `main` deploys to PROD.

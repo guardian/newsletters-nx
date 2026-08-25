@@ -10,6 +10,9 @@ To get the app running, start with the [root README](../README.md).
 - [Launch flow](./launch-flow.md) — what happens when a newsletter is launched
 - [Auth and permissions](./auth-and-permissions.md) — how access control works today
 - [Data model](./data-model.md) — how newsletter data is shaped, stored and changed
+- [Clients](./clients.md) — who consumes the API, and what that means for changes
+- [Publishing type changes](./publishing-type-changes.md) — how to ship API shape changes to `@guardian/newsletter-types`
+- [Features](./features.md) — what the tool lets editorial users do
 - [Stand migration](./stand-migration.md) — the in-progress move of the UI to `@guardian/stand`
 
 Package-level detail lives in each package's own README.

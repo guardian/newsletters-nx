@@ -1,34 +1,72 @@
-# newsletters-e2e
+# Newsletter E2E Tests
 
-Playwright end-to-end tests for the newsletters tool.
+End-to-end functional tests for the Newsletters application using Playwright.
 
-For the commands to run these (and how they fit with the other test layers), see
-[Testing](../../docs/testing.md). This README covers the Playwright-specific
-detail.
+See [Testing](../../docs/testing.md) for how these fit with the other test layers.
 
-## Layout
+## Running Tests
 
-|         |                                                         |
-| ------- | ------------------------------------------------------- |
-| Config  | `playwright.config.ts`                                  |
-| Specs   | `src/api/**` and `src/ui/**`                            |
-| Reports | `playwright-report/` locally, `dist/.playwright/` in CI |
+### Locally
 
-The suite expects the API on `http://localhost:3000`. Start it with
-`pnpm run dev` from the workspace root before running the tests locally.
+From the workspace root: `/newsletters-nx/`
 
-## Viewing reports
+```bash
+# Run all tests (headless)
+pnpm run test:e2e
 
-Locally, from the workspace root:
+# Run with browser visible
+pnpm run test:e2e:ui
+
+# Debug tests
+pnpm run test:e2e:debug
+```
+
+### In CI
+
+Tests run automatically on every push and pull request via GitHub Actions.
+
+## Test Coverage
+
+- **Viewing Newsletters** - Click and navigate through launched newsletters
+- **Creating Newsletters** - Placeholder for create functionality
+- **Editing Newsletters** - Placeholder for edit functionality
+
+## Configuration
+
+- **Config file**: `playwright.config.ts`
+- **Test files**: `src/*.spec.ts`
+- **Reports**: `playwright-report/` (local) or `dist/.playwright/` (CI)
+
+## CI Environment
+
+Tests run with:
+
+- `USE_IN_MEMORY_STORAGE='true'` - Uses in-memory storage instead of S3
+- `CI='true'` - Enables CI-specific configurations
+- Chromium browser only (for speed)
+- 2 retries on failure
+- Artifacts uploaded for 30 days
+
+## Viewing Reports
+
+### Locally
+
+From the workspace root: `/newsletters-nx/`
 
 ```bash
 pnpm exec playwright show-report apps/newsletters-e2e/playwright-report
 ```
 
-In CI, download the `playwright-report` artifact from the workflow run (retained
-30 days) and open `index.html`.
+### CI
 
-## Writing tests
+1. Go to GitHub Actions tab
+2. Click on the workflow run
+3. Download the "playwright-report" artifact
+4. Extract and open `index.html`
+
+## Writing New Tests
+
+Tests use Playwright Test framework. Example:
 
 ```typescript
 import { test, expect } from '@playwright/test';
@@ -42,18 +80,15 @@ test('my test', async ({ page }) => {
 
 ## Troubleshooting
 
-**Port already in use:**
+**Port conflict:**
 
 ```bash
 lsof -ti:4200 | xargs kill -9
 ```
 
-**Browsers not installed** — from the workspace root:
+**Playwright browsers not installed:**
 
 ```bash
+# From workspace root: e.g /newsletters-nx
 pnpm exec playwright install --with-deps chromium
 ```
-
-**Passes locally, fails in CI** — CI runs Chromium only, with 2 retries and
-in-memory storage. Check the uploaded report for the trace before assuming
-flakiness.

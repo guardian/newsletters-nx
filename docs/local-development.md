@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node and pnpm — versions are pinned in [`.nvmrc`](../.nvmrc), [`mise.toml`](../mise.toml) and the `packageManager` field in [`package.json`](../package.json)
+- Node and pnpm — versions are pinned in [`.nvmrc`](../.nvmrc) and the `packageManager` field in [`package.json`](../package.json)
 - [dev-nginx](https://github.com/guardian/dev-nginx), for the local HTTPS domain
 - [Janus](https://janus.gutools.co.uk/) credentials, only if you want to use a real S3 bucket
 
