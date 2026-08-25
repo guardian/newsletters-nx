@@ -1,4 +1,4 @@
-# newsletters-api
+# Newsletters API
 
 The Express backend: storage, auth and authorisation, workflow routes, and
 serving the UI bundle.
