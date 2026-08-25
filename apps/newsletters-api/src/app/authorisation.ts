@@ -13,8 +13,7 @@ export const hasEditAccess = async (
 		return false;
 	}
 	const permissions = await permissionService.get(profile);
-	const { editNewsletters } = permissions;
-	return [editNewsletters].some((permission) => permission);
+	return permissions.editNewsletters;
 };
 
 export const hasPermission = async (
