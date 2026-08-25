@@ -27,9 +27,10 @@ export type UserProfile = Partial<{
 }>;
 
 export enum UserAccessLevel {
-	Developer, // Can do everything
-	Editor, // Can edit and launch newsletters
-	Viewer, // Read-only access
+	Developer = 0, // Can do everything
+	Editor = 1, // Can edit and launch newsletters
+	// Drafter = 2, // Intentionally removed.
+	Viewer = 3, // Read-only access
 }
 
 export type UserPermissions = {
