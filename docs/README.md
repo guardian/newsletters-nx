@@ -10,6 +10,7 @@ To get the app running, start with the [root README](../README.md).
 - [Launch flow](./launch-flow.md) — what happens when a newsletter is launched
 - [Auth and permissions](./auth-and-permissions.md) — how access control works today
 - [Data model](./data-model.md) — how newsletter data is shaped, stored and changed
+- [Stand migration](./stand-migration.md) — the in-progress move of the UI to `@guardian/stand`
 
 Package-level detail lives in each package's own README.
 

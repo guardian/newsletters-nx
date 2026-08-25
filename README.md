@@ -37,6 +37,21 @@ The usual first stops:
 - [Testing](docs/testing.md) — how to run the tests
 - [Deployment](docs/deployment.md) — how changes reach CODE and PROD
 
+## In progress: the Stand migration
+
+The UI is mid-migration from MUI to
+[`@guardian/stand`](https://github.com/guardian/stand). Both UIs live in the
+codebase: the Stand version is off by default and opt-in per browser via the
+`switch-stand` feature switch, e.g.
+
+```
+https://newsletters-tool.local.dev-gutools.co.uk/drafts?switch-stand=true
+```
+
+If you're touching the UI, read [Stand migration](docs/stand-migration.md)
+first — it explains which screens have moved, how the two versions coexist, and
+which of the parallel `Stand*` components to change.
+
 ## Before you merge
 
 ⚠️ **Changes to [`libs/newsletters-data-client`](libs/newsletters-data-client)
