@@ -1,9 +1,7 @@
 # email-builder
 
-## Running unit tests
+Builds the content of the notification emails this system sends — launch
+requests, Braze set-up requests and Central Production handoffs.
 
-From the workspace root `/newsletters-nx/`
-
-```
-pnpm --filter=@newsletters-nx/email-builder test
-```
+These emails are requests to downstream teams, not direct provisioning. See
+[Launch flow](../../docs/launch-flow.md).

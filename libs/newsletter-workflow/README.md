@@ -1,17 +1,9 @@
 # newsletter-workflow
 
-## Running unit tests
+The newsletter-specific wizard definitions and the launch workflow. Composes
+[`state-machine`](../state-machine) (the generic wizard engine) with
+[`newsletters-data-client`](../newsletters-data-client) (the schemas and
+storage).
 
-From the workspace root `/newsletters-nx/`
-
-```
-pnpm --filter=@newsletters-nx/newsletter-workflow test
-```
-
-## Running lint
-
-From the workspace root `/newsletters-nx/`
-
-```
-pnpm --filter=@newsletters-nx/newsletter-workflow lint
-```
+For what happens when a newsletter is launched, see
+[Launch flow](../../docs/launch-flow.md).

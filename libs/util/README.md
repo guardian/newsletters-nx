@@ -1,17 +1,4 @@
 # util
 
-## Running unit tests
-
-From the workspace root, i.e: `/newsletters-nx/`:
-
-```
-pnpm --filter=@newsletters-nx/util test
-```
-
-## Running lint
-
-From the workspace root, i.e: `/newsletters-nx/`:
-
-```
-pnpm --filter=@newsletters-nx/util lint
-```
+Shared utilities used across the repo, including the runtime config helpers that
+read environment variables and SSM-backed configuration.
