@@ -82,8 +82,8 @@
 		"@typescript-eslint/eslint-plugin": "^8.13.0",
 		"@typescript-eslint/parser": "^8.13.0",
 		"@vitejs/plugin-react": "^6.0.1",
-		"@vitest/coverage-v8": "^4.0.0",
-		"@vitest/ui": "^4.0.0",
+		"@vitest/coverage-v8": "^4.1.11",
+		"@vitest/ui": "^4.1.11",
 		"babel-jest": "^30.3.0",
 		"esbuild": "^0.28.1",
 		"eslint": "^9.39.5",
@@ -105,7 +105,7 @@
 		"unist-util-visit": "5.1.0",
 		"vite": "^8.0.16",
 		"vite-tsconfig-paths": "^6.1.1",
-		"vitest": "^4.0.0"
+		"vitest": "^4.1.11"
 	},
 	"packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72"
 }
