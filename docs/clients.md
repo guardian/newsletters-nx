@@ -7,11 +7,11 @@ The newsletters tool has two kinds of consumer: the **editorial users** of the t
 This repo is the **canonical source of truth for Guardian newsletter data**. Other systems do not hold their own copy of what newsletters exist — they read it from here. Specifically, the tool provides:
 
 - **The list of newsletters that exist**, and their status (`pending`, `live`, `paused`, `cancelled`). This is what determines whether a newsletter can be subscribed to, promoted, or sent at all.
-- **Stable identifiers** — `identityName`, `listId`, and the legacy `listIdV1` — which other systems use as the key for subscriptions, analytics, and Braze attributes.
-- **Descriptive and promotional copy** — name, description, frequency, group, theme, sign-up headline — rendered directly on theguardian.com sign-up pages and in-article sign-up blocks.
-- **Tags and campaign codes** — the series tag, campaign tag, and email campaign codes used to associate articles and traffic with a newsletter.
+- **Stable identifiers** — `identityName`, `listId`, and the deprecated `listIdV1` — which other systems use as the key for subscriptions, analytics, and Braze attributes. See [Identifiers](#identifiers) below for how each is used.
+- **Descriptive and promotional copy** — name, description, frequency, group, theme, sign-up headline — rendered directly on theguardian.com sign-up pages (for example, the [First Edition sign-up page](https://www.theguardian.com/global/2022/sep/20/sign-up-for-the-first-edition-newsletter-our-free-news-email)) and in-article sign-up blocks.
+- **Tags and campaign codes** — the series tag, campaign tag, and email campaign codes used to associate articles and traffic with a newsletter. Specifically, when an article in Composer is tagged with the newsletter's campaign tag (`campaign/email/<identityName>`, alongside an `info/newsletter-sign-up` tag), `frontend` resolves that tag to look up the newsletter and renders its sign-up embed on the article (see `NewsletterService.getNewsletterResponseFromTags` in [`guardian/frontend`](https://github.com/guardian/frontend)).
 - **Email rendering options** — the per-newsletter configuration (banners, subheadings, read-more sections, palette, dark theme) that the email rendering service uses to build the actual email.
-- **Edition layouts** — how newsletters are grouped and ordered for edition-based pages.
+- **Edition layouts** — how newsletters are grouped and ordered for https://www.theguardian.com/email-newsletters.
 
 Because of this, the API is a shared contract. Changes to `newsletterDataSchema` in [`newsletters-data-client`](../libs/newsletters-data-client/README.md) can silently remove newsletters from the API response for every client listed below — see the [notes on not breaking the API](../libs/newsletters-data-client/README.md#how-not-to-break-the-api).
 
@@ -35,6 +35,14 @@ The full surface is described in [`open-api.yaml`](../apps/newsletters-api/open-
 | --- | --- |
 | Newsletters / editorial teams | Create, edit, and launch newsletters; configure rendering options and edition layouts |
 | Central Production | Receive launch and set-up notification emails and complete the manual Braze and sign-up page work |
+
+## Identifiers
+
+| Identifier | Used for | Consumers |
+| --- | --- | --- |
+| `identityName` | The primary key used across almost all consumers to look up a specific newsletter. | `identity`, `frontend`, `dotcom-rendering`, `email-rendering`, `manage-frontend` |
+| `listId` | Subscription state specifically (subscribe/unsubscribe, "is user subscribed"). | `identity`, `gateway`, `dotcom-rendering`, `support-frontend` |
+| `listIdV1` | Deprecated — kept only for backwards compatibility with legacy V1 email widget styling. No active consumer subscribes using it. | None (legacy only) |
 
 ## Who consumes the API
 

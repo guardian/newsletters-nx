@@ -4,7 +4,7 @@ How newsletter data is shaped, stored, and transformed in `newsletters-nx`.
 
 ## Source of truth
 
-Newsletter data is defined by Zod schemas in:
+Newsletter data is defined by [Zod](https://zod.dev/) schemas in:
 
 - `libs/newsletters-data-client/src/lib/schemas/`
 
@@ -31,12 +31,9 @@ The model uses two closely related shapes:
 
 ## Storage model
 
-Storage is abstracted behind interfaces in `newsletters-data-client`, with environment-dependent implementations:
+Storage is abstracted behind interfaces in `newsletters-data-client`, with **S3-backed storage** as the standard model for persisted newsletter data.
 
-- **In-memory storage** for local/dev workflows
-- **S3-backed storage** for integrated/stage workflows
-
-Selection is made at app startup by configuration (for example `USE_IN_MEMORY_STORAGE` and related env setup).
+For local/dev workflows, there is also an **in-memory storage** implementation selected at app startup by configuration (for example `USE_IN_MEMORY_STORAGE` and related env setup).
 
 ## Key services
 
@@ -49,25 +46,12 @@ Core service responsibilities are split between draft and launch concerns:
 - **Launch service**
     - validates/assembles launchable data
     - persists launched newsletter records
-    - coordinates post-launch side effects (notification handoffs)
-
-## Derived and computed values
-
-Some fields are generated from base newsletter inputs (for example naming/identity variants used by downstream systems).  
-These are deterministic defaults, and editable where workflow allows.
-
-There is also a set of **computed display/runtime values** used for UI and notification contexts; these are generated when needed rather than treated as user-authored source fields.
+    - sends the newsletter-launched, Braze set-up request, and central production tags/signup page request notification emails
 
 ## Compatibility / downstream consumers
 
 A legacy-compatible transformation exists for older consumers (v1-style shape),
-served at `/api/legacy/newsletters`.
-
-It has **no known active downstream consumers**. No client listed in
-[Clients](./clients.md#who-consumes-the-api) reads it, and the Data Design
-sign-off that used to be required for changes to the legacy shape no longer
-applies. The route, `transformDataToLegacyNewsletter`, and the legacy schema are
-therefore candidates for removal.
+served at `/api/legacy/newsletters`. **It is deprecated — do not use it.**
 
 The `listIdV1` field on the current (v2) newsletter data is a separate thing and
 is still used by downstream systems — it is not part of this deprecation.
