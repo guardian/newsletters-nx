@@ -21,6 +21,16 @@ export default defineConfig([
 		},
 	},
 	{
+		files: ['src/**/*.spec.ts', 'src/**/*.spec.tsx'],
+		extends: [guardian.configs.recommended, guardian.configs.react],
+		languageOptions: {
+			parserOptions: {
+				projectService: false,
+				project: './tsconfig.spec.json',
+			},
+		},
+	},
+	{
 		// Config files
 		files: ['eslint.config.mjs', 'vite.config.ts'],
 		extends: [guardian.configs.recommended],
