@@ -79,7 +79,7 @@ export function HomeMenu() {
 				/>
 				<ButtonGridItem path="/drafts" content={'View draft newsletters'} />
 
-				{permissions.editNewsletters && (
+				{permissions.editEverything && (
 					<ButtonGridItem
 						path="/drafts/newsletter-data"
 						content={'Create newsletter'}
@@ -115,7 +115,7 @@ export function HomeMenu() {
 					</Grid>
 				)}
 
-				{permissions.editNewsletters && (
+				{permissions.editEverything && (
 					<Grid
 						sx={{ display: 'flex' }}
 						size={{

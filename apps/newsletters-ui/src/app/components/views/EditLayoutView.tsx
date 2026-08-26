@@ -25,7 +25,7 @@ export const EditLayoutView = () => {
 	return (
 		<ContentWrapper maxWidth="xl">
 			<Typography variant="h2">Edit Layout for {editionId}</Typography>
-			{permissions?.editNewsletters && (
+			{permissions?.editEverything && (
 				<LayoutEditor
 					editionId={editionId}
 					layout={data.layout}

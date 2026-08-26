@@ -63,7 +63,7 @@ const LayoutOverview = ({
 				<Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 4 }}>
 					{title}
 
-					{permissions?.editNewsletters && (
+					{permissions?.editEverything && (
 						<Button
 							onClick={() => {
 								void handleCreate(editionId);

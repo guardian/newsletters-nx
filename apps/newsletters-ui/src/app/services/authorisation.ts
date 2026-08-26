@@ -6,5 +6,5 @@ export const shouldShowEditOptions = (
 	if (!permissions) {
 		return null;
 	}
-	return permissions.editNewsletters;
+	return permissions.editEverything;
 };

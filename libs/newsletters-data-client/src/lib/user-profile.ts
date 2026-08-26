@@ -34,8 +34,8 @@ export enum UserAccessLevel {
 }
 
 export type UserPermissions = {
-	editNewsletters: boolean;
-	useJsonEditor: boolean;
+	editEverything: boolean; // Can Edit everything (except JSON)
+	useJsonEditor: boolean; // Can Edit JSON using the JSON editor
 };
 
 export const permissionsDataSchema = z.record(z.string(), z.int().min(0));
@@ -44,7 +44,7 @@ export const levelToPermissions = (
 	accessLevel: UserAccessLevel,
 ): UserPermissions => {
 	return {
-		editNewsletters: [
+		editEverything: [
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
 		].includes(accessLevel),

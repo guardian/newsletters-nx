@@ -161,7 +161,7 @@ export async function updateDraftNewsletter<S extends UpdateStepId>(
 
 /**
  * Deletes a draft newsletter by its listId.
- * Requires the editNewsletters permission (USE_DEVELOPER_PROFILE=true in dev/test).
+ * Requires the 'editEverything' permission (USE_DEVELOPER_PROFILE=true in dev/test).
  */
 export async function deleteDraftNewsletter(
 	request: APIRequestContext,

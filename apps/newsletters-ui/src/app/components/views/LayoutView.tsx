@@ -31,7 +31,7 @@ export const LayoutView = () => {
 				newsletters={data.newsletters}
 				layout={data.layout ?? makeBlankLayout()}
 			/>
-			{permissions?.editNewsletters && (
+			{permissions?.editEverything && (
 				<Box sx={{ paddingY: 2 }}>
 					<NavigateButton href={`/layouts/edit/${editionId}`}>
 						Edit layout
