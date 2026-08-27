@@ -43,53 +43,18 @@ sequenceDiagram
     Exec->>Newsletter: updateCreationStatus(REQUESTED/NOT_REQUESTED)
 ```
 
-## Step-by-step behaviour
-
-### 1) Create launched record
-
-The launch service reads the draft, applies defaults/derived values, merges user-edited launch values, and writes the launched record to launched storage.
-
-### 2) Delete draft
-
-After a successful launch write, the draft is deleted on a best-effort basis.  
-If deletion fails, launch still succeeds (with warning/logging).
-
-### 3) Send notifications
-
-Launch triggers notification emails (for example launch/Braze/Central Production handoffs).  
-These notifications represent requests to downstream teams, not direct provisioning by this system.
-
-### 4) Set status fields
-
-`*CreationStatus` fields are set from notification results (e.g. `REQUESTED`/`NOT_REQUESTED` semantics in current implementation).
-
 ## Status semantics (important)
 
-`REQUESTED` means a request/handoff notification was issued successfully by this system.  
-It does **not** mean downstream work has been completed.
-
-In particular:
+`REQUESTED` means automated emails to editorial and production teams are sent.
 
 - Braze campaign setup is manual
 - Tag and sign-up page setup are manual
-- `newsletters-nx` does not directly create those downstream entities
 
 ## Known caveats
 
 - Status values reflect this system's request path, not guaranteed downstream completion.
 - If email sending is disabled by environment/config (`ENABLE_EMAIL_SERVICE`), status behaviour may still indicate request success from the app's perspective.
-- **Notification results are mislabelled.** In
-  [`executeLaunch.ts`](../libs/newsletter-workflow/src/lib/executeLaunch.ts)
-  three emails are sent via `Promise.all`, but the result array is destructured
-  into only two variables:
-
-    | Email sent                                        | Result is assigned to                                  |
-    | ------------------------------------------------- | ------------------------------------------------------ |
-    | `NEWSLETTER_LAUNCH`                               | `brazeCampaignCreationStatus`                          |
-    | `BRAZE_SET_UP_REQUEST`                            | `tagCreationStatus` **and** `signupPageCreationStatus` |
-    | `CENTRAL_PRODUCTION_TAGS_AND_SIGNUP_PAGE_REQUEST` | discarded                                              |
-
-    Read those three status fields with this in mind until it is fixed.
+- Notification results are mislabelled (see https://github.com/guardian/newsletters-nx/issues/727)
 
 ## Post-launch Braze update requests
 
