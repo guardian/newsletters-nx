@@ -15,21 +15,6 @@ make sure your change is ready before you merge.
 3. Go to [RiffRaff](https://riffraff.gutools.co.uk/deployment/request), pick
    project `newsletters::newsletters-tool`, choose your build, and deploy to CODE
 
-## Change infrastructure
-
-Infrastructure lives in [`cdk/`](../cdk). Run these from that directory:
-
-| Command               | Use it to                                           |
-| --------------------- | --------------------------------------------------- |
-| `npm run diff`        | See what your change would do to a deployed stack   |
-| `npm run synth`       | Generate the CloudFormation templates               |
-| `npm run test`        | Run the snapshot test                               |
-| `npm run test-update` | Regenerate the snapshot after an intentional change |
-| `npm run lint`        | Lint the CDK code                                   |
-
-The stack has a snapshot test, so **any infrastructure change needs
-`npm run test-update`** or CI will fail. Commit the updated snapshot.
-
 ## What CI does
 
 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on pushes to
@@ -41,14 +26,12 @@ The stack has a snapshot test, so **any infrastructure change needs
 | Build, lint and unit tests | `pnpm lint`, `pnpm test`, plus CDK lint, test and synth                                                                       |
 | Deploy                     | Needs both jobs above. Bundles the UI and API, synths the templates, and uploads to RiffRaff via `guardian/actions-riff-raff` |
 
-`check-labels.yaml` is a separate PR-labelling check, unrelated to deployment.
-
 See [Testing](./testing.md) for more on the test jobs.
 
 ## Troubleshooting
 
 **CDK snapshot test failing** — you changed infrastructure without regenerating
-the snapshot. Run `npm run test-update` from `cdk/`.
+the snapshot. See [Change infrastructure](./infrastructure.md#change-infrastructure).
 
 **Your build isn't in RiffRaff** — the deploy job only runs after both test jobs
 pass. Check CI first.

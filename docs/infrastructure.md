@@ -63,6 +63,21 @@ Configuration is injected as environment variables through EC2 user data:
 Per-stage runtime configuration beyond this comes from SSM Parameter Store — see
 [Architecture](./architecture.md#external-services).
 
+## Change infrastructure
+
+Infrastructure lives in [`cdk/`](../cdk). Run these from that directory:
+
+| Command               | Use it to                                           |
+| --------------------- | --------------------------------------------------- |
+| `npm run diff`        | See what your change would do to a deployed stack   |
+| `npm run synth`       | Generate the CloudFormation templates               |
+| `npm run test`        | Run the snapshot test                               |
+| `npm run test-update` | Regenerate the snapshot after an intentional change |
+| `npm run lint`        | Lint the CDK code                                   |
+
+The stack has a snapshot test, so **any infrastructure change needs
+`npm run test-update`** or CI will fail. Commit the updated snapshot.
+
 ## RiffRaff
 
 [`riff-raff.yaml`](../riff-raff.yaml) declares one CloudFormation deployment

@@ -1,46 +1,60 @@
 # Features
 
-What the newsletters tool lets you do.
+The newsletters tool lets Guardian staff create, manage and launch newsletters. This page describes its features in more detail.
 
 ## Manage newsletters
 
-- Browse all Guardian newsletters in a searchable, filterable table (view state is shareable via the URL).
-- View full details for a newsletter, including derived values and the raw JSON.
-- Edit a newsletter via schema-driven forms, or directly as JSON.
+- Browse all Guardian newsletters in a searchable, filterable table. View state (search, filters, sort) is shareable via the URL:
+  - [/launched](https://newsletters-tool.gutools.co.uk/launched)
+- View and edit newsletters through schema-driven forms, or directly as JSON (developers only).
 
 ## Create a newsletter
 
-- Step through a guided wizard covering name, frequency, dates, tags, targeting, production details and promotion content.
-- Save progress as a draft, skip steps, and come back later.
-- See, edit and delete drafts from a drafts list.
+- Create a newsletter using a guided wizard that steps through name, frequency, dates, tags, targeting, production details and promotion content:
+  - [/drafts/newsletter-data](https://newsletters-tool.gutools.co.uk/drafts/newsletter-data)
+- Save progress as a draft at any point, skip steps, and come back later to finish.
+- View, edit and delete drafts from a drafts list:
+  - [/drafts](https://newsletters-tool.gutools.co.uk/drafts)
 
 ## Launch a newsletter
 
-- Run a launch wizard that checks the draft is complete, confirms the identity name and Braze layout, and takes the newsletter live.
-- Cancel a launch part-way through.
+- Launch a newsletter using a wizard that checks the draft is complete, confirms the identity name and Braze layout, and takes the newsletter live.
+- Cancel a launch part-way through if needed.
 
 ## Configure rendering
 
-- Set email rendering options: header, footer, images, link lists, read-more and podcast blocks, dark sections and palette overrides.
-- Browse and preview rendering templates.
+- Configure how a newsletter renders in email: header, footer, images, link lists, read-more and podcast blocks, dark sections and palette overrides.
+- Browse and preview the available rendering templates before applying them:
+  - [/templates](https://newsletters-tool.gutools.co.uk/templates)
 
 ## Edit edition layouts
 
-- View how newsletters are arranged into edition layouts.
-- Edit layouts visually or as JSON, with warnings for missing newsletters.
+- View how newsletters are arranged into edition layouts:
+  - [/layouts](https://newsletters-tool.gutools.co.uk/layouts)
+- Edit layouts visually or as JSON, with warnings shown for any missing newsletters.
 
 ## Send notifications
 
-Automated emails to editorial and production teams for: new draft created, newsletter launched, Braze set-up requested, Braze update requested, and render tags / sign-up page requested.
+Send automated emails to editorial and production teams when key events happen:
+
+- A new draft is created.
+- A newsletter is launched.
+- Braze set-up is requested.
+- A Braze update is requested.
+- Render tags or a sign-up page are requested.
 
 ## Serve newsletter data to the rest of the Guardian
 
-A public read-only API is the canonical source of newsletter data for other Guardian systems — see [Clients](./clients.md).
+Expose a public, read-only API for other Guardian systems:
 
-## Access control
+- https://newsletters.guardianapis.com/api/newsletters
 
-Guardian sign-in, with edit and launch actions gated by permissions. See [Auth and permissions](./auth-and-permissions.md).
+See [Clients](./clients.md) for details on who consumes it.
+
+## Control access
+
+Require Guardian sign-in for all users, with edit and launch actions further gated by permissions. See [Auth and permissions](./auth-and-permissions.md) for details.
 
 ---
 
-For how these are implemented, see [Architecture](./architecture.md) and [Data model](./data-model.md).
+For how these features are implemented, see [Architecture](./architecture.md) and [Data model](./data-model.md).
