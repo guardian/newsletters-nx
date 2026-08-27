@@ -16,8 +16,7 @@ defaults to `false`. Opt in with a query param, which persists in
 https://newsletters-tool.local.dev-gutools.co.uk/drafts?switch-stand=true
 ```
 
-Use `?switch-stand=false` to turn it off. It's per-browser, not per-stage, so
-it's safe in PROD — users only see the new UI if they opt in.
+Use `?switch-stand=false` to turn it off.
 
 ## What's migrated
 
@@ -29,11 +28,8 @@ it's safe in PROD — users only see the new UI if they opt in.
 
 Stand versions are parallel files prefixed `Stand*` / `StandRedesign*` (nav,
 wizard, step nav, schema form, markdown view, dialogs, issue reports), so the
-MUI originals are untouched. Two places branch on
-`isFeatureSwitchEnabled('switch-stand')`:
-
-- [`Layout.tsx`](../apps/newsletters-ui/src/app/Layout.tsx) — nav, and the wizard-route frame
-- [`routes/drafts.tsx`](../apps/newsletters-ui/src/app/routes/drafts.tsx) — which wizard container to render
+MUI originals are untouched. Search for `isFeatureSwitchEnabled('switch-stand')`
+to find the places that branch on it.
 
 Stand's reset and font CSS is imported globally in
 [`main.tsx`](../apps/newsletters-ui/src/main.tsx) for all users.
@@ -42,8 +38,9 @@ Stand's reset and font CSS is imported globally in
 
 The redesign isn't purely visual.
 [`NEWSLETTER_DATA_STAND_REDESIGN`](../libs/newsletter-workflow/src/lib/steps/standRedesignNewsletterData/index.ts)
-is a separate `WizardLayout` from `NEWSLETTER_DATA`: it adds a name/frequency
-step and a `review` step, and drops `createDraftNewsletter` and `thrasher`. Both
+is a separate `WizardLayout` from `NEWSLETTER_DATA`: it replaces the
+`createDraftNewsletter` step (just a name field) with a combined
+name/frequency step, adds a new `review` step, and drops `thrasher`. Both
 read and write the same draft data, so a draft can be continued in either UI.
 
 ## Working on it
@@ -56,5 +53,7 @@ read and write the same draft data, so a draft can be continued in either UI.
   [`createNewsletter.spec.ts`](../apps/newsletters-e2e/src/ui/createNewsletter.spec.ts).
 - `@guardian/stand` is pinned to an exact version and is pre-1.0 — bump it deliberately.
 
+
+## Completing the migration
 Finishing means migrating the remaining screens, then removing the switch, the
 MUI components and theme, the MUI dependencies, and the `StandRedesign` prefixes.

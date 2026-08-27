@@ -1,59 +1,53 @@
 # Features
 
-The newsletters tool lets Guardian staff create, manage and launch newsletters. This page describes its features in more detail.
+The newsletters tool lets Guardian staff create, manage and launch newsletters. This page describes what it does.
 
 ## Manage newsletters
 
-- Browse all Guardian newsletters in a searchable, filterable table. View state (search, filters, sort) is shareable via the URL:
-  - [/launched](https://newsletters-tool.gutools.co.uk/launched)
-- View and edit newsletters through schema-driven forms, or directly as JSON (developers only).
+- Search, filter and sort every Guardian newsletter in one table at [/launched](https://newsletters-tool.gutools.co.uk/launched). The URL captures your view, so you can share it.
+- Edit newsletters through schema-driven forms, or as raw JSON (developers only).
 
 ## Create a newsletter
 
-- Create a newsletter using a guided wizard that steps through name, frequency, dates, tags, targeting, production details and promotion content:
-  - [/drafts/newsletter-data](https://newsletters-tool.gutools.co.uk/drafts/newsletter-data)
-- Save progress as a draft at any point, skip steps, and come back later to finish.
-- View, edit and delete drafts from a drafts list:
-  - [/drafts](https://newsletters-tool.gutools.co.uk/drafts)
+- A wizard at [/drafts/newsletter-data](https://newsletters-tool.gutools.co.uk/drafts/newsletter-data) walks you through name, frequency, dates, tags, targeting, production details and promotion content.
+- Skip steps, save as a draft at any point, and finish later.
+- Manage your drafts at [/drafts](https://newsletters-tool.gutools.co.uk/drafts).
 
 ## Launch a newsletter
 
-- Launch a newsletter using a wizard that checks the draft is complete, confirms the identity name and Braze layout, and takes the newsletter live.
-- Cancel a launch part-way through if needed.
+- A launch wizard checks the draft is complete, confirms the identity name and Braze layout, then takes the newsletter live.
+- Cancel part-way through if you need to.
 
 ## Configure rendering
 
-- Configure how a newsletter renders in email: header, footer, images, link lists, read-more and podcast blocks, dark sections and palette overrides.
-- Browse and preview the available rendering templates before applying them:
-  - [/templates](https://newsletters-tool.gutools.co.uk/templates)
+- Set how a newsletter looks in email: header, footer, images, link lists, read-more and podcast blocks, dark sections and palette overrides.
+- Preview the available templates at [/templates](https://newsletters-tool.gutools.co.uk/templates) before applying one.
 
 ## Edit edition layouts
 
-- View how newsletters are arranged into edition layouts:
-  - [/layouts](https://newsletters-tool.gutools.co.uk/layouts)
-- Edit layouts visually or as JSON, with warnings shown for any missing newsletters.
+- See how newsletters are arranged into edition layouts at [/layouts](https://newsletters-tool.gutools.co.uk/layouts).
+- Edit layouts visually or as JSON. Missing newsletters are flagged with warnings.
 
 ## Send notifications
 
-Send automated emails to editorial and production teams when key events happen:
+Editorial and production teams are emailed automatically when someone:
 
-- A new draft is created.
-- A newsletter is launched.
-- Braze set-up is requested.
-- A Braze update is requested.
-- Render tags or a sign-up page are requested.
+- creates a draft
+- launches a newsletter
+- requests Braze set-up or a Braze update
+- requests render tags or a sign-up page
 
 ## Serve newsletter data to the rest of the Guardian
 
-Expose a public, read-only API for other Guardian systems:
+A public, read-only API serves newsletter data to other Guardian systems:
 
 - https://newsletters.guardianapis.com/api/newsletters
 
-See [Clients](./clients.md) for details on who consumes it.
+See [Clients](./clients.md) for who uses it.
 
 ## Control access
 
-Require Guardian sign-in for all users, with edit and launch actions further gated by permissions. See [Auth and permissions](./auth-and-permissions.md) for details.
+Everyone must sign in with a Guardian account, and editing and launching need extra permissions. See [Auth and permissions](./auth-and-permissions.md).
 
 ---
 

@@ -16,9 +16,3 @@ To get the app running, start with the [root README](../README.md).
 - [Stand migration](./stand-migration.md) — the in-progress move of the UI to `@guardian/stand`
 
 Package-level detail lives in each package's own README.
-
-## Contributing to these docs
-
-Update the relevant doc in the same PR as the change it describes. Prefer
-linking to source over duplicating it, and if something is mid-migration, say so
-and link the tracking issue.

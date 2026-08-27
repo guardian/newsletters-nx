@@ -18,16 +18,14 @@ regenerating — see [Deploying](./deployment.md#change-infrastructure).
 
 Run these from the **workspace root** unless stated otherwise.
 
-| Command                                        | What it runs                                |
-| ---------------------------------------------- | ------------------------------------------- |
-| `pnpm test`                                    | Every package's unit tests, in parallel     |
-| `pnpm lint`                                    | ESLint across every package                 |
-| `pnpm --filter=@newsletters-nx/<package> test` | One package's unit tests                    |
-| `pnpm test:e2e`                                | All Playwright tests, headless              |
-| `pnpm test:e2e:ui`                             | All Playwright tests with a visible browser |
-| `pnpm test:e2e:debug`                          | Playwright in step-through debug mode       |
-| `pnpm test:e2e:api`                            | API Playwright specs only                   |
-| `pnpm test:e2e:ui-only`                        | UI Playwright specs only                    |
+| Command                                        | What it runs                            |
+| ---------------------------------------------- | --------------------------------------- |
+| `pnpm test`                                    | Every package's unit tests, in parallel |
+| `pnpm lint`                                    | ESLint across every package             |
+| `pnpm --filter=@newsletters-nx/<package> test` | One package's unit tests                |
+| `pnpm test:e2e`                                | All Playwright tests, headless          |
+
+Other `test:e2e:*` scripts are in `apps/newsletters-e2e/package.json`.
 
 CDK has its own commands, run from `cdk/` — see
 [Deploying](./deployment.md#change-infrastructure).
@@ -36,7 +34,7 @@ The e2e suite expects the API to be reachable on `http://localhost:3000`. See
 [`apps/newsletters-e2e/README.md`](../apps/newsletters-e2e/README.md) for
 Playwright specifics, reports and troubleshooting.
 
-## What CI runs
+## CI
 
 Tests run on pushes to `main` and on every pull request, in two jobs — one for
 E2E, one for build/lint/unit tests. Deployment is blocked until both pass. See

@@ -58,12 +58,16 @@ is still used by downstream systems — it is not part of this deprecation.
 
 ## What to update when changing the model
 
+_TypeScript clients of `newsletters-api` do **not** import types from this repo.
+They use [`@guardian/newsletter-types`](https://github.com/guardian/csnx/tree/main/libs/%40guardian/newsletter-types)_
+
 When changing newsletter fields:
 
 1. Update the relevant Zod schema(s)
-2. Update workflow validation/step layouts if user-editable
-3. Update derived/computed generators if naming logic changes
-4. Update storage readers/writers if persisted shape changes
-5. Update docs:
+2. If API response shape changes, raise a matching PR in `guardian/csnx` to update `@guardian/newsletter-types`
+3. Update workflow validation/step layouts if user-editable
+4. Update derived/computed generators if naming logic changes
+5. Update storage readers/writers if persisted shape changes
+6. Update docs:
     - this file (`docs/data-model.md`)
     - any impacted workflow docs (e.g. launch flow)

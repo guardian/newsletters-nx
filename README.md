@@ -30,12 +30,16 @@ see [Local development](docs/local-development.md).
 
 **[📖 Documentation index](docs/README.md)** — the map of everything.
 
-The usual first stops:
+- [Architecture](docs/architecture.md)
+- [Local development](docs/local-development.md)
+- [Testing](docs/testing.md)
+- [Deployment](docs/deployment.md)
 
-- [Architecture](docs/architecture.md) — what this repo is and isn't responsible for
-- [Local development](docs/local-development.md) — setup, configuration, gotchas
-- [Testing](docs/testing.md) — how to run the tests
-- [Deployment](docs/deployment.md) — how changes reach CODE and PROD
+## Contributing to these docs
+
+Update the relevant doc in the same PR as the change it describes. Prefer
+linking to source over duplicating it, and if something is mid-migration, say so
+and link the tracking issue.
 
 ## In progress: the Stand migration
 
