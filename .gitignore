@@ -70,3 +70,7 @@ trace.zip
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 
+# playwright-bdd generated test files
+.features-gen/
+
+

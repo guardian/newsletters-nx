@@ -3,8 +3,12 @@
 	"version": "0.0.0",
 	"license": "MIT",
 	"scripts": {
-		"e2e": "playwright test",
-		"e2e-headed": "playwright test --headed",
-		"e2e-ui": "playwright test --ui"
+		"e2e": "bddgen && playwright test",
+		"e2e-headed": "bddgen && playwright test --headed",
+		"e2e-ui": "bddgen && playwright test --ui"
+	},
+	"devDependencies": {
+		"@cucumber/cucumber": "^13.2.1",
+		"playwright-bdd": "^9.2.0"
 	}
 }

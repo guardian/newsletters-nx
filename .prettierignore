@@ -3,3 +3,7 @@
 /dist
 /coverage
 /cdk/cdk.out
+
+# playwright-bdd generated test files
+apps/newsletters-e2e/.features-gen/
+
