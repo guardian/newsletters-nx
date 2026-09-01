@@ -7,7 +7,9 @@ See [Local development](../../docs/local-development.md) for setup, environment 
 The API should be run locally from the _workspace_ root rather than the _project_ root - IE /newsletters-nx/ not /newsletters-nx/apps/newsletters-api/
 From the _workspace_ root: `pnpm run dev` will run the API on http://localhost:3000/
 
-On the default configuration, the API serves a the UI on its index page, so http://localhost:3000/ will display the UI, but the API response can be accessed at their path, e.g. http://localhost:3000/api/newsletters
+The UI (`apps/newsletters-ui`) is hosted separately from this API during local development.
+When running the UI with Vite, requests to `/api` are proxied to the API.
+You can still access API responses directly on the API server path, for example http://localhost:3000/api/newsletters.
 
 ### Configuring the local instance with environment variables
 

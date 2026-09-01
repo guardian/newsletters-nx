@@ -45,15 +45,9 @@ sequenceDiagram
 
 ## Status semantics (important)
 
-`REQUESTED` means automated emails to editorial and production teams are sent.
-
-- Braze campaign setup is manual
-- Tag and sign-up page setup are manual
+`REQUESTED` means emails to editorial and production teams were sent. Setup is still manual.
 
 ## Known caveats
-
-- Status values reflect this system's request path, not guaranteed downstream completion.
-- If email sending is disabled by environment/config (`ENABLE_EMAIL_SERVICE`), status behaviour may still indicate request success from the app's perspective.
 - Notification results are mislabelled (see https://github.com/guardian/newsletters-nx/issues/727)
 
 ## Post-launch Braze update requests

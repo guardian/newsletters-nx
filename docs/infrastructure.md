@@ -55,22 +55,6 @@ allow requests carrying an `X-Gu-API-Key` header matching the
 `readOnlyEndpointApiKey` SSM parameter, and return a fixed 403 to everything
 else.
 
-## Instance configuration
-
-Configuration is injected as environment variables through EC2 user data:
-
-| Variable                       | Notes                                                                                            |
-| ------------------------------ | ------------------------------------------------------------------------------------------------ |
-| `NEWSLETTER_BUCKET_NAME`       | The S3 data bucket                                                                               |
-| `STAGE`, `STACK`, `APP`        | Standard Guardian tagging                                                                        |
-| `ENABLE_EMAIL_SERVICE`         | From the `enableEmailService` SSM parameter for the tool; always `'false'` for the read-only API |
-| `NEWSLETTERS_API_READ`         | Differentiates the two deployments                                                               |
-| `NEWSLETTERS_UI_SERVE`         | Differentiates the two deployments                                                               |
-| `ENABLE_DYNAMIC_IMAGE_SIGNING` | Differentiates the two deployments                                                               |
-
-Per-stage runtime configuration beyond this comes from SSM Parameter Store — see
-[Architecture](./architecture.md#external-services).
-
 ## Change infrastructure
 
 Infrastructure lives in [`cdk/`](../cdk). Run these from that directory:
@@ -85,11 +69,3 @@ Infrastructure lives in [`cdk/`](../cdk). Run these from that directory:
 
 The stack has a snapshot test, so **any infrastructure change needs
 `npm run test-update`** or CI will fail. Commit the updated snapshot.
-
-## RiffRaff
-
-[`riff-raff.yaml`](../riff-raff.yaml) declares one CloudFormation deployment
-(`newsletters-tool-cfn`) and two autoscaling deployments (`newsletters-tool` and
-`newsletters-api`), both depending on it, for stages CODE and PROD.
-
-AMIs come from Amigo, recipe `newsletters-node-24-ubuntu-22`.

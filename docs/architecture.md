@@ -8,7 +8,7 @@ How `newsletters-nx` fits into Guardian’s editorial newsletter ecosystem, and 
 flowchart TB
     user["Editorial user<br>(Guardian Google account)"]
 
-    subgraph alb["Application Load Balancer"]
+    subgraph alb["Application Load Balancer (configured in /cdk)"]
         auth["Google OIDC action<br>hd=guardian.co.uk"]
     end
 

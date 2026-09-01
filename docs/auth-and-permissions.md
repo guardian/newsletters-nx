@@ -4,7 +4,7 @@ How authentication works today, and where permissions are moving.
 
 ## Authentication
 
-The newsletters tool is protected at the load balancer using Google OIDC (`guardian.co.uk` accounts).  
+The newsletters tool is protected at the load balancer using Google OIDC (`guardian.co.uk` accounts) (configured in /cdk).  
 The application consumes identity headers forwarded by the ALB (see [AWS docs on ALB authentication](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-authenticate-users.html)),
 decoded in [`get-user-profile.ts`](../apps/newsletters-api/src/app/get-user-profile.ts). This is unaffected by the user permissions migration described below.
 
