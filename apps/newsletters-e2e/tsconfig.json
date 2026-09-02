@@ -11,5 +11,6 @@
 			"path": "./tsconfig.conf.json"
 		}
 	],
-	"include": ["**/*.ts", "**/*.js", "playwright.config.ts"]
+	"include": ["**/*.ts", "**/*.js", "playwright.config.ts"],
+	"exclude": [".features-gen"]
 }

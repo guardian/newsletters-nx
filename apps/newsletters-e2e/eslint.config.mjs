@@ -4,6 +4,7 @@ import { defineConfig } from 'eslint/config';
 export default defineConfig([
 	{
 		files: ['**/*.ts', '**/*.spec.ts'],
+		ignores: ['.features-gen/**'],
 		extends: [guardian.configs.recommended],
 		languageOptions: {
 			parserOptions: {
