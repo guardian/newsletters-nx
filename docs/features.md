@@ -4,7 +4,7 @@ The newsletters tool lets Guardian staff create, manage and launch newsletters. 
 
 ## Manage newsletters
 
-- Search, filter and sort every Guardian newsletter in one table at [/launched](https://newsletters-tool.gutools.co.uk/launched). The URL captures your view, so you can share it.
+- Search, filter and sort every launched Guardian newsletter in one table at [/launched](https://newsletters-tool.gutools.co.uk/launched), or every draft at [/drafts](https://newsletters-tool.gutools.co.uk/drafts). The URL captures your view, so you can share it.
 - Edit newsletters through schema-driven forms, or as raw JSON (developers only).
 
 ## Create a newsletter

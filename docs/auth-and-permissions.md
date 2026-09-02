@@ -8,6 +8,8 @@ The newsletters tool is protected at the load balancer using Google OIDC (`guard
 The application consumes identity headers forwarded by the ALB (see [AWS docs on ALB authentication](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-authenticate-users.html)),
 decoded in [`get-user-profile.ts`](../apps/newsletters-api/src/app/get-user-profile.ts). This is unaffected by the user permissions migration described below.
 
+The read-only API is a second deployment of the same code with the UI and write routes disabled. It has no user auth — instead, it's gated by an `X-Gu-API-Key` header matching the `readOnlyEndpointApiKey` SSM parameter (see [Infrastructure](./infrastructure.md#the-two-apps) and [Architecture](./architecture.md)).
+
 ## Authorisation (current state)
 
 User permissions are currently read from per-stage SSM configuration and enforced server-side on API routes.

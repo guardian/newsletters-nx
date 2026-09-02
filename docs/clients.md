@@ -46,21 +46,20 @@ The full surface is described in [`open-api.yaml`](../apps/newsletters-api/open-
 
 ## Who consumes the API
 
-| Client | Uses | For |
-| --- | --- | --- |
-| [`guardian/frontend`](https://github.com/guardian/frontend) | `/api/newsletters`, `/api/layouts` | Newsletter sign-up embeds, the email-newsletters index page, and edition layout pages (`NewsletterApi.scala`, `NewsletterSignupAgent.scala`) |
-| [`guardian/dotcom-rendering`](https://github.com/guardian/dotcom-rendering) | Newsletter data passed through from `frontend` | Rendering sign-up pages and in-article newsletter sign-up blocks |
-| [`guardian/identity`](https://github.com/guardian/identity) | `/api/newsletters` | Resolving newsletters for subscription management in the identity API (`NewslettersSourceClient.scala`) |
-| [`guardian/email-rendering`](https://github.com/guardian/email-rendering) | Newsletter data and rendering options | Rendering newsletter emails and previews |
-| [`guardian/ophan`](https://github.com/guardian/ophan) | `/api/newsletters` | Mapping email campaign codes for analytics |
-| [`guardian/ophan-data-lake`](https://github.com/guardian/ophan-data-lake) | `/api/newsletters` | Daily ingest of newsletter data into BigQuery |
-| [`guardian/targeted-experiences`](https://github.com/guardian/targeted-experiences) | `/api/newsletters` | Resolving Braze subscribe attribute names |
-| [`guardian/csnx`](https://github.com/guardian/csnx) | Types only (`@guardian/newsletter-types`) | Shared TypeScript types for the API response |
-| [`guardian/interactives`](https://github.com/guardian/interactives) | `/api/newsletters` | Project scaffolding that needs the newsletter list |
+| Client | Uses | For                                                                                                                                              |
+| --- | --- |--------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`guardian/frontend`](https://github.com/guardian/frontend) | `/api/newsletters`, `/api/layouts` | Newsletter sign-up embeds, the [email-newsletters index page](https://www.guardian.co.uk/email-newsletters), and edition layout pages (`NewsletterApi.scala`, `NewsletterSignupAgent.scala`) |
+| [`guardian/dotcom-rendering`](https://github.com/guardian/dotcom-rendering) | Newsletter data passed through from `frontend` | Rendering sign-up pages and in-article newsletter sign-up blocks                                                                                 |
+| [`guardian/identity`](https://github.com/guardian/identity) | `/api/newsletters` | Resolving newsletters for subscription management in the identity API (`NewslettersSourceClient.scala`)                                          |
+| [`guardian/email-rendering`](https://github.com/guardian/email-rendering) | Newsletter data and rendering options | Rendering newsletter emails and previews                                                                                                         |
+| [`guardian/ophan`](https://github.com/guardian/ophan) | `/api/newsletters` | Mapping email campaign codes for analytics                                                                                                       |
+| [`guardian/ophan-data-lake`](https://github.com/guardian/ophan-data-lake) | `/api/newsletters` | Daily ingest of newsletter data into BigQuery                                                                                                    |
+| [`guardian/targeted-experiences`](https://github.com/guardian/targeted-experiences) | `/api/newsletters` | Resolving Braze subscribe attribute names                                                                                                        |
+| [`guardian/csnx`](https://github.com/guardian/csnx) | Types only (`@guardian/newsletter-types`) | Shared TypeScript types for the API response                                                                                                     |
+| [`guardian/interactives`](https://github.com/guardian/interactives) | `/api/newsletters` | Used by the `create-thrasher` project generator CLI to let developers pick a newsletter and pre-populate a new thrasher template with its name, description, and campaign code |
 
 This list reflects what is visible in the `guardian` org and may not be exhaustive. No client in it is known to read `/api/legacy/newsletters`.
 
 ## Access
 
-- The **editorial tool** is behind Guardian Google sign-in at the load balancer.
-- The **read-only API** is a second deployment of the same code with the UI and write routes disabled, gated by an `X-Gu-API-Key` header. See [Architecture](./architecture.md) and [Auth and permissions](./auth-and-permissions.md).
+See [Auth and permissions](./auth-and-permissions.md) for how the editorial tool and the read-only API are secured.

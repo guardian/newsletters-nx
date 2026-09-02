@@ -72,25 +72,19 @@ For email-rendering internals, see [email-rendering architecture](https://github
 | [`libs/util`](../libs/util)                                       | Shared utilities (including runtime config helpers)                                                  | [↗](../libs/util/README.md)                    |
 | [`cdk`](../cdk)                                                   | AWS infrastructure definitions                                                                       | [↗](../cdk/README.md)                          |
 
-### Dependency direction
-
-Dependencies are one-way:
-
-- apps depend on libs
-- libs do not depend on apps
 
 ## External services
 
-| Service                 | Used for                                                                                                     |
-| ----------------------- |--------------------------------------------------------------------------------------------------------------|
-| **[AWS S3](https://aws.amazon.com/s3/)** | Persistent storage for draft and launched newsletter data                                                    |
-| **[AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)** | Per-stage runtime configuration (permissions, recipients, feature/config values)                             |
-| **[AWS SES](https://aws.amazon.com/ses/)** | Sending notification emails for draft/launch/Braze/Central Production workflows (not newsletters themselves) |
-| **[AWS Secrets Manager](https://aws.amazon.com/secrets-manager/)** | OIDC client secret and other deployment-time secrets                                                         |
-| **[email-rendering](https://github.com/guardian/email-rendering)** | Template discovery and newsletter preview/rendering                                                          |
-| **[frontend](https://github.com/guardian/frontend)** | Calls `/api/newsletters` and `/api/layouts` to fetch newsletter data for sign-up embeds, the email-newsletters index page, and edition layout pages |
+| Service                 | Used for                                                                                                                        |
+| ----------------------- |---------------------------------------------------------------------------------------------------------------------------------|
+| **[AWS S3](https://aws.amazon.com/s3/)** | Persistent storage for draft and launched newsletter data                                                                       |
+| **[AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)** | Per-stage runtime configuration (permissions, recipients, feature/config values)                                                |
+| **[AWS SES](https://aws.amazon.com/ses/)** | Sending notification emails for draft/launch/Braze/Central Production workflows (not newsletters themselves)                    |
+| **[AWS Secrets Manager](https://aws.amazon.com/secrets-manager/)** | OIDC client secret and other deployment-time secrets                                                                            |
+| **[email-rendering](https://github.com/guardian/email-rendering)** | Template discovery and newsletter preview/rendering                                                                             |
+| **[frontend](https://github.com/guardian/frontend)** | Calls `/api/newsletters` and `/api/layouts` to fetch newsletter data for sign-up embeds and the email-newsletters index page    |
 | **[dotcom-rendering](https://github.com/guardian/dotcom-rendering)** | Renders sign-up pages and in-article sign-up blocks using data passed through from `frontend` (no direct API call to this repo) |
-| **[Braze](https://dashboard-01.braze.eu/dashboard/app_usage/5b75934336dc781764d855ae?locale=en)** | Consumes newsletter content from email-rendering; sends the newsletters to readers, campaign setup is manual |
+| **[Braze](https://dashboard-01.braze.eu/dashboard/app_usage/5b75934336dc781764d855ae?locale=en)** | Consumes newsletter content from email-rendering; sends the newsletters to readers, campaign setup is manual                    |
 ## Related docs
 
 - [Data model](./data-model.md) — the shape of the data flowing through this system
