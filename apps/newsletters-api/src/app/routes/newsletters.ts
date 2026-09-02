@@ -173,7 +173,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 			const user = getUserProfile(req);
 			const accessDeniedError = await makeAccessDeniedApiResponse(
 				user.profile,
-				'editNewsletters',
+				'editEverything',
 			);
 			if (accessDeniedError) {
 				return res.status(403).send(accessDeniedError);

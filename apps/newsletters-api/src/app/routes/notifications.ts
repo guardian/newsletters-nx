@@ -17,10 +17,7 @@ export function registerNotificationRoutes(app: Express) {
 		reply: Response,
 	) => {
 		const user = getUserProfile(request);
-		const hasLaunchAccess = await hasPermission(
-			user.profile,
-			'editNewsletters',
-		);
+		const hasLaunchAccess = await hasPermission(user.profile, 'editEverything');
 
 		if (!hasLaunchAccess) {
 			void reply

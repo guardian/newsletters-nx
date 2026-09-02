@@ -54,10 +54,7 @@ const propertyToNode = (
 
 export const DraftDetails = ({ draft }: Props) => {
 	const [hasBeenDeleted, setHasBeenDeleted] = useState(false);
-	const {
-		launchNewsletters: userCanLaunchNewsletter,
-		writeToDrafts: userCanWriteToDrafts,
-	} = usePermissions() ?? {};
+	const { editEverything: userCanEditEverything } = usePermissions() ?? {};
 	const issues = getDraftNotReadyIssues(draft);
 	const readyToLaunch = issues.length === 0;
 
@@ -80,9 +77,9 @@ export const DraftDetails = ({ draft }: Props) => {
 					>
 						back to list
 					</NavigateButton>
-					{userCanWriteToDrafts && <EditDraftNavigateButtons draft={draft} />}
+					{userCanEditEverything && <EditDraftNavigateButtons draft={draft} />}
 
-					{readyToLaunch && userCanLaunchNewsletter && (
+					{readyToLaunch && userCanEditEverything && (
 						<NavigateButton
 							href={`/drafts/launch-newsletter/${draft.listId}`}
 							startIcon={<RocketLaunchIcon />}
@@ -91,7 +88,7 @@ export const DraftDetails = ({ draft }: Props) => {
 							Launch
 						</NavigateButton>
 					)}
-					{userCanWriteToDrafts && (
+					{userCanEditEverything && (
 						<DeleteDraftButton
 							draft={draft}
 							hasBeenDeleted={hasBeenDeleted}

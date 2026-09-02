@@ -45,7 +45,7 @@ const getAccessDeniedError = async (
 
 	switch (wizardId) {
 		case 'LAUNCH_NEWSLETTER':
-			if (!permissions.launchNewsletters) {
+			if (!permissions.editEverything) {
 				return {
 					errorMessage: 'You do not have permissions to launch a newsletter',
 					currentStepId: stepId,
@@ -56,7 +56,7 @@ const getAccessDeniedError = async (
 
 		case 'NEWSLETTER_DATA':
 		case 'RENDERING_OPTIONS':
-			if (!permissions.writeToDrafts) {
+			if (!permissions.editEverything) {
 				return {
 					errorMessage: 'You do not have permissions to create or edit drafts.',
 					currentStepId: stepId,
