@@ -35,6 +35,7 @@
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
 		"@guardian/image": "^1.1.0",
+		"@guardian/permissions-client": "^0.0.4",
 		"@guardian/source": "^12.2.1",
 		"@guardian/stand": "0.0.67",
 		"@internationalized/date": "^3.12.2",

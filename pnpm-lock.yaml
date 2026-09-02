@@ -47,6 +47,9 @@ importers:
       '@guardian/image':
         specifier: ^1.1.0
         version: 1.1.0
+      '@guardian/permissions-client':
+        specifier: ^0.0.4
+        version: 0.0.4(@aws-sdk/client-s3@3.1047.0)(@aws-sdk/credential-providers@3.1047.0)
       '@guardian/source':
         specifier: ^12.2.1
         version: 12.2.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1)(supports-color@8.1.1))(@types/react@18.3.1)(react@18.3.1)(tslib@2.8.1)(typescript@6.0.2)
@@ -977,6 +980,12 @@ packages:
 
   '@guardian/image@1.1.0':
     resolution: {integrity: sha512-EiBcBwpe1/HECBZP4BbRcBNR1SL2glrhYFsStWNCJ7rn9ixoo7+WoT23k3FSA5pqU+VVkjVEd7q6Qvaq9+hawg==}
+
+  '@guardian/permissions-client@0.0.4':
+    resolution: {integrity: sha512-h2RPhVnTniW/inWKJ+NegZPybEUveWePjGtGaVelnVnF+ikYJBIu+X6cl6Zz0PiTjNaSW3/26cy0D7qM+HTHzA==}
+    peerDependencies:
+      '@aws-sdk/client-s3': ^3.1090.0
+      '@aws-sdk/credential-providers': ^3.1090.0
 
   '@guardian/prettier@10.0.0':
     resolution: {integrity: sha512-b/ITMGfAxL5Rz+HZqmn5AGTI/Bb7Ep50SmRvcDo0QqahTmeAneiWOc1eFBA3pFRkMCR2UwU79v7kDXaMQwS2DQ==}
@@ -5913,6 +5922,11 @@ snapshots:
   '@guardian/image@1.1.0':
     dependencies:
       md5: 2.3.0
+
+  '@guardian/permissions-client@0.0.4(@aws-sdk/client-s3@3.1047.0)(@aws-sdk/credential-providers@3.1047.0)':
+    dependencies:
+      '@aws-sdk/client-s3': 3.1047.0
+      '@aws-sdk/credential-providers': 3.1047.0
 
   '@guardian/prettier@10.0.0(prettier@3.8.2)(tslib@2.8.1)':
     dependencies:
