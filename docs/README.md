@@ -1,0 +1,18 @@
+# Documentation
+
+To get the app running, start with the [root README](../README.md).
+
+- [Local development](./local-development.md) — setup, configuration, gotchas
+- [Testing](./testing.md) — the test layers, commands, and what CI checks
+- [Deployment](./deployment.md) — how to ship a change to CODE or PROD
+- [Infrastructure](./infrastructure.md) — CDK stacks, stages, the two deployed apps, RiffRaff
+- [Architecture](./architecture.md) — how the packages fit together, and what this repo is and isn't responsible for
+- [Launch flow](./launch-flow.md) — what happens when a newsletter is launched
+- [Auth and permissions](./auth-and-permissions.md) — how access control works today
+- [Data model](./data-model.md) — how newsletter data is shaped, stored and changed
+- [Clients](./clients.md) — who consumes the API, and what that means for changes
+- [Publishing type changes](./publishing-type-changes.md) — how to ship API shape changes to `@guardian/newsletter-types`
+- [Features](./features.md) — what the tool lets editorial users do
+- [Stand migration](./stand-migration.md) — the in-progress move of the UI to `@guardian/stand`
+
+Package-level detail lives in each package's own README.

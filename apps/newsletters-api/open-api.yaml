@@ -10,7 +10,8 @@ paths:
   /legacy/newsletters:
     get:
       summary: Returns a list of newsletters.
-      description: Provides the legacy API format, consisting only of the array of newsletters. Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters.
+      deprecated: true
+      description: Deprecated. Provides the legacy (v1) API format, consisting only of the array of newsletters. Includes current and previous (cancelled or paused) editorial newsletters. Does not include marketing or product newsletters. There are no known active consumers of this endpoint - use /newsletters instead.
       responses:
         '200':
           description: A JSON array of newsletter entities

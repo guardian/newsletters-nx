@@ -1,5 +1,8 @@
 # Infrastructure
 
-This directory defines the components to be deployed to AWS.
+CDK definitions for the AWS resources this repo deploys.
 
-See [`package.json`](./package.json) for a list of available scripts.
+- [Infrastructure](../docs/infrastructure.md) — what the stack contains
+- [Deploying](../docs/deployment.md) — how to change and ship it
+
+See [`package.json`](./package.json) for the available scripts.

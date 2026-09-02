@@ -2,6 +2,8 @@
 
 End-to-end functional tests for the Newsletters application using Playwright.
 
+See [Testing](../../docs/testing.md) for how these fit with the other test layers.
+
 ## Running Tests
 
 ### Locally
