@@ -13,11 +13,7 @@ export const hasEditAccess = async (
 		return false;
 	}
 	const permissions = await permissionService.get(profile);
-	const { editTags, editNewsletters, editSignUpPage, editBraze, editOphan } =
-		permissions;
-	return [editTags, editNewsletters, editSignUpPage, editBraze, editOphan].some(
-		(permission) => permission,
-	);
+	return permissions.editEverything;
 };
 
 export const hasPermission = async (
@@ -39,9 +35,9 @@ export const isAuthorisedToMakeRequestedNewsletterUpdate = async (
 		return false;
 	}
 	const permissions = await permissionService.get(profile);
-	const { editNewsletters } = permissions;
+	const { editEverything } = permissions;
 
-	if (editNewsletters) {
+	if (editEverything) {
 		return true;
 	}
 

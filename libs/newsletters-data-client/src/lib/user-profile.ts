@@ -27,63 +27,27 @@ export type UserProfile = Partial<{
 }>;
 
 export enum UserAccessLevel {
-	Developer,
-	Editor,
-	Drafter,
-	Viewer,
-	CentralProduction,
-	BrazeEditor,
-	OphanEditor,
+	Developer = 0, // Can do everything
+	Editor = 1, // Can edit and launch newsletters
+	// Drafter = 2, // Intentionally removed.
+	Viewer = 3, // Read-only access
 }
 
 export type UserPermissions = {
-	editNewsletters: boolean;
-	useJsonEditor: boolean;
-	launchNewsletters: boolean;
-	writeToDrafts: boolean;
-	viewMetaData: boolean;
-	editBraze: boolean;
-	editOphan: boolean;
-	editTags: boolean;
-	editSignUpPage: boolean;
-	editLayouts: boolean;
+	editEverything: boolean; // Can Edit everything (except JSON)
+	useJsonEditor: boolean; // Can Edit JSON using the JSON editor
 };
 
-export const permissionsDataSchema = z.record(
-	z.string(),
-	z.int().min(0),
-);
+export const permissionsDataSchema = z.record(z.string(), z.int().min(0));
 
 export const levelToPermissions = (
 	accessLevel: UserAccessLevel,
 ): UserPermissions => {
 	return {
-		editNewsletters: [
+		editEverything: [
 			UserAccessLevel.Developer,
 			UserAccessLevel.Editor,
 		].includes(accessLevel),
-		launchNewsletters: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-		].includes(accessLevel),
-		writeToDrafts: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-			UserAccessLevel.Drafter,
-			UserAccessLevel.CentralProduction,
-			UserAccessLevel.BrazeEditor,
-			UserAccessLevel.OphanEditor,
-		].includes(accessLevel),
-		viewMetaData: [UserAccessLevel.Developer].includes(accessLevel),
 		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
-		editLayouts: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-			UserAccessLevel.CentralProduction,
-		].includes(accessLevel),
-		editBraze: [UserAccessLevel.BrazeEditor].includes(accessLevel),
-		editOphan: [UserAccessLevel.OphanEditor].includes(accessLevel),
-		editTags: [UserAccessLevel.CentralProduction].includes(accessLevel),
-		editSignUpPage: [UserAccessLevel.CentralProduction].includes(accessLevel),
 	};
 };

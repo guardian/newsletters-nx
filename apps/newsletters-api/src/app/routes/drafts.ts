@@ -39,7 +39,7 @@ export function registerDraftsRoutes(app: Express) {
 		const user = getUserProfile(req);
 		const permissions = await permissionService.get(user.profile);
 
-		if (!permissions.writeToDrafts) {
+		if (!permissions.editEverything) {
 			return res
 				.status(403)
 				.send(makeErrorResponse(`You don't have permission to delete drafts.`));
