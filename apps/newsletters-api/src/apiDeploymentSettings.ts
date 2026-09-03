@@ -64,6 +64,10 @@ export const isUsingLocalUserPermissions = () => {
 	return process.env.USE_LOCAL_USER_PERMISSIONS === 'true';
 };
 
+export const isUsingGuardianPermissions = () => {
+	return process.env.USE_GUARDIAN_PERMISSIONS === 'true';
+};
+
 export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 	const json = process.env.USER_PERMISSIONS;
 	if (!json) {

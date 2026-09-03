@@ -3,6 +3,7 @@ import {
 	isServingReadWriteEndpoints,
 	isServingUI,
 	isUndefinedAndNotProduction,
+	isUsingGuardianPermissions,
 	isUsingInMemoryStorage,
 } from './apiDeploymentSettings';
 
@@ -163,5 +164,23 @@ describe('isUsingInMemoryStorage', () => {
 	it('returns false if USE_IN_MEMORY_STORAGE is something other than true or false', () => {
 		process.env.USE_IN_MEMORY_STORAGE = 'foo';
 		expect(isUsingInMemoryStorage()).toBe(false);
+	});
+});
+
+describe('isUsingInMemoryStorage', () => {
+	it('returns false where USE_GUARDIAN_PERMISSIONS is not set', () => {
+		expect(isUsingGuardianPermissions()).toBe(false);
+	});
+	it('returns false where USE_GUARDIAN_PERMISSIONS is false', () => {
+		process.env.USE_GUARDIAN_PERMISSIONS = 'false';
+		expect(isUsingGuardianPermissions()).toBe(false);
+	});
+	it('returns true where USE_GUARDIAN_PERMISSIONS is true', () => {
+		process.env.USE_GUARDIAN_PERMISSIONS = 'true';
+		expect(isUsingGuardianPermissions()).toBe(true);
+	});
+	it('returns false if USE_GUARDIAN_PERMISSIONS is something other than true or false', () => {
+		process.env.USE_GUARDIAN_PERMISSIONS = 'foo';
+		expect(isUsingGuardianPermissions()).toBe(false);
 	});
 });
