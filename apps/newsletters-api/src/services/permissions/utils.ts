@@ -8,7 +8,7 @@ import * as z from 'zod';
 // Must match the identifiers in https://permissions.gutools.co.uk/definitions
 export const GuardianPermissionSchema = z.literal([
 	'newsletters_tool_edit_everything',
-	'newsletters_tool_use_json_editor',
+	'newsletters_tool_edit_json',
 ]);
 
 export type GuardianPermission = z.infer<typeof GuardianPermissionSchema>;
@@ -24,7 +24,7 @@ export const toNewsletterToolPermission = (
 ): NewsletterToolPermission => {
 	const mapping: Record<GuardianPermission, NewsletterToolPermission> = {
 		newsletters_tool_edit_everything: 'editEverything',
-		newsletters_tool_use_json_editor: 'useJsonEditor',
+		newsletters_tool_edit_json: 'useJsonEditor',
 	};
 
 	return mapping[gPerm];

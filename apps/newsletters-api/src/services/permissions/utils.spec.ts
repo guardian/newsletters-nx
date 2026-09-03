@@ -12,7 +12,7 @@ import {
 describe('toUserPermission()', () => {
 	const mappings: Array<[GuardianPermission, keyof UserPermissions]> = [
 		['newsletters_tool_edit_everything', 'editEverything'],
-		['newsletters_tool_use_json_editor', 'useJsonEditor'],
+		['newsletters_tool_edit_json', 'useJsonEditor'],
 	];
 
 	it.each(mappings)('maps %s to %s', (gPerm, uPerm) => {
