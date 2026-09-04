@@ -10,6 +10,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuCname",
       "GuPolicy",
       "GuPolicy",
+      "GuPolicy",
       "GuStringParameter",
       "GuDistributionBucketParameter",
       "GuVpcParameter",
@@ -2307,6 +2308,7 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   },
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
+Environment=USE_GUARDIAN_PERMISSIONS=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 Environment=ENABLE_EMAIL_SERVICE=false
 [Install]
@@ -2496,6 +2498,7 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   },
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
+Environment=USE_GUARDIAN_PERMISSIONS=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
 Environment=ENABLE_EMAIL_SERVICE=",
                   {
@@ -2555,6 +2558,28 @@ systemctl start newsletters-api",
         ],
       },
       "Type": "AWS::IAM::InstanceProfile",
+    },
+    "permissionscacheaccesspolicy17393FC9": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3:::permissions-cache/TEST/permissions.json",
+              "Sid": "readPermissionsCachePolicy",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "readAccessToPermissionsCache",
+        "Roles": [
+          {
+            "Ref": "InstanceRoleNewsletterstoolDD0F3665",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "s3accesspolicy28B12BB3": {
       "Properties": {
