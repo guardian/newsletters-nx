@@ -167,7 +167,7 @@ describe('isUsingInMemoryStorage', () => {
 	});
 });
 
-describe('isUsingInMemoryStorage', () => {
+describe('isUsingGuardianPermissions', () => {
 	it('returns false where USE_GUARDIAN_PERMISSIONS is not set', () => {
 		expect(isUsingGuardianPermissions()).toBe(false);
 	});
