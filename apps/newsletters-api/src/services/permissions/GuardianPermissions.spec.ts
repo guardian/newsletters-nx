@@ -1,5 +1,6 @@
 import { init as originalInit } from '@guardian/permissions-client';
 import type { UserPermissions } from '@newsletters-nx/newsletters-data-client';
+import * as utils from './guardian-permissions-utils';
 import { GuardianPermissionService } from './GuardianPermissions';
 
 const init = originalInit as jest.Mock;
@@ -25,12 +26,7 @@ describe('GuardianPermissionsService', () => {
 		init.mockReset();
 	});
 
-	it('initializes the permissions client', () => {
-		new GuardianPermissionService();
-		expect(init).toHaveBeenCalled();
-	});
-
-	it('calls listUserPermissions() with the user email', async () => {
+	it('get() passes the user email to  permissionsClient.listUserPermissions()', async () => {
 		const spy = jest.fn(() => []);
 		init.mockImplementation(() => ({
 			listUserPermissions: spy,
@@ -61,7 +57,7 @@ describe('GuardianPermissionsService', () => {
 		} satisfies UserPermissions);
 	});
 
-	it('ignores unknown permissions', async () => {
+	it("calls toUserPermissions() with all of a user's permissions", async () => {
 		init.mockReturnValue({
 			listUserPermissions: () => [
 				'newsletters_tool_edit_everything',
@@ -70,15 +66,18 @@ describe('GuardianPermissionsService', () => {
 			],
 		});
 
+		const spy = jest.spyOn(utils, 'toUserPermissions');
+
 		const service = new GuardianPermissionService();
-		const permissions = await service.get({
+		await service.get({
 			email: 'ada.lovelace@guardian.co.uk',
 		});
 
-		expect(permissions).toEqual({
-			editEverything: true,
-			useJsonEditor: false,
-		} satisfies UserPermissions);
+		expect(spy).toHaveBeenCalledWith([
+			'newsletters_tool_edit_everything',
+			'fictional_tool_write_access',
+			'another_tool_read_access',
+		]);
 	});
 
 	it('logs a warning on error', async () => {
