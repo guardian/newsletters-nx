@@ -114,6 +114,8 @@ EOL`,
 			enableEmailSSMParameterName,
 		);
 
+		const permissionsCacheBucketName = 'permissions-cache';
+
 		const dataStorageBucket = new GuS3Bucket(this, 'DataBucket', {
 			bucketName,
 			app: toolAppName,
@@ -158,6 +160,24 @@ EOL`,
 			],
 		});
 
+		const permissionsCacheAccessPolicy = new GuPolicy(
+			this,
+			`permissions-cache-access-policy`,
+			{
+				policyName: 'readAccessToPermissionsCache',
+				statements: [
+					new PolicyStatement({
+						sid: 'readPermissionsCachePolicy',
+						effect: Effect.ALLOW,
+						actions: ['s3:GetObject'],
+						resources: [
+							`arn:aws:s3:::${permissionsCacheBucketName}/${this.stage}/permissions.json`,
+						],
+					}),
+				],
+			},
+		);
+
 		const sendEmailPolicy = new GuPolicy(this, `send-email-policy`, {
 			policyName: 'sendEmailPolicy',
 			statements: [
@@ -199,7 +219,11 @@ EOL`,
 				enableEmailService,
 			),
 			roleConfiguration: {
-				additionalPolicies: [s3AccessPolicy, sendEmailPolicy],
+				additionalPolicies: [
+					s3AccessPolicy,
+					sendEmailPolicy,
+					permissionsCacheAccessPolicy,
+				],
 			},
 			app: toolAppName,
 			applicationLogging: {
