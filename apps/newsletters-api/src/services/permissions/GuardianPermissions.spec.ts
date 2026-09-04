@@ -61,7 +61,11 @@ describe('GuardianPermissionsService', () => {
 
 	it('ignores unknown permissions', async () => {
 		init.mockReturnValue({
-			listUserPermissions: () => ['newsletters_tool_edit_everything'],
+			listUserPermissions: () => [
+				'newsletters_tool_edit_everything',
+				'fictional_tool_write_access',
+				'another_tool_read_access',
+			],
 		});
 
 		const service = new GuardianPermissionService();
