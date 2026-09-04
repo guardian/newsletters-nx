@@ -2,12 +2,12 @@ import {
 	NewsletterToolPermissionSchema,
 	type UserPermissions,
 } from '@newsletters-nx/newsletters-data-client';
-import type { GuardianPermission } from './utils';
+import type { GuardianPermission } from './guardian-permissions-utils';
 import {
 	GuardianPermissionSchema,
 	toNewsletterToolPermission,
 	toUserPermissions,
-} from './utils';
+} from './guardian-permissions-utils';
 
 describe('toUserPermission()', () => {
 	const mappings: Array<[GuardianPermission, keyof UserPermissions]> = [

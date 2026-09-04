@@ -5,7 +5,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { denyAll } from '@newsletters-nx/newsletters-data-client';
 import type { PermissionsService } from './abstract-class';
-import { toUserPermissions } from './utils';
+import { toUserPermissions } from './guardian-permissions-utils';
 
 export class GuardianPermissionService implements PermissionsService {
 	private client: ReturnType<typeof init>;

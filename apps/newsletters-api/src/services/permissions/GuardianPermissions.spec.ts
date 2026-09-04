@@ -18,11 +18,13 @@ jest.mock<typeof import('@guardian/permissions-client')>(
 
 describe('GuardianPermissionsService', () => {
 	beforeAll(() => {
+		// Avoid muddying the test output
 		console.warn = jest.fn(() => {});
 	});
 	beforeEach(() => {
 		init.mockReset();
 	});
+
 	it('initializes the permissions client', () => {
 		new GuardianPermissionService();
 		expect(init).toHaveBeenCalled();
