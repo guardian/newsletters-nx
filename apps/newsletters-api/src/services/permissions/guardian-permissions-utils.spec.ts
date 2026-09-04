@@ -1,4 +1,5 @@
 import {
+	denyAll,
 	NewsletterToolPermissionSchema,
 	type UserPermissions,
 } from '@newsletters-nx/newsletters-data-client';
@@ -32,15 +33,12 @@ describe('toUserPermission()', () => {
 });
 
 describe('toUserPermissions()', () => {
-	it('Supports empty permissions list', () => {
-		const expected: UserPermissions = {
-			editEverything: false,
-			useJsonEditor: false,
-		};
+	it('Denies all permissions if permission list empty', () => {
+		const expected: UserPermissions = denyAll();
 		expect(toUserPermissions([])).toEqual(expected);
 	});
 
-	it('maps all permissions', () => {
+	it('maps all supported GuardianPermission to a NewsletterPermission', () => {
 		const allGuardianPermissions = Array.from(GuardianPermissionSchema.values);
 		const expected: UserPermissions = {
 			editEverything: true,
@@ -50,7 +48,7 @@ describe('toUserPermissions()', () => {
 		expect(toUserPermissions(allGuardianPermissions)).toEqual(expected);
 	});
 
-	it('ignores unknown guardian permissions', () => {
+	it('ignores unknown permission ids from permissions tool', () => {
 		const permissions: string[] = [
 			'not_a_real_permission',
 			'newsletters_tool_edit_everything',
