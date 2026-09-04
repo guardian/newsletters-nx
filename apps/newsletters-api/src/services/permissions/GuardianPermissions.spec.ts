@@ -18,15 +18,16 @@ jest.mock<typeof import('@guardian/permissions-client')>(
 /* eslint-enable @typescript-eslint/consistent-type-imports */
 
 describe('GuardianPermissionsService', () => {
-	beforeAll(() => {
-		// Avoid muddying the test output
-		console.warn = jest.fn(() => {});
-	});
 	beforeEach(() => {
-		init.mockReset();
+		// Avoid muddying the test output
+		jest.spyOn(console, 'warn').mockImplementation(() => {});
 	});
 
-	it('get() passes the user email to  permissionsClient.listUserPermissions()', async () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	it('get() passes the user email to permissionsClient.listUserPermissions()', async () => {
 		const spy = jest.fn(() => []);
 		init.mockImplementation(() => ({
 			listUserPermissions: spy,
