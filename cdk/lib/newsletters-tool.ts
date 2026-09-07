@@ -7,6 +7,7 @@ import {
 	GuStringParameter,
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
+import { GuDeveloperPolicyExperimental } from '@guardian/cdk/lib/experimental/constructs/iam/policies';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
 import { type App, aws_ses, Duration, SecretValue, Tags } from 'aws-cdk-lib';
 import {
@@ -320,6 +321,53 @@ EOL`,
 			ttl: Duration.hours(1),
 			resourceRecord: ec2AppApi.loadBalancer.loadBalancerDnsName,
 		});
+
+		// 'DEV' is not a deployed stage, so we deploy the developer policy using pushes to 'CODE' instead.
+		if (['CODE', 'TEST'].includes(this.stage)) {
+			// Use 'DEV' stage AWS resources for local development.
+			const devBucketSSMParameterName = NewslettersTool.getSSMParameterName(
+				'DEV',
+				this.stack,
+				apiAppName,
+				s3BucketSSMParameterId,
+			);
+			const devBucketName = StringParameter.valueForStringParameter(
+				this,
+				devBucketSSMParameterName,
+			);
+
+			const devUserPermissionsParameterName =
+				NewslettersTool.getSSMParameterName(
+					'DEV',
+					this.stack,
+					toolAppName,
+					userPermissionsSSMParameterId,
+				);
+
+			new GuDeveloperPolicyExperimental(this, 'NewslettersToolLocalRunPolicy', {
+				grantId: 'run-newsletters-tool-locally',
+				friendlyName: 'Run Newsletters tool locally',
+				statements: [
+					// Read SSM 'bucketName' parameter
+					NewslettersTool.getSSMParameterPolicy(
+						`arn:aws:ssm:${this.region}:${this.account}:parameter${devBucketSSMParameterName}`,
+					),
+					// Read 'userPermissions' parameter
+					NewslettersTool.getSSMParameterPolicy(
+						`arn:aws:ssm:${this.region}:${this.account}:parameter${devUserPermissionsParameterName}`,
+					),
+					// R/W access to storage for newsletters data.
+					NewslettersTool.readWriteDataStorageBucketPolicy(
+						`arn:aws:s3:::${devBucketName}`,
+					),
+					// Read access to permissions cache (for guardian/permissions app inte)
+					NewslettersTool.readAccessToPermissionsCachePolicy(
+						permissionsCacheBucketName,
+						'LOCAL', // The 'DEV' instance is called 'LOCAL'
+					),
+				],
+			});
+		}
 	};
 
 	static getSSMParameterName(
@@ -329,6 +377,14 @@ EOL`,
 		parameterId: string,
 	) {
 		return `/${stage}/${stack}/${appName}/${parameterId}`;
+	}
+
+	static getSSMParameterPolicy(parameterArn: string) {
+		return new PolicyStatement({
+			effect: Effect.ALLOW,
+			actions: ['ssm:GetParameter'],
+			resources: [parameterArn],
+		});
 	}
 
 	static readWriteDataStorageBucketPolicy(bucketArn: string) {

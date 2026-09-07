@@ -53,6 +53,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuStringParameter",
       "GuCname",
       "GuCname",
+      "GuDeveloperPolicyExperimental",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -103,6 +104,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
     "LoggingStreamName": {
       "Default": "/account/services/logging.stream.name",
       "Description": "SSM parameter containing the Name (not ARN) on the kinesis stream",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueDEVnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/DEV/newsletters/newsletters-api/s3BucketName",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "SsmParameterValueTESTnewslettersnewslettersapireadOnlyEndpointApiKeyC96584B6F00A464EAD1953AFF4B05118Parameter": {
@@ -1645,6 +1650,93 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
         "TTL": 3600,
       },
       "Type": "Guardian::DNS::RecordSet",
+    },
+    "NewslettersToolLocalRunPolicy87E339B7": {
+      "Properties": {
+        "Description": "Run Newsletters tool locally",
+        "Path": "/developer-policy/guardian/newsletters-nx/newsletters/TEST/run-newsletters-tool-locally/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:ssm:eu-west-1:",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/DEV/newsletters/newsletters-api/s3BucketName",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:ssm:eu-west-1:",
+                    {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/DEV/newsletters/newsletters-tool/userPermissions",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:DeleteObject",
+                "s3:ListBucket",
+                "s3:DeleteObjectVersion",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "SsmParameterValueDEVnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "SsmParameterValueDEVnewslettersnewslettersapis3BucketNameC96584B6F00A464EAD1953AFF4B05118Parameter",
+                      },
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "writeToDataStorageBucketPolicy",
+            },
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": "arn:aws:s3:::permissions-cache/LOCAL/permissions.json",
+              "Sid": "readPermissionsCachePolicy",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
     },
     "ParameterStoreReadNewslettersapi37E83AD5": {
       "Properties": {
