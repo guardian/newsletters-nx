@@ -100,9 +100,17 @@ EOL`,
 		const { domainNameTool, domainNameApi } = props;
 		const toolAppName = 'newsletters-tool';
 		const apiAppName = 'newsletters-api';
+		const s3BucketSSMParameterId = 's3BucketName';
+		const userPermissionsSSMParameterId = 'userPermissions';
 
 		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
-		const bucketSSMParameterName = `/${this.stage}/${this.stack}/${apiAppName}/s3BucketName`;
+
+		const bucketSSMParameterName = NewslettersTool.getSSMParameterName(
+			this.stage,
+			this.stack,
+			apiAppName,
+			s3BucketSSMParameterId,
+		);
 		const bucketName = StringParameter.valueForStringParameter(
 			this,
 			bucketSSMParameterName,
@@ -140,23 +148,9 @@ EOL`,
 		const s3AccessPolicy = new GuPolicy(this, `s3-access-policy`, {
 			policyName: 'readWriteAccessToDataBucket',
 			statements: [
-				new PolicyStatement({
-					sid: 'writeToDataStorageBucketPolicy',
-					effect: Effect.ALLOW,
-					actions: [
-						's3:PutObject',
-						's3:GetObject',
-						's3:GetObjectVersion',
-						's3:DeleteObject',
-						's3:ListBucket',
-						's3:DeleteObject',
-						's3:DeleteObjectVersion',
-					],
-					resources: [
-						`${dataStorageBucket.bucketArn}/*`,
-						`${dataStorageBucket.bucketArn}`,
-					],
-				}),
+				NewslettersTool.readWriteDataStorageBucketPolicy(
+					dataStorageBucket.bucketArn,
+				),
 			],
 		});
 
@@ -166,14 +160,10 @@ EOL`,
 			{
 				policyName: 'readAccessToPermissionsCache',
 				statements: [
-					new PolicyStatement({
-						sid: 'readPermissionsCachePolicy',
-						effect: Effect.ALLOW,
-						actions: ['s3:GetObject'],
-						resources: [
-							`arn:aws:s3:::${permissionsCacheBucketName}/${this.stage}/permissions.json`,
-						],
-					}),
+					NewslettersTool.readAccessToPermissionsCachePolicy(
+						permissionsCacheBucketName,
+						this.stage,
+					),
 				],
 			},
 		);
@@ -331,4 +321,39 @@ EOL`,
 			resourceRecord: ec2AppApi.loadBalancer.loadBalancerDnsName,
 		});
 	};
+
+	static getSSMParameterName(
+		stage: string,
+		stack: string,
+		appName: string,
+		parameterId: string,
+	) {
+		return `/${stage}/${stack}/${appName}/${parameterId}`;
+	}
+
+	static readWriteDataStorageBucketPolicy(bucketArn: string) {
+		return new PolicyStatement({
+			sid: 'writeToDataStorageBucketPolicy',
+			effect: Effect.ALLOW,
+			actions: [
+				's3:PutObject',
+				's3:GetObject',
+				's3:GetObjectVersion',
+				's3:DeleteObject',
+				's3:ListBucket',
+				's3:DeleteObject',
+				's3:DeleteObjectVersion',
+			],
+			resources: [`${bucketArn}/*`, `${bucketArn}`],
+		});
+	}
+
+	static readAccessToPermissionsCachePolicy(bucketName: string, stage: string) {
+		return new PolicyStatement({
+			sid: 'readPermissionsCachePolicy',
+			effect: Effect.ALLOW,
+			actions: ['s3:GetObject'],
+			resources: [`arn:aws:s3:::${bucketName}/${stage}/permissions.json`],
+		});
+	}
 }
