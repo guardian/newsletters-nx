@@ -15,6 +15,7 @@ export class GuardianPermissionService implements PermissionsService {
 		this.client = init({
 			stage: STAGE === 'DEV' ? 'LOCAL' : STAGE,
 			isRunningLocally: STAGE === 'DEV',
+			localProfile: 'frontend',
 		});
 	}
 
