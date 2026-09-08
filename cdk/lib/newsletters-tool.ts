@@ -347,6 +347,8 @@ EOL`,
 			new GuDeveloperPolicyExperimental(this, 'NewslettersToolLocalRunPolicy', {
 				grantId: 'run-newsletters-tool-locally',
 				friendlyName: 'Run Newsletters tool locally',
+				// Necessary for access to dataStorageBucket. We cannot enumerate all objects in the bucket.
+				withoutPolicyChecks: true,
 				statements: [
 					// Read SSM 'bucketName' parameter
 					NewslettersTool.getSSMParameterPolicy(
