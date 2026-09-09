@@ -7,6 +7,7 @@ import {
 	GuStringParameter,
 } from '@guardian/cdk/lib/constructs/core';
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
+import { GuDeveloperPolicyExperimental } from '@guardian/cdk/lib/experimental/constructs/iam/policies';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
 import { type App, aws_ses, Duration, SecretValue, Tags } from 'aws-cdk-lib';
 import {
@@ -100,9 +101,17 @@ EOL`,
 		const { domainNameTool, domainNameApi } = props;
 		const toolAppName = 'newsletters-tool';
 		const apiAppName = 'newsletters-api';
+		const s3BucketSSMParameterId = 's3BucketName';
+		const userPermissionsSSMParameterId = 'userPermissions';
 
 		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
-		const bucketSSMParameterName = `/${this.stage}/${this.stack}/${apiAppName}/s3BucketName`;
+
+		const bucketSSMParameterName = NewslettersTool.getSSMParameterName(
+			this.stage,
+			this.stack,
+			apiAppName,
+			s3BucketSSMParameterId,
+		);
 		const bucketName = StringParameter.valueForStringParameter(
 			this,
 			bucketSSMParameterName,
@@ -140,23 +149,9 @@ EOL`,
 		const s3AccessPolicy = new GuPolicy(this, `s3-access-policy`, {
 			policyName: 'readWriteAccessToDataBucket',
 			statements: [
-				new PolicyStatement({
-					sid: 'writeToDataStorageBucketPolicy',
-					effect: Effect.ALLOW,
-					actions: [
-						's3:PutObject',
-						's3:GetObject',
-						's3:GetObjectVersion',
-						's3:DeleteObject',
-						's3:ListBucket',
-						's3:DeleteObject',
-						's3:DeleteObjectVersion',
-					],
-					resources: [
-						`${dataStorageBucket.bucketArn}/*`,
-						`${dataStorageBucket.bucketArn}`,
-					],
-				}),
+				NewslettersTool.readWriteDataStorageBucketPolicy(
+					dataStorageBucket.bucketArn,
+				),
 			],
 		});
 
@@ -166,14 +161,10 @@ EOL`,
 			{
 				policyName: 'readAccessToPermissionsCache',
 				statements: [
-					new PolicyStatement({
-						sid: 'readPermissionsCachePolicy',
-						effect: Effect.ALLOW,
-						actions: ['s3:GetObject'],
-						resources: [
-							`arn:aws:s3:::${permissionsCacheBucketName}/${this.stage}/permissions.json`,
-						],
-					}),
+					NewslettersTool.readAccessToPermissionsCachePolicy(
+						permissionsCacheBucketName,
+						this.stage,
+					),
 				],
 			},
 		);
@@ -330,5 +321,97 @@ EOL`,
 			ttl: Duration.hours(1),
 			resourceRecord: ec2AppApi.loadBalancer.loadBalancerDnsName,
 		});
+
+		// 'DEV' is not a deployed stage, so we deploy the developer policy using pushes to 'CODE' instead.
+		if (['CODE', 'TEST'].includes(this.stage)) {
+			// Use 'DEV' stage AWS resources for local development.
+			const devBucketSSMParameterName = NewslettersTool.getSSMParameterName(
+				'DEV',
+				this.stack,
+				apiAppName,
+				s3BucketSSMParameterId,
+			);
+			const devBucketName = StringParameter.valueForStringParameter(
+				this,
+				devBucketSSMParameterName,
+			);
+
+			const devUserPermissionsParameterName =
+				NewslettersTool.getSSMParameterName(
+					'DEV',
+					this.stack,
+					toolAppName,
+					userPermissionsSSMParameterId,
+				);
+
+			new GuDeveloperPolicyExperimental(this, 'NewslettersToolLocalRunPolicy', {
+				grantId: 'run-newsletters-tool-locally',
+				friendlyName: 'Run Newsletters tool locally',
+				// Necessary for access to dataStorageBucket. We cannot enumerate all objects in the bucket.
+				withoutPolicyChecks: true,
+				statements: [
+					// Read SSM 'bucketName' parameter
+					NewslettersTool.getSSMParameterPolicy(
+						`arn:aws:ssm:${this.region}:${this.account}:parameter${devBucketSSMParameterName}`,
+					),
+					// Read 'userPermissions' parameter
+					NewslettersTool.getSSMParameterPolicy(
+						`arn:aws:ssm:${this.region}:${this.account}:parameter${devUserPermissionsParameterName}`,
+					),
+					// R/W access to storage for newsletters data.
+					NewslettersTool.readWriteDataStorageBucketPolicy(
+						`arn:aws:s3:::${devBucketName}`,
+					),
+					// Read access to permissions cache (for guardian/permissions app inte)
+					NewslettersTool.readAccessToPermissionsCachePolicy(
+						permissionsCacheBucketName,
+						'LOCAL', // The 'DEV' instance is called 'LOCAL'
+					),
+				],
+			});
+		}
 	};
+
+	static getSSMParameterName(
+		stage: string,
+		stack: string,
+		appName: string,
+		parameterId: string,
+	) {
+		return `/${stage}/${stack}/${appName}/${parameterId}`;
+	}
+
+	static getSSMParameterPolicy(parameterArn: string) {
+		return new PolicyStatement({
+			effect: Effect.ALLOW,
+			actions: ['ssm:GetParameter'],
+			resources: [parameterArn],
+		});
+	}
+
+	static readWriteDataStorageBucketPolicy(bucketArn: string) {
+		return new PolicyStatement({
+			sid: 'writeToDataStorageBucketPolicy',
+			effect: Effect.ALLOW,
+			actions: [
+				's3:PutObject',
+				's3:GetObject',
+				's3:GetObjectVersion',
+				's3:DeleteObject',
+				's3:ListBucket',
+				's3:DeleteObject',
+				's3:DeleteObjectVersion',
+			],
+			resources: [`${bucketArn}/*`, `${bucketArn}`],
+		});
+	}
+
+	static readAccessToPermissionsCachePolicy(bucketName: string, stage: string) {
+		return new PolicyStatement({
+			sid: 'readPermissionsCachePolicy',
+			effect: Effect.ALLOW,
+			actions: ['s3:GetObject'],
+			resources: [`arn:aws:s3:::${bucketName}/${stage}/permissions.json`],
+		});
+	}
 }

@@ -133,6 +133,7 @@ describe('GuardianPermissionsService', () => {
 					expect(init).toHaveBeenCalledWith({
 						stage: clientStage,
 						isRunningLocally,
+						localProfile: 'frontend',
 					});
 				});
 
