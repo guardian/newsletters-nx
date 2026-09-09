@@ -82,6 +82,7 @@ Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
+Environment=USE_GUARDIAN_PERMISSIONS=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 Environment=ENABLE_EMAIL_SERVICE=${enableEmailService}
 [Install]
@@ -112,6 +113,8 @@ EOL`,
 			this,
 			enableEmailSSMParameterName,
 		);
+
+		const permissionsCacheBucketName = 'permissions-cache';
 
 		const dataStorageBucket = new GuS3Bucket(this, 'DataBucket', {
 			bucketName,
@@ -157,6 +160,24 @@ EOL`,
 			],
 		});
 
+		const permissionsCacheAccessPolicy = new GuPolicy(
+			this,
+			`permissions-cache-access-policy`,
+			{
+				policyName: 'readAccessToPermissionsCache',
+				statements: [
+					new PolicyStatement({
+						sid: 'readPermissionsCachePolicy',
+						effect: Effect.ALLOW,
+						actions: ['s3:GetObject'],
+						resources: [
+							`arn:aws:s3:::${permissionsCacheBucketName}/${this.stage}/permissions.json`,
+						],
+					}),
+				],
+			},
+		);
+
 		const sendEmailPolicy = new GuPolicy(this, `send-email-policy`, {
 			policyName: 'sendEmailPolicy',
 			statements: [
@@ -198,7 +219,11 @@ EOL`,
 				enableEmailService,
 			),
 			roleConfiguration: {
-				additionalPolicies: [s3AccessPolicy, sendEmailPolicy],
+				additionalPolicies: [
+					s3AccessPolicy,
+					sendEmailPolicy,
+					permissionsCacheAccessPolicy,
+				],
 			},
 			app: toolAppName,
 			applicationLogging: {

@@ -33,12 +33,31 @@ export enum UserAccessLevel {
 	Viewer = 3, // Read-only access
 }
 
-export type UserPermissions = {
-	editEverything: boolean; // Can Edit everything (except JSON)
-	useJsonEditor: boolean; // Can Edit JSON using the JSON editor
-};
+export const UserPermissionsSchema = z.object({
+	editEverything: z.boolean(), // Can Edit everything (except JSON)
+	useJsonEditor: z.boolean(), // Can Edit JSON using the JSON editor
+});
+export type UserPermissions = z.infer<typeof UserPermissionsSchema>;
+
+// Schema for the names of individual permissions, e.g 'useJsonEditor'
+export const NewsletterToolPermissionSchema = z.toZod<keyof UserPermissions>()(
+	z.literal(['editEverything', 'useJsonEditor']),
+);
+export type NewsletterToolPermission = z.infer<
+	typeof NewsletterToolPermissionSchema
+>;
 
 export const permissionsDataSchema = z.record(z.string(), z.int().min(0));
+
+/**
+ *
+ * Provides no permissions to user. (@guardian.co.uk logins can still view the tool)
+ *
+ */
+export const denyAll = (): UserPermissions => ({
+	editEverything: false,
+	useJsonEditor: false,
+});
 
 export const levelToPermissions = (
 	accessLevel: UserAccessLevel,
