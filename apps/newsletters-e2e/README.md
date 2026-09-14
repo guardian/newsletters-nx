@@ -90,13 +90,13 @@ there's no separate manual step. To run/debug a single scenario:
 cd apps/newsletters-e2e
 
 # Run every scenario in a feature file
-pnpm run bddgen && pnpm playwright test stand-switch.feature
+pnpm run bddgen && pnpm playwright test workspace-layout.feature
 
 # Run one scenario by name (matches the Scenario title, not step text)
-pnpm run bddgen && pnpm playwright test stand-switch.feature -g "persists onto a non-wizard page"
+pnpm run bddgen && pnpm playwright test workspace-layout.feature -g "drafts overview"
 
 # Step through it with the Playwright Inspector
-pnpm run e2e-debug -- stand-switch.feature
+pnpm run e2e-debug -- workspace-layout.feature
 ```
 
 You can also open the generated spec directly in
@@ -112,6 +112,27 @@ matching).
    `fixtures.ts` if a step needs to share data, e.g. a created draft's `listId`).
 3. Run `pnpm run bddgen` — if a step has no matching definition, generation
    fails immediately and prints a ready-to-paste snippet for the missing step.
+
+#### Gherkin style guide
+
+Feature files describe user-observable behaviour, not implementation. Follow
+these rules (see `workspace-layout.feature` for a worked example):
+
+- **No implementation leakage.** Don't mention clicks, URLs, selectors, or
+  raw config/feature-flag names in step text. Translate technical state into
+  a user-facing concept instead (e.g. a `switch-stand` flag becomes "the
+  classic layout" / "the modern layout").
+- **One `When` per scenario.** Each scenario tests exactly one action. Split
+  multi-action flows into separate scenarios.
+- **Lean `Background`.** Keep it to a handful of `Given` steps shared by
+  every scenario in the file; anything scenario-specific belongs in the
+  scenario itself.
+- **Named personas, not "the user"/"I".** Use a consistent named persona
+  (e.g. "Editor Erin") so steps read as complete third-person sentences.
+- **No conjunction steps.** Don't cram two preconditions/actions into one
+  step with "and" — use separate `Given`/`And` lines instead.
+- **Observable `Then` steps only.** Assert on what's visible in the UI, never
+  on the database, API responses, or logs.
 
 ### Zero-test build gate
 
