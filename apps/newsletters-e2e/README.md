@@ -52,7 +52,27 @@ Playwright config declares BDD tests in their own project (`chromium-bdd`),
 separate from the plain-spec project (`chromium`), because playwright-bdd
 requires a project's `testDir` to exactly match the directory it generates
 into. Both projects' test files still live under `src/ui`, so the path-based
-`test:e2e:ui-only` script (`playwright test src/ui`) picks up both.
+`test:e2e:ui-only` script (`playwright test src/ui`) picks up both — BDD
+scenarios run as part of the normal e2e gate rather than a separate,
+non-blocking job, since they exist to close a real coverage gap.
+
+To run *only* the BDD scenarios (e.g. for fast local iteration while writing
+a feature), use:
+
+```bash
+pnpm run test:e2e:bdd-only
+```
+
+This runs `bddgen` then filters to the `chromium-bdd` project only, isolated
+from the plain-spec suite.
+
+These tests deliberately run against the real app and real API (via
+`helpers/draft-newsletter.ts`), matching every other spec in this suite —
+there's no mocking layer here. That's intentional: the point of these
+scenarios is to catch real integration/rendering issues (e.g. the shell
+selector bug described below), which a mocked test could hide. If a future
+need arises for isolated, mock-backed UI tests, that's a separate test layer
+to design deliberately rather than retrofit into these BDD specs.
 
 ### Running/debugging a single scenario
 
