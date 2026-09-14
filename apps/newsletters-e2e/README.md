@@ -121,7 +121,7 @@ these rules (see `workspace-layout.feature` for a worked example):
 - **No implementation leakage.** Don't mention clicks, URLs, selectors, or
   raw config/feature-flag names in step text. Translate technical state into
   a user-facing concept instead (e.g. a `switch-stand` flag becomes "the
-  classic layout" / "the modern layout").
+  Legacy design" / "the Stand design").
 - **One `When` per scenario.** Each scenario tests exactly one action. Split
   multi-action flows into separate scenarios.
 - **Lean `Background`.** Keep it to a handful of `Given` steps shared by

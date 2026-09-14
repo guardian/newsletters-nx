@@ -9,18 +9,18 @@ Given('a draft newsletter exists', async ({ request, draftWorld }) => {
 	);
 });
 
-Given("Editor Erin's workspace uses the classic layout", async ({ page }) => {
+Given("Editor Erin's workspace uses the Legacy design", async ({ page }) => {
 	// Full page navigation so `checkFeatureSwitchURLParams` (called at module
 	// load) picks up the query param and (re)writes it to localStorage.
 	await page.goto('/drafts?switch-stand=false');
 });
 
-Given("Editor Erin's workspace uses the modern layout", async ({ page }) => {
+Given("Editor Erin's workspace uses the Stand design", async ({ page }) => {
 	await page.goto('/drafts?switch-stand=true');
 });
 
 When(
-	'Editor Erin opens the newsletter creation step using the modern layout',
+	'Editor Erin opens the newsletter creation step using the Stand design',
 	async ({ page }) => {
 		await page.goto('/drafts/newsletter-data?switch-stand=true');
 	},
@@ -28,7 +28,7 @@ When(
 
 When('Editor Erin opens the newsletter creation step', async ({ page }) => {
 	// No switch-stand query param here: `checkFeatureSwitchURLParams` only
-	// writes params present in the URL, so the layout set by the preceding
+	// writes params present in the URL, so the design set by the preceding
 	// Given step is left untouched.
 	await page.goto('/drafts/newsletter-data');
 });
@@ -38,13 +38,13 @@ When('Editor Erin opens the drafts overview', async ({ page }) => {
 });
 
 Then(
-	'Editor Erin sees the newsletter creation step in the modern layout',
+	'Editor Erin sees the newsletter creation step in the Stand design',
 	async ({ page }) => {
-		// Both layout variants render their own <nav aria-label="Newsletter
+		// Both design variants render their own <nav aria-label="Newsletter
 		// creation steps"> step sidebar, so `getByRole('navigation')` alone
-		// can't distinguish them. Only the modern layout's top bar additionally
+		// can't distinguish them. Only the Stand design's top bar additionally
 		// wraps its navigation in a semantic <nav> -- identify it by its
-		// "Draft newsletters" link, which is unique to the modern navigation.
+		// "Draft newsletters" link, which is unique to the Stand navigation.
 		const topBarNav = page
 			.getByRole('navigation')
 			.filter({ has: page.getByRole('link', { name: 'Draft newsletters' }) });
@@ -53,12 +53,12 @@ Then(
 );
 
 Then(
-	'Editor Erin sees the newsletter creation step in the classic layout',
+	'Editor Erin sees the newsletter creation step in the Legacy design',
 	async ({ page }) => {
-		// The classic layout renders a `<main>` landmark the modern layout
-		// never produces, and has no top-bar <nav> landmark (its navigation
-		// uses buttons, not links, and isn't wrapped in a <nav> element) --
-		// only the step sidebar <nav> is present.
+		// The Legacy design renders a `<main>` landmark the Stand design never
+		// produces, and has no top-bar <nav> landmark (its navigation uses
+		// buttons, not links, and isn't wrapped in a <nav> element) -- only the
+		// step sidebar <nav> is present.
 		const topBarNav = page
 			.getByRole('navigation')
 			.filter({ has: page.getByRole('link', { name: 'Draft newsletters' }) });
@@ -68,11 +68,11 @@ Then(
 );
 
 Then(
-	'Editor Erin sees the drafts overview in the modern layout',
+	'Editor Erin sees the drafts overview in the Stand design',
 	async ({ page }) => {
-		// On non-wizard routes the modern layout doesn't wrap its navigation in
+		// On non-wizard routes the Stand design doesn't wrap its navigation in
 		// a <nav> landmark, so assert on content unique to it instead: its
-		// "Draft newsletters" link (the classic layout's equivalent is a
+		// "Draft newsletters" link (the Legacy design's equivalent is a
 		// "Drafts" button, not a link).
 		await expect(
 			page.getByRole('link', { name: 'Draft newsletters' }),
