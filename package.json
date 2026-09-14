@@ -19,7 +19,7 @@
 		"test:e2e:ui": "pnpm --filter=@newsletters-nx/newsletters-e2e e2e-headed",
 		"test:e2e:debug": "pnpm --filter=@newsletters-nx/newsletters-e2e e2e --debug",
 		"test:e2e:api": "cd apps/newsletters-e2e && pnpm playwright test src/api",
-		"test:e2e:ui-only": "cd apps/newsletters-e2e && pnpm playwright test src/ui"
+		"test:e2e:ui-only": "cd apps/newsletters-e2e && pnpm run bddgen && pnpm playwright test src/ui"
 	},
 	"engines": {
 		"node": ">=16.19.0",

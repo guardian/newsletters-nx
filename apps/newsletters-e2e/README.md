@@ -34,8 +34,75 @@ Tests run automatically on every push and pull request via GitHub Actions.
 ## Configuration
 
 - **Config file**: `playwright.config.ts`
-- **Test files**: `src/*.spec.ts`
+- **Test files**: `src/*.spec.ts` (plain Playwright specs) and BDD `.feature` files (see below)
 - **Reports**: `playwright-report/` (local) or `dist/.playwright/` (CI)
+
+## BDD tests (playwright-bdd)
+
+Some scenarios are written as Gherkin `.feature` files using
+[playwright-bdd](https://vitalets.github.io/playwright-bdd/) instead of plain
+`*.spec.ts` files.
+
+- **Feature files**: `src/ui/features/*.feature`
+- **Step definitions**: `src/ui/steps/*.ts`
+- **Generated specs**: `src/ui/.features-gen/` (git-ignored, regenerated on every
+  run by `bddgen` — never edit these by hand)
+
+Playwright config declares BDD tests in their own project (`chromium-bdd`),
+separate from the plain-spec project (`chromium`), because playwright-bdd
+requires a project's `testDir` to exactly match the directory it generates
+into. Both projects' test files still live under `src/ui`, so the path-based
+`test:e2e:ui-only` script (`playwright test src/ui`) picks up both.
+
+### Running/debugging a single scenario
+
+`bddgen` must run before `playwright test` so the `.feature` file has a
+generated spec to execute — this happens automatically in every script below,
+there's no separate manual step. To run/debug a single scenario:
+
+```bash
+cd apps/newsletters-e2e
+
+# Run every scenario in a feature file
+pnpm run bddgen && pnpm playwright test stand-switch.feature
+
+# Run one scenario by name (matches the Scenario title, not step text)
+pnpm run bddgen && pnpm playwright test stand-switch.feature -g "persists onto a non-wizard page"
+
+# Step through it with the Playwright Inspector
+pnpm run e2e-debug -- stand-switch.feature
+```
+
+You can also open the generated spec directly in
+`src/ui/.features-gen/src/ui/features/*.feature.spec.js` to see exactly which
+Playwright test/steps a scenario compiles to (helpful when a step isn't
+matching).
+
+### Writing a new feature
+
+1. Add a `.feature` file under `src/ui/features/`.
+2. Implement any new step text in `src/ui/steps/*.ts` using `Given`/`When`/`Then`
+   from `./fixtures` (add scenario-scoped state to the `draftWorld` fixture in
+   `fixtures.ts` if a step needs to share data, e.g. a created draft's `listId`).
+3. Run `pnpm run bddgen` — if a step has no matching definition, generation
+   fails immediately and prints a ready-to-paste snippet for the missing step.
+
+### Zero-test build gate
+
+`reporters/summary-reporter.ts` writes the overall Playwright result to
+`summary.txt`, which CI double-checks reads `passed`. It now also fails the
+build (writes `failed`) if **zero tests were collected**, even when
+Playwright's own `FullResult.status` would otherwise report `passed` — e.g. a
+`playwright test <path>` invocation whose path/testMatch matches nothing.
+
+Caveat found while implementing this: if `bddgen` is skipped entirely (e.g. by
+invoking `playwright test` directly instead of via the `e2e`/`bddgen`-prefixed
+scripts), the `chromium-bdd` project silently contributes 0 tests while the
+unrelated `*.spec.ts` tests in the `chromium` project still pass — the overall
+test count stays above zero, so this specific reporter check does not catch
+it. In practice this can't happen through the documented scripts/CI, since
+`bddgen` is always run first, but keep that in mind if you invoke Playwright
+directly.
 
 ## CI Environment
 
@@ -78,6 +145,8 @@ test('my test', async ({ page }) => {
 });
 ```
 
+For BDD/Gherkin-style tests, see [BDD tests (playwright-bdd)](#bdd-tests-playwright-bdd) above.
+
 ## Troubleshooting
 
 **Port conflict:**
@@ -92,3 +161,4 @@ lsof -ti:4200 | xargs kill -9
 # From workspace root: e.g /newsletters-nx
 pnpm exec playwright install --with-deps chromium
 ```
+
