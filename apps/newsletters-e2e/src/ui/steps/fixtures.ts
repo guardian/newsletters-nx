@@ -2,24 +2,26 @@ import { test as base, createBdd } from 'playwright-bdd';
 import { deleteDraftNewsletter } from '../../../helpers/draft-newsletter';
 
 /**
- * Per-scenario mutable state, shared between step definitions for a single
- * test. Playwright creates a fresh fixture instance for every test, so this
- * is safe even when scenarios run in parallel.
+ * Scenario-scoped state for a draft newsletter created via the API. Playwright
+ * instantiates a fresh copy of this fixture per test, so it's safe under
+ * parallel/sharded execution without any shared global state (no "World"
+ * object) -- each scenario's step definitions read/write only their own
+ * fixture instance, and the draft is torn down automatically afterwards.
  */
-interface DraftWorld {
+interface ExistingDraftNewsletter {
 	listId?: number;
 }
 
 type Fixtures = {
-	draftWorld: DraftWorld;
+	existingDraftNewsletter: ExistingDraftNewsletter;
 };
 
 export const test = base.extend<Fixtures>({
-	draftWorld: async ({ request }, use) => {
-		const world: DraftWorld = {};
-		await use(world);
-		if (world.listId) {
-			await deleteDraftNewsletter(request, world.listId).catch(() => {
+	existingDraftNewsletter: async ({ request }, use) => {
+		const draft: ExistingDraftNewsletter = {};
+		await use(draft);
+		if (draft.listId) {
+			await deleteDraftNewsletter(request, draft.listId).catch(() => {
 				// Best-effort cleanup only; ignore if already removed.
 			});
 		}

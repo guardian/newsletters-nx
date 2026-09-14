@@ -2,43 +2,46 @@ import { expect } from '@playwright/test';
 import { createDraftNewsletter } from '../../../helpers/draft-newsletter';
 import { Given, Then, When } from './fixtures';
 
-Given('a draft newsletter exists', async ({ request, draftWorld }) => {
-	draftWorld.listId = await createDraftNewsletter(
-		request,
-		`Workspace Layout E2E ${Date.now()}`,
-	);
-});
+Given(
+	'an existing draft newsletter',
+	async ({ request, existingDraftNewsletter }) => {
+		existingDraftNewsletter.listId = await createDraftNewsletter(
+			request,
+			`Workspace Layout E2E ${Date.now()}`,
+		);
+	},
+);
 
-Given("Editor Erin's workspace uses the Legacy design", async ({ page }) => {
+Given("an editor's workspace uses the Legacy design", async ({ page }) => {
 	// Full page navigation so `checkFeatureSwitchURLParams` (called at module
 	// load) picks up the query param and (re)writes it to localStorage.
 	await page.goto('/drafts?switch-stand=false');
 });
 
-Given("Editor Erin's workspace uses the Stand design", async ({ page }) => {
+Given("an editor's workspace uses the Stand design", async ({ page }) => {
 	await page.goto('/drafts?switch-stand=true');
 });
 
 When(
-	'Editor Erin opens the newsletter creation step using the Stand design',
+	'the editor opens the newsletter creation step using the Stand design',
 	async ({ page }) => {
 		await page.goto('/drafts/newsletter-data?switch-stand=true');
 	},
 );
 
-When('Editor Erin opens the newsletter creation step', async ({ page }) => {
+When('the editor opens the newsletter creation step', async ({ page }) => {
 	// No switch-stand query param here: `checkFeatureSwitchURLParams` only
 	// writes params present in the URL, so the design set by the preceding
 	// Given step is left untouched.
 	await page.goto('/drafts/newsletter-data');
 });
 
-When('Editor Erin opens the drafts overview', async ({ page }) => {
+When('the editor opens the drafts overview', async ({ page }) => {
 	await page.goto('/drafts');
 });
 
 Then(
-	'Editor Erin sees the newsletter creation step in the Stand design',
+	'the newsletter creation step is displayed in the Stand design',
 	async ({ page }) => {
 		// Both design variants render their own <nav aria-label="Newsletter
 		// creation steps"> step sidebar, so `getByRole('navigation')` alone
@@ -53,7 +56,7 @@ Then(
 );
 
 Then(
-	'Editor Erin sees the newsletter creation step in the Legacy design',
+	'the newsletter creation step is displayed in the Legacy design',
 	async ({ page }) => {
 		// The Legacy design renders a `<main>` landmark the Stand design never
 		// produces, and has no top-bar <nav> landmark (its navigation uses
@@ -68,7 +71,7 @@ Then(
 );
 
 Then(
-	'Editor Erin sees the drafts overview in the Stand design',
+	'the drafts overview is displayed in the Stand design',
 	async ({ page }) => {
 		// On non-wizard routes the Stand design doesn't wrap its navigation in
 		// a <nav> landmark, so assert on content unique to it instead: its
