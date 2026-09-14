@@ -46,9 +46,23 @@ names. `.env.local` is gitignored.
 
 ## Using a real S3 bucket
 
+> [!NOTE]
+> You'll need following [janus](https://janus.gutools.co.uk/) credentials:
+>
+> **Frontend** > **Run newsletters tool locally**
+
 `pnpm run dev:s3` starts the app with `USE_IN_MEMORY_STORAGE=false`. You'll also
-need the S3 variables set in `.env.local` and [Janus](https://janus.gutools.co.uk/)
-credentials for the [frontend profile](https://janus.gutools.co.uk/credentials?permissionId=frontend-read-only&tzOffset=1). 
+need the S3 variables set in `.env.local`:
+
+```
+# Probably developerPlayground or frontend
+S3_PROFILE=<aws-profile-with-bucket-access>
+# Should match S3_PROFILE
+AWS_PROFILE=<aws-profile-with-bucket-access>
+# Either use a custom bucket in developerPlayground
+# or use the dev bucket in frontend. Get the name for this bucket from the /DEV/newsletters/newsletters-api/s3BucketName' SSM parameter.
+NEWSLETTER_BUCKET_NAME=<bucket-to-use>
+```
 
 Locally `STAGE=DEV`, which is what causes anything you write via `pnpm run
 dev:s3` to land in AWS tagged as `DEV`. See
