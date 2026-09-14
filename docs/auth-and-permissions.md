@@ -27,5 +27,4 @@ The permissions are stored as (email_address, user_access_level) pairs, and must
 
 ## Local development auth and permissions
 
-For local development the API can bypass ALB identity headers and SSM-backed
-permissions entirely. See [Local development](./local-development.md#configuration).
+For local development the API will bypass ALB identity headers and may be configured to use or bypass [permissions tool](https://permissions.gutools.co.uk/definitions) based authorisation. See [Local development](./local-development.md#configuration).

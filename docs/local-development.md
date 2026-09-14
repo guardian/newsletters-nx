@@ -4,7 +4,7 @@
 
 - [Node](https://nodejs.org/) and [pnpm](https://pnpm.io/) — versions are pinned in [`.nvmrc`](../.nvmrc) and the `packageManager` field in [`package.json`](../package.json)
 - [dev-nginx](https://github.com/guardian/dev-nginx), for the local HTTPS domain
-- [Janus](https://janus.gutools.co.uk/) credentials, only if you want to use a real S3 bucket
+- [Janus](https://janus.gutools.co.uk/) credentials, if you want to use a real S3 bucket or integrate with the permissions tool.
 
 ## Setup
 
@@ -54,6 +54,33 @@ Locally `STAGE=DEV`, which is what causes anything you write via `pnpm run
 dev:s3` to land in AWS tagged as `DEV`. See
 [Infrastructure](./infrastructure.md#stages-and-domains) for what `DEV`
 artifacts exist and why they aren't managed by CDK.
+
+## Using the permissions tool
+
+> [!NOTE]
+> You'll need following [janus](https://janus.gutools.co.uk/) credentials:
+>
+> - Permissions App: **Workflow** > **Run Permissions App locally**
+> - Newsletters Tool: **Frontend** > **Run newsletters tool locally**
+
+The newsletters tool can be configured to manage authorisation against a local instance of the [permissions tool](https://github.com/guardian/permissions).
+
+To configure this, update your `apps/newsletters-api/.env.local` file:
+
+```
+# Disable local permissions
+USE_LOCAL_USER_PERMISSIONS=false
+USE_GUARDIAN_PERMISSIONS=true
+# Choose which user to authorize as
+LOCAL_USER_PROFILE_EMAIL=<your_guardian_email>
+```
+
+This will cause the newsletters tool to load permissions from the `arn:aws:s3:::permissions-cache/LOCAL/permissions.json` s3 object.
+
+> [!NOTE]
+> Although the permissions app has only 2 stages (CODE + PROD), it has 3 caches, LOCAL, CODE and PROD
+
+The `LOCAL/permissions.json` permissions cache is only updated when changes are made on a **local** instance of the permissions tool, even though the underlying data is shared with the **CODE** instance of the tool.
 
 ## Testing
 
