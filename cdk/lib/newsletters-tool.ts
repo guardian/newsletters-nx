@@ -347,7 +347,8 @@ EOL`,
 			new GuDeveloperPolicyExperimental(this, 'NewslettersToolLocalRunPolicy', {
 				grantId: 'run-newsletters-tool-locally',
 				friendlyName: 'Run Newsletters tool locally',
-				// Necessary for access to dataStorageBucket. We cannot enumerate all objects in the bucket.
+				// Necessary for access to dataStorageBucket.
+				// We cannot enumerate all objects in the bucket, so use a wildcard arn instead, which the policy checks do not allow.
 				withoutPolicyChecks: true,
 				statements: [
 					// Read SSM 'bucketName' parameter
@@ -362,7 +363,7 @@ EOL`,
 					NewslettersTool.readWriteDataStorageBucketPolicy(
 						`arn:aws:s3:::${devBucketName}`,
 					),
-					// Read access to permissions cache (for guardian/permissions app inte)
+					// Read access to permissions cache (for guardian/permissions app integration)
 					NewslettersTool.readAccessToPermissionsCachePolicy(
 						permissionsCacheBucketName,
 						'LOCAL', // The 'DEV' instance is called 'LOCAL'
