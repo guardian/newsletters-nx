@@ -64,7 +64,13 @@ pnpm run test:e2e:bdd-only
 ```
 
 This runs `bddgen` then filters to the `chromium-bdd` project only, isolated
-from the plain-spec suite.
+from the plain-spec suite, with `--workers=3` (parallel) instead of the
+global `workers: 1`. `workers` is a top-level Playwright setting, not
+per-project, so the main suite stays serial (its specs share seeded
+newsletter data and aren't safe to parallelize) while this script overrides
+it via the CLI flag for just the BDD scenarios — each of which creates and
+tears down its own isolated draft, so concurrent runs are safe. Confirmed
+stable across repeated runs.
 
 These tests deliberately run against the real app and real API (via
 `helpers/draft-newsletter.ts`), matching every other spec in this suite —
