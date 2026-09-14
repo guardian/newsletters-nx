@@ -108,31 +108,53 @@ matching).
 
 1. Add a `.feature` file under `src/ui/features/`.
 2. Implement any new step text in `src/ui/steps/*.ts` using `Given`/`When`/`Then`
-   from `./fixtures` (add scenario-scoped state to the `draftWorld` fixture in
-   `fixtures.ts` if a step needs to share data, e.g. a created draft's `listId`).
+   from `./fixtures` (add a scenario-scoped Playwright fixture in `fixtures.ts`
+   if a step needs to share state, e.g. an `existingDraftNewsletter` fixture
+   holding a created draft's `listId`).
 3. Run `pnpm run bddgen` — if a step has no matching definition, generation
    fails immediately and prints a ready-to-paste snippet for the missing step.
 
 #### Gherkin style guide
 
-Feature files describe user-observable behaviour, not implementation. Follow
-these rules (see `workspace-layout.feature` for a worked example):
+Feature files describe user-observable behaviour, not implementation. This
+follows the team's BDD corporate style guide (declarative specifications,
+strict scenario atomicity, fixture-driven state — see
+`workspace-layout.feature` for a worked example):
 
-- **No implementation leakage.** Don't mention clicks, URLs, selectors, or
-  raw config/feature-flag names in step text. Translate technical state into
-  a user-facing concept instead (e.g. a `switch-stand` flag becomes "the
-  Legacy design" / "the Stand design").
-- **One `When` per scenario.** Each scenario tests exactly one action. Split
-  multi-action flows into separate scenarios.
-- **Lean `Background`.** Keep it to a handful of `Given` steps shared by
-  every scenario in the file; anything scenario-specific belongs in the
-  scenario itself.
-- **Named personas, not "the user"/"I".** Use a consistent named persona
-  (e.g. "Editor Erin") so steps read as complete third-person sentences.
-- **No conjunction steps.** Don't cram two preconditions/actions into one
-  step with "and" — use separate `Given`/`And` lines instead.
+- **Declarative, not imperative.** Ban UI vocabulary ("click", "type",
+  "dropdown", "URL", "button") and raw config/feature-flag names from step
+  text. Translate technical state into a user-facing concept instead (e.g.
+  a `switch-stand` flag becomes "the Legacy design" / "the Stand design").
+- **One behaviour per scenario.** Cap scenarios at single-digit step counts
+  (target 3–7); exactly one `When` action per scenario. If a flow needs
+  multiple actions/assertions in sequence, split it into separate scenarios
+  rather than chaining `When`/`Then` blocks.
+- **No arbitrary data.** Don't hardcode incidental values (IDs, exact
+  strings) that aren't essential to the behaviour under test; abstract them
+  into a concept instead (e.g. "an existing draft newsletter").
+- **`Background` for domain context only.** Use it only for state that's
+  fundamentally necessary to understand every scenario in the feature (e.g.
+  "an existing draft newsletter" here). Never use it for generic
+  setup/teardown, app resets, or logins — that belongs in Playwright
+  fixtures.
+- **Zero sequential dependencies.** Every scenario must be independently
+  runnable in any order or shard. State a scenario needs must be created by
+  its own `Given` step (backed by a fixture that seeds it, typically via
+  API), never assumed from a prior scenario.
+- **Fixtures, not a global "World".** Share state between step definitions
+  via strongly-typed Playwright fixtures (see `existingDraftNewsletter` in
+  `fixtures.ts`) — never a shared mutable global object, which isn't safe
+  under parallel/sharded execution.
 - **Observable `Then` steps only.** Assert on what's visible in the UI, never
   on the database, API responses, or logs.
+- **Stable `Scenario Outline` titles.** If a scenario uses an `Examples:`
+  table, add a `# title-format:` comment above it (see the
+  [playwright-bdd docs](https://vitalets.github.io/playwright-bdd/)) so
+  inserting/reordering rows doesn't shift every other row's compiled test
+  title and break historical CI reporting.
+- **Tags for execution control only.** Use tags like `@skip`/`@fixme` (mapped
+  natively by playwright-bdd to Playwright's test annotations) or semantic
+  grouping tags (e.g. `@slow`) — not temporal tags like `@sprint-3`.
 
 ### Zero-test build gate
 
