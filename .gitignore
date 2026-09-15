@@ -52,6 +52,9 @@ apps/newsletters-e2e/playwright-report/
 apps/newsletters-e2e/.cache/
 apps/newsletters-e2e/playwright/.auth/
 
+# playwright-bdd generated test files (from bddgen, regenerated on every run)
+apps/newsletters-e2e/src/ui/.features-gen/
+
 # Playwright artifacts (screenshots, videos, traces)
 **/test-results/
 **/playwright-report/

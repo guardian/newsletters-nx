@@ -1,7 +1,20 @@
 import { defineConfig, devices } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
 
 const isCI = !!process.env.CI;
 const baseURL = process.env.BASE_URL ?? 'http://localhost:4200';
+
+// Generates test files from src/ui/features/*.feature + src/ui/steps/*.ts into
+// src/ui/.features-gen. playwright-bdd requires a project's `testDir` to be
+// *exactly* this generated directory, so BDD tests run in their own project
+// below, separate from the plain *.spec.ts project. The generated directory
+// still lives under src/ui, so the path-based `playwright test src/ui`
+// filter (the `test:e2e:ui-only` script) matches both projects.
+const bddTestDir = defineBddConfig({
+	features: 'src/ui/features/**/*.feature',
+	steps: 'src/ui/steps/**/*.ts',
+	outputDir: 'src/ui/.features-gen',
+});
 
 export default defineConfig({
 	testDir: './src',
@@ -48,6 +61,15 @@ export default defineConfig({
 	projects: [
 		{
 			name: 'chromium',
+			// Generated BDD spec files live in their own project (see
+			// `chromium-bdd` below), so exclude them here to avoid picking
+			// them up under a testDir they weren't generated for.
+			testIgnore: '**/.features-gen/**',
+			use: { ...devices['Desktop Chrome'] },
+		},
+		{
+			name: 'chromium-bdd',
+			testDir: bddTestDir,
 			use: { ...devices['Desktop Chrome'] },
 		},
 	],
@@ -75,3 +97,4 @@ export default defineConfig({
 				},
 			},
 });
+
