@@ -8,16 +8,9 @@ import type {
 } from '@playwright/test/reporter';
 
 /**
- * A custom playwright report that emits the overall test result.
- *
- * One of the `FullResult.status` values:
- *  'passed', 'failed', 'timedout' or 'interrupted'.
- *
- * Playwright reports a `passed` FullResult even when zero tests were
- * collected (e.g. a `.feature` file that fails to compile into a spec via
- * bddgen, or a testDir/testMatch typo). That produces a green CI build
- * despite nothing actually running, so this reporter treats a zero-test run
- * as a failure regardless of the underlying `FullResult.status`.
+ * Writes the overall Playwright result ('passed'/'failed'/etc.) to a file.
+ * Treats zero collected tests as a failure, since Playwright otherwise
+ * reports `passed` for an empty run.
  */
 export default class SummaryReporter implements Reporter {
 	private outputFile?: string;
@@ -35,9 +28,7 @@ export default class SummaryReporter implements Reporter {
 		const noTestsRan = this.totalTests === 0;
 		if (noTestsRan) {
 			console.error(
-				'SummaryReporter: 0 tests were collected. Failing the build ' +
-					'(this usually means a testDir/testMatch misconfiguration, or ' +
-					'a .feature file with no matching step definitions).',
+				'SummaryReporter: 0 tests were collected, failing the build.',
 			);
 		}
 		const reportString = noTestsRan ? 'failed' : result.status;
