@@ -114,13 +114,17 @@ scenarios run out of order or on different workers.
 Feature: Newsletter drafts
 
 Background:
-  Given the newsletters API is available
+  Given an existing draft newsletter
 
 Scenario: Launch a ready draft
-  Given a draft newsletter with all required data and rendering options
   When the admin submits the launch request
   Then the newsletter's status becomes launched
 ```
+`Background` steps run before **every** scenario in the file, so this one
+creates a fresh, isolated draft for each scenario via the API helpers (see
+rule 1) rather than depending on state left behind by another scenario or
+worker. See `workspace-layout.feature` and its step definitions for the real
+version of this pattern.
 
 ---
 

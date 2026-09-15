@@ -59,7 +59,9 @@ pnpm run test:e2e:bdd-only
 
 To add a new feature: add a `.feature` file under `src/ui/features/`,
 implement any new step text in `src/ui/steps/*.ts`, then run
-`pnpm run bddgen` (fails with a ready-to-paste snippet if a step is missing).
+`pnpm run bddgen`. If any step in the `.feature` file has no matching step
+definition, `bddgen` fails with an error listing the missing step and a
+ready-to-paste code snippet for its implementation.
 
 Style: keep steps declarative (describe user-facing behaviour, not UI
 actions like "click"), one `When` per scenario, and avoid `Background`/global
