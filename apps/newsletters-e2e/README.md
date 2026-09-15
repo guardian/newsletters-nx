@@ -63,7 +63,9 @@ implement any new step text in `src/ui/steps/*.ts`, then run
 
 Style: keep steps declarative (describe user-facing behaviour, not UI
 actions like "click"), one `When` per scenario, and avoid `Background`/global
-state — see `workspace-layout.feature` for an example.
+state — see `workspace-layout.feature` for an example, and the full
+[Gherkin style guide](../../docs/gherkin-style-guide.md) for the rest of the
+rules.
 
 ## CI Environment
 
