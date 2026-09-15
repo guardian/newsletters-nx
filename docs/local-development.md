@@ -55,9 +55,8 @@ names. `.env.local` is gitignored.
 need the S3 variables set in `.env.local`:
 
 ```
-# Probably developerPlayground or frontend
-S3_PROFILE=<aws-profile-with-bucket-access>
-# Should match S3_PROFILE
+# The AWS profile with access to the bucket
+# Use 'frontend' for the standard DEV bucket.
 AWS_PROFILE=<aws-profile-with-bucket-access>
 # Either use a custom bucket in developerPlayground
 # or use the dev bucket in frontend. Get the name for this bucket from the /DEV/newsletters/newsletters-api/s3BucketName' SSM parameter.
