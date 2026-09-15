@@ -323,6 +323,7 @@ EOL`,
 		});
 
 		// 'DEV' is not a deployed stage, so we deploy the developer policy using pushes to 'CODE' instead.
+		// 'TEST' is included so the snapshot test covers this policy.
 		if (['CODE', 'TEST'].includes(this.stage)) {
 			// Use 'DEV' stage AWS resources for local development.
 			const devBucketSSMParameterName = NewslettersTool.getSSMParameterName(
