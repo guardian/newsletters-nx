@@ -322,9 +322,11 @@ EOL`,
 			resourceRecord: ec2AppApi.loadBalancer.loadBalancerDnsName,
 		});
 
-		// 'DEV' is not a deployed stage, so we deploy the developer policy using pushes to 'CODE' instead.
+		// We deploy two instances of the dev policy:
+		//  The 'PROD' instance is for general use.
+		//  The 'DEV' instance is for iterating on the policy itself
 		// 'TEST' is included so the snapshot test covers this policy.
-		if (['CODE', 'TEST'].includes(this.stage)) {
+		if (['CODE', 'PROD', 'TEST'].includes(this.stage)) {
 			// Use 'DEV' stage AWS resources for local development.
 			const devBucketSSMParameterName = NewslettersTool.getSSMParameterName(
 				'DEV',
@@ -345,9 +347,15 @@ EOL`,
 					userPermissionsSSMParameterId,
 				);
 
+			const friendlyName =
+				'Run Newsletters tool locally' +
+				(this.stage === 'PROD'
+					? ''
+					: ` ${this.stage} (for testing the policy)`);
+
 			new GuDeveloperPolicyExperimental(this, 'NewslettersToolLocalRunPolicy', {
 				grantId: 'run-newsletters-tool-locally',
-				friendlyName: 'Run Newsletters tool locally',
+				friendlyName: friendlyName,
 				// Necessary for access to dataStorageBucket.
 				// We cannot enumerate all objects in the bucket, so use a wildcard arn instead, which the policy checks do not allow.
 				withoutPolicyChecks: true,

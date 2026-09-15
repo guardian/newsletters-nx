@@ -1653,7 +1653,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
     },
     "NewslettersToolLocalRunPolicy87E339B7": {
       "Properties": {
-        "Description": "Run Newsletters tool locally",
+        "Description": "Run Newsletters tool locally TEST (for testing the policy)",
         "Path": "/developer-policy/guardian/newsletters-nx/newsletters/TEST/run-newsletters-tool-locally/",
         "PolicyDocument": {
           "Statement": [
