@@ -24,7 +24,13 @@ Scenario Outline: An editor can skip to certain steps in the wizard
 	| Promotion copy and images |
 
 
+Scenario: An editor cannot skip to the 'Review' step
+	Given the editor is creating a new newsletter
+	Then the editor cannot select the 'Review' step from the navigation
 
+Scenario: An editor cannot skip to the 'Finish' step
+	Given the editor is creating a new newsletter
+	Then the editor cannot select the 'Finish' step from the navigation
 
 
 

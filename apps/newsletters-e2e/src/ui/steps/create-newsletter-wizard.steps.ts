@@ -5,7 +5,7 @@ Given('the redesign switch is turned on', async ({ page }) => {
 	await page.goto('/?switch-stand=true');
 });
 
-Given("the editor is viewing the 'Introduction' step", async ({ page }) => {
+Given('the editor is creating a new newsletter', async ({ page }) => {
 	await page.goto('/drafts/newsletter-data');
 });
 
@@ -25,5 +25,17 @@ Then(
 				.getByRole('button')
 				.filter({ hasText: step }),
 		).toHaveAttribute('aria-current', 'step');
+	},
+);
+
+Then(
+	'the editor cannot select the {string} step from the navigation',
+	async ({ page }, step: string) => {
+		await expect(
+			page
+				.getByRole('navigation')
+				.getByRole('button')
+				.filter({ hasText: step }),
+		).toBeDisabled();
 	},
 );
