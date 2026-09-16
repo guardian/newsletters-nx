@@ -28,7 +28,7 @@ sequenceDiagram
     User->>UI: Click "Request Launch"
     UI->>Exec: submit doLaunch step
     Exec->>Launch: launchDraft(draftId, extraValues)
-    Launch->>Draft: readWithMeta(draftId)
+    Launch->>Draft: read(draftId)
     Draft-->>Launch: draft data
     Launch->>Launch: apply defaults/derived fields<br>+ merge extraValues
     Launch->>Newsletter: create(launched record)

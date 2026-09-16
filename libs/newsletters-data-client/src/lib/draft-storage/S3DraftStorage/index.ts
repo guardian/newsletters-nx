@@ -9,15 +9,9 @@ import type { UserProfile } from '../../user-profile';
 import type {
 	DraftWithId,
 	DraftWithIdAndMeta,
-	DraftWithIdButNoMeta,
 	DraftWithoutId,
 } from '../DraftStorage';
-import {
-	createNewDraftMeta,
-	DraftStorage,
-	stripDraftMeta,
-	updateDraftMeta,
-} from '../DraftStorage';
+import { createNewDraftMeta, DraftStorage, updateDraftMeta } from '../DraftStorage';
 import { errorToResponse } from './errorToResponse';
 import { objectToDraftWithMetaAndId } from './objectToDraftWithId';
 import {
@@ -42,7 +36,7 @@ export class S3DraftStorage extends DraftStorage {
 		draft: DraftWithoutId,
 		user: UserProfile,
 	): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta>
 		| UnsuccessfulStorageResponse
 	> {
 		try {
@@ -69,7 +63,7 @@ export class S3DraftStorage extends DraftStorage {
 
 			return {
 				ok: true,
-				data: this.stripMeta(newDraft),
+				data: newDraft,
 			};
 		} catch (err) {
 			return errorToResponse(err, draft.listId);
@@ -78,17 +72,17 @@ export class S3DraftStorage extends DraftStorage {
 
 	async readAll(): Promise<
 		| UnsuccessfulStorageResponse
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta[]>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta[]>
 	> {
 		try {
 			const listOfKeys = await this.getListOfObjectsKeys();
-			const data: DraftWithIdButNoMeta[] = [];
+			const data: DraftWithIdAndMeta[] = [];
 			await Promise.all(
 				listOfKeys.map(async (key) => {
 					const output = await this.fetchObject(key);
 					const draft = await objectToDraftWithMetaAndId(output);
 					if (draft) {
-						data.push(this.stripMeta(draft));
+						data.push(draft);
 					}
 				}),
 			);
@@ -105,33 +99,8 @@ export class S3DraftStorage extends DraftStorage {
 	async read(
 		listId: number,
 	): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta>
 		| UnsuccessfulStorageResponse
-	> {
-		try {
-			const draft = await this.fetchDraft(listId);
-
-			if (!draft) {
-				return {
-					ok: false,
-					message: `file ${this.listIdToKey(listId)} was not a valid draft.`,
-					reason: StorageRequestFailureReason.DataInStoreNotValid,
-				};
-			}
-
-			return {
-				ok: true,
-				data: this.stripMeta(draft),
-			};
-		} catch (err) {
-			return errorToResponse(err, listId);
-		}
-	}
-
-	async readWithMeta(
-		listId: number,
-	): Promise<
-		SuccessfulStorageResponse<DraftWithIdAndMeta> | UnsuccessfulStorageResponse
 	> {
 		try {
 			const draft = await this.fetchDraft(listId);
@@ -157,7 +126,7 @@ export class S3DraftStorage extends DraftStorage {
 		draft: DraftWithId,
 		user: UserProfile,
 	): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta>
 		| UnsuccessfulStorageResponse
 	> {
 		try {
@@ -193,7 +162,7 @@ export class S3DraftStorage extends DraftStorage {
 
 			return {
 				ok: true,
-				data: this.stripMeta(updatedDraft),
+				data: updatedDraft,
 			};
 		} catch (err) {
 			return errorToResponse(err, draft.listId);
@@ -203,7 +172,7 @@ export class S3DraftStorage extends DraftStorage {
 	async deleteItem(
 		listId: number,
 	): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta>
 		| UnsuccessfulStorageResponse
 	> {
 		try {
@@ -222,7 +191,7 @@ export class S3DraftStorage extends DraftStorage {
 
 			return {
 				ok: true,
-				data: this.stripMeta(draftToDelete),
+				data: draftToDelete,
 			};
 		} catch (err) {
 			return errorToResponse(err, listId);
@@ -279,7 +248,6 @@ export class S3DraftStorage extends DraftStorage {
 	private fetchObject = fetchObject(this);
 	private deleteObject = deleteObject(this);
 
-	stripMeta = stripDraftMeta;
 	createNewMeta = createNewDraftMeta;
 	updateMeta = updateDraftMeta;
 }

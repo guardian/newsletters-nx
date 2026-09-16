@@ -1,5 +1,13 @@
+import {
+	makeBlankMeta,
+	MIGRATION_TIMESTAMP_VALUE,
+} from '@newsletters-nx/newsletters-data-client';
 import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client/server';
 
+// Drafts without an explicit `meta` are given realistic, varied meta data by
+// InMemoryDraftStorage, so local dev shows meaningful "last updated" dates.
+// The two below are deliberately given meta with no usable updatedTimestamp so
+// the "no value" case is visible locally too.
 export const makeInMemoryStorageInstance = () =>
 	new InMemoryDraftStorage([
 		{
@@ -87,6 +95,7 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: makeBlankMeta(),
 		},
 		{
 			name: 'Response Academic',
@@ -100,6 +109,11 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: {
+				...makeBlankMeta(),
+				createdTimestamp: MIGRATION_TIMESTAMP_VALUE,
+				updatedTimestamp: MIGRATION_TIMESTAMP_VALUE,
+			},
 		},
 		{
 			name: 'Wagon Automotive',
