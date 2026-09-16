@@ -1,7 +1,8 @@
-import type { Express, Request, Response } from 'express';
+import type { Request } from 'express';
 import { isPublicReadOnlyApi } from '../../apiDeploymentSettings';
 import { newsletterStore } from '../../services/storage';
 import { registerReadNewsletterRoutes } from './newsletters';
+import { makeFakeApp, makeMockResponse } from './test-helpers';
 
 const VALID_NEWSLETTER_DATA = {
 	identityName: 'tech-scape',
@@ -74,27 +75,6 @@ const mockReadByName = newsletterStore.readByName as jest.Mock;
 const NEWSLETTER_WITH_META = {
 	...VALID_NEWSLETTER_DATA,
 	meta: { createdBy: 'editor@example.com', createdTimestamp: 1 },
-};
-
-/** Captures the handlers registered on a fake Express app so they can be invoked directly, without booting a real server. */
-const makeFakeApp = () => {
-	const handlers = new Map<string, (req: Request, res: Response) => unknown>();
-	const app = {
-		get: (path: string, handler: (req: Request, res: Response) => unknown) => {
-			handlers.set(`GET ${path}`, handler);
-		},
-	} as unknown as Express;
-	return {
-		app,
-		get: (path: string) => handlers.get(`GET ${path}`),
-	};
-};
-
-const makeMockResponse = () => {
-	const send = jest.fn<Response, [unknown]>().mockReturnThis();
-	const status = jest.fn<Response, [number]>().mockReturnThis();
-	const res = { status, send } as unknown as Response;
-	return { res, send };
 };
 
 describe('registerReadNewsletterRoutes meta visibility', () => {

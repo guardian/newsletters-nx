@@ -1,7 +1,8 @@
-import type { Express, Request, Response } from 'express';
+import type { Request } from 'express';
 import { isPublicReadOnlyApi } from '../../apiDeploymentSettings';
 import { draftStore } from '../../services/storage';
 import { registerDraftsRoutes } from './drafts';
+import { makeFakeApp, makeMockResponse } from './test-helpers';
 
 jest.mock('../../apiDeploymentSettings', () => ({
 	// eslint-disable-next-line @typescript-eslint/consistent-type-imports -- inline import() type needed for jest.requireActual's generic
@@ -32,33 +33,6 @@ const DRAFT_WITH_META = {
 	listId: 1,
 	name: 'a-draft',
 	meta: { createdBy: 'editor@example.com', createdTimestamp: 1 },
-};
-
-/** Captures the handlers registered on a fake Express app so they can be invoked directly, without booting a real server. */
-const makeFakeApp = () => {
-	const handlers = new Map<string, (req: Request, res: Response) => unknown>();
-	const app = {
-		get: (path: string, handler: (req: Request, res: Response) => unknown) => {
-			handlers.set(`GET ${path}`, handler);
-		},
-		delete: (
-			path: string,
-			handler: (req: Request, res: Response) => unknown,
-		) => {
-			handlers.set(`DELETE ${path}`, handler);
-		},
-	} as unknown as Express;
-	return {
-		app,
-		get: (path: string) => handlers.get(`GET ${path}`),
-	};
-};
-
-const makeMockResponse = () => {
-	const send = jest.fn<Response, [unknown]>().mockReturnThis();
-	const status = jest.fn<Response, [number]>().mockReturnThis();
-	const res = { status, send } as unknown as Response;
-	return { res, send };
 };
 
 describe('registerDraftsRoutes meta visibility', () => {

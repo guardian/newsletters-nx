@@ -1,22 +1,9 @@
 import { TECHSCAPE_IN_NEW_FORMAT } from '../../fixtures/newsletter-fixtures';
-import type { MetaData } from '../schemas/meta-data-type';
 import { makeBlankMeta } from '../schemas/meta-data-type';
+import type { MetaData } from '../schemas/meta-data-type';
 import type { NewsletterData } from '../schemas/newsletter-data-type';
-import type {
-	SuccessfulStorageResponse,
-	UnsuccessfulStorageResponse,
-} from '../storage-response-types';
-import type { UserProfile } from '../user-profile';
+import { dataOf, META, USER } from '../test-helpers/storage-response';
 import { InMemoryNewsletterStorage } from './InMemoryNewsletterStorage';
-
-const USER: UserProfile = { email: 'editor@example.com' };
-
-const META: MetaData = {
-	createdTimestamp: 1_700_000_000_000,
-	createdBy: 'author@example.com',
-	updatedTimestamp: 1_750_000_000_000,
-	updatedBy: 'editor@example.com',
-};
 
 const makeNewsletter = (
 	listId: number,
@@ -28,15 +15,6 @@ const makeNewsletter = (
 	identityName,
 	meta,
 });
-
-const dataOf = <T>(
-	response: SuccessfulStorageResponse<T> | UnsuccessfulStorageResponse,
-): T => {
-	if (!response.ok) {
-		throw new Error(`expected a successful response: ${response.message}`);
-	}
-	return response.data;
-};
 
 describe('newsletter read responses', () => {
 	it('include the meta data on the list response', async () => {
