@@ -119,14 +119,6 @@ export class InMemoryDraftStorage implements DraftStorage {
 		return Promise.resolve(response);
 	}
 
-	readAllWithMeta() {
-		const response: SuccessfulStorageResponse<DraftWithIdAndMeta[]> = {
-			ok: true,
-			data: this.memory.map((draft) => ({ ...draft })),
-		};
-		return Promise.resolve(response);
-	}
-
 	private getNextId(): number {
 		const currentHighestListId = this.memory.reduce<number>(
 			(highestListIdSoFar, nextDraft) => {
