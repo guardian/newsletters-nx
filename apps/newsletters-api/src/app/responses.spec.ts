@@ -17,20 +17,23 @@ describe('redactMetaForPublicApi', () => {
 		meta: { createdBy: 'someone@example.com', createdTimestamp: 1 },
 	};
 
-	it('strips meta when serving the public read-only API', () => {
-		mockIsPublicReadOnlyApi.mockReturnValue(true);
+	it.each([
+		{
+			description: 'strips meta when serving the public read-only API',
+			isPublic: true,
+			expectedMeta: undefined,
+		},
+		{
+			description: 'leaves meta untouched on the internal read/write deployment',
+			isPublic: false,
+			expectedMeta: itemWithMeta.meta,
+		},
+	])('$description', ({ isPublic, expectedMeta }) => {
+		mockIsPublicReadOnlyApi.mockReturnValue(isPublic);
 
 		const result = redactMetaForPublicApi(itemWithMeta);
 
-		expect(result.meta).toBeUndefined();
+		expect(result.meta).toEqual(expectedMeta);
 		expect(result.identityName).toBe('a-newsletter');
-	});
-
-	it('leaves meta untouched on the internal read/write deployment', () => {
-		mockIsPublicReadOnlyApi.mockReturnValue(false);
-
-		const result = redactMetaForPublicApi(itemWithMeta);
-
-		expect(result.meta).toEqual(itemWithMeta.meta);
 	});
 });

@@ -26,3 +26,22 @@ export const makeMockResponse = () => {
 	const res = { status, send } as unknown as Response;
 	return { res, send };
 };
+
+/**
+ * Registers routes on a fake app, invokes the GET handler for `path` with the
+ * given request, and returns whatever was passed to `res.send(...)`.
+ * Centralises the app/response plumbing shared by route spec files.
+ */
+export const invokeGetRoute = async <T = unknown>(
+	registerRoutes: (app: Express) => void,
+	path: string,
+	req: Partial<Request> = {},
+): Promise<T> => {
+	const { app, get } = makeFakeApp();
+	registerRoutes(app);
+	const { res, send } = makeMockResponse();
+
+	await get(path)?.(req as Request, res);
+
+	return send.mock.calls[0]?.[0] as T;
+};

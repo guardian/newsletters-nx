@@ -1,8 +1,7 @@
-import type { Request } from 'express';
 import { isPublicReadOnlyApi } from '../../apiDeploymentSettings';
 import { newsletterStore } from '../../services/storage';
 import { registerReadNewsletterRoutes } from './newsletters';
-import { makeFakeApp, makeMockResponse } from './test-helpers';
+import { invokeGetRoute } from './test-helpers';
 
 const VALID_NEWSLETTER_DATA = {
 	identityName: 'tech-scape',
@@ -82,64 +81,54 @@ describe('registerReadNewsletterRoutes meta visibility', () => {
 		jest.clearAllMocks();
 	});
 
-	it('strips meta from /api/newsletters on the public read-only deployment', async () => {
-		mockIsPublicReadOnlyApi.mockReturnValue(true);
+	it.each([
+		{
+			description: 'strips meta from /api/newsletters on the public read-only deployment',
+			isPublic: true,
+			expectedMeta: undefined,
+		},
+		{
+			description:
+				'keeps meta on /api/newsletters for the internal read/write deployment',
+			isPublic: false,
+			expectedMeta: NEWSLETTER_WITH_META.meta,
+		},
+	])('$description', async ({ isPublic, expectedMeta }) => {
+		mockIsPublicReadOnlyApi.mockReturnValue(isPublic);
 		mockList.mockResolvedValue({ ok: true, data: [NEWSLETTER_WITH_META] });
-		const { app, get } = makeFakeApp();
-		registerReadNewsletterRoutes(app);
-		const { res, send } = makeMockResponse();
 
-		await get('/api/newsletters')?.({ query: {} } as unknown as Request, res);
+		const body = await invokeGetRoute<{ data: Array<{ meta?: unknown }> }>(
+			registerReadNewsletterRoutes,
+			'/api/newsletters',
+			{ query: {} },
+		);
 
-		const body = send.mock.calls[0]?.[0] as { data: Array<{ meta?: unknown }> };
-		expect(body.data[0]?.meta).toBeUndefined();
-	});
-
-	it('keeps meta on /api/newsletters for the internal read/write deployment', async () => {
-		mockIsPublicReadOnlyApi.mockReturnValue(false);
-		mockList.mockResolvedValue({ ok: true, data: [NEWSLETTER_WITH_META] });
-		const { app, get } = makeFakeApp();
-		registerReadNewsletterRoutes(app);
-		const { res, send } = makeMockResponse();
-
-		await get('/api/newsletters')?.({ query: {} } as unknown as Request, res);
-
-		const body = send.mock.calls[0]?.[0] as { data: Array<{ meta?: unknown }> };
-		expect(body.data[0]?.meta).toEqual(NEWSLETTER_WITH_META.meta);
+		expect(body.data[0]?.meta).toEqual(expectedMeta);
 	});
 
 	it('strips meta from /api/newsletters/:newsletterId on the public read-only deployment', async () => {
 		mockIsPublicReadOnlyApi.mockReturnValue(true);
 		mockReadByName.mockResolvedValue({ ok: true, data: NEWSLETTER_WITH_META });
-		const { app, get } = makeFakeApp();
-		registerReadNewsletterRoutes(app);
-		const { res, send } = makeMockResponse();
 
-		await get('/api/newsletters/:newsletterId')?.(
-			{
-				query: {},
-				params: { newsletterId: 'a-newsletter' },
-			} as unknown as Request,
-			res,
+		const body = await invokeGetRoute<{ data: { meta?: unknown } }>(
+			registerReadNewsletterRoutes,
+			'/api/newsletters/:newsletterId',
+			{ query: {}, params: { newsletterId: 'a-newsletter' } },
 		);
 
-		const body = send.mock.calls[0]?.[0] as { data: { meta?: unknown } };
 		expect(body.data.meta).toBeUndefined();
 	});
 
 	it('never exposes meta on the legacy endpoint, regardless of deployment', async () => {
 		mockIsPublicReadOnlyApi.mockReturnValue(false);
 		mockList.mockResolvedValue({ ok: true, data: [NEWSLETTER_WITH_META] });
-		const { app, get } = makeFakeApp();
-		registerReadNewsletterRoutes(app);
-		const { res, send } = makeMockResponse();
 
-		await get('/api/legacy/newsletters')?.(
-			{ query: {} } as unknown as Request,
-			res,
+		const body = await invokeGetRoute<Array<Record<string, unknown>>>(
+			registerReadNewsletterRoutes,
+			'/api/legacy/newsletters',
+			{ query: {} },
 		);
 
-		const body = send.mock.calls[0]?.[0] as Array<Record<string, unknown>>;
 		expect(body[0]?.meta).toBeUndefined();
 	});
 });
