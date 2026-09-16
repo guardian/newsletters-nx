@@ -14,9 +14,9 @@ const makeGetObjectOutput = (body?: string): GetObjectCommandOutput =>
 
 describe('objectToNewsletter', () => {
 	test('returns undefined when getObjectOutput.Body is undefined', () => {
-		void expect(
-			objectToNewsletter(makeGetObjectOutput()),
-		).resolves.toEqual(undefined);
+		void expect(objectToNewsletter(makeGetObjectOutput())).resolves.toEqual(
+			undefined,
+		);
 	});
 
 	test('returns undefined when invalid JSON body returned', () => {

@@ -119,7 +119,8 @@ describe('redactMetaForPublicApi', () => {
 			expectedMeta: undefined,
 		},
 		{
-			description: 'leaves meta untouched on the internal read/write deployment',
+			description:
+				'leaves meta untouched on the internal read/write deployment',
 			isPublic: false,
 			expectedMeta: itemWithMeta.meta,
 		},
@@ -136,7 +137,8 @@ describe('redactMetaForPublicApi', () => {
 describe('registerDraftsRoutes meta visibility', () => {
 	it.each([
 		{
-			description: 'strips meta from /api/drafts on the public read-only deployment',
+			description:
+				'strips meta from /api/drafts on the public read-only deployment',
 			isPublic: true,
 			expectedMeta: undefined,
 		},
@@ -175,7 +177,8 @@ describe('registerDraftsRoutes meta visibility', () => {
 describe('registerReadNewsletterRoutes meta visibility', () => {
 	it.each([
 		{
-			description: 'strips meta from /api/newsletters on the public read-only deployment',
+			description:
+				'strips meta from /api/newsletters on the public read-only deployment',
 			isPublic: true,
 			expectedMeta: undefined,
 		},
