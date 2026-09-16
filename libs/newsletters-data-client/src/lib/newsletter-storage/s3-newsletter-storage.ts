@@ -127,27 +127,33 @@ export class S3NewsletterStorage implements NewsletterStorage {
 	}
 
 	async list(): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
+		| SuccessfulStorageResponse<NewsletterDataWithMeta[]>
 		| UnsuccessfulStorageResponse
 	> {
 		try {
 			const listOfObjectsKeys = await this.getListOfObjectsKeys();
-			const data: NewsletterData[] = [];
+			const data: NewsletterDataWithMeta[] = [];
 			await Promise.all(
 				listOfObjectsKeys.map(async (key) => {
 					const s3Response = await this.fetchObject(key);
 					const responseAsNewsletter = await objectToNewsletter(s3Response);
 					if (responseAsNewsletter) {
-						data.push(responseAsNewsletter);
+						// Stored newsletters predating the meta field have none, so
+						// fall back the same way `update` does rather than dropping
+						// the row from the list.
+						data.push({
+							...responseAsNewsletter,
+							meta: isNewsletterDataWithMeta(responseAsNewsletter)
+								? responseAsNewsletter.meta
+								: makeBlankMeta(),
+						});
 					}
 				}),
 			);
 
-			const listWithoutMeta = data.map(this.stripMeta);
-
 			return {
 				ok: true,
-				data: listWithoutMeta,
+				data,
 			};
 		} catch (error) {
 			console.error(error);

@@ -212,9 +212,9 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	}
 
 	list() {
-		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta[]> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta[]> = {
 			ok: true,
-			data: [...this.memory].map(this.stripMeta).map((item) => ({ ...item })),
+			data: [...this.memory].map((item) => ({ ...item })),
 		};
 		return Promise.resolve(response);
 	}

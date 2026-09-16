@@ -152,7 +152,7 @@ export abstract class NewsletterStorage {
 	>;
 
 	abstract list(): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
+		| SuccessfulStorageResponse<NewsletterDataWithMeta[]>
 		| UnsuccessfulStorageResponse
 	>;
 }

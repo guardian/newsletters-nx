@@ -139,9 +139,9 @@ export class InMemoryDraftStorage implements DraftStorage {
 	}
 
 	readAll() {
-		const response: SuccessfulStorageResponse<DraftWithIdButNoMeta[]> = {
+		const response: SuccessfulStorageResponse<DraftWithIdAndMeta[]> = {
 			ok: true,
-			data: this.memory.map(this.stripMeta),
+			data: this.memory.map((draft) => ({ ...draft })),
 		};
 		return Promise.resolve(response);
 	}

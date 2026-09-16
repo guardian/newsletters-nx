@@ -79,7 +79,7 @@ export abstract class DraftStorage {
 	>;
 
 	abstract readAll(): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta[]>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta[]>
 		| UnsuccessfulStorageResponse
 	>;
 }

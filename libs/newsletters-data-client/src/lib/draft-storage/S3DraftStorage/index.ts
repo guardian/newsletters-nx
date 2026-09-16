@@ -78,17 +78,17 @@ export class S3DraftStorage extends DraftStorage {
 
 	async readAll(): Promise<
 		| UnsuccessfulStorageResponse
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta[]>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta[]>
 	> {
 		try {
 			const listOfKeys = await this.getListOfObjectsKeys();
-			const data: DraftWithIdButNoMeta[] = [];
+			const data: DraftWithIdAndMeta[] = [];
 			await Promise.all(
 				listOfKeys.map(async (key) => {
 					const output = await this.fetchObject(key);
 					const draft = await objectToDraftWithMetaAndId(output);
 					if (draft) {
-						data.push(this.stripMeta(draft));
+						data.push(draft);
 					}
 				}),
 			);
