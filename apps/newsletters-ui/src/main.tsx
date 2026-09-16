@@ -3,6 +3,8 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DefaultStyles } from './app/components/DefaultStyles';
+import { isFeatureSwitchEnabled } from './app/featureSwitches';
+import { allNewslettersRoute } from './app/routes/all-newsletters';
 import { draftRoute } from './app/routes/drafts';
 import { homeRoute } from './app/routes/home';
 import { launchedRoute } from './app/routes/launched';
@@ -20,6 +22,9 @@ const router = createBrowserRouter([
 	draftRoute,
 	launchedRoute,
 	layoutsRoute,
+	// Only registered with the Stand design on; /launched and /drafts remain
+	// the only way to see newsletters otherwise.
+	...(isFeatureSwitchEnabled('switch-stand') ? [allNewslettersRoute] : []),
 ]);
 
 const root = ReactDOM.createRoot(

@@ -8,7 +8,7 @@ import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 
 type LaunchedStatus = NewsletterData['status'];
 
-interface BadgeContent {
+export interface BadgeContent {
 	label: string;
 	color: NonNullable<BadgeProps['color']>;
 }

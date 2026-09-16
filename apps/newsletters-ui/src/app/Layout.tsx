@@ -52,6 +52,9 @@ export function Layout(props: IRootRoute) {
 		];
 		return wizardRoutes.some((route) => location.pathname.includes(route));
 	})();
+	const isAllNewslettersRoute = location.pathname === '/all';
+	// /all uses the same Stand top bar / alert banner shell as the wizard.
+	const usesStandShell = isWizardRoute || isAllNewslettersRoute;
 	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
 
 	useEffect(() => {
@@ -71,7 +74,7 @@ export function Layout(props: IRootRoute) {
 		<MainNav isOnCode={isOnCode} isOnLocal={isOnLocal} />
 	);
 
-	if (isUsingStand && isWizardRoute) {
+	if (isUsingStand && usesStandShell) {
 		return (
 			<StandLayout>
 				{(isOnCode || isOnLocal) && (

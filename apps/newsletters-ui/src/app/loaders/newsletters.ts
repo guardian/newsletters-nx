@@ -1,14 +1,30 @@
 import type {
 	DraftNewsletterData,
+	DraftWithIdAndMeta,
 	NewsletterData,
+	NewsletterDataWithMeta,
 } from '@newsletters-nx/newsletters-data-client';
 import type { LoaderFunction } from 'react-router-dom';
 import { fetchApiData } from '../api-requests/fetch-api-data';
 
+/**
+ * The list fetches behind `listLoader` and `draftListLoader`. `fetchApiData`
+ * resolves to `undefined` when a request fails, which those loaders flatten to
+ * an empty list. The All Newsletters loader needs to tell "no newsletters"
+ * apart from "could not load the newsletters", so it composes these directly.
+ */
+export const fetchNewsletterList = async (): Promise<
+	NewsletterDataWithMeta[] | undefined
+> => fetchApiData<NewsletterDataWithMeta[]>(`api/newsletters`);
+
+export const fetchDraftNewsletterList = async (): Promise<
+	DraftWithIdAndMeta[] | undefined
+> => fetchApiData<DraftWithIdAndMeta[]>(`api/drafts`);
+
 export const listLoader: LoaderFunction = async (): Promise<
 	NewsletterData[]
 > => {
-	const list = (await fetchApiData<NewsletterData[]>(`api/newsletters`)) ?? [];
+	const list = (await fetchNewsletterList()) ?? [];
 	return list;
 };
 
@@ -25,7 +41,7 @@ export const detailLoader: LoaderFunction = async ({
 export const draftListLoader: LoaderFunction = async (): Promise<
 	DraftNewsletterData[]
 > => {
-	const list = (await fetchApiData<DraftNewsletterData[]>(`api/drafts`)) ?? [];
+	const list = (await fetchDraftNewsletterList()) ?? [];
 	return list;
 };
 
