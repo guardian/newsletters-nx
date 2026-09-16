@@ -38,7 +38,7 @@
 		"@guardian/image": "^1.1.0",
 		"@guardian/permissions-client": "^0.0.4",
 		"@guardian/source": "^12.2.1",
-		"@guardian/stand": "0.0.67",
+		"@guardian/stand": "0.0.74",
 		"@internationalized/date": "^3.12.2",
 		"@mui/icons-material": "^9.0.0",
 		"@mui/material": "^9.0.0",
