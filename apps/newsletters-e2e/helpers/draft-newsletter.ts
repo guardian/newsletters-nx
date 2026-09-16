@@ -1,5 +1,5 @@
-import type { APIRequestContext } from '@playwright/test';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
+import type { APIRequestContext } from '@playwright/test';
 
 const API_BASE = process.env['API_URL'] ?? 'http://localhost:3000';
 
@@ -149,12 +149,14 @@ export async function updateDraftNewsletter<S extends UpdateStepId>(
 	listId: number,
 	stepId: S,
 	fields: StepFormDataMap[S],
+	buttonId: string = 'next',
+	buttonType: string = 'NEXT',
 ): Promise<void> {
 	await postStep(request, {
 		wizardId: 'NEWSLETTER_DATA',
 		stepId,
-		buttonId: 'next',
-		buttonType: 'NEXT',
+		buttonId: buttonId,
+		buttonType: buttonType,
 		formData: { listId, ...fields },
 	});
 }
