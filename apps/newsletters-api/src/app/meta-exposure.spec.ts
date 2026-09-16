@@ -5,10 +5,9 @@ import { registerDraftsRoutes } from './routes/drafts';
 import { registerReadNewsletterRoutes } from './routes/newsletters';
 import { invokeGetRoute } from './routes/test-helpers';
 
-// Consolidates all "does the public read-only API leak `meta`?" coverage
-// (pure helper + route-level) into a single file to avoid duplicating the
-// same mocking/setup boilerplate across responses.spec.ts, drafts.spec.ts
-// and newsletters.spec.ts.
+// Covers whether the public read-only API leaks `meta`, both at the
+// pure-helper level (redactMetaForPublicApi) and at the route level
+// (drafts and newsletters routes).
 
 jest.mock('../apiDeploymentSettings', () => ({
 	// eslint-disable-next-line @typescript-eslint/consistent-type-imports -- inline import() type needed for jest.requireActual's generic

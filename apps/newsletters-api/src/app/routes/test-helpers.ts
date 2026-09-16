@@ -30,7 +30,6 @@ export const makeMockResponse = () => {
 /**
  * Registers routes on a fake app, invokes the GET handler for `path` with the
  * given request, and returns whatever was passed to `res.send(...)`.
- * Centralises the app/response plumbing shared by route spec files.
  */
 export const invokeGetRoute = async <T = unknown>(
 	registerRoutes: (app: Express) => void,
