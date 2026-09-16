@@ -1,10 +1,11 @@
 import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
-import type { NewsletterData } from '../schemas/newsletter-data-type';
+import { makeBlankMeta } from '../schemas/meta-data-type';
+import type { NewsletterDataWithMeta } from '../schemas/newsletter-data-type';
 import { isNewsletterData } from '../schemas/newsletter-data-type';
 
 export const objectToNewsletter = async (
 	getObjectOutput: GetObjectCommandOutput,
-): Promise<NewsletterData | undefined> => {
+): Promise<NewsletterDataWithMeta | undefined> => {
 	try {
 		const { Body } = getObjectOutput;
 		const content = await Body?.transformToString();
@@ -15,7 +16,13 @@ export const objectToNewsletter = async (
 		if (!isNewsletterData(parsedContent)) {
 			return undefined;
 		}
-		return parsedContent;
+		// `meta` is not part of newsletterDataSchema, so records written before
+		// it was introduced parse without one. Default it here so every
+		// newsletter leaving storage has meta, as drafts already do.
+		return {
+			meta: makeBlankMeta(),
+			...parsedContent,
+		};
 	} catch (err) {
 		console.warn('objectToNewsletter failed');
 		console.warn(err);

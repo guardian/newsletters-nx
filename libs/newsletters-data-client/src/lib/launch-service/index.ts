@@ -39,7 +39,7 @@ export class LaunchService {
 		SuccessfulStorageResponse<NewsletterData> | UnsuccessfulStorageResponse
 	> {
 		const { draftStorage, newsletterStorage } = this;
-		const draftGetResponse = await draftStorage.readWithMeta(draftId);
+		const draftGetResponse = await draftStorage.read(draftId);
 		if (!draftGetResponse.ok) {
 			return draftGetResponse;
 		}

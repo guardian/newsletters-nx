@@ -1,5 +1,6 @@
 import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import { TECHSCAPE_IN_NEW_FORMAT } from '../../fixtures/newsletter-fixtures';
+import { makeBlankMeta } from '../schemas/meta-data-type';
 import type { NewsletterData } from '../schemas/newsletter-data-type';
 import { objectToNewsletter } from './objectToNewsletter';
 
@@ -43,6 +44,30 @@ describe('objectToNewsletter', () => {
 		const newsletterAsStored = JSON.stringify(TECHSCAPE_IN_NEW_FORMAT);
 		const expectedNewsletter = JSON.parse(newsletterAsStored) as NewsletterData;
 		const actualNewsletter = await objectToNewsletter(getObjectOutput);
-		expect(actualNewsletter).toEqual(expectedNewsletter);
+		expect(actualNewsletter).toEqual({
+			...expectedNewsletter,
+			meta: makeBlankMeta(),
+		});
+	});
+
+	test('keeps the meta data stored on the record', async () => {
+		const storedMeta = {
+			createdTimestamp: 1690000000000,
+			updatedTimestamp: 1700000000000,
+			createdBy: 'author@example.com',
+			updatedBy: 'editor@example.com',
+		};
+		const getObjectOutput = {
+			Body: {
+				transformToString: () =>
+					Promise.resolve(
+						JSON.stringify({ ...TECHSCAPE_IN_NEW_FORMAT, meta: storedMeta }),
+					),
+			},
+		} as GetObjectCommandOutput;
+
+		const actualNewsletter = await objectToNewsletter(getObjectOutput);
+
+		expect(actualNewsletter?.meta).toEqual(storedMeta);
 	});
 });

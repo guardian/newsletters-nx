@@ -1,9 +1,9 @@
 import type { DraftNewsletterDataWithMeta } from '../schemas/draft-newsletter-data-type';
+import type { MetaData } from '../schemas/meta-data-type';
 import { makeBlankMeta } from '../schemas/meta-data-type';
 import type {
 	NewsletterData,
 	NewsletterDataWithMeta,
-	NewsletterDataWithoutMeta,
 } from '../schemas/newsletter-data-type';
 import { isNewsletterDataWithMeta } from '../schemas/newsletter-data-type';
 import { StorageRequestFailureReason } from '../storage-response-types';
@@ -17,7 +17,6 @@ import {
 	buildNewsletterNoItemError,
 	createNewNewsletterMeta,
 	getNewsletterModificationError,
-	stripNewsletterMeta,
 	updateNewsletterMeta,
 	updateNewsletterMetaForLaunch,
 } from './NewsletterStorage';
@@ -27,11 +26,11 @@ import {
 export class InMemoryNewsletterStorage implements NewsletterStorage {
 	private memory: NewsletterDataWithMeta[];
 
-	constructor(newsletters?: NewsletterData[]) {
+	constructor(newsletters?: Array<NewsletterData & { meta?: MetaData }>) {
 		this.memory = newsletters
 			? newsletters.map((n) => ({
 					...n,
-					meta: makeBlankMeta(),
+					meta: n.meta ?? makeBlankMeta(),
 				}))
 			: [];
 	}
@@ -69,29 +68,14 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		};
 		this.memory.push(newNewsletterWithNewId);
 
-		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
 			ok: true,
-			data: this.stripMeta(newNewsletterWithNewId),
+			data: newNewsletterWithNewId,
 		};
 		return Promise.resolve(response);
 	}
 
 	read(listId: number) {
-		const match = this.memory.find(
-			(newsletter) => newsletter.listId === listId,
-		);
-
-		if (!match) {
-			return Promise.resolve(buildNewsletterNoItemError(listId));
-		}
-		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
-			ok: true,
-			data: this.stripMeta(match),
-		};
-		return Promise.resolve(response);
-	}
-
-	readWithMeta(listId: number) {
 		const match = this.memory.find(
 			(newsletter) => newsletter.listId === listId,
 		);
@@ -113,20 +97,6 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		if (!match) {
 			return Promise.resolve(buildNewsletterNoItemError(identityName));
 		}
-		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
-			ok: true,
-			data: this.stripMeta(match),
-		};
-		return Promise.resolve(response);
-	}
-
-	readByNameWithMeta(identityName: string) {
-		const match = this.memory.find(
-			(newsletter) => newsletter.identityName === identityName,
-		);
-		if (!match) {
-			return Promise.resolve(buildNewsletterNoItemError(identityName));
-		}
 		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
 			ok: true,
 			data: match,
@@ -136,7 +106,7 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 
 	update(
 		listId: number,
-		modifications: Partial<NewsletterDataWithoutMeta>,
+		modifications: Partial<NewsletterDataWithMeta>,
 		user: UserProfile,
 	) {
 		const modificationError = getNewsletterModificationError(modifications);
@@ -155,16 +125,16 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			meta: this.updateMeta(match.meta, user),
 		};
 		this.memory.splice(this.memory.indexOf(match), 1, updatedItem);
-		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
 			ok: true,
-			data: this.stripMeta(updatedItem),
+			data: updatedItem,
 		};
 		return Promise.resolve(response);
 	}
 
 	async replace(
 		listId: number,
-		newsletter: NewsletterDataWithoutMeta,
+		newsletter: NewsletterDataWithMeta,
 		user: UserProfile,
 	) {
 		const match = this.memory.find((item) => item.listId === listId);
@@ -189,9 +159,9 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 			meta: this.updateMeta(match.meta, user),
 		};
 		this.memory.splice(this.memory.indexOf(match), 1, updatedItem);
-		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
 			ok: true,
-			data: this.stripMeta(updatedItem),
+			data: updatedItem,
 		};
 		return Promise.resolve(response);
 	}
@@ -204,17 +174,25 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		}
 
 		this.memory.splice(this.memory.indexOf(match), 1);
-		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
 			ok: true,
-			data: this.stripMeta(match),
+			data: match,
 		};
 		return Promise.resolve(response);
 	}
 
 	list() {
-		const response: SuccessfulStorageResponse<NewsletterDataWithoutMeta[]> = {
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta[]> = {
 			ok: true,
-			data: [...this.memory].map(this.stripMeta).map((item) => ({ ...item })),
+			data: this.memory.map((item) => ({ ...item })),
+		};
+		return Promise.resolve(response);
+	}
+
+	listWithMeta() {
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta[]> = {
+			ok: true,
+			data: this.memory.map((item) => ({ ...item })),
 		};
 		return Promise.resolve(response);
 	}
@@ -232,7 +210,6 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 
 	getModificationError = getNewsletterModificationError;
 	buildNoItemError = buildNewsletterNoItemError;
-	stripMeta = stripNewsletterMeta;
 	createNewMeta = createNewNewsletterMeta;
 	updateMeta = updateNewsletterMeta;
 	updateMetaForLaunch = updateNewsletterMetaForLaunch;
