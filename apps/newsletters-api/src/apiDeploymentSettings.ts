@@ -53,6 +53,16 @@ export const isServingReadEndpoints = () => {
 	return undefinedAndNotProduction || isApiRead || isApiReadWrite;
 };
 
+/**
+ * The read-only deployment (`readonly-newsletters`) is the one gated only by
+ * a shared `X-Gu-API-Key` header at the load balancer, not per-user Google
+ * auth — see docs/auth-and-permissions.md. It's the deployment external
+ * Guardian systems (frontend, ophan, etc.) read from, so anything it returns
+ * should be treated as public. The read/write deployment behind Google OIDC
+ * is the only one that should ever see internal audit data such as `meta`.
+ */
+export const isPublicReadOnlyApi = () => !isServingReadWriteEndpoints();
+
 export const isUsingInMemoryStorage = () =>
 	process.env.USE_IN_MEMORY_STORAGE === 'true';
 

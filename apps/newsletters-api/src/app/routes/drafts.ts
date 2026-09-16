@@ -6,13 +6,16 @@ import {
 	makeErrorResponse,
 	makeSuccessResponse,
 	mapStorageFailureReasonToStatusCode,
+	redactMetaForPublicApi,
 } from '../responses';
 
 export function registerDraftsRoutes(app: Express) {
 	app.get('/api/drafts', async (req, res) => {
 		const storageResponse = await draftStore.readAll();
 		if (storageResponse.ok) {
-			return res.send(makeSuccessResponse(storageResponse.data));
+			return res.send(
+				makeSuccessResponse(storageResponse.data.map(redactMetaForPublicApi)),
+			);
 		}
 		return res
 			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
@@ -28,7 +31,9 @@ export function registerDraftsRoutes(app: Express) {
 
 		const storageResponse = await draftStore.read(idAsNumber);
 		if (storageResponse.ok) {
-			return res.send(makeSuccessResponse(storageResponse.data));
+			return res.send(
+				makeSuccessResponse(redactMetaForPublicApi(storageResponse.data)),
+			);
 		}
 		return res
 			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
