@@ -189,14 +189,6 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
-	listWithMeta() {
-		const response: SuccessfulStorageResponse<NewsletterDataWithMeta[]> = {
-			ok: true,
-			data: this.memory.map((item) => ({ ...item })),
-		};
-		return Promise.resolve(response);
-	}
-
 	private getNextId(): number {
 		const currentHighestListId = this.memory.reduce<number>(
 			(highestListIdSoFar, nextDraft) => {
