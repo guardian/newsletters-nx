@@ -68,4 +68,12 @@ Scenario: An editor can complete the 'Targeting' step
 	Then the editor will see the 'Tag Setting' step
 
 
+Scenario: An editor can complete the 'Tag Setting' step
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Tag Setting' step from the navigation
+	When the editor sets the series tag & description, campaign tag & description fields
+	And the editor chooses to continue
+	Then the editor will see the 'Promotion copy and images' step
+
+
 
