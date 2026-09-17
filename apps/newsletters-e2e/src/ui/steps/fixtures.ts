@@ -12,6 +12,16 @@ interface ExistingDraftNewsletter {
 	listId?: number;
 }
 
+/**
+ * Scenario-scoped state for several draft newsletters created via the API,
+ * keyed by whatever name a `Given` step's data table used to refer to them
+ * (not necessarily the draft's actual API name -- see `namedDraftNewsletters`
+ * below). Torn down automatically afterwards, same as `existingDraftNewsletter`.
+ */
+interface NamedDraftNewsletters {
+	listIdsByName: Record<string, number>;
+}
+
 type ApiRequestEvent = {
 	type: 'started' | 'finished';
 	path: string;
@@ -30,6 +40,7 @@ interface ApiRequestLog {
 
 type Fixtures = {
 	existingDraftNewsletter: ExistingDraftNewsletter;
+	namedDraftNewsletters: NamedDraftNewsletters;
 	apiRequestLog: ApiRequestLog;
 };
 
@@ -44,6 +55,18 @@ export const test = base.extend<Fixtures>({
 		}
 	},
 
+	namedDraftNewsletters: async ({ request }, use) => {
+		const drafts: NamedDraftNewsletters = { listIdsByName: {} };
+		await use(drafts);
+		await Promise.all(
+			Object.values(drafts.listIdsByName).map((listId) =>
+				deleteDraftNewsletter(request, listId).catch(() => {
+					// Best-effort cleanup only; ignore if already removed.
+				}),
+			),
+		);
+	},
+
 	apiRequestLog: async ({ page }, use) => {
 		const log: ApiRequestLog = {
 			events: [],
@@ -53,9 +76,11 @@ export const test = base.extend<Fixtures>({
 		};
 
 		const record =
-			(type: ApiRequestEvent['type']) =>
-			({ url }: { url: () => string }) => {
-				const { pathname } = new URL(url());
+			(type: ApiRequestEvent['type']) => (request: { url: () => string }) => {
+				// Call `.url()` on the request itself rather than destructuring
+				// it: `Request.url()` reads internal instance state, so a bare
+				// destructured reference loses its `this` binding and throws.
+				const { pathname } = new URL(request.url());
 				if (pathname.startsWith('/api/')) {
 					log.events.push({ type, path: pathname });
 				}
