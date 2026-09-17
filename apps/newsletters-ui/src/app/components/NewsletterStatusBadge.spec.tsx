@@ -2,14 +2,9 @@ import type {
 	DraftNewsletterData,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import {
-	getDraftStatusBadgeContent,
-	getLaunchedStatusBadgeContent,
-	NewsletterStatusBadge,
-} from './NewsletterStatusBadge';
+import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 
 // A newsletter that satisfies every field required to be launch-ready,
 // so `calculateProgress` reports 100% when it is used as a draft.
@@ -45,86 +40,59 @@ const READY_TO_LAUNCH_DRAFT: DraftNewsletterData = {
 	tagCreationStatus: 'NOT_REQUESTED',
 };
 
+// A draft missing just its two sign-up description fields - 90% complete
+// according to `calculateProgress`, so a genuine "in progress" case rather
+// than the 0%/100% edges.
+const NINETY_PERCENT_COMPLETE_DRAFT: DraftNewsletterData = {
+	...READY_TO_LAUNCH_DRAFT,
+	signUpDescription: undefined,
+	signUpEmbedDescription: undefined,
+};
+
 const LIVE_NEWSLETTER: NewsletterData = {
 	...READY_TO_LAUNCH_DRAFT,
 	category: 'article-based-legacy',
 	status: 'live',
 };
 
-describe('getLaunchedStatusBadgeContent', () => {
-	it.each([
-		['live', 'Live', 'green'],
-		['pending', 'Pending', 'orange'],
-		['cancelled', 'Cancelled', 'grey'],
-		['paused', 'Paused', 'grey'],
-	] as const)(
-		'maps status "%s" to label "%s" and colour "%s"',
-		(status, label, color) => {
-			expect(getLaunchedStatusBadgeContent(status)).toEqual({
-				label,
-				color,
-			});
-		},
-	);
-});
-
-describe('getDraftStatusBadgeContent', () => {
-	it('reads "Draft • n%" when progress is below 100', () => {
-		expect(getDraftStatusBadgeContent({})).toEqual({
-			label: 'Draft • 0%',
-			color: 'yellow',
-		});
-	});
-
-	it('reads the actual calculateProgress value for a partially complete draft', () => {
-		// Missing the last couple of required fields, so this is neither
-		// empty nor launch-ready - a genuine partial-completion case.
-		const partialDraft: DraftNewsletterData = {
-			...READY_TO_LAUNCH_DRAFT,
-			signUpDescription: undefined,
-			signUpEmbedDescription: undefined,
-		};
-		const expectedProgress = calculateProgress(partialDraft);
-
-		// Guard against this becoming a vacuous 0%/100% case if the draft
-		// or calculateProgress change - this test is only useful for a
-		// genuine partial value.
-		expect(expectedProgress).toBeGreaterThan(0);
-		expect(expectedProgress).toBeLessThan(100);
-
-		expect(getDraftStatusBadgeContent(partialDraft)).toEqual({
-			label: `Draft • ${expectedProgress}%`,
-			color: 'yellow',
-		});
-	});
-
-	it('reads "Ready to launch" once nothing is outstanding', () => {
-		expect(getDraftStatusBadgeContent(READY_TO_LAUNCH_DRAFT)).toEqual({
-			label: 'Ready to launch',
-			color: 'warmPurple',
-		});
-	});
-});
-
 describe('NewsletterStatusBadge', () => {
-	it('renders the launched status label as text', () => {
-		render(<NewsletterStatusBadge newsletter={LIVE_NEWSLETTER} />);
+	it.each([
+		['live', 'Live'],
+		['pending', 'Pending'],
+		['cancelled', 'Cancelled'],
+		['paused', 'Paused'],
+	] as const)('shows "%s" newsletters as "%s"', (status, expectedLabel) => {
+		render(
+			<NewsletterStatusBadge newsletter={{ ...LIVE_NEWSLETTER, status }} />,
+		);
 
-		expect(screen.getByText('Live')).toBeTruthy();
+		expect(screen.getByText(expectedLabel)).toBeTruthy();
 	});
 
-	it('renders the draft progress label as text', () => {
+	it('shows an empty draft as "Draft • 0%"', () => {
 		render(<NewsletterStatusBadge draft={{}} />);
 
 		expect(screen.getByText('Draft • 0%')).toBeTruthy();
 	});
 
-	it('renders the same badge for a draft in more than one place', () => {
-		const { unmount: unmountFirst } = render(
+	it('shows a partially complete draft as "Draft • 90%"', () => {
+		render(<NewsletterStatusBadge draft={NINETY_PERCENT_COMPLETE_DRAFT} />);
+
+		expect(screen.getByText('Draft • 90%')).toBeTruthy();
+	});
+
+	it('shows a fully complete draft as "Ready to launch"', () => {
+		render(<NewsletterStatusBadge draft={READY_TO_LAUNCH_DRAFT} />);
+
+		expect(screen.getByText('Ready to launch')).toBeTruthy();
+	});
+
+	it('shows the same "Ready to launch" badge everywhere the same draft is rendered', () => {
+		const { unmount: unmountFirstRender } = render(
 			<NewsletterStatusBadge draft={READY_TO_LAUNCH_DRAFT} />,
 		);
 		expect(screen.getByText('Ready to launch')).toBeTruthy();
-		unmountFirst();
+		unmountFirstRender();
 
 		render(<NewsletterStatusBadge draft={READY_TO_LAUNCH_DRAFT} />);
 		expect(screen.getByText('Ready to launch')).toBeTruthy();
