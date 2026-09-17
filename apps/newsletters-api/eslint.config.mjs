@@ -4,6 +4,7 @@ import { defineConfig } from 'eslint/config';
 export default defineConfig([
 	{
 		files: ['src/**/*.ts'],
+		ignores: ['src/app/routes/test-helpers.ts'],
 		extends: [guardian.configs.recommended],
 		languageOptions: {
 			parserOptions: {
@@ -13,7 +14,7 @@ export default defineConfig([
 		},
 	},
 	{
-		files: ['src/**/*.spec.ts'],
+		files: ['src/**/*.spec.ts', 'src/app/routes/test-helpers.ts'],
 		extends: [guardian.configs.recommended, guardian.configs.jest],
 		languageOptions: {
 			parserOptions: {

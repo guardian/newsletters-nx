@@ -1,8 +1,5 @@
 import { format } from '@guardian/image';
-import type {
-	NewsletterData,
-	NewsletterDataWithoutMeta,
-} from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterDataWithMeta } from '@newsletters-nx/newsletters-data-client';
 import { getConfigValue } from '@newsletters-nx/util';
 
 interface Props {
@@ -27,8 +24,8 @@ export const signImage = async (
 };
 
 export const signTemplateImages = async (
-	newsletterData: NewsletterDataWithoutMeta,
-): Promise<NewsletterData> => {
+	newsletterData: NewsletterDataWithMeta,
+): Promise<NewsletterDataWithMeta> => {
 	let signedImages = {};
 	const { renderingOptions } = newsletterData;
 	if (!renderingOptions) {

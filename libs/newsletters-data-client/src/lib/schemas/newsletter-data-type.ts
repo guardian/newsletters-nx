@@ -185,7 +185,6 @@ export function isNewsletterData(subject: unknown): subject is NewsletterData {
 }
 
 export type NewsletterDataWithMeta = NewsletterData & { meta: MetaData };
-export type NewsletterDataWithoutMeta = NewsletterData & { meta: undefined };
 
 export function isNewsletterDataWithMeta(
 	subject: unknown,

@@ -1,5 +1,25 @@
 import { InMemoryDraftStorage } from '@newsletters-nx/newsletters-data-client/server';
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const now = Date.now();
+
+/**
+ * Gives local/test seed data a realistic `meta`, instead of the all-zeros
+ * `makeBlankMeta()` default, so `updatedTimestamp`/`updatedBy` have something
+ * meaningful to show without needing real S3 data.
+ */
+const seedMeta = (
+	createdDaysAgo: number,
+	createdBy: string,
+	updatedDaysAgo: number,
+	updatedBy: string,
+) => ({
+	createdTimestamp: now - createdDaysAgo * DAY_IN_MS,
+	createdBy,
+	updatedTimestamp: now - updatedDaysAgo * DAY_IN_MS,
+	updatedBy,
+});
+
 export const makeInMemoryStorageInstance = () =>
 	new InMemoryDraftStorage([
 		{
@@ -30,6 +50,12 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: seedMeta(
+				30,
+				'ada.lovelace@guardian.co.uk',
+				2,
+				'ada.lovelace@guardian.co.uk',
+			),
 		},
 		{
 			name: 'blue empowering',
@@ -57,6 +83,12 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: seedMeta(
+				45,
+				'grace.hopper@guardian.co.uk',
+				45,
+				'grace.hopper@guardian.co.uk',
+			),
 		},
 		{
 			listId: 7000,
@@ -76,6 +108,12 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: seedMeta(
+				10,
+				'ada.lovelace@guardian.co.uk',
+				1,
+				'grace.hopper@guardian.co.uk',
+			),
 		},
 		{
 			listId: 7001,
@@ -87,6 +125,12 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: seedMeta(
+				5,
+				'grace.hopper@guardian.co.uk',
+				5,
+				'grace.hopper@guardian.co.uk',
+			),
 		},
 		{
 			name: 'Response Academic',
@@ -100,6 +144,12 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: seedMeta(
+				200,
+				'ada.lovelace@guardian.co.uk',
+				200,
+				'ada.lovelace@guardian.co.uk',
+			),
 		},
 		{
 			name: 'Wagon Automotive',
@@ -114,6 +164,12 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: seedMeta(
+				14,
+				'grace.hopper@guardian.co.uk',
+				3,
+				'ada.lovelace@guardian.co.uk',
+			),
 		},
 		{
 			name: 'Background Hatchback',
@@ -133,5 +189,11 @@ export const makeInMemoryStorageInstance = () =>
 			ophanCampaignCreationStatus: 'NOT_REQUESTED',
 			signupPageCreationStatus: 'NOT_REQUESTED',
 			tagCreationStatus: 'NOT_REQUESTED',
+			meta: seedMeta(
+				1,
+				'ada.lovelace@guardian.co.uk',
+				1,
+				'ada.lovelace@guardian.co.uk',
+			),
 		},
 	]);
