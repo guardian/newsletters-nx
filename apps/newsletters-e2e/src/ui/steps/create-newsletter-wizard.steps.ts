@@ -97,3 +97,24 @@ When('the editor sets the launch and sign up dates', async ({ page }) => {
 	await fillDateSegment(signUpDateGroup, 'month', '12');
 	await fillDateSegment(signUpDateGroup, 'year', '2025');
 });
+
+When(
+	'the editor sets the region focus, pillar and MMA group',
+	async ({ page }) => {
+		await page
+			.getByRole('radiogroup', { name: 'Region focus' })
+			.getByText('UK')
+			.check();
+
+		const selectOption = async (label: string, option: string) => {
+			await page.getByLabel(label).click();
+			await page
+				.getByRole('listbox')
+				.getByRole('option', { name: option })
+				.click();
+		};
+
+		await selectOption('Pillar', 'sport');
+		await selectOption('Group for MMA page', 'Opinion');
+	},
+);
