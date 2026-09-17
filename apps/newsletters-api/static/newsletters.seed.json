@@ -44,6 +44,14 @@
 			"contactEmail": "rerum@example.com",
 			"displayImageCaptions": true,
 			"mainBannerUrl": "https://i.guim.co.uk/img/uploads/2022/10/21/default-newsletter-main-banner.png?dpr=2&quality=100&width=600&s=618cf82b457a343bf56650ad7acaad59"
+		},
+		"meta": {
+			"createdTimestamp": 1647134612452,
+			"createdBy": "seed-editor@guardian.co.uk",
+			"updatedTimestamp": 1699000000000,
+			"updatedBy": "seed-editor@guardian.co.uk",
+			"launchTimestamp": 1647134612452,
+			"launchedBy": "seed-editor@guardian.co.uk"
 		}
 	}
 ]

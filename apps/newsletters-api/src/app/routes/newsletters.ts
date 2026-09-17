@@ -20,6 +20,7 @@ import {
 	makeErrorResponse,
 	makeSuccessResponse,
 	mapStorageFailureReasonToStatusCode,
+	redactMetaForPublicApi,
 } from '../responses';
 
 export function registerReadNewsletterRoutes(app: Express) {
@@ -52,9 +53,15 @@ export function registerReadNewsletterRoutes(app: Express) {
 			const newsletterDataWithSignedImages = await Promise.all(
 				storageResponse.data.map(signTemplateImages),
 			);
-			return res.send(makeSuccessResponse(newsletterDataWithSignedImages));
+			return res.send(
+				makeSuccessResponse(
+					newsletterDataWithSignedImages.map(redactMetaForPublicApi),
+				),
+			);
 		}
-		return res.send(makeSuccessResponse(storageResponse.data));
+		return res.send(
+			makeSuccessResponse(storageResponse.data.map(redactMetaForPublicApi)),
+		);
 	});
 
 	app.get('/api/newsletters/:newsletterId', async (req, res) => {
@@ -74,9 +81,15 @@ export function registerReadNewsletterRoutes(app: Express) {
 			const newsletterDataWithSignedImages = await signTemplateImages(
 				storageResponse.data,
 			);
-			return res.send(makeSuccessResponse(newsletterDataWithSignedImages));
+			return res.send(
+				makeSuccessResponse(
+					redactMetaForPublicApi(newsletterDataWithSignedImages),
+				),
+			);
 		}
-		return res.send(makeSuccessResponse(storageResponse.data));
+		return res.send(
+			makeSuccessResponse(redactMetaForPublicApi(storageResponse.data)),
+		);
 	});
 }
 

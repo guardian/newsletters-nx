@@ -1,14 +1,9 @@
 import type { DraftNewsletterDataWithMeta } from '../schemas/draft-newsletter-data-type';
 import type { MetaData } from '../schemas/meta-data-type';
-import {
-	createNewMeta,
-	stripMeta,
-	updateMeta,
-} from '../schemas/meta-data-type';
+import { createNewMeta, updateMeta } from '../schemas/meta-data-type';
 import type {
 	NewsletterData,
 	NewsletterDataWithMeta,
-	NewsletterDataWithoutMeta,
 } from '../schemas/newsletter-data-type';
 import { isPartialNewsletterData } from '../schemas/newsletter-data-type';
 import type {
@@ -72,12 +67,6 @@ export const buildNewsletterNoItemError = (
 	};
 };
 
-export const stripNewsletterMeta = (
-	data: NewsletterDataWithMeta | NewsletterData,
-): NewsletterDataWithoutMeta => {
-	return stripMeta(data);
-};
-
 export const createNewNewsletterMeta = (user: UserProfile): MetaData => {
 	return createNewMeta(user);
 };
@@ -101,18 +90,11 @@ export abstract class NewsletterStorage {
 		draft: DraftNewsletterDataWithMeta,
 		user: UserProfile,
 	): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
 		| UnsuccessfulStorageResponse
 	>;
 
 	abstract read(
-		listId: number,
-	): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
-		| UnsuccessfulStorageResponse
-	>;
-
-	abstract readWithMeta(
 		listId: number,
 	): Promise<
 		| SuccessfulStorageResponse<NewsletterDataWithMeta>
@@ -122,7 +104,7 @@ export abstract class NewsletterStorage {
 	abstract readByName(
 		identityName: string,
 	): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
 		| UnsuccessfulStorageResponse
 	>;
 
@@ -131,7 +113,7 @@ export abstract class NewsletterStorage {
 		modifications: Partial<NewsletterData>,
 		user: UserProfile,
 	): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
 		| UnsuccessfulStorageResponse
 	>;
 
@@ -140,19 +122,19 @@ export abstract class NewsletterStorage {
 		newsletter: NewsletterData,
 		user: UserProfile,
 	): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
 		| UnsuccessfulStorageResponse
 	>;
 
 	abstract delete(
 		listId: number,
 	): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta>
+		| SuccessfulStorageResponse<NewsletterDataWithMeta>
 		| UnsuccessfulStorageResponse
 	>;
 
 	abstract list(): Promise<
-		| SuccessfulStorageResponse<NewsletterDataWithoutMeta[]>
+		| SuccessfulStorageResponse<NewsletterDataWithMeta[]>
 		| UnsuccessfulStorageResponse
 	>;
 }

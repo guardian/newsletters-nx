@@ -4,6 +4,7 @@ import type {
 	UserPermissions,
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
+import { isPublicReadOnlyApi } from '../apiDeploymentSettings';
 import { permissionService } from '../services/permissions';
 
 // TODO - make the error response type generic
@@ -19,6 +20,21 @@ export function makeSuccessResponse<T extends object>(data: T): ApiResponse<T> {
 		data,
 	};
 }
+
+/**
+ * `meta` (createdBy/updatedBy staff emails, timestamps) is only for the
+ * editorial tool. The public, read-only deployment shares its API key across
+ * many external Guardian systems, so it must never see `meta` even though it
+ * calls the same route handlers as the internal read/write deployment.
+ */
+export const redactMetaForPublicApi = <T extends { meta?: unknown }>(
+	item: T,
+): T => {
+	if (!isPublicReadOnlyApi()) {
+		return item;
+	}
+	return { ...item, meta: undefined };
+};
 
 export const mapStorageFailureReasonToStatusCode = (
 	reason?: StorageRequestFailureReason,

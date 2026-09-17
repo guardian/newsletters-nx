@@ -53,6 +53,14 @@ export const isServingReadEndpoints = () => {
 	return undefinedAndNotProduction || isApiRead || isApiReadWrite;
 };
 
+/**
+ * True for the read-only deployment, which sits behind a shared API key
+ * rather than per-user auth and is read by external Guardian systems — so
+ * it must not expose internal audit data such as `meta`.
+ * See docs/auth-and-permissions.md for the full deployment split.
+ */
+export const isPublicReadOnlyApi = () => !isServingReadWriteEndpoints();
+
 export const isUsingInMemoryStorage = () =>
 	process.env.USE_IN_MEMORY_STORAGE === 'true';
 

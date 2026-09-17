@@ -1,10 +1,6 @@
 import type { DraftNewsletterData } from '../schemas/draft-newsletter-data-type';
 import type { MetaData } from '../schemas/meta-data-type';
-import {
-	createNewMeta,
-	stripMeta,
-	updateMeta,
-} from '../schemas/meta-data-type';
+import { createNewMeta, updateMeta } from '../schemas/meta-data-type';
 import type {
 	SuccessfulStorageResponse,
 	UnsuccessfulStorageResponse,
@@ -17,17 +13,6 @@ export type DraftWithId = DraftNewsletterData & { listId: number };
 export type DraftWithIdAndMeta = DraftNewsletterData & {
 	listId: number;
 	meta: MetaData;
-};
-
-export type DraftWithIdButNoMeta = DraftNewsletterData & {
-	listId: number;
-	meta: undefined;
-};
-
-export const stripDraftMeta = (
-	data: DraftWithIdAndMeta,
-): DraftWithIdButNoMeta => {
-	return stripMeta(data);
 };
 
 export const createNewDraftMeta = (user: UserProfile): MetaData => {
@@ -46,40 +31,34 @@ export abstract class DraftStorage {
 		draft: DraftWithoutId,
 		user: UserProfile,
 	): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta>
 		| UnsuccessfulStorageResponse
 	>;
 
 	abstract read(
 		listId: number,
 	): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta>
 		| UnsuccessfulStorageResponse
-	>;
-
-	abstract readWithMeta(
-		listId: number,
-	): Promise<
-		SuccessfulStorageResponse<DraftWithIdAndMeta> | UnsuccessfulStorageResponse
 	>;
 
 	abstract update(
 		draft: DraftWithId,
 		user: UserProfile,
 	): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta>
 		| UnsuccessfulStorageResponse
 	>;
 
 	abstract deleteItem(
 		listId: number,
 	): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta>
 		| UnsuccessfulStorageResponse
 	>;
 
 	abstract readAll(): Promise<
-		| SuccessfulStorageResponse<DraftWithIdButNoMeta[]>
+		| SuccessfulStorageResponse<DraftWithIdAndMeta[]>
 		| UnsuccessfulStorageResponse
 	>;
 }

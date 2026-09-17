@@ -6,6 +6,10 @@
 		"types": ["node"],
 		"esModuleInterop": true
 	},
-	"exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
+	"exclude": [
+		"src/**/*.spec.ts",
+		"src/**/*.test.ts",
+		"src/app/routes/test-helpers.ts"
+	],
 	"include": ["src/**/*.ts"]
 }
