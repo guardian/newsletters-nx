@@ -94,7 +94,7 @@ export default defineConfig({
 					USE_LOCAL_USER_PERMISSIONS: 'true',
 					LOCAL_USER_PROFILE_EMAIL: 'e2e-test@example.com',
 					USER_PERMISSIONS: '{"e2e-test@example.com":0}',
+					ENABLE_TEST_FIXTURES: 'true',
 				},
 			},
 });
-
