@@ -39,3 +39,19 @@ Then(
 		).toBeDisabled();
 	},
 );
+
+When('the editor chooses to continue', async ({ page }) => {
+	await page.getByRole('button').filter({ hasText: 'Continue' }).click();
+});
+
+When('the editor chooses to save and continue', async ({ page }) => {
+	await page
+		.getByRole('button')
+		.filter({ hasText: 'Save and continue' })
+		.click();
+});
+
+When('the editor fills out the name and frequency fields', async ({ page }) => {
+	await page.getByLabel('Name the newsletter').fill('example');
+	await page.getByLabel('Set the frequency').getByText('Monthly').check();
+});

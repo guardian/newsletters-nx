@@ -33,6 +33,19 @@ Scenario: An editor cannot skip to the 'Finish' step
 	Then the editor cannot select the 'Finish' step from the navigation
 
 
+Scenario: An editor can complete the 'Introduction' step
+	Given the editor is creating a new newsletter
+	When the editor chooses to continue
+	Then the editor will see the 'Name & frequency' step
+
+Scenario: An editor can complete the 'Name & frequency' step
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Name & frequency' step from the navigation
+	When the editor fills out the name and frequency fields
+	And the editor chooses to continue
+	Then the editor will see the 'Production Details' step
+
+
 
 
 
