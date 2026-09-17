@@ -143,3 +143,31 @@ When(
 			.fill('Example campaign tag description');
 	},
 );
+
+When(
+	'the editor sets the headline, description, embed description, success message, highlight card message and image url fields',
+	async ({ page }) => {
+		await page.getByLabel('Headline').fill('Example headline');
+		await page
+			.getByLabel('Description', { exact: true })
+			.fill('Example description');
+		await page
+			.getByLabel('Embed description')
+			.fill('Example embed description');
+		await page
+			.getByLabel('Success message', { exact: true })
+			.fill('Example success message. Hurray!');
+
+		await page
+			.getByLabel('Highlight card message', { exact: true })
+			.fill('Example message for highlight card.');
+
+		await page
+			.getByPlaceholder('URL of the newsletter graphic 5:4')
+			.fill('https://www.example.com/');
+
+		await page
+			.getByPlaceholder('URL of the newsletter graphic 1:1')
+			.fill('https://www.example.com/');
+	},
+);
