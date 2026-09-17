@@ -55,3 +55,17 @@ When('the editor fills out the name and frequency fields', async ({ page }) => {
 	await page.getByLabel('Name the newsletter').fill('example');
 	await page.getByLabel('Set the frequency').getByText('Monthly').check();
 });
+
+When(
+	'the editor fills out the newsletter type and location fields',
+	async ({ page }) => {
+		await page
+			.getByLabel('Type of newsletter')
+			.getByText('article-based')
+			.check();
+		await page
+			.getByLabel('Location of newsletter')
+			.getByText('Web for first send only')
+			.check();
+	},
+);
