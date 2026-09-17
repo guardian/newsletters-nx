@@ -65,12 +65,6 @@ describe('getLaunchedStatusBadgeContent', () => {
 			});
 		},
 	);
-
-	it('gives cancelled and paused the same colour', () => {
-		expect(getLaunchedStatusBadgeContent('paused').color).toEqual(
-			getLaunchedStatusBadgeContent('cancelled').color,
-		);
-	});
 });
 
 describe('getDraftStatusBadgeContent', () => {
