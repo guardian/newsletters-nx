@@ -60,5 +60,12 @@ Scenario: An editor can complete the 'Launch/Promotion Dates' step
 	And the editor chooses to continue
 	Then the editor will see the 'Targeting' step
 
+Scenario: An editor can complete the 'Targeting' step
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Targeting' step from the navigation
+	When the editor sets the region focus, pillar and MMA group
+	And the editor chooses to continue
+	Then the editor will see the 'Tag Setting' step
+
 
 
