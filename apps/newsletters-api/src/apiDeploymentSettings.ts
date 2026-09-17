@@ -64,7 +64,7 @@ export const isPublicReadOnlyApi = () => !isServingReadWriteEndpoints();
 export const isUsingInMemoryStorage = () =>
 	process.env.USE_IN_MEMORY_STORAGE === 'true';
 
-/** Gates the test-fixture routes. All three conditions must hold. */
+/** Gates the test-fixture routes: opt-in, in-memory storage, non-production. */
 export const areTestFixturesEnabled = () =>
 	process.env.ENABLE_TEST_FIXTURES === 'true' &&
 	isUsingInMemoryStorage() &&

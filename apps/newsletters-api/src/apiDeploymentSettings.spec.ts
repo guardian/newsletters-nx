@@ -210,9 +210,7 @@ describe('areTestFixturesEnabled', () => {
 		expect(areTestFixturesEnabled()).toBe(false);
 	});
 
-	// The deployed environments set USE_IN_MEMORY_STORAGE=false, so this is
-	// what keeps the fixture routes out of them even if the opt-in flag
-	// were somehow set.
+	// Keeps fixture routes out of deployed envs even if opt-in flag is set.
 	it('returns false when not using in-memory storage', () => {
 		enableAll();
 		process.env.USE_IN_MEMORY_STORAGE = 'false';

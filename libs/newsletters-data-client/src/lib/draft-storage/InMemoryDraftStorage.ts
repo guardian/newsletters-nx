@@ -121,9 +121,8 @@ export class InMemoryDraftStorage implements DraftStorage {
 	}
 
 	/**
-	 * Inserts a draft as given, including `meta`, assigning a `listId` only
-	 * when one was not supplied. For tests and local development only; not
-	 * part of the `DraftStorage` interface.
+	 * Inserts a draft as given, assigning `listId` only if missing. Test/dev
+	 * only; not part of the `DraftStorage` interface.
 	 */
 	insertVerbatim(draft: DraftNewsletterData & { meta?: MetaData }) {
 		const inserted: DraftWithIdAndMeta = {

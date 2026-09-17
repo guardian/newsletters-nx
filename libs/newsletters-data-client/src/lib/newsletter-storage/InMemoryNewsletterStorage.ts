@@ -190,9 +190,8 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 	}
 
 	/**
-	 * Inserts a newsletter as given, including `meta` and `status`, assigning a
-	 * `listId` only when one was not supplied. For tests and local development
-	 * only; not part of the `NewsletterStorage` interface.
+	 * Inserts a newsletter as given, assigning `listId` only if missing.
+	 * Test/dev only; not part of the `NewsletterStorage` interface.
 	 */
 	insertVerbatim(newsletter: NewsletterData & { meta?: MetaData }) {
 		const existing = this.memory.find(

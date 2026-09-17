@@ -14,12 +14,9 @@ import {
 } from '../responses';
 
 /**
- * Routes that insert newsletters and drafts directly into storage, bypassing
- * the wizard, so end-to-end tests can set up states the UI cannot reach: a
- * chosen `status`, a known `meta.updatedTimestamp`, or no update date at all.
- *
- * Only registered when `areTestFixturesEnabled()` holds, so they are absent
- * from every deployed environment.
+ * Routes that insert newsletters/drafts directly into storage, bypassing the
+ * wizard, so e2e tests can set up states the UI can't reach. Gated by
+ * `areTestFixturesEnabled()`.
  */
 
 /** `insertVerbatim` only exists on the in-memory implementations. */
