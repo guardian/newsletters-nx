@@ -70,7 +70,9 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 
 	return (
 		<AriaRouterProvider
-			navigate={(path) => navigate(path)}
+			// `navigate` returns a promise in react-router 7, but react-aria's
+			// RouterProvider expects a void return; discard it explicitly.
+			navigate={(path) => void navigate(path)}
 			useHref={useHrefFromRouter}
 		>
 			<Table

@@ -7,10 +7,7 @@ import {
 	draftNewsletterToRow,
 	launchedNewsletterToRow,
 } from '../lib/all-newsletters-rows';
-import {
-	fetchDraftNewsletterList,
-	fetchNewsletterList,
-} from './newsletters';
+import { fetchDraftNewsletterList, fetchNewsletterList } from './newsletters';
 
 export interface AllNewslettersData {
 	rows: NewsletterRow[];

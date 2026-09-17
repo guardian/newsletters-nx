@@ -123,10 +123,8 @@ describe('draftNewsletterToRow', () => {
 			thumbnailUrl: undefined,
 			lastUpdated: UPDATED,
 		});
-		expect(row.statusBadge).toEqual({
-			label: expect.stringMatching(/^Draft • \d+%$/),
-			color: 'yellow',
-		});
+		expect(row.statusBadge.label).toMatch(/^Draft • \d+%$/);
+		expect(row.statusBadge.color).toBe('yellow');
 	});
 
 	it('names an untitled draft by its list id', () => {
@@ -162,9 +160,12 @@ describe('formatPillarCategoryLabel', () => {
 		['news', 'fronts-based', 'News | Fronts based'],
 		['culture', 'manual-send', 'Culture | Manual send'],
 		['news', 'other', 'News | Other'],
-	] as const)('formats theme "%s" and category "%s" as "%s"', (theme, category, expected) => {
-		expect(formatPillarCategoryLabel(theme, category)).toBe(expected);
-	});
+	] as const)(
+		'formats theme "%s" and category "%s" as "%s"',
+		(theme, category, expected) => {
+			expect(formatPillarCategoryLabel(theme, category)).toBe(expected);
+		},
+	);
 
 	it('is undefined when neither theme nor category is set', () => {
 		expect(formatPillarCategoryLabel(undefined, undefined)).toBeUndefined();

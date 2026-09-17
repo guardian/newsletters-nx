@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { Then, When } from './fixtures';
 
@@ -10,12 +11,12 @@ const API_BASE = process.env['API_URL'] ?? 'http://localhost:3000';
  * landmark. Filtering by a link that only the Stand navigation has therefore
  * identifies the shell, not just the design.
  */
-const standShellNav = (page: import('@playwright/test').Page) =>
+const standShellNav = (page: Page) =>
 	page
 		.getByRole('navigation')
 		.filter({ has: page.getByRole('link', { name: 'Draft newsletters' }) });
 
-const allNewslettersTable = (page: import('@playwright/test').Page) =>
+const allNewslettersTable = (page: Page) =>
 	page.getByRole('grid', { name: 'All newsletters' });
 
 When(
@@ -50,9 +51,10 @@ Then(
 				(event) => event.type === 'started' && event.path === path,
 			),
 		);
-		expect(startedBoth, 'both list endpoints should be requested').not.toContain(
-			-1,
-		);
+		expect(
+			startedBoth,
+			'both list endpoints should be requested',
+		).not.toContain(-1);
 
 		// Requested in parallel rather than one after the other: neither request
 		// had finished by the time the later of the two was sent.
@@ -81,8 +83,13 @@ Then(
 		const [launchedCount = 0, draftCount = 0] = counts;
 
 		// Otherwise a view showing only one source could still pass.
-		expect(launchedCount, 'expected launched newsletters to exist').toBeGreaterThan(0);
-		expect(draftCount, 'expected draft newsletters to exist').toBeGreaterThan(0);
+		expect(
+			launchedCount,
+			'expected launched newsletters to exist',
+		).toBeGreaterThan(0);
+		expect(draftCount, 'expected draft newsletters to exist').toBeGreaterThan(
+			0,
+		);
 
 		await expect(
 			page.getByText(`${launchedCount + draftCount} newsletters`),
@@ -120,16 +127,21 @@ Then(
 	'the Legacy navigation keeps its Launched and Drafts entries',
 	async ({ page }) => {
 		const header = page.locator('header');
-		await expect(header.getByRole('button', { name: 'Launched' })).toBeVisible();
+		await expect(
+			header.getByRole('button', { name: 'Launched' }),
+		).toBeVisible();
 		await expect(header.getByRole('button', { name: 'Drafts' })).toBeVisible();
 	},
 );
 
-Then('the Legacy navigation does not offer All Newsletters', async ({ page }) => {
-	await expect(
-		page.locator('header').getByRole('button', { name: 'All newsletters' }),
-	).toHaveCount(0);
-	await expect(
-		page.getByRole('link', { name: 'All newsletters' }),
-	).toHaveCount(0);
-});
+Then(
+	'the Legacy navigation does not offer All Newsletters',
+	async ({ page }) => {
+		await expect(
+			page.locator('header').getByRole('button', { name: 'All newsletters' }),
+		).toHaveCount(0);
+		await expect(
+			page.getByRole('link', { name: 'All newsletters' }),
+		).toHaveCount(0);
+	},
+);

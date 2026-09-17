@@ -1,51 +1,86 @@
-Feature: All newsletters table rows
-  Each row in the All newsletters table shows enough information to scan at
-  a glance.
-
-  # #768's "Rows are operable" rule (click/Enter/Space navigation, visible
-  # focus state, no row-level Edit action) is deferred to a follow-up and
-  # isn't covered by this feature yet.
+Feature: All newsletters list
+  Editors manage launched newsletters and drafts as one list. Each row
+  carries enough to identify a newsletter at a glance, and the list leads
+  with whatever was touched most recently.
 
   Background:
     Given an editor's workspace uses the Stand design
 
-  Rule: Rows are recognisable at a glance
+  Rule: A row identifies its newsletter at a glance
 
-    Scenario: Editor sees the core row information
+    Scenario: A row shows the newsletter's identifying details
+      Given a newsletter "Politics Weekly" with pillar "News" and category "article-based"
       When the editor opens the All Newsletters view
-      Then the "Playwright Launched Seed" row shows its title, pillar and category label, last updated date, and status badge
-      And the "Playwright Launched Seed" row shows its thumbnail with meaningful alt text
+      Then the "Politics Weekly" row shows the title "Politics Weekly"
+      And the "Politics Weekly" row shows the label "News | Article based"
+      And the "Politics Weekly" row shows a last updated date
 
-    Scenario: Editor sees the supported category labels
-      Given newsletters exist with these pillar and category values:
-        | newsletter        | pillar  | category      |
-        | Politics Weekly   | News    | article-based |
-        | Morning Briefing  | News    | fronts-based  |
-        | Culture Manual    | Culture | manual-send   |
-        | Editor Picks      | News    | other         |
+    Scenario: Rows label their pillar and category
+      Given these newsletters exist:
+        | newsletter       | pillar  | category      |
+        | Politics Weekly  | News    | article-based |
+        | Morning Briefing | News    | fronts-based  |
+        | Culture Manual   | Culture | manual-send   |
+        | Editor Picks     | News    | other         |
       When the editor opens the All Newsletters view
-      Then rows show these pillar/category labels:
-        | newsletter        | expected label          |
-        | Politics Weekly   | News \| Article based   |
-        | Morning Briefing  | News \| Fronts based    |
-        | Culture Manual    | Culture \| Manual send  |
-        | Editor Picks      | News \| Other           |
+      Then the rows show these labels:
+        | newsletter       | label                  |
+        | Politics Weekly  | News \| Article based  |
+        | Morning Briefing | News \| Fronts based   |
+        | Culture Manual   | Culture \| Manual send |
+        | Editor Picks     | News \| Other          |
 
-    Scenario: Editor sees a status badge on each row
-      Given an existing draft newsletter
+    Scenario: A newsletter with neither pillar nor category shows no label
+      Given a newsletter "Bare Draft" with no pillar or category
       When the editor opens the All Newsletters view
-      Then the "Playwright Launched Seed" row shows a visible status badge
-      And that draft's row shows a visible status badge
+      Then the "Bare Draft" row shows no pillar and category label
 
-    Scenario: Editor sees a fallback image when a newsletter has no thumbnail
-      Given an existing draft newsletter
+  Rule: A row reports where its newsletter has got to
+
+    # The full set of badge labels (Live, Pending, Cancelled, Paused, and the
+    # draft progress states) is covered by NewsletterStatusBadge.spec.tsx.
+    # These scenarios check the badge reaches the row it belongs to, which
+    # only a rendered list can show.
+
+    Scenario: An unfinished newsletter shows how far along it is
+      Given a newsletter "Half Done" with pillar "News" and category "other"
       When the editor opens the All Newsletters view
-      Then that draft's row shows a fallback image with meaningful alt text
+      Then the "Half Done" row shows a draft progress badge
 
-  Rule: The list remains usable under different conditions
-
-    Scenario: Editor sees key row information on mobile
-      Given the editor is using a mobile viewport
+    Scenario: A launched newsletter shows its launch status
+      Given the launched newsletter that is already published
       When the editor opens the All Newsletters view
-      Then the "Playwright Launched Seed" row shows its title, pillar and category label, last updated date, and status badge
-      And the "Playwright Launched Seed" row shows its last updated date below its pillar and category label
+      Then the launched newsletter's row shows the status badge "Paused"
+
+  Rule: The most recently updated newsletters come first
+
+    Scenario: Recently updated newsletters sort above older ones
+      Given these newsletters were updated in this order:
+        | newsletter    |
+        | Edited First  |
+        | Edited Second |
+        | Edited Last   |
+      When the editor opens the All Newsletters view
+      Then the rows appear in this order:
+        | newsletter    |
+        | Edited Last   |
+        | Edited Second |
+        | Edited First  |
+
+    Scenario: A recently updated newsletter sorts above a long-untouched one
+      Given a newsletter "Just Edited" with pillar "News" and category "other"
+      And the launched newsletter that is already published
+      When the editor opens the All Newsletters view
+      Then the "Just Edited" row appears above the launched newsletter's row
+
+  Rule: A row stays readable when information is missing
+
+    Scenario: A newsletter with no thumbnail shows a fallback
+      Given a newsletter "No Picture" with no thumbnail
+      When the editor opens the All Newsletters view
+      Then the "No Picture" row shows a fallback image with meaningful alt text
+
+    Scenario: A newsletter with a thumbnail shows it with meaningful alt text
+      Given the launched newsletter that is already published
+      When the editor opens the All Newsletters view
+      Then the launched newsletter's row shows its thumbnail with meaningful alt text

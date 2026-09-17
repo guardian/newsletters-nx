@@ -68,10 +68,20 @@ export const test = base.extend<Fixtures>({
 	},
 
 	apiRequestLog: async ({ page }, use) => {
+		/**
+		 * Requests whose `started` event was logged since the last `reset`.
+		 * A request that began before the reset may still be in flight and
+		 * emit `requestfinished` afterwards; without this, that stray
+		 * `finished` event would be logged with no matching `started` and
+		 * make requests look sequential when they weren't.
+		 */
+		let tracked = new WeakSet();
+
 		const log: ApiRequestLog = {
 			events: [],
 			reset: () => {
 				log.events.length = 0;
+				tracked = new WeakSet();
 			},
 		};
 
@@ -81,9 +91,15 @@ export const test = base.extend<Fixtures>({
 				// it: `Request.url()` reads internal instance state, so a bare
 				// destructured reference loses its `this` binding and throws.
 				const { pathname } = new URL(request.url());
-				if (pathname.startsWith('/api/')) {
-					log.events.push({ type, path: pathname });
+				if (!pathname.startsWith('/api/')) {
+					return;
 				}
+				if (type === 'started') {
+					tracked.add(request);
+				} else if (!tracked.has(request)) {
+					return;
+				}
+				log.events.push({ type, path: pathname });
 			};
 
 		page.on('request', record('started'));
