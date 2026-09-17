@@ -61,4 +61,27 @@ describe('newsletter read responses', () => {
 			META.updatedTimestamp,
 		);
 	});
+
+	it('only partially overrides a blank meta on first edit', async () => {
+		// records stored before `meta` existed are defaulted to a blank meta
+		// (see makeBlankMeta). Editing them should populate `updatedBy`/
+		// `updatedTimestamp`, but there is no way to retroactively know who
+		// really created the newsletter, so `createdBy`/`createdTimestamp`
+		// stay at their blank sentinel values.
+		const blankMeta = makeBlankMeta();
+		const storage = new InMemoryNewsletterStorage([
+			makeNewsletter(1, 'one', blankMeta),
+		]);
+
+		await storage.update(1, { name: 'a new name' }, USER);
+
+		const newsletter = dataOf(await storage.read(1));
+
+		expect(newsletter.meta.updatedBy).toBe(USER.email);
+		expect(newsletter.meta.updatedTimestamp).toBeGreaterThan(
+			blankMeta.updatedTimestamp,
+		);
+		expect(newsletter.meta.createdBy).toBe(blankMeta.createdBy);
+		expect(newsletter.meta.createdTimestamp).toBe(blankMeta.createdTimestamp);
+	});
 });
