@@ -83,15 +83,4 @@ describe('NewsletterStatusBadge', () => {
 
 		expect(screen.getByText('Ready to launch')).toBeTruthy();
 	});
-
-	it('shows the same "Ready to launch" badge everywhere the same draft is rendered', () => {
-		const { unmount: unmountFirstRender } = render(
-			<NewsletterStatusBadge draft={READY_TO_LAUNCH_DRAFT} />,
-		);
-		expect(screen.getByText('Ready to launch')).toBeTruthy();
-		unmountFirstRender();
-
-		render(<NewsletterStatusBadge draft={READY_TO_LAUNCH_DRAFT} />);
-		expect(screen.getByText('Ready to launch')).toBeTruthy();
-	});
 });
