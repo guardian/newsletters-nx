@@ -53,6 +53,12 @@ Scenario: An editor can complete the 'Production Details' step
 	And the editor chooses to continue
 	Then the editor will see the 'Launch/Promotion Dates' step
 
+Scenario: An editor can complete the 'Launch/Promotion Dates' step
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Launch/Promotion Dates' step from the navigation
+	When the editor sets the launch and sign up dates
+	And the editor chooses to continue
+	Then the editor will see the 'Targeting' step
 
 
 

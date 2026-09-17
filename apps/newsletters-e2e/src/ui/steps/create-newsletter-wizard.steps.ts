@@ -1,3 +1,4 @@
+import type { Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from './fixtures';
 
@@ -69,3 +70,30 @@ When(
 			.check();
 	},
 );
+
+When('the editor sets the launch and sign up dates', async ({ page }) => {
+	const fillDateSegment = async (
+		group: Locator,
+		name: string,
+		value: string,
+	) => {
+		await group.getByRole('spinbutton', { name }).click();
+		await page.keyboard.type(value);
+	};
+
+	const launchDateGroup = page.getByRole('group', {
+		name: 'Enter launch date',
+	});
+
+	await fillDateSegment(launchDateGroup, 'day', '09');
+	await fillDateSegment(launchDateGroup, 'month', '12');
+	await fillDateSegment(launchDateGroup, 'year', '2025');
+
+	const signUpDateGroup = page.getByRole('group', {
+		name: 'Enter sign up page date',
+	});
+
+	await fillDateSegment(signUpDateGroup, 'day', '18');
+	await fillDateSegment(signUpDateGroup, 'month', '12');
+	await fillDateSegment(signUpDateGroup, 'year', '2025');
+});
