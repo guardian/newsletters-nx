@@ -23,5 +23,12 @@
 	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": true,
-	"prettier.requireConfig": true
+	"prettier.requireConfig": true,
+
+	// Cucumber/gherkin support
+	"cucumberautocomplete.steps": ["apps/newsletters-e2e/src/ui/steps/*.ts"],
+	"cucumberautocomplete.strictGherkinCompletion": false,
+	"cucumberautocomplete.strictGherkinValidation": false,
+	"cucumberautocomplete.smartSnippets": true,
+	"cucumberautocomplete.onTypeFormat": true
 }
