@@ -2,6 +2,7 @@ import type {
 	DraftNewsletterData,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
@@ -71,6 +72,28 @@ describe('getDraftStatusBadgeContent', () => {
 	it('reads "Draft • n%" when progress is below 100', () => {
 		expect(getDraftStatusBadgeContent({})).toEqual({
 			label: 'Draft • 0%',
+			color: 'yellow',
+		});
+	});
+
+	it('reads the actual calculateProgress value for a partially complete draft', () => {
+		// Missing the last couple of required fields, so this is neither
+		// empty nor launch-ready - a genuine partial-completion case.
+		const partialDraft: DraftNewsletterData = {
+			...READY_TO_LAUNCH_DRAFT,
+			signUpDescription: undefined,
+			signUpEmbedDescription: undefined,
+		};
+		const expectedProgress = calculateProgress(partialDraft);
+
+		// Guard against this becoming a vacuous 0%/100% case if the draft
+		// or calculateProgress change - this test is only useful for a
+		// genuine partial value.
+		expect(expectedProgress).toBeGreaterThan(0);
+		expect(expectedProgress).toBeLessThan(100);
+
+		expect(getDraftStatusBadgeContent(partialDraft)).toEqual({
+			label: `Draft • ${expectedProgress}%`,
 			color: 'yellow',
 		});
 	});
