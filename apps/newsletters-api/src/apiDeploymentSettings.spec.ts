@@ -1,4 +1,5 @@
 import {
+	areTestFixturesEnabled,
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
 	isServingUI,
@@ -182,5 +183,51 @@ describe('isUsingGuardianPermissions', () => {
 	it('returns false if USE_GUARDIAN_PERMISSIONS is something other than true or false', () => {
 		process.env.USE_GUARDIAN_PERMISSIONS = 'foo';
 		expect(isUsingGuardianPermissions()).toBe(false);
+	});
+});
+
+describe('areTestFixturesEnabled', () => {
+	const enableAll = () => {
+		process.env.ENABLE_TEST_FIXTURES = 'true';
+		process.env.USE_IN_MEMORY_STORAGE = 'true';
+		process.env.NODE_ENV = 'development';
+	};
+
+	it('returns true only when opted in, using in-memory storage, and not in production', () => {
+		enableAll();
+		expect(areTestFixturesEnabled()).toBe(true);
+	});
+
+	it('returns false when the opt-in flag is not set', () => {
+		enableAll();
+		delete process.env.ENABLE_TEST_FIXTURES;
+		expect(areTestFixturesEnabled()).toBe(false);
+	});
+
+	it('returns false when the opt-in flag is not exactly "true"', () => {
+		enableAll();
+		process.env.ENABLE_TEST_FIXTURES = 'yes';
+		expect(areTestFixturesEnabled()).toBe(false);
+	});
+
+	// The deployed environments set USE_IN_MEMORY_STORAGE=false, so this is
+	// what keeps the fixture routes out of them even if the opt-in flag
+	// were somehow set.
+	it('returns false when not using in-memory storage', () => {
+		enableAll();
+		process.env.USE_IN_MEMORY_STORAGE = 'false';
+		expect(areTestFixturesEnabled()).toBe(false);
+	});
+
+	it('returns false in production even when everything else is set', () => {
+		enableAll();
+		process.env.NODE_ENV = 'production';
+		expect(areTestFixturesEnabled()).toBe(false);
+	});
+
+	it('returns false when nothing is set', () => {
+		delete process.env.ENABLE_TEST_FIXTURES;
+		delete process.env.USE_IN_MEMORY_STORAGE;
+		expect(areTestFixturesEnabled()).toBe(false);
 	});
 });

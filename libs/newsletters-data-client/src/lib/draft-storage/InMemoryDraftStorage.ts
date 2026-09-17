@@ -1,3 +1,4 @@
+import type { DraftNewsletterData } from '../schemas/draft-newsletter-data-type';
 import type { MetaData } from '../schemas/meta-data-type';
 import { makeBlankMeta } from '../schemas/meta-data-type';
 import { StorageRequestFailureReason } from '../storage-response-types';
@@ -115,6 +116,25 @@ export class InMemoryDraftStorage implements DraftStorage {
 		const response: SuccessfulStorageResponse<DraftWithIdAndMeta[]> = {
 			ok: true,
 			data: this.memory.map((draft) => ({ ...draft })),
+		};
+		return Promise.resolve(response);
+	}
+
+	/**
+	 * Inserts a draft as given, including `meta`, assigning a `listId` only
+	 * when one was not supplied. For tests and local development only; not
+	 * part of the `DraftStorage` interface.
+	 */
+	insertVerbatim(draft: DraftNewsletterData & { meta?: MetaData }) {
+		const inserted: DraftWithIdAndMeta = {
+			...draft,
+			listId: draft.listId ?? this.getNextId(),
+			meta: draft.meta ?? makeBlankMeta(),
+		};
+		this.memory.push(inserted);
+		const response: SuccessfulStorageResponse<DraftWithIdAndMeta> = {
+			ok: true,
+			data: inserted,
 		};
 		return Promise.resolve(response);
 	}

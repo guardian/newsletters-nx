@@ -64,6 +64,12 @@ export const isPublicReadOnlyApi = () => !isServingReadWriteEndpoints();
 export const isUsingInMemoryStorage = () =>
 	process.env.USE_IN_MEMORY_STORAGE === 'true';
 
+/** Gates the test-fixture routes. All three conditions must hold. */
+export const areTestFixturesEnabled = () =>
+	process.env.ENABLE_TEST_FIXTURES === 'true' &&
+	isUsingInMemoryStorage() &&
+	process.env.NODE_ENV !== 'production';
+
 export const getTestJwtProfileDataIfUsing = () => {
 	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;
 };
