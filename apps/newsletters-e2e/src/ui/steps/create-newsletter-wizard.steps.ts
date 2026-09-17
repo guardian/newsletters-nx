@@ -118,3 +118,28 @@ When(
 		await selectOption('Group for MMA page', 'Opinion');
 	},
 );
+
+When(
+	'the editor sets the series tag & description, campaign tag & description fields',
+	async ({ page }) => {
+		await page
+			.getByRole('textbox', { name: 'Add the series tag', exact: true })
+			.fill('example/series');
+		await page
+			.getByRole('textbox', {
+				name: 'Add the Series tag description',
+				exact: true,
+			})
+			.fill('Example series tag description');
+
+		await page
+			.getByRole('textbox', { name: 'Campaign tag', exact: true })
+			.fill('Example (newsletter sign up)');
+		await page
+			.getByRole('textbox', {
+				name: 'Campaign description',
+				exact: true,
+			})
+			.fill('Example campaign tag description');
+	},
+);
