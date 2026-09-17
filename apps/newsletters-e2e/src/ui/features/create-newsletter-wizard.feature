@@ -75,5 +75,13 @@ Scenario: An editor can complete the 'Tag Setting' step
 	And the editor chooses to continue
 	Then the editor will see the 'Promotion copy and images' step
 
+Scenario: An editor can complete the 'Promotion copy and images' step
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Promotion copy and images' step from the navigation
+	When the editor sets the headline, description, embed description, success message, highlight card message and image url fields
+	And the editor chooses to continue
+	Then the editor will see the 'Review' step
+
+
 
 
