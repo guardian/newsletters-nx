@@ -6,8 +6,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 
-// A newsletter that satisfies every field required to be launch-ready,
-// so `calculateProgress` reports 100% when it is used as a draft.
+// Satisfies every required field, so it's 100% complete as a draft.
 const READY_TO_LAUNCH_DRAFT: DraftNewsletterData = {
 	identityName: 'tech-scape',
 	name: 'TechScape',
@@ -40,9 +39,7 @@ const READY_TO_LAUNCH_DRAFT: DraftNewsletterData = {
 	tagCreationStatus: 'NOT_REQUESTED',
 };
 
-// A draft missing just its two sign-up description fields - 90% complete
-// according to `calculateProgress`, so a genuine "in progress" case rather
-// than the 0%/100% edges.
+// 90% complete: missing its two sign-up description fields.
 const NINETY_PERCENT_COMPLETE_DRAFT: DraftNewsletterData = {
 	...READY_TO_LAUNCH_DRAFT,
 	signUpDescription: undefined,
