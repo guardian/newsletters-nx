@@ -46,6 +46,13 @@ Scenario: An editor can complete the 'Name & frequency' step
 	Then the editor will see the 'Production Details' step
 
 
+Scenario: An editor can complete the 'Production Details' step
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Production Details' step from the navigation
+	When the editor fills out the newsletter type and location fields
+	And the editor chooses to continue
+	Then the editor will see the 'Launch/Promotion Dates' step
+
 
 
 
