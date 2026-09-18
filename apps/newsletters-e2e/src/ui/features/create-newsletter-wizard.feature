@@ -142,6 +142,15 @@ Scenario: Creating an article-based newsletter offers to set up rendering option
 	Then the editor can see the rendering options page for the newly created newsletter
 
 
+Scenario: Creating an fronts-based newsletter does not offer to set up rendering options
+	Given the editor is creating a new newsletter
+	And all form fields will be filled in
+	| field | value |
+	| type | fronts-based |
+	And the editor has completed up until the 'Finish' step
+	Then the editor should not see a rendering options link
+
+
 
 
 

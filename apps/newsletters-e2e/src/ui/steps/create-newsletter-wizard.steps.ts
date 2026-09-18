@@ -238,3 +238,9 @@ Then(
 		);
 	},
 );
+
+When('the editor should not see a rendering options link', async ({ page }) => {
+	await expect(
+		page.getByRole('link', { name: 'rendering options' }),
+	).toHaveCount(0);
+});
