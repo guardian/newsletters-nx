@@ -1,10 +1,10 @@
-import type { APIRequestContext, Locator, Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import {
-	createDraftNewsletter,
-	updateDraftNewsletter,
-} from '../../../helpers/draft-newsletter';
+	createFixtureDraft,
+	createFixtureNewsletter,
+} from '../../../helpers/test-fixtures';
 import { Given, Then } from './fixtures';
 
 /**
@@ -16,194 +16,195 @@ import { Given, Then } from './fixtures';
 const rowByHref = (page: Page, href: string): Locator =>
 	page.locator(`tr[data-href="${href}"]`);
 
-/**
- * The one launched newsletter the API seeds
- * (`apps/newsletters-api/static/newsletters.seed.json`). Launched newsletters
- * can only otherwise be produced by promoting a draft through the full launch
- * wizard, so scenarios that need one use this. Its harness name is kept here
- * rather than in the feature file, which refers to it only as "the launched
- * newsletter that is already published".
- */
-const SEED = {
-	href: '/launched/playwright-launched-seed',
-	name: 'Playwright Launched Seed',
-	status: 'Paused',
-};
+type NamedNewsletterRef =
+	| { kind: 'draft'; listId: number }
+	| { kind: 'launched'; identityName: string };
 
-/**
- * Scenarios create their newsletters as drafts: a draft carries the same
- * `theme`/`category` fields as a launched newsletter and maps through the
- * same `pillarCategoryLabel` logic (see `all-newsletters-rows.ts`), so the
- * row content under test is identical. The feature file therefore says
- * "newsletter" rather than "draft" wherever the distinction doesn't matter.
- */
-const createNamedNewsletter = async (
-	request: APIRequestContext,
-	namedNewsletters: { listIdsByName: Record<string, number> },
-	name: string,
-	fields?: { pillar: string; category: string },
-): Promise<number> => {
-	// The API name is suffixed for uniqueness across parallel workers and
-	// re-runs; scenarios refer to newsletters by their table name only, and
-	// rows are located by listId, so the suffix stays invisible to them.
-	const listId = await createDraftNewsletter(
-		request,
-		`${name} ${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-	);
-	namedNewsletters.listIdsByName[name] = listId;
+interface NamedNewsletters {
+	refsByName: Record<string, NamedNewsletterRef>;
+}
 
-	if (fields) {
-		// Wizard steps must be submitted in the wizard's own order:
-		// productionDetails before targeting. Both key their forward button
-		// as "finish", not "next" (see `updateDraftNewsletter`'s docstring).
-		await updateDraftNewsletter(
-			request,
-			listId,
-			'productionDetails',
-			{
-				category: fields.category as
-					| 'article-based'
-					| 'fronts-based'
-					| 'manual-send'
-					| 'article-based-legacy'
-					| 'other',
-				frequency: 'Weekly',
-				onlineArticle: 'Web for all sends',
-			},
-			'finish',
-		);
-		await updateDraftNewsletter(
-			request,
-			listId,
-			'targeting',
-			{
-				theme: fields.pillar.toLowerCase() as
-					| 'news'
-					| 'opinion'
-					| 'culture'
-					| 'sport'
-					| 'lifestyle'
-					| 'features',
-				group: 'Features',
-				regionFocus: 'UK',
-			},
-			'finish',
-		);
-	}
-
-	return listId;
-};
+// Drafts are addressed by `listId`, launched newsletters by `identityName`
+// (see `all-newsletters-rows.ts`'s `href` construction) -- so the row lookup
+// must branch on `kind` rather than treating both the same way.
+const hrefFor = (ref: NamedNewsletterRef): string =>
+	ref.kind === 'draft' ? `/drafts/${ref.listId}` : `/launched/${ref.identityName}`;
 
 const namedRow = (
 	page: Page,
-	namedNewsletters: { listIdsByName: Record<string, number> },
+	namedNewsletters: NamedNewsletters,
 	name: string,
 ): Locator => {
-	const listId = namedNewsletters.listIdsByName[name];
-	if (listId === undefined) {
+	const ref = namedNewsletters.refsByName[name];
+	if (ref === undefined) {
 		throw new Error(
-			`No newsletter named "${name}" was created by this scenario. Created: ${Object.keys(namedNewsletters.listIdsByName).join(', ') || '(none)'}`,
+			`No newsletter named "${name}" was created by this scenario. Created: ${Object.keys(namedNewsletters.refsByName).join(', ') || '(none)'}`,
 		);
 	}
-	return rowByHref(page, `/drafts/${listId}`);
+	return rowByHref(page, hrefFor(ref));
 };
 
+type Pillar = 'news' | 'opinion' | 'culture' | 'sport' | 'lifestyle' | 'features';
+type Category =
+	| 'article-based'
+	| 'fronts-based'
+	| 'manual-send'
+	| 'article-based-legacy'
+	| 'other';
+
+/**
+ * Scenarios create their newsletters as drafts by default: a draft carries
+ * the same `theme`/`category` fields as a launched newsletter and maps
+ * through the same `pillarCategoryLabel` logic (see `all-newsletters-rows.ts`),
+ * so the row content under test is identical, and inserting one is a single
+ * fixture-route call (see `helpers/test-fixtures.ts`) rather than a multi-step
+ * wizard walk. The feature file therefore says "newsletter" rather than
+ * "draft" wherever the distinction doesn't matter, reserving "launched
+ * newsletter" for scenarios that specifically need one (a real status, or a
+ * date under the editor's control).
+ */
 Given(
 	'a newsletter {string} with pillar {string} and category {string}',
 	async (
-		{ request, namedDraftNewsletters },
+		{ request, namedNewsletters },
 		name: string,
 		pillar: string,
 		category: string,
 	) => {
-		await createNamedNewsletter(request, namedDraftNewsletters, name, {
-			pillar,
-			category,
+		const listId = await createFixtureDraft(request, {
+			name,
+			theme: pillar.toLowerCase() as Pillar,
+			category: category as Category,
 		});
+		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
 	},
 );
 
 Given(
 	'a newsletter {string} with no pillar or category',
-	async ({ request, namedDraftNewsletters }, name: string) => {
-		// A freshly created draft has neither field set yet.
-		await createNamedNewsletter(request, namedDraftNewsletters, name);
+	async ({ request, namedNewsletters }, name: string) => {
+		const listId = await createFixtureDraft(request, { name });
+		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
 	},
 );
 
 Given(
 	'a newsletter {string} with no thumbnail',
-	async ({ request, namedDraftNewsletters }, name: string) => {
-		// Illustrations are only added later in the wizard, so a new draft has
-		// none of the three illustration fields `toThumbnailUrl` falls back to.
-		await createNamedNewsletter(request, namedDraftNewsletters, name);
+	async ({ request, namedNewsletters }, name: string) => {
+		// A fixture draft has no illustration fields unless one is given.
+		const listId = await createFixtureDraft(request, { name });
+		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
 	},
 );
 
 Given(
 	'these newsletters exist:',
-	async ({ request, namedDraftNewsletters }, table: DataTable) => {
+	async ({ request, namedNewsletters }, table: DataTable) => {
 		for (const row of table.hashes()) {
-			await createNamedNewsletter(
-				request,
-				namedDraftNewsletters,
-				row['newsletter'] ?? '',
-				{ pillar: row['pillar'] ?? '', category: row['category'] ?? '' },
-			);
+			const name = row['newsletter'] ?? '';
+			const listId = await createFixtureDraft(request, {
+				name,
+				theme: (row['pillar'] ?? '').toLowerCase() as Pillar,
+				category: (row['category'] ?? '') as Category,
+			});
+			namedNewsletters.refsByName[name] = { kind: 'draft', listId };
 		}
 	},
 );
 
 Given(
 	'these newsletters were updated in this order:',
-	async ({ request, namedDraftNewsletters }, table: DataTable) => {
-		// Created and then updated strictly in sequence, so each one's
-		// `meta.updatedTimestamp` is later than the previous one's. The table
-		// therefore reads oldest-first.
-		for (const row of table.hashes()) {
-			await createNamedNewsletter(
-				request,
-				namedDraftNewsletters,
-				row['newsletter'] ?? '',
-				{ pillar: 'News', category: 'other' },
-			);
+	async ({ request, namedNewsletters }, table: DataTable) => {
+		const rows = table.hashes();
+		// Explicit, strictly increasing timestamps (one second apart) rather
+		// than relying on wall-clock time between requests: fixture inserts are
+		// fast enough that two calls could otherwise land in the same
+		// millisecond and tie. The table reads oldest-first, so the last row
+		// gets the newest timestamp.
+		const base = Date.now() - rows.length * 1000;
+		for (const [index, row] of rows.entries()) {
+			const name = row['newsletter'] ?? '';
+			const listId = await createFixtureDraft(request, {
+				name,
+				theme: 'news',
+				category: 'other',
+				meta: { updatedTimestamp: base + index * 1000 },
+			});
+			namedNewsletters.refsByName[name] = { kind: 'draft', listId };
 		}
 	},
 );
 
-Given('the launched newsletter that is already published', () => {
-	// Seeded by the API at startup; nothing to set up.
+Given(
+	'a launched newsletter {string} with status {string}',
+	async (
+		{ request, namedNewsletters },
+		name: string,
+		status: 'paused' | 'cancelled' | 'live' | 'pending',
+	) => {
+		const { identityName } = await createFixtureNewsletter(request, {
+			name,
+			status,
+		});
+		namedNewsletters.refsByName[name] = { kind: 'launched', identityName };
+	},
+);
+
+Given(
+	'a launched newsletter {string} with a thumbnail',
+	async ({ request, namedNewsletters }, name: string) => {
+		const { identityName } = await createFixtureNewsletter(request, {
+			name,
+			illustrationCircle: 'https://example.com/thumbnail.png',
+		});
+		namedNewsletters.refsByName[name] = { kind: 'launched', identityName };
+	},
+);
+
+Given(
+	'a launched newsletter {string} last updated a long time ago',
+	async ({ request, namedNewsletters }, name: string) => {
+		const { identityName } = await createFixtureNewsletter(request, {
+			name,
+			meta: { updatedTimestamp: Date.UTC(2015, 0, 1) },
+		});
+		namedNewsletters.refsByName[name] = { kind: 'launched', identityName };
+	},
+);
+
+Given('the editor is using a mobile viewport', async ({ page }) => {
+	// Stand's `md` breakpoint (where the table switches to its 3-column
+	// layout) is 830px, so this stays in the single-column mobile layout.
+	await page.setViewportSize({ width: 375, height: 812 });
 });
 
 Then(
 	'the {string} row shows the title {string}',
-	async ({ page, namedDraftNewsletters }, name: string, title: string) => {
+	async ({ page, namedNewsletters }, name: string, title: string) => {
 		await expect(
-			namedRow(page, namedDraftNewsletters, name).getByText(title),
+			namedRow(page, namedNewsletters, name).getByText(title),
 		).toBeVisible();
 	},
 );
 
 Then(
 	'the {string} row shows the label {string}',
-	async ({ page, namedDraftNewsletters }, name: string, label: string) => {
+	async ({ page, namedNewsletters }, name: string, label: string) => {
 		await expect(
-			namedRow(page, namedDraftNewsletters, name).getByText(label),
+			namedRow(page, namedNewsletters, name).getByText(label),
 		).toBeVisible();
 	},
 );
 
 Then(
 	'the {string} row shows a last updated date',
-	async ({ page, namedDraftNewsletters }, name: string) => {
+	async ({ page, namedNewsletters }, name: string) => {
 		// `formatLastUpdated` renders a real date via `toDateString` and the
 		// literal "Unknown" when none is known, so matching the date shape
 		// proves a genuine timestamp reached the row without pinning the
-		// assertion to one timezone's rendering of it. Deliberately
-		// unanchored: the cell also carries a visually-hidden "Last updated"
-		// compact label alongside the date.
+		// assertion to one timezone's rendering of it.
 		await expect(
-			namedRow(page, namedDraftNewsletters, name).getByText(
+			namedRow(page, namedNewsletters, name).getByText(
 				/[A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{4}/,
 			),
 		).toBeVisible();
@@ -212,26 +213,24 @@ Then(
 
 Then(
 	'the {string} row shows no pillar and category label',
-	async ({ page, namedDraftNewsletters }, name: string) => {
+	async ({ page, namedNewsletters }, name: string) => {
 		// Every label `formatPillarCategoryLabel` builds contains "|", and it
 		// returns undefined when neither field is set, so the row should carry
 		// no such text at all.
 		await expect(
-			namedRow(page, namedDraftNewsletters, name).getByText('|'),
+			namedRow(page, namedNewsletters, name).getByText('|'),
 		).toHaveCount(0);
 	},
 );
 
 Then(
 	'the rows show these labels:',
-	async ({ page, namedDraftNewsletters }, table: DataTable) => {
+	async ({ page, namedNewsletters }, table: DataTable) => {
 		for (const row of table.hashes()) {
 			await expect(
-				namedRow(
-					page,
-					namedDraftNewsletters,
-					row['newsletter'] ?? '',
-				).getByText(row['label'] ?? ''),
+				namedRow(page, namedNewsletters, row['newsletter'] ?? '').getByText(
+					row['label'] ?? '',
+				),
 			).toBeVisible();
 		}
 	},
@@ -239,29 +238,31 @@ Then(
 
 Then(
 	'the {string} row shows a draft progress badge',
-	async ({ page, namedDraftNewsletters }, name: string) => {
+	async ({ page, namedNewsletters }, name: string) => {
 		// Draft badges show a completeness percentage rather than a fixed
 		// label (see `NewsletterStatusBadge.spec.tsx`), so match its shape
 		// rather than one exact percentage.
 		await expect(
-			namedRow(page, namedDraftNewsletters, name).getByText(/^Draft • \d+%$/),
+			namedRow(page, namedNewsletters, name).getByText(/^Draft • \d+%$/),
 		).toBeVisible();
 	},
 );
 
 Then(
-	"the launched newsletter's row shows the status badge {string}",
-	async ({ page }, status: string) => {
-		await expect(rowByHref(page, SEED.href).getByText(status)).toBeVisible();
+	'the {string} row shows the status badge {string}',
+	async ({ page, namedNewsletters }, name: string, status: string) => {
+		await expect(
+			namedRow(page, namedNewsletters, name).getByText(status),
+		).toBeVisible();
 	},
 );
 
 Then(
-	"the launched newsletter's row shows its thumbnail with meaningful alt text",
-	async ({ page }) => {
+	'the {string} row shows its thumbnail with meaningful alt text',
+	async ({ page, namedNewsletters }, name: string) => {
 		await expect(
-			rowByHref(page, SEED.href).getByRole('img', {
-				name: `${SEED.name} thumbnail`,
+			namedRow(page, namedNewsletters, name).getByRole('img', {
+				name: `${name} thumbnail`,
 			}),
 		).toBeVisible();
 	},
@@ -269,14 +270,11 @@ Then(
 
 Then(
 	'the {string} row shows a fallback image with meaningful alt text',
-	async ({ page, namedDraftNewsletters }, name: string) => {
-		const row = namedRow(page, namedDraftNewsletters, name);
+	async ({ page, namedNewsletters }, name: string) => {
+		const row = namedRow(page, namedNewsletters, name);
 		await expect(row.getByText('No image')).toBeVisible();
-		// The fallback's accessible name is built from the newsletter's real
-		// (uniqueness-suffixed) API name, so match the stable prefix rather
-		// than the name the scenario used.
 		await expect(
-			row.getByRole('img', { name: /^No thumbnail available for / }),
+			row.getByRole('img', { name: `No thumbnail available for ${name}` }),
 		).toBeVisible();
 	},
 );
@@ -298,12 +296,12 @@ const rowPosition = async (row: Locator): Promise<number> => {
 
 Then(
 	'the rows appear in this order:',
-	async ({ page, namedDraftNewsletters }, table: DataTable) => {
+	async ({ page, namedNewsletters }, table: DataTable) => {
 		const names = table.hashes().map((row) => row['newsletter'] ?? '');
 		const positions = [];
 		for (const name of names) {
 			positions.push(
-				await rowPosition(namedRow(page, namedDraftNewsletters, name)),
+				await rowPosition(namedRow(page, namedNewsletters, name)),
 			);
 		}
 
@@ -317,13 +315,15 @@ Then(
 );
 
 Then(
-	"the {string} row appears above the launched newsletter's row",
-	async ({ page, namedDraftNewsletters }, name: string) => {
-		const newsletterY = await rowPosition(
-			namedRow(page, namedDraftNewsletters, name),
+	'the {string} row appears above the {string} row',
+	async ({ page, namedNewsletters }, aboveName: string, belowName: string) => {
+		const aboveY = await rowPosition(
+			namedRow(page, namedNewsletters, aboveName),
 		);
-		const seedY = await rowPosition(rowByHref(page, SEED.href));
+		const belowY = await rowPosition(
+			namedRow(page, namedNewsletters, belowName),
+		);
 
-		expect(newsletterY).toBeLessThan(seedY);
+		expect(aboveY).toBeLessThan(belowY);
 	},
 );

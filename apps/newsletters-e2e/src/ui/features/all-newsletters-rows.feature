@@ -48,9 +48,9 @@ Feature: All newsletters list
       Then the "Half Done" row shows a draft progress badge
 
     Scenario: A launched newsletter shows its launch status
-      Given the launched newsletter that is already published
+      Given a launched newsletter "Long Runner" with status "paused"
       When the editor opens the All Newsletters view
-      Then the launched newsletter's row shows the status badge "Paused"
+      Then the "Long Runner" row shows the status badge "Paused"
 
   Rule: The most recently updated newsletters come first
 
@@ -68,10 +68,10 @@ Feature: All newsletters list
         | Edited First  |
 
     Scenario: A recently updated newsletter sorts above a long-untouched one
-      Given a newsletter "Just Edited" with pillar "News" and category "other"
-      And the launched newsletter that is already published
+      Given a launched newsletter "Old Timer" last updated a long time ago
+      And a newsletter "Just Edited" with pillar "News" and category "other"
       When the editor opens the All Newsletters view
-      Then the "Just Edited" row appears above the launched newsletter's row
+      Then the "Just Edited" row appears above the "Old Timer" row
 
   Rule: A row stays readable when information is missing
 
@@ -81,6 +81,16 @@ Feature: All newsletters list
       Then the "No Picture" row shows a fallback image with meaningful alt text
 
     Scenario: A newsletter with a thumbnail shows it with meaningful alt text
-      Given the launched newsletter that is already published
+      Given a launched newsletter "Picture Perfect" with a thumbnail
       When the editor opens the All Newsletters view
-      Then the launched newsletter's row shows its thumbnail with meaningful alt text
+      Then the "Picture Perfect" row shows its thumbnail with meaningful alt text
+
+  Rule: A row stays legible on a mobile viewport
+
+    Scenario: A row still shows every field on a narrow screen
+      Given the editor is using a mobile viewport
+      And a newsletter "Mobile Check" with pillar "News" and category "article-based"
+      When the editor opens the All Newsletters view
+      Then the "Mobile Check" row shows the title "Mobile Check"
+      And the "Mobile Check" row shows the label "News | Article based"
+      And the "Mobile Check" row shows a last updated date

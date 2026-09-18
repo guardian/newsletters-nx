@@ -1,5 +1,9 @@
 import { test as base, createBdd } from 'playwright-bdd';
 import { deleteDraftNewsletter } from '../../../helpers/draft-newsletter';
+import {
+	deleteFixtureDraft,
+	deleteFixtureNewsletter,
+} from '../../../helpers/test-fixtures';
 
 /**
  * Scenario-scoped state for a draft newsletter created via the API. Playwright
@@ -12,14 +16,21 @@ interface ExistingDraftNewsletter {
 	listId?: number;
 }
 
+/** A reference to one named newsletter created via a test-fixture route. */
+interface NamedNewsletterRef {
+	kind: 'draft' | 'launched';
+	listId: number;
+}
+
 /**
- * Scenario-scoped state for several draft newsletters created via the API,
- * keyed by whatever name a `Given` step's data table used to refer to them
- * (not necessarily the draft's actual API name -- see `namedDraftNewsletters`
- * below). Torn down automatically afterwards, same as `existingDraftNewsletter`.
+ * Scenario-scoped state for several newsletters (drafts and/or launched)
+ * created via the `/api/test-fixtures/*` routes, keyed by whatever name a
+ * `Given` step used to refer to them (not the newsletter's own `name` or
+ * `identityName`). Torn down automatically afterwards, same as
+ * `existingDraftNewsletter`.
  */
-interface NamedDraftNewsletters {
-	listIdsByName: Record<string, number>;
+interface NamedNewsletters {
+	refsByName: Record<string, NamedNewsletterRef>;
 }
 
 type ApiRequestEvent = {
@@ -40,7 +51,7 @@ interface ApiRequestLog {
 
 type Fixtures = {
 	existingDraftNewsletter: ExistingDraftNewsletter;
-	namedDraftNewsletters: NamedDraftNewsletters;
+	namedNewsletters: NamedNewsletters;
 	apiRequestLog: ApiRequestLog;
 };
 
@@ -55,12 +66,15 @@ export const test = base.extend<Fixtures>({
 		}
 	},
 
-	namedDraftNewsletters: async ({ request }, use) => {
-		const drafts: NamedDraftNewsletters = { listIdsByName: {} };
-		await use(drafts);
+	namedNewsletters: async ({ request }, use) => {
+		const newsletters: NamedNewsletters = { refsByName: {} };
+		await use(newsletters);
 		await Promise.all(
-			Object.values(drafts.listIdsByName).map((listId) =>
-				deleteDraftNewsletter(request, listId).catch(() => {
+			Object.values(newsletters.refsByName).map((ref) =>
+				(ref.kind === 'draft'
+					? deleteFixtureDraft(request, ref.listId)
+					: deleteFixtureNewsletter(request, ref.listId)
+				).catch(() => {
 					// Best-effort cleanup only; ignore if already removed.
 				}),
 			),
