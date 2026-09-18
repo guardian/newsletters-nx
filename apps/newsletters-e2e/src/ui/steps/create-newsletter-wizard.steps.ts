@@ -436,11 +436,34 @@ Then(
 	'the editor can see the details page',
 	async ({ page, createDraftNewsletterWizard }) => {
 		expect(
-			createDraftNewsletterWizard.getListId(),
+			createDraftNewsletterWizard.listId,
 			'Newsletter list id was not captured in test run',
-		).not.toBe(undefined);
+		).toBeDefined();
 		await expect(page.locator('p').filter({ hasText: `id:` })).toContainText(
-			createDraftNewsletterWizard.getListId()!.toString(),
+			createDraftNewsletterWizard.listId!.toString(),
+		);
+	},
+);
+
+When('the editor selects the launch wizard link', async ({ page }) => {
+	await page.getByRole('link', { name: 'use the launch wizard' }).click();
+});
+
+Then(
+	'the editor can see the launch wizard',
+	async ({ page, createDraftNewsletterWizard }) => {
+		expect(
+			createDraftNewsletterWizard.listId,
+			'Newsletter list id was not captured in test run',
+		).toBeDefined();
+		await expect(page.getByRole('heading', { name: 'Launch' })).toBeVisible();
+		const storedNewsletterData =
+			await createDraftNewsletterWizard.getStoredNewsletterData();
+
+		expect(storedNewsletterData.name).toBeDefined();
+
+		await expect(page.getByText('This wizard will guide you')).toContainText(
+			storedNewsletterData.name!,
 		);
 	},
 );
