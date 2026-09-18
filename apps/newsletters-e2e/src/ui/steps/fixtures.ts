@@ -4,7 +4,7 @@ import {
 	deleteFixtureDraft,
 	deleteFixtureNewsletter,
 } from '../../../helpers/test-fixtures';
-import CreateDraftNewsletterWizard from './create-newsletter-wizard';
+import CreateDraftNewsletterWizard from '../helpers/create-newsletter-wizard';
 
 /** Scenario-scoped state for a draft newsletter created via the API. */
 interface ExistingDraftNewsletter {
