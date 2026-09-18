@@ -42,17 +42,17 @@ Then(
 );
 
 When(
-'the editor chooses to continue',
-async ({ createDraftNewsletterWizard }) => {
-	await createDraftNewsletterWizard.gotoNextStep();
-},
+	'the editor chooses to continue',
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.gotoNextStep();
+	},
 );
 
 When(
-'the editor chooses to save and continue',
-async ({ createDraftNewsletterWizard }) => {
-	await createDraftNewsletterWizard.gotoNextStep();
-},
+	'the editor chooses to save and continue',
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.gotoNextStep();
+	},
 );
 
 When('the editor fills out the name and frequency fields', async ({ page }) => {
