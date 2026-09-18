@@ -3,6 +3,7 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { DefaultStyles } from './app/components/DefaultStyles';
+import { allNewslettersRoute } from './app/routes/all-newsletters';
 import { draftRoute } from './app/routes/drafts';
 import { homeRoute } from './app/routes/home';
 import { launchedRoute } from './app/routes/launched';
@@ -20,6 +21,9 @@ const router = createBrowserRouter([
 	draftRoute,
 	launchedRoute,
 	layoutsRoute,
+	// Always registered; AllNewslettersView itself shows a message in place
+	// of the table when the Stand design isn't enabled.
+	allNewslettersRoute,
 ]);
 
 const root = ReactDOM.createRoot(
