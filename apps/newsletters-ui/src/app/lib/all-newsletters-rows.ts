@@ -57,13 +57,18 @@ const toThumbnailUrl = (
 		DraftNewsletterData,
 		'illustrationCircle' | 'illustrationSquare' | 'illustrationCard'
 	>,
-): string | undefined =>
-	// These are plain optional strings, so an empty string is possible; use a
-	// truthy fallback chain rather than `??` so it doesn't mask a valid one.
-	newsletter.illustrationCircle ||
-	newsletter.illustrationSquare ||
-	newsletter.illustrationCard ||
-	undefined;
+): string | undefined => {
+	// These are plain optional strings, so an empty string is possible;
+	// treat it as absent so it doesn't mask a valid fallback illustration.
+	const nonEmpty = (value: string | undefined): string | undefined =>
+		value === '' ? undefined : value;
+
+	return (
+		nonEmpty(newsletter.illustrationCircle) ??
+		nonEmpty(newsletter.illustrationSquare) ??
+		nonEmpty(newsletter.illustrationCard)
+	);
+};
 
 export const launchedNewsletterToRow = (
 	newsletter: NewsletterDataWithMeta,
