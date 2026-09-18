@@ -161,4 +161,18 @@ export default class CreateDraftNewsletterWizard {
 			.getByPlaceholder(`URL of the newsletter graphic ${ratio}`)
 			.fill(value);
 	}
+
+	public getNavigationStepButton(step: string) {
+		return this.page
+			.getByRole('navigation', { name: 'Newsletter creation steps' })
+			.getByRole('button')
+			.filter({ hasText: step });
+	}
+
+	public async getAllNavigationStepButtons() {
+		return this.page
+			.getByRole('navigation', { name: 'Newsletter creation steps' })
+			.getByRole('button')
+			.all();
+	}
 }

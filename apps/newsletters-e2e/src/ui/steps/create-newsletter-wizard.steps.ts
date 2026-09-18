@@ -11,31 +11,25 @@ Given('the editor is creating a new newsletter', async ({ page }) => {
 
 When(
 	'the editor selects the {string} step from the navigation',
-	async ({ page }, step: string) => {
-		await page.getByRole('navigation').getByText(step).click();
+	async ({ createDraftNewsletterWizard }, step: string) => {
+		await createDraftNewsletterWizard.getNavigationStepButton(step).click();
 	},
 );
 
 Then(
 	'the editor will see the {string} step',
-	async ({ page }, step: string) => {
+	async ({ createDraftNewsletterWizard }, step: string) => {
 		await expect(
-			page
-				.getByRole('navigation')
-				.getByRole('button')
-				.filter({ hasText: step }),
+			createDraftNewsletterWizard.getNavigationStepButton(step),
 		).toHaveAttribute('aria-current', 'step');
 	},
 );
 
 Then(
 	'the editor cannot select the {string} step from the navigation',
-	async ({ page }, step: string) => {
+	async ({ createDraftNewsletterWizard }, step: string) => {
 		await expect(
-			page
-				.getByRole('navigation')
-				.getByRole('button')
-				.filter({ hasText: step }),
+			createDraftNewsletterWizard.getNavigationStepButton(step),
 		).toBeDisabled();
 	},
 );
@@ -258,18 +252,16 @@ Given(
 	},
 );
 
-Then('the wizard navigation is disabled', async ({ page }) => {
-	const allNavButtons = await page
-		.getByRole('navigation', { name: 'Newsletter creation steps' })
-		.getByRole('button')
-		.all();
-
-	for (const btn of allNavButtons) {
-		const isCurrent = (await btn.getAttribute('aria-current')) == 'step';
-		const isDisabled = await btn.isDisabled();
-		expect(isCurrent || isDisabled).toBe(true);
-	}
-});
+Then(
+	'the wizard navigation is disabled',
+	async ({ createDraftNewsletterWizard }) => {
+		for (const btn of await createDraftNewsletterWizard.getAllNavigationStepButtons()) {
+			const isCurrent = (await btn.getAttribute('aria-current')) == 'step';
+			const isDisabled = await btn.isDisabled();
+			expect(isCurrent || isDisabled).toBe(true);
+		}
+	},
+);
 
 When(
 	'the editor follows the edit link for the {string} step',
