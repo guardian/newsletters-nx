@@ -28,8 +28,8 @@ export const test = base.extend<Fixtures>({
 			});
 		}
 	},
-	createDraftNewsletterWizard: async ({ page }, use) => {
-		const draft = new CreateDraftNewsletterWizard(page);
+	createDraftNewsletterWizard: async ({ page, request }, use) => {
+		const draft = new CreateDraftNewsletterWizard(page, request);
 		await use(draft);
 	},
 });
