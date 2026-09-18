@@ -24,4 +24,7 @@ export * from './lib/zod-helpers/user-data-schema';
 // parameters without bundling any server-side (AWS SDK) code
 export type { DraftService } from './lib/draft-service';
 export type { LaunchService } from './lib/launch-service';
-export type { DraftWithId } from './lib/draft-storage/DraftStorage';
+export type {
+	DraftWithId,
+	DraftWithIdAndMeta,
+} from './lib/draft-storage/DraftStorage';
