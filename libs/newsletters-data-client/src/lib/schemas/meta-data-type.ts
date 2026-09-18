@@ -63,7 +63,11 @@ export const deriveUpdatedTimestamp = (
 ): number | undefined => {
 	const updatedTimestamp = meta?.updatedTimestamp;
 
-	if (!updatedTimestamp || updatedTimestamp === MIGRATION_TIMESTAMP_VALUE) {
+	if (
+		updatedTimestamp === undefined ||
+		updatedTimestamp === 0 ||
+		updatedTimestamp === MIGRATION_TIMESTAMP_VALUE
+	) {
 		return undefined;
 	}
 
