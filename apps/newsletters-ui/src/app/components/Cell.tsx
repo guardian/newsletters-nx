@@ -1,11 +1,11 @@
 import InfoIcon from '@mui/icons-material/Info';
 import Tooltip from '@mui/material/Tooltip';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { MIGRATION_TIMESTAMP_VALUE } from '@newsletters-nx/newsletters-data-client';
 import { renderYesNo } from '../util';
 
 export type Cell<T> = { cell: { value: T; row: { original: NewsletterData } } };
 
-export const MIGRATION_TIMESTAMP_VALUE = 946684800;
 export const formatCellBoolean = ({ cell: { value } }: Cell<boolean>) => (
 	<span>{renderYesNo(value)}</span>
 );

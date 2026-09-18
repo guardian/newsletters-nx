@@ -65,7 +65,8 @@ export const deriveUpdatedTimestamp = (
 
 	if (
 		updatedTimestamp === undefined ||
-		updatedTimestamp === 0 ||
+		!Number.isFinite(updatedTimestamp) ||
+		updatedTimestamp <= 0 ||
 		updatedTimestamp === MIGRATION_TIMESTAMP_VALUE
 	) {
 		return undefined;
