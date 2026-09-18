@@ -3,6 +3,51 @@ import type { ApiResponse } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
 
+export interface NewsletterFormData {
+	name: string;
+	frequency: string;
+	type: string;
+	location: string;
+	launchDate: { day: string; month: string; year: string };
+	signUpDate: { day: string; month: string; year: string };
+	regionFocus: string;
+	pillar: string;
+	mmaGroup: string;
+	seriesTag: string;
+	seriesTagDescription: string;
+	campaignTag: string;
+	campaignDescription: string;
+	headline: string;
+	description: string;
+	embedDescription: string;
+	successMessage: string;
+	highlightCardMessage: string;
+	imageUrl5x4: string;
+	imageUrl1x1: string;
+}
+
+export const defaultNewsletterFormData: NewsletterFormData = {
+	name: 'example',
+	frequency: 'Monthly',
+	type: 'article-based',
+	location: 'Web for first send only',
+	launchDate: { day: '09', month: '12', year: '2027' },
+	signUpDate: { day: '18', month: '12', year: '2027' },
+	regionFocus: 'UK',
+	pillar: 'sport',
+	mmaGroup: 'Opinion',
+	seriesTag: 'example/series',
+	seriesTagDescription: 'Example series tag description',
+	campaignTag: 'Example (newsletter sign up)',
+	campaignDescription: 'Example campaign tag description',
+	headline: 'Example headline',
+	description: 'Example description',
+	embedDescription: 'Example embed description',
+	successMessage: 'Example success message. Hurray!',
+	highlightCardMessage: 'Example message for highlight card.',
+	imageUrl5x4: 'https://www.example.com/',
+	imageUrl1x1: 'https://www.example.com/',
+};
 export default class CreateDraftNewsletterWizard {
 	public listId: number | null = null;
 
@@ -174,5 +219,49 @@ export default class CreateDraftNewsletterWizard {
 			.getByRole('navigation', { name: 'Newsletter creation steps' })
 			.getByRole('button')
 			.all();
+	}
+
+	public async fillAllFields(
+		data: NewsletterFormData = defaultNewsletterFormData,
+	) {
+		await this.fillNameField(data.name);
+		await this.setFrequencyField(data.frequency);
+		await this.gotoNextStep();
+
+		await this.setTypeField(data.type);
+		await this.setLocationField(data.location);
+		await this.gotoNextStep();
+
+		await this.setLaunchDate(
+			data.launchDate.day,
+			data.launchDate.month,
+			data.launchDate.year,
+		);
+		await this.setSignUpDate(
+			data.signUpDate.day,
+			data.signUpDate.month,
+			data.signUpDate.year,
+		);
+		await this.gotoNextStep();
+
+		await this.setRegionFocus(data.regionFocus);
+		await this.selectPillar(data.pillar);
+		await this.selectMmaGroup(data.mmaGroup);
+		await this.gotoNextStep();
+
+		await this.setSeriesTag(data.seriesTag);
+		await this.setSeriesTagDescription(data.seriesTagDescription);
+		await this.setCampaignTag(data.campaignTag);
+		await this.setCampaignDescription(data.campaignDescription);
+		await this.gotoNextStep();
+
+		await this.setHeadline(data.headline);
+		await this.setDescription(data.description);
+		await this.setEmbedDescription(data.embedDescription);
+		await this.setSuccessMessage(data.successMessage);
+		await this.setHighlightCardMessage(data.highlightCardMessage);
+		await this.setImageUrl('5:4', data.imageUrl5x4);
+		await this.setImageUrl('1:1', data.imageUrl1x1);
+		await this.gotoNextStep();
 	}
 }

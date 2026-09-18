@@ -126,129 +126,19 @@ When(
 Given(
 	"the editor has completed up until the 'Review' step",
 	async ({ createDraftNewsletterWizard }) => {
-		const continueToNextStep = async () => {
-			await createDraftNewsletterWizard.gotoNextStep();
-		};
-
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.fillNameField('example');
-		await createDraftNewsletterWizard.setFrequencyField('Monthly');
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setTypeField('article-based');
-		await createDraftNewsletterWizard.setLocationField(
-			'Web for first send only',
-		);
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setLaunchDate('09', '12', '2027');
-		await createDraftNewsletterWizard.setSignUpDate('18', '12', '2027');
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setRegionFocus('UK');
-		await createDraftNewsletterWizard.selectPillar('sport');
-		await createDraftNewsletterWizard.selectMmaGroup('Opinion');
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setSeriesTag('example/series');
-		await createDraftNewsletterWizard.setSeriesTagDescription(
-			'Example series tag description',
-		);
-		await createDraftNewsletterWizard.setCampaignTag(
-			'Example (newsletter sign up)',
-		);
-		await createDraftNewsletterWizard.setCampaignDescription(
-			'Example campaign tag description',
-		);
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setHeadline('Example headline');
-		await createDraftNewsletterWizard.setDescription('Example description');
-		await createDraftNewsletterWizard.setEmbedDescription(
-			'Example embed description',
-		);
-		await createDraftNewsletterWizard.setSuccessMessage(
-			'Example success message. Hurray!',
-		);
-		await createDraftNewsletterWizard.setHighlightCardMessage(
-			'Example message for highlight card.',
-		);
-		await createDraftNewsletterWizard.setImageUrl(
-			'5:4',
-			'https://www.example.com/',
-		);
-		await createDraftNewsletterWizard.setImageUrl(
-			'1:1',
-			'https://www.example.com/',
-		);
-		await continueToNextStep();
+		await createDraftNewsletterWizard.gotoNextStep();
+		await createDraftNewsletterWizard.fillAllFields();
 	},
 );
 
 Given(
 	"the editor has completed up until the 'Finish' step",
 	async ({ createDraftNewsletterWizard }) => {
-		const continueToNextStep = async () => {
-			await createDraftNewsletterWizard.gotoNextStep();
-		};
-
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.fillNameField('example');
-		await createDraftNewsletterWizard.setFrequencyField('Monthly');
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setTypeField('article-based');
-		await createDraftNewsletterWizard.setLocationField(
-			'Web for first send only',
-		);
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setLaunchDate('09', '12', '2027');
-		await createDraftNewsletterWizard.setSignUpDate('18', '12', '2027');
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setRegionFocus('UK');
-		await createDraftNewsletterWizard.selectPillar('sport');
-		await createDraftNewsletterWizard.selectMmaGroup('Opinion');
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setSeriesTag('example/series');
-		await createDraftNewsletterWizard.setSeriesTagDescription(
-			'Example series tag description',
-		);
-		await createDraftNewsletterWizard.setCampaignTag(
-			'Example (newsletter sign up)',
-		);
-		await createDraftNewsletterWizard.setCampaignDescription(
-			'Example campaign tag description',
-		);
-		await continueToNextStep();
-
-		await createDraftNewsletterWizard.setHeadline('Example headline');
-		await createDraftNewsletterWizard.setDescription('Example description');
-		await createDraftNewsletterWizard.setEmbedDescription(
-			'Example embed description',
-		);
-		await createDraftNewsletterWizard.setSuccessMessage(
-			'Example success message. Hurray!',
-		);
-		await createDraftNewsletterWizard.setHighlightCardMessage(
-			'Example message for highlight card.',
-		);
-		await createDraftNewsletterWizard.setImageUrl(
-			'5:4',
-			'https://www.example.com/',
-		);
-		await createDraftNewsletterWizard.setImageUrl(
-			'1:1',
-			'https://www.example.com/',
-		);
-		await continueToNextStep();
+		await createDraftNewsletterWizard.gotoNextStep();
+		await createDraftNewsletterWizard.fillAllFields();
 
 		// Go to Finish step
-		await continueToNextStep();
+		await createDraftNewsletterWizard.gotoNextStep();
 	},
 );
 
