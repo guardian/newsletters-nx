@@ -50,11 +50,16 @@ export const defaultNewsletterFormData: NewsletterFormData = {
 };
 export default class CreateDraftNewsletterWizard {
 	public listId: number | null = null;
+	public formFieldOverrides: Partial<NewsletterFormData> = {};
 
 	constructor(
 		public readonly page: Page,
 		public readonly request: APIRequestContext,
 	) {}
+
+	public setFormFieldOverrides(overrides: Partial<NewsletterFormData>) {
+		this.formFieldOverrides = { ...this.formFieldOverrides, ...overrides };
+	}
 
 	public async gotoNextStep() {
 		const responsePromise = this.page.waitForResponse((response) => {
@@ -222,7 +227,10 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public async fillAllFields(
-		data: NewsletterFormData = defaultNewsletterFormData,
+		data: NewsletterFormData = {
+			...defaultNewsletterFormData,
+			...this.formFieldOverrides,
+		},
 	) {
 		await this.fillNameField(data.name);
 		await this.setFrequencyField(data.frequency);

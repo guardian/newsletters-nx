@@ -1,4 +1,6 @@
 import { expect } from '@playwright/test';
+import type { DataTable } from 'playwright-bdd';
+import type { NewsletterFormData } from '../helpers/create-newsletter-wizard';
 import { Given, Then, When } from './fixtures';
 
 Given('the redesign switch is turned on', async ({ page }) => {
@@ -200,6 +202,39 @@ Then(
 
 		await expect(page.getByText('This wizard will guide you')).toContainText(
 			storedNewsletterData.name!,
+		);
+	},
+);
+
+Given(
+	'all form fields will be filled in',
+	async ({ createDraftNewsletterWizard }, table: DataTable) => {
+		const overrides = Object.fromEntries(
+			table.hashes().map(({ field, value }) => [field, value]),
+		) as Partial<NewsletterFormData>;
+
+		createDraftNewsletterWizard.setFormFieldOverrides(overrides);
+	},
+);
+
+When('the editor selects the rendering options link', async ({ page }) => {
+	await page.getByRole('link', { name: 'rendering options' }).click();
+});
+
+Then(
+	'the editor can see the rendering options page for the newly created newsletter',
+	async ({ page, createDraftNewsletterWizard }) => {
+		expect(
+			createDraftNewsletterWizard.listId,
+			'Newsletter list id was not captured in test run',
+		).toBeDefined();
+		await expect(
+			page.getByRole('heading', { name: 'Set Rendering Template Options' }),
+		).toBeVisible();
+
+		// Neither the list id, no name are rendered on the page, so we check the url.
+		expect(page.url()).toContain(
+			createDraftNewsletterWizard.listId!.toString(),
 		);
 	},
 );

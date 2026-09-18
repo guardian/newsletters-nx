@@ -132,6 +132,18 @@ Scenario: The 'finish' step shows a link to the launch wizard for the newsletter
 	Then the editor can see the launch wizard
 
 
+Scenario: Creating an article-based newsletter offers to set up rendering options next
+	Given the editor is creating a new newsletter
+	And all form fields will be filled in
+	| field | value |
+	| type | article-based |
+	And the editor has completed up until the 'Finish' step
+	When the editor selects the rendering options link
+	Then the editor can see the rendering options page for the newly created newsletter
+
+
+
+
 
 
 
