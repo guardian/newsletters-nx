@@ -10,11 +10,15 @@ interface ExistingDraftNewsletter {
 	listId?: number;
 }
 
-/** A reference to one named newsletter created via a test-fixture route. */
-interface NamedNewsletterRef {
-	kind: 'draft' | 'launched';
-	listId: number;
-}
+/**
+ * A reference to one named newsletter created via a test-fixture route.
+ * `listId` is retained on both variants so cleanup can always delete the
+ * right record; `identityName` is only meaningful (and only present) for
+ * launched newsletters, which are addressed by identity elsewhere.
+ */
+export type NamedNewsletterRef =
+	| { kind: 'draft'; listId: number }
+	| { kind: 'launched'; listId: number; identityName: string };
 
 /**
  * Scenario-scoped state for several newsletters (drafts and/or launched)

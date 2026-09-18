@@ -58,9 +58,12 @@ const toThumbnailUrl = (
 		'illustrationCircle' | 'illustrationSquare' | 'illustrationCard'
 	>,
 ): string | undefined =>
-	newsletter.illustrationCircle ??
-	newsletter.illustrationSquare ??
-	newsletter.illustrationCard;
+	// These are plain optional strings, so an empty string is possible; use a
+	// truthy fallback chain rather than `??` so it doesn't mask a valid one.
+	newsletter.illustrationCircle ||
+	newsletter.illustrationSquare ||
+	newsletter.illustrationCard ||
+	undefined;
 
 export const launchedNewsletterToRow = (
 	newsletter: NewsletterDataWithMeta,

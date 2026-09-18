@@ -5,16 +5,13 @@ import {
 	createFixtureDraft,
 	createFixtureNewsletter,
 } from '../../../helpers/test-fixtures';
+import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then } from './fixtures';
 
 // `TableRow` intercepts row navigation itself rather than rendering an
 // `<a>`, but react-aria puts the target in `data-href`.
 const rowByHref = (page: Page, href: string): Locator =>
 	page.locator(`tr[data-href="${href}"]`);
-
-type NamedNewsletterRef =
-	| { kind: 'draft'; listId: number }
-	| { kind: 'launched'; identityName: string };
 
 interface NamedNewsletters {
 	refsByName: Record<string, NamedNewsletterRef>;
@@ -134,33 +131,45 @@ Given(
 		name: string,
 		status: 'paused' | 'cancelled' | 'live' | 'pending',
 	) => {
-		const { identityName } = await createFixtureNewsletter(request, {
+		const { identityName, listId } = await createFixtureNewsletter(request, {
 			name,
 			status,
 		});
-		namedNewsletters.refsByName[name] = { kind: 'launched', identityName };
+		namedNewsletters.refsByName[name] = {
+			kind: 'launched',
+			identityName,
+			listId,
+		};
 	},
 );
 
 Given(
 	'a launched newsletter {string} with a thumbnail',
 	async ({ request, namedNewsletters }, name: string) => {
-		const { identityName } = await createFixtureNewsletter(request, {
+		const { identityName, listId } = await createFixtureNewsletter(request, {
 			name,
 			illustrationCircle: 'https://example.com/thumbnail.png',
 		});
-		namedNewsletters.refsByName[name] = { kind: 'launched', identityName };
+		namedNewsletters.refsByName[name] = {
+			kind: 'launched',
+			identityName,
+			listId,
+		};
 	},
 );
 
 Given(
 	'a launched newsletter {string} last updated a long time ago',
 	async ({ request, namedNewsletters }, name: string) => {
-		const { identityName } = await createFixtureNewsletter(request, {
+		const { identityName, listId } = await createFixtureNewsletter(request, {
 			name,
 			meta: { updatedTimestamp: Date.UTC(2015, 0, 1) },
 		});
-		namedNewsletters.refsByName[name] = { kind: 'launched', identityName };
+		namedNewsletters.refsByName[name] = {
+			kind: 'launched',
+			identityName,
+			listId,
+		};
 	},
 );
 
