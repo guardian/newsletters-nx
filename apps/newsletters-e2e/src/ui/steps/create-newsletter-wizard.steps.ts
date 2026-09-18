@@ -427,3 +427,20 @@ When(
 			.click();
 	},
 );
+
+When('the editor selects the details page link', async ({ page }) => {
+	await page.getByRole('link', { name: 'details page' }).click();
+});
+
+Then(
+	'the editor can see the details page',
+	async ({ page, createDraftNewsletterWizard }) => {
+		expect(
+			createDraftNewsletterWizard.getListId(),
+			'Newsletter list id was not captured in test run',
+		).not.toBe(undefined);
+		await expect(page.locator('p').filter({ hasText: `id:` })).toContainText(
+			createDraftNewsletterWizard.getListId()!.toString(),
+		);
+	},
+);

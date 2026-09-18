@@ -119,4 +119,13 @@ Scenario Outline: The 'review' step has links to all preview steps
 
 
 
+Scenario: The 'finish' step shows a link to edit the details of the newsletter
+	Given the editor is creating a new newsletter
+	And the editor has completed up until the 'Finish' step
+	When the editor selects the details page link
+	Then the editor can see the details page
+
+
+
+
 
