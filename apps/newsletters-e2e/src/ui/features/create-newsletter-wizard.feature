@@ -8,6 +8,8 @@ Background:
 	Given the redesign switch is turned on
 
 
+# Step navigation
+
 Scenario Outline: An editor can skip to certain steps in the wizard
 	Given the editor is viewing the 'Introduction' step
 	When the editor selects the '<step>' step from the navigation
@@ -32,7 +34,18 @@ Scenario: An editor cannot skip to the 'Finish' step
 	Given the editor is creating a new newsletter
 	Then the editor cannot select the 'Finish' step from the navigation
 
+Scenario: An editor in the Review step cannot skip to any other step
+	Given the editor is creating a new newsletter
+	And the editor has completed up until the 'Review' step
+	Then the wizard navigation is disabled
 
+Scenario: An editor in the Finish step cannot skip to any other step
+	Given the editor is creating a new newsletter
+	And the editor has completed up until the 'Finish' step
+	Then the wizard navigation is disabled
+
+
+# Completing steps
 Scenario: An editor can complete the 'Introduction' step
 	Given the editor is creating a new newsletter
 	When the editor chooses to continue
