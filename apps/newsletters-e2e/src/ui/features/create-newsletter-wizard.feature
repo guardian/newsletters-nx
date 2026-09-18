@@ -11,7 +11,7 @@ Background:
 # Step navigation
 
 Scenario Outline: An editor can skip to certain steps in the wizard
-	Given the editor is viewing the 'Introduction' step
+	Given the editor is creating a new newsletter
 	When the editor selects the '<step>' step from the navigation
 	Then the editor will see the '<step>' step
 
