@@ -25,8 +25,6 @@ export interface NewsletterRow {
 	name: string;
 	theme?: Theme;
 	category?: NewsletterCategory;
-	/** "News | Article based" - theme then category, humanised; undefined if neither is set. */
-	pillarCategoryLabel?: string;
 	/** Epoch milliseconds, or undefined when no real edit date is known. */
 	lastUpdated?: number;
 	thumbnailUrl?: string;
@@ -51,7 +49,9 @@ export const formatPillarCategoryLabel = (
 };
 
 // `NewsletterData` has no single thumbnail field; fall back through the
-// illustrations in the design's preferred order.
+// illustrations, closest aspect ratio to the thumbnail's square slot first
+// (illustrationSquare is 1:1, illustrationCircle at least crops symmetrically,
+// illustrationCard is 5:4 and would lose the most content to the crop).
 const toThumbnailUrl = (
 	newsletter: Pick<
 		DraftNewsletterData,
@@ -64,8 +64,8 @@ const toThumbnailUrl = (
 		value === '' ? undefined : value;
 
 	return (
-		nonEmpty(newsletter.illustrationCircle) ??
 		nonEmpty(newsletter.illustrationSquare) ??
+		nonEmpty(newsletter.illustrationCircle) ??
 		nonEmpty(newsletter.illustrationCard)
 	);
 };
@@ -79,10 +79,6 @@ export const launchedNewsletterToRow = (
 	name: newsletter.name,
 	theme: newsletter.theme,
 	category: newsletter.category,
-	pillarCategoryLabel: formatPillarCategoryLabel(
-		newsletter.theme,
-		newsletter.category,
-	),
 	// deriveUpdatedTimestamp, not meta.updatedTimestamp: it collapses the blank
 	// and legacy-migration sentinel timestamps to undefined.
 	lastUpdated: deriveUpdatedTimestamp(newsletter.meta),
@@ -100,7 +96,6 @@ export const draftNewsletterToRow = (
 	name: draft.name ?? `Untitled draft ${draft.listId}`,
 	theme: draft.theme,
 	category: draft.category,
-	pillarCategoryLabel: formatPillarCategoryLabel(draft.theme, draft.category),
 	lastUpdated: deriveUpdatedTimestamp(draft.meta),
 	thumbnailUrl: toThumbnailUrl(draft),
 	statusBadge: getDraftStatusBadgeContent(draft),

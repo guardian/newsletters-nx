@@ -1,3 +1,7 @@
+import type {
+	NewsletterCategory,
+	Theme,
+} from '@newsletters-nx/newsletters-data-client';
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
@@ -23,33 +27,26 @@ const hrefFor = (ref: NamedNewsletterRef): string =>
 		? `/drafts/${ref.listId}`
 		: `/launched/${ref.identityName}`;
 
-const namedRow = (
-	page: Page,
+const refForName = (
 	namedNewsletters: NamedNewsletters,
 	name: string,
-): Locator => {
+): NamedNewsletterRef => {
 	const ref = namedNewsletters.refsByName[name];
 	if (ref === undefined) {
 		throw new Error(
 			`No newsletter named "${name}" was created by this scenario. Created: ${Object.keys(namedNewsletters.refsByName).join(', ') || '(none)'}`,
 		);
 	}
-	return rowByHref(page, hrefFor(ref));
+	return ref;
 };
 
-type Pillar =
-	| 'news'
-	| 'opinion'
-	| 'culture'
-	| 'sport'
-	| 'lifestyle'
-	| 'features';
-type Category =
-	| 'article-based'
-	| 'fronts-based'
-	| 'manual-send'
-	| 'article-based-legacy'
-	| 'other';
+const namedRow = (
+	page: Page,
+	namedNewsletters: NamedNewsletters,
+	name: string,
+): Locator => {
+	return rowByHref(page, hrefFor(refForName(namedNewsletters, name)));
+};
 
 // Scenarios create newsletters as drafts by default (cheaper than the
 // wizard, and drafts map through the same row logic as launched
@@ -65,8 +62,8 @@ Given(
 	) => {
 		const listId = await createFixtureDraft(request, {
 			name,
-			theme: pillar.toLowerCase() as Pillar,
-			category: category as Category,
+			theme: pillar.toLowerCase() as Theme,
+			category: category as NewsletterCategory,
 		});
 		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
 	},
@@ -96,8 +93,8 @@ Given(
 			const name = row['newsletter'] ?? '';
 			const listId = await createFixtureDraft(request, {
 				name,
-				theme: (row['pillar'] ?? '').toLowerCase() as Pillar,
-				category: (row['category'] ?? '') as Category,
+				theme: (row['pillar'] ?? '').toLowerCase() as Theme,
+				category: (row['category'] ?? '') as NewsletterCategory,
 			});
 			namedNewsletters.refsByName[name] = { kind: 'draft', listId };
 		}
@@ -140,6 +137,31 @@ Given(
 			identityName,
 			listId,
 		};
+	},
+);
+
+Given(
+	'these launched newsletters exist:',
+	async ({ request, namedNewsletters }, table: DataTable) => {
+		for (const row of table.hashes()) {
+			const name = row['newsletter'] ?? '';
+			const { identityName, listId } = await createFixtureNewsletter(
+				request,
+				{
+					name,
+					status: (row['status'] ?? '') as
+						| 'paused'
+						| 'cancelled'
+						| 'live'
+						| 'pending',
+				},
+			);
+			namedNewsletters.refsByName[name] = {
+				kind: 'launched',
+				identityName,
+				listId,
+			};
+		}
 	},
 );
 
@@ -243,61 +265,75 @@ Then(
 );
 
 Then(
-	'the {string} row shows the status badge {string}',
-	async ({ page, namedNewsletters }, name: string, status: string) => {
+	'the rows show these status badges:',
+	async ({ page, namedNewsletters }, table: DataTable) => {
+		for (const row of table.hashes()) {
+			await expect(
+				namedRow(page, namedNewsletters, row['newsletter'] ?? '').getByText(
+					row['label'] ?? '',
+				),
+			).toBeVisible();
+		}
+	},
+);
+
+Then(
+	'the {string} row shows its thumbnail image',
+	async ({ page, namedNewsletters }, name: string) => {
 		await expect(
-			namedRow(page, namedNewsletters, name).getByText(status),
+			namedRow(page, namedNewsletters, name).locator('img'),
 		).toBeVisible();
 	},
 );
 
 Then(
-	'the {string} row shows its thumbnail with meaningful alt text',
+	'the {string} row shows a no-thumbnail placeholder',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(
-			namedRow(page, namedNewsletters, name).getByRole('img', {
-				name: `${name} thumbnail`,
-			}),
+			namedRow(page, namedNewsletters, name).getByText('No image'),
 		).toBeVisible();
 	},
 );
 
-Then(
-	'the {string} row shows a fallback image with meaningful alt text',
-	async ({ page, namedNewsletters }, name: string) => {
-		const row = namedRow(page, namedNewsletters, name);
-		await expect(row.getByText('No image')).toBeVisible();
-		await expect(
-			row.getByRole('img', { name: `No thumbnail available for ${name}` }),
-		).toBeVisible();
-	},
-);
+// Rows render in document order matching the loader's sort output, so
+// checking order just means reading each named row's position in that list.
+// Only the named rows' relative positions matter; other scenarios' rows may
+// legitimately sit between them.
+const rowIndices = async (
+	page: Page,
+	namedNewsletters: NamedNewsletters,
+	names: string[],
+): Promise<number[]> => {
+	// All rows render together from one data fetch, so waiting for any one
+	// row to appear means the full list is ready to read.
+	await expect(page.locator('tr[data-href]').first()).toBeVisible();
+	const hrefs = await page
+		.locator('tr[data-href]')
+		.evaluateAll((rows) =>
+			rows.map((row) => row.getAttribute('data-href') ?? ''),
+		);
 
-// Compares only the named rows' relative positions; other scenarios' rows
-// may legitimately sit between them.
-const rowPosition = async (row: Locator): Promise<number> => {
-	await expect(row).toBeVisible();
-	const box = await row.boundingBox();
-	if (!box) {
-		throw new Error('Expected the row to have a bounding box');
-	}
-	return box.y;
+	return names.map((name) => {
+		const href = hrefFor(refForName(namedNewsletters, name));
+		const index = hrefs.indexOf(href);
+		if (index === -1) {
+			throw new Error(`Expected a row for "${name}" (${href}) to be visible`);
+		}
+		return index;
+	});
 };
 
 Then(
 	'the rows appear in this order:',
 	async ({ page, namedNewsletters }, table: DataTable) => {
 		const names = table.hashes().map((row) => row['newsletter'] ?? '');
-		const positions = [];
-		for (const name of names) {
-			positions.push(await rowPosition(namedRow(page, namedNewsletters, name)));
-		}
+		const indices = await rowIndices(page, namedNewsletters, names);
 
-		for (let index = 1; index < positions.length; index++) {
+		for (let index = 1; index < indices.length; index++) {
 			expect(
-				positions[index],
+				indices[index],
 				`"${names[index]}" should appear below "${names[index - 1]}"`,
-			).toBeGreaterThan(positions[index - 1] ?? 0);
+			).toBeGreaterThan(indices[index - 1] ?? 0);
 		}
 	},
 );
@@ -305,13 +341,11 @@ Then(
 Then(
 	'the {string} row appears above the {string} row',
 	async ({ page, namedNewsletters }, aboveName: string, belowName: string) => {
-		const aboveY = await rowPosition(
-			namedRow(page, namedNewsletters, aboveName),
-		);
-		const belowY = await rowPosition(
-			namedRow(page, namedNewsletters, belowName),
-		);
+		const [aboveIndex, belowIndex] = await rowIndices(page, namedNewsletters, [
+			aboveName,
+			belowName,
+		]);
 
-		expect(aboveY).toBeLessThan(belowY);
+		expect(aboveIndex).toBeLessThan(belowIndex);
 	},
 );

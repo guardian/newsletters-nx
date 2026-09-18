@@ -53,28 +53,18 @@ export const makeBlankMeta = (): MetaData => ({
 	updatedBy: 'unknown',
 });
 
-/**
- * The timestamp (2000-01-01) stamped onto records brought over by the
- * migration from the legacy newsletters data. It records when the data was
- * migrated, not when anybody edited the newsletter through this app.
- */
+// Stamped onto records migrated from the legacy newsletters data (2000-01-01);
+// not a real edit date.
 export const MIGRATION_TIMESTAMP_VALUE = 946684800;
 
-/**
- * The "last updated" value to display for a record: the last time it was
- * written through this app, or `undefined` when there is no real edit date.
- *
- * `0` is reachable because a record stored before `meta` existed is defaulted
- * to `makeBlankMeta()` on read, and `MIGRATION_TIMESTAMP_VALUE` only records
- * when a legacy record was migrated. Neither is a real edit date, so both are
- * reported as "no value" rather than rendering as 1 Jan 1970 or 1 Jan 2000.
- */
+/** A record's "last updated" value, or `undefined` if there is no real edit date. */
 export const deriveUpdatedTimestamp = (
 	meta: MetaData | undefined,
 ): number | undefined => {
 	const updatedTimestamp = meta?.updatedTimestamp;
 
 	if (
+		updatedTimestamp === undefined ||
 		!Number.isFinite(updatedTimestamp) ||
 		updatedTimestamp <= 0 ||
 		updatedTimestamp === MIGRATION_TIMESTAMP_VALUE

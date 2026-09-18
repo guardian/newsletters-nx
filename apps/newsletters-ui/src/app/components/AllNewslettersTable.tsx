@@ -14,6 +14,7 @@ import { Typography } from '@guardian/stand/Typography';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useNavigate } from 'react-router-dom';
 import type { NewsletterRow } from '../lib/all-newsletters-rows';
+import { formatPillarCategoryLabel } from '../lib/all-newsletters-rows';
 import { formatLastUpdated } from '../lib/format-last-updated';
 import { NewsletterThumbnail } from './NewsletterThumbnail';
 
@@ -86,53 +87,59 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 					<TableColumnHeader>Status</TableColumnHeader>
 				</TableHeader>
 				<TableBody>
-					{rows.map((row) => (
-						<TableRow key={row.id} id={row.id} href={row.href}>
-							<TableCell
-								gridColumn={{ sm: '1', md: '1' }}
-								gridRow={{ sm: '1', md: 'auto' }}
-							>
-								<div css={newsletterCellStyle}>
-									<NewsletterThumbnail src={row.thumbnailUrl} name={row.name} />
-									<div css={detailsStyle}>
-										<Typography
-											element="span"
-											variant="bodyBoldMd"
-											cssOverrides={titleStyle}
-										>
-											{row.name}
-										</Typography>
-										{row.pillarCategoryLabel && (
+					{rows.map((row) => {
+						const pillarCategoryLabel = formatPillarCategoryLabel(
+							row.theme,
+							row.category,
+						);
+						return (
+							<TableRow key={row.id} id={row.id} href={row.href}>
+								<TableCell
+									gridColumn={{ sm: '1', md: '1' }}
+									gridRow={{ sm: '1', md: 'auto' }}
+								>
+									<div css={newsletterCellStyle}>
+										<NewsletterThumbnail src={row.thumbnailUrl} />
+										<div css={detailsStyle}>
 											<Typography
 												element="span"
-												variant="bodySm"
-												cssOverrides={subTextStyle}
+												variant="bodyBoldMd"
+												cssOverrides={titleStyle}
 											>
-												{row.pillarCategoryLabel}
+												{row.name}
 											</Typography>
-										)}
+											{pillarCategoryLabel && (
+												<Typography
+													element="span"
+													variant="bodySm"
+													cssOverrides={subTextStyle}
+												>
+													{pillarCategoryLabel}
+												</Typography>
+											)}
+										</div>
 									</div>
-								</div>
-							</TableCell>
-							<TableCell
-								gridColumn={{ sm: '1', md: '2' }}
-								gridRow={{ sm: '2', md: 'auto' }}
-								compactLabel="Last updated"
-							>
-								{formatLastUpdated(row.lastUpdated)}
-							</TableCell>
-							<TableCell
-								gridColumn={{ sm: '1', md: '3' }}
-								gridRow={{ sm: '3', md: 'auto' }}
-								compactLabel="Status"
-								cssOverrides={statusCellStyle}
-							>
-								<Badge color={row.statusBadge.color} weight="strong">
-									{row.statusBadge.label}
-								</Badge>
-							</TableCell>
-						</TableRow>
-					))}
+								</TableCell>
+								<TableCell
+									gridColumn={{ sm: '1', md: '2' }}
+									gridRow={{ sm: '2', md: 'auto' }}
+									compactLabel="Last updated"
+								>
+									{formatLastUpdated(row.lastUpdated)}
+								</TableCell>
+								<TableCell
+									gridColumn={{ sm: '1', md: '3' }}
+									gridRow={{ sm: '3', md: 'auto' }}
+									compactLabel="Status"
+									cssOverrides={statusCellStyle}
+								>
+									<Badge color={row.statusBadge.color} weight="strong">
+										{row.statusBadge.label}
+									</Badge>
+								</TableCell>
+							</TableRow>
+						);
+					})}
 				</TableBody>
 			</Table>
 		</AriaRouterProvider>

@@ -57,7 +57,6 @@ describe('launchedNewsletterToRow', () => {
 			name: 'Politics Weekly',
 			theme: 'news',
 			category: 'article-based',
-			pillarCategoryLabel: 'News | Article based',
 			statusBadge: { label: 'Live', color: 'green' },
 			thumbnailUrl: 'https://example.com/circle.png',
 			lastUpdated: UPDATED,
@@ -65,20 +64,16 @@ describe('launchedNewsletterToRow', () => {
 	});
 
 	it.each([
-		['prefers illustrationCircle', {}, 'https://example.com/circle.png'],
 		[
-			'falls back to illustrationSquare',
-			{
-				illustrationCircle: undefined,
-				illustrationSquare: 'https://example.com/square.png',
-			},
+			'prefers illustrationSquare',
+			{ illustrationSquare: 'https://example.com/square.png' },
 			'https://example.com/square.png',
 		],
+		['falls back to illustrationCircle', {}, 'https://example.com/circle.png'],
 		[
 			'falls back to illustrationCard',
 			{
 				illustrationCircle: undefined,
-				illustrationSquare: undefined,
 				illustrationCard: 'https://example.com/card.png',
 			},
 			'https://example.com/card.png',
@@ -121,7 +116,6 @@ describe('draftNewsletterToRow', () => {
 			name: 'Culture Manual',
 			theme: 'culture',
 			category: 'manual-send',
-			pillarCategoryLabel: 'Culture | Manual send',
 			thumbnailUrl: undefined,
 			lastUpdated: UPDATED,
 		});
