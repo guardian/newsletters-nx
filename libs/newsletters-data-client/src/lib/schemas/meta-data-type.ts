@@ -52,3 +52,24 @@ export const makeBlankMeta = (): MetaData => ({
 	updatedTimestamp: 0,
 	updatedBy: 'unknown',
 });
+
+// Stamped onto records migrated from the legacy newsletters data (2000-01-01);
+// not a real edit date.
+export const MIGRATION_TIMESTAMP_VALUE = 946684800;
+
+/** A record's "last updated" value, or `undefined` if there is no real edit date. */
+export const deriveUpdatedTimestamp = (
+	meta: MetaData | undefined,
+): number | undefined => {
+	const updatedTimestamp = meta?.updatedTimestamp;
+
+	if (
+		updatedTimestamp === undefined ||
+		updatedTimestamp === 0 ||
+		updatedTimestamp === MIGRATION_TIMESTAMP_VALUE
+	) {
+		return undefined;
+	}
+
+	return updatedTimestamp;
+};
