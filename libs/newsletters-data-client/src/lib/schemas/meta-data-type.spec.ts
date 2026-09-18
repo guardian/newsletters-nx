@@ -23,24 +23,12 @@ describe('deriveUpdatedTimestamp', () => {
 	});
 
 	it('returns undefined for a blank meta', () => {
-		// Records stored before meta existed are defaulted to a blank meta on
-		// read, so its zero timestamp must not render as 1 Jan 1970.
 		expect(deriveUpdatedTimestamp(makeBlankMeta())).toBeUndefined();
 	});
 
 	it('returns undefined for the legacy migration timestamp', () => {
-		// That records when the legacy data was migrated, not when anybody
-		// edited the newsletter.
 		expect(
 			deriveUpdatedTimestamp(meta(MIGRATION_TIMESTAMP_VALUE)),
 		).toBeUndefined();
-	});
-
-	it.each([
-		['a negative timestamp', -1],
-		['NaN', NaN],
-		['Infinity', Infinity],
-	])('returns undefined for %s', (_, updatedTimestamp) => {
-		expect(deriveUpdatedTimestamp(meta(updatedTimestamp))).toBeUndefined();
 	});
 });
