@@ -1,6 +1,6 @@
 import { test as base, createBdd } from 'playwright-bdd';
 import { deleteDraftNewsletter } from '../../../helpers/draft-newsletter';
-import CreateDraftNewsletterWizard from './create-newsletter-wizard';
+import CreateDraftNewsletterWizard from '../helpers/create-newsletter-wizard';
 
 /**
  * Scenario-scoped state for a draft newsletter created via the API. Playwright
