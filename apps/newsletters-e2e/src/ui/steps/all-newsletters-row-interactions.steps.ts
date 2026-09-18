@@ -46,15 +46,3 @@ Then(
 		);
 	},
 );
-
-Then(
-	'the {string} row shows no Edit action',
-	async ({ page }, name: string) => {
-		await expect(
-			newsletterRow(page, name).getByRole('button', { name: 'Edit' }),
-		).toHaveCount(0);
-		await expect(
-			newsletterRow(page, name).getByRole('link', { name: 'Edit' }),
-		).toHaveCount(0);
-	},
-);

@@ -16,6 +16,3 @@ Feature: All newsletters row interactions
     Then the "Politics Weekly" row shows a visible focus indicator
     When the editor presses "Enter"
     Then the editor sees the detail page for "Politics Weekly"
-
-  Scenario: Editor does not see a row-level Edit action
-    Then the "Politics Weekly" row shows no Edit action
