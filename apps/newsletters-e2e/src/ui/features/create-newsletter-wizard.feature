@@ -95,6 +95,12 @@ Scenario: An editor can complete the 'Promotion copy and images' step
 	And the editor chooses to continue
 	Then the editor will see the 'Review' step
 
+Scenario: An editor can complete the 'Review' step
+	Given the editor is creating a new newsletter
+	And the editor has completed up until the 'Review' step
+	When the editor chooses to continue
+	Then the editor will see the 'Finish' step
+
 
 
 
