@@ -1,5 +1,6 @@
 import { test as base, createBdd } from 'playwright-bdd';
 import { deleteDraftNewsletter } from '../../../helpers/draft-newsletter';
+import CreateDraftNewsletterWizard from './create-newsletter-wizard';
 
 /**
  * Scenario-scoped state for a draft newsletter created via the API. Playwright
@@ -14,6 +15,7 @@ interface ExistingDraftNewsletter {
 
 type Fixtures = {
 	existingDraftNewsletter: ExistingDraftNewsletter;
+	createDraftNewsletterWizard: CreateDraftNewsletterWizard;
 };
 
 export const test = base.extend<Fixtures>({
@@ -25,6 +27,10 @@ export const test = base.extend<Fixtures>({
 				// Best-effort cleanup only; ignore if already removed.
 			});
 		}
+	},
+	createDraftNewsletterWizard: async ({ page }, use) => {
+		const draft = new CreateDraftNewsletterWizard(page);
+		await use(draft);
 	},
 });
 
