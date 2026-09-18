@@ -102,5 +102,21 @@ Scenario: An editor can complete the 'Review' step
 	Then the editor will see the 'Finish' step
 
 
+Scenario Outline: The 'review' step has links to all preview steps
+	Given the editor is creating a new newsletter
+	And the editor has completed up until the 'Review' step
+	When the editor follows the edit link for the '<step>' step
+	Then the editor will see the '<step>' step
+  # title-format: Link to <step>
+	Examples:
+	| step |
+	| Name & frequency |
+	| Production Details |
+	| Launch/Promotion Dates |
+	| Targeting |
+	| Tag Setting |
+	| Promotion copy and images |
+
+
 
 

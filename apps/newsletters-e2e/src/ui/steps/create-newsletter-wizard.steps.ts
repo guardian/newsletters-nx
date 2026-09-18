@@ -416,3 +416,14 @@ Then('the wizard navigation is disabled', async ({ page }) => {
 		expect(isCurrent || isDisabled).toBe(true);
 	}
 });
+
+When(
+	'the editor follows the edit link for the {string} step',
+	async ({ page }, step: string) => {
+		await page
+			.locator('section')
+			.filter({ hasText: step })
+			.getByRole('link', { name: 'Edit' })
+			.click();
+	},
+);
