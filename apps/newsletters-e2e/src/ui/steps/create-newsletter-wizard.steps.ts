@@ -1,4 +1,3 @@
-import type { Locator } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from './fixtures';
 
@@ -55,348 +54,203 @@ When(
 	},
 );
 
-When('the editor fills out the name and frequency fields', async ({ page }) => {
-	await page.getByLabel('Name the newsletter').fill('example');
-	await page.getByLabel('Set the frequency').getByText('Monthly').check();
-});
-
+When(
+	'the editor fills out the name and frequency fields',
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.fillNameField('example');
+		await createDraftNewsletterWizard.setFrequencyField('Monthly');
+	},
+);
 When(
 	'the editor fills out the newsletter type and location fields',
-	async ({ page }) => {
-		await page
-			.getByLabel('Type of newsletter')
-			.getByText('article-based')
-			.check();
-		await page
-			.getByLabel('Location of newsletter')
-			.getByText('Web for first send only')
-			.check();
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.setTypeField('article-based');
+		await createDraftNewsletterWizard.setLocationField(
+			'Web for first send only',
+		);
 	},
 );
 
-When('the editor sets the launch and sign up dates', async ({ page }) => {
-	const fillDateSegment = async (
-		group: Locator,
-		name: string,
-		value: string,
-	) => {
-		await group.getByRole('spinbutton', { name }).click();
-		await page.keyboard.type(value);
-	};
-
-	const launchDateGroup = page.getByRole('group', {
-		name: 'Enter launch date',
-	});
-
-	await fillDateSegment(launchDateGroup, 'day', '09');
-	await fillDateSegment(launchDateGroup, 'month', '12');
-	await fillDateSegment(launchDateGroup, 'year', '2025');
-
-	const signUpDateGroup = page.getByRole('group', {
-		name: 'Enter sign up page date',
-	});
-
-	await fillDateSegment(signUpDateGroup, 'day', '18');
-	await fillDateSegment(signUpDateGroup, 'month', '12');
-	await fillDateSegment(signUpDateGroup, 'year', '2025');
-});
+When(
+	'the editor sets the launch and sign up dates',
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.setLaunchDate('09', '12', '2025');
+		await createDraftNewsletterWizard.setSignUpDate('18', '12', '2025');
+	},
+);
 
 When(
 	'the editor sets the region focus, pillar and MMA group',
-	async ({ page }) => {
-		await page
-			.getByRole('radiogroup', { name: 'Region focus' })
-			.getByText('UK')
-			.check();
-
-		const selectOption = async (label: string, option: string) => {
-			await page.getByLabel(label).click();
-			await page
-				.getByRole('listbox')
-				.getByRole('option', { name: option })
-				.click();
-		};
-
-		await selectOption('Pillar', 'sport');
-		await selectOption('Group for MMA page', 'Opinion');
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.setRegionFocus('UK');
+		await createDraftNewsletterWizard.selectPillar('sport');
+		await createDraftNewsletterWizard.selectMmaGroup('Opinion');
 	},
 );
 
 When(
 	'the editor sets the series tag & description, campaign tag & description fields',
-	async ({ page }) => {
-		await page
-			.getByRole('textbox', { name: 'Add the series tag', exact: true })
-			.fill('example/series');
-		await page
-			.getByRole('textbox', {
-				name: 'Add the Series tag description',
-				exact: true,
-			})
-			.fill('Example series tag description');
-
-		await page
-			.getByRole('textbox', { name: 'Campaign tag', exact: true })
-			.fill('Example (newsletter sign up)');
-		await page
-			.getByRole('textbox', {
-				name: 'Campaign description',
-				exact: true,
-			})
-			.fill('Example campaign tag description');
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.setSeriesTag('example/series');
+		await createDraftNewsletterWizard.setSeriesTagDescription(
+			'Example series tag description',
+		);
+		await createDraftNewsletterWizard.setCampaignTag(
+			'Example (newsletter sign up)',
+		);
+		await createDraftNewsletterWizard.setCampaignDescription(
+			'Example campaign tag description',
+		);
 	},
 );
 
 When(
 	'the editor sets the headline, description, embed description, success message, highlight card message and image url fields',
-	async ({ page }) => {
-		await page.getByLabel('Headline').fill('Example headline');
-		await page
-			.getByLabel('Description', { exact: true })
-			.fill('Example description');
-		await page
-			.getByLabel('Embed description')
-			.fill('Example embed description');
-		await page
-			.getByLabel('Success message', { exact: true })
-			.fill('Example success message. Hurray!');
-
-		await page
-			.getByLabel('Highlight card message', { exact: true })
-			.fill('Example message for highlight card.');
-
-		await page
-			.getByPlaceholder('URL of the newsletter graphic 5:4')
-			.fill('https://www.example.com/');
-
-		await page
-			.getByPlaceholder('URL of the newsletter graphic 1:1')
-			.fill('https://www.example.com/');
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.setHeadline('Example headline');
+		await createDraftNewsletterWizard.setDescription('Example description');
+		await createDraftNewsletterWizard.setEmbedDescription(
+			'Example embed description',
+		);
+		await createDraftNewsletterWizard.setSuccessMessage(
+			'Example success message. Hurray!',
+		);
+		await createDraftNewsletterWizard.setHighlightCardMessage(
+			'Example message for highlight card.',
+		);
+		await createDraftNewsletterWizard.setImageUrl(
+			'5:4',
+			'https://www.example.com/',
+		);
+		await createDraftNewsletterWizard.setImageUrl(
+			'1:1',
+			'https://www.example.com/',
+		);
 	},
 );
 
 Given(
 	"the editor has completed up until the 'Review' step",
-	async ({ page, createDraftNewsletterWizard }) => {
+	async ({ createDraftNewsletterWizard }) => {
 		const continueToNextStep = async () => {
 			await createDraftNewsletterWizard.gotoNextStep();
 		};
 
 		await continueToNextStep();
 
-		await page.getByLabel('Name the newsletter').fill('example');
-		await page.getByLabel('Set the frequency').getByText('Monthly').check();
+		await createDraftNewsletterWizard.fillNameField('example');
+		await createDraftNewsletterWizard.setFrequencyField('Monthly');
 		await continueToNextStep();
 
-		await page
-			.getByLabel('Type of newsletter')
-			.getByText('article-based')
-			.check();
-		await page
-			.getByLabel('Location of newsletter')
-			.getByText('Web for first send only')
-			.check();
+		await createDraftNewsletterWizard.setTypeField('article-based');
+		await createDraftNewsletterWizard.setLocationField(
+			'Web for first send only',
+		);
 		await continueToNextStep();
 
-		const fillDateSegment = async (
-			group: Locator,
-			name: string,
-			value: string,
-		) => {
-			await group.getByRole('spinbutton', { name }).click();
-			await page.keyboard.type(value);
-		};
-
-		const launchDateGroup = page.getByRole('group', {
-			name: 'Enter launch date',
-		});
-		await fillDateSegment(launchDateGroup, 'day', '09');
-		await fillDateSegment(launchDateGroup, 'month', '12');
-		await fillDateSegment(launchDateGroup, 'year', '2027');
-
-		const signUpDateGroup = page.getByRole('group', {
-			name: 'Enter sign up page date',
-		});
-		await fillDateSegment(signUpDateGroup, 'day', '18');
-		await fillDateSegment(signUpDateGroup, 'month', '12');
-		await fillDateSegment(signUpDateGroup, 'year', '2027');
+		await createDraftNewsletterWizard.setLaunchDate('09', '12', '2027');
+		await createDraftNewsletterWizard.setSignUpDate('18', '12', '2027');
 		await continueToNextStep();
 
-		await page
-			.getByRole('radiogroup', { name: 'Region focus' })
-			.getByText('UK')
-			.check();
-
-		const selectOption = async (label: string, option: string) => {
-			await page.getByLabel(label).click();
-			await page
-				.getByRole('listbox')
-				.getByRole('option', { name: option })
-				.click();
-		};
-
-		await selectOption('Pillar', 'sport');
-		await selectOption('Group for MMA page', 'Opinion');
+		await createDraftNewsletterWizard.setRegionFocus('UK');
+		await createDraftNewsletterWizard.selectPillar('sport');
+		await createDraftNewsletterWizard.selectMmaGroup('Opinion');
 		await continueToNextStep();
 
-		await page
-			.getByRole('textbox', {
-				name: 'Add the series tag',
-				exact: true,
-			})
-			.fill('example/series');
-		await page
-			.getByRole('textbox', {
-				name: 'Add the Series tag description',
-				exact: true,
-			})
-			.fill('Example series tag description');
-		await page
-			.getByRole('textbox', {
-				name: 'Campaign tag',
-				exact: true,
-			})
-			.fill('Example (newsletter sign up)');
-		await page
-			.getByRole('textbox', {
-				name: 'Campaign description',
-				exact: true,
-			})
-			.fill('Example campaign tag description');
+		await createDraftNewsletterWizard.setSeriesTag('example/series');
+		await createDraftNewsletterWizard.setSeriesTagDescription(
+			'Example series tag description',
+		);
+		await createDraftNewsletterWizard.setCampaignTag(
+			'Example (newsletter sign up)',
+		);
+		await createDraftNewsletterWizard.setCampaignDescription(
+			'Example campaign tag description',
+		);
 		await continueToNextStep();
 
-		await page.getByLabel('Headline').fill('Example headline');
-		await page
-			.getByLabel('Description', { exact: true })
-			.fill('Example description');
-		await page
-			.getByLabel('Embed description')
-			.fill('Example embed description');
-		await page
-			.getByLabel('Success message', { exact: true })
-			.fill('Example success message. Hurray!');
-		await page
-			.getByLabel('Highlight card message', { exact: true })
-			.fill('Example message for highlight card.');
-		await page
-			.getByPlaceholder('URL of the newsletter graphic 5:4')
-			.fill('https://www.example.com/');
-		await page
-			.getByPlaceholder('URL of the newsletter graphic 1:1')
-			.fill('https://www.example.com/');
+		await createDraftNewsletterWizard.setHeadline('Example headline');
+		await createDraftNewsletterWizard.setDescription('Example description');
+		await createDraftNewsletterWizard.setEmbedDescription(
+			'Example embed description',
+		);
+		await createDraftNewsletterWizard.setSuccessMessage(
+			'Example success message. Hurray!',
+		);
+		await createDraftNewsletterWizard.setHighlightCardMessage(
+			'Example message for highlight card.',
+		);
+		await createDraftNewsletterWizard.setImageUrl(
+			'5:4',
+			'https://www.example.com/',
+		);
+		await createDraftNewsletterWizard.setImageUrl(
+			'1:1',
+			'https://www.example.com/',
+		);
 		await continueToNextStep();
 	},
 );
 
 Given(
 	"the editor has completed up until the 'Finish' step",
-	async ({ page, createDraftNewsletterWizard }) => {
+	async ({ createDraftNewsletterWizard }) => {
 		const continueToNextStep = async () => {
 			await createDraftNewsletterWizard.gotoNextStep();
 		};
 
 		await continueToNextStep();
 
-		await page.getByLabel('Name the newsletter').fill('example');
-		await page.getByLabel('Set the frequency').getByText('Monthly').check();
+		await createDraftNewsletterWizard.fillNameField('example');
+		await createDraftNewsletterWizard.setFrequencyField('Monthly');
 		await continueToNextStep();
 
-		await page
-			.getByLabel('Type of newsletter')
-			.getByText('article-based')
-			.check();
-		await page
-			.getByLabel('Location of newsletter')
-			.getByText('Web for first send only')
-			.check();
+		await createDraftNewsletterWizard.setTypeField('article-based');
+		await createDraftNewsletterWizard.setLocationField(
+			'Web for first send only',
+		);
 		await continueToNextStep();
 
-		const fillDateSegment = async (
-			group: Locator,
-			name: string,
-			value: string,
-		) => {
-			await group.getByRole('spinbutton', { name }).click();
-			await page.keyboard.type(value);
-		};
-
-		const launchDateGroup = page.getByRole('group', {
-			name: 'Enter launch date',
-		});
-		await fillDateSegment(launchDateGroup, 'day', '09');
-		await fillDateSegment(launchDateGroup, 'month', '12');
-		await fillDateSegment(launchDateGroup, 'year', '2027');
-
-		const signUpDateGroup = page.getByRole('group', {
-			name: 'Enter sign up page date',
-		});
-		await fillDateSegment(signUpDateGroup, 'day', '18');
-		await fillDateSegment(signUpDateGroup, 'month', '12');
-		await fillDateSegment(signUpDateGroup, 'year', '2027');
+		await createDraftNewsletterWizard.setLaunchDate('09', '12', '2027');
+		await createDraftNewsletterWizard.setSignUpDate('18', '12', '2027');
 		await continueToNextStep();
 
-		await page
-			.getByRole('radiogroup', { name: 'Region focus' })
-			.getByText('UK')
-			.check();
-
-		const selectOption = async (label: string, option: string) => {
-			await page.getByLabel(label).click();
-			await page
-				.getByRole('listbox')
-				.getByRole('option', { name: option })
-				.click();
-		};
-
-		await selectOption('Pillar', 'sport');
-		await selectOption('Group for MMA page', 'Opinion');
+		await createDraftNewsletterWizard.setRegionFocus('UK');
+		await createDraftNewsletterWizard.selectPillar('sport');
+		await createDraftNewsletterWizard.selectMmaGroup('Opinion');
 		await continueToNextStep();
 
-		await page
-			.getByRole('textbox', {
-				name: 'Add the series tag',
-				exact: true,
-			})
-			.fill('example/series');
-		await page
-			.getByRole('textbox', {
-				name: 'Add the Series tag description',
-				exact: true,
-			})
-			.fill('Example series tag description');
-		await page
-			.getByRole('textbox', {
-				name: 'Campaign tag',
-				exact: true,
-			})
-			.fill('Example (newsletter sign up)');
-		await page
-			.getByRole('textbox', {
-				name: 'Campaign description',
-				exact: true,
-			})
-			.fill('Example campaign tag description');
+		await createDraftNewsletterWizard.setSeriesTag('example/series');
+		await createDraftNewsletterWizard.setSeriesTagDescription(
+			'Example series tag description',
+		);
+		await createDraftNewsletterWizard.setCampaignTag(
+			'Example (newsletter sign up)',
+		);
+		await createDraftNewsletterWizard.setCampaignDescription(
+			'Example campaign tag description',
+		);
 		await continueToNextStep();
 
-		await page.getByLabel('Headline').fill('Example headline');
-		await page
-			.getByLabel('Description', { exact: true })
-			.fill('Example description');
-		await page
-			.getByLabel('Embed description')
-			.fill('Example embed description');
-		await page
-			.getByLabel('Success message', { exact: true })
-			.fill('Example success message. Hurray!');
-		await page
-			.getByLabel('Highlight card message', { exact: true })
-			.fill('Example message for highlight card.');
-		await page
-			.getByPlaceholder('URL of the newsletter graphic 5:4')
-			.fill('https://www.example.com/');
-		await page
-			.getByPlaceholder('URL of the newsletter graphic 1:1')
-			.fill('https://www.example.com/');
+		await createDraftNewsletterWizard.setHeadline('Example headline');
+		await createDraftNewsletterWizard.setDescription('Example description');
+		await createDraftNewsletterWizard.setEmbedDescription(
+			'Example embed description',
+		);
+		await createDraftNewsletterWizard.setSuccessMessage(
+			'Example success message. Hurray!',
+		);
+		await createDraftNewsletterWizard.setHighlightCardMessage(
+			'Example message for highlight card.',
+		);
+		await createDraftNewsletterWizard.setImageUrl(
+			'5:4',
+			'https://www.example.com/',
+		);
+		await createDraftNewsletterWizard.setImageUrl(
+			'1:1',
+			'https://www.example.com/',
+		);
 		await continueToNextStep();
 
 		// Go to Finish step
