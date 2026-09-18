@@ -6,6 +6,7 @@ import {
 	newsletterDataSchema,
 } from '@newsletters-nx/newsletters-data-client/server';
 import type { Express, Request, Response } from 'express';
+import * as z from 'zod';
 import { draftStore, newsletterStore } from '../../services/storage';
 import {
 	makeErrorResponse,
@@ -62,9 +63,11 @@ const sendStorageResult = (
 		.send(makeErrorResponse(result.message));
 };
 
+const listIdParamSchema = z.coerce.number();
+
 const parseListIdParam = (req: Request): number | undefined => {
-	const idAsNumber = Number(req.params['listId']);
-	return Number.isNaN(idAsNumber) ? undefined : idAsNumber;
+	const parsed = listIdParamSchema.safeParse(req.params['listId']);
+	return parsed.success ? parsed.data : undefined;
 };
 
 export function registerTestFixtureRoutes(app: Express) {
