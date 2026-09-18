@@ -85,3 +85,78 @@ describe('newsletter read responses', () => {
 		expect(newsletter.meta.createdTimestamp).toBe(blankMeta.createdTimestamp);
 	});
 });
+
+describe('inserting a newsletter verbatim', () => {
+	it('keeps the supplied meta rather than stamping it for launch', async () => {
+		const storage = new InMemoryNewsletterStorage();
+
+		await storage.insertVerbatim(makeNewsletter(1, 'one', META));
+
+		expect(dataOf(await storage.read(1)).meta).toEqual(META);
+	});
+
+	it('keeps a status that launching could never produce', async () => {
+		const storage = new InMemoryNewsletterStorage();
+
+		await storage.insertVerbatim({
+			...makeNewsletter(1, 'one', META),
+			status: 'cancelled',
+		});
+
+		expect(dataOf(await storage.read(1)).status).toBe('cancelled');
+	});
+
+	it('defaults the meta when none is supplied', async () => {
+		const storage = new InMemoryNewsletterStorage();
+
+		await storage.insertVerbatim(makeNewsletter(1, 'one'));
+
+		expect(dataOf(await storage.read(1)).meta).toEqual(makeBlankMeta());
+	});
+
+	it('makes the newsletter readable by name and in the list', async () => {
+		const storage = new InMemoryNewsletterStorage();
+
+		await storage.insertVerbatim(makeNewsletter(1, 'one', META));
+
+		expect(dataOf(await storage.readByName('one')).listId).toBe(1);
+		expect(dataOf(await storage.list())).toHaveLength(1);
+	});
+
+	it('allocates the next free listId when none is given', async () => {
+		const storage = new InMemoryNewsletterStorage([
+			makeNewsletter(7, 'seven', META),
+		]);
+
+		const inserted = dataOf(
+			await storage.insertVerbatim({
+				...makeNewsletter(7, 'eight', META),
+				listId: undefined as unknown as number,
+			}),
+		);
+
+		expect(inserted.listId).toBe(8);
+	});
+
+	it('refuses a duplicate identityName', async () => {
+		const storage = new InMemoryNewsletterStorage([
+			makeNewsletter(1, 'one', META),
+		]);
+
+		const response = await storage.insertVerbatim(
+			makeNewsletter(2, 'one', META),
+		);
+
+		expect(response.ok).toBe(false);
+		expect(dataOf(await storage.list())).toHaveLength(1);
+	});
+
+	it('can be removed again, so a test can clean up after itself', async () => {
+		const storage = new InMemoryNewsletterStorage();
+		await storage.insertVerbatim(makeNewsletter(1, 'one', META));
+
+		await storage.delete(1);
+
+		expect(dataOf(await storage.list())).toHaveLength(0);
+	});
+});

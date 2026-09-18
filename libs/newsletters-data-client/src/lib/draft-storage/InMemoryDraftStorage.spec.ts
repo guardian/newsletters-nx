@@ -45,3 +45,48 @@ describe('draft read responses', () => {
 		expect(draft.meta.updatedTimestamp).toBeGreaterThan(META.updatedTimestamp);
 	});
 });
+
+describe('inserting a draft verbatim', () => {
+	it('keeps the supplied meta rather than stamping it with the current time', async () => {
+		const storage = new InMemoryDraftStorage();
+
+		await storage.insertVerbatim(makeDraft(1, META));
+
+		expect(dataOf(await storage.read(1)).meta).toEqual(META);
+	});
+
+	it('defaults the meta when none is supplied', async () => {
+		const storage = new InMemoryDraftStorage();
+
+		await storage.insertVerbatim(makeDraft(1));
+
+		expect(dataOf(await storage.read(1)).meta).toEqual(makeBlankMeta());
+	});
+
+	it('makes the draft appear in the list', async () => {
+		const storage = new InMemoryDraftStorage();
+
+		await storage.insertVerbatim(makeDraft(1, META));
+
+		expect(dataOf(await storage.readAll())).toHaveLength(1);
+	});
+
+	it('allocates the next free listId when none is given', async () => {
+		const storage = new InMemoryDraftStorage([makeDraft(7, META)]);
+
+		const inserted = dataOf(
+			await storage.insertVerbatim({ name: 'no id yet', meta: META }),
+		);
+
+		expect(inserted.listId).toBe(8);
+	});
+
+	it('can be removed again, so a test can clean up after itself', async () => {
+		const storage = new InMemoryDraftStorage();
+		await storage.insertVerbatim(makeDraft(1, META));
+
+		await storage.deleteItem(1);
+
+		expect(dataOf(await storage.readAll())).toHaveLength(0);
+	});
+});

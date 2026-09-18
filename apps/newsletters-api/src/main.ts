@@ -1,5 +1,6 @@
 import ExpressApp, { json } from 'express';
 import {
+	areTestFixturesEnabled,
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
 	isServingUI,
@@ -19,6 +20,7 @@ import {
 } from './app/routes/newsletters';
 import { registerNotificationRoutes } from './app/routes/notifications';
 import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
+import { registerTestFixtureRoutes } from './app/routes/test-fixtures';
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
@@ -41,6 +43,12 @@ if (isServingReadEndpoints()) {
 	registerDraftsRoutes(app);
 	registerRenderingTemplatesRoutes(app);
 	registerReadLayoutRoutes(app);
+}
+if (areTestFixturesEnabled()) {
+	console.warn(
+		'Test fixture routes are enabled. These allow newsletters to be written directly to storage and must never be served in production.',
+	);
+	registerTestFixtureRoutes(app);
 }
 
 const start = async () => {

@@ -189,6 +189,36 @@ export class InMemoryNewsletterStorage implements NewsletterStorage {
 		return Promise.resolve(response);
 	}
 
+	/**
+	 * Inserts a newsletter as given, assigning `listId` only if missing.
+	 * Test/dev only; not part of the `NewsletterStorage` interface.
+	 */
+	insertVerbatim(newsletter: NewsletterData & { meta?: MetaData }) {
+		const existing = this.memory.find(
+			(item) => item.identityName === newsletter.identityName,
+		);
+		if (existing) {
+			const error: UnsuccessfulStorageResponse = {
+				ok: false,
+				message: `a newsletter with the identityName "${newsletter.identityName}" already exists`,
+				reason: StorageRequestFailureReason.InvalidDataInput,
+			};
+			return Promise.resolve(error);
+		}
+
+		const inserted: NewsletterDataWithMeta = {
+			...newsletter,
+			listId: newsletter.listId || this.getNextId(),
+			meta: newsletter.meta ?? makeBlankMeta(),
+		};
+		this.memory.push(inserted);
+		const response: SuccessfulStorageResponse<NewsletterDataWithMeta> = {
+			ok: true,
+			data: inserted,
+		};
+		return Promise.resolve(response);
+	}
+
 	private getNextId(): number {
 		const currentHighestListId = this.memory.reduce<number>(
 			(highestListIdSoFar, nextDraft) => {
