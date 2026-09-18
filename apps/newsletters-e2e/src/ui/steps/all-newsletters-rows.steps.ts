@@ -170,7 +170,7 @@ Given(
 	async ({ request, namedNewsletters }, name: string) => {
 		const { identityName, listId } = await createFixtureNewsletter(request, {
 			name,
-			illustrationCircle: 'https://example.com/thumbnail.png',
+			illustrationSquare: 'https://example.com/thumbnail.png',
 		});
 		namedNewsletters.refsByName[name] = {
 			kind: 'launched',

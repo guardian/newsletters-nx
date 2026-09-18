@@ -61,7 +61,7 @@ const defaultNewsletterFields = (identityName: string, suffix: string) => ({
 });
 
 type FixtureDraftOverrides = Partial<
-	Pick<NewsletterData, 'name' | 'illustrationCircle'>
+	Pick<NewsletterData, 'name' | 'illustrationSquare'>
 > & {
 	theme?: Theme;
 	category?: NewsletterCategory;
@@ -104,7 +104,7 @@ export async function deleteFixtureDraft(
 type FixtureNewsletterOverrides = Partial<
 	Pick<
 		NewsletterData,
-		'identityName' | 'name' | 'status' | 'illustrationCircle'
+		'identityName' | 'name' | 'status' | 'illustrationSquare'
 	>
 > & {
 	theme?: Theme;

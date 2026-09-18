@@ -33,7 +33,7 @@ const launched = (
 		category: 'article-based',
 		theme: 'news',
 		status: 'live',
-		illustrationCircle: 'https://example.com/circle.png',
+		illustrationSquare: 'https://example.com/square.png',
 		meta: meta(),
 		...overrides,
 	}) as NewsletterDataWithMeta;
@@ -58,21 +58,40 @@ describe('launchedNewsletterToRow', () => {
 			theme: 'news',
 			category: 'article-based',
 			statusBadge: { label: 'Live', color: 'green' },
-			thumbnailUrl: 'https://example.com/circle.png',
+			thumbnailUrl: 'https://example.com/square.png',
 			lastUpdated: UPDATED,
 		});
 	});
 
 	it.each([
 		[
-			'prefers illustrationSquare',
-			{ illustrationSquare: 'https://example.com/square.png' },
+			'prefers illustrationSquare over circle and card',
+			{
+				illustrationCircle: 'https://example.com/circle.png',
+				illustrationCard: 'https://example.com/card.png',
+			},
 			'https://example.com/square.png',
 		],
-		['falls back to illustrationCircle', {}, 'https://example.com/circle.png'],
+		[
+			'falls back to illustrationCircle when square is absent',
+			{
+				illustrationSquare: undefined,
+				illustrationCircle: 'https://example.com/circle.png',
+			},
+			'https://example.com/circle.png',
+		],
+		[
+			'treats an empty illustrationSquare as absent',
+			{
+				illustrationSquare: '',
+				illustrationCircle: 'https://example.com/circle.png',
+			},
+			'https://example.com/circle.png',
+		],
 		[
 			'falls back to illustrationCard',
 			{
+				illustrationSquare: undefined,
 				illustrationCircle: undefined,
 				illustrationCard: 'https://example.com/card.png',
 			},
@@ -80,7 +99,7 @@ describe('launchedNewsletterToRow', () => {
 		],
 		[
 			'is undefined with no illustration',
-			{ illustrationCircle: undefined },
+			{ illustrationSquare: undefined },
 			undefined,
 		],
 	])('%s', (_, overrides, expected) => {
