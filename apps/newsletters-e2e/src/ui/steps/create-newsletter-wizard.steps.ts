@@ -244,3 +244,19 @@ When('the editor should not see a rendering options link', async ({ page }) => {
 		page.getByRole('link', { name: 'rendering options' }),
 	).toHaveCount(0);
 });
+Then(
+	'the ui will indicate the following fields are mandatory',
+	async ({ page }, table: DataTable) => {
+		const errorAlert = page
+			.getByRole('alert')
+			.filter({ hasText: 'Please try again' });
+		for (const row of table.hashes()) {
+			const field = page
+				.locator('div[data-invalid="true"]')
+				.filter({ hasText: row.name! });
+
+			await expect(field).toContainText('Must not be empty');
+			await expect(errorAlert).toContainText(row.id!);
+		}
+	},
+);

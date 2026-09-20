@@ -152,6 +152,17 @@ Scenario: Creating an fronts-based newsletter does not offer to set up rendering
 
 
 
+Scenario: The name and frequency fields are mandatory
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Name & frequency' step from the navigation
+	When the editor chooses to continue
+	Then the ui will indicate the following fields are mandatory
+	| name | id |
+	| Name the newsletter | name |
+	| Set the frequency | frequency |
+
+
+
 
 
 
