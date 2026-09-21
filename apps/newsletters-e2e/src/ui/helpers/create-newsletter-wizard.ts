@@ -296,11 +296,14 @@ export default class CreateDraftNewsletterWizard {
 			.filter({ hasText: step });
 	}
 
-	public async getAllNavigationStepButtons() {
+	public locateNavigationStepButtons() {
 		return this.page
 			.getByRole('navigation', { name: 'Newsletter creation steps' })
-			.getByRole('button')
-			.all();
+			.getByRole('button');
+	}
+
+	public getAllNavigationStepButtons() {
+		return this.locateNavigationStepButtons().all();
 	}
 
 	public async fillAllFields(

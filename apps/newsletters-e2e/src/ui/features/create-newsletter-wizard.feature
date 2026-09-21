@@ -214,6 +214,14 @@ Scenario: The sign up page's headline, description and embed description are man
 	| Embed description | signUpEmbedDescription | Must not be empty |
 
 
+Scenario: Optional steps are marked optional in the navigation
+	Given the editor is creating a new newsletter
+	Then only the following navigation links are marked as optional
+	| step |
+	| Tag Setting |
+
+
+
 
 
 

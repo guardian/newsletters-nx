@@ -317,3 +317,28 @@ Then(
 		);
 	},
 );
+
+Then(
+	'only the following navigation links are marked as optional',
+	async ({ createDraftNewsletterWizard }, table: DataTable) => {
+		for (const row of table.hashes()) {
+			const navButton = createDraftNewsletterWizard.getNavigationStepButton(
+				row.step!,
+			);
+
+			await expect(navButton).toContainText('Optional');
+		}
+
+		const totalNavButtons = await createDraftNewsletterWizard
+			.locateNavigationStepButtons()
+			.count();
+		const totalOptionalSteps = table.hashes().length;
+		const requiredStepButtons = createDraftNewsletterWizard
+			.locateNavigationStepButtons()
+			.filter({ hasNotText: 'Optional' });
+
+		await expect(requiredStepButtons).toHaveCount(
+			totalNavButtons - totalOptionalSteps,
+		);
+	},
+);
