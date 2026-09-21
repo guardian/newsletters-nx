@@ -342,3 +342,24 @@ Then(
 		);
 	},
 );
+
+Then(
+	'the following navigation links are marked as incomplete',
+	async ({ createDraftNewsletterWizard }, table: DataTable) => {
+		for (const row of table.hashes()) {
+			const navButton = createDraftNewsletterWizard.getNavigationStepButton(
+				row.step!,
+			);
+
+			await expect(navButton).toContainText('Incomplete');
+		}
+	},
+);
+
+Then(
+	'the {string} step will be marked complete',
+	async ({ createDraftNewsletterWizard }, step: string) => {
+		const navButton = createDraftNewsletterWizard.getNavigationStepButton(step);
+		await expect(navButton).toContainText('Complete');
+	},
+);

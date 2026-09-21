@@ -57,7 +57,7 @@ Scenario: An editor can complete the 'Name & frequency' step
 	When the editor fills out the name and frequency fields
 	And the editor chooses to continue
 	Then the editor will see the 'Production Details' step
-
+	And the 'Name & frequency' step will be marked complete
 
 Scenario: An editor can complete the 'Production Details' step
 	Given the editor is creating a new newsletter
@@ -65,6 +65,8 @@ Scenario: An editor can complete the 'Production Details' step
 	When the editor fills out the newsletter type and location fields
 	And the editor chooses to continue
 	Then the editor will see the 'Launch/Promotion Dates' step
+	And the 'Production details' step will be marked complete
+
 
 Scenario: An editor can complete the 'Launch/Promotion Dates' step
 	Given the editor is creating a new newsletter
@@ -72,6 +74,7 @@ Scenario: An editor can complete the 'Launch/Promotion Dates' step
 	When the editor sets the launch and sign up dates
 	And the editor chooses to continue
 	Then the editor will see the 'Targeting' step
+	And the 'Launch/Promotion Dates' step will be marked complete
 
 Scenario: An editor can complete the 'Targeting' step
 	Given the editor is creating a new newsletter
@@ -79,7 +82,7 @@ Scenario: An editor can complete the 'Targeting' step
 	When the editor sets the region focus, pillar and MMA group
 	And the editor chooses to continue
 	Then the editor will see the 'Tag Setting' step
-
+	And the 'Targeting' step will be marked complete
 
 Scenario: An editor can complete the 'Tag Setting' step
 	Given the editor is creating a new newsletter
@@ -87,6 +90,7 @@ Scenario: An editor can complete the 'Tag Setting' step
 	When the editor sets the series tag & description, campaign tag & description fields
 	And the editor chooses to continue
 	Then the editor will see the 'Promotion copy and images' step
+	And the 'Tag Setting' step will be marked complete
 
 Scenario: An editor can complete the 'Promotion copy and images' step
 	Given the editor is creating a new newsletter
@@ -94,6 +98,7 @@ Scenario: An editor can complete the 'Promotion copy and images' step
 	When the editor sets the headline, description, embed description, success message, highlight card message and image url fields
 	And the editor chooses to continue
 	Then the editor will see the 'Review' step
+	And the 'Promotion copy and images' step will be marked complete
 
 Scenario: An editor can complete the 'Review' step
 	Given the editor is creating a new newsletter
@@ -116,8 +121,6 @@ Scenario Outline: The 'review' step has links to all preview steps
 	| Targeting |
 	| Tag Setting |
 	| Promotion copy and images |
-
-
 
 Scenario: The 'finish' step shows a link to edit the details of the newsletter
 	Given the editor is creating a new newsletter
@@ -213,7 +216,6 @@ Scenario: The sign up page's headline, description and embed description are man
 	| Description | signUpDescription | Must not be empty |
 	| Embed description | signUpEmbedDescription | Must not be empty |
 
-
 Scenario: Optional steps are marked optional in the navigation
 	Given the editor is creating a new newsletter
 	Then only the following navigation links are marked as optional
@@ -221,6 +223,15 @@ Scenario: Optional steps are marked optional in the navigation
 	| Tag Setting |
 
 
+Scenario: Non optional steps are initially marked incomplete
+	Given the editor is creating a new newsletter
+	Then the following navigation links are marked as incomplete
+	| step |
+	| Name & frequency |
+	| Production Details |
+	| Launch/Promotion Dates |
+	| Targeting |
+	| Promotion copy and images |
 
 
 
