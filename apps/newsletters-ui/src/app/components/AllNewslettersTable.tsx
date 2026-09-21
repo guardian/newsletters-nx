@@ -30,8 +30,9 @@ import { NewsletterThumbnail } from './NewsletterThumbnail';
 
 const tableColumns: ResponsiveTableValue<string> = {
 	sm: 'minmax(0, 1fr)',
-	// Fixed rather than `auto` widths: an `auto` track sizes to the widest
-	// cell, and "Ready to launch" would unbalance the status column.
+	// Fixed (not `auto`) widths: an `auto` track sizes to the widest cell in
+	// that column, and "Ready to launch" is much wider than the other status
+	// badges, which visually unbalances the column on every other row.
 	md: 'minmax(0, 1fr) 150px 190px',
 };
 
@@ -86,7 +87,8 @@ const bodyStyle = css`
 	border-bottom-right-radius: ${listBorderRadius};
 `;
 
-// `TableRow` doesn't show a pointer cursor for its `href` rows by default.
+// Every row navigates to a newsletter's detail page, but `TableRow` doesn't
+// show a pointer cursor for its `href` rows by default.
 const rowStyle = css`
 	cursor: pointer;
 `;
@@ -130,8 +132,8 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 
 	return (
 		<AriaRouterProvider
-			// `navigate` returns a promise in react-router 7; react-aria's
-			// RouterProvider expects void.
+			// `navigate` returns a promise in react-router 7, but react-aria's
+			// RouterProvider expects a void return; discard it explicitly.
 			navigate={(path) => void navigate(path)}
 			useHref={useHrefFromRouter}
 		>

@@ -101,21 +101,22 @@ const sourceLabels: Record<string, string> = {
 };
 
 export const AllNewslettersView = () => {
-	// `useLoaderData` is typed as `any`, which `eslint --fix` strips a plain
-	// `as` cast from; the `<unknown>` type argument keeps the cast meaningful.
+	// `useLoaderData` is typed as `any`, which `eslint --fix` uses to strip a
+	// plain `as` cast; the `<unknown>` type argument keeps the cast meaningful.
 	const { rows, failedSources } =
 		useLoaderData<unknown>() as AllNewslettersData;
 
-	// Not worth route-level gating for a temporary, Stand-only page, so Legacy
-	// design editors get a message and a link to opt in.
+	// This view is part of the Stand design. It's not worth building real
+	// route-level gating for what's a temporary, Stand-only page, so Legacy
+	// design editors who land here just get a message and a link to opt in.
 	if (!isFeatureSwitchEnabled('switch-stand')) {
 		return (
 			<StandLayout.Main>
 				<div css={containerStyle}>
 					<Typography element="p" variant="bodyMd">
 						All Newsletters is only available with the Stand design enabled.{' '}
-						<a href="/all?switch-stand=true">Enable the Stand design</a> to view
-						it.
+						<a href="/all?switch-stand=true">Enable the Stand design</a> to
+						view it.
 					</Typography>
 				</div>
 			</StandLayout.Main>
