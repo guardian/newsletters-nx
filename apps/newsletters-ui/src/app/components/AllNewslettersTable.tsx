@@ -1,6 +1,8 @@
 import { css } from '@emotion/react';
 import {
 	semanticColors,
+	semanticRadius,
+	semanticSizing,
 	semanticSpacing,
 } from '@guardian/stand';
 import { Badge } from '@guardian/stand/Badge';
@@ -21,9 +23,6 @@ import type { NewsletterRow } from '../lib/all-newsletters-rows';
 import { formatPillarCategoryLabel } from '../lib/all-newsletters-rows';
 import { formatLastUpdated } from '../lib/format-last-updated';
 import {
-	stickyListBorderColorVar,
-	stickyListBorderRadiusVar,
-	stickyListBorderWidthVar,
 	stickyListHeaderOffsetVar,
 	stickyListLayerVar,
 } from '../lib/stand-layout';
@@ -36,7 +35,10 @@ const tableColumns: ResponsiveTableValue<string> = {
 	md: 'minmax(0, 1fr) 150px 190px',
 };
 
-const listBorder = `var(${stickyListBorderWidthVar}) solid var(${stickyListBorderColorVar})`;
+// Border and radius applied to the sticky header and body, keeping the
+// list's outline and rounded corners consistent between the two.
+const listBorder = `${semanticSizing.border.default} solid ${semanticColors.border.weak}`;
+const listBorderRadius = semanticRadius.cornerSm;
 
 // Stand `Table` currently sets `overflow: hidden`, which makes the table a
 // scroll container and breaks sticky headers. `overflow: clip` avoids creating
@@ -68,8 +70,8 @@ const stickyHeaderStyle = css`
 		border-top: ${listBorder};
 		border-left: ${listBorder};
 		border-right: ${listBorder};
-		border-top-left-radius: var(${stickyListBorderRadiusVar});
-		border-top-right-radius: var(${stickyListBorderRadiusVar});
+		border-top-left-radius: ${listBorderRadius};
+		border-top-right-radius: ${listBorderRadius};
 	}
 `;
 
@@ -80,8 +82,8 @@ const bodyStyle = css`
 	border-left: ${listBorder};
 	border-right: ${listBorder};
 	border-bottom: ${listBorder};
-	border-bottom-left-radius: var(${stickyListBorderRadiusVar});
-	border-bottom-right-radius: var(${stickyListBorderRadiusVar});
+	border-bottom-left-radius: ${listBorderRadius};
+	border-bottom-right-radius: ${listBorderRadius};
 `;
 
 // `TableRow` doesn't show a pointer cursor for its `href` rows by default.
