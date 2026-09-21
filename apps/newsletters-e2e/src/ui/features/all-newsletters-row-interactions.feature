@@ -6,7 +6,7 @@ Feature: All newsletters row interactions
   Background:
     Given an editor's workspace uses the Stand design
     And a newsletter "Politics Weekly" with pillar "News" and category "article-based"
-    When the editor opens the All Newsletters view
+    And the editor opens the All Newsletters view
 
   Scenario: Editor opens a row by clicking
     When the editor clicks the "Politics Weekly" row
