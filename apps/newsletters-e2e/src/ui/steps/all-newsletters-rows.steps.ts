@@ -278,7 +278,7 @@ Then(
 );
 
 Then(
-	'the {string} row shows its thumbnail',
+	'the {string} row shows its thumbnail image',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(
 			namedRow(page, namedNewsletters, name).locator('img'),
@@ -287,7 +287,7 @@ Then(
 );
 
 Then(
-	'the {string} row shows a fallback image',
+	'the {string} row shows a no-thumbnail placeholder',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(
 			namedRow(page, namedNewsletters, name).getByText('No image'),
