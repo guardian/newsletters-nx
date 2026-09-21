@@ -31,4 +31,16 @@ describe('deriveUpdatedTimestamp', () => {
 			deriveUpdatedTimestamp(meta(MIGRATION_TIMESTAMP_VALUE)),
 		).toBeUndefined();
 	});
+
+	it('returns undefined for NaN', () => {
+		expect(deriveUpdatedTimestamp(meta(NaN))).toBeUndefined();
+	});
+
+	it('returns undefined for Infinity', () => {
+		expect(deriveUpdatedTimestamp(meta(Infinity))).toBeUndefined();
+	});
+
+	it('returns undefined for a negative timestamp', () => {
+		expect(deriveUpdatedTimestamp(meta(-1))).toBeUndefined();
+	});
 });

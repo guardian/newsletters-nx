@@ -32,6 +32,12 @@ const stickyHeaderStyle = css`
 	z-index: 1;
 `;
 
+// Every row navigates to a newsletter's detail page, but `TableRow` doesn't
+// show a pointer cursor for its `href` rows by default.
+const rowStyle = css`
+	cursor: pointer;
+`;
+
 const statusCellStyle = css`
 	display: flex;
 	justify-content: flex-start;
@@ -93,7 +99,12 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 							row.category,
 						);
 						return (
-							<TableRow key={row.id} id={row.id} href={row.href}>
+							<TableRow
+								key={row.id}
+								id={row.id}
+								href={row.href}
+								cssOverrides={rowStyle}
+							>
 								<TableCell
 									gridColumn={{ sm: '1', md: '1' }}
 									gridRow={{ sm: '1', md: 'auto' }}
