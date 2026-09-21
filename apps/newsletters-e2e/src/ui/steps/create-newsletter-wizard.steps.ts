@@ -1,3 +1,4 @@
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import type { NewsletterFormData } from '../helpers/create-newsletter-wizard';
@@ -208,7 +209,7 @@ Then(
 
 Given(
 	'all form fields will be filled in',
-	async ({ createDraftNewsletterWizard }, table: DataTable) => {
+	({ createDraftNewsletterWizard }, table: DataTable) => {
 		const overrides = Object.fromEntries(
 			table.hashes().map(({ field, value }) => [field, value]),
 		) as Partial<NewsletterFormData>;
@@ -244,19 +245,75 @@ When('the editor should not see a rendering options link', async ({ page }) => {
 		page.getByRole('link', { name: 'rendering options' }),
 	).toHaveCount(0);
 });
+
 Then(
 	'the ui will indicate the following fields are mandatory',
-	async ({ page }, table: DataTable) => {
+	async ({ page, createDraftNewsletterWizard }, table: DataTable) => {
 		const errorAlert = page
 			.getByRole('alert')
 			.filter({ hasText: 'Please try again' });
 		for (const row of table.hashes()) {
-			const field = page
-				.locator('div[data-invalid="true"]')
-				.filter({ hasText: row.name! });
+			const field = createDraftNewsletterWizard.locateField(
+				row.id! as keyof NewsletterData,
+			);
 
-			await expect(field).toContainText('Must not be empty');
+			const invalidDiv = page.locator('div[data-invalid="true"]');
+			const wrapper = invalidDiv
+				.filter({ has: field })
+				.or(invalidDiv.and(field));
+
+			const errorMessage = wrapper.filter({
+				has: page.locator('[slot="errorMessage"]'),
+			});
+
+			await expect(errorMessage).toContainText(
+				row.message ?? 'Must not be empty',
+			);
 			await expect(errorAlert).toContainText(row.id!);
 		}
+	},
+);
+
+When(
+	'the editor fills out the series tag field',
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.setSeriesTag(
+			'example/example-newsletter',
+		);
+	},
+);
+
+When(
+	'the editor fills out the campaign tag field',
+	async ({ createDraftNewsletterWizard }) => {
+		await createDraftNewsletterWizard.setCampaignTag(
+			'Example (newsletter sign up)',
+		);
+	},
+);
+
+Then(
+	'the ui will indicate the series tag description is mandatory',
+	async ({ page }) => {
+		const errorAlert = page
+			.getByRole('alert')
+			.filter({ hasText: 'Please try again' });
+
+		await expect(errorAlert).toContainText(
+			'Series tag description is required if series tag specified',
+		);
+	},
+);
+
+Then(
+	'the ui will indicate the campagin tag description is mandatory',
+	async ({ page }) => {
+		const errorAlert = page
+			.getByRole('alert')
+			.filter({ hasText: 'Please try again' });
+
+		await expect(errorAlert).toContainText(
+			'Enter composer campaign tag if specifying composer tag',
+		);
 	},
 );

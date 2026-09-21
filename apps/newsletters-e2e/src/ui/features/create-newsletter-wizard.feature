@@ -157,9 +157,62 @@ Scenario: The name and frequency fields are mandatory
 	And the editor selects the 'Name & frequency' step from the navigation
 	When the editor chooses to continue
 	Then the ui will indicate the following fields are mandatory
-	| name | id |
-	| Name the newsletter | name |
-	| Set the frequency | frequency |
+	| name | id | message |
+	| Name the newsletter | name | Must not be empty |
+	| Set the frequency | frequency | Must not be empty |
+
+Scenario: The type and location fields are mandatory
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Production Details' step from the navigation
+	When the editor chooses to continue
+	Then the ui will indicate the following fields are mandatory
+	| name | id | message |
+	| Type of newsletter | category | Invalid option: expected one of |
+	| Location of newsletter | onlineArticle | Invalid option: expected one of  |
+
+Scenario: The launch date and sign-up date fields are mandatory
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Launch/Promotion Dates' step from the navigation
+	When the editor chooses to continue
+	Then the ui will indicate the following fields are mandatory
+	| name | id | message |
+	| Enter launch date | launchDate | Invalid input: expected date |
+	| Enter sign up page date | signUpPageDate | Invalid input: expected date |
+
+Scenario: The region focus, pillar and MMA page group fields are mandatory
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Targeting' step from the navigation
+	When the editor chooses to continue
+	Then the ui will indicate the following fields are mandatory
+	| name | id | message |
+	| Region focus | regionFocus | Invalid option: expected one of |
+	| Pillar | theme | Invalid option: expected one of |
+	| Group for MMA page | group | Invalid option: expected one of |
+
+Scenario: If a series tag is set, then the tag description is mandatory
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Tag Setting' step from the navigation
+	And the editor fills out the series tag field
+	When the editor chooses to continue
+	Then the ui will indicate the series tag description is mandatory
+
+Scenario: If a campaign tag is set, then the tag description is mandatory
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Tag Setting' step from the navigation
+	And the editor fills out the campaign tag field
+	When the editor chooses to continue
+	Then the ui will indicate the campagin tag description is mandatory
+
+Scenario: The sign up page's headline, description and embed description are mandatory
+	Given the editor is creating a new newsletter
+	And the editor selects the 'Promotion copy and images' step from the navigation
+	When the editor chooses to continue
+	Then the ui will indicate the following fields are mandatory
+	| name | id | message |
+	| Headline | signUpHeadline | Must not be empty |
+	| Description | signUpDescription | Must not be empty |
+	| Embed description | signUpEmbedDescription | Must not be empty |
+
 
 
 

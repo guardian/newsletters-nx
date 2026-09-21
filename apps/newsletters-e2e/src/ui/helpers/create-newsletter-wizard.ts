@@ -1,4 +1,7 @@
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import type { ApiResponse } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
@@ -89,127 +92,201 @@ export default class CreateDraftNewsletterWizard {
 		return data.data;
 	}
 
-	public async fillNameField(value: string) {
-		await this.page.getByLabel('Name the newsletter').fill(value);
-	}
-	public async setFrequencyField(selection: string) {
-		await this.page
-			.getByLabel('Set the frequency')
-			.getByText(selection)
-			.check();
-	}
-
-	public async setTypeField(selection: string) {
-		await this.page
-			.getByLabel('Type of newsletter')
-			.getByText(selection)
-			.check();
-	}
-
-	public async setLocationField(selection: string) {
-		await this.page
-			.getByLabel('Location of newsletter')
-			.getByText(selection)
-			.check();
-	}
-
 	private async fillDateSegment(group: Locator, name: string, value: string) {
 		await group.getByRole('spinbutton', { name }).click();
 		await this.page.keyboard.type(value);
 	}
 
+	public locateNameField() {
+		return this.page.getByRole('textbox', { name: 'Name the newsletter' });
+	}
+
+	public locateNameFieldErrorMessage() {
+		return this.page
+			.locator('div[data-invalid="true"]')
+			.filter({ has: this.locateNameField() })
+			.locator('[slot="errorMessage"]');
+	}
+
+	public async fillNameField(value: string) {
+		await this.locateNameField().fill(value);
+	}
+
+	public locateFrequencyField() {
+		return this.page.getByRole('radiogroup', { name: 'Set the frequency' });
+	}
+
+	public locateFrequencyFieldErrorMessage() {
+		return this.page
+			.locator('div[data-invalid="true"]')
+			.filter({ has: this.locateFrequencyField() })
+			.locator('[slot="errorMessage"]');
+	}
+
+	public async setFrequencyField(selection: string) {
+		await this.locateFrequencyField().getByText(selection).check();
+	}
+
+	public locateTypeField() {
+		return this.page.getByLabel('Type of newsletter');
+	}
+
+	public async setTypeField(selection: string) {
+		await this.locateTypeField().getByText(selection).check();
+	}
+
+	public locateLocationField() {
+		return this.page.getByLabel('Location of newsletter');
+	}
+
+	public async setLocationField(selection: string) {
+		await this.locateLocationField().getByText(selection).check();
+	}
+
+	public locateLaunchDateGroup() {
+		return this.page.getByRole('group', { name: 'Enter launch date' });
+	}
+
 	public async setLaunchDate(day: string, month: string, year: string) {
-		const group = this.page.getByRole('group', { name: 'Enter launch date' });
+		const group = this.locateLaunchDateGroup();
 		await this.fillDateSegment(group, 'day', day);
 		await this.fillDateSegment(group, 'month', month);
 		await this.fillDateSegment(group, 'year', year);
+	}
+
+	public locateSignUpDateGroup() {
+		return this.page.getByRole('group', { name: 'Enter sign up page date' });
 	}
 
 	public async setSignUpDate(day: string, month: string, year: string) {
-		const group = this.page.getByRole('group', {
-			name: 'Enter sign up page date',
-		});
+		const group = this.locateSignUpDateGroup();
 		await this.fillDateSegment(group, 'day', day);
 		await this.fillDateSegment(group, 'month', month);
 		await this.fillDateSegment(group, 'year', year);
 	}
 
-	public async setRegionFocus(selection: string) {
-		await this.page
-			.getByRole('radiogroup', { name: 'Region focus' })
-			.getByText(selection)
-			.check();
+	public locateRegionFocusField() {
+		return this.page.getByRole('radiogroup', { name: 'Region focus' });
 	}
 
-	private async selectOption(label: string, option: string) {
-		await this.page.getByLabel(label).click();
+	public async setRegionFocus(selection: string) {
+		await this.locateRegionFocusField().getByText(selection).check();
+	}
+
+	private async selectOption(field: Locator, option: string) {
+		await field.click();
 		await this.page
 			.getByRole('listbox')
 			.getByRole('option', { name: option })
 			.click();
 	}
 
+	public locatePillarField() {
+		return this.page.getByLabel('Pillar');
+	}
+
 	public async selectPillar(option: string) {
-		await this.selectOption('Pillar', option);
+		await this.selectOption(this.locatePillarField(), option);
+	}
+
+	public locateMmaGroupField() {
+		return this.page.getByLabel('Group for MMA page');
 	}
 
 	public async selectMmaGroup(option: string) {
-		await this.selectOption('Group for MMA page', option);
+		await this.selectOption(this.locateMmaGroupField(), option);
+	}
+
+	public locateSeriesTagField() {
+		return this.page.getByRole('textbox', {
+			name: 'Add the series tag',
+			exact: true,
+		});
 	}
 
 	public async setSeriesTag(value: string) {
-		await this.page
-			.getByRole('textbox', { name: 'Add the series tag', exact: true })
-			.fill(value);
+		await this.locateSeriesTagField().fill(value);
+	}
+
+	public locateSeriesTagDescriptionField() {
+		return this.page.getByRole('textbox', {
+			name: 'Add the Series tag description',
+			exact: true,
+		});
 	}
 
 	public async setSeriesTagDescription(value: string) {
-		await this.page
-			.getByRole('textbox', {
-				name: 'Add the Series tag description',
-				exact: true,
-			})
-			.fill(value);
+		await this.locateSeriesTagDescriptionField().fill(value);
+	}
+
+	public locateCampaignTagField() {
+		return this.page.getByRole('textbox', {
+			name: 'Campaign tag',
+			exact: true,
+		});
 	}
 
 	public async setCampaignTag(value: string) {
-		await this.page
-			.getByRole('textbox', { name: 'Campaign tag', exact: true })
-			.fill(value);
+		await this.locateCampaignTagField().fill(value);
+	}
+
+	public locateCampaignDescriptionField() {
+		return this.page.getByRole('textbox', {
+			name: 'Campaign description',
+			exact: true,
+		});
 	}
 
 	public async setCampaignDescription(value: string) {
-		await this.page
-			.getByRole('textbox', { name: 'Campaign description', exact: true })
-			.fill(value);
+		await this.locateCampaignDescriptionField().fill(value);
+	}
+
+	public locateHeadlineField() {
+		return this.page.getByLabel('Headline');
 	}
 
 	public async setHeadline(value: string) {
-		await this.page.getByLabel('Headline').fill(value);
+		await this.locateHeadlineField().fill(value);
+	}
+
+	public locateDescriptionField() {
+		return this.page.getByLabel('Description', { exact: true });
 	}
 
 	public async setDescription(value: string) {
-		await this.page.getByLabel('Description', { exact: true }).fill(value);
+		await this.locateDescriptionField().fill(value);
+	}
+
+	public locateEmbedDescriptionField() {
+		return this.page.getByLabel('Embed description');
 	}
 
 	public async setEmbedDescription(value: string) {
-		await this.page.getByLabel('Embed description').fill(value);
+		await this.locateEmbedDescriptionField().fill(value);
+	}
+
+	public locateSuccessMessageField() {
+		return this.page.getByLabel('Success message', { exact: true });
 	}
 
 	public async setSuccessMessage(value: string) {
-		await this.page.getByLabel('Success message', { exact: true }).fill(value);
+		await this.locateSuccessMessageField().fill(value);
+	}
+
+	public locateHighlightCardMessageField() {
+		return this.page.getByLabel('Highlight card message', { exact: true });
 	}
 
 	public async setHighlightCardMessage(value: string) {
-		await this.page
-			.getByLabel('Highlight card message', { exact: true })
-			.fill(value);
+		await this.locateHighlightCardMessageField().fill(value);
+	}
+
+	public locateImageUrlField(ratio: '5:4' | '1:1') {
+		return this.page.getByPlaceholder(`URL of the newsletter graphic ${ratio}`);
 	}
 
 	public async setImageUrl(ratio: '5:4' | '1:1', value: string) {
-		await this.page
-			.getByPlaceholder(`URL of the newsletter graphic ${ratio}`)
-			.fill(value);
+		await this.locateImageUrlField(ratio).fill(value);
 	}
 
 	public getNavigationStepButton(step: string) {
@@ -271,5 +348,28 @@ export default class CreateDraftNewsletterWizard {
 		await this.setImageUrl('5:4', data.imageUrl5x4);
 		await this.setImageUrl('1:1', data.imageUrl1x1);
 		await this.gotoNextStep();
+	}
+
+	public locateField(key: keyof NewsletterData) {
+		const mapping: Record<string, () => Locator> = {
+			name: () => this.locateNameField(),
+			frequency: () => this.locateFrequencyField(),
+			category: () => this.locateTypeField(),
+			onlineArticle: () => this.locateLocationField(),
+			regionFocus: () => this.locateRegionFocusField(),
+			theme: () => this.locatePillarField(),
+			group: () => this.locateMmaGroupField(),
+			signUpHeadline: () => this.locateHeadlineField(),
+			signUpDescription: () => this.locateDescriptionField(),
+			signUpEmbedDescription: () => this.locateEmbedDescriptionField(),
+			launchDate: () => this.locateLaunchDateGroup(),
+			signUpPageDate: () => this.locateSignUpDateGroup(),
+		};
+
+		if (!mapping[key]) {
+			throw new Error(`No locator set up for field ${key}`);
+		}
+
+		return mapping[key]();
 	}
 }
