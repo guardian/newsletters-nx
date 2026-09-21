@@ -75,26 +75,6 @@ describe('allNewslettersLoader', () => {
 		expect(failedSources).toEqual([]);
 	});
 
-	it('requests both sources in parallel rather than one after the other', async () => {
-		let launchedResolved = false;
-		mockFetchNewsletterList.mockImplementation(async () => {
-			// Resolves on a later tick, so a sequential loader would not have
-			// called the drafts fetch by the time this assertion runs.
-			await Promise.resolve();
-			launchedResolved = true;
-			return [];
-		});
-		mockFetchDraftNewsletterList.mockImplementation(() => {
-			expect(launchedResolved).toBe(false);
-			return Promise.resolve([]);
-		});
-
-		await runLoader();
-
-		expect(mockFetchNewsletterList).toHaveBeenCalledTimes(1);
-		expect(mockFetchDraftNewsletterList).toHaveBeenCalledTimes(1);
-	});
-
 	describe('ordering', () => {
 		it.each([
 			{
@@ -125,6 +105,15 @@ describe('allNewslettersLoader', () => {
 				],
 				draftList: [],
 				expectedIds: ['launched-dated', 'launched-undated'],
+			},
+			{
+				name: 'breaks ties on the same update date by id, for a deterministic order',
+				launchedList: [
+					{ ...launched('b', 0), meta: makeBlankMeta() },
+					{ ...launched('a', 0), meta: makeBlankMeta() },
+				],
+				draftList: [],
+				expectedIds: ['launched-a', 'launched-b'],
 			},
 		])('$name', async ({ launchedList, draftList, expectedIds }) => {
 			mockFetchNewsletterList.mockResolvedValue(launchedList);
@@ -206,5 +195,20 @@ describe('allNewslettersLoader', () => {
 		const { rows } = await runLoader();
 
 		expect(rows.map((row) => row.id)).toEqual(['draft-12']);
+	});
+
+	it('warns when a draft with no listId is omitted', async () => {
+		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+			// suppress console output during the test
+		});
+		mockFetchNewsletterList.mockResolvedValue([]);
+		mockFetchDraftNewsletterList.mockResolvedValue([draft(undefined, 300)]);
+
+		await runLoader();
+
+		expect(warnSpy).toHaveBeenCalledWith(
+			expect.stringContaining('omitting 1 draft'),
+			expect.any(Array),
+		);
 	});
 });

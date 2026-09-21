@@ -54,8 +54,11 @@ Then(
 	},
 );
 
-Then('the All Newsletters view is not available', async ({ page }) => {
+Then('the editor sees a message to enable the Stand design', async ({ page }) => {
 	await expect(allNewslettersTable(page)).toHaveCount(0);
+	await expect(
+		page.getByRole('link', { name: 'Enable the Stand design' }),
+	).toBeVisible();
 });
 
 Then(

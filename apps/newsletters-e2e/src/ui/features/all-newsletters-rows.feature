@@ -8,6 +8,9 @@ Feature: All newsletters list
 
   Rule: A row identifies its newsletter at a glance
 
+    # An unnamed draft falling back to "Untitled draft <id>" is covered by
+    # all-newsletters-rows.spec.ts, not repeated here as an e2e scenario.
+
     Scenario: A row shows the newsletter's identifying details
       Given a newsletter "Politics Weekly" with pillar "News" and category "article-based"
       When the editor opens the All Newsletters view
@@ -47,10 +50,20 @@ Feature: All newsletters list
       When the editor opens the All Newsletters view
       Then the "Half Done" row shows a draft progress badge
 
-    Scenario: A launched newsletter shows its launch status
-      Given a launched newsletter "Long Runner" with status "paused"
+    Scenario: Launched newsletters show their launch status
+      Given these launched newsletters exist:
+        | newsletter   | status    |
+        | Fresh Launch | live      |
+        | Queued Up    | pending   |
+        | Called Off   | cancelled |
+        | On Hold      | paused    |
       When the editor opens the All Newsletters view
-      Then the "Long Runner" row shows the status badge "Paused"
+      Then the rows show these status badges:
+        | newsletter   | label     |
+        | Fresh Launch | Live      |
+        | Queued Up    | Pending   |
+        | Called Off   | Cancelled |
+        | On Hold      | Paused    |
 
   Rule: The most recently updated newsletters come first
 
