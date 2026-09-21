@@ -1,3 +1,4 @@
+import { css as emotionCss } from '@emotion/react';
 import { AlertBanner } from '@guardian/stand/AlertBanner';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { Box, css } from '@mui/material';
@@ -6,6 +7,14 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
 import { StandMainNav } from './components/StandMainNav';
 import { isFeatureSwitchEnabled } from './featureSwitches';
+
+// All Newsletters scrolls its list inside the content area, so the shell is
+// pinned to the viewport; `StandLayout` only sets `min-height`, which would
+// let the main row stretch and hand scrolling back to the page.
+const standViewportHeightCss = emotionCss`
+	height: 100svh;
+	overflow: hidden;
+`;
 
 const frameCss = css`
 	display: flex;
@@ -76,7 +85,11 @@ export function Layout(props: IRootRoute) {
 
 	if (isUsingStand && usesStandShell) {
 		return (
-			<StandLayout>
+			<StandLayout
+				cssOverrides={
+					isAllNewslettersRoute ? standViewportHeightCss : undefined
+				}
+			>
 				{(isOnCode || isOnLocal) && (
 					<StandLayout.AlertBanner>
 						<StandAlertBanner isOnCode={isOnCode} />
