@@ -2,9 +2,9 @@ import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { Then, When } from './fixtures';
 
-// The row's accessible name includes its thumbnail alt text and sub-text as
-// well as its title, so matching on the newsletter name alone is enough to
-// find it uniquely.
+// The row's accessible name includes its pillar/category sub-text as well as
+// its title, so matching on the newsletter name alone is enough to find it
+// uniquely.
 const newsletterRow = (page: Page, name: string) =>
 	page.getByRole('row', { name });
 
@@ -15,14 +15,22 @@ When(
 	},
 );
 
+// The most Tab presses we'll make while looking for the target row, so a
+// keyboard-navigation regression fails the test instead of looping forever.
+const maxTabStops = 20;
+
 When(
 	'the editor moves keyboard focus to the {string} row',
 	async ({ page }, name: string) => {
-		// A keydown establishes react-aria's "keyboard" interaction modality so
-		// the subsequent programmatic focus shows a focus ring, matching how a
-		// real Tab press would behave.
-		await page.keyboard.press('Tab');
-		await newsletterRow(page, name).focus();
+		const row = newsletterRow(page, name);
+		for (let stops = 0; stops < maxTabStops; stops += 1) {
+			await page.keyboard.press('Tab');
+			if (await row.evaluate((el) => el === document.activeElement)) {
+				return;
+			}
+		}
+		// Fails with a clear message if the row was never reached by Tab.
+		await expect(row).toBeFocused();
 	},
 );
 

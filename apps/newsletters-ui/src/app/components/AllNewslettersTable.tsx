@@ -110,10 +110,7 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 									gridRow={{ sm: '1', md: 'auto' }}
 								>
 									<div css={newsletterCellStyle}>
-										<NewsletterThumbnail
-											src={row.thumbnailUrl}
-											name={row.name}
-										/>
+										<NewsletterThumbnail src={row.thumbnailUrl} />
 										<div css={detailsStyle}>
 											<Typography
 												element="span"

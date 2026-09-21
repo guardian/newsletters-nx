@@ -27,21 +27,17 @@ const fallbackStyle = css`
 
 export interface NewsletterThumbnailProps {
 	src?: string;
-	/** The newsletter's name, used to build meaningful alt text. */
-	name: string;
 }
 
-// A newsletter's thumbnail, or a fallback image when it has none. `role="img"`
-// plus `aria-label` gives the fallback the same accessible alt text as a real `<img alt>`.
-export const NewsletterThumbnail = ({ src, name }: NewsletterThumbnailProps) =>
+// A newsletter's thumbnail, or a fallback when it has none. Purely
+// decorative: the row's title text already identifies the newsletter, so
+// the image carries no alt text and the fallback isn't exposed to the
+// accessibility tree (its "No image" text is enough on its own).
+export const NewsletterThumbnail = ({ src }: NewsletterThumbnailProps) =>
 	src ? (
-		<img src={src} alt={`${name} thumbnail`} css={thumbnailStyle} />
+		<img src={src} alt="" css={thumbnailStyle} />
 	) : (
-		<div
-			css={fallbackStyle}
-			role="img"
-			aria-label={`No thumbnail available for ${name}`}
-		>
+		<div css={fallbackStyle} aria-hidden="true">
 			<Icon size="sm" symbol="image" />
 			<Typography element="span" variant="bodyXs">
 				No image

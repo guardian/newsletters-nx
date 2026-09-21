@@ -1,6 +1,7 @@
 Feature: All newsletters row interactions
   Each row in the All newsletters list is how an editor reaches that
-  newsletter's detail page, by mouse or keyboard.
+  newsletter's detail page, by clicking it or activating it with Enter
+  while it holds keyboard focus.
 
   Background:
     Given an editor's workspace uses the Stand design

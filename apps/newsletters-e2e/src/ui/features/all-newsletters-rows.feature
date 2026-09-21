@@ -91,12 +91,12 @@ Feature: All newsletters list
     Scenario: A newsletter with no thumbnail shows a fallback
       Given a newsletter "No Picture" with no thumbnail
       When the editor opens the All Newsletters view
-      Then the "No Picture" row shows a fallback image with meaningful alt text
+      Then the "No Picture" row shows a fallback image
 
-    Scenario: A newsletter with a thumbnail shows it with meaningful alt text
+    Scenario: A newsletter with a thumbnail shows it
       Given a launched newsletter "Picture Perfect" with a thumbnail
       When the editor opens the All Newsletters view
-      Then the "Picture Perfect" row shows its thumbnail with meaningful alt text
+      Then the "Picture Perfect" row shows its thumbnail
 
   Rule: A row stays legible on a mobile viewport
 

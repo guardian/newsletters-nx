@@ -278,23 +278,19 @@ Then(
 );
 
 Then(
-	'the {string} row shows its thumbnail with meaningful alt text',
+	'the {string} row shows its thumbnail',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(
-			namedRow(page, namedNewsletters, name).getByRole('img', {
-				name: `${name} thumbnail`,
-			}),
+			namedRow(page, namedNewsletters, name).locator('img'),
 		).toBeVisible();
 	},
 );
 
 Then(
-	'the {string} row shows a fallback image with meaningful alt text',
+	'the {string} row shows a fallback image',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(
-			namedRow(page, namedNewsletters, name).getByRole('img', {
-				name: `No thumbnail available for ${name}`,
-			}),
+			namedRow(page, namedNewsletters, name).getByText('No image'),
 		).toBeVisible();
 	},
 );
