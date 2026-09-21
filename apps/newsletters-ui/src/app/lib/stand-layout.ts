@@ -1,13 +1,10 @@
-/** Keeps the pinned count and list header above the rows scrolling beneath them. */
-export const layer = {
-	stickyContent: 1,
-} as const;
-
-/** Height of the "N newsletters" count and the gap below it. */
-export const countBlockHeight = '2.125rem';
-
 /**
- * Distance from the top of the scrolling area to the top of the list, so the
- * list header can pin below the count without either knowing the other's size.
+ * Shared sticky-list CSS custom properties.
+ * Keep this as an extraction seam while this behavior lives in app code.
  */
-export const listHeaderOffsetProperty = '--all-newsletters-list-header-offset';
+export const stickyListHeaderOffsetVar = '--sticky-list-header-offset';
+export const stickyListPinnedBlockHeightVar = '--sticky-list-pinned-block-height';
+export const stickyListLayerVar = '--sticky-list-layer';
+export const stickyListBorderColorVar = '--sticky-list-border-color';
+export const stickyListBorderRadiusVar = '--sticky-list-border-radius';
+export const stickyListBorderWidthVar = '--sticky-list-border-width';

@@ -1,5 +1,10 @@
 import { css } from '@emotion/react';
-import { semanticColors, semanticSpacing } from '@guardian/stand';
+import {
+	semanticColors,
+	semanticRadius,
+	semanticSizing,
+	semanticSpacing,
+} from '@guardian/stand';
 import { InlineMessage } from '@guardian/stand/InlineMessage';
 import { componentLayout, Layout as StandLayout } from '@guardian/stand/Layout';
 import { Typography } from '@guardian/stand/Typography';
@@ -7,16 +12,18 @@ import { from } from '@guardian/stand/utils';
 import { useLoaderData } from 'react-router-dom';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import {
-	countBlockHeight,
-	layer,
-	listHeaderOffsetProperty,
+	stickyListBorderColorVar,
+	stickyListBorderRadiusVar,
+	stickyListBorderWidthVar,
+	stickyListHeaderOffsetVar,
+	stickyListLayerVar,
+	stickyListPinnedBlockHeightVar,
 } from '../../lib/stand-layout';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { AllNewslettersTable } from '../AllNewslettersTable';
 
-// `Layout.Main`'s own padding is turned off and reproduced below: left on
-// `Main`, the top padding would push the top of the scrolling area (and so
-// the scrollbar) down below the top bar.
+// `Layout.Main` padding is disabled and reapplied here so the scroll area can
+// start at the top edge of content, directly under the top bar.
 const mainPadding = componentLayout.main;
 
 const mainStyle = css`
@@ -34,51 +41,57 @@ const containerStyle = css`
 	box-sizing: border-box;
 `;
 
-// The whole content area scrolls, so the scrollbar runs its full height and a
-// scroll starting over the empty space either side of the list still moves
-// the rows.
+// This is the single scroll container for the page content. Keeping scroll
+// here preserves full-height scrollbar behavior and allows sticky children.
+//
+// These `--sticky-list-*` vars are a local token layer consumed by the table,
+// and are intended to move into Stand later with minimal app churn.
 const scrollAreaStyle = css`
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto;
 	padding-inline: ${semanticSpacing.stackMd};
+	${stickyListLayerVar}: 1;
+	${stickyListPinnedBlockHeightVar}: 2.125rem;
 
-	${listHeaderOffsetProperty}: calc(
-		${mainPadding.sm.padding.top} + ${countBlockHeight}
+	${stickyListHeaderOffsetVar}: calc(
+		${mainPadding.sm.padding.top} + var(${stickyListPinnedBlockHeightVar})
 	);
 
 	${from.md} {
-		${listHeaderOffsetProperty}: calc(
-			${mainPadding.md.padding.top} + ${countBlockHeight}
+		${stickyListHeaderOffsetVar}: calc(
+			${mainPadding.md.padding.top} + var(${stickyListPinnedBlockHeightVar})
 		);
 	}
 
 	${from.lg} {
-		${listHeaderOffsetProperty}: calc(
-			${mainPadding.lg.padding.top} + ${countBlockHeight}
+		${stickyListHeaderOffsetVar}: calc(
+			${mainPadding.lg.padding.top} + var(${stickyListPinnedBlockHeightVar})
 		);
 	}
 `;
 
-// Pinned so the count keeps its place while the rows scroll, and opaque so
-// rows don't show through as they pass beneath it.
+// Pinned meta block above the sticky table header; opaque to prevent row bleed.
 const countBlockStyle = css`
 	position: sticky;
 	top: 0;
-	z-index: ${layer.stickyContent};
+	z-index: var(${stickyListLayerVar});
 	background-color: ${semanticColors.bg.base};
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
 	box-sizing: border-box;
-	height: var(${listHeaderOffsetProperty});
+	height: var(${stickyListHeaderOffsetVar});
 	padding-bottom: ${semanticSpacing.stackMd};
 `;
 
-// Keeps the end of the list clear of the foot of the scrolling area. Sits on
-// the list block rather than the scroller so it counts as scrollable content.
+// Bottom breathing room at end-of-list; border tokens are defined here and
+// consumed by the table so radius/outline styling stays coordinated.
 const listBlockStyle = css`
 	padding-bottom: ${mainPadding.sm.padding.bottom};
+	${stickyListBorderColorVar}: ${semanticColors.border.weak};
+	${stickyListBorderRadiusVar}: ${semanticRadius.cornerSm};
+	${stickyListBorderWidthVar}: ${semanticSizing.border.default};
 `;
 
 const countStyle = css`

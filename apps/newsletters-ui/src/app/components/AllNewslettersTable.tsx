@@ -1,8 +1,6 @@
 import { css } from '@emotion/react';
 import {
 	semanticColors,
-	semanticRadius,
-	semanticSizing,
 	semanticSpacing,
 } from '@guardian/stand';
 import { Badge } from '@guardian/stand/Badge';
@@ -22,7 +20,13 @@ import { useHref, useNavigate } from 'react-router-dom';
 import type { NewsletterRow } from '../lib/all-newsletters-rows';
 import { formatPillarCategoryLabel } from '../lib/all-newsletters-rows';
 import { formatLastUpdated } from '../lib/format-last-updated';
-import { layer, listHeaderOffsetProperty } from '../lib/stand-layout';
+import {
+	stickyListBorderColorVar,
+	stickyListBorderRadiusVar,
+	stickyListBorderWidthVar,
+	stickyListHeaderOffsetVar,
+	stickyListLayerVar,
+} from '../lib/stand-layout';
 import { NewsletterThumbnail } from './NewsletterThumbnail';
 
 const tableColumns: ResponsiveTableValue<string> = {
@@ -32,11 +36,11 @@ const tableColumns: ResponsiveTableValue<string> = {
 	md: 'minmax(0, 1fr) 150px 190px',
 };
 
-const listBorder = `${semanticSizing.border.default} solid ${semanticColors.border.weak}`;
+const listBorder = `var(${stickyListBorderWidthVar}) solid var(${stickyListBorderColorVar})`;
 
-// Stand's `Table` sets `overflow: hidden`, which makes the table its own
-// scroll container and stops the header sticking. `clip` creates no scroll
-// container. Remove once `@guardian/stand` ships it.
+// Stand `Table` currently sets `overflow: hidden`, which makes the table a
+// scroll container and breaks sticky headers. `overflow: clip` avoids creating
+// a scroll container. Remove once `@guardian/stand` changes its default.
 //
 // The table hands its border and corners to the pinned header and the body
 // below. Left on the table they'd scroll out of view, leaving the list open
@@ -48,16 +52,15 @@ const tableStyle = css`
 	border-radius: 0;
 `;
 
-// Pins below the count so the headings hold their place while the rows scroll
-// underneath, carrying the top of the list's outline with them.
+// Header pins below the count block while rows scroll beneath.
 //
 // `thead` is an opaque, square backdrop in the page colour, hiding the body's
 // side borders where they would otherwise run straight up past the rounded
 // corners; its row carries the outline itself.
 const stickyHeaderStyle = css`
 	position: sticky;
-	top: var(${listHeaderOffsetProperty});
-	z-index: ${layer.stickyContent};
+	top: var(${stickyListHeaderOffsetVar});
+	z-index: var(${stickyListLayerVar});
 	background-color: ${semanticColors.bg.base};
 
 	& > tr {
@@ -65,20 +68,20 @@ const stickyHeaderStyle = css`
 		border-top: ${listBorder};
 		border-left: ${listBorder};
 		border-right: ${listBorder};
-		border-top-left-radius: ${semanticRadius.cornerSm};
-		border-top-right-radius: ${semanticRadius.cornerSm};
+		border-top-left-radius: var(${stickyListBorderRadiusVar});
+		border-top-right-radius: var(${stickyListBorderRadiusVar});
 	}
 `;
 
-// The rest of the list's outline. `TableRow` drops its own bottom border on
-// the last row, so the foot of the list is drawn here.
+// Body carries the side/bottom outline. `TableRow` drops its own last bottom
+// border, so the list foot is drawn here.
 const bodyStyle = css`
 	overflow: clip;
 	border-left: ${listBorder};
 	border-right: ${listBorder};
 	border-bottom: ${listBorder};
-	border-bottom-left-radius: ${semanticRadius.cornerSm};
-	border-bottom-right-radius: ${semanticRadius.cornerSm};
+	border-bottom-left-radius: var(${stickyListBorderRadiusVar});
+	border-bottom-right-radius: var(${stickyListBorderRadiusVar});
 `;
 
 // `TableRow` doesn't show a pointer cursor for its `href` rows by default.
