@@ -1,13 +1,8 @@
 Feature: Create a newsletter in the redesigned wizard
-
-	As an editor
-	I want ot create a new newsletter by working through a guided series of steps
-	So that the newsletter is set-up correctly
+	New newsletters can be created via a series of guided steps in the 'stand' design system
 
 Background:
 	Given the redesign switch is turned on
-
-
 
 Rule: Editors can skip between certain steps of the wizard
 
