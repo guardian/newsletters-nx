@@ -1,5 +1,9 @@
 import { css } from '@emotion/react';
-import { semanticColors, semanticSpacing } from '@guardian/stand';
+import {
+	semanticColors,
+	semanticRadius,
+	semanticSpacing,
+} from '@guardian/stand';
 import { InlineMessage } from '@guardian/stand/InlineMessage';
 import { componentLayout, Layout as StandLayout } from '@guardian/stand/Layout';
 import { Typography } from '@guardian/stand/Typography';
@@ -89,10 +93,22 @@ const countStyle = css`
 	color: ${semanticColors.text.weak};
 `;
 
+// No Figma design exists yet for this error state (see #803), so this
+// borrows Stand's error tokens directly: a light red fill and red border give
+// it enough visual weight to read as a real notice, not just extra text
+// floating above the table.
 const errorsStyle = css`
 	display: flex;
 	flex-direction: column;
 	gap: ${semanticSpacing.stackXs};
+	margin-bottom: ${semanticSpacing.stackMd};
+`;
+
+const errorMessageStyle = css`
+	background-color: ${semanticColors.fill.errorWeaker};
+	border: 1px solid ${semanticColors.border.error};
+	border-radius: ${semanticRadius.cornerSm};
+	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 `;
 
 const sourceLabels: Record<string, string> = {
@@ -115,8 +131,8 @@ export const AllNewslettersView = () => {
 				<div css={containerStyle}>
 					<Typography element="p" variant="bodyMd">
 						All Newsletters is only available with the Stand design enabled.{' '}
-						<a href="/all?switch-stand=true">Enable the Stand design</a> to
-						view it.
+						<a href="/all?switch-stand=true">Enable the Stand design</a> to view
+						it.
 					</Typography>
 				</div>
 			</StandLayout.Main>
@@ -140,7 +156,11 @@ export const AllNewslettersView = () => {
 					{failedSources.length > 0 && (
 						<div css={errorsStyle}>
 							{failedSources.map((source) => (
-								<InlineMessage key={source} level="error">
+								<InlineMessage
+									key={source}
+									level="error"
+									cssOverrides={errorMessageStyle}
+								>
 									{`Could not load ${sourceLabels[source] ?? source}.`}
 								</InlineMessage>
 							))}
