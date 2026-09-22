@@ -108,10 +108,12 @@ Feature: All newsletters list
       And the "Mobile Check" row shows the label "News | Article based"
       And the "Mobile Check" row shows a last updated date
 
-    Scenario: A launched row keeps its status visible on a narrow screen
+    Scenario: A row keeps its status visible on a narrow screen, whether draft or launched
       Given the editor is using a mobile viewport
+      And a newsletter "Mobile Draft" with pillar "News" and category "other"
       And a launched newsletter "Mobile Status" with status "pending"
       When the editor opens the All Newsletters view
-      Then the rows show these status badges:
+      Then the "Mobile Draft" row shows a draft progress badge
+      And the rows show these status badges:
         | newsletter    | label   |
         | Mobile Status | Pending |
