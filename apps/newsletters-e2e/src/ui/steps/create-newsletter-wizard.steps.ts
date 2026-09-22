@@ -1,11 +1,11 @@
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { expect } from '@playwright/test';
-import type { DataTable } from 'playwright-bdd';
+import { createBdd, type DataTable } from 'playwright-bdd';
 import type { NewsletterFormData } from '../helpers/create-newsletter-wizard';
-import { Given, Then, When } from './fixtures';
+import { test } from './fixtures';
 
-Given('the redesign switch is turned on', async ({ page }) => {
-	await page.goto('/?switch-stand=true');
+const { Given, Then, When } = createBdd(test, {
+	tags: '@feature-create-newsletter-wizard',
 });
 
 Given('the editor is creating a new newsletter', async ({ page }) => {
