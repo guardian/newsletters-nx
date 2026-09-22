@@ -17,6 +17,7 @@ import {
 	TableRow,
 } from '@guardian/stand/Table';
 import { Typography } from '@guardian/stand/Typography';
+import { from, until } from '@guardian/stand/utils';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useNavigate } from 'react-router-dom';
 import type { NewsletterRow } from '../lib/all-newsletters-rows';
@@ -123,13 +124,13 @@ const subTextStyle = css`
 `;
 
 const lastUpdatedMobileStyle = css`
-	@media (min-width: 830px) {
+	${from.md} {
 		display: none;
 	}
 `;
 
 const hideOnMobileStyle = css`
-	@media (max-width: 829px) {
+	${until.md} {
 		display: none;
 	}
 `;
