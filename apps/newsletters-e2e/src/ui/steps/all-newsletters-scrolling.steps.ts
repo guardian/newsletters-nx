@@ -49,8 +49,15 @@ When('the editor scrolls down the All Newsletters list', async ({ page }) => {
 	headingsTopBeforeScroll = await headingsTop(page);
 
 	// A real editor scrolls with the mouse wheel over the list, not by
-	// jumping the scroll position programmatically.
-	await allNewslettersTable(page).hover();
+	// jumping the scroll position programmatically. The wheel is aimed at
+	// empty space to the right of the (centred, max-width) table rather
+	// than at the table itself, so a narrow table-only scroller would fail
+	// this scenario: the contract is that the whole content area scrolls,
+	// not just the table.
+	const viewportSize = page.viewportSize();
+	const width = viewportSize?.width ?? 1280;
+	const height = viewportSize?.height ?? 720;
+	await page.mouse.move(width - 10, height / 2);
 	await page.mouse.wheel(0, 2000);
 });
 
