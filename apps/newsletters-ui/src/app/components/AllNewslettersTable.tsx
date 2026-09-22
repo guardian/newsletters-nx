@@ -29,7 +29,7 @@ import {
 import { NewsletterThumbnail } from './NewsletterThumbnail';
 
 const tableColumns: ResponsiveTableValue<string> = {
-	sm: 'minmax(0, 1fr) auto auto',
+	sm: 'minmax(0, 1fr) auto',
 	// Fixed (not `auto`) widths: an `auto` track sizes to the widest cell in
 	// that column, and "Ready to launch" is much wider than the other status
 	// badges, which visually unbalances the column on every other row.
@@ -128,6 +128,12 @@ const lastUpdatedMobileStyle = css`
 	}
 `;
 
+const hideOnMobileStyle = css`
+	@media (max-width: 739px) {
+		display: none;
+	}
+`;
+
 export interface AllNewslettersTableProps {
 	rows: NewsletterRow[];
 }
@@ -151,11 +157,9 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 			>
 				<TableHeader cssOverrides={stickyHeaderStyle}>
 					<TableColumnHeader isRowHeader>Newsletters</TableColumnHeader>
-					<TableColumnHeader cssOverrides={css`
-						@media (max-width: 739px) {
-							display: none;
-						}
-					`}>Last updated</TableColumnHeader>
+					<TableColumnHeader cssOverrides={hideOnMobileStyle}>
+						Last updated
+					</TableColumnHeader>
 					<TableColumnHeader>Status</TableColumnHeader>
 				</TableHeader>
 				<TableBody cssOverrides={bodyStyle}>
@@ -164,6 +168,7 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 							row.theme,
 							row.category,
 						);
+						const lastUpdated = formatLastUpdated(row.lastUpdated);
 						return (
 							<TableRow
 								key={row.id}
@@ -199,7 +204,7 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 												variant="bodySm"
 												cssOverrides={[subTextStyle, lastUpdatedMobileStyle]}
 											>
-												{formatLastUpdated(row.lastUpdated)}
+												{lastUpdated}
 											</Typography>
 										</div>
 									</div>
@@ -208,13 +213,9 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 									gridColumn={{ sm: '1', md: '2' }}
 									gridRow={{ sm: '1', md: 'auto' }}
 									compactLabel="Last updated"
-									cssOverrides={css`
-										@media (max-width: 739px) {
-											display: none;
-										}
-									`}
+									cssOverrides={hideOnMobileStyle}
 								>
-									{formatLastUpdated(row.lastUpdated)}
+									{lastUpdated}
 								</TableCell>
 								<TableCell
 									gridColumn={{ sm: '2', md: '3' }}
