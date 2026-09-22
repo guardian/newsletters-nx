@@ -123,13 +123,13 @@ const subTextStyle = css`
 `;
 
 const lastUpdatedMobileStyle = css`
-	@media (min-width: 740px) {
+	@media (min-width: 830px) {
 		display: none;
 	}
 `;
 
 const hideOnMobileStyle = css`
-	@media (max-width: 739px) {
+	@media (max-width: 829px) {
 		display: none;
 	}
 `;
