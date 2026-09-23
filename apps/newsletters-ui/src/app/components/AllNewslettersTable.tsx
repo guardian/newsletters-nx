@@ -17,6 +17,7 @@ import {
 	TableRow,
 } from '@guardian/stand/Table';
 import { Typography } from '@guardian/stand/Typography';
+import { from, until } from '@guardian/stand/utils';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useNavigate } from 'react-router-dom';
 import type { NewsletterRow } from '../lib/all-newsletters-rows';
@@ -29,7 +30,7 @@ import {
 import { NewsletterThumbnail } from './NewsletterThumbnail';
 
 const tableColumns: ResponsiveTableValue<string> = {
-	sm: 'minmax(0, 1fr)',
+	sm: 'minmax(0, 1fr) auto',
 	// Fixed (not `auto`) widths: an `auto` track sizes to the widest cell in
 	// that column, and "Ready to launch" is much wider than the other status
 	// badges, which visually unbalances the column on every other row.
@@ -122,6 +123,18 @@ const subTextStyle = css`
 	color: ${semanticColors.text.weak};
 `;
 
+const lastUpdatedMobileStyle = css`
+	${from.md} {
+		display: none;
+	}
+`;
+
+const hideOnMobileStyle = css`
+	${until.md} {
+		display: none;
+	}
+`;
+
 export interface AllNewslettersTableProps {
 	rows: NewsletterRow[];
 }
@@ -140,12 +153,14 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 			<Table
 				aria-label="All newsletters"
 				columns={tableColumns}
-				headerVisibleFrom="md"
+				headerVisibleFrom="sm"
 				cssOverrides={tableStyle}
 			>
 				<TableHeader cssOverrides={stickyHeaderStyle}>
 					<TableColumnHeader isRowHeader>Newsletters</TableColumnHeader>
-					<TableColumnHeader>Last updated</TableColumnHeader>
+					<TableColumnHeader cssOverrides={hideOnMobileStyle}>
+						Last updated
+					</TableColumnHeader>
 					<TableColumnHeader>Status</TableColumnHeader>
 				</TableHeader>
 				<TableBody cssOverrides={bodyStyle}>
@@ -154,6 +169,7 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 							row.theme,
 							row.category,
 						);
+						const lastUpdated = formatLastUpdated(row.lastUpdated);
 						return (
 							<TableRow
 								key={row.id}
@@ -184,19 +200,27 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 													{pillarCategoryLabel}
 												</Typography>
 											)}
+											<Typography
+												element="span"
+												variant="bodySm"
+												cssOverrides={[subTextStyle, lastUpdatedMobileStyle]}
+											>
+												{lastUpdated}
+											</Typography>
 										</div>
 									</div>
 								</TableCell>
 								<TableCell
 									gridColumn={{ sm: '1', md: '2' }}
-									gridRow={{ sm: '2', md: 'auto' }}
+									gridRow={{ sm: '1', md: 'auto' }}
 									compactLabel="Last updated"
+									cssOverrides={hideOnMobileStyle}
 								>
-									{formatLastUpdated(row.lastUpdated)}
+									{lastUpdated}
 								</TableCell>
 								<TableCell
-									gridColumn={{ sm: '1', md: '3' }}
-									gridRow={{ sm: '3', md: 'auto' }}
+									gridColumn={{ sm: '2', md: '3' }}
+									gridRow={{ sm: '1', md: 'auto' }}
 									compactLabel="Status"
 									cssOverrides={statusCellStyle}
 								>
