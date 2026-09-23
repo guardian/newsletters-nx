@@ -210,7 +210,7 @@ Feature: Create a newsletter in the redesigned wizard
 			And the editor selects the 'Tag Setting' step from the navigation
 			And the editor fills out the campaign tag field
 			When the editor chooses to continue
-			Then the ui will indicate the campagin tag description is mandatory
+			Then the ui will indicate the campaign tag description is mandatory
 
 		Scenario: The sign up page's headline, description and embed description are mandatory
 			Given the editor is creating a new newsletter

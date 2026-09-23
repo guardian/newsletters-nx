@@ -202,7 +202,7 @@ Then(
 		expect(storedNewsletterData.name).toBeDefined();
 
 		await expect(page.getByText('This wizard will guide you')).toContainText(
-			storedNewsletterData.name!,
+			storedNewsletterData.name,
 		);
 	},
 );
@@ -253,9 +253,7 @@ Then(
 			.getByRole('alert')
 			.filter({ hasText: 'Please try again' });
 		for (const row of table.hashes()) {
-			const field = createDraftNewsletterWizard.locateField(
-				row.id! as keyof NewsletterData,
-			);
+			const field = createDraftNewsletterWizard.locateField(row.id!);
 
 			const invalidDiv = page.locator('div[data-invalid="true"]');
 			const wrapper = invalidDiv
@@ -306,7 +304,7 @@ Then(
 );
 
 Then(
-	'the ui will indicate the campagin tag description is mandatory',
+	'the ui will indicate the campaign tag description is mandatory',
 	async ({ page }) => {
 		const errorAlert = page
 			.getByRole('alert')
