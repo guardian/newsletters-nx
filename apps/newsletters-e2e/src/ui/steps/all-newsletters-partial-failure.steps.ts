@@ -68,3 +68,13 @@ Then(
 		).toBeVisible();
 	},
 );
+
+Then('the newsletters table has no rows', async ({ page }) => {
+	// The view has no dedicated "no results" state: when both sources fail
+	// the table itself just renders with a header and no body rows, with the
+	// two error messages above it carrying the explanation instead.
+	await expect(
+		page.getByRole('grid', { name: 'All newsletters' }),
+	).toBeVisible();
+	await expect(page.locator('tr[data-href]')).toHaveCount(0);
+});

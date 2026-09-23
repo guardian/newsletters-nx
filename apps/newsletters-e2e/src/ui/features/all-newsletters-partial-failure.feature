@@ -20,3 +20,11 @@ Feature: All newsletters list survives a partial data-source failure
     When the editor opens the All Newsletters view
     Then the "Fresh Launch" row shows the title "Fresh Launch"
     And a non-blocking error says draft newsletters failed to load
+
+  Scenario: Editor sees both errors and an empty list when both data sources fail to load
+    Given the launched newsletters source fails to load
+    And the draft newsletters source fails to load
+    When the editor opens the All Newsletters view
+    Then a non-blocking error says launched newsletters failed to load
+    And a non-blocking error says draft newsletters failed to load
+    And the newsletters table has no rows
