@@ -99,6 +99,7 @@
 		"jsdom": "22.1.0",
 		"mdast-util-directive": "3.1.0",
 		"prettier": "^3.8.2",
+		"prettier-plugin-gherkin": "^4.0.0",
 		"ts-jest": "^29.4.9",
 		"ts-node": "^10.9.2",
 		"tsconfig-paths": "^4.2.0",
