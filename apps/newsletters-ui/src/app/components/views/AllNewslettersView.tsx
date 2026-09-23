@@ -1,22 +1,88 @@
 import { css } from '@emotion/react';
 import { semanticColors, semanticSpacing } from '@guardian/stand';
 import { InlineMessage } from '@guardian/stand/InlineMessage';
-import { Layout as StandLayout } from '@guardian/stand/Layout';
+import { componentLayout, Layout as StandLayout } from '@guardian/stand/Layout';
 import { Typography } from '@guardian/stand/Typography';
+import { from } from '@guardian/stand/utils';
 import { useLoaderData } from 'react-router-dom';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
+import {
+	stickyListHeaderOffsetVar,
+	stickyListLayerVar,
+} from '../../lib/stand-layout';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { AllNewslettersTable } from '../AllNewslettersTable';
+
+// `Layout.Main` padding is disabled and reapplied here so the scroll area can
+// start at the top edge of content, directly under the top bar.
+const mainPadding = componentLayout.main;
+
+// Height of the pinned count block above the sticky table header, used to
+// derive the header offset and to size `countBlockStyle`.
+const pinnedBlockHeight = '2.125rem';
+
+const mainStyle = css`
+	display: flex;
+	flex-direction: column;
+	/* Lets the scrolling region shrink below the height of its rows, instead
+	 * of forcing the shell taller. */
+	min-height: 0;
+`;
 
 const containerStyle = css`
 	max-width: 996px;
 	margin-inline: auto;
+	width: 100%;
+	box-sizing: border-box;
 `;
 
-const headerStyle = css`
+// This is the single scroll container for the page content. Keeping scroll
+// here preserves full-height scrollbar behavior and allows sticky children.
+//
+// `--sticky-list-header-offset` and `--sticky-list-layer` are a local token
+// layer consumed by the table, and are intended to move into Stand later
+// with minimal app churn.
+const scrollAreaStyle = css`
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding-inline: ${semanticSpacing.stackMd};
+	${stickyListLayerVar}: 1;
+
+	${stickyListHeaderOffsetVar}: calc(
+		${mainPadding.sm.padding.top} + ${pinnedBlockHeight}
+	);
+
+	${from.md} {
+		${stickyListHeaderOffsetVar}: calc(
+			${mainPadding.md.padding.top} + ${pinnedBlockHeight}
+		);
+	}
+
+	${from.lg} {
+		${stickyListHeaderOffsetVar}: calc(
+			${mainPadding.lg.padding.top} + ${pinnedBlockHeight}
+		);
+	}
+`;
+
+// Pinned meta block above the sticky table header; opaque to prevent row bleed.
+const countBlockStyle = css`
+	position: sticky;
+	top: 0;
+	z-index: var(${stickyListLayerVar});
+	background-color: ${semanticColors.bg.base};
 	display: flex;
 	justify-content: flex-end;
+	align-items: flex-end;
+	box-sizing: border-box;
+	height: var(${stickyListHeaderOffsetVar});
 	padding-bottom: ${semanticSpacing.stackMd};
+`;
+
+// Bottom breathing room at end-of-list.
+const listBlockStyle = css`
+	padding-bottom: ${mainPadding.sm.padding.bottom};
 `;
 
 const countStyle = css`
@@ -58,25 +124,31 @@ export const AllNewslettersView = () => {
 	}
 
 	return (
-		<StandLayout.Main>
-			<div css={containerStyle}>
-				<div css={headerStyle}>
+		<StandLayout.Main
+			paddingTop={false}
+			paddingBottom={false}
+			cssOverrides={mainStyle}
+		>
+			<div css={scrollAreaStyle}>
+				<div css={[containerStyle, countBlockStyle]}>
 					<Typography element="p" variant="bodySm" cssOverrides={countStyle}>
 						{rows.length === 1 ? '1 newsletter' : `${rows.length} newsletters`}
 					</Typography>
 				</div>
 
-				{failedSources.length > 0 && (
-					<div css={errorsStyle}>
-						{failedSources.map((source) => (
-							<InlineMessage key={source} level="error">
-								{`Could not load ${sourceLabels[source] ?? source}.`}
-							</InlineMessage>
-						))}
-					</div>
-				)}
+				<div css={[containerStyle, listBlockStyle]}>
+					{failedSources.length > 0 && (
+						<div css={errorsStyle}>
+							{failedSources.map((source) => (
+								<InlineMessage key={source} level="error">
+									{`Could not load ${sourceLabels[source] ?? source}.`}
+								</InlineMessage>
+							))}
+						</div>
+					)}
 
-				<AllNewslettersTable rows={rows} />
+					<AllNewslettersTable rows={rows} />
+				</div>
 			</div>
 		</StandLayout.Main>
 	);

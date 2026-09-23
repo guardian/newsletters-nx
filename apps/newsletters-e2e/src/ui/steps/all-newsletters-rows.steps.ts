@@ -223,11 +223,11 @@ Then(
 	'the {string} row shows a last updated date',
 	async ({ page, namedNewsletters }, name: string) => {
 		// Matches the rendered date shape without pinning to one timezone.
-		await expect(
-			namedRow(page, namedNewsletters, name).getByText(
-				/[A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{4}/,
-			),
-		).toBeVisible();
+		// Assert on the row itself to avoid strict-mode collisions when both
+		// mobile/desktop date nodes exist in the DOM.
+		await expect(namedRow(page, namedNewsletters, name)).toContainText(
+			/[A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{4}/,
+		);
 	},
 );
 
