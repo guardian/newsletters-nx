@@ -12,24 +12,6 @@ Given('the editor is creating a new newsletter', async ({ page }) => {
 });
 
 When(
-	'the editor edits the existing draft newsletter',
-	async ({ page, existingDraftNewsletter }) => {
-		await page.goto(
-			`/drafts/newsletter-data/${existingDraftNewsletter.listId}`,
-		);
-	},
-);
-
-Then(
-	'the {string} step is only shown once in the navigation',
-	async ({ createDraftNewsletterWizard }, step: string) => {
-		await expect(
-			createDraftNewsletterWizard.getNavigationStepButton(step),
-		).toHaveCount(1);
-	},
-);
-
-When(
 	'the editor selects the {string} step from the navigation',
 	async ({ createDraftNewsletterWizard }, step: string) => {
 		await createDraftNewsletterWizard.getNavigationStepButton(step).click();

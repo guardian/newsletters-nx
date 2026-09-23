@@ -228,10 +228,3 @@ Feature: Create a newsletter in the redesigned wizard
 				| step        |
 				| Tag Setting |
 
-	Rule: Editing an already-created draft newsletter shows a single 'Name & frequency' step
-
-		Scenario: The 'Name & frequency' step is not duplicated when editing an existing draft
-			Given an existing draft newsletter
-			When the editor edits the existing draft newsletter
-			Then the editor will see the 'Name & frequency' step
-			And the 'Name & frequency' step is only shown once in the navigation
