@@ -1,10 +1,11 @@
 import type {
 	DraftNewsletterData,
 	NewsletterData,
-} from "@newsletters-nx/newsletters-data-client";
-import type { ApiResponse } from "@newsletters-nx/newsletters-data-client";
-import type { CurrentStepRouteResponse } from "@newsletters-nx/state-machine";
-import type { APIRequestContext, Locator, Page } from "@playwright/test";
+} from '@newsletters-nx/newsletters-data-client';
+import type { ApiResponse } from '@newsletters-nx/newsletters-data-client';
+import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
+import type { APIRequestContext, Locator, Page } from '@playwright/test';
+import day from 'dayjs';
 
 /**
  * Describes data types needed to fill in each of the 'create newsletter' wizard
@@ -33,27 +34,42 @@ export interface NewsletterFormData {
 	imageUrl1x1: string;
 }
 
+const inOneYear = (() => {
+	const now = new Date();
+	return day(now).add(1, 'year').toDate();
+})();
+
+const toFormDate = (
+	date: Date,
+): { day: string; month: string; year: string } => {
+	return {
+		day: date.getDate().toString(),
+		month: (date.getMonth() + 1).toString(),
+		year: date.getFullYear().toString(),
+	};
+};
+
 export const defaultNewsletterFormData: NewsletterFormData = {
-	name: "example",
-	frequency: "Monthly",
-	type: "article-based",
-	location: "Web for first send only",
-	launchDate: { day: "09", month: "12", year: "2027" },
-	signUpDate: { day: "18", month: "12", year: "2027" },
-	regionFocus: "UK",
-	pillar: "sport",
-	mmaGroup: "Opinion",
-	seriesTag: "example/series",
-	seriesTagDescription: "Example series tag description",
-	campaignTag: "Example (newsletter sign up)",
-	campaignDescription: "Example campaign tag description",
-	headline: "Example headline",
-	description: "Example description",
-	embedDescription: "Example embed description",
-	successMessage: "Example success message. Hurray!",
-	highlightCardMessage: "Example message for highlight card.",
-	imageUrl5x4: "https://www.example.com/",
-	imageUrl1x1: "https://www.example.com/",
+	name: 'example',
+	frequency: 'Monthly',
+	type: 'article-based',
+	location: 'Web for first send only',
+	launchDate: toFormDate(inOneYear),
+	signUpDate: toFormDate(inOneYear),
+	regionFocus: 'UK',
+	pillar: 'sport',
+	mmaGroup: 'Opinion',
+	seriesTag: 'example/series',
+	seriesTagDescription: 'Example series tag description',
+	campaignTag: 'Example (newsletter sign up)',
+	campaignDescription: 'Example campaign tag description',
+	headline: 'Example headline',
+	description: 'Example description',
+	embedDescription: 'Example embed description',
+	successMessage: 'Example success message. Hurray!',
+	highlightCardMessage: 'Example message for highlight card.',
+	imageUrl5x4: 'https://www.example.com/',
+	imageUrl1x1: 'https://www.example.com/',
 };
 
 /**
@@ -82,11 +98,11 @@ export default class CreateDraftNewsletterWizard {
 			const request = response.request();
 
 			return (
-				request.method() === "POST" &&
-				response.url().includes("/api/currentstep")
+				request.method() === 'POST' &&
+				response.url().includes('/api/currentstep')
 			);
 		});
-		await this.page.getByRole("button").filter({ hasText: "Continue" }).click();
+		await this.page.getByRole('button').filter({ hasText: 'Continue' }).click();
 		const response = await responsePromise;
 
 		// TODO: Improve typing here. Check with zod?
@@ -106,12 +122,11 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	private async fillDateSegment(group: Locator, name: string, value: string) {
-		await group.getByRole("spinbutton", { name }).click();
-		await this.page.keyboard.type(value);
+		await group.getByRole('spinbutton', { name }).fill(value);
 	}
 
 	public locateNameField() {
-		return this.page.getByRole("textbox", { name: "Name the newsletter" });
+		return this.page.getByRole('textbox', { name: 'Name the newsletter' });
 	}
 
 	public async fillNameField(value: string) {
@@ -119,7 +134,7 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateFrequencyField() {
-		return this.page.getByRole("radiogroup", { name: "Set the frequency" });
+		return this.page.getByRole('radiogroup', { name: 'Set the frequency' });
 	}
 
 	public async setFrequencyField(selection: string) {
@@ -127,7 +142,7 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateTypeField() {
-		return this.page.getByLabel("Type of newsletter");
+		return this.page.getByLabel('Type of newsletter');
 	}
 
 	public async setTypeField(selection: string) {
@@ -135,7 +150,7 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateLocationField() {
-		return this.page.getByLabel("Location of newsletter");
+		return this.page.getByLabel('Location of newsletter');
 	}
 
 	public async setLocationField(selection: string) {
@@ -143,29 +158,29 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateLaunchDateGroup() {
-		return this.page.getByRole("group", { name: "Enter launch date" });
+		return this.page.getByRole('group', { name: 'Enter launch date' });
 	}
 
 	public async setLaunchDate(day: string, month: string, year: string) {
 		const group = this.locateLaunchDateGroup();
-		await this.fillDateSegment(group, "day", day);
-		await this.fillDateSegment(group, "month", month);
-		await this.fillDateSegment(group, "year", year);
+		await this.fillDateSegment(group, 'day', day);
+		await this.fillDateSegment(group, 'month', month);
+		await this.fillDateSegment(group, 'year', year);
 	}
 
 	public locateSignUpDateGroup() {
-		return this.page.getByRole("group", { name: "Enter sign up page date" });
+		return this.page.getByRole('group', { name: 'Enter sign up page date' });
 	}
 
 	public async setSignUpDate(day: string, month: string, year: string) {
 		const group = this.locateSignUpDateGroup();
-		await this.fillDateSegment(group, "day", day);
-		await this.fillDateSegment(group, "month", month);
-		await this.fillDateSegment(group, "year", year);
+		await this.fillDateSegment(group, 'day', day);
+		await this.fillDateSegment(group, 'month', month);
+		await this.fillDateSegment(group, 'year', year);
 	}
 
 	public locateRegionFocusField() {
-		return this.page.getByRole("radiogroup", { name: "Region focus" });
+		return this.page.getByRole('radiogroup', { name: 'Region focus' });
 	}
 
 	public async setRegionFocus(selection: string) {
@@ -175,13 +190,13 @@ export default class CreateDraftNewsletterWizard {
 	private async selectOption(field: Locator, option: string) {
 		await field.click();
 		await this.page
-			.getByRole("listbox")
-			.getByRole("option", { name: option })
+			.getByRole('listbox')
+			.getByRole('option', { name: option })
 			.click();
 	}
 
 	public locatePillarField() {
-		return this.page.getByLabel("Pillar");
+		return this.page.getByLabel('Pillar');
 	}
 
 	public async selectPillar(option: string) {
@@ -189,7 +204,7 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateMmaGroupField() {
-		return this.page.getByLabel("Group for MMA page");
+		return this.page.getByLabel('Group for MMA page');
 	}
 
 	public async selectMmaGroup(option: string) {
@@ -197,8 +212,8 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateSeriesTagField() {
-		return this.page.getByRole("textbox", {
-			name: "Add the series tag",
+		return this.page.getByRole('textbox', {
+			name: 'Add the series tag',
 			exact: true,
 		});
 	}
@@ -208,8 +223,8 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateSeriesTagDescriptionField() {
-		return this.page.getByRole("textbox", {
-			name: "Add the Series tag description",
+		return this.page.getByRole('textbox', {
+			name: 'Add the Series tag description',
 			exact: true,
 		});
 	}
@@ -219,8 +234,8 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateCampaignTagField() {
-		return this.page.getByRole("textbox", {
-			name: "Campaign tag",
+		return this.page.getByRole('textbox', {
+			name: 'Campaign tag',
 			exact: true,
 		});
 	}
@@ -230,8 +245,8 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateCampaignDescriptionField() {
-		return this.page.getByRole("textbox", {
-			name: "Campaign description",
+		return this.page.getByRole('textbox', {
+			name: 'Campaign description',
 			exact: true,
 		});
 	}
@@ -241,7 +256,7 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateHeadlineField() {
-		return this.page.getByLabel("Headline");
+		return this.page.getByLabel('Headline');
 	}
 
 	public async setHeadline(value: string) {
@@ -249,7 +264,7 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateDescriptionField() {
-		return this.page.getByLabel("Description", { exact: true });
+		return this.page.getByLabel('Description', { exact: true });
 	}
 
 	public async setDescription(value: string) {
@@ -257,7 +272,7 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateEmbedDescriptionField() {
-		return this.page.getByLabel("Embed description");
+		return this.page.getByLabel('Embed description');
 	}
 
 	public async setEmbedDescription(value: string) {
@@ -265,7 +280,7 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateSuccessMessageField() {
-		return this.page.getByLabel("Success message", { exact: true });
+		return this.page.getByLabel('Success message', { exact: true });
 	}
 
 	public async setSuccessMessage(value: string) {
@@ -273,32 +288,32 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public locateHighlightCardMessageField() {
-		return this.page.getByLabel("Highlight card message", { exact: true });
+		return this.page.getByLabel('Highlight card message', { exact: true });
 	}
 
 	public async setHighlightCardMessage(value: string) {
 		await this.locateHighlightCardMessageField().fill(value);
 	}
 
-	public locateImageUrlField(ratio: "5:4" | "1:1") {
+	public locateImageUrlField(ratio: '5:4' | '1:1') {
 		return this.page.getByPlaceholder(`URL of the newsletter graphic ${ratio}`);
 	}
 
-	public async setImageUrl(ratio: "5:4" | "1:1", value: string) {
+	public async setImageUrl(ratio: '5:4' | '1:1', value: string) {
 		await this.locateImageUrlField(ratio).fill(value);
 	}
 
 	public getNavigationStepButton(step: string) {
 		return this.page
-			.getByRole("navigation", { name: "Newsletter creation steps" })
-			.getByRole("button")
+			.getByRole('navigation', { name: 'Newsletter creation steps' })
+			.getByRole('button')
 			.filter({ hasText: step });
 	}
 
 	public locateNavigationStepButtons() {
 		return this.page
-			.getByRole("navigation", { name: "Newsletter creation steps" })
-			.getByRole("button");
+			.getByRole('navigation', { name: 'Newsletter creation steps' })
+			.getByRole('button');
 	}
 
 	public getAllNavigationStepButtons() {
@@ -347,8 +362,8 @@ export default class CreateDraftNewsletterWizard {
 		await this.setEmbedDescription(data.embedDescription);
 		await this.setSuccessMessage(data.successMessage);
 		await this.setHighlightCardMessage(data.highlightCardMessage);
-		await this.setImageUrl("5:4", data.imageUrl5x4);
-		await this.setImageUrl("1:1", data.imageUrl1x1);
+		await this.setImageUrl('5:4', data.imageUrl5x4);
+		await this.setImageUrl('1:1', data.imageUrl1x1);
 		await this.gotoNextStep();
 	}
 
