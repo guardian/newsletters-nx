@@ -21,11 +21,11 @@ When(
 );
 
 Then(
-	'the editor will not see a {string} step in the navigation',
+	'the {string} step is only shown once in the navigation',
 	async ({ createDraftNewsletterWizard }, step: string) => {
 		await expect(
 			createDraftNewsletterWizard.getNavigationStepButton(step),
-		).toHaveCount(0);
+		).toHaveCount(1);
 	},
 );
 

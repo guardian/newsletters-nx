@@ -121,7 +121,14 @@ export interface BaseWizardStepLayout<
 > {
 	indicateStepsCompleteOnThisWizard?: boolean;
 	label?: string;
-	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT';
+	/**
+	 * `'START'` marks a step as the entry point for *both* the create and
+	 * edit tracks (used when one step serves both journeys, e.g. by
+	 * pre-filling from storage when editing and starting blank when
+	 * creating). Prefer this over separate `CREATE_START`/`EDIT_START`
+	 * steps when the two journeys share an identical step.
+	 */
+	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT' | 'START';
 	parentStepId?: string;
 	staticMarkdown: string;
 	dynamicMarkdown?: {
