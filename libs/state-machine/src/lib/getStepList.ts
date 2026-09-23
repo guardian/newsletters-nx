@@ -9,6 +9,7 @@ export type StepListing = {
 	parentStepId?: WizardStepLayout['parentStepId'];
 	canSkipTo?: boolean;
 	canSkipFrom?: boolean;
+	hiddenOnEditTrack?: WizardStepLayout['hiddenOnEditTrack'];
 	isIntro?: boolean;
 	skippingWillPersistLocalChanges?: boolean;
 	schema?: ZodObject<ZodRawShape>;
@@ -33,6 +34,7 @@ export const getStepperConfig = (wizard: WizardLayout): StepperConfig => {
 					parentStepId: step.parentStepId,
 					canSkipTo: !!step.canSkip,
 					canSkipFrom: !!(step.canSkip ?? step.executeSkip),
+					hiddenOnEditTrack: step.hiddenOnEditTrack,
 					isIntro: !!step.isIntro,
 					skippingWillPersistLocalChanges: step.skippingWillPersistLocalChanges,
 					schema: step.schema,

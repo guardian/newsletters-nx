@@ -103,6 +103,10 @@ export const StepNav = ({
 			return false;
 		}
 
+		if (step.hiddenOnEditTrack && onEditTrack) {
+			return false;
+		}
+
 		switch (step.role) {
 			case 'CREATE_START':
 				return !onEditTrack;
