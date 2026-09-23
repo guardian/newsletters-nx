@@ -1,4 +1,3 @@
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { expect } from '@playwright/test';
 import { createBdd, type DataTable } from 'playwright-bdd';
 import type { NewsletterFormData } from '../helpers/create-newsletter-wizard';
@@ -40,14 +39,14 @@ Then(
 When(
 	'the editor chooses to continue',
 	async ({ createDraftNewsletterWizard }) => {
-		await createDraftNewsletterWizard.gotoNextStep();
+		await createDraftNewsletterWizard.recordListIdAndGoToNextStep();
 	},
 );
 
 When(
 	'the editor chooses to save and continue',
 	async ({ createDraftNewsletterWizard }) => {
-		await createDraftNewsletterWizard.gotoNextStep();
+		await createDraftNewsletterWizard.recordListIdAndGoToNextStep();
 	},
 );
 
@@ -129,7 +128,7 @@ When(
 Given(
 	"the editor has completed up until the 'Review' step",
 	async ({ createDraftNewsletterWizard }) => {
-		await createDraftNewsletterWizard.gotoNextStep();
+		await createDraftNewsletterWizard.recordListIdAndGoToNextStep();
 		await createDraftNewsletterWizard.fillAllFields();
 	},
 );
@@ -137,11 +136,11 @@ Given(
 Given(
 	"the editor has completed up until the 'Finish' step",
 	async ({ createDraftNewsletterWizard }) => {
-		await createDraftNewsletterWizard.gotoNextStep();
+		await createDraftNewsletterWizard.recordListIdAndGoToNextStep();
 		await createDraftNewsletterWizard.fillAllFields();
 
 		// Go to Finish step
-		await createDraftNewsletterWizard.gotoNextStep();
+		await createDraftNewsletterWizard.recordListIdAndGoToNextStep();
 	},
 );
 

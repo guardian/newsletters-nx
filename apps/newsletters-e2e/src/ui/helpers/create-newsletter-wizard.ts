@@ -93,7 +93,7 @@ export default class CreateDraftNewsletterWizard {
 	 *
 	 * Records the listId of the new newsletter.
 	 */
-	public async gotoNextStep() {
+	public async recordListIdAndGoToNextStep() {
 		const responsePromise = this.page.waitForResponse((response) => {
 			const request = response.request();
 
@@ -102,12 +102,19 @@ export default class CreateDraftNewsletterWizard {
 				response.url().includes('/api/currentstep')
 			);
 		});
-		await this.page.getByRole('button').filter({ hasText: 'Continue' }).click();
+		await this.gotoNextStep();
 		const response = await responsePromise;
 
 		// TODO: Improve typing here. Check with zod?
 		const data = (await response.json()) as unknown as CurrentStepRouteResponse;
 		this.listId = data.formData?.listId as number;
+	}
+
+	/**
+	 * Go to the next step
+	 */
+	public async gotoNextStep() {
+		await this.page.getByRole('button').filter({ hasText: 'Continue' }).click();
 	}
 
 	public async getStoredNewsletterData() {
@@ -328,11 +335,11 @@ export default class CreateDraftNewsletterWizard {
 	) {
 		await this.fillNameField(data.name);
 		await this.setFrequencyField(data.frequency);
-		await this.gotoNextStep();
+		await this.recordListIdAndGoToNextStep();
 
 		await this.setTypeField(data.type);
 		await this.setLocationField(data.location);
-		await this.gotoNextStep();
+		await this.recordListIdAndGoToNextStep();
 
 		await this.setLaunchDate(
 			data.launchDate.day,
@@ -344,18 +351,18 @@ export default class CreateDraftNewsletterWizard {
 			data.signUpDate.month,
 			data.signUpDate.year,
 		);
-		await this.gotoNextStep();
+		await this.recordListIdAndGoToNextStep();
 
 		await this.setRegionFocus(data.regionFocus);
 		await this.selectPillar(data.pillar);
 		await this.selectMmaGroup(data.mmaGroup);
-		await this.gotoNextStep();
+		await this.recordListIdAndGoToNextStep();
 
 		await this.setSeriesTag(data.seriesTag);
 		await this.setSeriesTagDescription(data.seriesTagDescription);
 		await this.setCampaignTag(data.campaignTag);
 		await this.setCampaignDescription(data.campaignDescription);
-		await this.gotoNextStep();
+		await this.recordListIdAndGoToNextStep();
 
 		await this.setHeadline(data.headline);
 		await this.setDescription(data.description);
@@ -364,7 +371,7 @@ export default class CreateDraftNewsletterWizard {
 		await this.setHighlightCardMessage(data.highlightCardMessage);
 		await this.setImageUrl('5:4', data.imageUrl5x4);
 		await this.setImageUrl('1:1', data.imageUrl1x1);
-		await this.gotoNextStep();
+		await this.recordListIdAndGoToNextStep();
 	}
 
 	public locateField(key: keyof NewsletterData) {
