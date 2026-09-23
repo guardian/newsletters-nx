@@ -1,47 +1,55 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import { Then, When } from './fixtures';
+import type { DataTable } from 'playwright-bdd';
+import { Given, Then, When } from './fixtures';
 
 // The Stand main nav's links aren't wrapped in a <nav> landmark on
-// non-wizard routes (see workspace-layout.steps.ts), so its items can't be
-// scoped by role. Its labels are unique across the page, so read all links
-// and filter down to the known nav labels, preserving DOM order.
-const standMainNavLabels = [
-	'All newsletters',
-	'Launched newsletters',
-	'Draft newsletters',
-	'Email templates',
-	'Newsletter layouts',
-	'Create new newsletter',
-];
+// non-wizard routes (see workspace-layout.steps.ts), so links are located by
+// their accessible name across the whole page rather than scoped to a nav
+// landmark.
+const navLink = (page: Page, label: string) =>
+	page.getByRole('link', { name: label });
 
-const standMainNavLinkNames = async (page: Page) => {
-	// `allTextContents()` doesn't wait for the page to render, so wait for a
-	// stable nav link first (the Stand shell's nav renders after the initial
-	// route navigation completes).
-	await page.getByRole('link', { name: 'Draft newsletters' }).waitFor();
-	return (await page.getByRole('link').allTextContents()).filter((name) =>
-		standMainNavLabels.includes(name),
-	);
-};
+Given(
+	'an editor goes to the tool with the stand design switch on',
+	async ({ page }) => {
+		await page.goto('/drafts?switch-stand=true');
+	},
+);
 
 Then(
-	'the Stand main navigation lists All Newsletters before Launched newsletters',
-	async ({ page }) => {
-		const linkNames = await standMainNavLinkNames(page);
+	'they should see the following navigation',
+	async ({ page }, table: DataTable) => {
+		const rows = table.hashes();
+		const expectedLabels = rows.map((row) => row['label'] ?? '');
 
-		const allNewslettersIndex = linkNames.indexOf('All newsletters');
-		const launchedNewslettersIndex = linkNames.indexOf('Launched newsletters');
+		// The nav renders after the initial route navigation completes, so
+		// wait for its last expected link before reading link order below.
+		await navLink(
+			page,
+			expectedLabels[expectedLabels.length - 1] ?? '',
+		).waitFor();
 
-		expect(allNewslettersIndex).toBeGreaterThanOrEqual(0);
-		expect(launchedNewslettersIndex).toBeGreaterThanOrEqual(0);
-		expect(allNewslettersIndex).toBeLessThan(launchedNewslettersIndex);
+		const allLinkLabels = await page.getByRole('link').allTextContents();
+		const actualOrder = allLinkLabels.filter((label) =>
+			expectedLabels.includes(label),
+		);
+		expect(actualOrder).toEqual(expectedLabels);
+
+		for (const { label, path } of rows) {
+			await expect(navLink(page, label ?? '')).toHaveAttribute(
+				'href',
+				path ?? '',
+			);
+		}
 	},
 );
 
-When(
-	'the editor selects All Newsletters from the Stand main navigation',
-	async ({ page }) => {
-		await page.getByRole('link', { name: 'All newsletters' }).click();
-	},
-);
+When(/^they go to the (.+) page$/, async ({ page }, label: string) => {
+	await navLink(page, label).click();
+});
+
+Then(/^they should be on the (.+) page$/, async ({ page }, label: string) => {
+	const path = await navLink(page, label).getAttribute('href');
+	await expect(page).toHaveURL(new RegExp(`${path ?? ''}$`));
+});
