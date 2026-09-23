@@ -87,8 +87,7 @@ export const StandRedesignStepNav = ({
 				!step.parentStepId &&
 				step.role !== 'EARLY_EXIT' &&
 				(step.role !== 'CREATE_START' || !onEditTrack) &&
-				(step.role !== 'EDIT_START' || onEditTrack) &&
-				!(step.hiddenOnEditTrack && onEditTrack),
+				(step.role !== 'EDIT_START' || onEditTrack),
 		})),
 	};
 

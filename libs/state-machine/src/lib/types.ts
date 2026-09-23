@@ -161,18 +161,6 @@ export interface BaseWizardStepLayout<
 	};
 	isIntro?: boolean;
 	isReviewStep?: boolean;
-	/**
-	 * When `true`, this step is hidden from the step navigation whenever the
-	 * wizard is on the "edit" track (ie. editing an already-created draft).
-	 *
-	 * Used for steps such as the initial 'name and frequency' step, which is
-	 * only relevant when creating a brand new draft - a dedicated
-	 * `EDIT_START` step covers the same fields when editing an existing one.
-	 * This is separate from `role`, since giving such a step a `CREATE_START`
-	 * role would also affect `getNextStepId`/`getPreviousOrStartStepId`
-	 * traversal (only steps with no `role` are treated as "normal" steps).
-	 */
-	hiddenOnEditTrack?: boolean;
 }
 
 export type WizardLayout<

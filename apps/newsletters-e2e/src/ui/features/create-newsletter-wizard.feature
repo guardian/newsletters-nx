@@ -227,4 +227,3 @@ Feature: Create a newsletter in the redesigned wizard
 			Then only the following navigation links are marked as optional
 				| step        |
 				| Tag Setting |
-

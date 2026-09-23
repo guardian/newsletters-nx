@@ -25,5 +25,4 @@ The first step is to enter the name of your newsletter. For example,  **Down to 
 	schema: formSchemas.startDraftNewsletter,
 	canSkip: true,
 	skippingWillPersistLocalChanges: true,
-	hiddenOnEditTrack: true,
 };
