@@ -231,6 +231,9 @@ importers:
       prettier:
         specifier: ^3.8.2
         version: 3.8.2
+      prettier-plugin-gherkin:
+        specifier: ^4.0.0
+        version: 4.0.0
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.0(supports-color@8.1.1))(@jest/transform@30.3.0(supports-color@8.1.1))(@jest/types@30.3.0)(babel-jest@30.3.0(@babel/core@7.29.0(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.28.1)(jest-util@30.0.5)(jest@30.3.0(@types/node@20.19.39)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@20.19.39)(typescript@6.0.2)))(typescript@6.0.2)
@@ -4034,6 +4037,9 @@ packages:
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+
+  prettier-plugin-gherkin@4.0.0:
+    resolution: {integrity: sha512-EBDwV1Ou9rG+seoh7jcwZ6sXXyHwsbUks5TeSyrlrLaTdz+/qYvnHuwY8rk7mb6/+M1ZGuY4/SiVc68ybwvJOA==}
 
   prettier@3.8.2:
     resolution: {integrity: sha512-8c3mgTe0ASwWAJK+78dpviD+A8EqhndQPUBpNUIPt6+xWlIigCwfN01lWr9MAede4uqXGTEKeQWTvzb3vjia0Q==}
@@ -9673,6 +9679,12 @@ snapshots:
       source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
+
+  prettier-plugin-gherkin@4.0.0:
+    dependencies:
+      '@cucumber/gherkin': 39.1.0
+      '@cucumber/messages': 32.3.1
+      prettier: 3.8.2
 
   prettier@3.8.2: {}
 
