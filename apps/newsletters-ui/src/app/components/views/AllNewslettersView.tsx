@@ -93,10 +93,6 @@ const countStyle = css`
 	color: ${semanticColors.text.weak};
 `;
 
-// No Figma design exists yet for this error state (see #803), so this
-// borrows Stand's error tokens directly: a light red fill and red border give
-// it enough visual weight to read as a real notice, not just extra text
-// floating above the table.
 const errorsStyle = css`
 	display: flex;
 	flex-direction: column;
