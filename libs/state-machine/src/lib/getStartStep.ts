@@ -1,13 +1,5 @@
 import type { WizardLayout } from './types';
 
-/**
- * Finds the entry step for a wizard.
- *
- * A step with the exact role for the journey (`CREATE_START` or
- * `EDIT_START`) always takes precedence. If there isn't one, a step with
- * the shared `START` role is used. This keeps the result independent of
- * the order of keys in the layout.
- */
 export const getStartStepAndId = (
 	wizardLayout: WizardLayout,
 	isEdit = false,

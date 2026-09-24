@@ -4,14 +4,6 @@ import type { WizardStepLayout } from '@newsletters-nx/state-machine';
 import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { formSchemas } from './formSchemas';
 
-/**
- * The entry point step for both the "create a new draft" and "edit an
- * existing draft" journeys - both ask for the same name & frequency
- * fields, so a single step covers both. `getInitialFormData` pre-fills
- * the fields from storage when editing an existing draft, and returns
- * an empty object (leaving the fields blank) when there is no existing
- * draft to load.
- */
 export const nameAndFrequencyLayout: WizardStepLayout<
 	DraftService,
 	typeof formSchemas.nameAndFrequency.shape

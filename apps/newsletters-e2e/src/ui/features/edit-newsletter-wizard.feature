@@ -1,9 +1,5 @@
 @feature-edit-newsletter-wizard
 Feature: Edit an existing draft newsletter in the redesigned wizard
-	An already-created draft newsletter is edited using the same guided
-	steps used to create one. The first step, 'Name & frequency', is
-	shared between the create and edit journeys, and is pre-filled with
-	the draft's existing data when editing.
 
 	Background:
 		Given an editor's workspace uses the Stand design

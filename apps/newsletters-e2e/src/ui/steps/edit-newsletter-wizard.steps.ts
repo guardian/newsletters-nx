@@ -12,9 +12,6 @@ When(
 		await page.goto(
 			`/drafts/newsletter-data/${existingDraftNewsletter.listId}`,
 		);
-		// Pre-set the listId so `getStoredNewsletterData` can be used without
-		// first having to advance a step (which is how it's normally captured
-		// when creating a brand new draft).
 		createDraftNewsletterWizard.listId = existingDraftNewsletter.listId!;
 	},
 );
