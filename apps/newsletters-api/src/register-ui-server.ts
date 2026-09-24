@@ -5,6 +5,7 @@ import { static as serveStatic } from 'express';
 
 const routeMap = {
 	'/': ['', '/templates'],
+	'/all': [''],
 	'/launched': [
 		'',
 		'/:id',
