@@ -1,6 +1,7 @@
 import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import { getNextStepId } from '@newsletters-nx/state-machine';
 import type { WizardStepLayout } from '@newsletters-nx/state-machine';
+import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { formSchemas } from './formSchemas';
 
 export const nameAndFrequencyLayout: WizardStepLayout<
@@ -35,5 +36,7 @@ The frequency you specify will be shown on the sign up page, and on the all news
 		},
 	},
 	schema: formSchemas.nameAndFrequency,
+	role: 'START',
+	getInitialFormData: getDraftFromStorage,
 	canSkip: true,
 };

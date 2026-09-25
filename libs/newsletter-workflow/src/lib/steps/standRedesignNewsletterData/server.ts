@@ -8,7 +8,6 @@ import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
 import { cancelLayout } from './cancelLayout';
 import { dateLayout } from './dateLayout';
-import { editDraftNewsletterLayout } from './editDraftNewsletterLayout';
 import { finishLayout } from './finishLayout';
 import { createDraftIntro } from './introLayout';
 import { nameAndFrequencyLayout } from './nameAndFrequencyLayout';
@@ -52,17 +51,6 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			...nameAndFrequencyLayout.buttons,
 			next: {
 				...nameAndFrequencyLayout.buttons['next']!,
-				executeStep: executeModify,
-			},
-		},
-	},
-	editDraftNewsletter: {
-		...editDraftNewsletterLayout,
-		executeSkip,
-		buttons: {
-			...editDraftNewsletterLayout.buttons,
-			next: {
-				...editDraftNewsletterLayout.buttons['next']!,
 				executeStep: executeModify,
 			},
 		},

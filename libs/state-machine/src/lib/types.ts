@@ -121,7 +121,17 @@ export interface BaseWizardStepLayout<
 > {
 	indicateStepsCompleteOnThisWizard?: boolean;
 	label?: string;
-	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT';
+	/**
+	 * Identifies special routing steps within the wizard.
+	 * Because steps are stored in an unordered map, these markers determine
+	 * the entry and exit points depending on the current user flow.
+	 *
+	 * - `START`: The generic entry point. Used as a fallback if the track-specific start role is not found.
+	 * - `CREATE_START`: The entry point for creating a new item. Takes precedence over `START` on the creation track.
+	 * - `EDIT_START`: The entry point for editing an existing item. Takes precedence over `START` on the edit track.
+	 * - `EARLY_EXIT`: The step routed to when a user cancels or prematurely exits the wizard.
+	 */
+	role?: 'EDIT_START' | 'CREATE_START' | 'EARLY_EXIT' | 'START';
 	parentStepId?: string;
 	staticMarkdown: string;
 	dynamicMarkdown?: {
