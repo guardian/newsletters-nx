@@ -4,10 +4,12 @@ import {
 	deleteFixtureDraft,
 	deleteFixtureNewsletter,
 } from '../../../helpers/test-fixtures';
+import CreateDraftNewsletterWizard from '../helpers/create-newsletter-wizard';
 
 /** Scenario-scoped state for a draft newsletter created via the API. */
 interface ExistingDraftNewsletter {
 	listId?: number;
+	name?: string;
 }
 
 /**
@@ -33,6 +35,7 @@ interface NamedNewsletters {
 type Fixtures = {
 	existingDraftNewsletter: ExistingDraftNewsletter;
 	namedNewsletters: NamedNewsletters;
+	createDraftNewsletterWizard: CreateDraftNewsletterWizard;
 };
 
 export const test = base.extend<Fixtures>({
@@ -59,6 +62,10 @@ export const test = base.extend<Fixtures>({
 				}),
 			),
 		);
+	},
+	createDraftNewsletterWizard: async ({ page, request }, use) => {
+		const draft = new CreateDraftNewsletterWizard(page, request);
+		await use(draft);
 	},
 });
 
