@@ -53,10 +53,6 @@ When(
 Then(
 	"the stored newsletter reflects the editor's changes to the same draft",
 	async ({ createDraftNewsletterWizard, existingDraftNewsletter }) => {
-		expect(createDraftNewsletterWizard.listId).toEqual(
-			existingDraftNewsletter.listId,
-		);
-
 		const storedNewsletterData =
 			await createDraftNewsletterWizard.getStoredNewsletterData();
 

@@ -7,6 +7,7 @@ export const getStartStepAndId = (
 	const role = isEdit ? 'EDIT_START' : 'CREATE_START';
 	const entries = Object.entries(wizardLayout);
 
+	// Attempt to find the mode-specific start step first; fallback to the generic 'START' role if omitted.
 	const [id, step] = entries.find(([, step]) => step.role === role) ??
 		entries.find(([, step]) => step.role === 'START') ?? [
 			undefined,
