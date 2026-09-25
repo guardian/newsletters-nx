@@ -4,7 +4,12 @@
     "vscode" : {
       "extensions" : [
         "hverlin.mise-vscode",
-        "GitHub.copilot"
+        "GitHub.copilot",
+        "nrwl.angular-console",
+        "esbenp.prettier-vscode",
+        "firsttris.vscode-jest-runner",
+        "dbaeumer.vscode-eslint",
+        "alexkrechik.cucumberautocomplete"
       ]
     },
     "jetbrains" : {
@@ -16,6 +21,8 @@
     }
   },
   "forwardPorts" : [
+    3000,
+    4200
   ],
   "image" : "mcr.microsoft.com/devcontainers/base:ubuntu26.04",
   "remoteUser" : "vscode",
