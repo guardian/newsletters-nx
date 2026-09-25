@@ -20,24 +20,23 @@ modules:
   - github-copilot
 
 # Optional: Ports to forward
-# forwardPorts:
-#   - 8080  # same port on host and container
-#   - "8000:9000"  # hostPort:containerPort
+forwardPorts:
+  - 3000 # Newsletters Tool API
+  - 4200 # Newsletters Tool  UI
 
 # Optional: Mount directories from host to container
 # mounts:
 #   - "source=${localEnv:HOME}/.gu/example,target=/home/vscode/.gu/example,readonly,type=bind,consistency=cached"
 
 # Optional: IDE plugins - shared project plugins like language support
-# plugins:
-#  vscode: [
-# "nrwl.angular-console",
-# "esbenp.prettier-vscode",
-# "firsttris.vscode-jest-runner",
-# "dbaeumer.vscode-eslint",
-# "alexkrechik.cucumberautocomplete"
-# ]
-#   intellij: []
+plugins:
+  vscode:
+    - 'nrwl.angular-console'
+    - 'esbenp.prettier-vscode'
+    - 'firsttris.vscode-jest-runner'
+    - 'dbaeumer.vscode-eslint'
+    - 'alexkrechik.cucumberautocomplete'
+  intellij: []
 
 # Optional: Commands to run after container creation
 # Each command has a 'cmd' field and a 'workingDirectory' field

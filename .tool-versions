@@ -2,3 +2,4 @@ github:guardian/devenv 20260721-123412
 deno latest
 node 24
 npm 12
+pnpm 11.17.0
