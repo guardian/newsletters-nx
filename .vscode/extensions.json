@@ -4,6 +4,7 @@
 		"esbenp.prettier-vscode",
 		"firsttris.vscode-jest-runner",
 		"dbaeumer.vscode-eslint",
-		"alexkrechik.cucumberautocomplete"
+		"alexkrechik.cucumberautocomplete",
+		"ms-vscode-remote.remote-containers"
 	]
 }
