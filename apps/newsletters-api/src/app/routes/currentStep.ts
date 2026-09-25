@@ -55,6 +55,7 @@ const getAccessDeniedError = async (
 			break;
 
 		case 'NEWSLETTER_DATA':
+		case 'NEWSLETTER_DATA_STAND_REDESIGN':
 		case 'RENDERING_OPTIONS':
 			if (!permissions.editEverything) {
 				return {
