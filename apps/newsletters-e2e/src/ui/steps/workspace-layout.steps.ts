@@ -5,10 +5,12 @@ import { Given, Then, When } from './fixtures';
 Given(
 	'an existing draft newsletter',
 	async ({ request, existingDraftNewsletter }) => {
+		const name = `E2E test draft ${Date.now()}`;
 		existingDraftNewsletter.listId = await createDraftNewsletter(
 			request,
-			`Workspace Layout E2E ${Date.now()}`,
+			name,
 		);
+		existingDraftNewsletter.name = name;
 	},
 );
 

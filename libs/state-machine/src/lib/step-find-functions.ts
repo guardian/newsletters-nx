@@ -6,15 +6,20 @@ import type {
 } from './types';
 
 const isNormalStep = (step: WizardStepLayout) =>
-	step.parentStepId === undefined && step.role === undefined;
+	step.parentStepId === undefined &&
+	(step.role === undefined || step.role === 'START');
 
 const isNormalStepOrEditStart = (step: WizardStepLayout) =>
 	step.parentStepId === undefined &&
-	(step.role === undefined || step.role === 'EDIT_START');
+	(step.role === undefined ||
+		step.role === 'EDIT_START' ||
+		step.role === 'START');
 
 const isNormalStepOrCreateStart = (step: WizardStepLayout) =>
 	step.parentStepId === undefined &&
-	(step.role === undefined || step.role === 'CREATE_START');
+	(step.role === undefined ||
+		step.role === 'CREATE_START' ||
+		step.role === 'START');
 
 const getContext = (wizard: WizardLayout, step: WizardStepLayout) => {
 	const allIds: string[] = Object.keys(wizard);

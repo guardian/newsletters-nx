@@ -9,6 +9,7 @@ import CreateDraftNewsletterWizard from '../helpers/create-newsletter-wizard';
 /** Scenario-scoped state for a draft newsletter created via the API. */
 interface ExistingDraftNewsletter {
 	listId?: number;
+	name?: string;
 }
 
 /**
