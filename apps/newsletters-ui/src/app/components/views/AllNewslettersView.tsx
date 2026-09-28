@@ -16,6 +16,7 @@ import {
 } from '../../lib/stand-layout';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { AllNewslettersTable } from '../AllNewslettersTable';
+import { SearchAndFilterMenu } from '../SearchAndFilterMenu';
 
 // `Layout.Main` padding is disabled and reapplied here so the scroll area can
 // start at the top edge of content, directly under the top bar.
@@ -31,6 +32,9 @@ const mainStyle = css`
 	/* Lets the scrolling region shrink below the height of its rows, instead
 	 * of forcing the shell taller. */
 	min-height: 0;
+	${from.lg} {
+		flex-direction: row;
+	}
 `;
 
 const containerStyle = css`
@@ -141,7 +145,8 @@ export const AllNewslettersView = () => {
 			paddingBottom={false}
 			cssOverrides={mainStyle}
 		>
-			<div css={scrollAreaStyle}>
+			<SearchAndFilterMenu />
+			<section css={scrollAreaStyle}>
 				<div css={[containerStyle, countBlockStyle]}>
 					<Typography element="p" variant="bodySm" cssOverrides={countStyle}>
 						{rows.length === 1 ? '1 newsletter' : `${rows.length} newsletters`}
@@ -165,7 +170,7 @@ export const AllNewslettersView = () => {
 
 					<AllNewslettersTable rows={rows} />
 				</div>
-			</div>
+			</section>
 		</StandLayout.Main>
 	);
 };
