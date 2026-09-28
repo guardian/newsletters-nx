@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import {
+	baseSpacing,
 	semanticColors,
 	semanticRadius,
 	semanticSizing,
@@ -86,6 +87,11 @@ const bodyStyle = css`
 	border-bottom: ${listBorder};
 	border-bottom-left-radius: ${listBorderRadius};
 	border-bottom-right-radius: ${listBorderRadius};
+
+	&[data-empty] > tr,
+	&[data-empty] > tr > td {
+		display: block;
+	}
 `;
 
 // Every row navigates to a newsletter's detail page, but `TableRow` doesn't
@@ -135,6 +141,13 @@ const hideOnMobileStyle = css`
 	}
 `;
 
+const emptyStateStyle = css`
+	display: block;
+	text-align: center;
+	padding: ${baseSpacing['64Rem']} ${semanticSpacing.stackXxs};
+	color: ${semanticColors.text.weak};
+`;
+
 export interface AllNewslettersTableProps {
 	rows: NewsletterRow[];
 }
@@ -163,7 +176,18 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 					</TableColumnHeader>
 					<TableColumnHeader>Status</TableColumnHeader>
 				</TableHeader>
-				<TableBody cssOverrides={bodyStyle}>
+				<TableBody
+					cssOverrides={bodyStyle}
+					renderEmptyState={() => (
+						<Typography
+							element="span"
+							variant="bodyBoldMd"
+							cssOverrides={emptyStateStyle}
+						>
+							No results found
+						</Typography>
+					)}
+				>
 					{rows.map((row) => {
 						const pillarCategoryLabel = formatPillarCategoryLabel(
 							row.theme,
