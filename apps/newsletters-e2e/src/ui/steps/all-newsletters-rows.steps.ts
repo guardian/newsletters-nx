@@ -102,6 +102,17 @@ Given(
 );
 
 Given(
+	'newsletters exist:',
+	async ({ request, namedNewsletters }, table: DataTable) => {
+		for (const row of table.hashes()) {
+			const name = row['name'] ?? '';
+			const listId = await createFixtureDraft(request, { name });
+			namedNewsletters.refsByName[name] = { kind: 'draft', listId };
+		}
+	},
+);
+
+Given(
 	'these newsletters were updated in this order:',
 	async ({ request, namedNewsletters }, table: DataTable) => {
 		const rows = table.hashes();
@@ -145,17 +156,14 @@ Given(
 	async ({ request, namedNewsletters }, table: DataTable) => {
 		for (const row of table.hashes()) {
 			const name = row['newsletter'] ?? '';
-			const { identityName, listId } = await createFixtureNewsletter(
-				request,
-				{
-					name,
-					status: (row['status'] ?? '') as
-						| 'paused'
-						| 'cancelled'
-						| 'live'
-						| 'pending',
-				},
-			);
+			const { identityName, listId } = await createFixtureNewsletter(request, {
+				name,
+				status: (row['status'] ?? '') as
+					| 'paused'
+					| 'cancelled'
+					| 'live'
+					| 'pending',
+			});
 			namedNewsletters.refsByName[name] = {
 				kind: 'launched',
 				identityName,
@@ -294,6 +302,34 @@ Then(
 		).toBeVisible();
 	},
 );
+
+Then(
+	'only newsletters matching {string} are shown',
+	async ({ page, namedNewsletters }, term: string) => {
+		const pattern = new RegExp(
+			term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+			'i',
+		);
+		for (const name of Object.keys(namedNewsletters.refsByName)) {
+			const row = namedRow(page, namedNewsletters, name);
+			if (pattern.test(name)) {
+				await expect(row).toBeVisible();
+			} else {
+				await expect(row).toHaveCount(0);
+			}
+		}
+		// Other tests might have added extra rows to the table. CHeck that every visible row contains the search pattern
+		for (const row of await page.locator('tr[data-href]').all()) {
+			await expect(row).toContainText(pattern);
+		}
+	},
+);
+
+Then('all newsletters are shown', async ({ page, namedNewsletters }) => {
+	for (const name of Object.keys(namedNewsletters.refsByName)) {
+		await expect(namedRow(page, namedNewsletters, name)).toBeVisible();
+	}
+});
 
 // Rows render in document order matching the loader's sort output, so
 // checking order just means reading each named row's position in that list.

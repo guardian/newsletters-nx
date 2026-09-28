@@ -64,7 +64,15 @@ const getInputContainerStyles = (isOpen: boolean) => css`
 	}
 `;
 
-export const SearchAndFilterMenu = () => {
+interface SearchAndFilterMenuProps {
+	searchTerm: string;
+	onSearchChange: (value: string) => void;
+}
+
+export const SearchAndFilterMenu = ({
+	searchTerm,
+	onSearchChange,
+}: SearchAndFilterMenuProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -84,7 +92,11 @@ export const SearchAndFilterMenu = () => {
 				/>
 			</button>
 			<div css={getInputContainerStyles(isOpen)}>
-				<SearchInput label="search" />
+				<SearchInput
+					label="search"
+					value={searchTerm}
+					onChange={onSearchChange}
+				/>
 			</div>
 		</section>
 	);
