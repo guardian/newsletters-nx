@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
-import { Given, Then, When } from './fixtures';
+import { Then, When } from './fixtures';
 
 // The Stand main nav's links aren't wrapped in a <nav> landmark on
 // non-wizard routes (see workspace-layout.steps.ts), so links are located by
@@ -9,13 +9,6 @@ import { Given, Then, When } from './fixtures';
 // landmark.
 const navLink = (page: Page, label: string) =>
 	page.getByRole('link', { name: label });
-
-Given(
-	'an editor goes to the tool with the stand design switch on',
-	async ({ page }) => {
-		await page.goto('/drafts?switch-stand=true');
-	},
-);
 
 Then(
 	'they should see the following navigation',
@@ -30,10 +23,12 @@ Then(
 			expectedLabels[expectedLabels.length - 1] ?? '',
 		).waitFor();
 
-		const allLinkLabels = await page.getByRole('link').allTextContents();
-		const actualOrder = allLinkLabels.filter((label) =>
-			expectedLabels.includes(label),
-		);
+
+
+		const actualOrder = await page
+			.getByRole('navigation')
+			.getByRole('link')
+			.allTextContents();
 		expect(actualOrder).toEqual(expectedLabels);
 
 		for (const { label, path } of rows) {
