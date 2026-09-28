@@ -13,6 +13,11 @@ const sectionStyles = css`
 	flex-direction: column;
 	gap: ${semanticSpacing.stackMd};
 	border-bottom: 2px solid ${semanticColors.border.weak};
+	${from.lg} {
+		border: none;
+		border-right: 1px solid ${semanticColors.border.weak};
+		width: 280px;
+	}
 `;
 
 const headerButtonStyles = (isOpen: boolean) => css`
