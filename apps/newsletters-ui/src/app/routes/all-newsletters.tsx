@@ -10,7 +10,8 @@ import { allNewslettersLoader } from '../loaders/all-newsletters';
 const withoutSearchParam = (url: URL): string => {
 	const params = new URLSearchParams(url.search);
 	params.delete(allNewslettersSearchParam);
-	return `${url.pathname}?${params.toString()}`;
+	const query = params.toString();
+	return query ? `${url.pathname}?${query}` : url.pathname;
 };
 
 export const allNewslettersRoute: RouteObject = {
