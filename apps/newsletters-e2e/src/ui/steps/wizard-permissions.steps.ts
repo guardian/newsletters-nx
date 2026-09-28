@@ -14,8 +14,7 @@ Given(
 				status: 403,
 				contentType: 'application/json',
 				body: JSON.stringify({
-					errorMessage:
-						'You do not have permissions for the Newsletter tool. Please contact Central Production if you need permission.',
+					errorMessage: 'You do not have permissions to create or edit drafts.',
 					currentStepId: 'intro',
 					hasPersistentError: true,
 				}),
