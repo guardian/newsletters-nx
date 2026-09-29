@@ -24,6 +24,10 @@ Given("an editor's workspace uses the Stand design", async ({ page }) => {
 	await page.goto('/drafts?switch-stand=true');
 });
 
+Given('the editor is using the Stand workspace', async ({ page }) => {
+	await page.goto('/drafts?switch-stand=true');
+});
+
 When(
 	'the editor opens the newsletter creation step using the Stand design',
 	async ({ page }) => {

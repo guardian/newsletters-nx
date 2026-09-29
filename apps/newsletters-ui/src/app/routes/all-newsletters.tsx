@@ -1,8 +1,18 @@
 import type { RouteObject } from 'react-router-dom';
-import { AllNewslettersView } from '../components/views/AllNewslettersView';
+import {
+	allNewslettersSearchParam,
+	AllNewslettersView,
+} from '../components/views/AllNewslettersView';
 import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { allNewslettersLoader } from '../loaders/all-newsletters';
+
+const withoutSearchParam = (url: URL): string => {
+	const params = new URLSearchParams(url.search);
+	params.delete(allNewslettersSearchParam);
+	const query = params.toString();
+	return query ? `${url.pathname}?${query}` : url.pathname;
+};
 
 export const allNewslettersRoute: RouteObject = {
 	path: '/all',
@@ -13,6 +23,13 @@ export const allNewslettersRoute: RouteObject = {
 			path: '',
 			element: <AllNewslettersView />,
 			loader: allNewslettersLoader,
+			shouldRevalidate: ({ currentUrl, nextUrl, defaultShouldRevalidate }) => {
+				const onlySearchChanged =
+					currentUrl.searchParams.get(allNewslettersSearchParam) !==
+						nextUrl.searchParams.get(allNewslettersSearchParam) &&
+					withoutSearchParam(currentUrl) === withoutSearchParam(nextUrl);
+				return onlySearchChanged ? false : defaultShouldRevalidate;
+			},
 		},
 	],
 };

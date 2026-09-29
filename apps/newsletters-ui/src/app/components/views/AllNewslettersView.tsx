@@ -8,7 +8,7 @@ import { InlineMessage } from '@guardian/stand/InlineMessage';
 import { componentLayout, Layout as StandLayout } from '@guardian/stand/Layout';
 import { Typography } from '@guardian/stand/Typography';
 import { from } from '@guardian/stand/utils';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useSearchParams } from 'react-router-dom';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import {
 	stickyListHeaderOffsetVar,
@@ -16,6 +16,7 @@ import {
 } from '../../lib/stand-layout';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { AllNewslettersTable } from '../AllNewslettersTable';
+import { SearchAndFilterMenu } from '../SearchAndFilterMenu';
 
 // `Layout.Main` padding is disabled and reapplied here so the scroll area can
 // start at the top edge of content, directly under the top bar.
@@ -31,6 +32,9 @@ const mainStyle = css`
 	/* Lets the scrolling region shrink below the height of its rows, instead
 	 * of forcing the shell taller. */
 	min-height: 0;
+	${from.lg} {
+		flex-direction: row;
+	}
 `;
 
 const containerStyle = css`
@@ -112,11 +116,38 @@ const sourceLabels: Record<string, string> = {
 	draft: 'draft newsletters',
 };
 
+export const allNewslettersSearchParam = 'search';
+
 export const AllNewslettersView = () => {
 	// `useLoaderData` is typed as `any`, which `eslint --fix` uses to strip a
 	// plain `as` cast; the `<unknown>` type argument keeps the cast meaningful.
 	const { rows, failedSources } =
 		useLoaderData<unknown>() as AllNewslettersData;
+	const [searchParams, setSearchParams] = useSearchParams();
+	const searchTerm = searchParams.get(allNewslettersSearchParam) ?? '';
+
+	const setSearchTerm = (value: string) => {
+		setSearchParams(
+			(previous) => {
+				const next = new URLSearchParams(previous);
+				if (value) {
+					next.set(allNewslettersSearchParam, value);
+				} else {
+					next.delete(allNewslettersSearchParam);
+				}
+				return next;
+			},
+			// Replace so each keystroke doesn't add a history entry.
+			{ replace: true },
+		);
+	};
+
+	const normalisedSearchTerm = searchTerm.trim().toLowerCase();
+	const filteredRows = normalisedSearchTerm
+		? rows.filter((row) =>
+				row.name.toLowerCase().includes(normalisedSearchTerm),
+			)
+		: rows;
 
 	// This view is part of the Stand design. It's not worth building real
 	// route-level gating for what's a temporary, Stand-only page, so Legacy
@@ -141,10 +172,16 @@ export const AllNewslettersView = () => {
 			paddingBottom={false}
 			cssOverrides={mainStyle}
 		>
-			<div css={scrollAreaStyle}>
+			<SearchAndFilterMenu
+				searchTerm={searchTerm}
+				onSearchChange={setSearchTerm}
+			/>
+			<section css={scrollAreaStyle}>
 				<div css={[containerStyle, countBlockStyle]}>
 					<Typography element="p" variant="bodySm" cssOverrides={countStyle}>
-						{rows.length === 1 ? '1 newsletter' : `${rows.length} newsletters`}
+						{filteredRows.length === 1
+							? '1 newsletter'
+							: `${filteredRows.length} newsletters`}
 					</Typography>
 				</div>
 
@@ -163,9 +200,9 @@ export const AllNewslettersView = () => {
 						</div>
 					)}
 
-					<AllNewslettersTable rows={rows} />
+					<AllNewslettersTable rows={filteredRows} />
 				</div>
-			</div>
+			</section>
 		</StandLayout.Main>
 	);
 };
