@@ -62,6 +62,7 @@ export function StandMainNav() {
 	const { pathname } = useLocation();
 
 	const navLinks: NavLink[] = [
+		{ path: '/all', label: 'All newsletters' },
 		{ path: '/launched', label: 'Launched newsletters' },
 		{ path: '/drafts', label: 'Draft newsletters' },
 		{ path: '/templates', label: 'Email templates' },

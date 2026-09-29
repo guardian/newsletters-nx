@@ -74,7 +74,7 @@ Then('the column headings are still clear of the top bar', async ({ page }) => {
 	// The Stand top bar pins to the top of the viewport; the headings must
 	// stay below it so it never covers them.
 	const topBarBottom = await page
-		.locator('nav')
+		.getByRole('navigation', { name: 'Top bar' })
 		.evaluate((el) => Math.round(el.getBoundingClientRect().bottom));
 	expect(await headingsTop(page)).toBeGreaterThanOrEqual(topBarBottom);
 });
