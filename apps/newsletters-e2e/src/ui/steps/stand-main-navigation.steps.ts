@@ -3,12 +3,9 @@ import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import { Then, When } from './fixtures';
 
-// The Stand main nav's links aren't wrapped in a <nav> landmark on
-// non-wizard routes (see workspace-layout.steps.ts), so links are located by
-// their accessible name across the whole page rather than scoped to a nav
-// landmark.
+
 const navLink = (page: Page, label: string) =>
-	page.getByRole('link', { name: label });
+	page.getByRole('navigation').getByRole('link', { name: label });
 
 Then(
 	'they should see the following navigation',
