@@ -59,7 +59,8 @@ const getAccessDeniedError = async (
 		case 'RENDERING_OPTIONS':
 			if (!permissions.editEverything) {
 				return {
-					errorMessage: 'You do not have permissions to create or edit drafts.',
+					errorMessage:
+						'You do not have permissions to create or edit drafts.',
 					currentStepId: stepId,
 					hasPersistentError: true,
 				};

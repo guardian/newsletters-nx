@@ -46,7 +46,7 @@ Then(
 		const alert = page.getByRole('alert');
 		await expect(alert).toBeVisible();
 		await expect(alert).toContainText(
-			'You do not have permissions for the Newsletter tool. Please contact Central Production if you need permission.',
+			'You do not have permissions to create or edit drafts.',
 		);
 	},
 );
