@@ -2,9 +2,23 @@ import { css } from '@emotion/react';
 import { semanticColors, semanticSpacing } from '@guardian/stand';
 import { Icon } from '@guardian/stand/Icon';
 import { SearchInput } from '@guardian/stand/SearchInput';
+import { Option, Select } from '@guardian/stand/Select';
 import { Typography } from '@guardian/stand/Typography';
 import { from, until } from '@guardian/stand/utils';
+import type { NewsletterCategory } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
+import type { Key } from 'react-aria-components';
+
+export const categoryOptions: Array<{
+	id: NewsletterCategory;
+	label: string;
+}> = [
+	{ id: 'article-based', label: 'Article based' },
+	{ id: 'article-based-legacy', label: 'Article based legacy' },
+	{ id: 'fronts-based', label: 'Fronts based' },
+	{ id: 'manual-send', label: 'Manual send' },
+	{ id: 'other', label: 'Other' },
+];
 
 const sectionStyles = css`
 	background-color: ${semanticColors.bg.raisedLevel1};
@@ -16,6 +30,7 @@ const sectionStyles = css`
 	${from.lg} {
 		border: none;
 		border-right: 1px solid ${semanticColors.border.weak};
+		padding-top: ${semanticSpacing.stackLg};
 		width: 280px;
 	}
 `;
@@ -59,21 +74,45 @@ const chevronStyles = (isOpen: boolean) => css`
 `;
 
 const getInputContainerStyles = (isOpen: boolean) => css`
+	display: flex;
+	flex-direction: column;
+	gap: ${semanticSpacing.stackMd};
+
 	${until.lg} {
-		display: ${isOpen ? 'block' : 'none'};
+		display: ${isOpen ? 'flex' : 'none'};
+	}
+
+	${from.lg} {
+		gap: ${semanticSpacing.stackLg};
+	}
+`;
+
+const categorySelectStyles = css`
+	button > span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 `;
 
 interface SearchAndFilterMenuProps {
 	searchTerm: string;
 	onSearchChange: (value: string) => void;
+	selectedCategories: NewsletterCategory[];
+	onCategoryChange: (categories: NewsletterCategory[]) => void;
 }
 
 export const SearchAndFilterMenu = ({
 	searchTerm,
 	onSearchChange,
+	selectedCategories,
+	onCategoryChange,
 }: SearchAndFilterMenuProps) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const handleCategoryChange = (value: Key | Key[] | null) => {
+		const values = Array.isArray(value) ? value : value === null ? [] : [value];
+		onCategoryChange(values as NewsletterCategory[]);
+	};
 
 	return (
 		<section css={sectionStyles}>
@@ -97,6 +136,20 @@ export const SearchAndFilterMenu = ({
 					value={searchTerm}
 					onChange={onSearchChange}
 				/>
+				<Select
+					label="Category"
+					placeholder="All"
+					selectionMode="multiple"
+					value={selectedCategories}
+					onChange={handleCategoryChange}
+					cssOverrides={categorySelectStyles}
+				>
+					{categoryOptions.map(({ id, label }) => (
+						<Option key={id} id={id}>
+							{label}
+						</Option>
+					))}
+				</Select>
 			</div>
 		</section>
 	);
