@@ -2,7 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const isCI = !!process.env.CI;
-const baseURL = process.env.BASE_URL ?? 'http://localhost:4200';
+const baseURL =
+	process.env.BASE_URL ??
+	(isCI ? 'http://localhost:3000' : 'http://localhost:4200');
 
 // Generates test files from src/ui/features/*.feature + src/ui/steps/*.ts into
 // src/ui/.features-gen. playwright-bdd requires a project's `testDir` to be
@@ -78,9 +80,9 @@ export default defineConfig({
 	// Local: npm run dev starts both API and UI
 	webServer: isCI
 		? {
-				command: 'pnx vite preview --config ../newsletters-ui/vite.config.ts',
-				url: baseURL,
-				reuseExistingServer: false,
+				command: 'pnpm --filter=@newsletters-nx/newsletters-api serve',
+				url: 'http://localhost:3000/healthcheck',
+				reuseExistingServer: true,
 				timeout: 300000,
 			}
 		: {

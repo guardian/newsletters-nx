@@ -39,7 +39,24 @@ const readIndexHtml = async (filePath: string): Promise<Buffer | null> => {
 };
 
 export async function registerUIServer(app: Express) {
-	const pathToStaticFiles = path.join('./dist/apps/newsletters-ui');
+	function resolveStaticFilesPath(): string {
+		const candidates = [
+			path.resolve(process.cwd(), 'dist/apps/newsletters-ui'),
+			path.resolve(process.cwd(), '../../dist/apps/newsletters-ui'),
+			path.resolve(__dirname, '../../../dist/apps/newsletters-ui'),
+			path.resolve(__dirname, '../../newsletters-ui'),
+		];
+
+		for (const candidate of candidates) {
+			if (fs.existsSync(candidate)) {
+				return candidate;
+			}
+		}
+
+		return path.resolve(process.cwd(), 'dist/apps/newsletters-ui');
+	}
+
+	const pathToStaticFiles = resolveStaticFilesPath();
 
 	app.use(serveStatic(pathToStaticFiles));
 
