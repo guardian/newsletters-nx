@@ -39,10 +39,11 @@ jobs:
       - name: Build UI for E2e tests
         run: pnpm --filter=@newsletters-nx/newsletters-ui build
 
-      # NEW: Start API server in background
+      # NEW: Start API server in background with UI serving enabled
       - name: Start API Server
         env:
           USE_DEVELOPER_PROFILE: 'true'
+          NEWSLETTERS_UI_SERVE: 'true'
         run: |
           pnpm --filter=@newsletters-nx/newsletters-api serve &
           API_PID=$!

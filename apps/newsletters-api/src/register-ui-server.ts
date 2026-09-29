@@ -4,7 +4,8 @@ import type { Express, Request, Response } from 'express';
 import { static as serveStatic } from 'express';
 
 const routeMap = {
-	'/': ['', '/templates'],
+	'/': [''],
+	'/templates': [''],
 	'/all': [''],
 	'/launched': [
 		'',
@@ -38,8 +39,25 @@ const readIndexHtml = async (filePath: string): Promise<Buffer | null> => {
 	}
 };
 
+function resolveStaticFilesPath(): string {
+	const candidates = [
+		path.resolve(process.cwd(), 'dist/apps/newsletters-ui'),
+		path.resolve(process.cwd(), '../../dist/apps/newsletters-ui'),
+		path.resolve(__dirname, '../../../dist/apps/newsletters-ui'),
+		path.resolve(__dirname, '../../newsletters-ui'),
+	];
+
+	for (const candidate of candidates) {
+		if (fs.existsSync(candidate)) {
+			return candidate;
+		}
+	}
+
+	return path.resolve(process.cwd(), 'dist/apps/newsletters-ui');
+}
+
 export async function registerUIServer(app: Express) {
-	const pathToStaticFiles = path.join('./dist/apps/newsletters-ui');
+	const pathToStaticFiles = resolveStaticFilesPath();
 
 	app.use(serveStatic(pathToStaticFiles));
 
@@ -59,8 +77,9 @@ export async function registerUIServer(app: Express) {
 	};
 
 	Object.entries(routeMap).forEach(([routeName, paths]) => {
-		paths.forEach((path) => {
-			app.get(`${routeName}${path}`, serveIndexHtml);
+		paths.forEach((subPath) => {
+			const fullRoute = path.posix.join(routeName, subPath);
+			app.get(fullRoute, serveIndexHtml);
 		});
 	});
 }
