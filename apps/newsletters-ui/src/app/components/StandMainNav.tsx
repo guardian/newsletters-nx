@@ -63,7 +63,7 @@ export function StandMainNav() {
 
 	const navLinks: NavLink[] = [
 		{ path: '/all', label: 'All newsletters' },
-		{ path: '/layouts', label: 'Newsletter layouts' },
+		{ path: '/layouts', label: 'Newsletters hub' },
 		permissions?.editEverything
 			? { path: '/drafts/newsletter-data', label: 'Create new newsletter' }
 			: null,
