@@ -54,10 +54,10 @@ Then(
 Then('the user can still access the main navigation', async ({ page }) => {
 	// Asserts that the application shell hasn't crashed and the user isn't trapped
 	const standNav = page
-		.getByRole('navigation')
-		.filter({ has: page.getByRole('link', { name: 'Draft newsletters' }) });
+		.getByRole('navigation', { name: 'Top bar' })
+		.filter({ has: page.getByRole('link', { name: 'All newsletters' }) });
 	await expect(standNav).toBeVisible();
 	await expect(
-		page.getByRole('link', { name: 'Draft newsletters' }),
+		page.getByRole('link', { name: 'All newsletters' }),
 	).toBeVisible();
 });
