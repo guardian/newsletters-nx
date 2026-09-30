@@ -24,7 +24,8 @@ const fixtureNewsletters: Array<{
 	{ name: 'Category Other Newsletter', category: 'other' },
 ];
 
-const categoryControl = (page: Page): Locator => page.getByLabel('Category');
+const categoryControl = (page: Page): Locator =>
+	page.getByRole('button', { name: /Category$/ });
 
 const categoryValue = (label: string): NewsletterCategory => {
 	const value = categoryValues[label];
