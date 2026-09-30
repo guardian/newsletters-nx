@@ -44,11 +44,11 @@ const openAllNewsletters = async (page: Page) => {
 };
 
 const selectCategory = async (page: Page, label: string) => {
-	const option = page.getByRole('option', { name: label, exact: true });
-	if (!(await option.isVisible())) {
-		await categoryControl(page).click();
+	const trigger = categoryControl(page);
+	if ((await trigger.getAttribute('aria-expanded')) !== 'true') {
+		await trigger.click();
 	}
-	await option.click();
+	await page.getByRole('option', { name: label, exact: true }).click();
 };
 
 Given(
