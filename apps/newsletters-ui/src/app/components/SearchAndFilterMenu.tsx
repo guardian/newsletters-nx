@@ -5,7 +5,10 @@ import { SearchInput } from '@guardian/stand/SearchInput';
 import { Option, Select } from '@guardian/stand/Select';
 import { Typography } from '@guardian/stand/Typography';
 import { from, until } from '@guardian/stand/utils';
-import type { NewsletterCategory } from '@newsletters-nx/newsletters-data-client';
+import type {
+	NewsletterCategory,
+	Theme,
+} from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import type { Key } from 'react-aria-components';
 
@@ -18,6 +21,18 @@ export const categoryOptions: Array<{
 	{ id: 'fronts-based', label: 'Fronts based' },
 	{ id: 'manual-send', label: 'Manual send' },
 	{ id: 'other', label: 'Other' },
+];
+
+export const pillarOptions: Array<{
+	id: Theme;
+	label: string;
+}> = [
+	{ id: 'news', label: 'News' },
+	{ id: 'opinion', label: 'Opinion' },
+	{ id: 'culture', label: 'Culture' },
+	{ id: 'sport', label: 'Sport' },
+	{ id: 'lifestyle', label: 'Lifestyle' },
+	{ id: 'features', label: 'Features' },
 ];
 
 const sectionStyles = css`
@@ -87,7 +102,7 @@ const getInputContainerStyles = (isOpen: boolean) => css`
 	}
 `;
 
-const categorySelectStyles = css`
+const multiSelectStyles = css`
 	button > span {
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -95,11 +110,16 @@ const categorySelectStyles = css`
 	}
 `;
 
+const toKeys = (value: Key | Key[] | null): Key[] =>
+	Array.isArray(value) ? value : value === null ? [] : [value];
+
 interface SearchAndFilterMenuProps {
 	searchTerm: string;
 	onSearchChange: (value: string) => void;
 	selectedCategories: NewsletterCategory[];
 	onCategoryChange: (categories: NewsletterCategory[]) => void;
+	selectedPillars: Theme[];
+	onPillarChange: (pillars: Theme[]) => void;
 }
 
 export const SearchAndFilterMenu = ({
@@ -107,12 +127,10 @@ export const SearchAndFilterMenu = ({
 	onSearchChange,
 	selectedCategories,
 	onCategoryChange,
+	selectedPillars,
+	onPillarChange,
 }: SearchAndFilterMenuProps) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const handleCategoryChange = (value: Key | Key[] | null) => {
-		const values = Array.isArray(value) ? value : value === null ? [] : [value];
-		onCategoryChange(values as NewsletterCategory[]);
-	};
 
 	return (
 		<section css={sectionStyles}>
@@ -132,7 +150,7 @@ export const SearchAndFilterMenu = ({
 			</button>
 			<div css={getInputContainerStyles(isOpen)}>
 				<SearchInput
-					label="search"
+					label="Search"
 					value={searchTerm}
 					onChange={onSearchChange}
 				/>
@@ -141,10 +159,26 @@ export const SearchAndFilterMenu = ({
 					placeholder="All"
 					selectionMode="multiple"
 					value={selectedCategories}
-					onChange={handleCategoryChange}
-					cssOverrides={categorySelectStyles}
+					onChange={(value) =>
+						onCategoryChange(toKeys(value) as NewsletterCategory[])
+					}
+					cssOverrides={multiSelectStyles}
 				>
 					{categoryOptions.map(({ id, label }) => (
+						<Option key={id} id={id}>
+							{label}
+						</Option>
+					))}
+				</Select>
+				<Select
+					label="Pillar"
+					placeholder="All"
+					selectionMode="multiple"
+					value={selectedPillars}
+					onChange={(value) => onPillarChange(toKeys(value) as Theme[])}
+					cssOverrides={multiSelectStyles}
+				>
+					{pillarOptions.map(({ id, label }) => (
 						<Option key={id} id={id}>
 							{label}
 						</Option>
