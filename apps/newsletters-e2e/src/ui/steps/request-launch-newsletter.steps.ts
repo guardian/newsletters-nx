@@ -31,21 +31,21 @@ const getContext = (page: Page): ScenarioContext => {
 
 const DEFAULT_READY_DRAFT_DATA = {
 	name: 'Launch Ready Draft',
-	category: 'fronts-based',
+	category: 'fronts-based' as const,
 	signUpHeadline: 'Sign up headline',
 	signUpDescription: 'Ready for launch testing.',
 	signUpEmbedDescription: 'Ready for launch testing.',
-	theme: 'news',
+	theme: 'news' as const,
 	group: 'News in depth',
-	regionFocus: 'UK',
+	regionFocus: 'UK' as const,
 	frequency: 'Weekly',
-	onlineArticle: 'Web for all sends',
+	onlineArticle: 'Web for all sends' as const,
 	launchDate: new Date().toISOString(),
 	signUpPageDate: new Date().toISOString(),
 	creationTimeStamp: Date.now(),
-	brazeCampaignCreationStatus: 'NOT_REQUESTED',
-	signupPageCreationStatus: 'NOT_REQUESTED',
-	tagCreationStatus: 'NOT_REQUESTED',
+	brazeCampaignCreationStatus: 'NOT_REQUESTED' as const,
+	signupPageCreationStatus: 'NOT_REQUESTED' as const,
+	tagCreationStatus: 'NOT_REQUESTED' as const,
 };
 
 async function createReadyDraft(
@@ -162,7 +162,14 @@ Given(
 		await page.route('**/api/currentstep', async (route) => {
 			const req = route.request();
 			if (req.method() === 'POST') {
-				const postData = req.postDataJSON();
+				const postData = req.postDataJSON() as
+					| {
+							id?: number | string;
+							listId?: number | string;
+							formData?: { listId?: number | string };
+					  }
+					| undefined;
+
 				const targetListId =
 					postData?.formData?.listId ?? postData?.listId ?? postData?.id;
 				if (String(targetListId) === String(ctx.draftListId)) {
@@ -320,7 +327,7 @@ Then(
 
 Then(
 	'the launch is requested using {string} as the {string}',
-	async ({ page }, fieldValue: string, fieldLabel: string) => {
+	async ({ page }, _fieldValue: string, _fieldLabel: string) => {
 		await expectLaunchRequestedPage(page);
 	},
 );
