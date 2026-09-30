@@ -16,6 +16,11 @@ Feature: Stand main navigation
 			| Newsletters hub       | /layouts                |
 			| Create new newsletter | /drafts/newsletter-data |
 
+	Scenario: The 'Create new newsletter' link is only visible with correct permissions
+		Given an editor's workspace uses the Stand design
+		And the user does not have the 'edit everything' permission
+		Then the 'Create new newsletter' nav link should not be visible
+
 	Scenario Outline: Navigating to each item in the Stand main navigation
 		Given an editor's workspace uses the Stand design
 		When they go to the <page> page

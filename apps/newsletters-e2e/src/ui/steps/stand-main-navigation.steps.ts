@@ -52,3 +52,11 @@ Then('they should see the home page', async ({ page, baseURL }) => {
 	expect(baseURL, 'base url not set').toBeDefined();
 	await expect(page).toHaveURL(baseURL!);
 });
+
+Then(
+	'the {string} nav link should not be visible',
+	async ({ page }, label: string) => {
+		const link = navLink(page, label);
+		await expect(link).toHaveCount(0);
+	},
+);
