@@ -8,15 +8,28 @@ import { createFixtureDraft } from '../../../helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
 
+interface FixtureNewsletter {
+	name: string;
+	category: NewsletterCategory;
+	theme?: Theme;
+}
+
 interface FilterConfig {
 	param: string;
+	fixtureKey: 'category' | 'theme';
 	values: Record<string, string>;
 	activeLabels: [string, string];
+	// Matches the row's "Pillar | Category" label when it shows one of `labels`.
+	rowLabelPattern: (labels: string[]) => RegExp;
 }
+
+const anyOf = (labels: string[]) => `(${labels.join('|')})`;
+const separator = ' \\| ';
 
 const filters: Record<string, FilterConfig> = {
 	Category: {
 		param: 'category',
+		fixtureKey: 'category',
 		values: {
 			'Article based': 'article-based',
 			'Article based legacy': 'article-based-legacy',
@@ -25,9 +38,13 @@ const filters: Record<string, FilterConfig> = {
 			Other: 'other',
 		},
 		activeLabels: ['Article based', 'Other'],
+		// Category is the last part of the label, e.g. "Other" or "Culture | Other".
+		rowLabelPattern: (labels) =>
+			new RegExp(`(^|${separator})${anyOf(labels)}$`),
 	},
 	Pillar: {
 		param: 'pillar',
+		fixtureKey: 'theme',
 		values: {
 			News: 'news',
 			Opinion: 'opinion',
@@ -37,16 +54,16 @@ const filters: Record<string, FilterConfig> = {
 			Features: 'features',
 		},
 		activeLabels: ['News', 'Sport'],
+		// Pillar is the first part of the label, e.g. "News" or "News | Article based".
+		rowLabelPattern: (labels) =>
+			new RegExp(`^${anyOf(labels)}(${separator}|$)`),
 	},
 };
 
-const fixtureNewsletters: Array<{
-	name: string;
-	category: NewsletterCategory;
-	theme?: Theme;
-}> = [
+const fixtureNewsletters: FixtureNewsletter[] = [
 	{ name: 'Filter Article News', category: 'article-based', theme: 'news' },
 	{ name: 'Filter Fronts Sport', category: 'fronts-based', theme: 'sport' },
+	{ name: 'Filter Other Culture', category: 'other', theme: 'culture' },
 	{ name: 'Filter Other No Pillar', category: 'other' },
 ];
 
@@ -117,19 +134,11 @@ When('the editor opens the All newsletters page', async ({ page }) => {
 });
 
 When(
-	'the editor filters Category to {string} and {string}',
-	async ({ page }, firstCategory: string, secondCategory: string) => {
+	'the editor filters {word} to {string} and {string}',
+	async ({ page }, filter: string, first: string, second: string) => {
 		await openAllNewsletters(page);
-		await toggleOption(page, 'Category', firstCategory);
-		await toggleOption(page, 'Category', secondCategory);
-	},
-);
-
-When(
-	'the editor sets {word} to {string}',
-	async ({ page }, filter: string, label: string) => {
-		await openAllNewsletters(page);
-		await toggleOption(page, filter, label);
+		await toggleOption(page, filter, first);
+		await toggleOption(page, filter, second);
 	},
 );
 
@@ -154,53 +163,43 @@ Then(
 );
 
 Then(
-	'only newsletters in Article based or Other are shown',
-	async ({ page, namedNewsletters }) => {
-		for (const { name, category } of fixtureNewsletters) {
-			const ref = namedNewsletters.refsByName[name];
-			if (ref === undefined) {
-				throw new Error(`No fixture newsletter named "${name}"`);
-			}
-			const row = rowFor(page, ref);
-			if (category === 'article-based' || category === 'other') {
-				await expect(row).toBeVisible();
-			} else {
-				await expect(row).toHaveCount(0);
-			}
-		}
-	},
-);
-
-Then(
-	'only rows matching Pillar {string} are shown',
-	async ({ page, namedNewsletters }, label: string) => {
-		const theme = filterValue('Pillar', label);
+	'only newsletters in {word} {string} or {string} are shown',
+	async (
+		{ page, namedNewsletters },
+		filter: string,
+		first: string,
+		second: string,
+	) => {
+		const config = filterConfig(filter);
+		const selected = [filterValue(filter, first), filterValue(filter, second)];
 		for (const fixture of fixtureNewsletters) {
 			const ref = namedNewsletters.refsByName[fixture.name];
 			if (ref === undefined) {
 				throw new Error(`No fixture newsletter named "${fixture.name}"`);
 			}
 			const row = rowFor(page, ref);
-			if (fixture.theme === theme) {
+			const value = fixture[config.fixtureKey];
+			if (value !== undefined && selected.includes(value)) {
 				await expect(row).toBeVisible();
 			} else {
 				await expect(row).toHaveCount(0);
 			}
 		}
-		// Other scenarios' rows may be listed too, but each must show this pillar.
-		const pillarLabel = new RegExp(`^${label}( \\| .+)?$`);
+		// Other scenarios' rows may be listed too, but each must match the filter.
+		const rowLabel = config.rowLabelPattern([first, second]);
 		for (const row of await page.locator('tr[data-href]').all()) {
-			await expect(row.getByText(pillarLabel)).toBeVisible();
+			await expect(row.getByText(rowLabel)).toBeVisible();
 		}
 	},
 );
 
 Then(
-	'the Category control shows a truncated selected-values summary',
-	async ({ page }) => {
-		const control = filterControl(page, 'Category');
-		await expect(control).toContainText('Article based');
-		await expect(control).toContainText('Other');
+	'the {word} control shows a truncated selected-values summary',
+	async ({ page }, filter: string) => {
+		const control = filterControl(page, filter);
+		for (const label of filterConfig(filter).activeLabels) {
+			await expect(control).toContainText(label);
+		}
 		await expect(control.locator('span').first()).toHaveCSS(
 			'text-overflow',
 			'ellipsis',
@@ -208,25 +207,15 @@ Then(
 	},
 );
 
-Then('the URL includes the selected Category values', async ({ page }) => {
-	const { param } = filterConfig('Category');
-	await expect(page).toHaveURL((url) => {
-		const categories = url.searchParams.getAll(param);
-		return (
-			categories.includes(filterValue('Category', 'Article based')) &&
-			categories.includes(filterValue('Category', 'Other'))
-		);
-	});
-});
-
 Then(
-	'the URL includes {word} {string}',
-	async ({ page }, filter: string, label: string) => {
-		const { param } = filterConfig(filter);
-		const value = filterValue(filter, label);
-		await expect(page).toHaveURL((url) =>
-			url.searchParams.getAll(param).includes(value),
-		);
+	'the URL includes the selected {word} values',
+	async ({ page }, filter: string) => {
+		const { param, activeLabels } = filterConfig(filter);
+		const expected = activeLabels.map((label) => filterValue(filter, label));
+		await expect(page).toHaveURL((url) => {
+			const values = url.searchParams.getAll(param);
+			return expected.every((value) => values.includes(value));
+		});
 	},
 );
 

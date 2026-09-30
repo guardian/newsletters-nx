@@ -15,15 +15,16 @@ Feature: All newsletters filters
 
 	Scenario: Category supports multi-select and updates the URL
 		When the editor filters Category to "Article based" and "Other"
-		Then only newsletters in Article based or Other are shown
+		Then only newsletters in Category "Article based" or "Other" are shown
 		And the Category control shows a truncated selected-values summary
 		And the URL includes the selected Category values
 
-	Scenario: Pillar filter narrows results and updates the URL
-		When the editor sets Pillar to "News"
-		Then only rows matching Pillar "News" are shown
+	Scenario: Pillar supports multi-select and updates the URL
+		When the editor filters Pillar to "News" and "Sport"
+		Then only newsletters in Pillar "News" or "Sport" are shown
+		And the Pillar control shows a truncated selected-values summary
 		And the result count matches the visible rows
-		And the URL includes Pillar "News"
+		And the URL includes the selected Pillar values
 
 	Scenario: De-selecting Category filters resets the control and clears URL state
 		Given the editor has active Category filters
