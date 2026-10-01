@@ -40,7 +40,7 @@ const refForName = (
 	return ref;
 };
 
-const namedRow = (
+export const namedRow = (
 	page: Page,
 	namedNewsletters: NamedNewsletters,
 	name: string,
@@ -236,6 +236,17 @@ Then(
 		await expect(namedRow(page, namedNewsletters, name)).toContainText(
 			/[A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{4}/,
 		);
+	},
+);
+
+// The header names the part of the row, the cell is the text shown there.
+Then(
+	'the {string} row shows:',
+	async ({ page, namedNewsletters }, name: string, table: DataTable) => {
+		const row = namedRow(page, namedNewsletters, name);
+		for (const text of table.rows()[0] ?? []) {
+			await expect(row.getByText(text)).toBeVisible();
+		}
 	},
 );
 
