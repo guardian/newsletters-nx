@@ -8,7 +8,7 @@ import {
 } from '@guardian/stand';
 import { Badge } from '@guardian/stand/Badge';
 import { InlineMessage } from '@guardian/stand/InlineMessage';
-import { Layout as StandLayout } from '@guardian/stand/Layout';
+import { componentLayout, Layout as StandLayout } from '@guardian/stand/Layout';
 import { Link } from '@guardian/stand/Link';
 import { LinkButton } from '@guardian/stand/LinkButton';
 import type { ResponsiveTableValue } from '@guardian/stand/Table';
@@ -31,12 +31,21 @@ import { formatLastUpdated } from '../../lib/format-last-updated';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 
+const mainPadding = componentLayout.main;
+
+// Halves the default `Layout.Main` bottom padding.
 const mainStyle = css`
 	min-height: 0;
 	box-sizing: border-box;
 	padding-inline: ${semanticSpacing.stackMd};
+	padding-bottom: calc(${mainPadding.sm.padding.bottom} / 2);
+
+	${from.md} {
+		padding-bottom: calc(${mainPadding.md.padding.bottom} / 2);
+	}
 
 	${from.lg} {
+		padding-bottom: calc(${mainPadding.lg.padding.bottom} / 2);
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
