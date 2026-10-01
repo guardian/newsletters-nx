@@ -14,12 +14,14 @@ Feature: All newsletters filters
 		And all newsletters are shown
 
 	Scenario: Category supports multi-select and updates the URL
+		Given the editor is on the All newsletters page
 		When the editor filters Category to "Article based" and "Other"
 		Then only newsletters in Category "Article based" or "Other" are shown
 		And the Category control shows a truncated selected-values summary
 		And the URL includes the selected Category values
 
 	Scenario: Pillar supports multi-select and updates the URL
+		Given the editor is on the All newsletters page
 		When the editor filters Pillar to "News" and "Sport"
 		Then only newsletters in Pillar "News" or "Sport" are shown
 		And the Pillar control shows a truncated selected-values summary

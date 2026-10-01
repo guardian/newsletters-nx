@@ -119,6 +119,10 @@ Given(
 	},
 );
 
+Given('the editor is on the All newsletters page', async ({ page }) => {
+	await page.goto('/all');
+});
+
 Given(
 	'the editor has active {word} filters',
 	async ({ page }, filter: string) => {
@@ -136,7 +140,6 @@ When('the editor opens the All newsletters page', async ({ page }) => {
 When(
 	'the editor filters {word} to {string} and {string}',
 	async ({ page }, filter: string, first: string, second: string) => {
-		await openAllNewsletters(page);
 		await toggleOption(page, filter, first);
 		await toggleOption(page, filter, second);
 	},
