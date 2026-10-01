@@ -13,8 +13,10 @@ import {
 	emptyStateStyle,
 	hideOnMobileStyle,
 	titleBarStyle,
+	titleGroupStyle,
 } from './home.styles';
 import { NewsletterTableRow } from './NewsletterTableRow';
+import { SubText } from './SubText';
 
 const tableColumns: ResponsiveTableValue<string> = {
 	sm: 'minmax(0, 1fr) auto',
@@ -27,18 +29,23 @@ export const NewsletterPanel = ({
 	rows,
 	emptyText,
 	action,
+	caption,
 }: {
 	title: string;
 	background: string;
 	rows: NewsletterRow[];
 	emptyText: string;
 	action?: ReactNode;
+	caption?: string;
 }) => (
 	<section aria-label={title}>
 		<div css={titleBarStyle}>
-			<Typography element="h2" variant="headingLg">
-				{title}
-			</Typography>
+			<div css={titleGroupStyle}>
+				<Typography element="h2" variant="headingLg">
+					{title}
+				</Typography>
+				{caption && <SubText>{caption}</SubText>}
+			</div>
 			{action}
 		</div>
 		<Table
