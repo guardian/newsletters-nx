@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { semanticSpacing } from '@guardian/stand';
+import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
 import { from, until } from '@guardian/stand/utils';
 
 export const mainStyle = css`
@@ -33,5 +33,20 @@ export const titleBarStyle = css`
 export const hideOnMobileStyle = css`
 	${until.md} {
 		display: none;
+	}
+`;
+
+export const emptyStateStyle = css`
+	display: block;
+	text-align: center;
+	padding: ${baseSpacing['64Rem']} ${semanticSpacing.stackXxs};
+	color: ${semanticColors.text.weak};
+`;
+
+// Stretches the empty-state row across the table so its text can be centred.
+export const emptyBodyStyle = css`
+	&[data-empty] > tr,
+	&[data-empty] > tr > td {
+		display: block;
 	}
 `;

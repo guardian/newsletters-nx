@@ -7,7 +7,12 @@ import {
 } from '@guardian/stand/Table';
 import { Typography } from '@guardian/stand/Typography';
 import type { ReactNode } from 'react';
-import { hideOnMobileStyle, titleBarStyle } from './home.styles';
+import {
+	emptyBodyStyle,
+	emptyStateStyle,
+	hideOnMobileStyle,
+	titleBarStyle,
+} from './home.styles';
 
 const tableColumns: ResponsiveTableValue<string> = {
 	sm: 'minmax(0, 1fr) auto',
@@ -45,7 +50,18 @@ export const NewsletterPanel = ({
 				</TableColumnHeader>
 				<TableColumnHeader>Status</TableColumnHeader>
 			</TableHeader>
-			<TableBody renderEmptyState={() => emptyText} />
+			<TableBody
+				cssOverrides={emptyBodyStyle}
+				renderEmptyState={() => (
+					<Typography
+						element="span"
+						variant="bodyBoldMd"
+						cssOverrides={emptyStateStyle}
+					>
+						{emptyText}
+					</Typography>
+				)}
+			/>
 		</Table>
 	</section>
 );
