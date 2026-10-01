@@ -1,11 +1,12 @@
 import { baseColors } from '@guardian/stand';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
+import { Link } from '@guardian/stand/Link';
 import { LinkButton } from '@guardian/stand/LinkButton';
 import { Typography } from '@guardian/stand/Typography';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useLoaderData, useNavigate } from 'react-router-dom';
 import { usePermissions } from '../../hooks/user-hooks';
-import { splitHomeRows } from '../../lib/home-rows';
+import { LAUNCHED_LIMIT, splitHomeRows } from '../../lib/home-rows';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { FailedSourcesMessages } from '../home/FailedSourcesMessages';
 import { mainStyle, pageStyle, titleStyle } from '../home/home.styles';
@@ -18,7 +19,7 @@ export const HomeView = () => {
 	const navigate = useNavigate();
 
 	// Rows arrive sorted most recently updated first.
-	const { drafts } = splitHomeRows(rows);
+	const { drafts, launched } = splitHomeRows(rows);
 
 	return (
 		<StandLayout.Main cssOverrides={mainStyle}>
@@ -52,8 +53,10 @@ export const HomeView = () => {
 					<NewsletterPanel
 						title="Launched newsletters"
 						background={baseColors.green[800]}
-						rows={[]}
+						rows={launched}
+						caption={`${LAUNCHED_LIMIT} most recently updated`}
 						emptyText="No launched newsletters"
+						action={<Link href="/all">View all</Link>}
 					/>
 				</div>
 			</AriaRouterProvider>

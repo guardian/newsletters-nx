@@ -40,7 +40,7 @@ const refForName = (
 	return ref;
 };
 
-const namedRow = (
+export const namedRow = (
 	page: Page,
 	namedNewsletters: NamedNewsletters,
 	name: string,

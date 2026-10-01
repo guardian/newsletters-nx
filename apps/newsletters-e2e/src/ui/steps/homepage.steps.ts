@@ -74,6 +74,13 @@ Then(
 	},
 );
 
+Then('the editor is taken to the All Newsletters page', async ({ page }) => {
+	await expect(page).toHaveURL(/\/all$/);
+	await expect(
+		page.getByRole('grid', { name: 'All newsletters' }),
+	).toBeVisible();
+});
+
 const boxes = async (page: Page, first: string, second: string) => {
 	await expect(section(page, first)).toBeVisible();
 	await expect(section(page, second)).toBeVisible();
