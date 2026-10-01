@@ -23,6 +23,7 @@ modules:
 forwardPorts:
   - 3000 # Newsletters Tool API
   - 4200 # Newsletters Tool  UI
+  - 8888 # Playwright UI
 
 # Optional: Mount directories from host to container
 # mounts:
