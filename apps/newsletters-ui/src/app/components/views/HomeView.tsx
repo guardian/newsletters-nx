@@ -6,11 +6,11 @@ import { Typography } from '@guardian/stand/Typography';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useLoaderData, useNavigate } from 'react-router-dom';
 import { usePermissions } from '../../hooks/user-hooks';
+import { LAUNCHED_LIMIT, splitHomeRows } from '../../lib/home-rows';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { FailedSourcesMessages } from '../home/FailedSourcesMessages';
 import { mainStyle, pageStyle, titleStyle } from '../home/home.styles';
 import { NewsletterPanel } from '../home/NewsletterPanel';
-import { LAUNCHED_LIMIT, splitHomeRows } from '../../lib/home-rows';
 
 export const HomeView = () => {
 	const { rows, failedSources } =

@@ -239,17 +239,6 @@ Then(
 	},
 );
 
-// The header names the part of the row, the cell is the text shown there.
-Then(
-	'the {string} row shows:',
-	async ({ page, namedNewsletters }, name: string, table: DataTable) => {
-		const row = namedRow(page, namedNewsletters, name);
-		for (const text of table.rows()[0] ?? []) {
-			await expect(row.getByText(text)).toBeVisible();
-		}
-	},
-);
-
 Then(
 	'the {string} row shows no pillar and category label',
 	async ({ page, namedNewsletters }, name: string) => {
