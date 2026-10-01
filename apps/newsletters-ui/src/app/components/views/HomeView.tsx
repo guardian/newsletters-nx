@@ -10,8 +10,7 @@ import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { FailedSourcesMessages } from '../home/FailedSourcesMessages';
 import { mainStyle, pageStyle, titleStyle } from '../home/home.styles';
 import { NewsletterPanel } from '../home/NewsletterPanel';
-
-const LAUNCHED_LIMIT = 15;
+import { LAUNCHED_LIMIT, splitHomeRows } from '../../lib/home-rows';
 
 export const HomeView = () => {
 	const { rows, failedSources } =
@@ -19,11 +18,8 @@ export const HomeView = () => {
 	const permissions = usePermissions();
 	const navigate = useNavigate();
 
-	const drafts = rows.filter((row) => row.kind === 'draft');
 	// Rows arrive sorted most recently updated first.
-	const launched = rows
-		.filter((row) => row.kind === 'launched')
-		.slice(0, LAUNCHED_LIMIT);
+	const { drafts, launched } = splitHomeRows(rows);
 
 	return (
 		<StandLayout.Main cssOverrides={mainStyle}>
