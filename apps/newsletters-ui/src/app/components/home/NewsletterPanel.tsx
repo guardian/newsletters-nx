@@ -11,7 +11,10 @@ import type { NewsletterRow } from '../../lib/all-newsletters-rows';
 import {
 	emptyBodyStyle,
 	emptyStateStyle,
+	headerStyle,
 	hideOnMobileStyle,
+	sectionStyle,
+	tableStyle,
 	titleBarStyle,
 	titleGroupStyle,
 } from './home.styles';
@@ -38,7 +41,7 @@ export const NewsletterPanel = ({
 	action?: ReactNode;
 	caption?: string;
 }) => (
-	<section aria-label={title}>
+	<section aria-label={title} css={sectionStyle}>
 		<div css={titleBarStyle}>
 			<div css={titleGroupStyle}>
 				<Typography element="h2" variant="headingLg">
@@ -53,8 +56,9 @@ export const NewsletterPanel = ({
 			columns={tableColumns}
 			headerVisibleFrom="sm"
 			theme={{ header: { backgroundColor: background } }}
+			cssOverrides={tableStyle}
 		>
-			<TableHeader>
+			<TableHeader cssOverrides={headerStyle}>
 				<TableColumnHeader isRowHeader>Newsletters</TableColumnHeader>
 				<TableColumnHeader cssOverrides={hideOnMobileStyle}>
 					Last updated
