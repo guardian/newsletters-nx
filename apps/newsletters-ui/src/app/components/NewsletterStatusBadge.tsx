@@ -8,6 +8,13 @@ import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
 
 type LaunchedStatus = NewsletterData['status'];
 
+export type NewsletterStatus = LaunchedStatus | 'draft' | 'ready-to-launch';
+
+export const getDraftStatus = (
+	draft: DraftNewsletterData,
+): Extract<NewsletterStatus, 'draft' | 'ready-to-launch'> =>
+	calculateProgress(draft) >= 100 ? 'ready-to-launch' : 'draft';
+
 export interface BadgeContent {
 	label: string;
 	color: NonNullable<BadgeProps['color']>;

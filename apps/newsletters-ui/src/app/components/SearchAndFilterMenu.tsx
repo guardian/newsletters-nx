@@ -11,6 +11,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import type { Key } from 'react-aria-components';
+import type { NewsletterStatus } from './NewsletterStatusBadge';
 
 const categoryLabels: Record<NewsletterCategory, string> = {
 	'article-based': 'Article based',
@@ -36,6 +37,18 @@ const toSortedOptions = <T extends string>(labels: Record<T, string>) =>
 
 export const categoryOptions = toSortedOptions(categoryLabels);
 export const pillarOptions = toSortedOptions(pillarLabels);
+
+export const statusOptions: Array<{
+	id: NewsletterStatus;
+	label: string;
+}> = [
+	{ id: 'live', label: 'Live' },
+	{ id: 'pending', label: 'Pending' },
+	{ id: 'paused', label: 'Paused' },
+	{ id: 'cancelled', label: 'Cancelled' },
+	{ id: 'draft', label: 'Draft' },
+	{ id: 'ready-to-launch', label: 'Ready to launch' },
+];
 
 const sectionStyles = css`
 	background-color: ${semanticColors.bg.raisedLevel1};
@@ -122,6 +135,8 @@ interface SearchAndFilterMenuProps {
 	onCategoryChange: (categories: NewsletterCategory[]) => void;
 	selectedPillars: Theme[];
 	onPillarChange: (pillars: Theme[]) => void;
+	selectedStatuses: NewsletterStatus[];
+	onStatusChange: (statuses: NewsletterStatus[]) => void;
 }
 
 export const SearchAndFilterMenu = ({
@@ -131,6 +146,8 @@ export const SearchAndFilterMenu = ({
 	onCategoryChange,
 	selectedPillars,
 	onPillarChange,
+	selectedStatuses,
+	onStatusChange,
 }: SearchAndFilterMenuProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -181,6 +198,22 @@ export const SearchAndFilterMenu = ({
 					cssOverrides={multiSelectStyles}
 				>
 					{pillarOptions.map(({ id, label }) => (
+						<Option key={id} id={id}>
+							{label}
+						</Option>
+					))}
+				</Select>
+				<Select
+					label="Status"
+					placeholder="All"
+					selectionMode="multiple"
+					value={selectedStatuses}
+					onChange={(value) =>
+						onStatusChange(toKeys(value) as NewsletterStatus[])
+					}
+					cssOverrides={multiSelectStyles}
+				>
+					{statusOptions.map(({ id, label }) => (
 						<Option key={id} id={id}>
 							{label}
 						</Option>
