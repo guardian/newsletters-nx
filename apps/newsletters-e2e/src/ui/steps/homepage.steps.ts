@@ -48,8 +48,9 @@ Then(
 Then(
 	'the {string} section does not list {string}',
 	async ({ page }, title: string, name: string) => {
-		// Wait for the section to load before asserting absence.
-		await expect(sectionRows(page, title).first()).toBeVisible();
+		// Wait for the section's table to render (it may legitimately be empty)
+		// before asserting absence.
+		await expect(section(page, title).getByRole('grid')).toBeVisible();
 		await expect(
 			sectionRows(page, title).filter({ hasText: name }),
 		).toHaveCount(0);
@@ -59,8 +60,7 @@ Then(
 Then(
 	'the {string} section has no {string} action',
 	async ({ page }, title: string, action: string) => {
-		await expect(section(page, title)).toBeVisible();
-		await expect(sectionRows(page, title).first()).toBeVisible();
+		await expect(section(page, title).getByRole('grid')).toBeVisible();
 		await expect(
 			section(page, title).getByRole('link', { name: action }),
 		).toHaveCount(0);
