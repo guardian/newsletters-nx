@@ -34,16 +34,13 @@ const mainStyle = css`
 	}
 `;
 
+const LAUNCHED_LIMIT = 15;
+
 const welcomeStyle = css`
 	max-width: 1400px;
 	margin: 0 auto ${semanticSpacing.stackLg};
 	width: 100%;
 	box-sizing: border-box;
-`;
-
-const welcomeTextStyle = css`
-	color: ${semanticColors.text.weak};
-	margin-top: ${semanticSpacing.stackXs};
 `;
 
 const pageStyle = css`
@@ -85,6 +82,12 @@ const panelStyle = css`
 	border-radius: ${semanticRadius.cornerSm};
 	overflow: hidden;
 	background-color: ${semanticColors.bg.base};
+`;
+
+const titleGroupStyle = css`
+	display: flex;
+	flex-direction: column;
+	gap: ${semanticSpacing.stackXxs};
 `;
 
 const titleBarStyle = css`
@@ -271,18 +274,31 @@ const NewsletterPanel = ({
 	rows,
 	emptyText,
 	action,
+	caption,
 }: {
 	title: string;
 	background: string;
 	rows: NewsletterRow[];
 	emptyText: string;
 	action?: React.ReactNode;
+	caption?: string;
 }) => (
 	<section aria-label={title} css={sectionStyle}>
 		<div css={titleBarStyle}>
-			<Typography element="h2" variant="headingLg">
-				{title}
-			</Typography>
+			<div css={titleGroupStyle}>
+				<Typography element="h2" variant="headingLg">
+					{title}
+				</Typography>
+				{caption && (
+					<Typography
+						element="span"
+						variant="bodySm"
+						cssOverrides={subTextStyle}
+					>
+						{caption}
+					</Typography>
+				)}
+			</div>
 			{action}
 		</div>
 		<div css={panelStyle}>
@@ -334,7 +350,10 @@ export const HomeView = () => {
 	const navigate = useNavigate();
 
 	const drafts = rows.filter((row) => row.kind === 'draft');
-	const launched = rows.filter((row) => row.kind === 'launched');
+	// Rows arrive sorted most recently updated first.
+	const launched = rows
+		.filter((row) => row.kind === 'launched')
+		.slice(0, LAUNCHED_LIMIT);
 
 	return (
 		<StandLayout.Main cssOverrides={mainStyle}>
@@ -345,13 +364,6 @@ export const HomeView = () => {
 				<div css={welcomeStyle}>
 					<Typography element="h1" variant="titleXl">
 						Welcome to Newsletters
-					</Typography>
-					<Typography
-						element="p"
-						variant="bodyMd"
-						cssOverrides={welcomeTextStyle}
-					>
-						Create, manage and launch Guardian newsletters.
 					</Typography>
 				</div>
 				{failedSources.length > 0 && (
@@ -386,6 +398,7 @@ export const HomeView = () => {
 						title="Launched newsletters"
 						background={baseColors.green[800]}
 						rows={launched}
+						caption={`${LAUNCHED_LIMIT} most recently updated`}
 						emptyText="No launched newsletters"
 						action={<Link href="/all">View all</Link>}
 					/>
