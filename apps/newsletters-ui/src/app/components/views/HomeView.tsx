@@ -33,18 +33,21 @@ import { NewsletterThumbnail } from '../NewsletterThumbnail';
 
 const mainPadding = componentLayout.main;
 
-// Halves the default `Layout.Main` bottom padding.
+// Halves the default `Layout.Main` vertical padding.
 const mainStyle = css`
 	min-height: 0;
 	box-sizing: border-box;
 	padding-inline: ${semanticSpacing.stackMd};
+	padding-top: calc(${mainPadding.sm.padding.top} / 2);
 	padding-bottom: calc(${mainPadding.sm.padding.bottom} / 2);
 
 	${from.md} {
+		padding-top: calc(${mainPadding.md.padding.top} / 2);
 		padding-bottom: calc(${mainPadding.md.padding.bottom} / 2);
 	}
 
 	${from.lg} {
+		padding-top: calc(${mainPadding.lg.padding.top} / 2);
 		padding-bottom: calc(${mainPadding.lg.padding.bottom} / 2);
 		display: flex;
 		flex-direction: column;
@@ -56,7 +59,7 @@ const LAUNCHED_LIMIT = 15;
 
 const welcomeStyle = css`
 	max-width: 1400px;
-	margin: 0 auto ${semanticSpacing.stackLg};
+	margin: 0 auto ${semanticSpacing.stackSm};
 	width: 100%;
 	box-sizing: border-box;
 `;
@@ -108,8 +111,10 @@ const panelStyle = css`
 
 const titleGroupStyle = css`
 	display: flex;
-	flex-direction: column;
-	gap: ${semanticSpacing.stackXxs};
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: ${semanticSpacing.stackSm};
+	row-gap: ${semanticSpacing.stackXxs};
 `;
 
 const titleBarStyle = css`
