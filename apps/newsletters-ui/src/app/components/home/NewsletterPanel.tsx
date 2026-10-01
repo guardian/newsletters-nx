@@ -7,12 +7,14 @@ import {
 } from '@guardian/stand/Table';
 import { Typography } from '@guardian/stand/Typography';
 import type { ReactNode } from 'react';
+import type { NewsletterRow } from '../../lib/all-newsletters-rows';
 import {
 	emptyBodyStyle,
 	emptyStateStyle,
 	hideOnMobileStyle,
 	titleBarStyle,
 } from './home.styles';
+import { NewsletterTableRow } from './NewsletterTableRow';
 
 const tableColumns: ResponsiveTableValue<string> = {
 	sm: 'minmax(0, 1fr) auto',
@@ -22,11 +24,13 @@ const tableColumns: ResponsiveTableValue<string> = {
 export const NewsletterPanel = ({
 	title,
 	background,
+	rows,
 	emptyText,
 	action,
 }: {
 	title: string;
 	background: string;
+	rows: NewsletterRow[];
 	emptyText: string;
 	action?: ReactNode;
 }) => (
@@ -61,7 +65,11 @@ export const NewsletterPanel = ({
 						{emptyText}
 					</Typography>
 				)}
-			/>
+			>
+				{rows.map((row) => (
+					<NewsletterTableRow key={row.id} row={row} />
+				))}
+			</TableBody>
 		</Table>
 	</section>
 );
