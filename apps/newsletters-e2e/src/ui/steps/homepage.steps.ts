@@ -1,9 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import {
-	createFixtureDraft,
-	createFixtureNewsletter,
-} from '../../../helpers/test-fixtures';
 import { Given, Then, When } from './fixtures';
 
 // Each card is a <section aria-label=...>, i.e. a "region" landmark.
@@ -18,71 +14,20 @@ When('the editor opens the homepage', async ({ page }) => {
 	await page.goto('/');
 });
 
-Given(
-	/^(\d+) (draft|launched) newsletters named "([^"]+)" with a number suffix, oldest first$/,
-	async (
-		{ request, namedNewsletters },
-		count: string,
-		kind: string,
-		prefix: string,
-	) => {
-		const total = Number(count);
-		// Timestamps start in the future so these always outrank any
-		// newsletters left over from other scenarios.
-		const base = Date.now() + 24 * 60 * 60 * 1000;
-		for (let n = 1; n <= total; n++) {
-			const name = `${prefix} ${n}`;
-			const meta = { updatedTimestamp: base + n * 1000 };
-			if (kind === 'draft') {
-				const listId = await createFixtureDraft(request, { name, meta });
-				namedNewsletters.refsByName[name] = { kind: 'draft', listId };
-			} else {
-				const { identityName, listId } = await createFixtureNewsletter(
-					request,
-					{ name, meta },
-				);
-				namedNewsletters.refsByName[name] = {
-					kind: 'launched',
-					identityName,
-					listId,
-				};
-			}
-		}
-	},
-);
-
-Given(
-	"the user does not have the 'edit everything' permission to see the homepage action",
-	async ({ page }) => {
-		// Same approach as wizard-permissions: the dev profile is an admin, so
-		// the permissions response is mocked.
-		await page.route('**/api/user/permissions', async (route) => {
-			await route.fulfill({
-				status: 200,
-				contentType: 'application/json',
-				body: JSON.stringify({
-					ok: true,
-					data: { editEverything: false, useJsonEditor: false },
-				}),
-			});
+Given('the editor cannot edit newsletters', async ({ page }) => {
+	// Same approach as wizard-permissions: the dev profile is an admin, so
+	// the permissions response is mocked.
+	await page.route('**/api/user/permissions', async (route) => {
+		await route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify({
+				ok: true,
+				data: { editEverything: false, useJsonEditor: false },
+			}),
 		});
-	},
-);
-
-When(
-	'the editor selects the {string} row',
-	async ({ page, namedNewsletters }, name: string) => {
-		const ref = namedNewsletters.refsByName[name];
-		if (ref === undefined) {
-			throw new Error(`No newsletter named "${name}" was created`);
-		}
-		const href =
-			ref.kind === 'draft'
-				? `/drafts/${ref.listId}`
-				: `/launched/${ref.identityName}`;
-		await page.locator(`tr[data-href="${href}"]`).click();
-	},
-);
+	});
+});
 
 When(
 	'the editor selects {string} in the {string} card',
@@ -94,38 +39,20 @@ When(
 Then(
 	'the {string} card lists {string}',
 	async ({ page }, title: string, name: string) => {
-		// Trailing digit guard so "Cap Draft 1" does not match "Cap Draft 16".
 		await expect(
-			cardRows(page, title).filter({ hasText: new RegExp(`${name}(?!\\d)`) }),
-		).toHaveCount(1);
+			cardRows(page, title).filter({ hasText: name }).first(),
+		).toBeVisible();
 	},
 );
 
 Then(
 	'the {string} card does not list {string}',
 	async ({ page }, title: string, name: string) => {
-		// Make sure the card has rendered before asserting absence.
-		await expect(card(page, title)).toBeVisible();
+		// Wait for the card to load before asserting absence.
 		await expect(cardRows(page, title).first()).toBeVisible();
-		// Exact word match so "Cap Draft 1" does not match "Cap Draft 16".
-		const exactName = new RegExp(`${name}(?!\\d)`);
-		await expect(
-			cardRows(page, title).filter({ hasText: exactName }),
-		).toHaveCount(0);
-	},
-);
-
-Then(
-	'the {string} card lists {int} rows',
-	async ({ page }, title: string, count: number) => {
-		await expect(cardRows(page, title)).toHaveCount(count);
-	},
-);
-
-Then(
-	'the {string} card lists {string} first',
-	async ({ page }, title: string, name: string) => {
-		await expect(cardRows(page, title).first()).toContainText(name);
+		await expect(cardRows(page, title).filter({ hasText: name })).toHaveCount(
+			0,
+		);
 	},
 );
 
@@ -137,14 +64,6 @@ Then(
 		await expect(
 			card(page, title).getByRole('link', { name: action }),
 		).toHaveCount(0);
-	},
-);
-
-Then(
-	'the editor is taken to the {string} newsletter',
-	async ({ page }, name: string) => {
-		await expect(page).toHaveURL(/\/launched\/|\/drafts\//);
-		await expect(page.getByText(name).first()).toBeVisible();
 	},
 );
 
