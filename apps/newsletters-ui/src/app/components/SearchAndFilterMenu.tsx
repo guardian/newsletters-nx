@@ -12,28 +12,30 @@ import type {
 import { useState } from 'react';
 import type { Key } from 'react-aria-components';
 
-export const categoryOptions: Array<{
-	id: NewsletterCategory;
-	label: string;
-}> = [
-	{ id: 'article-based', label: 'Article based' },
-	{ id: 'article-based-legacy', label: 'Article based legacy' },
-	{ id: 'fronts-based', label: 'Fronts based' },
-	{ id: 'manual-send', label: 'Manual send' },
-	{ id: 'other', label: 'Other' },
-];
+const categoryLabels: Record<NewsletterCategory, string> = {
+	'article-based': 'Article based',
+	'article-based-legacy': 'Article based legacy',
+	'fronts-based': 'Fronts based',
+	'manual-send': 'Manual send',
+	other: 'Other',
+};
 
-export const pillarOptions: Array<{
-	id: Theme;
-	label: string;
-}> = [
-	{ id: 'news', label: 'News' },
-	{ id: 'opinion', label: 'Opinion' },
-	{ id: 'culture', label: 'Culture' },
-	{ id: 'sport', label: 'Sport' },
-	{ id: 'lifestyle', label: 'Lifestyle' },
-	{ id: 'features', label: 'Features' },
-];
+const pillarLabels: Record<Theme, string> = {
+	news: 'News',
+	opinion: 'Opinion',
+	culture: 'Culture',
+	sport: 'Sport',
+	lifestyle: 'Lifestyle',
+	features: 'Features',
+};
+
+const toSortedOptions = <T extends string>(labels: Record<T, string>) =>
+	(Object.entries(labels) as Array<[T, string]>)
+		.map(([id, label]) => ({ id, label }))
+		.sort((a, b) => a.label.localeCompare(b.label));
+
+export const categoryOptions = toSortedOptions(categoryLabels);
+export const pillarOptions = toSortedOptions(pillarLabels);
 
 const sectionStyles = css`
 	background-color: ${semanticColors.bg.raisedLevel1};
