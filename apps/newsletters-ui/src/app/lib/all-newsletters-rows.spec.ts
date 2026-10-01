@@ -57,6 +57,7 @@ describe('launchedNewsletterToRow', () => {
 			name: 'Politics Weekly',
 			theme: 'news',
 			category: 'article-based',
+			status: 'live',
 			statusBadge: { label: 'Live', color: 'green' },
 			thumbnailUrl: 'https://example.com/square.png',
 			lastUpdated: UPDATED,
@@ -135,6 +136,7 @@ describe('draftNewsletterToRow', () => {
 			name: 'Culture Manual',
 			theme: 'culture',
 			category: 'manual-send',
+			status: 'draft',
 			thumbnailUrl: undefined,
 			lastUpdated: UPDATED,
 		});

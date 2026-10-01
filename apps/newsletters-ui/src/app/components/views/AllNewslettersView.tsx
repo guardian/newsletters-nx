@@ -20,10 +20,12 @@ import {
 } from '../../lib/stand-layout';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { AllNewslettersTable } from '../AllNewslettersTable';
+import type { NewsletterStatus } from '../NewsletterStatusBadge';
 import {
 	categoryOptions,
 	pillarOptions,
 	SearchAndFilterMenu,
+	statusOptions,
 } from '../SearchAndFilterMenu';
 
 // `Layout.Main` padding is disabled and reapplied here so the scroll area can
@@ -127,9 +129,11 @@ const sourceLabels: Record<string, string> = {
 export const allNewslettersSearchParam = 'search';
 export const allNewslettersCategoryParam = 'category';
 export const allNewslettersPillarParam = 'pillar';
+export const allNewslettersStatusParam = 'status';
 
 const categoryValues = new Set<string>(categoryOptions.map(({ id }) => id));
 const pillarValues = new Set<string>(pillarOptions.map(({ id }) => id));
+const statusValues = new Set<string>(statusOptions.map(({ id }) => id));
 
 export const AllNewslettersView = () => {
 	// `useLoaderData` is typed as `any`, which `eslint --fix` uses to strip a
@@ -144,6 +148,9 @@ export const AllNewslettersView = () => {
 	const selectedPillars = searchParams
 		.getAll(allNewslettersPillarParam)
 		.filter((value): value is Theme => pillarValues.has(value));
+	const selectedStatuses = searchParams
+		.getAll(allNewslettersStatusParam)
+		.filter((value): value is NewsletterStatus => statusValues.has(value));
 
 	const setSearchTerm = (value: string) => {
 		setSearchParams(
@@ -182,7 +189,9 @@ export const AllNewslettersView = () => {
 		const matchesPillar =
 			selectedPillars.length === 0 ||
 			(row.theme !== undefined && selectedPillars.includes(row.theme));
-		return matchesSearch && matchesCategory && matchesPillar;
+		const matchesStatus =
+			selectedStatuses.length === 0 || selectedStatuses.includes(row.status);
+		return matchesSearch && matchesCategory && matchesPillar && matchesStatus;
 	});
 
 	// This view is part of the Stand design. It's not worth building real
@@ -218,6 +227,10 @@ export const AllNewslettersView = () => {
 				selectedPillars={selectedPillars}
 				onPillarChange={(pillars) =>
 					setMultiValueParam(allNewslettersPillarParam, pillars)
+				}
+				selectedStatuses={selectedStatuses}
+				onStatusChange={(statuses) =>
+					setMultiValueParam(allNewslettersStatusParam, statuses)
 				}
 			/>
 			<section css={scrollAreaStyle}>

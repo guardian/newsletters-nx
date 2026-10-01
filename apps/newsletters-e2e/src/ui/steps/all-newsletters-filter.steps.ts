@@ -1,25 +1,32 @@
 import type {
 	NewsletterCategory,
+	NewsletterData,
 	Theme,
 } from '@newsletters-nx/newsletters-data-client';
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import { createFixtureDraft } from '../../../helpers/test-fixtures';
+import {
+	createFixtureDraft,
+	createFixtureNewsletter,
+} from '../../../helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
 
-interface FixtureNewsletter {
+type FixtureNewsletter = {
 	name: string;
 	category: NewsletterCategory;
 	theme?: Theme;
-}
+} & (
+	| { kind: 'draft'; status: 'draft' }
+	| { kind: 'launched'; status: NewsletterData['status']; theme: Theme }
+);
 
 interface FilterConfig {
 	param: string;
-	fixtureKey: 'category' | 'theme';
+	fixtureKey: 'category' | 'theme' | 'status';
 	values: Record<string, string>;
 	activeLabels: [string, string];
-	// Matches the row's "Pillar | Category" label when it shows one of `labels`.
+	// Matches the row text that shows one of `labels` for this filter.
 	rowLabelPattern: (labels: string[]) => RegExp;
 }
 
@@ -58,13 +65,51 @@ const filters: Record<string, FilterConfig> = {
 		rowLabelPattern: (labels) =>
 			new RegExp(`^${anyOf(labels)}(${separator}|$)`),
 	},
+	Status: {
+		param: 'status',
+		fixtureKey: 'status',
+		values: {
+			Live: 'live',
+			Pending: 'pending',
+			Paused: 'paused',
+			Cancelled: 'cancelled',
+			Draft: 'draft',
+			'Ready to launch': 'ready-to-launch',
+		},
+		activeLabels: ['Live', 'Draft'],
+		// rowLabelPattern uses regex here to match drafts that might have a percentage at the end of them eg `Draft • 40%`
+		rowLabelPattern: (labels) => new RegExp(`^${anyOf(labels)}( • \\d+%)?$`),
+	},
 };
 
 const fixtureNewsletters: FixtureNewsletter[] = [
-	{ name: 'Filter Article News', category: 'article-based', theme: 'news' },
-	{ name: 'Filter Fronts Sport', category: 'fronts-based', theme: 'sport' },
-	{ name: 'Filter Other Culture', category: 'other', theme: 'culture' },
-	{ name: 'Filter Other No Pillar', category: 'other' },
+	{
+		name: 'Filter Article News',
+		kind: 'draft',
+		status: 'draft',
+		category: 'article-based',
+		theme: 'news',
+	},
+	{
+		name: 'Filter Fronts Sport',
+		kind: 'launched',
+		status: 'live',
+		category: 'fronts-based',
+		theme: 'sport',
+	},
+	{
+		name: 'Filter Other Culture',
+		kind: 'launched',
+		status: 'paused',
+		category: 'other',
+		theme: 'culture',
+	},
+	{
+		name: 'Filter Other No Pillar',
+		kind: 'draft',
+		status: 'draft',
+		category: 'other',
+	},
 ];
 
 const filterConfig = (filter: string): FilterConfig => {
@@ -89,7 +134,13 @@ const filterControl = (page: Page, filter: string): Locator =>
 	page.getByRole('button', { name: new RegExp(`${filter}$`) });
 
 const rowFor = (page: Page, ref: NamedNewsletterRef): Locator =>
-	page.locator(`tr[data-href="/drafts/${ref.listId}"]`);
+	page.locator(
+		`tr[data-href="${
+			ref.kind === 'draft'
+				? `/drafts/${ref.listId}`
+				: `/launched/${ref.identityName}`
+		}"]`,
+	);
 
 const openAllNewsletters = async (page: Page) => {
 	if (new URL(page.url()).pathname !== '/all') {
@@ -106,15 +157,28 @@ const toggleOption = async (page: Page, filter: string, label: string) => {
 };
 
 Given(
-	'newsletters exist across multiple pillars and categories',
+	'newsletters exist across multiple pillars, categories, and statuses',
 	async ({ request, namedNewsletters }) => {
-		for (const { name, category, theme } of fixtureNewsletters) {
-			const listId = await createFixtureDraft(request, {
-				name,
-				category,
-				theme,
-			});
-			namedNewsletters.refsByName[name] = { kind: 'draft', listId };
+		for (const fixture of fixtureNewsletters) {
+			const { name, category, theme } = fixture;
+			if (fixture.kind === 'draft') {
+				const listId = await createFixtureDraft(request, {
+					name,
+					category,
+					theme,
+				});
+				namedNewsletters.refsByName[name] = { kind: 'draft', listId };
+			} else {
+				const { identityName, listId } = await createFixtureNewsletter(
+					request,
+					{ name, category, theme, status: fixture.status },
+				);
+				namedNewsletters.refsByName[name] = {
+					kind: 'launched',
+					identityName,
+					listId,
+				};
+			}
 		}
 	},
 );
@@ -200,12 +264,11 @@ Then(
 );
 
 Then(
-	'the {word} control shows a truncated selected-values summary',
-	async ({ page }, filter: string) => {
+	'the {word} control summarises {string} and {string}',
+	async ({ page }, filter: string, first: string, second: string) => {
 		const control = filterControl(page, filter);
-		for (const label of filterConfig(filter).activeLabels) {
-			await expect(control).toContainText(label);
-		}
+		await expect(control).toContainText(first);
+		await expect(control).toContainText(second);
 		await expect(control.locator('span').first()).toHaveCSS(
 			'text-overflow',
 			'ellipsis',
@@ -214,10 +277,10 @@ Then(
 );
 
 Then(
-	'the URL includes the selected {word} values',
-	async ({ page }, filter: string) => {
-		const { param, activeLabels } = filterConfig(filter);
-		const expected = activeLabels.map((label) => filterValue(filter, label));
+	'the URL includes {word} {string} and {string}',
+	async ({ page }, filter: string, first: string, second: string) => {
+		const { param } = filterConfig(filter);
+		const expected = [filterValue(filter, first), filterValue(filter, second)];
 		await expect(page).toHaveURL((url) => {
 			const values = url.searchParams.getAll(param);
 			return expected.every((value) => values.includes(value));

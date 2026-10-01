@@ -3,6 +3,7 @@ import {
 	allNewslettersCategoryParam,
 	allNewslettersPillarParam,
 	allNewslettersSearchParam,
+	allNewslettersStatusParam,
 	AllNewslettersView,
 } from '../components/views/AllNewslettersView';
 import { ErrorPage } from '../ErrorPage';
@@ -13,6 +14,7 @@ const clientFilterParams = [
 	allNewslettersSearchParam,
 	allNewslettersCategoryParam,
 	allNewslettersPillarParam,
+	allNewslettersStatusParam,
 ];
 
 const withoutClientFilterParams = (url: URL): string => {
