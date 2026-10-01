@@ -11,6 +11,15 @@ import { InlineMessage } from '@guardian/stand/InlineMessage';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { Link } from '@guardian/stand/Link';
 import { LinkButton } from '@guardian/stand/LinkButton';
+import type { ResponsiveTableValue } from '@guardian/stand/Table';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableColumnHeader,
+	TableHeader,
+	TableRow,
+} from '@guardian/stand/Table';
 import { Typography } from '@guardian/stand/Typography';
 import { from, until } from '@guardian/stand/utils';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
@@ -62,10 +71,14 @@ const pageStyle = css`
 	}
 `;
 
+// Sized to content (capped at the available height) so a short list doesn't
+// stretch to match the taller one.
 const sectionStyle = css`
 	${from.lg} {
 		display: flex;
 		flex-direction: column;
+		align-self: start;
+		max-height: 100%;
 		min-height: 0;
 	}
 `;
@@ -74,7 +87,7 @@ const panelStyle = css`
 	${from.lg} {
 		display: flex;
 		flex-direction: column;
-		flex: 1;
+		flex: 0 1 auto;
 		min-height: 0;
 	}
 
@@ -99,65 +112,47 @@ const titleBarStyle = css`
 	margin-bottom: ${semanticSpacing.stackSm};
 `;
 
-const columnHeaderStyle = (background: string) => css`
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: center;
-	gap: ${semanticSpacing.stackLg};
-	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
-	background-color: ${background};
-	box-sizing: border-box;
-
-	${from.lg} {
-		position: sticky;
-		top: 0;
-		z-index: 1;
-	}
-
-	${from.md} {
-		grid-template-columns: minmax(0, 1fr) 8.5rem 9.5rem;
-	}
-`;
-
-const lastUpdatedHeaderStyle = css`
-	${until.md} {
-		display: none;
-	}
-`;
-
-const statusHeaderStyle = css`
-	min-width: 5rem;
-	white-space: nowrap;
-`;
-
-const listStyle = css`
-	list-style: none;
-	margin: 0;
-	padding: 0;
-`;
-
 // The header lives inside the scroll area so it shares the rows' width
 // (the scrollbar would otherwise offset the two).
 const scrollAreaStyle = css`
 	${from.lg} {
-		flex: 1;
+		flex: 0 1 auto;
 		min-height: 0;
 		overflow-y: auto;
 		overscroll-behavior: contain;
 	}
 `;
 
-const rowStyle = css`
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: center;
-	gap: ${semanticSpacing.stackLg};
-	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
-	border-top: ${semanticSizing.border.default} solid
-		${semanticColors.border.weak};
+// The panel provides the border; `overflow: clip` keeps the sticky header working.
+const tableStyle = css`
+	overflow: clip;
+	border: none;
+	border-radius: 0;
+`;
 
+const headerStyle = (background: string) => css`
+	background-color: ${background};
+
+	${from.lg} {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+`;
+
+const rowStyle = css`
+	cursor: pointer;
+`;
+
+const lastUpdatedMobileStyle = css`
 	${from.md} {
-		grid-template-columns: minmax(0, 1fr) 8.5rem 9.5rem;
+		display: none;
+	}
+`;
+
+const hideOnMobileStyle = css`
+	${until.md} {
+		display: none;
 	}
 `;
 
@@ -175,41 +170,8 @@ const detailsStyle = css`
 	min-width: 0;
 `;
 
-const titleLinkStyle = css`
-	display: block;
-	max-width: 100%;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-`;
-
-const titleStyle = css`
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-`;
-
 const subTextStyle = css`
 	color: ${semanticColors.text.weak};
-`;
-
-const lastUpdatedStyle = css`
-	${until.md} {
-		display: none;
-	}
-`;
-
-const badgeCellStyle = css`
-	white-space: nowrap;
-	display: flex;
-	justify-content: flex-start;
-`;
-
-const emptyStyle = css`
-	padding: ${semanticSpacing.stackLg} ${semanticSpacing.stackMd};
-	color: ${semanticColors.text.weak};
-	border-top: ${semanticSizing.border.default} solid
-		${semanticColors.border.weak};
 `;
 
 const errorsStyle = css`
@@ -220,52 +182,9 @@ const errorsStyle = css`
 	margin: 0 auto ${semanticSpacing.stackMd};
 `;
 
-const NewsletterRowItem = ({ row }: { row: NewsletterRow }) => {
-	const pillarCategoryLabel = formatPillarCategoryLabel(
-		row.theme,
-		row.category,
-	);
-	const lastUpdated = formatLastUpdated(row.lastUpdated);
-
-	return (
-		<li css={rowStyle}>
-			<div css={newsletterCellStyle}>
-				<NewsletterThumbnail src={row.thumbnailUrl} />
-				<div css={detailsStyle}>
-					<Link href={row.href} cssOverrides={titleLinkStyle}>
-						<Typography
-							element="span"
-							variant="bodyBoldMd"
-							cssOverrides={titleStyle}
-						>
-							{row.name}
-						</Typography>
-					</Link>
-					{pillarCategoryLabel && (
-						<Typography
-							element="span"
-							variant="bodySm"
-							cssOverrides={subTextStyle}
-						>
-							{pillarCategoryLabel}
-						</Typography>
-					)}
-				</div>
-			</div>
-			<Typography
-				element="span"
-				variant="bodyMd"
-				cssOverrides={lastUpdatedStyle}
-			>
-				{lastUpdated}
-			</Typography>
-			<div css={badgeCellStyle}>
-				<Badge color={row.statusBadge.color} weight="strong">
-					{row.statusBadge.label}
-				</Badge>
-			</div>
-		</li>
-	);
+const tableColumns: ResponsiveTableValue<string> = {
+	sm: 'minmax(0, 1fr) auto',
+	md: 'minmax(0, 1fr) 8.5rem 9.5rem',
 };
 
 const NewsletterPanel = ({
@@ -303,36 +222,82 @@ const NewsletterPanel = ({
 		</div>
 		<div css={panelStyle}>
 			<div css={scrollAreaStyle}>
-				<div css={columnHeaderStyle(background)}>
-					<Typography element="span" variant="bodyBoldMd">
-						Newsletters
-					</Typography>
-					<Typography
-						element="span"
-						variant="bodyBoldMd"
-						cssOverrides={lastUpdatedHeaderStyle}
-					>
-						Last updated
-					</Typography>
-					<Typography
-						element="span"
-						variant="bodyBoldMd"
-						cssOverrides={statusHeaderStyle}
-					>
-						Status
-					</Typography>
-				</div>
-				{rows.length === 0 ? (
-					<Typography element="p" variant="bodyMd" cssOverrides={emptyStyle}>
-						{emptyText}
-					</Typography>
-				) : (
-					<ul css={listStyle}>
-						{rows.map((row) => (
-							<NewsletterRowItem key={row.id} row={row} />
-						))}
-					</ul>
-				)}
+				<Table
+					aria-label={title}
+					columns={tableColumns}
+					headerVisibleFrom="sm"
+					cssOverrides={tableStyle}
+				>
+					<TableHeader cssOverrides={headerStyle(background)}>
+						<TableColumnHeader isRowHeader>Newsletters</TableColumnHeader>
+						<TableColumnHeader cssOverrides={hideOnMobileStyle}>
+							Last updated
+						</TableColumnHeader>
+						<TableColumnHeader>Status</TableColumnHeader>
+					</TableHeader>
+					<TableBody renderEmptyState={() => emptyText}>
+						{rows.map((row) => {
+							const pillarCategoryLabel = formatPillarCategoryLabel(
+								row.theme,
+								row.category,
+							);
+							const lastUpdated = formatLastUpdated(row.lastUpdated);
+							return (
+								<TableRow
+									key={row.id}
+									id={row.id}
+									href={row.href}
+									cssOverrides={rowStyle}
+								>
+									<TableCell
+										gridColumn={{ sm: '1', md: '1' }}
+										gridRow={{ sm: '1', md: 'auto' }}
+									>
+										<div css={newsletterCellStyle}>
+											<NewsletterThumbnail src={row.thumbnailUrl} />
+											<div css={detailsStyle}>
+												<Typography element="span" variant="bodyBoldMd">
+													{row.name}
+												</Typography>
+												{pillarCategoryLabel && (
+													<Typography
+														element="span"
+														variant="bodySm"
+														cssOverrides={subTextStyle}
+													>
+														{pillarCategoryLabel}
+													</Typography>
+												)}
+												<Typography
+													element="span"
+													variant="bodySm"
+													cssOverrides={[subTextStyle, lastUpdatedMobileStyle]}
+												>
+													{lastUpdated}
+												</Typography>
+											</div>
+										</div>
+									</TableCell>
+									<TableCell
+										gridColumn={{ sm: '1', md: '2' }}
+										gridRow={{ sm: '1', md: 'auto' }}
+										cssOverrides={hideOnMobileStyle}
+									>
+										{lastUpdated}
+									</TableCell>
+									<TableCell
+										gridColumn={{ sm: '2', md: '3' }}
+										gridRow={{ sm: '1', md: 'auto' }}
+									>
+										<Badge color={row.statusBadge.color} weight="strong">
+											{row.statusBadge.label}
+										</Badge>
+									</TableCell>
+								</TableRow>
+							);
+						})}
+					</TableBody>
+				</Table>
 			</div>
 		</div>
 	</section>
