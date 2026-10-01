@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import {
 	allNewslettersCategoryParam,
+	allNewslettersPillarParam,
 	allNewslettersSearchParam,
 	AllNewslettersView,
 } from '../components/views/AllNewslettersView';
@@ -8,10 +9,15 @@ import { ErrorPage } from '../ErrorPage';
 import { Layout } from '../Layout';
 import { allNewslettersLoader } from '../loaders/all-newsletters';
 
+const clientFilterParams = [
+	allNewslettersSearchParam,
+	allNewslettersCategoryParam,
+	allNewslettersPillarParam,
+];
+
 const withoutClientFilterParams = (url: URL): string => {
 	const params = new URLSearchParams(url.search);
-	params.delete(allNewslettersSearchParam);
-	params.delete(allNewslettersCategoryParam);
+	clientFilterParams.forEach((param) => params.delete(param));
 	const query = params.toString();
 	return query ? `${url.pathname}?${query}` : url.pathname;
 };
@@ -26,15 +32,11 @@ export const allNewslettersRoute: RouteObject = {
 			element: <AllNewslettersView />,
 			loader: allNewslettersLoader,
 			shouldRevalidate: ({ currentUrl, nextUrl, defaultShouldRevalidate }) => {
-				const clientFiltersChanged =
-					currentUrl.searchParams.get(allNewslettersSearchParam) !==
-						nextUrl.searchParams.get(allNewslettersSearchParam) ||
-					JSON.stringify(
-						currentUrl.searchParams.getAll(allNewslettersCategoryParam),
-					) !==
-						JSON.stringify(
-							nextUrl.searchParams.getAll(allNewslettersCategoryParam),
-						);
+				const clientFiltersChanged = clientFilterParams.some(
+					(param) =>
+						JSON.stringify(currentUrl.searchParams.getAll(param)) !==
+						JSON.stringify(nextUrl.searchParams.getAll(param)),
+				);
 				const onlyClientFiltersChanged =
 					clientFiltersChanged &&
 					withoutClientFilterParams(currentUrl) ===

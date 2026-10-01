@@ -8,7 +8,10 @@ import { InlineMessage } from '@guardian/stand/InlineMessage';
 import { componentLayout, Layout as StandLayout } from '@guardian/stand/Layout';
 import { Typography } from '@guardian/stand/Typography';
 import { from } from '@guardian/stand/utils';
-import type { NewsletterCategory } from '@newsletters-nx/newsletters-data-client';
+import type {
+	NewsletterCategory,
+	Theme,
+} from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useSearchParams } from 'react-router-dom';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import {
@@ -17,7 +20,11 @@ import {
 } from '../../lib/stand-layout';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { AllNewslettersTable } from '../AllNewslettersTable';
-import { categoryOptions, SearchAndFilterMenu } from '../SearchAndFilterMenu';
+import {
+	categoryOptions,
+	pillarOptions,
+	SearchAndFilterMenu,
+} from '../SearchAndFilterMenu';
 
 // `Layout.Main` padding is disabled and reapplied here so the scroll area can
 // start at the top edge of content, directly under the top bar.
@@ -119,10 +126,10 @@ const sourceLabels: Record<string, string> = {
 
 export const allNewslettersSearchParam = 'search';
 export const allNewslettersCategoryParam = 'category';
+export const allNewslettersPillarParam = 'pillar';
 
-const categoryValues = new Set<NewsletterCategory>(
-	categoryOptions.map(({ id }) => id),
-);
+const categoryValues = new Set<string>(categoryOptions.map(({ id }) => id));
+const pillarValues = new Set<string>(pillarOptions.map(({ id }) => id));
 
 export const AllNewslettersView = () => {
 	// `useLoaderData` is typed as `any`, which `eslint --fix` uses to strip a
@@ -133,9 +140,10 @@ export const AllNewslettersView = () => {
 	const searchTerm = searchParams.get(allNewslettersSearchParam) ?? '';
 	const selectedCategories = searchParams
 		.getAll(allNewslettersCategoryParam)
-		.filter((value): value is NewsletterCategory =>
-			categoryValues.has(value as NewsletterCategory),
-		);
+		.filter((value): value is NewsletterCategory => categoryValues.has(value));
+	const selectedPillars = searchParams
+		.getAll(allNewslettersPillarParam)
+		.filter((value): value is Theme => pillarValues.has(value));
 
 	const setSearchTerm = (value: string) => {
 		setSearchParams(
@@ -153,14 +161,12 @@ export const AllNewslettersView = () => {
 		);
 	};
 
-	const setSelectedCategories = (categories: NewsletterCategory[]) => {
+	const setMultiValueParam = (param: string, values: string[]) => {
 		setSearchParams(
 			(previous) => {
 				const next = new URLSearchParams(previous);
-				next.delete(allNewslettersCategoryParam);
-				categories.forEach((category) =>
-					next.append(allNewslettersCategoryParam, category),
-				);
+				next.delete(param);
+				values.forEach((value) => next.append(param, value));
 				return next;
 			},
 			{ replace: true },
@@ -173,7 +179,10 @@ export const AllNewslettersView = () => {
 		const matchesCategory =
 			selectedCategories.length === 0 ||
 			(row.category !== undefined && selectedCategories.includes(row.category));
-		return matchesSearch && matchesCategory;
+		const matchesPillar =
+			selectedPillars.length === 0 ||
+			(row.theme !== undefined && selectedPillars.includes(row.theme));
+		return matchesSearch && matchesCategory && matchesPillar;
 	});
 
 	// This view is part of the Stand design. It's not worth building real
@@ -203,7 +212,13 @@ export const AllNewslettersView = () => {
 				searchTerm={searchTerm}
 				onSearchChange={setSearchTerm}
 				selectedCategories={selectedCategories}
-				onCategoryChange={setSelectedCategories}
+				onCategoryChange={(categories) =>
+					setMultiValueParam(allNewslettersCategoryParam, categories)
+				}
+				selectedPillars={selectedPillars}
+				onPillarChange={(pillars) =>
+					setMultiValueParam(allNewslettersPillarParam, pillars)
+				}
 			/>
 			<section css={scrollAreaStyle}>
 				<div css={[containerStyle, countBlockStyle]}>

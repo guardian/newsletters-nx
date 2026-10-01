@@ -5,20 +5,37 @@ import { SearchInput } from '@guardian/stand/SearchInput';
 import { Option, Select } from '@guardian/stand/Select';
 import { Typography } from '@guardian/stand/Typography';
 import { from, until } from '@guardian/stand/utils';
-import type { NewsletterCategory } from '@newsletters-nx/newsletters-data-client';
+import type {
+	NewsletterCategory,
+	Theme,
+} from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import type { Key } from 'react-aria-components';
 
-export const categoryOptions: Array<{
-	id: NewsletterCategory;
-	label: string;
-}> = [
-	{ id: 'article-based', label: 'Article based' },
-	{ id: 'article-based-legacy', label: 'Article based legacy' },
-	{ id: 'fronts-based', label: 'Fronts based' },
-	{ id: 'manual-send', label: 'Manual send' },
-	{ id: 'other', label: 'Other' },
-];
+const categoryLabels: Record<NewsletterCategory, string> = {
+	'article-based': 'Article based',
+	'article-based-legacy': 'Article based legacy',
+	'fronts-based': 'Fronts based',
+	'manual-send': 'Manual send',
+	other: 'Other',
+};
+
+const pillarLabels: Record<Theme, string> = {
+	news: 'News',
+	opinion: 'Opinion',
+	culture: 'Culture',
+	sport: 'Sport',
+	lifestyle: 'Lifestyle',
+	features: 'Features',
+};
+
+const toSortedOptions = <T extends string>(labels: Record<T, string>) =>
+	(Object.entries(labels) as Array<[T, string]>)
+		.map(([id, label]) => ({ id, label }))
+		.sort((a, b) => a.label.localeCompare(b.label));
+
+export const categoryOptions = toSortedOptions(categoryLabels);
+export const pillarOptions = toSortedOptions(pillarLabels);
 
 const sectionStyles = css`
 	background-color: ${semanticColors.bg.raisedLevel1};
@@ -87,7 +104,7 @@ const getInputContainerStyles = (isOpen: boolean) => css`
 	}
 `;
 
-const categorySelectStyles = css`
+const multiSelectStyles = css`
 	button > span {
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -95,11 +112,16 @@ const categorySelectStyles = css`
 	}
 `;
 
+const toKeys = (value: Key | Key[] | null): Key[] =>
+	Array.isArray(value) ? value : value === null ? [] : [value];
+
 interface SearchAndFilterMenuProps {
 	searchTerm: string;
 	onSearchChange: (value: string) => void;
 	selectedCategories: NewsletterCategory[];
 	onCategoryChange: (categories: NewsletterCategory[]) => void;
+	selectedPillars: Theme[];
+	onPillarChange: (pillars: Theme[]) => void;
 }
 
 export const SearchAndFilterMenu = ({
@@ -107,12 +129,10 @@ export const SearchAndFilterMenu = ({
 	onSearchChange,
 	selectedCategories,
 	onCategoryChange,
+	selectedPillars,
+	onPillarChange,
 }: SearchAndFilterMenuProps) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const handleCategoryChange = (value: Key | Key[] | null) => {
-		const values = Array.isArray(value) ? value : value === null ? [] : [value];
-		onCategoryChange(values as NewsletterCategory[]);
-	};
 
 	return (
 		<section css={sectionStyles}>
@@ -132,7 +152,7 @@ export const SearchAndFilterMenu = ({
 			</button>
 			<div css={getInputContainerStyles(isOpen)}>
 				<SearchInput
-					label="search"
+					label="Search"
 					value={searchTerm}
 					onChange={onSearchChange}
 				/>
@@ -141,10 +161,26 @@ export const SearchAndFilterMenu = ({
 					placeholder="All"
 					selectionMode="multiple"
 					value={selectedCategories}
-					onChange={handleCategoryChange}
-					cssOverrides={categorySelectStyles}
+					onChange={(value) =>
+						onCategoryChange(toKeys(value) as NewsletterCategory[])
+					}
+					cssOverrides={multiSelectStyles}
 				>
 					{categoryOptions.map(({ id, label }) => (
+						<Option key={id} id={id}>
+							{label}
+						</Option>
+					))}
+				</Select>
+				<Select
+					label="Pillar"
+					placeholder="All"
+					selectionMode="multiple"
+					value={selectedPillars}
+					onChange={(value) => onPillarChange(toKeys(value) as Theme[])}
+					cssOverrides={multiSelectStyles}
+				>
+					{pillarOptions.map(({ id, label }) => (
 						<Option key={id} id={id}>
 							{label}
 						</Option>
