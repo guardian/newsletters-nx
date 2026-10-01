@@ -9,8 +9,8 @@ Feature: All newsletters filters
 
 	Scenario: Filter defaults are applied on first load
 		When the editor opens the All newsletters page
-		Then Category is "All"
-		And Pillar is "All"
+		Then Category should be "All"
+		And Pillar should be "All"
 		And all newsletters are shown
 
 	Scenario: Category supports multi-select and updates the URL

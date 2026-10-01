@@ -151,9 +151,12 @@ When(
 	},
 );
 
-Then('{word} is {string}', async ({ page }, filter: string, value: string) => {
-	await expect(filterControl(page, filter)).toContainText(value);
-});
+Then(
+	'{word} should be {string}',
+	async ({ page }, filter: string, value: string) => {
+		await expect(filterControl(page, filter)).toContainText(value);
+	},
+);
 
 Then(
 	'{word} is reset to {string}',
