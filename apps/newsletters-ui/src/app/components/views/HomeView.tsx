@@ -32,7 +32,7 @@ export const HomeView = () => {
 				useHref={useHref}
 			>
 				<Typography element="h1" variant="titleXl" cssOverrides={titleStyle}>
-					Welcome to Newsletters
+					Welcome to the Newsletters tool
 				</Typography>
 				<FailedSourcesMessages failedSources={failedSources} />
 				<div css={pageStyle}>
