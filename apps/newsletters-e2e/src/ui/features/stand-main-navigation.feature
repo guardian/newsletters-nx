@@ -3,16 +3,23 @@ Feature: Stand main navigation
 	editor can move between. All Newsletters is the entry point for browsing
 	every newsletter regardless of its state, so it appears first.
 
+	Scenario: The Stand top-bar 'home' link navigates to the dashboard
+		Given an editor's workspace uses the Stand design
+		When they use the 'Newsletter' button in the top bar
+		Then they should see the home page
+
 	Scenario: The Stand main navigation displays in the correct order
 		Given an editor's workspace uses the Stand design
 		Then they should see the following navigation
 			| label                 | path                    |
 			| All newsletters       | /all                    |
-			| Launched newsletters  | /launched               |
-			| Draft newsletters     | /drafts                 |
-			| Email templates       | /templates              |
-			| Newsletter layouts    | /layouts                |
+			| Newsletters hub       | /layouts                |
 			| Create new newsletter | /drafts/newsletter-data |
+
+	Scenario: The 'Create new newsletter' link is only visible with correct permissions
+		Given an editor's workspace uses the Stand design
+		And the user does not have the 'edit everything' permission
+		Then the 'Create new newsletter' nav link should not be visible
 
 	Scenario Outline: Navigating to each item in the Stand main navigation
 		Given an editor's workspace uses the Stand design
@@ -22,8 +29,5 @@ Feature: Stand main navigation
 		Examples:
 			| page                  |
 			| All newsletters       |
-			| Launched newsletters  |
-			| Draft newsletters     |
-			| Email templates       |
-			| Newsletter layouts    |
+			| Newsletters hub       |
 			| Create new newsletter |

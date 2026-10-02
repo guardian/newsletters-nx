@@ -8,8 +8,8 @@ const API_BASE = process.env['API_URL'] ?? 'http://localhost:3000';
 // filtering by a Stand-only link identifies the shell, not just the design.
 const standShellNav = (page: Page) =>
 	page
-		.getByRole('navigation')
-		.filter({ has: page.getByRole('link', { name: 'Draft newsletters' }) });
+		.getByRole('navigation', { name: 'Top bar' })
+		.filter({ has: page.getByRole('link', { name: 'All newsletters' }) });
 
 const allNewslettersTable = (page: Page) =>
 	page.getByRole('grid', { name: 'All newsletters' });
@@ -54,12 +54,15 @@ Then(
 	},
 );
 
-Then('the editor sees a message to enable the Stand design', async ({ page }) => {
-	await expect(allNewslettersTable(page)).toHaveCount(0);
-	await expect(
-		page.getByRole('link', { name: 'Enable the Stand design' }),
-	).toBeVisible();
-});
+Then(
+	'the editor sees a message to enable the Stand design',
+	async ({ page }) => {
+		await expect(allNewslettersTable(page)).toHaveCount(0);
+		await expect(
+			page.getByRole('link', { name: 'Enable the Stand design' }),
+		).toBeVisible();
+	},
+);
 
 Then(
 	'the launched newsletters overview still lists the launched newsletters',
