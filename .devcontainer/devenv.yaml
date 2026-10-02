@@ -39,6 +39,11 @@ plugins:
     - 'alexkrechik.cucumberautocomplete'
   intellij: []
 
+#
+remoteEnv:
+  - name: IS_NEWSLETTERS_NX_DEVCONTAINER
+    value: 'true'
+
 # Optional: Commands to run after container creation
 # Each command has a 'cmd' field and a 'workingDirectory' field
 # e.g.

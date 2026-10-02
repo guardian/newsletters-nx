@@ -3,6 +3,14 @@ import react from '@vitejs/plugin-react';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const getViteHost = () => {
+	// Containers have their a separate loopback interface to the host machine,
+	// so to expose a service to the host you must bind to all interfaces on the container.
+	const isRunningInDevContainer =
+		process.env.IS_NEWSLETTERS_NX_DEVCONTAINER === 'true';
+	return isRunningInDevContainer ? '0.0.0.0' : 'localhost';
+};
+
 export default defineConfig({
 	root: __dirname,
 	build: {
@@ -14,7 +22,7 @@ export default defineConfig({
 	},
 	server: {
 		port: 4200,
-		host: 'localhost',
+		host: getViteHost(),
 		proxy: {
 			'/api': {
 				/** @TODO - Read target from env var / param instead of hardcoding */
@@ -32,7 +40,7 @@ export default defineConfig({
 	},
 	preview: {
 		port: 4200,
-		host: 'localhost',
+		host: getViteHost(),
 		proxy: {
 			'/api': {
 				target: 'http://localhost:3000',
