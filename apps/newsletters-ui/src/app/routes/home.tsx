@@ -1,11 +1,16 @@
 import type { RouteObject } from 'react-router-dom';
 import { HomeMenu } from '../components/HomeMenu';
+import { HomeView } from '../components/views/HomeView';
 import { TemplateListView } from '../components/views/TemplateListView';
 import { ContentWrapper } from '../ContentWrapper';
 import { ErrorPage } from '../ErrorPage';
+import { isFeatureSwitchEnabled } from '../featureSwitches';
 import { Layout } from '../Layout';
 import { listLoader } from '../loaders/newsletters';
 import { renderingTemplateListLoader } from '../loaders/rendering-templates';
+
+const HomeElement = () =>
+	isFeatureSwitchEnabled('switch-stand') ? <HomeView /> : <HomeMenu />;
 
 export const homeRoute: RouteObject = {
 	path: '/',
@@ -15,7 +20,7 @@ export const homeRoute: RouteObject = {
 	children: [
 		{
 			path: '',
-			element: <HomeMenu />,
+			element: <HomeElement />,
 			loader: listLoader,
 		},
 		{

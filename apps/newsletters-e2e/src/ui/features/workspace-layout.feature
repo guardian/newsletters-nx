@@ -21,3 +21,9 @@ Feature: Newsletter workspace design preference
     Given an editor's workspace uses the Stand design
     When the editor opens the drafts overview
     Then the drafts overview is displayed in the Stand design
+
+  Scenario: The Legacy design keeps the homepage button grid
+    Given an editor's workspace uses the Legacy design
+    When the editor opens the homepage
+    Then the editor sees the Legacy homepage button grid
+    And the homepage has no "Draft newsletters" section
