@@ -70,7 +70,7 @@ const sectionStyles = css`
 	${from.lg} {
 		border: none;
 		border-right: 1px solid ${semanticColors.border.weak};
-		padding-top: ${semanticSpacing.stackLg};
+		padding-top: ${semanticSpacing.stackMd};
 		width: 280px;
 	}
 `;
@@ -138,7 +138,20 @@ const multiSelectStyles = css`
 const toKeys = (value: Key | Key[] | null): Key[] =>
 	Array.isArray(value) ? value : value === null ? [] : [value];
 
+const clearAllStyles = css`
+	display: block;
+	margin-left: auto;
+	padding: 0;
+	border: none;
+	background: none;
+	color: ${semanticColors.fill.link};
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+`;
+
 interface SearchAndFilterMenuProps {
+	onClearAll: () => void;
 	searchTerm: string;
 	onSearchChange: (value: string) => void;
 	selectedCategories: NewsletterCategory[];
@@ -152,6 +165,7 @@ interface SearchAndFilterMenuProps {
 }
 
 export const SearchAndFilterMenu = ({
+	onClearAll,
 	searchTerm,
 	onSearchChange,
 	selectedCategories,
@@ -182,11 +196,24 @@ export const SearchAndFilterMenu = ({
 				/>
 			</button>
 			<div css={getInputContainerStyles(isOpen)}>
-				<SearchInput
-					label="Search"
-					value={searchTerm}
-					onChange={onSearchChange}
-				/>
+				<div>
+					<button type="button" css={clearAllStyles} onClick={onClearAll}>
+						<Typography
+							element="span"
+							variant="bodySm"
+							cssOverrides={css`
+								color: inherit;
+							`}
+						>
+							Clear all
+						</Typography>
+					</button>
+					<SearchInput
+						label="Search"
+						value={searchTerm}
+						onChange={onSearchChange}
+					/>
+				</div>
 				<Select
 					label="Category"
 					placeholder="All"
