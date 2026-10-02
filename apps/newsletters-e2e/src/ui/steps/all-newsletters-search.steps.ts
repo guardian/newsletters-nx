@@ -5,7 +5,7 @@ import { Given, Then, When } from './fixtures';
 const searchParam = 'search';
 
 const searchInput = (page: Page) =>
-	page.getByRole('searchbox', { name: 'search' });
+	page.getByRole('searchbox', { name: 'Search' });
 
 const resultCount = (page: Page) => page.getByText(/^\d+ newsletters?$/);
 

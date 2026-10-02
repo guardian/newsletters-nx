@@ -6,8 +6,12 @@ import type {
 	Theme,
 } from '@newsletters-nx/newsletters-data-client';
 import { deriveUpdatedTimestamp } from '@newsletters-nx/newsletters-data-client';
-import type { BadgeContent } from '../components/NewsletterStatusBadge';
+import type {
+	BadgeContent,
+	NewsletterStatus,
+} from '../components/NewsletterStatusBadge';
 import {
+	getDraftStatus,
 	getDraftStatusBadgeContent,
 	getLaunchedStatusBadgeContent,
 } from '../components/NewsletterStatusBadge';
@@ -28,6 +32,7 @@ export interface NewsletterRow {
 	/** Epoch milliseconds, or undefined when no real edit date is known. */
 	lastUpdated?: number;
 	thumbnailUrl?: string;
+	status: NewsletterStatus;
 	statusBadge: BadgeContent;
 }
 
@@ -83,6 +88,7 @@ export const launchedNewsletterToRow = (
 	// and legacy-migration sentinel timestamps to undefined.
 	lastUpdated: deriveUpdatedTimestamp(newsletter.meta),
 	thumbnailUrl: toThumbnailUrl(newsletter),
+	status: newsletter.status,
 	statusBadge: getLaunchedStatusBadgeContent(newsletter.status),
 });
 
@@ -98,5 +104,6 @@ export const draftNewsletterToRow = (
 	category: draft.category,
 	lastUpdated: deriveUpdatedTimestamp(draft.meta),
 	thumbnailUrl: toThumbnailUrl(draft),
+	status: getDraftStatus(draft),
 	statusBadge: getDraftStatusBadgeContent(draft),
 });
