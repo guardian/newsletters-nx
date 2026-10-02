@@ -28,6 +28,14 @@ export const pageStyle = css`
 	}
 `;
 
+export const titleGroupStyle = css`
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: ${semanticSpacing.stackSm};
+	row-gap: ${semanticSpacing.stackXxs};
+`;
+
 export const titleBarStyle = css`
 	display: flex;
 	align-items: center;

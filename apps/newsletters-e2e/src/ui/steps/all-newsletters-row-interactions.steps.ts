@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { namedRow } from './all-newsletters-rows.steps';
 import { Then, When } from './fixtures';
 
 // The row's accessible name includes its pillar/category sub-text as well as
@@ -10,8 +11,10 @@ const newsletterRow = (page: Page, name: string) =>
 
 When(
 	'the editor clicks the {string} row',
-	async ({ page }, name: string) => {
-		await newsletterRow(page, name).click();
+	async ({ page, namedNewsletters }, name: string) => {
+		// Other scenarios may have created newsletters with the same name, so
+		// target this scenario's own row rather than matching on name.
+		await namedRow(page, namedNewsletters, name).click();
 	},
 );
 
