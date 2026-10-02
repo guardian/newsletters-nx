@@ -11,6 +11,8 @@ import {
 	lastUpdatedMobileStyle,
 	newsletterCellStyle,
 	rowStyle,
+	rowTitleStyle,
+	statusCellStyle,
 } from './home.styles';
 import { SubText } from './SubText';
 
@@ -27,7 +29,11 @@ export const NewsletterTableRow = ({ row }: { row: NewsletterRow }) => {
 				<div css={newsletterCellStyle}>
 					<NewsletterThumbnail src={row.thumbnailUrl} />
 					<div css={detailsStyle}>
-						<Typography element="span" variant="bodyBoldMd">
+						<Typography
+							element="span"
+							variant="bodyBoldMd"
+							cssOverrides={rowTitleStyle}
+						>
 							{row.name}
 						</Typography>
 						{pillarCategoryLabel && <SubText>{pillarCategoryLabel}</SubText>}
@@ -40,6 +46,7 @@ export const NewsletterTableRow = ({ row }: { row: NewsletterRow }) => {
 			<TableCell
 				gridColumn={{ sm: '1', md: '2' }}
 				gridRow={{ sm: '1', md: 'auto' }}
+				compactLabel="Last updated"
 				cssOverrides={hideOnMobileStyle}
 			>
 				{lastUpdated}
@@ -47,6 +54,8 @@ export const NewsletterTableRow = ({ row }: { row: NewsletterRow }) => {
 			<TableCell
 				gridColumn={{ sm: '2', md: '3' }}
 				gridRow={{ sm: '1', md: 'auto' }}
+				compactLabel="Status"
+				cssOverrides={statusCellStyle}
 			>
 				<Badge color={row.statusBadge.color} weight="strong">
 					{row.statusBadge.label}

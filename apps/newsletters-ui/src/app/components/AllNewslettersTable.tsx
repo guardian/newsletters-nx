@@ -6,29 +6,24 @@ import {
 	semanticSizing,
 	semanticSpacing,
 } from '@guardian/stand';
-import { Badge } from '@guardian/stand/Badge';
 import type { ResponsiveTableValue } from '@guardian/stand/Table';
 import {
 	componentTable,
 	Table,
 	TableBody,
-	TableCell,
 	TableColumnHeader,
 	TableHeader,
-	TableRow,
 } from '@guardian/stand/Table';
 import { Typography } from '@guardian/stand/Typography';
-import { from, until } from '@guardian/stand/utils';
+import { until } from '@guardian/stand/utils';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useNavigate } from 'react-router-dom';
 import type { NewsletterRow } from '../lib/all-newsletters-rows';
-import { formatPillarCategoryLabel } from '../lib/all-newsletters-rows';
-import { formatLastUpdated } from '../lib/format-last-updated';
 import {
 	stickyListHeaderOffsetVar,
 	stickyListLayerVar,
 } from '../lib/stand-layout';
-import { NewsletterThumbnail } from './NewsletterThumbnail';
+import { NewsletterTableRow } from './home/NewsletterTableRow';
 
 const tableColumns: ResponsiveTableValue<string> = {
 	sm: 'minmax(0, 1fr) auto',
@@ -94,47 +89,6 @@ const bodyStyle = css`
 	}
 `;
 
-// Every row navigates to a newsletter's detail page, but `TableRow` doesn't
-// show a pointer cursor for its `href` rows by default.
-const rowStyle = css`
-	cursor: pointer;
-`;
-
-const statusCellStyle = css`
-	display: flex;
-	justify-content: flex-start;
-`;
-
-const newsletterCellStyle = css`
-	display: flex;
-	align-items: center;
-	gap: ${semanticSpacing.stackSm};
-	min-width: 0;
-`;
-
-const detailsStyle = css`
-	display: flex;
-	flex-direction: column;
-	gap: ${semanticSpacing.stackXxs};
-	min-width: 0;
-`;
-
-const titleStyle = css`
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-`;
-
-const subTextStyle = css`
-	color: ${semanticColors.text.weak};
-`;
-
-const lastUpdatedMobileStyle = css`
-	${from.md} {
-		display: none;
-	}
-`;
-
 const hideOnMobileStyle = css`
 	${until.md} {
 		display: none;
@@ -188,73 +142,9 @@ export const AllNewslettersTable = ({ rows }: AllNewslettersTableProps) => {
 						</Typography>
 					)}
 				>
-					{rows.map((row) => {
-						const pillarCategoryLabel = formatPillarCategoryLabel(
-							row.theme,
-							row.category,
-						);
-						const lastUpdated = formatLastUpdated(row.lastUpdated);
-						return (
-							<TableRow
-								key={row.id}
-								id={row.id}
-								href={row.href}
-								cssOverrides={rowStyle}
-							>
-								<TableCell
-									gridColumn={{ sm: '1', md: '1' }}
-									gridRow={{ sm: '1', md: 'auto' }}
-								>
-									<div css={newsletterCellStyle}>
-										<NewsletterThumbnail src={row.thumbnailUrl} />
-										<div css={detailsStyle}>
-											<Typography
-												element="span"
-												variant="bodyBoldMd"
-												cssOverrides={titleStyle}
-											>
-												{row.name}
-											</Typography>
-											{pillarCategoryLabel && (
-												<Typography
-													element="span"
-													variant="bodySm"
-													cssOverrides={subTextStyle}
-												>
-													{pillarCategoryLabel}
-												</Typography>
-											)}
-											<Typography
-												element="span"
-												variant="bodySm"
-												cssOverrides={[subTextStyle, lastUpdatedMobileStyle]}
-											>
-												{lastUpdated}
-											</Typography>
-										</div>
-									</div>
-								</TableCell>
-								<TableCell
-									gridColumn={{ sm: '1', md: '2' }}
-									gridRow={{ sm: '1', md: 'auto' }}
-									compactLabel="Last updated"
-									cssOverrides={hideOnMobileStyle}
-								>
-									{lastUpdated}
-								</TableCell>
-								<TableCell
-									gridColumn={{ sm: '2', md: '3' }}
-									gridRow={{ sm: '1', md: 'auto' }}
-									compactLabel="Status"
-									cssOverrides={statusCellStyle}
-								>
-									<Badge color={row.statusBadge.color} weight="strong">
-										{row.statusBadge.label}
-									</Badge>
-								</TableCell>
-							</TableRow>
-						);
-					})}
+					{rows.map((row) => (
+						<NewsletterTableRow key={row.id} row={row} />
+					))}
 				</TableBody>
 			</Table>
 		</AriaRouterProvider>

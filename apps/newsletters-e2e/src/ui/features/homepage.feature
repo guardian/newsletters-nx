@@ -25,6 +25,20 @@ Feature: Homepage draft and launched newsletter sections
 			When the editor opens the homepage
 			Then the "Draft newsletters" section has no "Create new" action
 
+	Rule: A failed data source shows an error without hiding the other section
+
+		Scenario: Drafts still appear when the launched newsletters fail to load
+			Given a newsletter "Politics Weekly" with pillar "News" and category "article-based"
+			And the launched newsletters source fails to load
+			When the editor opens the homepage
+			Then the homepage shows an error that launched newsletters could not load
+			And the "Draft newsletters" section lists "Politics Weekly"
+
+		Scenario: Drafts failing to load shows an error on the homepage
+			Given the draft newsletters source fails to load
+			When the editor opens the homepage
+			Then the homepage shows an error that draft newsletters could not load
+
 	Rule: The sections adapt to the screen size
 
 		Scenario: The sections sit side by side on a wide screen

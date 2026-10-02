@@ -3,6 +3,7 @@ import { Typography } from '@guardian/stand/Typography';
 import type { ReactNode } from 'react';
 import { subTextStyle } from './home.styles';
 
+/** Weak-coloured small text for the secondary lines in a newsletter row. */
 export const SubText = ({
 	children,
 	cssOverrides,

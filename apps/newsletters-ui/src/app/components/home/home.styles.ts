@@ -67,6 +67,17 @@ export const detailsStyle = css`
 	min-width: 0;
 `;
 
+export const rowTitleStyle = css`
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+`;
+
+export const statusCellStyle = css`
+	display: flex;
+	justify-content: flex-start;
+`;
+
 export const subTextStyle = css`
 	color: ${semanticColors.text.weak};
 `;

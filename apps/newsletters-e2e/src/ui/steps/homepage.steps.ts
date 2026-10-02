@@ -115,3 +115,12 @@ Then(
 		await expect(section(page, title)).toHaveCount(0);
 	},
 );
+
+Then(
+	'the homepage shows an error that {word} newsletters could not load',
+	async ({ page }, source: string) => {
+		await expect(
+			page.getByText(`Could not load ${source} newsletters.`),
+		).toBeVisible();
+	},
+);

@@ -1,3 +1,4 @@
+import type { SerializedStyles } from '@emotion/react';
 import { InlineMessage } from '@guardian/stand/InlineMessage';
 import type { NewsletterRowKind } from '../../lib/all-newsletters-rows';
 import { errorsStyle } from './home.styles';
@@ -9,8 +10,10 @@ const sourceLabels: Record<NewsletterRowKind, string> = {
 
 export const FailedSourcesMessages = ({
 	failedSources,
+	messageStyle,
 }: {
 	failedSources: NewsletterRowKind[];
+	messageStyle?: SerializedStyles;
 }) => {
 	if (failedSources.length === 0) {
 		return null;
@@ -18,7 +21,7 @@ export const FailedSourcesMessages = ({
 	return (
 		<div css={errorsStyle}>
 			{failedSources.map((source) => (
-				<InlineMessage key={source} level="error">
+				<InlineMessage key={source} level="error" cssOverrides={messageStyle}>
 					{`Could not load ${sourceLabels[source]}.`}
 				</InlineMessage>
 			))}
