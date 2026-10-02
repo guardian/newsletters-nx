@@ -3,6 +3,7 @@ import {
 	allNewslettersCategoryParam,
 	allNewslettersPillarParam,
 	allNewslettersSearchParam,
+	allNewslettersSortParam,
 	allNewslettersStatusParam,
 	AllNewslettersView,
 } from '../components/views/AllNewslettersView';
@@ -15,6 +16,7 @@ const clientFilterParams = [
 	allNewslettersCategoryParam,
 	allNewslettersPillarParam,
 	allNewslettersStatusParam,
+	allNewslettersSortParam,
 ];
 
 const withoutClientFilterParams = (url: URL): string => {

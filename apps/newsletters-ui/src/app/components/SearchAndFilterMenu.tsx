@@ -50,6 +50,16 @@ export const statusOptions: Array<{
 	{ id: 'ready-to-launch', label: 'Ready to launch' },
 ];
 
+export type NewsletterSort = 'most-recent' | 'newsletter-name';
+
+export const sortOptions: Array<{
+	id: NewsletterSort;
+	label: string;
+}> = [
+	{ id: 'most-recent', label: 'Most recent' },
+	{ id: 'newsletter-name', label: 'Newsletter name' },
+];
+
 const sectionStyles = css`
 	background-color: ${semanticColors.bg.raisedLevel1};
 	padding: ${semanticSpacing.stackMd};
@@ -137,6 +147,8 @@ interface SearchAndFilterMenuProps {
 	onPillarChange: (pillars: Theme[]) => void;
 	selectedStatuses: NewsletterStatus[];
 	onStatusChange: (statuses: NewsletterStatus[]) => void;
+	selectedSort: NewsletterSort;
+	onSortChange: (sort: NewsletterSort) => void;
 }
 
 export const SearchAndFilterMenu = ({
@@ -148,6 +160,8 @@ export const SearchAndFilterMenu = ({
 	onPillarChange,
 	selectedStatuses,
 	onStatusChange,
+	selectedSort,
+	onSortChange,
 }: SearchAndFilterMenuProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -214,6 +228,22 @@ export const SearchAndFilterMenu = ({
 					cssOverrides={multiSelectStyles}
 				>
 					{statusOptions.map(({ id, label }) => (
+						<Option key={id} id={id}>
+							{label}
+						</Option>
+					))}
+				</Select>
+				<Select
+					label="Sort by"
+					value={selectedSort}
+					onChange={(value) => {
+						const [sort] = toKeys(value);
+						if (sort !== undefined) {
+							onSortChange(sort as NewsletterSort);
+						}
+					}}
+				>
+					{sortOptions.map(({ id, label }) => (
 						<Option key={id} id={id}>
 							{label}
 						</Option>
