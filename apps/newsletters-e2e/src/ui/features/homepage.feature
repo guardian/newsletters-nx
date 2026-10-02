@@ -13,12 +13,12 @@ Feature: Homepage draft and launched newsletter sections
 			Then the "Draft newsletters" section lists "Politics Weekly"
 			And the "Launched newsletters" section does not list "Politics Weekly"
 
-	Rule: Launched newsletters appear in the launched card
+	Rule: Launched newsletters appear in the launched section
 
-		Scenario: Launched newsletters appear in the launched card
+		Scenario: Launched newsletters appear in the launched section
 			Given a launched newsletter "Fresh Launch" with status "live"
 			When the editor opens the homepage
-			Then the "Launched newsletters" card lists "Fresh Launch"
+			Then the "Launched newsletters" section lists "Fresh Launch"
 
 		Scenario: Selecting a row opens that newsletter
 			Given a launched newsletter "Fresh Launch" with status "live"
@@ -28,7 +28,7 @@ Feature: Homepage draft and launched newsletter sections
 
 		Scenario: View all opens the All Newsletters page
 			When the editor opens the homepage
-			And the editor selects "View all" in the "Launched newsletters" card
+			And the editor selects "View all" in the "Launched newsletters" section
 			Then the editor is taken to the All Newsletters page
 
 	Rule: Create new leads to the wizard for permitted editors
