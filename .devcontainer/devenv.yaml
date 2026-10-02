@@ -50,6 +50,8 @@ remoteEnv:
 # postCreateCommand:
 #   - cmd: 'pnpm install'
 #     workingDirectory: '.'
-# postStartCommand:
-#   - cmd: "echo 'Container started successfully'"
-#     workingDirectory: '.'
+postStartCommand:
+  - cmd: 'mise exec -- pnpm install'
+    workingDirectory: '.'
+  - cmd: 'mise exec -- pnpm exec playwright install --with-deps'
+    workingDirectory: '.'
