@@ -16,7 +16,7 @@ import {
 
 const tableColumns: ResponsiveTableValue<string> = {
 	sm: 'minmax(0, 1fr) auto',
-	md: 'minmax(0, 1fr) 8.5rem 9.5rem',
+	md: 'minmax(0, 1fr) auto auto',
 };
 
 export const NewsletterPanel = ({
