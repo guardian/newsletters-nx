@@ -58,7 +58,9 @@ When('the editor scrolls down the All Newsletters list', async ({ page }) => {
 	const width = viewportSize?.width ?? 1280;
 	const height = viewportSize?.height ?? 720;
 	await page.mouse.move(width - 10, height / 2);
-	await page.mouse.wheel(0, 2000);
+
+	// Increased delta from 2000 to 10000 to cover accumulated rows from parallel runs
+	await page.mouse.wheel(0, 10000);
 });
 
 Then('the last newsletter comes into view', async ({ page }) => {
