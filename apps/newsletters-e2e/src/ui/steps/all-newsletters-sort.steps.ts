@@ -39,17 +39,24 @@ const expectOrder = async (
 	namedNewsletters: Record<string, NamedNewsletterRef>,
 	expectedOrder: string[],
 ) => {
-	const hrefs = await page
-		.locator('tr[data-href]')
-		.evaluateAll((rows) =>
-			rows.map((row) => row.getAttribute('data-href') ?? ''),
-		);
-	const indices = expectedOrder.map((name) =>
-		hrefs.indexOf(hrefForName(namedNewsletters, name)),
+	const expectedHrefs = expectedOrder.map((name) =>
+		hrefForName(namedNewsletters, name),
 	);
-	for (let index = 1; index < indices.length; index += 1) {
-		expect(indices[index]).toBeGreaterThan(indices[index - 1] ?? -1);
-	}
+	await expect
+		.poll(async () => {
+			const hrefs = await page
+				.locator('tr[data-href]')
+				.evaluateAll((rows) =>
+					rows.map((row) => row.getAttribute('data-href') ?? ''),
+				);
+			const indices = expectedHrefs.map((href) => hrefs.indexOf(href));
+			return indices.every(
+				(index, position) =>
+					index >= 0 &&
+					(position === 0 || index > (indices[position - 1] ?? -1)),
+			);
+		})
+		.toBe(true);
 };
 
 const chooseSort = async (page: Page, label: string) => {

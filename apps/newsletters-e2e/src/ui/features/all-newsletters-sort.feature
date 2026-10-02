@@ -17,7 +17,7 @@ Feature: Sort newsletters
 			| Alpha Digest     |
 
 	Scenario: Sort by most recent updates the URL
-		Given the editor is on the All newsletters page
+		Given the URL contains a valid sort value
 		When the editor changes "Sort by" to "Most recent"
 		Then rows are reordered by "Most recent"
 		And the URL includes the selected sort order
