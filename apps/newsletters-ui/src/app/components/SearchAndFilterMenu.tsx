@@ -237,7 +237,7 @@ export const SearchAndFilterMenu = ({
 					label="Sort by"
 					value={selectedSort}
 					onChange={(value) => {
-						const sort = toKeys(value)[0];
+						const [sort] = toKeys(value);
 						if (sort !== undefined) {
 							onSortChange(sort as NewsletterSort);
 						}
