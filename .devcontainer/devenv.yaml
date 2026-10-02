@@ -32,11 +32,11 @@ forwardPorts:
 # Optional: IDE plugins - shared project plugins like language support
 plugins:
   vscode:
-    - 'nrwl.angular-console'
     - 'esbenp.prettier-vscode'
     - 'firsttris.vscode-jest-runner'
     - 'dbaeumer.vscode-eslint'
     - 'alexkrechik.cucumberautocomplete'
+    - 'EditorConfig.EditorConfig'
   intellij: []
 
 #
