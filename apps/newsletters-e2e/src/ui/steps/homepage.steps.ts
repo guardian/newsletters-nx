@@ -2,8 +2,8 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { Then, When } from './fixtures';
 
-// Each card is a <section aria-label=...>, i.e. a "region" landmark.
-const card = (page: Page, title: string): Locator =>
+// Each section is a <section aria-label=...>, i.e. a "region" landmark.
+const section = (page: Page, title: string): Locator =>
 	page.getByRole('region', { name: title });
 
 When('the editor opens the homepage', async ({ page }) => {
@@ -12,18 +12,18 @@ When('the editor opens the homepage', async ({ page }) => {
 });
 
 const boxes = async (page: Page, first: string, second: string) => {
-	await expect(card(page, first)).toBeVisible();
-	await expect(card(page, second)).toBeVisible();
-	const a = await card(page, first).boundingBox();
-	const b = await card(page, second).boundingBox();
+	await expect(section(page, first)).toBeVisible();
+	await expect(section(page, second)).toBeVisible();
+	const a = await section(page, first).boundingBox();
+	const b = await section(page, second).boundingBox();
 	if (!a || !b) {
-		throw new Error('Could not measure the homepage cards');
+		throw new Error('Could not measure the homepage sections');
 	}
 	return { a, b };
 };
 
 Then(
-	'the {string} and {string} cards sit side by side',
+	'the {string} and {string} sections sit side by side',
 	async ({ page }, first: string, second: string) => {
 		const { a, b } = await boxes(page, first, second);
 		expect(a.x + a.width).toBeLessThanOrEqual(b.x + 1);
@@ -32,7 +32,7 @@ Then(
 );
 
 Then(
-	'the {string} and {string} cards are stacked',
+	'the {string} and {string} sections are stacked',
 	async ({ page }, first: string, second: string) => {
 		const { a, b } = await boxes(page, first, second);
 		expect(a.y + a.height).toBeLessThanOrEqual(b.y + 1);
@@ -46,6 +46,9 @@ Then('the editor sees the Legacy homepage button grid', async ({ page }) => {
 	).toBeVisible();
 });
 
-Then('the homepage has no {string} card', async ({ page }, title: string) => {
-	await expect(card(page, title)).toHaveCount(0);
-});
+Then(
+	'the homepage has no {string} section',
+	async ({ page }, title: string) => {
+		await expect(section(page, title)).toHaveCount(0);
+	},
+);
