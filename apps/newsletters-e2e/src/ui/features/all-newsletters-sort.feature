@@ -20,13 +20,13 @@ Feature: Sort newsletters
 		Given the URL contains a valid sort value
 		When the editor changes "Sort by" to "Most recent"
 		Then rows are reordered by "Most recent"
-		And the URL includes the selected sort order
+		And the URL includes sort "Most recent"
 
 	Scenario: Sort by newsletter name orders rows alphabetically
 		Given the editor is on the All newsletters page
 		When the editor changes "Sort by" to "Newsletter name"
 		Then rows are reordered by "Newsletter name"
-		And the URL includes the selected sort order
+		And the URL includes sort "Newsletter name"
 
 	Scenario: Reload restores sort from the URL
 		Given the URL contains a valid sort value

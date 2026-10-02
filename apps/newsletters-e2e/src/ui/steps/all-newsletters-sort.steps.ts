@@ -134,9 +134,11 @@ Then(
 	},
 );
 
-Then('the URL includes the selected sort order', async ({ page }) => {
-	const selectedSort = await sortControl(page).innerText();
-	await expect(page).toHaveURL(
-		(url) => url.searchParams.get(sortParam) === sortValue(selectedSort),
-	);
-});
+Then(
+	'the URL includes sort {string}',
+	async ({ page }, selectedSort: string) => {
+		await expect(page).toHaveURL(
+			(url) => url.searchParams.get(sortParam) === sortValue(selectedSort),
+		);
+	},
+);
