@@ -10,6 +10,13 @@ export const titleStyle = css`
 	margin-bottom: ${semanticSpacing.stackSm};
 `;
 
+export const errorsStyle = css`
+	display: flex;
+	flex-direction: column;
+	gap: ${semanticSpacing.stackXs};
+	margin-bottom: ${semanticSpacing.stackMd};
+`;
+
 export const pageStyle = css`
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
@@ -30,10 +37,49 @@ export const titleBarStyle = css`
 	margin-bottom: ${semanticSpacing.stackSm};
 `;
 
+export const rowStyle = css`
+	cursor: pointer;
+`;
+
+export const lastUpdatedMobileStyle = css`
+	${from.md} {
+		display: none;
+	}
+`;
+
 export const hideOnMobileStyle = css`
 	${until.md} {
 		display: none;
 	}
+`;
+
+export const newsletterCellStyle = css`
+	display: flex;
+	align-items: center;
+	gap: ${semanticSpacing.stackSm};
+	min-width: 0;
+`;
+
+export const detailsStyle = css`
+	display: flex;
+	flex-direction: column;
+	gap: ${semanticSpacing.stackXxs};
+	min-width: 0;
+`;
+
+export const rowTitleStyle = css`
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+`;
+
+export const statusCellStyle = css`
+	display: flex;
+	justify-content: flex-start;
+`;
+
+export const subTextStyle = css`
+	color: ${semanticColors.text.weak};
 `;
 
 export const emptyStateStyle = css`

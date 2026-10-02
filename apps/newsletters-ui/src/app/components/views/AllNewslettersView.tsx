@@ -4,7 +4,6 @@ import {
 	semanticRadius,
 	semanticSpacing,
 } from '@guardian/stand';
-import { InlineMessage } from '@guardian/stand/InlineMessage';
 import { componentLayout, Layout as StandLayout } from '@guardian/stand/Layout';
 import { Typography } from '@guardian/stand/Typography';
 import { from } from '@guardian/stand/utils';
@@ -20,6 +19,7 @@ import {
 } from '../../lib/stand-layout';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { AllNewslettersTable } from '../AllNewslettersTable';
+import { FailedSourcesMessages } from '../home/FailedSourcesMessages';
 import type { NewsletterStatus } from '../NewsletterStatusBadge';
 import {
 	categoryOptions,
@@ -107,24 +107,12 @@ const countStyle = css`
 	color: ${semanticColors.text.weak};
 `;
 
-const errorsStyle = css`
-	display: flex;
-	flex-direction: column;
-	gap: ${semanticSpacing.stackXs};
-	margin-bottom: ${semanticSpacing.stackMd};
-`;
-
 const errorMessageStyle = css`
 	background-color: ${semanticColors.fill.errorWeaker};
 	border: 1px solid ${semanticColors.border.error};
 	border-radius: ${semanticRadius.cornerSm};
 	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 `;
-
-const sourceLabels: Record<string, string> = {
-	launched: 'launched newsletters',
-	draft: 'draft newsletters',
-};
 
 export const allNewslettersSearchParam = 'search';
 export const allNewslettersCategoryParam = 'category';
@@ -243,19 +231,10 @@ export const AllNewslettersView = () => {
 				</div>
 
 				<div css={[containerStyle, listBlockStyle]}>
-					{failedSources.length > 0 && (
-						<div css={errorsStyle}>
-							{failedSources.map((source) => (
-								<InlineMessage
-									key={source}
-									level="error"
-									cssOverrides={errorMessageStyle}
-								>
-									{`Could not load ${sourceLabels[source] ?? source}.`}
-								</InlineMessage>
-							))}
-						</div>
-					)}
+					<FailedSourcesMessages
+						failedSources={failedSources}
+						messageStyle={errorMessageStyle}
+					/>
 
 					<AllNewslettersTable rows={filteredRows} />
 				</div>
