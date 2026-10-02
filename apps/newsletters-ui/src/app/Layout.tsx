@@ -1,7 +1,9 @@
+import { LocationType } from '@aws-sdk/client-s3';
 import { css as emotionCss } from '@emotion/react';
 import { AlertBanner } from '@guardian/stand/AlertBanner';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { from } from '@guardian/stand/utils';
+import { LocationCityOutlined } from '@mui/icons-material';
 import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -77,8 +79,13 @@ export function Layout(props: IRootRoute) {
 	})();
 	const isAllNewslettersRoute = location.pathname === '/all';
 	const isHomeRoute = location.pathname === '/';
+	const isNewslettersHubLandingRoute = location.pathname === '/layouts';
 	// /all and the home page use the same Stand top bar / alert banner shell as the wizard.
-	const usesStandShell = isWizardRoute || isAllNewslettersRoute || isHomeRoute;
+	const usesStandShell =
+		isWizardRoute ||
+		isAllNewslettersRoute ||
+		isHomeRoute ||
+		isNewslettersHubLandingRoute;
 	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
 
 	useEffect(() => {
