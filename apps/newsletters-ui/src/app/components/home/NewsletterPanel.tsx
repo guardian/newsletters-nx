@@ -16,9 +16,11 @@ import {
 } from './home.styles';
 import { NewsletterTableRow } from './NewsletterTableRow';
 
+// Fixed widths on md+ so cells align across rows; Stand sizes `auto` columns
+// per row. TODO: switch back to content-based sizing if Stand shares columns.
 const tableColumns: ResponsiveTableValue<string> = {
 	sm: 'minmax(0, 1fr) auto',
-	md: 'minmax(0, 1fr) auto auto',
+	md: 'minmax(0, 1fr) 8.5rem 10.5rem',
 };
 
 export const NewsletterPanel = ({
