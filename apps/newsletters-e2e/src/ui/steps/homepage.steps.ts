@@ -27,7 +27,7 @@ Then(
 	async ({ page }, first: string, second: string) => {
 		const { a, b } = await boxes(page, first, second);
 		expect(a.x + a.width).toBeLessThanOrEqual(b.x + 1);
-		expect(Math.abs(a.y - b.y)).toBeLessThan(2);
+		expect(a.y).toBeCloseTo(b.y, 0);
 	},
 );
 
@@ -36,7 +36,7 @@ Then(
 	async ({ page }, first: string, second: string) => {
 		const { a, b } = await boxes(page, first, second);
 		expect(a.y + a.height).toBeLessThanOrEqual(b.y + 1);
-		expect(Math.abs(a.x - b.x)).toBeLessThan(2);
+		expect(a.x).toBeCloseTo(b.x, 0);
 	},
 );
 
