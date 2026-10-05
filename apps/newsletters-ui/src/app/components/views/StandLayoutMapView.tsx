@@ -31,6 +31,18 @@ const getDescription = (
 	return `${plural(newsletterCount, 'newsletter')} in ${plural(layout.groups.length, 'group')}`;
 };
 
+const getRegionName = (editionId: EditionId): string => {
+	const mapping: Record<EditionId, string> = {
+		UK: 'United Kingdom',
+		US: 'United States',
+		AU: 'Australia',
+		EUR: 'Europe',
+		INT: 'International',
+	};
+
+	return mapping[editionId];
+};
+
 export const StandLayoutMapView = () => {
 	const { editionsLayouts } = useLoaderData<{
 		editionsLayouts: EditionsLayouts;
@@ -86,7 +98,7 @@ export const StandLayoutMapView = () => {
 									description={getDescription(editionsLayouts, editionId)}
 									icon={<FlagAtom editionId={editionId} />}
 								>
-									{editionId} Layout
+									{getRegionName(editionId)}
 								</Tile>
 							</Item>
 						))}
