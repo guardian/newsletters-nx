@@ -11,7 +11,8 @@ import type {
 import { editionIds } from '@newsletters-nx/newsletters-data-client';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useLoaderData, useNavigate } from 'react-router-dom';
-import { mainStyle, titleStyle } from '../home/home.styles';
+import { titleStyle } from '../home/home.styles';
+import { FlagAtom } from '../icons/FlagAtom';
 
 const plural = (count: number, noun: string) =>
 	`${count} ${noun}${count === 1 ? '' : 's'}`;
@@ -83,6 +84,7 @@ export const StandLayoutMapView = () => {
 								<Tile
 									href={`/layouts/${editionId.toLowerCase()}`}
 									description={getDescription(editionsLayouts, editionId)}
+									icon={<FlagAtom editionId={editionId} />}
 								>
 									{editionId} Layout
 								</Tile>
