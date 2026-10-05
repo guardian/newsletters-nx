@@ -76,7 +76,7 @@ export const StandLayoutMapView = () => {
 							>
 								Newsletters hub layouts
 							</Typography>
-							<Typography element="p" variant="bodyMd">
+							<Typography element="p" variant="bodyMd" role="doc-subtitle">
 								Manage how the{' '}
 								<a href="https://www.theguardian.com/email-newsletters">
 									all newsletter pages
@@ -90,6 +90,7 @@ export const StandLayoutMapView = () => {
 						css={css`
 							display: contents;
 						`}
+						aria-label="Available regions"
 					>
 						{editionIds.map((editionId) => (
 							<Item key={editionId} size={{ sm: 12, md: 4, lg: 4 }}>
@@ -97,6 +98,7 @@ export const StandLayoutMapView = () => {
 									href={`/layouts/${editionId.toLowerCase()}`}
 									description={getDescription(editionsLayouts, editionId)}
 									icon={<FlagAtom editionId={editionId} />}
+									aria-label={getRegionName(editionId)}
 								>
 									{getRegionName(editionId)}
 								</Tile>
