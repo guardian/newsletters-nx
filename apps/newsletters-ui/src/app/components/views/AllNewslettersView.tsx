@@ -149,6 +149,23 @@ export const AllNewslettersView = () => {
 		? (searchParams.get(allNewslettersSortParam) as NewsletterSort)
 		: 'most-recent';
 
+	const clearAll = () => {
+		setSearchParams(
+			(previous) => {
+				const next = new URLSearchParams(previous);
+				[
+					allNewslettersSearchParam,
+					allNewslettersCategoryParam,
+					allNewslettersPillarParam,
+					allNewslettersStatusParam,
+					allNewslettersSortParam,
+				].forEach((param) => next.delete(param));
+				return next;
+			},
+			{ replace: true },
+		);
+	};
+
 	const setSearchTerm = (value: string) => {
 		setSearchParams(
 			(previous) => {
@@ -232,6 +249,7 @@ export const AllNewslettersView = () => {
 			cssOverrides={mainStyle}
 		>
 			<SearchAndFilterMenu
+				onClearAll={clearAll}
 				searchTerm={searchTerm}
 				onSearchChange={setSearchTerm}
 				selectedCategories={selectedCategories}
