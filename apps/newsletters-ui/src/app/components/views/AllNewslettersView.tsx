@@ -25,8 +25,10 @@ import {
 	categoryOptions,
 	pillarOptions,
 	SearchAndFilterMenu,
+	sortOptions,
 	statusOptions,
 } from '../SearchAndFilterMenu';
+import type { NewsletterSort } from '../SearchAndFilterMenu';
 
 // `Layout.Main` padding is disabled and reapplied here so the scroll area can
 // start at the top edge of content, directly under the top bar.
@@ -118,10 +120,12 @@ export const allNewslettersSearchParam = 'search';
 export const allNewslettersCategoryParam = 'category';
 export const allNewslettersPillarParam = 'pillar';
 export const allNewslettersStatusParam = 'status';
+export const allNewslettersSortParam = 'sort';
 
 const categoryValues = new Set<string>(categoryOptions.map(({ id }) => id));
 const pillarValues = new Set<string>(pillarOptions.map(({ id }) => id));
 const statusValues = new Set<string>(statusOptions.map(({ id }) => id));
+const sortValues = new Set<string>(sortOptions.map(({ id }) => id));
 
 export const AllNewslettersView = () => {
 	// `useLoaderData` is typed as `any`, which `eslint --fix` uses to strip a
@@ -139,6 +143,11 @@ export const AllNewslettersView = () => {
 	const selectedStatuses = searchParams
 		.getAll(allNewslettersStatusParam)
 		.filter((value): value is NewsletterStatus => statusValues.has(value));
+	const selectedSort: NewsletterSort = sortValues.has(
+		searchParams.get(allNewslettersSortParam) ?? '',
+	)
+		? (searchParams.get(allNewslettersSortParam) as NewsletterSort)
+		: 'most-recent';
 
 	const setSearchTerm = (value: string) => {
 		setSearchParams(
@@ -181,6 +190,23 @@ export const AllNewslettersView = () => {
 			selectedStatuses.length === 0 || selectedStatuses.includes(row.status);
 		return matchesSearch && matchesCategory && matchesPillar && matchesStatus;
 	});
+	const filteredAndSortedRows = [...filteredRows].sort((firstRow, secondRow) =>
+		selectedSort === 'newsletter-name'
+			? firstRow.name.localeCompare(secondRow.name) ||
+				firstRow.id.localeCompare(secondRow.id)
+			: 0,
+	);
+
+	const setSort = (sort: NewsletterSort) => {
+		setSearchParams(
+			(previous) => {
+				const next = new URLSearchParams(previous);
+				next.set(allNewslettersSortParam, sort);
+				return next;
+			},
+			{ replace: true },
+		);
+	};
 
 	// This view is part of the Stand design. It's not worth building real
 	// route-level gating for what's a temporary, Stand-only page, so Legacy
@@ -220,13 +246,15 @@ export const AllNewslettersView = () => {
 				onStatusChange={(statuses) =>
 					setMultiValueParam(allNewslettersStatusParam, statuses)
 				}
+				selectedSort={selectedSort}
+				onSortChange={setSort}
 			/>
 			<section css={scrollAreaStyle}>
 				<div css={[containerStyle, countBlockStyle]}>
 					<Typography element="p" variant="bodySm" cssOverrides={countStyle}>
-						{filteredRows.length === 1
+						{filteredAndSortedRows.length === 1
 							? '1 newsletter'
-							: `${filteredRows.length} newsletters`}
+							: `${filteredAndSortedRows.length} newsletters`}
 					</Typography>
 				</div>
 
@@ -236,7 +264,7 @@ export const AllNewslettersView = () => {
 						messageStyle={errorMessageStyle}
 					/>
 
-					<AllNewslettersTable rows={filteredRows} />
+					<AllNewslettersTable rows={filteredAndSortedRows} />
 				</div>
 			</section>
 		</StandLayout.Main>
