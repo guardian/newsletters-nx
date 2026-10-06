@@ -1,4 +1,6 @@
 import type {
+	EditionId,
+	Layout,
 	MetaData,
 	NewsletterCategory,
 	NewsletterData,
@@ -150,4 +152,28 @@ export async function deleteFixtureNewsletter(
 	listId: number,
 ): Promise<void> {
 	await request.delete(`${API_BASE}/api/test-fixtures/newsletters/${listId}`);
+}
+
+export async function createFixtureLayout(
+	request: APIRequestContext,
+	edition: EditionId,
+	layout: Layout,
+): Promise<void> {
+	const response = await request.post(
+		`${API_BASE}/api/test-fixtures/layouts/${edition}`,
+		{ data: layout },
+	);
+	const json = (await response.json()) as { ok: boolean; message?: string };
+	if (!response.ok() || !json.ok) {
+		throw new Error(
+			`Failed to create fixture layout (${response.status()}): ${json.message ?? JSON.stringify(json)}`,
+		);
+	}
+}
+
+export async function deleteFixtureLayout(
+	request: APIRequestContext,
+	edition: EditionId,
+): Promise<void> {
+	await request.delete(`${API_BASE}/api/test-fixtures/layouts/${edition}`);
 }

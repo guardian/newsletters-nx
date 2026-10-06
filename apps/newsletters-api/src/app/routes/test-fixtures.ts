@@ -1,3 +1,9 @@
+import type { EditionId } from '@newsletters-nx/newsletters-data-client/server';
+import {
+	editionIdSchema,
+	InMemoryLayoutStorage,
+	layoutSchema,
+} from '@newsletters-nx/newsletters-data-client/server';
 import {
 	draftNewsletterDataSchema,
 	InMemoryDraftStorage,
@@ -7,7 +13,11 @@ import {
 } from '@newsletters-nx/newsletters-data-client/server';
 import type { Express, Request, Response } from 'express';
 import * as z from 'zod';
-import { draftStore, newsletterStore } from '../../services/storage';
+import {
+	draftStore,
+	layoutStore,
+	newsletterStore,
+} from '../../services/storage';
 import {
 	makeErrorResponse,
 	makeSuccessResponse,
@@ -26,13 +36,20 @@ const getStores = ():
 			ok: true;
 			drafts: InMemoryDraftStorage;
 			newsletters: InMemoryNewsletterStorage;
+			layouts: InMemoryLayoutStorage;
 	  }
 	| { ok: false } => {
 	if (
 		draftStore instanceof InMemoryDraftStorage &&
-		newsletterStore instanceof InMemoryNewsletterStorage
+		newsletterStore instanceof InMemoryNewsletterStorage &&
+		layoutStore instanceof InMemoryLayoutStorage
 	) {
-		return { ok: true, drafts: draftStore, newsletters: newsletterStore };
+		return {
+			ok: true,
+			drafts: draftStore,
+			newsletters: newsletterStore,
+			layouts: layoutStore,
+		};
 	}
 	return { ok: false };
 };
@@ -67,6 +84,11 @@ const listIdParamSchema = z.coerce.number();
 
 const parseListIdParam = (req: Request): number | undefined => {
 	const parsed = listIdParamSchema.safeParse(req.params['listId']);
+	return parsed.success ? parsed.data : undefined;
+};
+
+const parseEditionIdParam = (req: Request): EditionId | undefined => {
+	const parsed = editionIdSchema.safeParse(req.params['editionId']);
 	return parsed.success ? parsed.data : undefined;
 };
 
@@ -148,6 +170,55 @@ export function registerTestFixtureRoutes(app: Express) {
 
 		return stores.drafts
 			.deleteItem(listId)
+			.then((result) => sendStorageResult(res, result));
+	});
+
+	app.post('/api/test-fixtures/layouts/:editionId', (req, res) => {
+		const stores = getStores();
+		if (!stores.ok) {
+			return res.status(500).send(makeErrorResponse(WRONG_STORAGE_MESSAGE));
+		}
+
+		const editionId = parseEditionIdParam(req);
+		if (editionId === undefined) {
+			return res
+				.status(400)
+				.send(makeErrorResponse('Unknown edition id passed'));
+		}
+
+		const parsed = layoutSchema.safeParse(req.body);
+		if (!parsed.success) {
+			return res
+				.status(400)
+				.send(
+					makeErrorResponse(
+						`Invalid layout fixture: ${parsed.error.issues
+							.map((issue) => `${issue.path.join('.')} ${issue.message}`)
+							.join('; ')}`,
+					),
+				);
+		}
+
+		return stores.layouts
+			.create(editionId, parsed.data)
+			.then((result) => sendStorageResult(res, result));
+	});
+
+	app.delete('/api/test-fixtures/layouts/:editionId', (req, res) => {
+		const stores = getStores();
+		if (!stores.ok) {
+			return res.status(500).send(makeErrorResponse(WRONG_STORAGE_MESSAGE));
+		}
+
+		const editionId = parseEditionIdParam(req);
+		if (editionId === undefined) {
+			return res
+				.status(400)
+				.send(makeErrorResponse('Unknown edition id passed'));
+		}
+
+		return stores.layouts
+			.delete(editionId)
 			.then((result) => sendStorageResult(res, result));
 	});
 }
