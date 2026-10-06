@@ -9,22 +9,26 @@ import { MainNav } from './components/MainNav';
 import { StandMainNav } from './components/StandMainNav';
 import { isFeatureSwitchEnabled } from './featureSwitches';
 
-// All Newsletters scrolls its list inside the content area, so the shell is
-// pinned to the viewport; `StandLayout` only sets `min-height`, which would
-// let the main row stretch and hand scrolling back to the page.
-const standViewportHeightCss = emotionCss`
+const pinnedToViewport = `
 	height: 100svh;
 	overflow: hidden;
 `;
 
-// On large screens the home page pins the shell to the viewport so only the
-// individual tables scroll; on small screens the page scrolls as normal.
-const homeViewportHeightCss = emotionCss`
-	${from.lg} {
-		height: 100svh;
-		overflow: hidden;
-	}
-`;
+// Pins the shell to the viewport so content scrolls inside the main area;
+// `StandLayout` only sets `min-height`, which would let the main row stretch
+// and hand scrolling back to the page. Optionally only from the lg breakpoint,
+// so smaller screens scroll as normal.
+const viewportHeightCss = (options: { fromLgOnly?: boolean } = {}) =>
+	options.fromLgOnly
+		? emotionCss`
+			${from.lg} {
+				${pinnedToViewport}
+			}
+		`
+		: emotionCss(pinnedToViewport);
+
+const allNewslettersViewportCss = viewportHeightCss();
+const homeViewportCss = viewportHeightCss({ fromLgOnly: true });
 
 const frameCss = css`
 	display: flex;
@@ -99,9 +103,9 @@ export function Layout(props: IRootRoute) {
 			<StandLayout
 				cssOverrides={
 					isAllNewslettersRoute
-						? standViewportHeightCss
+						? allNewslettersViewportCss
 						: isHomeRoute
-							? homeViewportHeightCss
+							? homeViewportCss
 							: undefined
 				}
 			>

@@ -10,7 +10,6 @@ export const mainStyle = css`
 	${from.lg} {
 		display: flex;
 		flex-direction: column;
-		overflow: hidden;
 	}
 `;
 
@@ -76,7 +75,6 @@ export const tableStyle = css`
 		flex: 0 1 auto;
 		min-height: 0;
 		overflow-y: auto;
-		overscroll-behavior: contain;
 	}
 `;
 
