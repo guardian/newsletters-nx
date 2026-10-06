@@ -31,7 +31,7 @@ const getDescription = (
 	return `${plural(newsletterCount, 'newsletter')} in ${plural(layout.groups.length, 'group')}`;
 };
 
-const getRegionName = (editionId: EditionId): string => {
+const getEditionName = (editionId: EditionId): string => {
 	const mapping: Record<EditionId, string> = {
 		UK: 'United Kingdom',
 		US: 'United States',
@@ -90,7 +90,7 @@ export const StandLayoutMapView = () => {
 						css={css`
 							display: contents;
 						`}
-						aria-label="Available regions"
+						aria-label="Available editions"
 					>
 						{editionIds.map((editionId) => (
 							<Item key={editionId} size={{ sm: 12, md: 4, lg: 4 }}>
@@ -98,9 +98,9 @@ export const StandLayoutMapView = () => {
 									href={`/layouts/${editionId.toLowerCase()}`}
 									description={getDescription(editionsLayouts, editionId)}
 									icon={<FlagAtom editionId={editionId} />}
-									aria-label={getRegionName(editionId)}
+									aria-label={getEditionName(editionId)}
 								>
-									{getRegionName(editionId)}
+									{getEditionName(editionId)}
 								</Tile>
 							</Item>
 						))}
