@@ -4,13 +4,10 @@ import { from, until } from '@guardian/stand/utils';
 
 // On large screens the panels fill the viewport and scroll internally.
 export const mainStyle = css`
+	display: flex;
+	flex-direction: column;
 	min-height: 0;
 	padding-inline: ${semanticSpacing.stackMd};
-
-	${from.lg} {
-		display: flex;
-		flex-direction: column;
-	}
 `;
 
 export const titleStyle = css`
