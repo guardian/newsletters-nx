@@ -6,7 +6,7 @@ import { HubEditionHeader } from './HubEditionHeader';
 afterEach(cleanup);
 
 describe('HubEditionHeader', () => {
-	it('renders the edition header with a Live badge', () => {
+	it('renders the edition header without a status badge', () => {
 		render(
 			<MemoryRouter>
 				<HubEditionHeader
@@ -41,7 +41,7 @@ describe('HubEditionHeader', () => {
 			screen.getByRole('navigation').querySelector('[aria-current="page"]')
 				?.textContent,
 		).toBe('United Kingdom');
-		expect(screen.getByText('Live')).toBeTruthy();
+		expect(screen.queryByText('Live')).toBeNull();
 		expect(screen.queryByText('Draft')).toBeNull();
 	});
 });
