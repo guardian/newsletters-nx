@@ -58,7 +58,7 @@ Then('a content box is displayed beneath the top section', async ({ page }) => {
 
 	await expect(contentBox).toBeVisible();
 	await expect(contentBox).toContainText(
-		'No content available. Go to "Edit layout" to add content.',
+		'No content available. Click on "Edit layout" to add content.',
 	);
 });
 

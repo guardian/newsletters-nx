@@ -89,7 +89,7 @@ export const LayoutView = () => {
 						variant="bodyMd"
 						cssOverrides={emptyStateTextStyles}
 					>
-						{'No content available. Go to "Edit layout" to add content.'}
+						{'No content available. Click on "Edit layout" to add content.'}
 					</StandTypography>
 				</div>
 			)}
