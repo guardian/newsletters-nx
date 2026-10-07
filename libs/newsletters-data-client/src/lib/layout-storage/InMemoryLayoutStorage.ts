@@ -73,4 +73,16 @@ export class InMemoryLayoutStorage implements LayoutStorage {
 		delete this.data[edition];
 		return Promise.resolve({ ok: true, data: structuredClone(layout) });
 	}
+	/**
+	 * Sets all layouts verbatim. Test/dev only.
+	 */
+	setVerbatim(data: EditionsLayouts) {
+		this.data = data;
+
+		const response: SuccessfulStorageResponse<EditionsLayouts> = {
+			ok: true,
+			data,
+		};
+		return Promise.resolve(response);
+	}
 }

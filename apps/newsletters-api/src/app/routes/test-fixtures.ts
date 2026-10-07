@@ -221,4 +221,40 @@ export function registerTestFixtureRoutes(app: Express) {
 			.delete(editionId)
 			.then((result) => sendStorageResult(res, result));
 	});
+
+	app.post('/api/test-fixtures/backup-layouts', (req, res) => {
+		const stores = getStores();
+		if (!stores.ok) {
+			return res.status(500).send(makeErrorResponse(WRONG_STORAGE_MESSAGE));
+		}
+
+		return stores.layouts
+			.readAll()
+			.then((result) => sendStorageResult(res, result));
+	});
+
+	app.post('/api/test-fixtures/restore-layouts', (req, res) => {
+		const stores = getStores();
+		if (!stores.ok) {
+			return res.status(500).send(makeErrorResponse(WRONG_STORAGE_MESSAGE));
+		}
+
+		const backupSchema = z.partialRecord(editionIdSchema, layoutSchema);
+		const parsed = backupSchema.safeParse(req.body);
+		if (!parsed.success) {
+			return res
+				.status(400)
+				.send(
+					makeErrorResponse(
+						`Invalid layout backup: ${parsed.error.issues
+							.map((issue) => `${issue.path.join('.')} ${issue.message}`)
+							.join('; ')}`,
+					),
+				);
+		}
+
+		return stores.layouts
+			.setVerbatim(parsed.data)
+			.then((result) => sendStorageResult(res, result));
+	});
 }

@@ -1,12 +1,15 @@
 import { faker } from '@faker-js/faker';
 import type {
 	EditionId,
+	EditionsLayouts,
 	Layout,
 } from '@newsletters-nx/newsletters-data-client';
 import type { APIRequestContext, Page } from '@playwright/test';
 import {
+	backupFixtureLayouts,
 	createFixtureLayout,
 	deleteFixtureLayout,
+	restoreFixtureLayouts,
 } from '../../../helpers/test-fixtures';
 import { chunk } from '../../../utils/chunk';
 
@@ -23,10 +26,23 @@ const editionIdsByName: Record<string, EditionId> = {
  *
  */
 export default class NewslettersHubLandingPage {
+	private backedUpLayouts: EditionsLayouts | null = null;
 	constructor(
 		public readonly page: Page,
 		public readonly request: APIRequestContext,
 	) {}
+
+	public async backupLayouts() {
+		this.backedUpLayouts = await backupFixtureLayouts(this.request);
+	}
+
+	public async restoreLayouts() {
+		if (this.backedUpLayouts === null) {
+			return;
+		}
+		await restoreFixtureLayouts(this.request, this.backedUpLayouts);
+		this.backedUpLayouts = null;
+	}
 
 	public getEditionIdByName(edition: string): EditionId {
 		const editionId = editionIdsByName[edition];
@@ -85,11 +101,9 @@ export default class NewslettersHubLandingPage {
 	}
 
 	public locateStandTopBarNav() {
-		return this.page
-			.getByRole('navigation')
-			.filter({
-				has: this.page.getByRole('link', { name: 'All newsletters' }),
-			});
+		return this.page.getByRole('navigation').filter({
+			has: this.page.getByRole('link', { name: 'All newsletters' }),
+		});
 	}
 
 	public locateLegacyTopBarNav() {

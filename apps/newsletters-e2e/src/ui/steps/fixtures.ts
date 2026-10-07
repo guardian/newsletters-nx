@@ -72,7 +72,9 @@ export const test = base.extend<Fixtures>({
 
 	newslettersHubLandingPage: async ({ page, request }, use) => {
 		const landingPage = new NewslettersHubLandingPage(page, request);
+		await landingPage.backupLayouts();
 		await use(landingPage);
+		await landingPage.restoreLayouts();
 	},
 });
 
