@@ -49,3 +49,19 @@ Then('the edit history controls are not visible', async ({ page }) => {
 		await expect(page.getByRole('button', { name, exact: true })).toBeHidden();
 	}
 });
+
+Then('a content box is displayed beneath the top section', async ({ page }) => {
+	const header = page
+		.locator('header')
+		.filter({ has: page.getByRole('heading', { name: 'United Kingdom' }) });
+	const contentBox = header.locator('xpath=following-sibling::*[1]');
+
+	await expect(contentBox).toBeVisible();
+	await expect(contentBox).toContainText(
+		'No content available. Go to "Edit layout" to add content.',
+	);
+});
+
+Then('the content box shows {string}', async ({ page }, text: string) => {
+	await expect(page.getByText(text, { exact: true })).toBeVisible();
+});
