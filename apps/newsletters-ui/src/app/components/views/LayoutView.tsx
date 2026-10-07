@@ -1,3 +1,6 @@
+import { css } from '@emotion/react';
+import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
+import { Typography as StandTypography } from '@guardian/stand/Typography';
 import { Box, Container, Typography } from '@mui/material';
 import type {
 	EditionId,
@@ -26,6 +29,28 @@ const regionNames: Record<EditionId, string> = {
 	EUR: 'Europe',
 };
 
+const contentStyles = css`
+	display: flex;
+	flex-direction: column;
+	gap: ${semanticSpacing.stackMd};
+`;
+
+const emptyStateStyles = css`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	border: 1px dashed ${semanticColors.border.weak};
+	padding-block: ${baseSpacing['96Px']};
+`;
+
+const emptyStateTextStyles = css`
+	max-width: calc(100% - 2 * ${baseSpacing['48Px']});
+	margin: 0;
+	text-align: center;
+	color: ${semanticColors.text.strong};
+`;
+
 export const LayoutView = () => {
 	const data = useLoaderData<
 		{ layout?: Layout; newsletters: NewsletterData[] } | undefined
@@ -44,7 +69,7 @@ export const LayoutView = () => {
 	const regionName = region.success ? regionNames[region.data] : editionId;
 
 	return isUsingStand ? (
-		<Container maxWidth="lg">
+		<Container maxWidth="lg" css={contentStyles}>
 			<HubEditionHeader
 				title={regionName}
 				breadcrumbs={{
@@ -56,6 +81,18 @@ export const LayoutView = () => {
 					<EditLayoutButton editionId={editionId} />
 				)}
 			</HubEditionHeader>
+
+			{!data.layout?.groups.length && (
+				<div css={emptyStateStyles}>
+					<StandTypography
+						element="p"
+						variant="bodyMd"
+						cssOverrides={emptyStateTextStyles}
+					>
+						{'No content available. Go to "Edit layout" to add content.'}
+					</StandTypography>
+				</div>
+			)}
 		</Container>
 	) : (
 		<ContentWrapper>

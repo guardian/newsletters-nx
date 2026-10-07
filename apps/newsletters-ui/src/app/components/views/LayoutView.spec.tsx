@@ -1,3 +1,4 @@
+import type { Layout } from '@newsletters-nx/newsletters-data-client';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -17,12 +18,12 @@ afterEach(() => {
 	vi.resetAllMocks();
 });
 
-const renderLayoutView = (editionId = 'uk') => {
+const renderLayoutView = (editionId = 'uk', layout?: Layout) => {
 	const router = createMemoryRouter(
 		[
 			{
 				path: '/layouts/:editionId',
-				loader: () => ({ newsletters: [] }),
+				loader: () => ({ layout, newsletters: [] }),
 				element: <LayoutView />,
 			},
 			{
@@ -63,5 +64,36 @@ describe('LayoutView edit button', () => {
 
 		await screen.findByRole('heading', { name: 'United Kingdom' });
 		expect(screen.queryByRole('link', { name: 'Edit layout' })).toBeNull();
+	});
+});
+
+describe('LayoutView empty state', () => {
+	it.each([undefined, { groups: [] }])(
+		'shows the empty state below the header when there are no sections (%j)',
+		async (layout) => {
+			renderLayoutView('uk', layout);
+
+			const message = await screen.findByText(
+				'No content available. Go to "Edit layout" to add content.',
+			);
+			const header = screen
+				.getByRole('heading', { name: 'United Kingdom' })
+				.closest('header');
+
+			expect(header?.nextElementSibling).toBe(message.parentElement);
+		},
+	);
+
+	it('does not show the empty state when a section exists, even without newsletters', async () => {
+		renderLayoutView('uk', {
+			groups: [{ title: 'News', newsletters: [] }],
+		});
+
+		await screen.findByRole('heading', { name: 'United Kingdom' });
+		expect(
+			screen.queryByText(
+				'No content available. Go to "Edit layout" to add content.',
+			),
+		).toBeNull();
 	});
 });
