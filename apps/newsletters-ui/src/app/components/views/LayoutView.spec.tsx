@@ -74,7 +74,7 @@ describe('LayoutView empty state', () => {
 			renderLayoutView('uk', layout);
 
 			const message = await screen.findByText(
-				'No content available. Go to "Edit layout" to add content.',
+				'No content available. Click on "Edit layout" to add content.',
 			);
 			const header = screen
 				.getByRole('heading', { name: 'United Kingdom' })
@@ -92,7 +92,7 @@ describe('LayoutView empty state', () => {
 		await screen.findByRole('heading', { name: 'United Kingdom' });
 		expect(
 			screen.queryByText(
-				'No content available. Go to "Edit layout" to add content.',
+				'No content available. Click on "Edit layout" to add content.',
 			),
 		).toBeNull();
 	});
