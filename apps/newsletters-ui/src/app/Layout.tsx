@@ -1,9 +1,7 @@
-import { LocationType } from '@aws-sdk/client-s3';
 import { css as emotionCss } from '@emotion/react';
 import { AlertBanner } from '@guardian/stand/AlertBanner';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { from } from '@guardian/stand/utils';
-import { LocationCityOutlined } from '@mui/icons-material';
 import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
