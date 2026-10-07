@@ -1,11 +1,9 @@
 import { css } from '@emotion/react';
 import { semanticColors, semanticSpacing } from '@guardian/stand';
-import { Badge } from '@guardian/stand/Badge';
 import { Typography } from '@guardian/stand/Typography';
 import type { ReactNode } from 'react';
 import type { HubEditionHeaderBreadcrumbsProps } from './HubEditionHeaderBreadcrumbs';
 import { HubEditionHeaderBreadcrumbs } from './HubEditionHeaderBreadcrumbs';
-import { getLaunchedStatusBadgeContent } from './NewsletterStatusBadge';
 
 interface HubEditionHeaderProps {
 	title: string;
@@ -41,8 +39,6 @@ export const HubEditionHeader = ({
 	breadcrumbs,
 	children,
 }: HubEditionHeaderProps) => {
-	const badge = getLaunchedStatusBadgeContent('live');
-
 	return (
 		<header css={headerStyles}>
 			<HubEditionHeaderBreadcrumbs {...breadcrumbs} />
@@ -54,9 +50,6 @@ export const HubEditionHeader = ({
 				>
 					{title}
 				</Typography>
-				<Badge color={badge.color} weight="strong" size="xs">
-					{badge.label}
-				</Badge>
 			</div>
 			{children}
 		</header>
