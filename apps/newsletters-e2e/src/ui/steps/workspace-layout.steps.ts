@@ -6,10 +6,7 @@ Given(
 	'an existing draft newsletter',
 	async ({ request, existingDraftNewsletter }) => {
 		const name = `E2E test draft ${Date.now()}`;
-		existingDraftNewsletter.listId = await createDraftNewsletter(
-			request,
-			name,
-		);
+		existingDraftNewsletter.listId = await createDraftNewsletter(request, name);
 		existingDraftNewsletter.name = name;
 	},
 );
@@ -56,7 +53,7 @@ Then(
 		// "Draft newsletters" link, which is unique to the Stand navigation.
 		const topBarNav = page
 			.getByRole('navigation')
-			.filter({ has: page.getByRole('link', { name: 'Draft newsletters' }) });
+			.filter({ has: page.getByRole('link', { name: 'All newsletters' }) });
 		await expect(topBarNav).toBeVisible();
 	},
 );
@@ -84,7 +81,9 @@ Then(
 		// "Draft newsletters" link (the Legacy design's equivalent is a
 		// "Drafts" button, not a link).
 		await expect(
-			page.getByRole('link', { name: 'Draft newsletters' }),
+			page
+				.getByRole('navigation', { name: 'Top bar' })
+				.getByRole('link', { name: 'All newsletters' }),
 		).toBeVisible();
 	},
 );

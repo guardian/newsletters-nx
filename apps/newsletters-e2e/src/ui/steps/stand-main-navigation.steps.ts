@@ -3,7 +3,6 @@ import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import { Then, When } from './fixtures';
 
-
 const navLink = (page: Page, label: string) =>
 	page.getByRole('navigation').getByRole('link', { name: label });
 
@@ -19,8 +18,6 @@ Then(
 			page,
 			expectedLabels[expectedLabels.length - 1] ?? '',
 		).waitFor();
-
-
 
 		const actualOrder = await page
 			.getByRole('navigation')
@@ -45,3 +42,21 @@ Then(/^they should be on the (.+) page$/, async ({ page }, label: string) => {
 	const path = await navLink(page, label).getAttribute('href');
 	await expect(page).toHaveURL(new RegExp(`${path ?? ''}$`));
 });
+
+When("they use the 'Newsletter' button in the top bar", async ({ page }) => {
+	const button = page.getByRole('link', { name: 'Back to dashboard' });
+	await button.click();
+});
+
+Then('they should see the home page', async ({ page, baseURL }) => {
+	expect(baseURL, 'base url not set').toBeDefined();
+	await expect(page).toHaveURL(baseURL!);
+});
+
+Then(
+	'the {string} nav link should not be visible',
+	async ({ page }, label: string) => {
+		const link = navLink(page, label);
+		await expect(link).toHaveCount(0);
+	},
+);
