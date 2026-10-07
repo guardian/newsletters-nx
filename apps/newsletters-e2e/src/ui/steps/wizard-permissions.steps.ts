@@ -1,27 +1,5 @@
 import { expect } from '@playwright/test';
-import { Given, Then, When } from './fixtures';
-
-Given(
-	"the user does not have the 'edit everything' permission",
-	async ({ page }) => {
-		// NOTE: We are mocking the network response here rather than testing this fully end-to-end.
-		// Currently, the E2E test environment boots with USE_DEVELOPER_PROFILE=true, which forces
-		// the backend to treat all requests as coming from an admin user. Until the test setup is
-		// updated to allow impersonating standard users via JWT headers, we intercept the API call
-		// to simulate the 403 rejection.
-		await page.route('**/api/currentstep', async (route) => {
-			await route.fulfill({
-				status: 403,
-				contentType: 'application/json',
-				body: JSON.stringify({
-					errorMessage: 'You do not have permissions to create or edit drafts.',
-					currentStepId: 'intro',
-					hasPersistentError: true,
-				}),
-			});
-		});
-	},
-);
+import { Then, When } from './fixtures';
 
 When(
 	'the user attempts to start the newsletter creation wizard',
@@ -54,10 +32,10 @@ Then(
 Then('the user can still access the main navigation', async ({ page }) => {
 	// Asserts that the application shell hasn't crashed and the user isn't trapped
 	const standNav = page
-		.getByRole('navigation')
-		.filter({ has: page.getByRole('link', { name: 'Draft newsletters' }) });
+		.getByRole('navigation', { name: 'Top bar' })
+		.filter({ has: page.getByRole('link', { name: 'All newsletters' }) });
 	await expect(standNav).toBeVisible();
 	await expect(
-		page.getByRole('link', { name: 'Draft newsletters' }),
+		page.getByRole('link', { name: 'All newsletters' }),
 	).toBeVisible();
 });
