@@ -1,9 +1,14 @@
 import { css } from '@emotion/react';
-import { baseSpacing, semanticBreakpoints } from '@guardian/stand';
+import {
+	semanticBreakpoints,
+	semanticGrid,
+	semanticSpacing,
+} from '@guardian/stand';
 import { Grid, Item } from '@guardian/stand/Grid';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { Tile } from '@guardian/stand/Tile';
 import { Typography } from '@guardian/stand/Typography';
+import { from } from '@guardian/stand/utils';
 import type {
 	EditionId,
 	EditionsLayouts,
@@ -43,6 +48,32 @@ const getEditionName = (editionId: EditionId): string => {
 	return mapping[editionId];
 };
 
+const mainStyle = css`
+	display: flex;
+	flex-flow: column nowrap;
+	gap: ${semanticSpacing.stackXl};
+`;
+
+const gridStyle = css`
+	max-width: ${semanticBreakpoints.lg};
+`;
+
+const editionsListStyle = css`
+	display: contents;
+`;
+
+const headerStyle = css`
+	padding: 0 ${semanticGrid.margin.smPx};
+
+	${from.md} {
+		padding: 0 ${semanticGrid.margin.mdPx};
+	}
+
+	${from.lg} {
+		padding: 0 ${semanticGrid.margin.lgPx};
+	}
+`;
+
 export const StandLayoutMapView = () => {
 	const { editionsLayouts } = useLoaderData<{
 		editionsLayouts: EditionsLayouts;
@@ -50,48 +81,30 @@ export const StandLayoutMapView = () => {
 	const navigate = useNavigate();
 
 	return (
-		<StandLayout.Main
-			cssOverrides={css`
-				display: flex;
-				flex-flow: column nowrap;
-				align-items: center;
-			`}
-		>
+		<StandLayout.Main css={mainStyle}>
 			<AriaRouterProvider
 				navigate={(path) => void navigate(path)}
 				useHref={useHref}
 			>
-				<Grid
-					css={css`
-						max-width: ${semanticBreakpoints.lg};
-						gap: ${baseSpacing['40Rem']};
-					`}
-				>
-					<Item size={12}>
-						<header>
-							<Typography
-								element="h1"
-								variant="heading2Xl"
-								cssOverrides={titleStyle}
-							>
-								Newsletters hub layouts
-							</Typography>
-							<Typography element="p" variant="bodyMd" role="doc-subtitle">
-								Manage how the{' '}
-								<a href="https://www.theguardian.com/email-newsletters">
-									all newsletter pages
-								</a>{' '}
-								look for readers.
-							</Typography>
-						</header>
-					</Item>
-
-					<ul
-						css={css`
-							display: contents;
-						`}
-						aria-label="Available editions"
+				<header css={headerStyle}>
+					<Typography
+						element="h1"
+						variant="heading2Xl"
+						cssOverrides={titleStyle}
 					>
+						Newsletters hub layouts
+					</Typography>
+					<Typography element="p" variant="bodyMd" role="doc-subtitle">
+						Manage how the{' '}
+						<a href="https://www.theguardian.com/email-newsletters">
+							all newsletter pages
+						</a>{' '}
+						look for readers.
+					</Typography>
+				</header>
+
+				<Grid css={gridStyle}>
+					<ul css={editionsListStyle} aria-label="Available editions">
 						{editionIds.map((editionId) => (
 							<Item key={editionId} size={{ sm: 12, md: 4, lg: 4 }}>
 								<Tile
