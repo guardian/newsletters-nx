@@ -1,6 +1,7 @@
 import { css as emotionCss } from '@emotion/react';
 import { AlertBanner } from '@guardian/stand/AlertBanner';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
+import { from } from '@guardian/stand/utils';
 import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -8,13 +9,26 @@ import { MainNav } from './components/MainNav';
 import { StandMainNav } from './components/StandMainNav';
 import { isFeatureSwitchEnabled } from './featureSwitches';
 
-// All Newsletters scrolls its list inside the content area, so the shell is
-// pinned to the viewport; `StandLayout` only sets `min-height`, which would
-// let the main row stretch and hand scrolling back to the page.
-const standViewportHeightCss = emotionCss`
+const pinnedToViewport = `
 	height: 100svh;
 	overflow: hidden;
 `;
+
+// Pins the shell to the viewport so content scrolls inside the main area;
+// `StandLayout` only sets `min-height`, which would let the main row stretch
+// and hand scrolling back to the page. Optionally only from the lg breakpoint,
+// so smaller screens scroll as normal.
+const viewportHeightCss = (options: { fromLgOnly?: boolean } = {}) =>
+	options.fromLgOnly
+		? emotionCss`
+			${from.lg} {
+				${pinnedToViewport}
+			}
+		`
+		: emotionCss(pinnedToViewport);
+
+const allNewslettersViewportCss = viewportHeightCss();
+const homeViewportCss = viewportHeightCss({ fromLgOnly: true });
 
 const frameCss = css`
 	display: flex;
@@ -88,7 +102,11 @@ export function Layout(props: IRootRoute) {
 		return (
 			<StandLayout
 				cssOverrides={
-					isAllNewslettersRoute ? standViewportHeightCss : undefined
+					isAllNewslettersRoute
+						? allNewslettersViewportCss
+						: isHomeRoute
+							? homeViewportCss
+							: undefined
 				}
 			>
 				{(isOnCode || isOnLocal) && (

@@ -11,10 +11,15 @@ import type { NewsletterRow } from '../../lib/all-newsletters-rows';
 import {
 	emptyBodyStyle,
 	emptyStateStyle,
+	headerStyle,
 	hideOnMobileStyle,
+	sectionStyle,
+	tableStyle,
 	titleBarStyle,
+	titleGroupStyle,
 } from './home.styles';
 import { NewsletterTableRow } from './NewsletterTableRow';
+import { SubText } from './SubText';
 
 // Fixed widths on md+ so cells align across rows; Stand sizes `auto` columns
 // per row. TODO: switch back to content-based sizing if Stand shares columns.
@@ -29,18 +34,23 @@ export const NewsletterPanel = ({
 	rows,
 	emptyText,
 	action,
+	caption,
 }: {
 	title: string;
 	background: string;
 	rows: NewsletterRow[];
 	emptyText: string;
 	action?: ReactNode;
+	caption?: string;
 }) => (
-	<section aria-label={title}>
+	<section aria-label={title} css={sectionStyle}>
 		<div css={titleBarStyle}>
-			<Typography element="h2" variant="headingLg">
-				{title}
-			</Typography>
+			<div css={titleGroupStyle}>
+				<Typography element="h2" variant="headingLg">
+					{title}
+				</Typography>
+				{caption && <SubText>{caption}</SubText>}
+			</div>
 			{action}
 		</div>
 		<Table
@@ -48,8 +58,9 @@ export const NewsletterPanel = ({
 			columns={tableColumns}
 			headerVisibleFrom="sm"
 			theme={{ header: { backgroundColor: background } }}
+			cssOverrides={tableStyle}
 		>
-			<TableHeader>
+			<TableHeader cssOverrides={headerStyle}>
 				<TableColumnHeader isRowHeader>Newsletters</TableColumnHeader>
 				<TableColumnHeader cssOverrides={hideOnMobileStyle}>
 					Last updated

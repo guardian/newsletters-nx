@@ -2,7 +2,11 @@ import { css } from '@emotion/react';
 import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
 import { from, until } from '@guardian/stand/utils';
 
+// On large screens the panels fill the viewport and scroll internally.
 export const mainStyle = css`
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
 	padding-inline: ${semanticSpacing.stackMd};
 `;
 
@@ -25,7 +29,31 @@ export const pageStyle = css`
 
 	${from.lg} {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-rows: minmax(0, 1fr);
+		align-items: stretch;
+		flex: 1;
+		min-height: 0;
 	}
+`;
+
+// Sized to content (capped at the available height) so a short list doesn't
+// stretch to match the taller one.
+export const sectionStyle = css`
+	${from.lg} {
+		display: flex;
+		flex-direction: column;
+		align-self: start;
+		max-height: 100%;
+		min-height: 0;
+	}
+`;
+
+export const titleGroupStyle = css`
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: ${semanticSpacing.stackSm};
+	row-gap: ${semanticSpacing.stackXxs};
 `;
 
 export const titleBarStyle = css`
@@ -35,6 +63,24 @@ export const titleBarStyle = css`
 	gap: ${semanticSpacing.stackMd};
 	min-height: 2.5rem;
 	margin-bottom: ${semanticSpacing.stackSm};
+`;
+
+// The table is its own scroll container, so Stand's border and radius stay
+// put while the rows scroll beneath the sticky header.
+export const tableStyle = css`
+	${from.lg} {
+		flex: 0 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+	}
+`;
+
+export const headerStyle = css`
+	${from.lg} {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
 `;
 
 export const rowStyle = css`
