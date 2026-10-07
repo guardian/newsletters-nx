@@ -21,10 +21,6 @@ const headerStyles = css`
 `;
 
 const headingRowStyles = css`
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: ${semanticSpacing.stackSm};
 	margin-bottom: ${semanticSpacing.stackLg};
 `;
 
