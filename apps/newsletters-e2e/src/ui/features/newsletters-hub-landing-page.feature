@@ -1,4 +1,5 @@
 @newsletters-hub-landing-page
+@mode:serial
 Feature: Newsletters hub landing page
 	The Stand Newsletters hub landing page shows a set of Tiles linking to the
 	individual 'detail' pages for each edition
