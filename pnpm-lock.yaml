@@ -129,9 +129,6 @@ importers:
       '@eslint/js':
         specifier: ^9.39.5
         version: 9.39.5
-      '@faker-js/faker':
-        specifier: ^10.6.0
-        version: 10.6.0
       '@guardian/eslint-config':
         specifier: ^16.0.0
         version: 16.0.0(@typescript-eslint/utils@8.59.3(eslint@9.39.5(jiti@2.4.2)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.2))(eslint@9.39.5(jiti@2.4.2)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.2)
@@ -266,6 +263,9 @@ importers:
 
   apps/newsletters-e2e:
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^10.6.0
+        version: 10.6.0
       playwright-bdd:
         specifier: ^9.2.1
         version: 9.2.1(@playwright/test@1.63.0)
