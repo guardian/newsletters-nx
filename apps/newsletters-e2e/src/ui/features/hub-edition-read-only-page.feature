@@ -36,5 +36,5 @@ Feature: Edit a regional hub layout
 	Scenario: An empty layout explains how to add content
 		Given the editor is viewing the layout for region "uk" in read-only mode
 		Then a content box is displayed beneath the top section
-		And the content box shows 'No content available. Go to "Edit layout" to add content.'
+		And the content box shows 'No content available. Click on "Edit layout" to add content.'
 		And the "Edit layout" button is visible
