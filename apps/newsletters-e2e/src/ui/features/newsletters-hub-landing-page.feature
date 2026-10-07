@@ -33,12 +33,12 @@ Feature: Newsletters hub landing page
 		Background:
 			Given an editor's workspace uses the Stand design
 
-		Scenario: A edition with no layout setup displays the text 'no edition'
+		Scenario: An edition with no layout setup displays the text 'no layout'
 			Given the 'International' edition does not have a layout configured
 			And the editor is viewing the newsletter hub landing page
 			Then the 'International' tile should display the text 'No layout'
 
-		Scenario Outline: A edition with a layout setup displays appropriate summary text
+		Scenario Outline: An edition with a layout setup displays appropriate summary text
 			Given the '<edition>' edition has <newsletters> newsletters and <groups> groups
 			And the editor is viewing the newsletter hub landing page
 			Then the '<edition>' tile should display the text '<text>'
