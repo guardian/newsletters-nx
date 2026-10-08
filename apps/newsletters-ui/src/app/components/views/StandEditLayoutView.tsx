@@ -7,8 +7,12 @@ import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { editionIdSchema } from '@newsletters-nx/newsletters-data-client';
+import {
+	editionIdSchema,
+	makeBlankLayout,
+} from '@newsletters-nx/newsletters-data-client';
 import { useReducer } from 'react';
+import { Navigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { usePermissions } from '../../hooks/user-hooks';
 import { regionNames } from '../../lib/region-names';
@@ -35,13 +39,13 @@ const actionsStyles = css`
 
 interface Props {
 	editionId: string;
-	layout: Layout;
+	layout?: Layout;
 	newsletters: NewsletterData[];
 }
 
 export const StandEditLayoutView = ({
 	editionId,
-	layout: originalLayout,
+	layout: originalLayout = makeBlankLayout(),
 	newsletters,
 }: Props) => {
 	const permissions = usePermissions();
@@ -55,6 +59,10 @@ export const StandEditLayoutView = ({
 	const region = editionIdSchema.safeParse(editionId);
 	const regionName = region.success ? regionNames[region.data] : editionId;
 	const canEdit = !!permissions?.editEverything;
+
+	if (!canEdit) {
+		return <Navigate to={`/layouts/${editionId.toLowerCase()}`} replace />;
+	}
 
 	const handlePublish = async () => {
 		if (updateInProgress) {
@@ -77,62 +85,58 @@ export const StandEditLayoutView = ({
 					currentLabel: regionName,
 				}}
 				actions={
-					canEdit && (
-						<div css={actionsStyles}>
-							<Button
-								variant="tertiary"
-								size="md"
-								isDisabled={updateInProgress}
-								onPress={() => dispatch({ type: 'cancel' })}
-							>
-								Cancel
-							</Button>
-							<Button
-								variant="primary"
-								size="md"
-								icon="upload"
-								isDisabled={updateInProgress}
-								onPress={() => void handlePublish()}
-							>
-								Save and publish layout
-							</Button>
-						</div>
-					)
+					<div css={actionsStyles}>
+						<Button
+							variant="tertiary"
+							size="md"
+							isDisabled={updateInProgress}
+							onPress={() => dispatch({ type: 'cancel' })}
+						>
+							Cancel
+						</Button>
+						<Button
+							variant="primary"
+							size="md"
+							icon="upload"
+							isDisabled={updateInProgress}
+							onPress={() => void handlePublish()}
+						>
+							Save and publish layout
+						</Button>
+					</div>
 				}
 			/>
-			{canEdit && (
-				<>
-					<div role="status">
-						{feedback === 'success' && (
-							<Typography element="p" variant="bodyMd">
-								Layout updated. It will take some time for the site to update.
-							</Typography>
-						)}
-						{feedback === 'failure' && (
-							<Typography element="p" variant="bodyMd">
-								Failed to update. If the problem persists, please contact
-								Central Production.
-							</Typography>
-						)}
-					</div>
-					{layout.groups.map((group, groupIndex) => (
-						<StandLayoutSection
-							key={groupIndex}
-							group={group}
-							groupIndex={groupIndex}
-							newsletters={newsletters}
-							disabled={updateInProgress}
-							onRemove={(groupIndex, newsletterIndex) =>
-								dispatch({
-									type: 'remove-newsletter',
-									groupIndex,
-									newsletterIndex,
-								})
-							}
-						/>
-					))}
-				</>
-			)}
+			<>
+				<div role="status">
+					{feedback === 'success' && (
+						<Typography element="p" variant="bodyMd">
+							Layout updated. It will take some time for the site to update.
+						</Typography>
+					)}
+					{feedback === 'failure' && (
+						<Typography element="p" variant="bodyMd">
+							Failed to update. If the problem persists, please contact Central
+							Production.
+						</Typography>
+					)}
+				</div>
+				{layout.groups.map((group, groupIndex) => (
+					<StandLayoutSection
+						key={groupIndex}
+						group={group}
+						groupIndex={groupIndex}
+						newsletters={newsletters}
+						disabled={updateInProgress}
+						onRemove={(groupIndex, newsletterIndex) =>
+							dispatch({
+								type: 'remove-newsletter',
+								groupIndex,
+								newsletterIndex,
+							})
+						}
+					/>
+				))}
+			</>
 		</Container>
 	);
 };

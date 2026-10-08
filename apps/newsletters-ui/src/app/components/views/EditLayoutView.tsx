@@ -3,6 +3,7 @@ import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { makeBlankLayout } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useLocation } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
@@ -13,7 +14,7 @@ import { StandEditLayoutView } from './StandEditLayoutView';
 
 export const EditLayoutView = () => {
 	const data = useLoaderData<
-		{ layout: Layout; newsletters: NewsletterData[] } | undefined
+		{ layout?: Layout; newsletters: NewsletterData[] } | undefined
 	>();
 
 	const location = useLocation();
@@ -28,7 +29,7 @@ export const EditLayoutView = () => {
 		return (
 			<StandEditLayoutView
 				editionId={editionId}
-				layout={data.layout}
+				layout={data.layout ?? makeBlankLayout()}
 				newsletters={data.newsletters}
 			/>
 		);
@@ -40,7 +41,7 @@ export const EditLayoutView = () => {
 			{permissions?.editEverything && (
 				<LayoutEditor
 					editionId={editionId}
-					layout={data.layout}
+					layout={data.layout ?? makeBlankLayout()}
 					newsletters={data.newsletters}
 				/>
 			)}
