@@ -1,0 +1,72 @@
+import { css } from '@emotion/react';
+import { semanticColors, semanticSpacing } from '@guardian/stand';
+import { Typography } from '@guardian/stand/Typography';
+import { from } from '@guardian/stand/utils';
+import type { ReactNode } from 'react';
+import type { HubEditionHeaderBreadcrumbsProps } from './HubEditionHeaderBreadcrumbs';
+import { HubEditionHeaderBreadcrumbs } from './HubEditionHeaderBreadcrumbs';
+
+interface HubEditionHeaderProps {
+	title: string;
+	breadcrumbs: HubEditionHeaderBreadcrumbsProps;
+	children?: ReactNode;
+}
+
+const headerStyles = css`
+	background-color: ${semanticColors.bg.raisedLevel2};
+	padding: ${semanticSpacing.stackMd};
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: ${semanticSpacing.stackSm};
+`;
+
+const headingRowStyles = css`
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: ${semanticSpacing.stackSm};
+	margin-bottom: 0;
+
+	${from.lg} {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0;
+	}
+`;
+
+const headingChildrenStyles = css`
+	display: flex;
+	align-items: center;
+	gap: ${semanticSpacing.stackSm};
+`;
+
+const headingStyles = css`
+	color: ${semanticColors.text.strong};
+	margin: 0;
+	overflow-wrap: anywhere;
+`;
+
+export const HubEditionHeader = ({
+	title,
+	breadcrumbs,
+	children,
+}: HubEditionHeaderProps) => {
+	return (
+		<header css={headerStyles}>
+			<HubEditionHeaderBreadcrumbs {...breadcrumbs} />
+			<div css={headingRowStyles}>
+				<Typography
+					element="h2"
+					variant="headingCompact2Xl"
+					cssOverrides={headingStyles}
+				>
+					{title}
+				</Typography>
+				{children && <div css={headingChildrenStyles}>{children}</div>}
+			</div>
+		</header>
+	);
+};
