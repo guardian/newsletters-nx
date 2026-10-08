@@ -47,7 +47,7 @@ export default class NewslettersHubLandingPage {
 	public getEditionIdByName(edition: string): EditionId {
 		const editionId = editionIdsByName[edition];
 		if (!editionId) {
-			throw new Error(`No edition code found for edition '${edition}'`);
+			throw new Error(`No edition id found for edition '${edition}'`);
 		}
 		return editionId;
 	}
