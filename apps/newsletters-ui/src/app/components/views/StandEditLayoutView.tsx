@@ -60,8 +60,14 @@ export const StandEditLayoutView = ({
 	const regionName = region.success ? regionNames[region.data] : editionId;
 	const canEdit = !!permissions?.editEverything;
 
-	if (!canEdit) {
+	// `permissions` is undefined while still loading, so only redirect once
+	// we know the user can't edit.
+	if (permissions && !canEdit) {
 		return <Navigate to={`/layouts/${editionId.toLowerCase()}`} replace />;
+	}
+
+	if (!permissions) {
+		return null;
 	}
 
 	const handlePublish = async () => {

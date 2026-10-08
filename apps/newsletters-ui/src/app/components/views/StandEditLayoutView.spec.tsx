@@ -57,4 +57,15 @@ describe('StandEditLayoutView', () => {
 		await screen.findByRole('heading', { name: 'Read-only layout' });
 		expect(router.state.location.pathname).toBe('/layouts/uk');
 	});
+
+	it('does not redirect while permissions are still loading', async () => {
+		vi.mocked(usePermissions).mockReturnValue(undefined);
+		const router = renderEditView({ groups: [] });
+
+		await vi.waitFor(() => expect(router.state.initialized).toBe(true));
+		expect(router.state.location.pathname).toBe('/layouts/edit/uk');
+		expect(
+			screen.queryByRole('heading', { name: 'Read-only layout' }),
+		).toBeNull();
+	});
 });
