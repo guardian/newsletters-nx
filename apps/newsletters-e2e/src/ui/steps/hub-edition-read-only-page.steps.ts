@@ -18,6 +18,7 @@ Given(
 	},
 );
 
+// Copy of apps/newsletters-ui/src/app/lib/region-names.ts (e2e can't import from the UI app).
 const regionNames: Record<string, string> = {
 	UK: 'United Kingdom',
 	US: 'United States',

@@ -4,7 +4,6 @@ import { Button } from '@guardian/stand/Button';
 import { Typography } from '@guardian/stand/Typography';
 import { Container } from '@mui/material';
 import type {
-	EditionId,
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
@@ -12,20 +11,13 @@ import { editionIdSchema } from '@newsletters-nx/newsletters-data-client';
 import { useReducer } from 'react';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { usePermissions } from '../../hooks/user-hooks';
+import { regionNames } from '../../lib/region-names';
 import {
 	makeStandLayoutState,
 	standLayoutReducer,
 } from '../edition-layouts/stand-layout-reducer';
 import { StandLayoutSection } from '../edition-layouts/StandLayoutSection';
 import { HubEditionHeader } from '../HubEditionHeader';
-
-const regionNames: Record<EditionId, string> = {
-	UK: 'United Kingdom',
-	US: 'United States',
-	AU: 'Australia',
-	INT: 'International',
-	EUR: 'Europe',
-};
 
 const contentStyles = css`
 	display: flex;

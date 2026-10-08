@@ -3,7 +3,6 @@ import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
 import { Typography as StandTypography } from '@guardian/stand/Typography';
 import { Box, Container, Typography } from '@mui/material';
 import type {
-	EditionId,
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
@@ -15,19 +14,12 @@ import { useLoaderData, useLocation } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import { usePermissions } from '../../hooks/user-hooks';
+import { regionNames } from '../../lib/region-names';
 import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
 import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 import { EditLayoutButton } from '../EditLayoutButton';
 import { HubEditionHeader } from '../HubEditionHeader';
 import { NavigateButton } from '../NavigateButton';
-
-const regionNames: Record<EditionId, string> = {
-	UK: 'United Kingdom',
-	US: 'United States',
-	AU: 'Australia',
-	INT: 'International',
-	EUR: 'Europe',
-};
 
 const contentStyles = css`
 	display: flex;
