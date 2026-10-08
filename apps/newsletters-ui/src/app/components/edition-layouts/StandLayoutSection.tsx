@@ -162,7 +162,7 @@ export const StandLayoutSection = ({
 			<ul css={listStyles}>
 				{group.newsletters.map((newsletterId, newsletterIndex) => (
 					<StandNewsletterRow
-						key={`${newsletterId}-${newsletterIndex}`}
+						key={newsletterId}
 						newsletterId={newsletterId}
 						newsletter={newsletters.find(
 							(n) => n.identityName === newsletterId,
