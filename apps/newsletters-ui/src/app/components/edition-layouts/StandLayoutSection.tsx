@@ -102,17 +102,9 @@ export const StandNewsletterRow = ({
 	return (
 		<li css={rowStyles}>
 			{thumbnail ? (
-				<img
-					css={thumbnailStyles}
-					src={thumbnail}
-					alt={`Illustration for ${name}`}
-				/>
+				<img css={thumbnailStyles} src={thumbnail} alt="" />
 			) : (
-				<div
-					css={thumbnailStyles}
-					role="img"
-					aria-label={`${name} has no illustration`}
-				/>
+				<div css={thumbnailStyles} aria-hidden="true" />
 			)}
 			<div css={detailsStyles}>
 				<Typography element="p" variant="bodyBoldMd" cssOverrides={nameStyles}>
