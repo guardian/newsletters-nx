@@ -27,7 +27,7 @@ const headingRowStyles = css`
 	flex-direction: column;
 	align-items: flex-start;
 	gap: ${semanticSpacing.stackSm};
-	margin-bottom: ${semanticSpacing.stackLg};
+	margin-bottom: 0;
 
 	${from.lg} {
 		flex-direction: row;
