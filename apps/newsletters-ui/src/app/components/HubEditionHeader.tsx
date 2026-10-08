@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { semanticColors, semanticSpacing } from '@guardian/stand';
 import { Typography } from '@guardian/stand/Typography';
+import { from } from '@guardian/stand/utils';
 import type { ReactNode } from 'react';
 import type { HubEditionHeaderBreadcrumbsProps } from './HubEditionHeaderBreadcrumbs';
 import { HubEditionHeaderBreadcrumbs } from './HubEditionHeaderBreadcrumbs';
@@ -21,7 +22,25 @@ const headerStyles = css`
 `;
 
 const headingRowStyles = css`
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: ${semanticSpacing.stackSm};
 	margin-bottom: ${semanticSpacing.stackLg};
+
+	${from.lg} {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0;
+	}
+`;
+
+const headingChildrenStyles = css`
+	display: flex;
+	align-items: center;
+	gap: ${semanticSpacing.stackSm};
 `;
 
 const headingStyles = css`
@@ -46,8 +65,8 @@ export const HubEditionHeader = ({
 				>
 					{title}
 				</Typography>
+				{children && <div css={headingChildrenStyles}>{children}</div>}
 			</div>
-			{children}
 		</header>
 	);
 };
