@@ -51,6 +51,7 @@ const getEditionName = (editionId: EditionId): string => {
 const mainStyle = css`
 	display: flex;
 	flex-flow: column nowrap;
+	margin: 0 auto;
 	gap: ${semanticSpacing.stackXl};
 `;
 
