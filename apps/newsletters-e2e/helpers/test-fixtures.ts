@@ -1,4 +1,7 @@
 import type {
+	EditionId,
+	EditionsLayouts,
+	Layout,
 	MetaData,
 	NewsletterCategory,
 	NewsletterData,
@@ -150,4 +153,66 @@ export async function deleteFixtureNewsletter(
 	listId: number,
 ): Promise<void> {
 	await request.delete(`${API_BASE}/api/test-fixtures/newsletters/${listId}`);
+}
+
+export async function createFixtureLayout(
+	request: APIRequestContext,
+	edition: EditionId,
+	layout: Layout,
+): Promise<void> {
+	const response = await request.post(
+		`${API_BASE}/api/test-fixtures/layouts/${edition}`,
+		{ data: layout },
+	);
+	const json = (await response.json()) as { ok: boolean; message?: string };
+	if (!response.ok() || !json.ok) {
+		throw new Error(
+			`Failed to create fixture layout (${response.status()}): ${json.message ?? JSON.stringify(json)}`,
+		);
+	}
+}
+
+export async function deleteFixtureLayout(
+	request: APIRequestContext,
+	edition: EditionId,
+): Promise<void> {
+	await request.delete(`${API_BASE}/api/test-fixtures/layouts/${edition}`);
+}
+
+// Snapshots every edition's layout so a scenario can mutate them and then
+// put them back with `restoreFixtureLayouts`.
+export async function backupFixtureLayouts(
+	request: APIRequestContext,
+): Promise<EditionsLayouts> {
+	const response = await request.post(
+		`${API_BASE}/api/test-fixtures/backup-layouts`,
+	);
+	const json = (await response.json()) as {
+		ok: boolean;
+		message?: string;
+		data?: EditionsLayouts;
+	};
+	if (!response.ok() || !json.ok || json.data === undefined) {
+		throw new Error(
+			`Failed to back up fixture layouts (${response.status()}): ${json.message ?? JSON.stringify(json)}`,
+		);
+	}
+	return json.data;
+}
+
+// Replaces all layouts with the given snapshot, discarding any others.
+export async function restoreFixtureLayouts(
+	request: APIRequestContext,
+	layouts: EditionsLayouts,
+): Promise<void> {
+	const response = await request.post(
+		`${API_BASE}/api/test-fixtures/restore-layouts`,
+		{ data: layouts },
+	);
+	const json = (await response.json()) as { ok: boolean; message?: string };
+	if (!response.ok() || !json.ok) {
+		throw new Error(
+			`Failed to restore fixture layouts (${response.status()}): ${json.message ?? JSON.stringify(json)}`,
+		);
+	}
 }

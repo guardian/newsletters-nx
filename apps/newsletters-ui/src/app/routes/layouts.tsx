@@ -3,9 +3,18 @@ import { EditLayoutJsonView } from '../components/views/EditLayoutJsonView';
 import { EditLayoutView } from '../components/views/EditLayoutView';
 import { LayoutMapView } from '../components/views/LayoutMapView';
 import { LayoutView } from '../components/views/LayoutView';
+import { StandLayoutMapView } from '../components/views/StandLayoutMapView';
 import { ErrorPage } from '../ErrorPage';
+import { isFeatureSwitchEnabled } from '../featureSwitches';
 import { Layout } from '../Layout';
 import { layoutLoader, mapLoader } from '../loaders/layouts';
+
+const LayoutsMapElement = () =>
+	isFeatureSwitchEnabled('switch-stand') ? (
+		<StandLayoutMapView />
+	) : (
+		<LayoutMapView />
+	);
 
 export const layoutsRoute: RouteObject = {
 	path: '/layouts',
@@ -14,7 +23,7 @@ export const layoutsRoute: RouteObject = {
 	children: [
 		{
 			path: '',
-			element: <LayoutMapView />,
+			element: <LayoutsMapElement />,
 			loader: mapLoader,
 		},
 
