@@ -27,11 +27,14 @@ const headingRowStyles = css`
 	justify-content: space-between;
 	gap: ${semanticSpacing.stackSm};
 	width: 100%;
-`;
-
-const headingRowWithChildrenStyles = css`
 	margin-bottom: ${semanticSpacing.stackLg};
 `;
+
+// The edit page puts actions in the heading row and has no content below.
+const headingRowWithoutSpacingStyles = css`
+	margin-bottom: 0;
+`;
+
 
 const headingStyles = css`
 	color: ${semanticColors.text.strong};
@@ -48,7 +51,10 @@ export const HubEditionHeader = ({
 	return (
 		<header css={headerStyles}>
 			<HubEditionHeaderBreadcrumbs {...breadcrumbs} />
-			<div css={[headingRowStyles, children && headingRowWithChildrenStyles]}>
+			<div css={[
+					headingRowStyles,
+					actions && !children && headingRowWithoutSpacingStyles,
+				]}>
 				<Typography
 					element="h2"
 					variant="headingCompact2Xl"
