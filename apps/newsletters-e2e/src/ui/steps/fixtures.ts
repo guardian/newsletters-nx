@@ -5,6 +5,7 @@ import {
 	deleteFixtureNewsletter,
 } from '../../../helpers/test-fixtures';
 import CreateDraftNewsletterWizard from '../helpers/create-newsletter-wizard';
+import NewslettersHubLandingPage from '../helpers/newsletters-hub-landing-page';
 
 /** Scenario-scoped state for a draft newsletter created via the API. */
 interface ExistingDraftNewsletter {
@@ -36,6 +37,7 @@ type Fixtures = {
 	existingDraftNewsletter: ExistingDraftNewsletter;
 	namedNewsletters: NamedNewsletters;
 	createDraftNewsletterWizard: CreateDraftNewsletterWizard;
+	newslettersHubLandingPage: NewslettersHubLandingPage;
 };
 
 export const test = base.extend<Fixtures>({
@@ -66,6 +68,13 @@ export const test = base.extend<Fixtures>({
 	createDraftNewsletterWizard: async ({ page, request }, use) => {
 		const draft = new CreateDraftNewsletterWizard(page, request);
 		await use(draft);
+	},
+
+	newslettersHubLandingPage: async ({ page, request }, use) => {
+		const landingPage = new NewslettersHubLandingPage(page, request);
+		await landingPage.backupLayouts();
+		await use(landingPage);
+		await landingPage.restoreLayouts();
 	},
 });
 
