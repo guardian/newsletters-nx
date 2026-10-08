@@ -35,7 +35,10 @@ const renderEditView = (layout?: unknown) => {
 
 describe('StandEditLayoutView', () => {
 	it('renders an empty editor when the edition has no stored layout', async () => {
-		vi.mocked(usePermissions).mockReturnValue({ editEverything: true });
+		vi.mocked(usePermissions).mockReturnValue({
+			editEverything: true,
+			useJsonEditor: false,
+		});
 		renderEditView(undefined);
 
 		expect(
@@ -45,7 +48,10 @@ describe('StandEditLayoutView', () => {
 	});
 
 	it('redirects users without edit permission to the read-only page', async () => {
-		vi.mocked(usePermissions).mockReturnValue({ editEverything: false });
+		vi.mocked(usePermissions).mockReturnValue({
+			editEverything: false,
+			useJsonEditor: false,
+		});
 		const router = renderEditView({ groups: [] });
 
 		await screen.findByRole('heading', { name: 'Read-only layout' });
