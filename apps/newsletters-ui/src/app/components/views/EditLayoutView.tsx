@@ -5,9 +5,11 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useLocation } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
+import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import { usePermissions } from '../../hooks/user-hooks';
 import { LayoutEditor } from '../edition-layouts/LayoutEditor';
 import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
+import { StandEditLayoutView } from './StandEditLayoutView';
 
 export const EditLayoutView = () => {
 	const data = useLoaderData<
@@ -20,6 +22,16 @@ export const EditLayoutView = () => {
 
 	if (!data || !editionId) {
 		return <MissingLayoutContent editionId={editionId} />;
+	}
+
+	if (isFeatureSwitchEnabled('switch-stand')) {
+		return (
+			<StandEditLayoutView
+				editionId={editionId}
+				layout={data.layout}
+				newsletters={data.newsletters}
+			/>
+		);
 	}
 
 	return (

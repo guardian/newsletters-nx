@@ -8,6 +8,7 @@ import { HubEditionHeaderBreadcrumbs } from './HubEditionHeaderBreadcrumbs';
 interface HubEditionHeaderProps {
 	title: string;
 	breadcrumbs: HubEditionHeaderBreadcrumbsProps;
+	actions?: ReactNode;
 	children?: ReactNode;
 }
 
@@ -21,6 +22,14 @@ const headerStyles = css`
 `;
 
 const headingRowStyles = css`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: ${semanticSpacing.stackSm};
+	width: 100%;
+`;
+
+const headingRowWithChildrenStyles = css`
 	margin-bottom: ${semanticSpacing.stackLg};
 `;
 
@@ -33,12 +42,13 @@ const headingStyles = css`
 export const HubEditionHeader = ({
 	title,
 	breadcrumbs,
+	actions,
 	children,
 }: HubEditionHeaderProps) => {
 	return (
 		<header css={headerStyles}>
 			<HubEditionHeaderBreadcrumbs {...breadcrumbs} />
-			<div css={headingRowStyles}>
+			<div css={[headingRowStyles, children && headingRowWithChildrenStyles]}>
 				<Typography
 					element="h2"
 					variant="headingCompact2Xl"
@@ -46,6 +56,7 @@ export const HubEditionHeader = ({
 				>
 					{title}
 				</Typography>
+				{actions}
 			</div>
 			{children}
 		</header>

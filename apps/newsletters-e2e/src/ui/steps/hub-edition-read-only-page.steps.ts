@@ -18,6 +18,14 @@ Given(
 	},
 );
 
+const regionNames: Record<string, string> = {
+	UK: 'United Kingdom',
+	US: 'United States',
+	AU: 'Australia',
+	INT: 'International',
+	EUR: 'Europe',
+};
+
 When('the editor chooses to edit the layout', async ({ page }) => {
 	await layoutAction(page, 'Edit layout').click();
 });
@@ -29,7 +37,7 @@ Then(
 		const edition = path.split('/').pop()?.toUpperCase();
 		await expect(
 			page.getByRole('heading', {
-				name: `Edit Layout for ${edition}`,
+				name: (edition && regionNames[edition]) ?? `Edit Layout for ${edition}`,
 				exact: true,
 			}),
 		).toBeVisible();
