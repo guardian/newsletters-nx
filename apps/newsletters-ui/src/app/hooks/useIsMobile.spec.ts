@@ -10,9 +10,7 @@ const mockMatchMedia = (initialMatches: boolean) => {
 	const mql = {
 		matches: initialMatches,
 		addEventListener: vi.fn((_: string, l: Listener) => listeners.add(l)),
-		removeEventListener: vi.fn((_: string, l: Listener) =>
-			listeners.delete(l),
-		),
+		removeEventListener: vi.fn((_: string, l: Listener) => listeners.delete(l)),
 	};
 	const matchMedia = vi.fn(() => mql);
 	vi.stubGlobal('matchMedia', matchMedia);

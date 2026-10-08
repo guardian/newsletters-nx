@@ -100,5 +100,10 @@ Then('a success message is shown', async ({ page }) => {
 	await expect(page.getByText(/Layout updated/)).toBeVisible();
 });
 Then('no layout has been saved', async ({ page }) => {
+	// Let the UI settle so a slow request can't make this pass by accident.
+	await expect(
+		page.getByRole('button', { name: 'Save and publish layout', exact: true }),
+	).toBeEnabled();
+	await page.waitForLoadState('networkidle');
 	expect(savedLayouts.get(page) ?? []).toHaveLength(0);
 });

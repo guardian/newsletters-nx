@@ -35,7 +35,6 @@ const headingRowWithoutSpacingStyles = css`
 	margin-bottom: 0;
 `;
 
-
 const headingStyles = css`
 	color: ${semanticColors.text.strong};
 	margin: 0;
@@ -51,10 +50,12 @@ export const HubEditionHeader = ({
 	return (
 		<header css={headerStyles}>
 			<HubEditionHeaderBreadcrumbs {...breadcrumbs} />
-			<div css={[
+			<div
+				css={[
 					headingRowStyles,
 					actions && !children && headingRowWithoutSpacingStyles,
-				]}>
+				]}
+			>
 				<Typography
 					element="h2"
 					variant="headingCompact2Xl"
