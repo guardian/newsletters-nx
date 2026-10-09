@@ -23,3 +23,11 @@ export type EditionsLayouts = Partial<Record<EditionId, Layout>>;
 export const makeBlankLayout = (): Layout => ({
 	groups: [],
 });
+
+export const regionNames: Record<EditionId, string> = {
+	UK: 'United Kingdom',
+	US: 'United States',
+	AU: 'Australia',
+	INT: 'International',
+	EUR: 'Europe',
+};

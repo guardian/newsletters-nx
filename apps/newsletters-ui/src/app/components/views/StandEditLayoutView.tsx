@@ -10,12 +10,12 @@ import type {
 import {
 	editionIdSchema,
 	makeBlankLayout,
+	regionNames,
 } from '@newsletters-nx/newsletters-data-client';
 import { useReducer } from 'react';
 import { Navigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { usePermissions } from '../../hooks/user-hooks';
-import { regionNames } from '../../lib/region-names';
 import {
 	makeStandLayoutState,
 	standLayoutReducer,

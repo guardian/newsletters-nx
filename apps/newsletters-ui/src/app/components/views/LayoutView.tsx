@@ -9,12 +9,12 @@ import type {
 import {
 	editionIdSchema,
 	makeBlankLayout,
+	regionNames,
 } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useLocation } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import { usePermissions } from '../../hooks/user-hooks';
-import { regionNames } from '../../lib/region-names';
 import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
 import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 import { EditLayoutButton } from '../EditLayoutButton';

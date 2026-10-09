@@ -1,5 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import type { EditionId } from '@newsletters-nx/newsletters-data-client';
+import { regionNames } from '@newsletters-nx/newsletters-data-client';
 import { Given, Then, When } from './fixtures';
 
 const layoutAction = (page: Page, name: string) =>
@@ -18,15 +20,6 @@ Given(
 	},
 );
 
-// Copy of apps/newsletters-ui/src/app/lib/region-names.ts (e2e can't import from the UI app).
-const regionNames: Record<string, string> = {
-	UK: 'United Kingdom',
-	US: 'United States',
-	AU: 'Australia',
-	INT: 'International',
-	EUR: 'Europe',
-};
-
 When('the editor chooses to edit the layout', async ({ page }) => {
 	await layoutAction(page, 'Edit layout').click();
 });
@@ -38,7 +31,9 @@ Then(
 		const edition = path.split('/').pop()?.toUpperCase();
 		await expect(
 			page.getByRole('heading', {
-				name: (edition && regionNames[edition]) ?? `Edit Layout for ${edition}`,
+				name:
+					(edition && regionNames[edition as EditionId]) ??
+					`Edit Layout for ${edition}`,
 				exact: true,
 			}),
 		).toBeVisible();
