@@ -1,5 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import type { EditionId } from '@newsletters-nx/newsletters-data-client';
+import { editionNames } from '@newsletters-nx/newsletters-data-client';
 import type { DataTable } from 'playwright-bdd';
 import { Given, Then, When } from './fixtures';
 
@@ -15,7 +17,7 @@ interface NewsletterFixture {
 	illustrationSquare: string;
 }
 
-const mockRegionalLayout = async (
+const mockEditionLayout = async (
 	page: Page,
 	groups: LayoutGroupFixture[],
 	newsletters: NewsletterFixture[],
@@ -44,7 +46,7 @@ const mockNewsletterLayout = async (
 			});
 		},
 	);
-	await mockRegionalLayout(
+	await mockEditionLayout(
 		page,
 		[{ title: sectionTitle, newsletters: [identityName] }],
 		[
@@ -64,7 +66,7 @@ const layoutAction = (page: Page, name: string) =>
 		.or(page.getByRole('link', { name, exact: true }));
 
 Given(
-	'the editor is viewing the layout for region {string} in read-only mode',
+	'the editor is viewing the layout for edition {string} in read-only mode',
 	async ({ page }, edition: string) => {
 		await page.route(`**/api/layouts/${edition}`, async (route) => {
 			await route.fulfill({ json: { ok: true, data: { groups: [] } } });
@@ -75,13 +77,13 @@ Given(
 );
 
 Given(
-	'the regional layout contains these sections:',
+	'the edition layout contains these sections:',
 	async ({ page }, table: DataTable) => {
 		const groups = table.hashes().map(({ title }) => ({
 			title: title ?? '',
 			newsletters: [],
 		}));
-		await mockRegionalLayout(page, groups, []);
+		await mockEditionLayout(page, groups, []);
 	},
 );
 
@@ -97,7 +99,7 @@ Given(
 	},
 );
 
-When('the regional layout loads', async ({ page }) => {
+When('the edition layout loads', async ({ page }) => {
 	await page.goto('/layouts/uk');
 	await expect(
 		page.getByRole('heading', { level: 2, name: 'United Kingdom' }),
@@ -115,7 +117,9 @@ Then(
 		const edition = path.split('/').pop()?.toUpperCase();
 		await expect(
 			page.getByRole('heading', {
-				name: `Edit Layout for ${edition}`,
+				name:
+					(edition && editionNames[edition as EditionId]) ??
+					`Edit Layout for ${edition}`,
 				exact: true,
 			}),
 		).toBeVisible();
@@ -153,7 +157,7 @@ Then('the content box shows {string}', async ({ page }, text: string) => {
 });
 
 Then(
-	'each section is displayed in a bordered box beneath the regional header',
+	'each section is displayed in a bordered box beneath the edition header',
 	async ({ page }) => {
 		const sections = page.locator('main section');
 		const sectionCount = await sections.count();

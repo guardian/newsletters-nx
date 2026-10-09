@@ -3,12 +3,12 @@ import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
 import { Typography as StandTypography } from '@guardian/stand/Typography';
 import { Box, Container, Typography } from '@mui/material';
 import type {
-	EditionId,
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	editionIdSchema,
+	editionNames,
 	makeBlankLayout,
 } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useLocation } from 'react-router-dom';
@@ -21,14 +21,6 @@ import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 import { EditLayoutButton } from '../EditLayoutButton';
 import { HubEditionHeader } from '../HubEditionHeader';
 import { NavigateButton } from '../NavigateButton';
-
-const regionNames: Record<EditionId, string> = {
-	UK: 'United Kingdom',
-	US: 'United States',
-	AU: 'Australia',
-	INT: 'International',
-	EUR: 'Europe',
-};
 
 const contentStyles = css`
 	display: flex;
@@ -66,16 +58,18 @@ export const LayoutView = () => {
 	if (!data || !editionId) {
 		return <MissingLayoutContent editionId={editionId} />;
 	}
-	const region = editionIdSchema.safeParse(editionId);
-	const regionName = region.success ? regionNames[region.data] : editionId;
+	const parsedEdition = editionIdSchema.safeParse(editionId);
+	const editionName = parsedEdition.success
+		? editionNames[parsedEdition.data]
+		: editionId;
 
 	return isUsingStand ? (
 		<Container maxWidth="lg" css={contentStyles}>
 			<HubEditionHeader
-				title={regionName}
+				title={editionName}
 				breadcrumbs={{
 					ancestors: [{ label: 'Newsletters front', href: '/layouts' }],
-					currentLabel: regionName,
+					currentLabel: editionName,
 				}}
 			>
 				{permissions?.editEverything && (

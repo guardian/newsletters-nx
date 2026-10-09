@@ -44,4 +44,21 @@ describe('HubEditionHeader', () => {
 		expect(screen.queryByText('Live')).toBeNull();
 		expect(screen.queryByText('Draft')).toBeNull();
 	});
+
+	it('renders children in the heading row', () => {
+		render(
+			<MemoryRouter>
+				<HubEditionHeader
+					title="United Kingdom"
+					breadcrumbs={{ ancestors: [], currentLabel: 'United Kingdom' }}
+				>
+					<button>Edit layout</button>
+				</HubEditionHeader>
+			</MemoryRouter>,
+		);
+		const row = screen.getByRole('heading', { level: 2 }).parentElement;
+		expect(
+			row?.contains(screen.getByRole('button', { name: 'Edit layout' })),
+		).toBe(true);
+	});
 });
