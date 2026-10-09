@@ -128,19 +128,14 @@ const NewsletterListItem = ({ newsletter }: NewsletterListItemProps) => {
 							{newsletter.name}
 						</Typography>
 					</Link>
-					{badge &&
-						(tooltipMessage ? (
-							<div css={badgeTooltipStyles}>
-								<Badge color={badge.color} weight="strong" size="xs">
-									{badge.label}
-								</Badge>
-								<Tooltip>{tooltipMessage}</Tooltip>
-							</div>
-						) : (
+					{badge && (
+						<div css={badgeTooltipStyles}>
 							<Badge color={badge.color} weight="strong" size="xs">
 								{badge.label}
 							</Badge>
-						))}
+							{tooltipMessage && <Tooltip>{tooltipMessage}</Tooltip>}
+						</div>
+					)}
 				</div>
 			</li>
 		)
@@ -170,9 +165,9 @@ export const HubEditionSectionContainer = ({
 			</Typography>
 		</header>
 		<ul css={newsletterListStyles}>
-			{section.newsletters.map((newsletterId, index) => (
+			{section.newsletters.map((newsletterId) => (
 				<NewsletterListItem
-					key={`${newsletterId}-${index}`}
+					key={newsletterId}
 					newsletter={newsletters.find(
 						(newsletter) => newsletter.identityName === newsletterId,
 					)}
