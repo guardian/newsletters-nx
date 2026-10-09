@@ -87,7 +87,7 @@ export const StandEditLayoutView = ({
 			<HubEditionHeader
 				title={regionName}
 				breadcrumbs={{
-					ancestors: [{ label: 'Newsletters hubs', href: '/layouts' }],
+					ancestors: [{ label: 'Newsletters hub', href: '/layouts' }],
 					currentLabel: regionName,
 				}}
 				actions={
