@@ -31,6 +31,12 @@ const contentStyles = css`
 	padding-bottom: ${semanticSpacing.stackLg};
 `;
 
+const loadingStyles = css`
+	display: flex;
+	justify-content: center;
+	padding: ${semanticSpacing.stackLg};
+`;
+
 interface Props {
 	editionId: string;
 	layout?: Layout;
@@ -69,9 +75,11 @@ export const StandEditLayoutView = ({
 	if (!permissions) {
 		// TODO: replace with a spinner once Stand provides one.
 		return (
-			<Typography element="p" variant="bodyMd">
-				Loading...
-			</Typography>
+			<div css={loadingStyles}>
+				<Typography element="p" variant="bodyMd">
+					Loading...
+				</Typography>
+			</div>
 		);
 	}
 
