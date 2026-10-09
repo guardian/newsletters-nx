@@ -1,4 +1,7 @@
-import type { Layout } from '@newsletters-nx/newsletters-data-client';
+import type {
+	Layout,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -18,12 +21,16 @@ afterEach(() => {
 	vi.resetAllMocks();
 });
 
-const renderLayoutView = (editionId = 'uk', layout?: Layout) => {
+const renderLayoutView = (
+	editionId = 'uk',
+	layout?: Layout,
+	newsletters: NewsletterData[] = [],
+) => {
 	const router = createMemoryRouter(
 		[
 			{
 				path: '/layouts/:editionId',
-				loader: () => ({ layout, newsletters: [] }),
+				loader: () => ({ layout, newsletters }),
 				element: <LayoutView />,
 			},
 			{
@@ -95,5 +102,60 @@ describe('LayoutView empty state', () => {
 				'No content available. Click on "Edit layout" to add content.',
 			),
 		).toBeNull();
+	});
+});
+
+describe('LayoutView sections', () => {
+	it('renders a numbered section container for each layout group', async () => {
+		renderLayoutView('uk', {
+			groups: [
+				{ title: 'Get started', newsletters: [] },
+				{ title: 'More to explore', newsletters: [] },
+			],
+		});
+
+		expect(
+			await screen.findByRole('heading', { level: 3, name: 'Section 1:' }),
+		).toBeTruthy();
+		expect(
+			screen.getByRole('heading', { level: 4, name: 'Get started' }),
+		).toBeTruthy();
+		expect(
+			screen.getByRole('heading', { level: 3, name: 'Section 2:' }),
+		).toBeTruthy();
+		expect(
+			screen.getByRole('heading', { level: 4, name: 'More to explore' }),
+		).toBeTruthy();
+		expect(
+			screen.queryByText(
+				'No content available. Go to "Edit layout" to add content.',
+			),
+		).toBeNull();
+	});
+
+	it('renders section newsletters as linked list items with thumbnails and status badges', async () => {
+		const newsletter = {
+			identityName: 'morning-briefing',
+			name: 'Morning Briefing',
+			status: 'live',
+			illustrationSquare: 'https://example.com/morning-briefing.png',
+		} as NewsletterData;
+
+		renderLayoutView(
+			'uk',
+			{
+				groups: [{ title: 'Get started', newsletters: ['morning-briefing'] }],
+			},
+			[newsletter],
+		);
+
+		const titleLink = await screen.findByRole('link', {
+			name: 'Morning Briefing',
+		});
+		expect(titleLink.getAttribute('href')).toBe('/launched/morning-briefing');
+		expect(screen.getByText('Live')).toBeTruthy();
+		expect(
+			titleLink.closest('li')?.querySelector('img')?.getAttribute('src'),
+		).toBe('https://example.com/morning-briefing.png');
 	});
 });

@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { semanticColors, semanticSpacing } from '@guardian/stand';
 import { Typography } from '@guardian/stand/Typography';
+import { from } from '@guardian/stand/utils';
 import type { ReactNode } from 'react';
 import type { HubEditionHeaderBreadcrumbsProps } from './HubEditionHeaderBreadcrumbs';
 import { HubEditionHeaderBreadcrumbs } from './HubEditionHeaderBreadcrumbs';
@@ -23,16 +24,24 @@ const headerStyles = css`
 
 const headingRowStyles = css`
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: ${semanticSpacing.stackSm};
 	width: 100%;
-	margin-bottom: ${semanticSpacing.stackLg};
+	flex-direction: column;
+	align-items: flex-start;
+	gap: ${semanticSpacing.stackSm};
+	margin-bottom: 0;
+
+	${from.lg} {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0;
+	}
 `;
 
-// The edit page puts actions in the heading row and has no content below.
-const headingRowWithoutSpacingStyles = css`
-	margin-bottom: 0;
+const headingChildrenStyles = css`
+	display: flex;
+	align-items: center;
+	gap: ${semanticSpacing.stackSm};
 `;
 
 const headingStyles = css`
@@ -50,12 +59,7 @@ export const HubEditionHeader = ({
 	return (
 		<header css={headerStyles}>
 			<HubEditionHeaderBreadcrumbs {...breadcrumbs} />
-			<div
-				css={[
-					headingRowStyles,
-					actions && !children && headingRowWithoutSpacingStyles,
-				]}
-			>
+			<div css={headingRowStyles}>
 				<Typography
 					element="h2"
 					variant="headingCompact2Xl"
@@ -63,9 +67,13 @@ export const HubEditionHeader = ({
 				>
 					{title}
 				</Typography>
-				{actions}
+				{(actions || children) && (
+					<div css={headingChildrenStyles}>
+						{actions}
+						{children}
+					</div>
+				)}
 			</div>
-			{children}
 		</header>
 	);
 };

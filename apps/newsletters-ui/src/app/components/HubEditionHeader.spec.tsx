@@ -1,5 +1,4 @@
 import { cleanup, render, screen } from '@testing-library/react';
-import type { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
 import { HubEditionHeader } from './HubEditionHeader';
@@ -46,45 +45,24 @@ describe('HubEditionHeader', () => {
 		expect(screen.queryByText('Draft')).toBeNull();
 	});
 
-	const renderHeader = (props: { actions?: ReactNode; children?: ReactNode }) =>
+	it('renders actions and children in the heading row', () => {
 		render(
 			<MemoryRouter>
 				<HubEditionHeader
 					title="United Kingdom"
 					breadcrumbs={{ ancestors: [], currentLabel: 'United Kingdom' }}
-					{...props}
-				/>
+					actions={<button>Publish</button>}
+				>
+					<button>Edit layout</button>
+				</HubEditionHeader>
 			</MemoryRouter>,
 		);
-
-	const headingRowMargin = () =>
-		getComputedStyle(
-			screen.getByRole('heading', { level: 2 }).parentElement as HTMLElement,
-		).marginBottom;
-
-	it('keeps spacing below the heading row by default', () => {
-		renderHeader({});
-		expect(headingRowMargin()).not.toBe('');
-		expect(headingRowMargin()).not.toBe('0px');
-	});
-
-	it('keeps spacing when children are falsy, as on the read-only page', () => {
-		renderHeader({ children: false });
-		expect(headingRowMargin()).not.toBe('0px');
-	});
-
-	it('keeps spacing when there are children', () => {
-		renderHeader({ children: <button>Edit layout</button> });
-		expect(headingRowMargin()).not.toBe('0px');
-		expect(screen.getByRole('button', { name: 'Edit layout' })).toBeTruthy();
-	});
-
-	it('renders actions in the heading row and drops spacing without children', () => {
-		renderHeader({ actions: <button>Publish</button> });
-		const action = screen.getByRole('button', { name: 'Publish' });
-		expect(action.parentElement).toBe(
-			screen.getByRole('heading', { level: 2 }).parentElement,
-		);
-		expect(headingRowMargin()).toBe('0px');
+		const row = screen.getByRole('heading', { level: 2 }).parentElement;
+		expect(
+			row?.contains(screen.getByRole('button', { name: 'Publish' })),
+		).toBe(true);
+		expect(
+			row?.contains(screen.getByRole('button', { name: 'Edit layout' })),
+		).toBe(true);
 	});
 });

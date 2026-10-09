@@ -11,6 +11,7 @@
 		"e2e-ui:remote": "bddgen && playwright test --ui-port=8888 --ui-host=0.0.0.0"
 	},
 	"devDependencies": {
+		"@faker-js/faker": "^10.6.0",
 		"playwright-bdd": "^9.2.1"
 	}
 }

@@ -15,6 +15,7 @@ import { useLoaderData, useLocation } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import { usePermissions } from '../../hooks/user-hooks';
+import { HubEditionSectionContainer } from '../edition-layouts/HubEditionSectionContainer';
 import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
 import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 import { EditLayoutButton } from '../EditLayoutButton';
@@ -74,7 +75,16 @@ export const LayoutView = () => {
 				)}
 			</HubEditionHeader>
 
-			{!data.layout?.groups.length && (
+			{data.layout?.groups.length ? (
+				data.layout.groups.map((section, index) => (
+					<HubEditionSectionContainer
+						key={`${section.title}-${index}`}
+						section={section}
+						sectionNumber={index + 1}
+						newsletters={data.newsletters}
+					/>
+				))
+			) : (
 				<div css={emptyStateStyles}>
 					<StandTypography
 						element="p"

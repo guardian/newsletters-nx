@@ -77,8 +77,13 @@ export function Layout(props: IRootRoute) {
 	})();
 	const isAllNewslettersRoute = location.pathname === '/all';
 	const isHomeRoute = location.pathname === '/';
+	const isNewslettersHubLandingRoute = location.pathname === '/layouts';
 	// /all and the home page use the same Stand top bar / alert banner shell as the wizard.
-	const usesStandShell = isWizardRoute || isAllNewslettersRoute || isHomeRoute;
+	const usesStandShell =
+		isWizardRoute ||
+		isAllNewslettersRoute ||
+		isHomeRoute ||
+		isNewslettersHubLandingRoute;
 	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
 
 	useEffect(() => {
@@ -126,7 +131,7 @@ export function Layout(props: IRootRoute) {
 				<StandAlertBanner isOnCode={isOnCode} />
 			)}
 			{Nav}
-			<Box sx={{ pt: 8 }} component={'main'}>
+			<Box sx={{ pt: 8, pb: 8 }} component={'main'}>
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
