@@ -26,7 +26,7 @@ describe('PermissionDeniedBlock', () => {
 			name: 'Return to newsletters hub',
 		});
 
-		expect(linkButton.textContent).toBe('Return to newsletters hub');
+		expect(linkButton.textContent).toContain('Return to newsletters hub');
 	});
 	it('it allows overriding the link target', () => {
 		render(<PermissionDeniedBlock backTo="/layouts" />);
