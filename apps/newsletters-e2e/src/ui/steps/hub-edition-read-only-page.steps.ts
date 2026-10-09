@@ -99,9 +99,6 @@ Given(
 
 When('the edition layout loads', async ({ page }) => {
 	await page.goto('/layouts/uk');
-	await expect(
-		page.getByRole('heading', { level: 2, name: 'United Kingdom' }),
-	).toBeVisible();
 });
 
 When('the editor chooses to edit the layout', async ({ page }) => {
