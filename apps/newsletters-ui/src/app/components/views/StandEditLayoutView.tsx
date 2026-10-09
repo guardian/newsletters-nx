@@ -104,7 +104,7 @@ export const StandEditLayoutView = ({
 						<Button
 							variant="primary"
 							size="md"
-							icon="upload"
+							icon="publish"
 							isDisabled={updateInProgress}
 							onPress={() => void handlePublish()}
 						>
