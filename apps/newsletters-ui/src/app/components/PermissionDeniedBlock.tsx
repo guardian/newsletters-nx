@@ -50,7 +50,7 @@ const flagTheme: Partial<IconTheme> = {
 };
 
 export const PermissionDeniedBlock = ({
-	title = 'You do not have the required permissions to access this area of the Newsletters tool',
+	title = 'You do not have permission for this area of the Newsletters tool',
 	backText = 'Return to previous page',
 	backTo,
 }: PermissionDeniedBlockProps) => {
@@ -67,7 +67,7 @@ export const PermissionDeniedBlock = ({
 					<a href="mailto:central.production@guardian.co.uk">
 						Central Production
 					</a>{' '}
-					if you need permission
+					if you need permission.
 				</Typography>
 			</div>
 			<LinkButton icon="arrow_back" href={backTo}>
