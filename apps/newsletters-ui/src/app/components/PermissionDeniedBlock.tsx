@@ -10,6 +10,7 @@ import type { IconTheme } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
 import { LinkButton } from '@guardian/stand/LinkButton';
 import { Typography } from '@guardian/stand/Typography';
+import { from } from '@guardian/stand/utils';
 import { useId } from 'react';
 
 export interface PermissionDeniedBlockProps {
@@ -23,8 +24,13 @@ const blockStyle = css`
 	flex-flow: column nowrap;
 	gap: ${baseSpacing['24Px']};
 	border: ${semanticSizing.border.default} dashed ${semanticColors.border.weak};
-	padding: ${baseSpacing['24Px']};
 	align-items: center;
+
+	padding: ${baseSpacing['24Px']};
+
+	${from.md} {
+		padding: ${baseSpacing['40Px']};
+	}
 `;
 
 const blockTextStyle = css`
