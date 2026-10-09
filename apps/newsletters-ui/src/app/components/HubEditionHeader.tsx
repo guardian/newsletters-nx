@@ -67,7 +67,7 @@ export const HubEditionHeader = ({
 				>
 					{title}
 				</Typography>
-				{(actions || children) && (
+				{(Boolean(actions) || Boolean(children)) && (
 					<div css={headingChildrenStyles}>
 						{actions}
 						{children}
