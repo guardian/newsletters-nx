@@ -192,11 +192,13 @@ Then(
 );
 
 Then('its newsletter thumbnail is visible', async ({ page }) => {
-	const thumbnail = page
-		.getByRole('link', { name: 'Morning Briefing' })
-		.locator('..')
-		.locator('..')
-		.locator('img');
+	const newsletterItem = page.getByRole('listitem').filter({
+		has: page.getByRole('link', {
+			name: 'Morning Briefing',
+			exact: true,
+		}),
+	});
+	const thumbnail = newsletterItem.locator('img');
 	await expect(thumbnail).toBeVisible();
 	await expect(thumbnail).toHaveJSProperty('naturalWidth', 60);
 });
