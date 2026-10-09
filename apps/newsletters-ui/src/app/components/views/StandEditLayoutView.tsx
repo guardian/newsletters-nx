@@ -6,6 +6,7 @@ import { Container } from '@mui/material';
 import type {
 	Layout,
 	NewsletterData,
+	UserPermissions,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	editionIdSchema,
@@ -15,7 +16,6 @@ import {
 import { useReducer } from 'react';
 import { Navigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
-import { usePermissions } from '../../hooks/user-hooks';
 import {
 	makeStandLayoutState,
 	standLayoutReducer,
@@ -41,14 +41,15 @@ interface Props {
 	editionId: string;
 	layout?: Layout;
 	newsletters: NewsletterData[];
+	permissions: UserPermissions | undefined;
 }
 
 export const StandEditLayoutView = ({
 	editionId,
 	layout: originalLayout = makeBlankLayout(),
 	newsletters,
+	permissions,
 }: Props) => {
-	const permissions = usePermissions();
 	const [state, dispatch] = useReducer(
 		standLayoutReducer,
 		originalLayout,

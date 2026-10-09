@@ -31,6 +31,7 @@ export const EditLayoutView = () => {
 				editionId={editionId}
 				layout={data.layout ?? makeBlankLayout()}
 				newsletters={data.newsletters}
+				permissions={permissions}
 			/>
 		);
 	}
