@@ -10,8 +10,8 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	editionIdSchema,
-	makeBlankLayout,
 	editionNames,
+	makeBlankLayout,
 } from '@newsletters-nx/newsletters-data-client';
 import { useReducer, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
