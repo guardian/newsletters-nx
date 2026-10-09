@@ -9,7 +9,6 @@ import { HubEditionHeaderBreadcrumbs } from './HubEditionHeaderBreadcrumbs';
 interface HubEditionHeaderProps {
 	title: string;
 	breadcrumbs: HubEditionHeaderBreadcrumbsProps;
-	actions?: ReactNode;
 	children?: ReactNode;
 }
 
@@ -53,7 +52,6 @@ const headingStyles = css`
 export const HubEditionHeader = ({
 	title,
 	breadcrumbs,
-	actions,
 	children,
 }: HubEditionHeaderProps) => {
 	return (
@@ -67,12 +65,7 @@ export const HubEditionHeader = ({
 				>
 					{title}
 				</Typography>
-				{(Boolean(actions) || Boolean(children)) && (
-					<div css={headingChildrenStyles}>
-						{actions}
-						{children}
-					</div>
-				)}
+				{Boolean(children) && <div css={headingChildrenStyles}>{children}</div>}
 			</div>
 		</header>
 	);

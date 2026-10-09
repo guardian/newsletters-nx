@@ -1,7 +1,6 @@
-import { until } from '@guardian/stand/utils';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { toMediaQuery, useIsMobile } from './useIsMobile';
+import { useIsMobile } from './useIsMobile';
 
 type Listener = () => void;
 
@@ -30,24 +29,15 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
-describe('toMediaQuery', () => {
-	it('turns the Stand md breakpoint into a bare media condition', () => {
-		// Fails if the shape of `until.md` changes.
-		expect(toMediaQuery(until.md)).toMatch(/^\(max-width:\s*[\d.]+px\)$/);
-	});
-
-	it('leaves a bare condition unchanged', () => {
-		expect(toMediaQuery('(max-width: 10px)')).toBe('(max-width: 10px)');
-	});
-});
-
 describe('useIsMobile', () => {
 	it.each([true, false])('returns the initial match (%s)', (matches) => {
 		const { matchMedia } = mockMatchMedia(matches);
 		const { result } = renderHook(() => useIsMobile());
 
 		expect(result.current).toBe(matches);
-		expect(matchMedia).toHaveBeenCalledWith(toMediaQuery(until.md));
+		expect(matchMedia).toHaveBeenCalledWith(
+			expect.stringMatching(/^\(width < \d+px\)$/),
+		);
 	});
 
 	it('updates when the media query changes', () => {

@@ -12,6 +12,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
+import { NewsletterThumbnail } from '../NewsletterThumbnail';
 
 const sectionStyles = css`
 	display: flex;
@@ -41,13 +42,6 @@ const rowStyles = css`
 	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 	background-color: ${semanticColors.bg.raisedLevel1};
 	border-top: 1px solid ${semanticColors.border.weak};
-`;
-
-const thumbnailStyles = css`
-	width: 60px;
-	height: 60px;
-	object-fit: cover;
-	flex-shrink: 0;
 `;
 
 const detailsStyles = css`
@@ -97,15 +91,13 @@ export const StandNewsletterRow = ({
 }: RowProps) => {
 	const name = newsletter?.name ?? newsletterId;
 	const thumbnail =
-		newsletter?.illustrationCard ?? newsletter?.illustrationCircle;
+		newsletter?.illustrationSquare ??
+		newsletter?.illustrationCircle ??
+		newsletter?.illustrationCard;
 
 	return (
 		<li css={rowStyles}>
-			{thumbnail ? (
-				<img css={thumbnailStyles} src={thumbnail} alt="" />
-			) : (
-				<div css={thumbnailStyles} aria-hidden="true" />
-			)}
+			<NewsletterThumbnail src={thumbnail} />
 			<div css={detailsStyles}>
 				<Typography element="p" variant="bodyBoldMd" cssOverrides={nameStyles}>
 					{name}

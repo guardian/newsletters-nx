@@ -44,6 +44,18 @@ describe('StandLayoutSection', () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Remove Beta' }));
 		expect(onRemove).toHaveBeenCalledWith(2, 1);
 	});
+	it('shows a "No image" fallback for newsletters without an illustration', () => {
+		vi.mocked(useIsMobile).mockReturnValue(false);
+		render(
+			<StandLayoutSection
+				group={group}
+				groupIndex={0}
+				newsletters={newsletters}
+				onRemove={vi.fn()}
+			/>,
+		);
+		expect(screen.getAllByText('No image')).toHaveLength(2);
+	});
 	it('hides Remove buttons on mobile', () => {
 		vi.mocked(useIsMobile).mockReturnValue(true);
 		render(

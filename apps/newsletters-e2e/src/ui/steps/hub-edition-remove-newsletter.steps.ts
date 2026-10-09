@@ -8,7 +8,7 @@ interface SavedLayout {
 const savedLayouts = new WeakMap<Page, SavedLayout[]>();
 const identityNameOf = (name: string) => name.toLowerCase();
 Given(
-	'the editor is editing the layout for region {string} with newsletters {string} and {string} in section {string}',
+	'the editor is editing the layout for edition {string} with newsletters {string} and {string} in section {string}',
 	async (
 		{ page },
 		edition: string,
@@ -74,6 +74,26 @@ When('the editor publishes the layout', async ({ page }) => {
 When('the editor cancels editing the layout', async ({ page }) => {
 	await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 });
+When('the editor confirms discarding the changes', async ({ page }) => {
+	await page
+		.getByRole('button', { name: 'Discard changes', exact: true })
+		.click();
+});
+Then(
+	'the editor is asked to confirm discarding their changes',
+	async ({ page }) => {
+		await expect(page.getByText('Discard unsaved changes?')).toBeVisible();
+	},
+);
+Then(
+	'the editor is returned to the read-only layout for edition {string}',
+	async ({ page }, edition: string) => {
+		await expect(page).toHaveURL(new RegExp(`/layouts/${edition}$`, 'i'));
+		await expect(
+			page.getByRole('button', { name: 'Save and publish layout' }),
+		).toBeHidden();
+	},
+);
 Then(
 	'{string} is no longer listed in the layout',
 	async ({ page }, name: string) => {
@@ -87,7 +107,7 @@ Then(
 	},
 );
 Then(
-	'the layout for region {string} is saved with only {string} in section {string}',
+	'the layout for edition {string} is saved with only {string} in section {string}',
 	async ({ page }, _edition: string, identityName: string, title: string) => {
 		await expect
 			.poll(() => savedLayouts.get(page)?.length ?? 0)
@@ -101,9 +121,6 @@ Then('a success message is shown', async ({ page }) => {
 });
 Then('no layout has been saved', async ({ page }) => {
 	// Let the UI settle so a slow request can't make this pass by accident.
-	await expect(
-		page.getByRole('button', { name: 'Save and publish layout', exact: true }),
-	).toBeEnabled();
 	await page.waitForLoadState('networkidle');
 	expect(savedLayouts.get(page) ?? []).toHaveLength(0);
 });

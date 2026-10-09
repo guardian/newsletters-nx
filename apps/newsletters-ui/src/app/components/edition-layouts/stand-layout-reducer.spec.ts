@@ -1,5 +1,5 @@
 import type { Layout } from '@newsletters-nx/newsletters-data-client';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
 	makeStandLayoutState,
 	standLayoutReducer,
@@ -33,14 +33,15 @@ describe('standLayoutReducer', () => {
 		expect(initial.layout).toEqual(snapshot);
 		expect(state.layout).not.toBe(state.original);
 	});
-	it('cancel restores the original', () => {
-		const removed = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+	it('treats an invalid group index as no change', () => {
+		const initial = makeStandLayoutState(makeLayout());
+		vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+		const state = standLayoutReducer(initial, {
 			type: 'remove-newsletter',
-			groupIndex: 0,
+			groupIndex: 99,
 			newsletterIndex: 0,
 		});
-		const cancelled = standLayoutReducer(removed, { type: 'cancel' });
-		expect(cancelled.layout).toEqual(makeLayout());
+		expect(state.layout).toBe(state.original);
 	});
 	it('ignores edits while an update is in progress', () => {
 		const pending = standLayoutReducer(makeStandLayoutState(makeLayout()), {

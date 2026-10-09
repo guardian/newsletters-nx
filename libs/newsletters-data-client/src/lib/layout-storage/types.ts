@@ -24,7 +24,7 @@ export const makeBlankLayout = (): Layout => ({
 	groups: [],
 });
 
-export const regionNames: Record<EditionId, string> = {
+export const editionNames: Record<EditionId, string> = {
 	UK: 'United Kingdom',
 	US: 'United States',
 	AU: 'Australia',

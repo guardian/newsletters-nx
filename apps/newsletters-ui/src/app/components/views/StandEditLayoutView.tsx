@@ -11,11 +11,12 @@ import type {
 import {
 	editionIdSchema,
 	makeBlankLayout,
-	regionNames,
+	editionNames,
 } from '@newsletters-nx/newsletters-data-client';
-import { useReducer } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useReducer, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
+import { DiscardLayoutChangesDialog } from '../edition-layouts/DiscardLayoutChangesDialog';
 import {
 	makeStandLayoutState,
 	standLayoutReducer,
@@ -28,13 +29,6 @@ const contentStyles = css`
 	flex-direction: column;
 	gap: ${semanticSpacing.stackMd};
 	padding-bottom: ${semanticSpacing.stackLg};
-`;
-
-const actionsStyles = css`
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	gap: ${semanticSpacing.stackSm};
 `;
 
 interface Props {
@@ -55,21 +49,41 @@ export const StandEditLayoutView = ({
 		originalLayout,
 		makeStandLayoutState,
 	);
-	const { layout, updateInProgress, feedback } = state;
+	const { layout, original, updateInProgress, feedback } = state;
+	const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
+	const navigate = useNavigate();
 
-	const region = editionIdSchema.safeParse(editionId);
-	const regionName = region.success ? regionNames[region.data] : editionId;
+	const parsedEdition = editionIdSchema.safeParse(editionId);
+	const editionName = parsedEdition.success
+		? editionNames[parsedEdition.data]
+		: editionId;
 	const canEdit = !!permissions?.editEverything;
+	const readOnlyPath = `/layouts/${editionId.toLowerCase()}`;
 
 	// `permissions` is undefined while still loading, so only redirect once
 	// we know the user can't edit.
 	if (permissions && !canEdit) {
-		return <Navigate to={`/layouts/${editionId.toLowerCase()}`} replace />;
+		return <Navigate to={readOnlyPath} replace />;
 	}
 
 	if (!permissions) {
-		return null;
+		// TODO: replace with a spinner once Stand provides one.
+		return (
+			<Typography element="p" variant="bodyMd">
+				Loading...
+			</Typography>
+		);
 	}
+
+	const hasUnsavedChanges = layout !== original;
+
+	const handleCancel = () => {
+		if (hasUnsavedChanges) {
+			setIsConfirmingCancel(true);
+			return;
+		}
+		void navigate(readOnlyPath);
+	};
 
 	const handlePublish = async () => {
 		if (updateInProgress) {
@@ -86,64 +100,64 @@ export const StandEditLayoutView = ({
 	return (
 		<Container maxWidth="lg" css={contentStyles}>
 			<HubEditionHeader
-				title={regionName}
+				title={editionName}
 				breadcrumbs={{
 					ancestors: [{ label: 'Newsletters hub', href: '/layouts' }],
-					currentLabel: regionName,
+					currentLabel: editionName,
 				}}
-				actions={
-					<div css={actionsStyles}>
-						<Button
-							variant="tertiary"
-							size="md"
-							isDisabled={updateInProgress}
-							onPress={() => dispatch({ type: 'cancel' })}
-						>
-							Cancel
-						</Button>
-						<Button
-							variant="primary"
-							size="md"
-							icon="publish"
-							isDisabled={updateInProgress}
-							onPress={() => void handlePublish()}
-						>
-							Save and publish layout
-						</Button>
-					</div>
-				}
+			>
+				<Button
+					variant="tertiary"
+					size="md"
+					isDisabled={updateInProgress}
+					onPress={handleCancel}
+				>
+					Cancel
+				</Button>
+				<Button
+					variant="primary"
+					size="md"
+					icon="publish"
+					isDisabled={updateInProgress}
+					onPress={() => void handlePublish()}
+				>
+					Save and publish layout
+				</Button>
+			</HubEditionHeader>
+			<div role="status">
+				{feedback === 'success' && (
+					<Typography element="p" variant="bodyMd">
+						Layout updated. It will take some time for the site to update.
+					</Typography>
+				)}
+				{feedback === 'failure' && (
+					<Typography element="p" variant="bodyMd">
+						Failed to update. If the problem persists, please contact Central
+						Production.
+					</Typography>
+				)}
+			</div>
+			{layout.groups.map((group, groupIndex) => (
+				<StandLayoutSection
+					key={groupIndex}
+					group={group}
+					groupIndex={groupIndex}
+					newsletters={newsletters}
+					disabled={updateInProgress}
+					onRemove={(groupIndex, newsletterIndex) =>
+						dispatch({
+							type: 'remove-newsletter',
+							groupIndex,
+							newsletterIndex,
+						})
+					}
+				/>
+			))}
+			<DiscardLayoutChangesDialog
+				isOpen={isConfirmingCancel}
+				onKeepEditing={() => setIsConfirmingCancel(false)}
+				onDiscard={() => void navigate(readOnlyPath)}
 			/>
-			<>
-				<div role="status">
-					{feedback === 'success' && (
-						<Typography element="p" variant="bodyMd">
-							Layout updated. It will take some time for the site to update.
-						</Typography>
-					)}
-					{feedback === 'failure' && (
-						<Typography element="p" variant="bodyMd">
-							Failed to update. If the problem persists, please contact Central
-							Production.
-						</Typography>
-					)}
-				</div>
-				{layout.groups.map((group, groupIndex) => (
-					<StandLayoutSection
-						key={groupIndex}
-						group={group}
-						groupIndex={groupIndex}
-						newsletters={newsletters}
-						disabled={updateInProgress}
-						onRemove={(groupIndex, newsletterIndex) =>
-							dispatch({
-								type: 'remove-newsletter',
-								groupIndex,
-								newsletterIndex,
-							})
-						}
-					/>
-				))}
-			</>
 		</Container>
 	);
 };
