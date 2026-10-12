@@ -85,8 +85,8 @@ export const LayoutView = () => {
 
 			{data.layout?.groups.length ? (
 				data.layout.groups.map((section, index) => (
+					// eslint-disable-next-line react/jsx-key -- Sections have no guaranteed unique ID and are not reordered on this read-only page.
 					<HubEditionSectionContainer
-						key={`${section.title}-${index}`}
 						section={section}
 						sectionNumber={index + 1}
 						newsletters={data.newsletters}
