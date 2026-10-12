@@ -11,16 +11,16 @@ vi.mock('../../featureSwitches', () => ({
 // jsdom can't parse the `:has()` selector in Stand's SearchInput styles.
 vi.mock('@guardian/stand/SearchInput', () => ({
 	SearchInput: ({
-		label,
+		'aria-label': ariaLabel,
 		value,
 		onChange,
 	}: {
-		label: string;
+		'aria-label': string;
 		value: string;
 		onChange: (value: string) => void;
 	}) => (
 		<input
-			aria-label={label}
+			aria-label={ariaLabel}
 			value={value}
 			onChange={(e) => onChange(e.target.value)}
 		/>
@@ -206,6 +206,23 @@ describe('StandEditLayoutView', () => {
 					name: 'Add newsletters',
 				}),
 			).toHaveLength(1);
+		});
+
+		it('filters results by name and shows a message when nothing matches', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[0]!,
+			);
+			const search = screen.getByRole('textbox', {
+				name: 'Search newsletters to add to News',
+			});
+			fireEvent.change(search, { target: { value: 'del' } });
+			expect(screen.getByRole('button', { name: 'Add Delta' })).toBeTruthy();
+			expect(screen.queryByRole('button', { name: 'Add Beta' })).toBeNull();
+			fireEvent.change(search, { target: { value: 'zzz' } });
+			expect(screen.getByText('No newsletters found')).toBeTruthy();
 		});
 
 		it('closes the add area with the Close button', async () => {

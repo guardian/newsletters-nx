@@ -5,7 +5,7 @@ import { IconButton } from '@guardian/stand/IconButton';
 import { SearchInput } from '@guardian/stand/SearchInput';
 import { Typography } from '@guardian/stand/Typography';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 
@@ -19,7 +19,7 @@ const panelStyles = css`
 `;
 
 const searchStyles = css`
-	width: 300px;
+	width: 100%;
 	max-width: 450px;
 `;
 
@@ -57,11 +57,6 @@ const nameStyles = css`
 	margin: 0;
 `;
 
-// Only launched newsletters can be placed in a layout. Cancelled ones
-// wouldn't be shown on the site; drafts have no launched data at all.
-export const isAddableStatus = (status: NewsletterData['status']): boolean =>
-	status === 'live' || status === 'pending' || status === 'paused';
-
 interface Props {
 	sectionTitle: string;
 	newsletters: NewsletterData[];
@@ -78,13 +73,19 @@ export const AddNewsletterPanel = ({
 	disabled,
 }: Props) => {
 	const [searchText, setSearchText] = useState('');
+	const panelRef = useRef<HTMLDivElement>(null);
 	const term = searchText.trim().toLowerCase();
 	const results = term
 		? newsletters.filter((n) => n.name.toLowerCase().includes(term))
 		: newsletters;
 
 	return (
-		<div css={panelStyles} role="region" aria-label="Add newsletters">
+		<div
+			ref={panelRef}
+			css={panelStyles}
+			role="region"
+			aria-label="Add newsletters"
+		>
 			<Button variant="tertiary" size="sm" icon="close" onPress={onClose}>
 				Close
 			</Button>
@@ -94,38 +95,49 @@ export const AddNewsletterPanel = ({
 				aria-label={`Search newsletters to add to ${sectionTitle}`}
 				value={searchText}
 				onChange={setSearchText}
+				autoFocus
 			/>
-			<ul css={resultsStyles}>
-				{results.map((newsletter) => (
-					<li key={newsletter.identityName} css={resultStyles}>
-						<IconButton
-							symbol="add"
-							size="sm"
-							variant="secondary"
-							ariaLabel={`Add ${newsletter.name}`}
-							isDisabled={disabled}
-							onPress={() => onAdd(newsletter.identityName)}
-						/>
-						<NewsletterThumbnail
-							src={
-								newsletter.illustrationSquare ??
-								newsletter.illustrationCircle ??
-								newsletter.illustrationCard
-							}
-						/>
-						<div css={detailsStyles}>
-							<Typography
-								element="p"
-								variant="bodyBoldMd"
-								cssOverrides={nameStyles}
-							>
-								{newsletter.name}
-							</Typography>
-							<NewsletterStatusBadge newsletter={newsletter} />
-						</div>
-					</li>
-				))}
-			</ul>
+			{results.length === 0 ? (
+				<Typography element="p" variant="bodySm" cssOverrides={nameStyles}>
+					No newsletters found
+				</Typography>
+			) : (
+				<ul css={resultsStyles}>
+					{results.map((newsletter) => (
+						<li key={newsletter.identityName} css={resultStyles}>
+							<IconButton
+								symbol="add"
+								size="sm"
+								variant="secondary"
+								ariaLabel={`Add ${newsletter.name}`}
+								isDisabled={disabled}
+								onPress={() => {
+									onAdd(newsletter.identityName);
+									// The pressed button is removed from the results, so keep focus in the panel.
+									panelRef.current?.querySelector('input')?.focus();
+								}}
+							/>
+							<NewsletterThumbnail
+								src={
+									newsletter.illustrationSquare ??
+									newsletter.illustrationCircle ??
+									newsletter.illustrationCard
+								}
+							/>
+							<div css={detailsStyles}>
+								<Typography
+									element="p"
+									variant="bodyBoldMd"
+									cssOverrides={nameStyles}
+								>
+									{newsletter.name}
+								</Typography>
+								<NewsletterStatusBadge newsletter={newsletter} />
+							</div>
+						</li>
+					))}
+				</ul>
+			)}
 		</div>
 	);
 };

@@ -1,7 +1,13 @@
 import type {
 	Layout,
 	LayoutGroup,
+	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+
+// Only launched newsletters can be placed in a layout. Cancelled ones
+// wouldn't be shown on the site; drafts have no launched data at all.
+export const isAddableStatus = (status: NewsletterData['status']): boolean =>
+	status === 'live' || status === 'pending' || status === 'paused';
 
 const makeBlankGroup = () => ({
 	title: '',

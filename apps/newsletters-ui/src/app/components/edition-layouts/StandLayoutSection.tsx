@@ -10,6 +10,7 @@ import type {
 	LayoutGroup,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { useState } from 'react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
@@ -156,6 +157,8 @@ export const StandLayoutSection = ({
 }: SectionProps) => {
 	const isMobile = useIsMobile();
 	const canAdd = !isMobile && !!onOpenAddArea;
+	// Return focus to the 'Add a newsletter' button when the panel is closed with its Close button.
+	const [focusAddButton, setFocusAddButton] = useState(false);
 
 	return (
 		<section css={sectionStyles} aria-label={group.title}>
@@ -185,7 +188,11 @@ export const StandLayoutSection = ({
 						size="sm"
 						icon="add"
 						isDisabled={disabled}
-						onPress={onOpenAddArea}
+						autoFocus={focusAddButton}
+						onPress={() => {
+							setFocusAddButton(false);
+							onOpenAddArea();
+						}}
 					>
 						Add a newsletter
 					</Button>
@@ -197,7 +204,10 @@ export const StandLayoutSection = ({
 					newsletters={availableNewsletters}
 					disabled={disabled}
 					onAdd={(identityName) => onAdd?.(groupIndex, identityName)}
-					onClose={() => onCloseAddArea?.()}
+					onClose={() => {
+						setFocusAddButton(true);
+						onCloseAddArea?.();
+					}}
 				/>
 			)}
 		</section>

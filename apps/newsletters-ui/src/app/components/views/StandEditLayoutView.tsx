@@ -16,7 +16,7 @@ import {
 import { useReducer, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
-import { isAddableStatus } from '../edition-layouts/AddNewsletterPanel';
+import { isAddableStatus } from '../../lib/modify-layout';
 import { DiscardLayoutChangesDialog } from '../edition-layouts/DiscardLayoutChangesDialog';
 import {
 	makeStandLayoutState,
