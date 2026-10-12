@@ -5,12 +5,20 @@ import {
 	semanticSpacing,
 } from '@guardian/stand';
 import { Button } from '@guardian/stand/Button';
+import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
 import type {
 	LayoutGroup,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
+import {
+	Button as AriaButton,
+	DropIndicator,
+	GridList,
+	GridListItem,
+	useDragAndDrop,
+} from 'react-aria-components';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
@@ -29,12 +37,14 @@ const sectionHeaderStyles = css`
 	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 `;
 
+const focusColour = '#0072A9';
+
 const listStyles = css`
-	list-style: none;
 	margin: 0;
 	padding: 0;
 	display: flex;
 	flex-direction: column;
+	position: relative;
 	&:not(:empty) {
 		border-bottom: 1px solid ${semanticColors.border.weak};
 	}
@@ -47,6 +57,60 @@ const rowStyles = css`
 	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 	background-color: ${semanticColors.bg.raisedLevel1};
 	border-top: 1px solid ${semanticColors.border.weak};
+	outline: none;
+	&[data-dragging] {
+		opacity: 0.5;
+	}
+	&[data-focus-visible] {
+		outline: 2px solid ${focusColour};
+		outline-offset: -2px;
+	}
+`;
+
+const draggableRowStyles = css`
+	cursor: grab;
+	user-select: none;
+	&[data-dragging] {
+		cursor: grabbing;
+	}
+`;
+
+const gripStyles = css`
+	display: flex;
+	align-items: center;
+	background: none;
+	border: 2px solid transparent;
+	border-radius: 3px;
+	padding: 0;
+	color: inherit;
+	cursor: inherit;
+	&[data-disabled] {
+		opacity: 0.4;
+		cursor: default;
+	}
+	&[data-focus-visible] {
+		background: #fff;
+		border-color: ${focusColour};
+		outline: none;
+	}
+`;
+
+const dropIndicatorStyles = css`
+	height: 4px;
+	background-color: ${focusColour};
+	&:not([data-drop-target]) {
+		display: none;
+	}
+`;
+
+const dragPreviewStyles = css`
+	display: flex;
+	align-items: center;
+	gap: ${semanticSpacing.stackSm};
+	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
+	background-color: ${semanticColors.fill.neutralWeak};
+	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12);
+	cursor: grabbing;
 `;
 
 const detailsStyles = css`
@@ -77,33 +141,27 @@ const nameStyles = css`
 	text-decoration: underline;
 `;
 
-interface RowProps {
-	newsletterId: string;
-	newsletter?: NewsletterData;
-	onRemove: () => void;
-	canRemove: boolean;
-	disabled?: boolean;
-}
+const getName = (newsletterId: string, newsletter?: NewsletterData) =>
+	newsletter?.name ?? newsletterId;
 
-export const StandNewsletterRow = ({
+const NewsletterSummary = ({
 	newsletterId,
 	newsletter,
-	onRemove,
-	canRemove,
-	disabled,
-}: RowProps) => {
-	const name = newsletter?.name ?? newsletterId;
+}: {
+	newsletterId: string;
+	newsletter?: NewsletterData;
+}) => {
 	const thumbnail =
 		newsletter?.illustrationSquare ??
 		newsletter?.illustrationCircle ??
 		newsletter?.illustrationCard;
 
 	return (
-		<li css={rowStyles}>
+		<>
 			<NewsletterThumbnail src={thumbnail} />
 			<div css={detailsStyles}>
 				<Typography element="p" variant="bodyBoldMd" cssOverrides={nameStyles}>
-					{name}
+					{getName(newsletterId, newsletter)}
 				</Typography>
 				{newsletter ? (
 					<NewsletterStatusBadge newsletter={newsletter} />
@@ -113,6 +171,39 @@ export const StandNewsletterRow = ({
 					</Typography>
 				)}
 			</div>
+		</>
+	);
+};
+
+interface RowProps {
+	newsletterId: string;
+	newsletter?: NewsletterData;
+	onRemove: () => void;
+	canRemove: boolean;
+	disabled?: boolean;
+	isDragDisabled?: boolean;
+}
+
+export const StandNewsletterRow = ({
+	newsletterId,
+	newsletter,
+	onRemove,
+	canRemove,
+	disabled,
+	isDragDisabled,
+}: RowProps) => {
+	const name = getName(newsletterId, newsletter);
+
+	return (
+		<GridListItem
+			id={newsletterId}
+			textValue={name}
+			css={[rowStyles, !isDragDisabled && draggableRowStyles]}
+		>
+			<AriaButton slot="drag" css={gripStyles} aria-label={`Reorder ${name}`}>
+				<Icon symbol="drag_indicator" aria-hidden="true" />
+			</AriaButton>
+			<NewsletterSummary newsletterId={newsletterId} newsletter={newsletter} />
 			{canRemove && (
 				<Button
 					variant="tertiary"
@@ -126,7 +217,7 @@ export const StandNewsletterRow = ({
 					Remove
 				</Button>
 			)}
-		</li>
+		</GridListItem>
 	);
 };
 
@@ -136,6 +227,13 @@ interface SectionProps {
 	newsletters: NewsletterData[];
 	onRemove: (groupIndex: number, newsletterIndex: number) => void;
 	disabled?: boolean;
+	// True while any section's 'Add newsletter' panel is open.
+	isDragDisabled?: boolean;
+	onMove?: (
+		groupIndex: number,
+		newsletterIndex: number,
+		newIndex: number,
+	) => void;
 	availableNewsletters?: NewsletterData[];
 	isAddAreaOpen?: boolean;
 	onOpenAddArea?: () => void;
@@ -149,6 +247,8 @@ export const StandLayoutSection = ({
 	newsletters,
 	onRemove,
 	disabled,
+	isDragDisabled = false,
+	onMove,
 	availableNewsletters = [],
 	isAddAreaOpen = false,
 	onOpenAddArea,
@@ -159,6 +259,44 @@ export const StandLayoutSection = ({
 	const canAdd = !isMobile && !!onOpenAddArea;
 	// Return focus to the 'Add a newsletter' button when the panel is closed with its Close button.
 	const [focusAddButton, setFocusAddButton] = useState(false);
+	const dragDisabled = isDragDisabled || !!disabled || isMobile || !onMove;
+
+	const { dragAndDropHooks } = useDragAndDrop({
+		isDisabled: dragDisabled,
+		getItems: (keys) => [...keys].map((key) => ({ 'text/plain': String(key) })),
+		renderDragPreview: (items) => {
+			const id = items[0]?.['text/plain'] ?? '';
+			return (
+				<div css={dragPreviewStyles}>
+					<Icon symbol="drag_indicator" aria-hidden="true" />
+					<NewsletterSummary
+						newsletterId={id}
+						newsletter={newsletters.find((n) => n.identityName === id)}
+					/>
+				</div>
+			);
+		},
+		renderDropIndicator: (target) => (
+			<DropIndicator target={target} css={dropIndicatorStyles} />
+		),
+		onReorder: (e) => {
+			const movedId = [...e.keys][0];
+			const targetId = e.target.key;
+			const ids = group.newsletters;
+			const from = ids.findIndex((id) => id === movedId);
+			const targetIndex = ids.findIndex((id) => id === targetId);
+			if (from < 0 || targetIndex < 0 || e.target.dropPosition === 'on') {
+				return;
+			}
+			const insertAt =
+				e.target.dropPosition === 'before' ? targetIndex : targetIndex + 1;
+			// moveNewsletterTo takes the index in the list after the item is removed.
+			const newIndex = insertAt > from ? insertAt - 1 : insertAt;
+			if (newIndex !== from) {
+				onMove?.(groupIndex, from, newIndex);
+			}
+		},
+	});
 
 	return (
 		<section css={sectionStyles} aria-label={group.title}>
@@ -167,7 +305,11 @@ export const StandLayoutSection = ({
 					{group.title}
 				</Typography>
 			</div>
-			<ul css={listStyles}>
+			<GridList
+				css={listStyles}
+				aria-label={`${group.title} newsletters`}
+				dragAndDropHooks={dragAndDropHooks}
+			>
 				{group.newsletters.map((newsletterId, newsletterIndex) => (
 					<StandNewsletterRow
 						key={newsletterId}
@@ -177,10 +319,11 @@ export const StandLayoutSection = ({
 						)}
 						canRemove={!isMobile}
 						disabled={disabled}
+						isDragDisabled={dragDisabled}
 						onRemove={() => onRemove(groupIndex, newsletterIndex)}
 					/>
 				))}
-			</ul>
+			</GridList>
 			{canAdd && !isAddAreaOpen && (
 				<div css={addButtonRowStyles}>
 					<Button

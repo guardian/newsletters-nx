@@ -84,4 +84,33 @@ describe('StandLayoutSection', () => {
 			screen.queryByRole('button', { name: 'Add a newsletter' }),
 		).toBeNull();
 	});
+	it('offers a drag handle per newsletter when dragging is enabled', () => {
+		vi.mocked(useIsMobile).mockReturnValue(false);
+		render(
+			<StandLayoutSection
+				group={group}
+				groupIndex={0}
+				newsletters={newsletters}
+				onRemove={vi.fn()}
+				onMove={vi.fn()}
+			/>,
+		);
+		expect(screen.getAllByRole('button', { name: /^Reorder/ })).toHaveLength(2);
+	});
+	it('disables the drag handles while the Add newsletter panel is open', () => {
+		vi.mocked(useIsMobile).mockReturnValue(false);
+		render(
+			<StandLayoutSection
+				group={group}
+				groupIndex={0}
+				newsletters={newsletters}
+				onRemove={vi.fn()}
+				onMove={vi.fn()}
+				isDragDisabled
+			/>,
+		);
+		for (const handle of screen.getAllByRole('button', { name: /^Reorder/ })) {
+			expect(handle.hasAttribute('disabled')).toBe(true);
+		}
+	});
 });
