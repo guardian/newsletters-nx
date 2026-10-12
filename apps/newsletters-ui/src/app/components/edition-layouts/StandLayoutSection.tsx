@@ -95,11 +95,15 @@ const gripStyles = css`
 	}
 `;
 
+// Overlaps the rows (negative margin) so it doesn't shift them. It must stay rendered
+// with a real size, not display: none, because react-aria uses it as the keyboard drop target.
 const dropIndicatorStyles = css`
+	position: relative;
 	height: 4px;
-	background-color: ${focusColour};
-	&:not([data-drop-target]) {
-		display: none;
+	margin: -2px 0;
+	z-index: 1;
+	&[data-drop-target] {
+		background-color: ${focusColour};
 	}
 `;
 
