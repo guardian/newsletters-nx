@@ -4,8 +4,8 @@ import type {
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 
-// Only launched newsletters can be placed in a layout. Cancelled ones
-// wouldn't be shown on the site; drafts have no launched data at all.
+// Cancelled newsletters wouldn't be shown on the site, so they can't be
+// placed in a layout. Listed explicitly so any new status is excluded by default.
 export const isAddableStatus = (status: NewsletterData['status']): boolean =>
 	status === 'live' || status === 'pending' || status === 'paused';
 

@@ -149,6 +149,12 @@ describe('StandEditLayoutView', () => {
 			{ identityName: 'b', name: 'Beta', status: 'pending' },
 			{ identityName: 'c', name: 'Gamma', status: 'cancelled' },
 			{ identityName: 'd', name: 'Delta', status: 'paused' },
+			{
+				identityName: 'e',
+				name: 'Epsilon',
+				status: 'live',
+				restricted: true,
+			},
 		];
 		const layout = {
 			groups: [
@@ -178,6 +184,28 @@ describe('StandEditLayoutView', () => {
 			expect(screen.queryByRole('button', { name: 'Add Gamma' })).toBeNull();
 			expect(screen.getByRole('button', { name: 'Add Beta' })).toBeTruthy();
 			expect(screen.getByRole('button', { name: 'Add Delta' })).toBeTruthy();
+		});
+
+		it('offers restricted newsletters', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[0]!,
+			);
+			expect(screen.getByRole('button', { name: 'Add Epsilon' })).toBeTruthy();
+		});
+
+		it('offers a newsletter again once it is removed from a section', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[1]!,
+			);
+			expect(screen.queryByRole('button', { name: 'Add Alpha' })).toBeNull();
+			fireEvent.click(screen.getByRole('button', { name: 'Remove Alpha' }));
+			expect(screen.getByRole('button', { name: 'Add Alpha' })).toBeTruthy();
 		});
 
 		it('adds to the section, keeps the area open and removes it from results', async () => {
