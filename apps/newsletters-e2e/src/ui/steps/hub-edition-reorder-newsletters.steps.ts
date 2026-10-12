@@ -22,6 +22,10 @@ const section = (page: Page, title: string) =>
 const pickUp = async (page: Page, name: string) => {
 	const dropTargets = page.getByRole('button', { name: /^Insert / });
 	await expect(async () => {
+		// Don't press Enter again if a previous attempt already started the drag.
+		if ((await dropTargets.count()) > 0) {
+			return;
+		}
 		await dragHandle(page, name).focus();
 		await expect(dragHandle(page, name)).toBeFocused({ timeout: 250 });
 		await page.keyboard.press('Enter');
@@ -271,3 +275,24 @@ Then('no reordered layout has been published', async ({ page }) => {
 	await page.waitForLoadState('networkidle');
 	expect(savedLayouts.get(page) ?? []).toHaveLength(0);
 });
+
+When(
+	'the editor focuses the drag handle for {string}',
+	async ({ page }, name: string) => {
+		await dragHandle(page, name).focus();
+		await expect(dragHandle(page, name)).toBeFocused();
+	},
+);
+
+When('the editor presses Tab', async ({ page }) => {
+	await page.keyboard.press('Tab');
+});
+
+Then(
+	'the Remove button for {string} has focus',
+	async ({ page }, name: string) => {
+		await expect(
+			page.getByRole('button', { name: `Remove ${name}`, exact: true }),
+		).toBeFocused();
+	},
+);

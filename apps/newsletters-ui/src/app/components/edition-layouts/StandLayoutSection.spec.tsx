@@ -84,6 +84,18 @@ describe('StandLayoutSection', () => {
 			screen.queryByRole('button', { name: 'Add a newsletter' }),
 		).toBeNull();
 	});
+	it('labels the list of an untitled section', () => {
+		vi.mocked(useIsMobile).mockReturnValue(false);
+		render(
+			<StandLayoutSection
+				group={{ ...group, title: '' }}
+				groupIndex={0}
+				newsletters={newsletters}
+				onRemove={vi.fn()}
+			/>,
+		);
+		expect(screen.getByRole('grid', { name: 'Newsletters' })).toBeTruthy();
+	});
 	it('offers a drag handle per newsletter when dragging is enabled', () => {
 		vi.mocked(useIsMobile).mockReturnValue(false);
 		render(

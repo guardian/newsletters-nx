@@ -20,6 +20,7 @@ import {
 	useDragAndDrop,
 } from 'react-aria-components';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import { getReorderIndex } from '../../lib/modify-layout';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 import { AddNewsletterPanel } from './AddNewsletterPanel';
@@ -37,7 +38,8 @@ const sectionHeaderStyles = css`
 	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 `;
 
-const focusColour = '#0072A9';
+// A custom type, so dropping a row into a text field or another app doesn't paste its ID.
+const DRAG_TYPE = 'application/x-newsletter-id';
 
 const listStyles = css`
 	margin: 0;
@@ -62,7 +64,7 @@ const rowStyles = css`
 		opacity: 0.5;
 	}
 	&[data-focus-visible] {
-		outline: 2px solid ${focusColour};
+		outline: 2px solid ${semanticColors.border.focused};
 		outline-offset: -2px;
 	}
 `;
@@ -90,7 +92,7 @@ const gripStyles = css`
 	}
 	&[data-focus-visible] {
 		background: #fff;
-		border-color: ${focusColour};
+		border-color: ${semanticColors.border.focused};
 		outline: none;
 	}
 `;
@@ -103,7 +105,7 @@ const dropIndicatorStyles = css`
 	margin: -2px 0;
 	z-index: 1;
 	&[data-drop-target] {
-		background-color: ${focusColour};
+		background-color: ${semanticColors.border.focused};
 	}
 `;
 
@@ -267,9 +269,9 @@ export const StandLayoutSection = ({
 
 	const { dragAndDropHooks } = useDragAndDrop({
 		isDisabled: dragDisabled,
-		getItems: (keys) => [...keys].map((key) => ({ 'text/plain': String(key) })),
+		getItems: (keys) => [...keys].map((key) => ({ [DRAG_TYPE]: String(key) })),
 		renderDragPreview: (items) => {
-			const id = items[0]?.['text/plain'] ?? '';
+			const id = items[0]?.[DRAG_TYPE] ?? '';
 			return (
 				<div css={dragPreviewStyles}>
 					<Icon symbol="drag_indicator" aria-hidden="true" />
@@ -285,19 +287,17 @@ export const StandLayoutSection = ({
 		),
 		onReorder: (e) => {
 			const movedId = [...e.keys][0];
-			const targetId = e.target.key;
-			const ids = group.newsletters;
-			const from = ids.findIndex((id) => id === movedId);
-			const targetIndex = ids.findIndex((id) => id === targetId);
-			if (from < 0 || targetIndex < 0 || e.target.dropPosition === 'on') {
+			if (movedId === undefined || e.target.dropPosition === 'on') {
 				return;
 			}
-			const insertAt =
-				e.target.dropPosition === 'before' ? targetIndex : targetIndex + 1;
-			// moveNewsletterTo takes the index in the list after the item is removed.
-			const newIndex = insertAt > from ? insertAt - 1 : insertAt;
-			if (newIndex !== from) {
-				onMove?.(groupIndex, from, newIndex);
+			const move = getReorderIndex(
+				group.newsletters,
+				String(movedId),
+				String(e.target.key),
+				e.target.dropPosition,
+			);
+			if (move) {
+				onMove?.(groupIndex, move.from, move.to);
 			}
 		},
 	});
@@ -311,7 +311,8 @@ export const StandLayoutSection = ({
 			</div>
 			<GridList
 				css={listStyles}
-				aria-label={`${group.title} newsletters`}
+				aria-label={group.title ? `${group.title} newsletters` : 'Newsletters'}
+				keyboardNavigationBehavior="tab"
 				dragAndDropHooks={dragAndDropHooks}
 			>
 				{group.newsletters.map((newsletterId, newsletterIndex) => (

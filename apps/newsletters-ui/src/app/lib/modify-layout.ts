@@ -75,6 +75,25 @@ export const moveNewsletterTo = (
 	});
 };
 
+// Converts a drop before/after a target into the indexes for moveNewsletterTo.
+// Returns undefined if either id is missing or the drop wouldn't change the order.
+export const getReorderIndex = (
+	ids: string[],
+	movedId: string,
+	targetId: string,
+	dropPosition: 'before' | 'after',
+): { from: number; to: number } | undefined => {
+	const from = ids.indexOf(movedId);
+	const targetIndex = ids.indexOf(targetId);
+	if (from < 0 || targetIndex < 0) {
+		return undefined;
+	}
+	const insertAt = dropPosition === 'before' ? targetIndex : targetIndex + 1;
+	// moveNewsletterTo takes the index in the list after the item is removed.
+	const to = insertAt > from ? insertAt - 1 : insertAt;
+	return to === from ? undefined : { from, to };
+};
+
 export const insertNewsletterIntoGroup = (
 	layout: Layout,
 	groupIndex: number,

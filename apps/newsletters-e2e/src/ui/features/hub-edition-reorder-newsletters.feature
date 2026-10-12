@@ -60,3 +60,8 @@ Feature: Reorder newsletters in an edition hub layout section
 		When the editor confirms discarding the changes
 		Then the editor is returned to the read-only layout for edition "uk"
 		And no reordered layout has been published
+
+	Scenario: Keyboard users can Tab from a drag handle to the Remove button in the same row
+		When the editor focuses the drag handle for "Alpha"
+		And the editor presses Tab
+		Then the Remove button for "Alpha" has focus
