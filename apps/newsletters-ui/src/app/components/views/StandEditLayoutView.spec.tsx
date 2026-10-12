@@ -8,25 +8,6 @@ vi.mock('../../featureSwitches', () => ({
 	isFeatureSwitchEnabled: () => true,
 }));
 
-// jsdom can't parse the `:has()` selector in Stand's SearchInput styles.
-vi.mock('@guardian/stand/SearchInput', () => ({
-	SearchInput: ({
-		'aria-label': ariaLabel,
-		value,
-		onChange,
-	}: {
-		'aria-label': string;
-		value: string;
-		onChange: (value: string) => void;
-	}) => (
-		<input
-			aria-label={ariaLabel}
-			value={value}
-			onChange={(e) => onChange(e.target.value)}
-		/>
-	),
-}));
-
 vi.mock('../../hooks/user-hooks', () => ({
 	usePermissions: vi.fn(),
 }));
@@ -243,7 +224,7 @@ describe('StandEditLayoutView', () => {
 					name: 'Add a newsletter',
 				})[0]!,
 			);
-			const search = screen.getByRole('textbox', {
+			const search = screen.getByRole('searchbox', {
 				name: 'Search newsletters to add to News',
 			});
 			fireEvent.change(search, { target: { value: 'del' } });
