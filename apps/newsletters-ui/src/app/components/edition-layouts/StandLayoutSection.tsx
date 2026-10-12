@@ -34,6 +34,9 @@ const listStyles = css`
 	padding: 0;
 	display: flex;
 	flex-direction: column;
+	&:not(:empty) {
+		border-bottom: 1px solid ${semanticColors.border.weak};
+	}
 `;
 
 const rowStyles = css`
@@ -63,9 +66,8 @@ const removeButtonStyles = css`
 
 const addButtonRowStyles = css`
 	display: flex;
-	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
-	background-color: ${semanticColors.bg.raisedLevel1};
-	border-top: 1px solid ${semanticColors.border.weak};
+	padding: ${semanticSpacing.stackMd};
+	background-color: ${semanticColors.bg.base};
 `;
 
 const nameStyles = css`
@@ -179,13 +181,13 @@ export const StandLayoutSection = ({
 			{canAdd && !isAddAreaOpen && (
 				<div css={addButtonRowStyles}>
 					<Button
-						variant="tertiary"
+						variant="secondary"
 						size="sm"
 						icon="add"
 						isDisabled={disabled}
 						onPress={onOpenAddArea}
 					>
-						Add newsletter
+						Add a newsletter
 					</Button>
 				</div>
 			)}

@@ -13,10 +13,14 @@ const panelStyles = css`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: ${semanticSpacing.stackSm};
+	gap: ${semanticSpacing.stackMd};
 	padding: ${semanticSpacing.stackMd};
-	border-top: 1px solid ${semanticColors.border.weak};
-	background-color: ${semanticColors.bg.raisedLevel1};
+	background-color: ${semanticColors.bg.base};
+`;
+
+const searchStyles = css`
+	width: 300px;
+	max-width: 450px;
 `;
 
 const resultsStyles = css`
@@ -32,8 +36,10 @@ const resultsStyles = css`
 const resultStyles = css`
 	display: flex;
 	align-items: center;
-	gap: ${semanticSpacing.stackSm};
-	padding: ${semanticSpacing.stackXs} ${semanticSpacing.stackSm};
+	gap: ${semanticSpacing.stackMd};
+	min-height: 84px;
+	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
+	background-color: ${semanticColors.fill.weak};
 	border-top: 1px solid ${semanticColors.border.weak};
 	&:first-of-type {
 		border-top: none;
@@ -83,7 +89,8 @@ export const AddNewsletterPanel = ({
 				Close
 			</Button>
 			<SearchInput
-				label="Search"
+				placeholder="Search"
+				cssOverrides={searchStyles}
 				aria-label={`Search newsletters to add to ${sectionTitle}`}
 				value={searchText}
 				onChange={setSearchText}
@@ -94,7 +101,7 @@ export const AddNewsletterPanel = ({
 						<IconButton
 							symbol="add"
 							size="sm"
-							variant="primary"
+							variant="secondary"
 							ariaLabel={`Add ${newsletter.name}`}
 							isDisabled={disabled}
 							onPress={() => onAdd(newsletter.identityName)}

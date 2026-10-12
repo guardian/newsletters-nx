@@ -66,7 +66,7 @@ When(
 	async ({ page }, title: string) => {
 		await page
 			.getByRole('region', { name: title, exact: true })
-			.getByRole('button', { name: 'Add newsletter', exact: true })
+			.getByRole('button', { name: 'Add a newsletter', exact: true })
 			.click();
 	},
 );

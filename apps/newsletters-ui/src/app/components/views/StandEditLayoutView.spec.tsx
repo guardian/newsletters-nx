@@ -171,7 +171,7 @@ describe('StandEditLayoutView', () => {
 			await setup();
 			fireEvent.click(
 				screen.getAllByRole('button', {
-					name: 'Add newsletter',
+					name: 'Add a newsletter',
 				})[0]!,
 			);
 			expect(screen.queryByRole('button', { name: 'Add Alpha' })).toBeNull();
@@ -184,7 +184,7 @@ describe('StandEditLayoutView', () => {
 			await setup();
 			fireEvent.click(
 				screen.getAllByRole('button', {
-					name: 'Add newsletter',
+					name: 'Add a newsletter',
 				})[1]!,
 			);
 			fireEvent.click(screen.getByRole('button', { name: 'Add Beta' }));
@@ -197,10 +197,10 @@ describe('StandEditLayoutView', () => {
 			await setup();
 			fireEvent.click(
 				screen.getAllByRole('button', {
-					name: 'Add newsletter',
+					name: 'Add a newsletter',
 				})[0]!,
 			);
-			fireEvent.click(screen.getByRole('button', { name: 'Add newsletter' }));
+			fireEvent.click(screen.getByRole('button', { name: 'Add a newsletter' }));
 			expect(
 				screen.getAllByRole('region', {
 					name: 'Add newsletters',
@@ -212,7 +212,7 @@ describe('StandEditLayoutView', () => {
 			await setup();
 			fireEvent.click(
 				screen.getAllByRole('button', {
-					name: 'Add newsletter',
+					name: 'Add a newsletter',
 				})[0]!,
 			);
 			fireEvent.click(screen.getByRole('button', { name: 'Close' }));
