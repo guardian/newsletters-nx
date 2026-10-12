@@ -131,7 +131,7 @@ export function Layout(props: IRootRoute) {
 				<StandAlertBanner isOnCode={isOnCode} />
 			)}
 			{Nav}
-			<Box sx={{ pt: 8 }} component={'main'}>
+			<Box sx={{ pt: 8, pb: 8 }} component={'main'}>
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
