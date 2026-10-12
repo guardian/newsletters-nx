@@ -43,7 +43,7 @@ describe('PermissionDeniedBlock', () => {
 			);
 			render(<Stub initialEntries={['/test']} />);
 
-			const linkButton = screen.getByRole('link', {
+			const linkButton = screen.getByRole('button', {
 				name: 'Return to newsletters hub',
 			});
 
@@ -55,7 +55,7 @@ describe('PermissionDeniedBlock', () => {
 		const Stub = makeStub(<PermissionDeniedBlock />);
 		render(<Stub initialEntries={['/old-page', '/test']} />);
 
-		const linkButton = screen.getByRole('link', {
+		const linkButton = screen.getByRole('button', {
 			name: 'Return to previous page',
 		});
 
