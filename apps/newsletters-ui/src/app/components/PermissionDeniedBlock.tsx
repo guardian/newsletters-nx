@@ -6,17 +6,17 @@ import {
 	semanticSizing,
 	semanticSpacing,
 } from '@guardian/stand';
+import { Button } from '@guardian/stand/Button';
 import type { IconTheme } from '@guardian/stand/Icon';
 import { Icon } from '@guardian/stand/Icon';
-import { LinkButton } from '@guardian/stand/LinkButton';
 import { Typography } from '@guardian/stand/Typography';
 import { from } from '@guardian/stand/utils';
 import { useId } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export interface PermissionDeniedBlockProps {
 	title?: string;
 	backText?: string;
-	backTo: string;
 }
 
 const blockStyle = css`
@@ -52,9 +52,12 @@ const flagTheme: Partial<IconTheme> = {
 export const PermissionDeniedBlock = ({
 	title = 'You do not have permission for this area of the Newsletters tool',
 	backText = 'Return to previous page',
-	backTo,
 }: PermissionDeniedBlockProps) => {
 	const headingId = useId();
+
+	const navigate = useNavigate();
+	const goBack = () => void navigate(-1);
+
 	return (
 		<section css={blockStyle} aria-labelledby="">
 			<div css={blockTextStyle}>
@@ -70,9 +73,9 @@ export const PermissionDeniedBlock = ({
 					if you need permission.
 				</Typography>
 			</div>
-			<LinkButton icon="arrow_back" href={backTo}>
+			<Button icon="arrow_back" onClick={goBack} role="link">
 				{backText}
-			</LinkButton>
+			</Button>
 		</section>
 	);
 };
