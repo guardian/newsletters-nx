@@ -8,6 +8,7 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	editionIdSchema,
+	editionNames,
 	makeBlankLayout,
 } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useLocation } from 'react-router-dom';
@@ -58,16 +59,18 @@ export const LayoutView = () => {
 	if (!data || !editionId) {
 		return <MissingLayoutContent editionId={editionId} />;
 	}
-	const region = editionIdSchema.safeParse(editionId);
-	const regionName = region.success ? regionNames[region.data] : editionId;
+	const parsedEdition = editionIdSchema.safeParse(editionId);
+	const editionName = parsedEdition.success
+		? editionNames[parsedEdition.data]
+		: editionId;
 
 	return isUsingStand ? (
 		<Container maxWidth="lg" css={contentStyles}>
 			<HubEditionHeader
-				title={regionName}
+				title={editionName}
 				breadcrumbs={{
 					ancestors: [{ label: 'Newsletters front', href: '/layouts' }],
-					currentLabel: regionName,
+					currentLabel: editionName,
 				}}
 			>
 				{permissions?.editEverything && (

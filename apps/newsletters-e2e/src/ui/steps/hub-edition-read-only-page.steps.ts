@@ -1,5 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import type { EditionId } from '@newsletters-nx/newsletters-data-client';
+import { editionNames } from '@newsletters-nx/newsletters-data-client';
 import type { DataTable } from 'playwright-bdd';
 import { Given, Then, When } from './fixtures';
 
@@ -99,6 +101,9 @@ Given(
 
 When('the edition layout loads', async ({ page }) => {
 	await page.goto('/layouts/uk');
+	await expect(
+		page.getByRole('heading', { level: 2, name: 'United Kingdom' }),
+	).toBeVisible();
 });
 
 When('the editor chooses to edit the layout', async ({ page }) => {
@@ -112,7 +117,9 @@ Then(
 		const edition = path.split('/').pop()?.toUpperCase();
 		await expect(
 			page.getByRole('heading', {
-				name: `Edit Layout for ${edition}`,
+				name:
+					(edition && editionNames[edition as EditionId]) ??
+					`Edit Layout for ${edition}`,
 				exact: true,
 			}),
 		).toBeVisible();
