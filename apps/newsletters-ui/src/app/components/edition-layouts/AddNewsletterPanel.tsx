@@ -1,5 +1,9 @@
 import { css } from '@emotion/react';
-import { semanticColors, semanticSpacing } from '@guardian/stand';
+import {
+	semanticColors,
+	semanticSizing,
+	semanticSpacing,
+} from '@guardian/stand';
 import { Button } from '@guardian/stand/Button';
 import { IconButton } from '@guardian/stand/IconButton';
 import { SearchInput } from '@guardian/stand/SearchInput';
@@ -20,7 +24,7 @@ const panelStyles = css`
 
 const searchStyles = css`
 	width: 100%;
-	max-width: 450px;
+	max-width: ${semanticSizing.input.maxWidthPx};
 `;
 
 const resultsStyles = css`
@@ -28,7 +32,7 @@ const resultsStyles = css`
 	margin: 0;
 	padding: 0;
 	width: 100%;
-	max-height: 192px;
+	max-height: 336px;
 	overflow-y: auto;
 	border: 1px solid ${semanticColors.border.weak};
 `;
@@ -102,7 +106,7 @@ export const AddNewsletterPanel = ({
 					No newsletters found
 				</Typography>
 			) : (
-				<ul css={resultsStyles}>
+				<ol css={resultsStyles}>
 					{results.map((newsletter) => (
 						<li key={newsletter.identityName} css={resultStyles}>
 							<IconButton
@@ -136,7 +140,7 @@ export const AddNewsletterPanel = ({
 							</div>
 						</li>
 					))}
-				</ul>
+				</ol>
 			)}
 		</div>
 	);
