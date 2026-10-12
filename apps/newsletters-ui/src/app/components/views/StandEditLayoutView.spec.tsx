@@ -8,6 +8,25 @@ vi.mock('../../featureSwitches', () => ({
 	isFeatureSwitchEnabled: () => true,
 }));
 
+// jsdom can't parse the `:has()` selector in Stand's SearchInput styles.
+vi.mock('@guardian/stand/SearchInput', () => ({
+	SearchInput: ({
+		label,
+		value,
+		onChange,
+	}: {
+		label: string;
+		value: string;
+		onChange: (value: string) => void;
+	}) => (
+		<input
+			aria-label={label}
+			value={value}
+			onChange={(e) => onChange(e.target.value)}
+		/>
+	),
+}));
+
 vi.mock('../../hooks/user-hooks', () => ({
 	usePermissions: vi.fn(),
 }));
@@ -121,6 +140,85 @@ describe('StandEditLayoutView', () => {
 
 			await screen.findByRole('heading', { name: 'Read-only layout' });
 			expect(router.state.location.pathname).toBe('/layouts/uk');
+		});
+	});
+
+	describe('adding newsletters', () => {
+		const newsletters = [
+			{ identityName: 'a', name: 'Alpha', status: 'live' },
+			{ identityName: 'b', name: 'Beta', status: 'pending' },
+			{ identityName: 'c', name: 'Gamma', status: 'cancelled' },
+			{ identityName: 'd', name: 'Delta', status: 'paused' },
+		];
+		const layout = {
+			groups: [
+				{ title: 'News', newsletters: ['a'] },
+				{ title: 'Sport', newsletters: [] },
+			],
+		};
+		const setup = async () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			renderEditView(layout, newsletters);
+			await screen.findByRole('button', {
+				name: 'Save and publish layout',
+			});
+		};
+
+		it('only offers unassigned, non-cancelled newsletters', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add newsletter',
+				})[0]!,
+			);
+			expect(screen.queryByRole('button', { name: 'Add Alpha' })).toBeNull();
+			expect(screen.queryByRole('button', { name: 'Add Gamma' })).toBeNull();
+			expect(screen.getByRole('button', { name: 'Add Beta' })).toBeTruthy();
+			expect(screen.getByRole('button', { name: 'Add Delta' })).toBeTruthy();
+		});
+
+		it('adds to the section, keeps the area open and removes it from results', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add newsletter',
+				})[1]!,
+			);
+			fireEvent.click(screen.getByRole('button', { name: 'Add Beta' }));
+			expect(screen.getByText('Beta')).toBeTruthy();
+			expect(screen.queryByRole('button', { name: 'Add Beta' })).toBeNull();
+			expect(screen.getByRole('button', { name: 'Add Delta' })).toBeTruthy();
+		});
+
+		it('only keeps one add area open at a time', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add newsletter',
+				})[0]!,
+			);
+			fireEvent.click(screen.getByRole('button', { name: 'Add newsletter' }));
+			expect(
+				screen.getAllByRole('region', {
+					name: 'Add newsletters',
+				}),
+			).toHaveLength(1);
+		});
+
+		it('closes the add area with the Close button', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add newsletter',
+				})[0]!,
+			);
+			fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+			expect(
+				screen.queryByRole('region', { name: 'Add newsletters' }),
+			).toBeNull();
 		});
 	});
 });

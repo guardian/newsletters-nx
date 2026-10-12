@@ -72,4 +72,23 @@ describe('standLayoutReducer', () => {
 			}),
 		).toMatchObject({ updateInProgress: false, feedback: 'failure' });
 	});
+	it('appends a newsletter to the bottom of the given section', () => {
+		const state = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+			type: 'append-newsletter',
+			groupIndex: 1,
+			newsletterId: 'x',
+		});
+		expect(state.layout.groups[1]?.newsletters).toEqual(['d', 'x']);
+		expect(state.layout.groups[0]?.newsletters).toEqual(['a', 'b', 'c']);
+		expect(state.original).toEqual(makeLayout());
+	});
+	it('does not append a newsletter that is already in a section', () => {
+		const initial = makeStandLayoutState(makeLayout());
+		const state = standLayoutReducer(initial, {
+			type: 'append-newsletter',
+			groupIndex: 1,
+			newsletterId: 'a',
+		});
+		expect(state).toBe(initial);
+	});
 });

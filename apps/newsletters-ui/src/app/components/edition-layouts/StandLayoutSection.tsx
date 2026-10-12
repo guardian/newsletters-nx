@@ -13,6 +13,7 @@ import type {
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
+import { AddNewsletterPanel } from './AddNewsletterPanel';
 
 const sectionStyles = css`
 	display: flex;
@@ -58,6 +59,13 @@ const removeButtonStyles = css`
 	&:hover {
 		background: ${semanticColors.fill.weak};
 	}
+`;
+
+const addButtonRowStyles = css`
+	display: flex;
+	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
+	background-color: ${semanticColors.bg.raisedLevel1};
+	border-top: 1px solid ${semanticColors.border.weak};
 `;
 
 const nameStyles = css`
@@ -125,6 +133,11 @@ interface SectionProps {
 	newsletters: NewsletterData[];
 	onRemove: (groupIndex: number, newsletterIndex: number) => void;
 	disabled?: boolean;
+	availableNewsletters?: NewsletterData[];
+	isAddAreaOpen?: boolean;
+	onOpenAddArea?: () => void;
+	onCloseAddArea?: () => void;
+	onAdd?: (groupIndex: number, identityName: string) => void;
 }
 
 export const StandLayoutSection = ({
@@ -133,8 +146,14 @@ export const StandLayoutSection = ({
 	newsletters,
 	onRemove,
 	disabled,
+	availableNewsletters = [],
+	isAddAreaOpen = false,
+	onOpenAddArea,
+	onCloseAddArea,
+	onAdd,
 }: SectionProps) => {
 	const isMobile = useIsMobile();
+	const canAdd = !isMobile && !!onOpenAddArea;
 
 	return (
 		<section css={sectionStyles} aria-label={group.title}>
@@ -157,6 +176,28 @@ export const StandLayoutSection = ({
 					/>
 				))}
 			</ul>
+			{canAdd && !isAddAreaOpen && (
+				<div css={addButtonRowStyles}>
+					<Button
+						variant="tertiary"
+						size="sm"
+						icon="add"
+						isDisabled={disabled}
+						onPress={onOpenAddArea}
+					>
+						Add newsletter
+					</Button>
+				</div>
+			)}
+			{canAdd && isAddAreaOpen && (
+				<AddNewsletterPanel
+					sectionTitle={group.title}
+					newsletters={availableNewsletters}
+					disabled={disabled}
+					onAdd={(identityName) => onAdd?.(groupIndex, identityName)}
+					onClose={() => onCloseAddArea?.()}
+				/>
+			)}
 		</section>
 	);
 };
