@@ -51,7 +51,7 @@ describe('PermissionDeniedBlock', () => {
 		});
 	});
 
-	it('it performs a browser history.back() call', async () => {
+	it('it performs a browser history.back() call', () => {
 		const Stub = makeStub(<PermissionDeniedBlock />);
 		render(<Stub initialEntries={['/old-page', '/test']} />);
 
