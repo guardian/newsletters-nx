@@ -150,3 +150,8 @@ Then(
 		]);
 	},
 );
+
+Then('the stored layout is unchanged', async ({ page }) => {
+	await page.waitForLoadState('networkidle');
+	expect(savedLayouts.get(page) ?? []).toHaveLength(0);
+});
