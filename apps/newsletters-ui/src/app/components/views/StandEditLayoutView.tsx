@@ -140,19 +140,21 @@ export const StandEditLayoutView = ({
 					Save and publish layout
 				</Button>
 			</HubEditionHeader>
-			<div role="status">
-				{feedback === 'success' && (
-					<Typography element="p" variant="bodyMd">
-						Layout updated. It will take some time for the site to update.
-					</Typography>
-				)}
-				{feedback === 'failure' && (
-					<Typography element="p" variant="bodyMd">
-						Failed to update. If the problem persists, please contact Central
-						Production.
-					</Typography>
-				)}
-			</div>
+			{feedback && (
+				<div role="status">
+					{feedback === 'success' && (
+						<Typography element="p" variant="bodyMd">
+							Layout updated. It will take some time for the site to update.
+						</Typography>
+					)}
+					{feedback === 'failure' && (
+						<Typography element="p" variant="bodyMd">
+							Failed to update. If the problem persists, please contact Central
+							Production.
+						</Typography>
+					)}
+				</div>
+			)}
 
 			<>
 				<HubEditionSectionDivider
