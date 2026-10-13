@@ -16,6 +16,7 @@ import {
 import { useReducer, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { isAddableStatus } from '../../lib/modify-layout';
 import { DiscardLayoutChangesDialog } from '../edition-layouts/DiscardLayoutChangesDialog';
 import { HubEditionSectionDivider } from '../edition-layouts/HubEditionSectionDivider';
@@ -70,12 +71,16 @@ export const StandEditLayoutView = ({
 	const [addAreaGroupIndex, setAddAreaGroupIndex] = useState<number>();
 	const navigate = useNavigate();
 
+	const isMobile = useIsMobile();
+
 	const parsedEdition = editionIdSchema.safeParse(editionId);
 	const editionName = parsedEdition.success
 		? editionNames[parsedEdition.data]
 		: editionId;
 	const canEdit = !!permissions?.editEverything;
 	const readOnlyPath = `/layouts/${editionId.toLowerCase()}`;
+
+	const showAddSectionButtons = !isMobile;
 
 	// `permissions` is undefined while still loading, so only redirect once
 	// we know the user can't edit.
@@ -164,18 +169,20 @@ export const StandEditLayoutView = ({
 			)}
 
 			<>
-				<HubEditionSectionDivider
-					onAddSection={() => {
-						ariaNotify('Section added');
-						dispatch({
-							type: 'add-section',
-							insert: {
-								place: 'before',
-								groupIndex: 0,
-							},
-						});
-					}}
-				/>
+				{showAddSectionButtons && (
+					<HubEditionSectionDivider
+						onAddSection={() => {
+							ariaNotify('Section added');
+							dispatch({
+								type: 'add-section',
+								insert: {
+									place: 'before',
+									groupIndex: 0,
+								},
+							});
+						}}
+					/>
+				)}
 				{layout.groups.map((group, groupIndex) => (
 					<>
 						<StandLayoutSection
@@ -211,15 +218,17 @@ export const StandEditLayoutView = ({
 								})
 							}
 						/>
-						<HubEditionSectionDivider
-							onAddSection={() => {
-								ariaNotify('Section added');
-								dispatch({
-									type: 'add-section',
-									insert: { place: 'after', groupIndex },
-								});
-							}}
-						/>
+						{showAddSectionButtons && (
+							<HubEditionSectionDivider
+								onAddSection={() => {
+									ariaNotify('Section added');
+									dispatch({
+										type: 'add-section',
+										insert: { place: 'after', groupIndex },
+									});
+								}}
+							/>
+						)}
 					</>
 				))}
 			</>

@@ -1,6 +1,8 @@
+import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { usePermissions } from '../../hooks/user-hooks';
 import { EditLayoutView } from './EditLayoutView';
 
@@ -10,6 +12,10 @@ vi.mock('../../featureSwitches', () => ({
 
 vi.mock('../../hooks/user-hooks', () => ({
 	usePermissions: vi.fn(),
+}));
+
+vi.mock('../../hooks/useIsMobile', () => ({
+	useIsMobile: vi.fn(),
 }));
 
 afterEach(() => {
@@ -121,6 +127,28 @@ describe('StandEditLayoutView', () => {
 
 			await screen.findByRole('heading', { name: 'Read-only layout' });
 			expect(router.state.location.pathname).toBe('/layouts/uk');
+		});
+
+		it("renders the 'Add section' buttons when in desktop view", async () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(useIsMobile).mockReturnValue(false);
+			renderEditView({ groups: [{ title: 'News', newsletters: [] }] });
+
+			expect(
+				await screen.findAllByRole('button', { name: 'Add section' }),
+			).toHaveLength(2);
+		});
+		it("does not render the 'Add section' buttons when in mobile view", () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			renderEditView({ groups: [{ title: 'News', newsletters: [] }] });
+			expect(screen.queryByRole('button', { name: 'Add section' })).toBeNull();
 		});
 	});
 
