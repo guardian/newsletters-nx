@@ -123,4 +123,128 @@ describe('StandEditLayoutView', () => {
 			expect(router.state.location.pathname).toBe('/layouts/uk');
 		});
 	});
+
+	describe('adding newsletters', () => {
+		const newsletters = [
+			{ identityName: 'a', name: 'Alpha', status: 'live' },
+			{ identityName: 'b', name: 'Beta', status: 'pending' },
+			{ identityName: 'c', name: 'Gamma', status: 'cancelled' },
+			{ identityName: 'd', name: 'Delta', status: 'paused' },
+			{
+				identityName: 'e',
+				name: 'Epsilon',
+				status: 'live',
+				restricted: true,
+			},
+		];
+		const layout = {
+			groups: [
+				{ title: 'News', newsletters: ['a'] },
+				{ title: 'Sport', newsletters: [] },
+			],
+		};
+		const setup = async () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			renderEditView(layout, newsletters);
+			await screen.findByRole('button', {
+				name: 'Save and publish layout',
+			});
+		};
+
+		it('only offers unassigned, non-cancelled newsletters', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[0]!,
+			);
+			expect(screen.queryByRole('button', { name: 'Add Alpha' })).toBeNull();
+			expect(screen.queryByRole('button', { name: 'Add Gamma' })).toBeNull();
+			expect(screen.getByRole('button', { name: 'Add Beta' })).toBeTruthy();
+			expect(screen.getByRole('button', { name: 'Add Delta' })).toBeTruthy();
+		});
+
+		it('offers restricted newsletters', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[0]!,
+			);
+			expect(screen.getByRole('button', { name: 'Add Epsilon' })).toBeTruthy();
+		});
+
+		it('offers a newsletter again once it is removed from a section', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[1]!,
+			);
+			expect(screen.queryByRole('button', { name: 'Add Alpha' })).toBeNull();
+			fireEvent.click(screen.getByRole('button', { name: 'Remove Alpha' }));
+			expect(screen.getByRole('button', { name: 'Add Alpha' })).toBeTruthy();
+		});
+
+		it('adds to the section, keeps the area open and removes it from results', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[1]!,
+			);
+			fireEvent.click(screen.getByRole('button', { name: 'Add Beta' }));
+			expect(screen.getByText('Beta')).toBeTruthy();
+			expect(screen.queryByRole('button', { name: 'Add Beta' })).toBeNull();
+			expect(screen.getByRole('button', { name: 'Add Delta' })).toBeTruthy();
+		});
+
+		it('only keeps one add area open at a time', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[0]!,
+			);
+			fireEvent.click(screen.getByRole('button', { name: 'Add a newsletter' }));
+			expect(
+				screen.getAllByRole('region', {
+					name: 'Add newsletters',
+				}),
+			).toHaveLength(1);
+		});
+
+		it('filters results by name and shows a message when nothing matches', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[0]!,
+			);
+			const search = screen.getByRole('searchbox', {
+				name: 'Search newsletters to add to News',
+			});
+			fireEvent.change(search, { target: { value: 'del' } });
+			expect(screen.getByRole('button', { name: 'Add Delta' })).toBeTruthy();
+			expect(screen.queryByRole('button', { name: 'Add Beta' })).toBeNull();
+			fireEvent.change(search, { target: { value: 'zzz' } });
+			expect(screen.getByText('No newsletters found')).toBeTruthy();
+		});
+
+		it('closes the add area with the Close button', async () => {
+			await setup();
+			fireEvent.click(
+				screen.getAllByRole('button', {
+					name: 'Add a newsletter',
+				})[0]!,
+			);
+			fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+			expect(
+				screen.queryByRole('region', { name: 'Add newsletters' }),
+			).toBeNull();
+		});
+	});
 });

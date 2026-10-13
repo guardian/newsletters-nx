@@ -69,4 +69,19 @@ describe('StandLayoutSection', () => {
 		expect(screen.getByText('Alpha')).toBeTruthy();
 		expect(screen.queryByRole('button', { name: /^Remove/ })).toBeNull();
 	});
+	it('hides the Add a newsletter button on mobile', () => {
+		vi.mocked(useIsMobile).mockReturnValue(true);
+		render(
+			<StandLayoutSection
+				group={group}
+				groupIndex={0}
+				newsletters={newsletters}
+				onRemove={vi.fn()}
+				onOpenAddArea={vi.fn()}
+			/>,
+		);
+		expect(
+			screen.queryByRole('button', { name: 'Add a newsletter' }),
+		).toBeNull();
+	});
 });

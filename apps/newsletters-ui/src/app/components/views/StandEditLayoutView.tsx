@@ -16,6 +16,7 @@ import {
 import { useReducer, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
+import { isAddableStatus } from '../../lib/modify-layout';
 import { DiscardLayoutChangesDialog } from '../edition-layouts/DiscardLayoutChangesDialog';
 import {
 	makeStandLayoutState,
@@ -57,6 +58,8 @@ export const StandEditLayoutView = ({
 	);
 	const { layout, original, updateInProgress, feedback } = state;
 	const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
+	// Only one section's 'Add newsletter' area can be open at a time.
+	const [addAreaGroupIndex, setAddAreaGroupIndex] = useState<number>();
 	const navigate = useNavigate();
 
 	const parsedEdition = editionIdSchema.safeParse(editionId);
@@ -84,6 +87,10 @@ export const StandEditLayoutView = ({
 	}
 
 	const hasUnsavedChanges = layout !== original;
+	const assignedIds = new Set(layout.groups.flatMap((g) => g.newsletters));
+	const availableNewsletters = newsletters.filter(
+		(n) => isAddableStatus(n.status) && !assignedIds.has(n.identityName),
+	);
 
 	const handleCancel = () => {
 		if (hasUnsavedChanges) {
@@ -152,6 +159,13 @@ export const StandEditLayoutView = ({
 					groupIndex={groupIndex}
 					newsletters={newsletters}
 					disabled={updateInProgress}
+					availableNewsletters={availableNewsletters}
+					isAddAreaOpen={addAreaGroupIndex === groupIndex}
+					onOpenAddArea={() => setAddAreaGroupIndex(groupIndex)}
+					onCloseAddArea={() => setAddAreaGroupIndex(undefined)}
+					onAdd={(groupIndex, newsletterId) =>
+						dispatch({ type: 'append-newsletter', groupIndex, newsletterId })
+					}
 					onRemove={(groupIndex, newsletterIndex) =>
 						dispatch({
 							type: 'remove-newsletter',
