@@ -46,6 +46,13 @@ interface Props {
 	permissions: UserPermissions | undefined;
 }
 
+const ariaNotify = (text: string) => {
+	/** @ts-expect-error typescript DOM typings do not yet know about ariaNotify() */
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- document.ariaNotify is not yet included in DOM typings
+	document.ariaNotify?.(text);
+	/** eslint-enable */
+};
+
 export const StandEditLayoutView = ({
 	editionId,
 	layout: originalLayout = makeBlankLayout(),
@@ -158,15 +165,16 @@ export const StandEditLayoutView = ({
 
 			<>
 				<HubEditionSectionDivider
-					onAddSection={() =>
+					onAddSection={() => {
+						ariaNotify('Section added');
 						dispatch({
 							type: 'add-section',
 							insert: {
 								place: 'before',
 								groupIndex: 0,
 							},
-						})
-					}
+						});
+					}}
 				/>
 				{layout.groups.map((group, groupIndex) => (
 					<>
@@ -205,6 +213,7 @@ export const StandEditLayoutView = ({
 						/>
 						<HubEditionSectionDivider
 							onAddSection={() => {
+								ariaNotify('Section added');
 								dispatch({
 									type: 'add-section',
 									insert: { place: 'after', groupIndex },
