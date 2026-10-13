@@ -10,9 +10,11 @@ import type {
 	LayoutGroup,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { useState } from 'react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
+import { AddNewsletterPanel } from './AddNewsletterPanel';
 
 const sectionStyles = css`
 	display: flex;
@@ -33,6 +35,9 @@ const listStyles = css`
 	padding: 0;
 	display: flex;
 	flex-direction: column;
+	&:not(:empty) {
+		border-bottom: 1px solid ${semanticColors.border.weak};
+	}
 `;
 
 const rowStyles = css`
@@ -58,6 +63,12 @@ const removeButtonStyles = css`
 	&:hover {
 		background: ${semanticColors.fill.weak};
 	}
+`;
+
+const addButtonRowStyles = css`
+	display: flex;
+	padding: ${semanticSpacing.stackMd};
+	background-color: ${semanticColors.bg.base};
 `;
 
 const nameStyles = css`
@@ -125,6 +136,11 @@ interface SectionProps {
 	newsletters: NewsletterData[];
 	onRemove: (groupIndex: number, newsletterIndex: number) => void;
 	disabled?: boolean;
+	availableNewsletters?: NewsletterData[];
+	isAddAreaOpen?: boolean;
+	onOpenAddArea?: () => void;
+	onCloseAddArea?: () => void;
+	onAdd?: (groupIndex: number, identityName: string) => void;
 }
 
 export const StandLayoutSection = ({
@@ -133,8 +149,16 @@ export const StandLayoutSection = ({
 	newsletters,
 	onRemove,
 	disabled,
+	availableNewsletters = [],
+	isAddAreaOpen = false,
+	onOpenAddArea,
+	onCloseAddArea,
+	onAdd,
 }: SectionProps) => {
 	const isMobile = useIsMobile();
+	const canAdd = !isMobile && !!onOpenAddArea;
+	// Return focus to the 'Add a newsletter' button when the panel is closed with its Close button.
+	const [focusAddButton, setFocusAddButton] = useState(false);
 
 	return (
 		<section css={sectionStyles} aria-label={group.title}>
@@ -157,6 +181,35 @@ export const StandLayoutSection = ({
 					/>
 				))}
 			</ul>
+			{canAdd && !isAddAreaOpen && (
+				<div css={addButtonRowStyles}>
+					<Button
+						variant="secondary"
+						size="sm"
+						icon="add"
+						isDisabled={disabled}
+						autoFocus={focusAddButton}
+						onPress={() => {
+							setFocusAddButton(false);
+							onOpenAddArea();
+						}}
+					>
+						Add a newsletter
+					</Button>
+				</div>
+			)}
+			{canAdd && isAddAreaOpen && (
+				<AddNewsletterPanel
+					sectionTitle={group.title}
+					newsletters={availableNewsletters}
+					disabled={disabled}
+					onAdd={(identityName) => onAdd?.(groupIndex, identityName)}
+					onClose={() => {
+						setFocusAddButton(true);
+						onCloseAddArea?.();
+					}}
+				/>
+			)}
 		</section>
 	);
 };

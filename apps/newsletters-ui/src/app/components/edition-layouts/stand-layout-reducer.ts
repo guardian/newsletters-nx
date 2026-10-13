@@ -1,10 +1,14 @@
 import type { Layout } from '@newsletters-nx/newsletters-data-client';
-import { deleteNewsletterFromGroup } from '../../lib/modify-layout';
+import {
+	deleteNewsletterFromGroup,
+	insertNewsletterIntoGroup,
+} from '../../lib/modify-layout';
 
 type FeedbackType = 'success' | 'failure';
-// Add `append-newsletter` (#877) and `move-newsletter-to` (#878) here.
+// Add `move-newsletter-to` (#878) here.
 export type StandLayoutAction =
 	| { type: 'remove-newsletter'; groupIndex: number; newsletterIndex: number }
+	| { type: 'append-newsletter'; groupIndex: number; newsletterId: string }
 	| { type: 'set-pending' }
 	| { type: 'handle-server-response'; success: boolean };
 export type StandLayoutState = {
@@ -33,6 +37,25 @@ export function standLayoutReducer(
 				// A published layout becomes the new baseline for detecting unsaved changes.
 				original: action.success ? state.layout : state.original,
 			};
+		case 'append-newsletter': {
+			const group = state.layout.groups[action.groupIndex];
+			const isAssigned = state.layout.groups.some((g) =>
+				g.newsletters.includes(action.newsletterId),
+			);
+			if (state.updateInProgress || !group || isAssigned) {
+				return state;
+			}
+			return {
+				...state,
+				feedback: undefined,
+				layout: insertNewsletterIntoGroup(
+					state.layout,
+					action.groupIndex,
+					group.newsletters.length,
+					action.newsletterId,
+				),
+			};
+		}
 		case 'remove-newsletter':
 			if (state.updateInProgress) {
 				return state;
