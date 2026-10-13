@@ -13,6 +13,7 @@ const sectionDividerStyles = css`
 	flex-flow: row nowrap;
 	align-items: center;
 	gap: ${semanticSpacing.stackSm};
+	padding: ${semanticSpacing.stackSm} 0;
 `;
 
 interface HubEditionSectionDividerProps {
