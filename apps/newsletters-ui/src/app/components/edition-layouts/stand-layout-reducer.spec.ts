@@ -134,5 +134,94 @@ describe('standLayoutReducer', () => {
 			newsletterId: 'a',
 		});
 		expect(state).toBe(initial);
+
+	describe('add-section', () => {
+		it('inserts a new group before the first group', () => {
+			const initialGroup = {
+				title: 'News',
+				newsletters: ['first-edition', 'breaking-news'],
+			};
+			const layout: Layout = {
+				groups: [initialGroup],
+			};
+
+			const state = makeStandLayoutState(layout);
+			const adding = standLayoutReducer(state, {
+				type: 'add-section',
+				insert: { place: 'before', groupIndex: 0 },
+			});
+
+			expect(adding).toMatchObject({
+				layout: {
+					groups: [{ title: '', newsletters: [] }, initialGroup],
+				},
+			});
+		});
+
+		it('inserts a new group when there are no groups', () => {
+			const state = makeStandLayoutState({ groups: [] });
+			const adding = standLayoutReducer(state, {
+				type: 'add-section',
+				insert: { place: 'before', groupIndex: 0 },
+			});
+
+			expect(adding.layout.groups).toEqual([{ title: '', newsletters: [] }]);
+		});
+
+		it('inserts a new group after the last group', () => {
+			const initialGroups = makeLayout().groups;
+			const state = makeStandLayoutState({ groups: initialGroups });
+			const adding = standLayoutReducer(state, {
+				type: 'add-section',
+				insert: { place: 'after', groupIndex: initialGroups.length - 1 },
+			});
+
+			expect(adding.layout.groups).toEqual([
+				...initialGroups,
+				{ title: '', newsletters: [] },
+			]);
+		});
+
+		describe('inserting new grups', () => {
+			const newsGroup = { title: 'News', newsletters: ['a'] };
+			const sportGroup = { title: 'Sport', newsletters: ['b'] };
+			const cultureGroup = { title: 'Culture', newsletters: ['c'] };
+			const blankGroup = { title: '', newsletters: [] };
+
+			it.each([
+				{
+					place: 'after',
+					groupIndex: 0,
+					expectedGroups: [newsGroup, blankGroup, sportGroup, cultureGroup],
+				},
+				{
+					place: 'before',
+					groupIndex: 1,
+					expectedGroups: [newsGroup, blankGroup, sportGroup, cultureGroup],
+				},
+				{
+					place: 'after',
+					groupIndex: 1,
+					expectedGroups: [newsGroup, sportGroup, blankGroup, cultureGroup],
+				},
+				{
+					place: 'before',
+					groupIndex: 2,
+					expectedGroups: [newsGroup, sportGroup, blankGroup, cultureGroup],
+				},
+			] as const)(
+				'inserts a new group between existing groups using $place groupIndex $groupIndex',
+				({ place, groupIndex, expectedGroups }) => {
+					const initialGroups = [newsGroup, sportGroup, cultureGroup];
+					const state = makeStandLayoutState({ groups: initialGroups });
+					const adding = standLayoutReducer(state, {
+						type: 'add-section',
+						insert: { place, groupIndex },
+					});
+
+					expect(adding.layout.groups).toEqual(expectedGroups);
+				},
+			);
+		});
 	});
 });

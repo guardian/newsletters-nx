@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { semanticSpacing } from '@guardian/stand';
+import { semanticColors, semanticSpacing } from '@guardian/stand';
 import { Button } from '@guardian/stand/Button';
 import { Typography } from '@guardian/stand/Typography';
 import { Container } from '@mui/material';
@@ -18,6 +18,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { isAddableStatus } from '../../lib/modify-layout';
 import { DiscardLayoutChangesDialog } from '../edition-layouts/DiscardLayoutChangesDialog';
+import { HubEditionSectionDivider } from '../edition-layouts/HubEditionSectionDivider';
 import {
 	makeStandLayoutState,
 	standLayoutReducer,
@@ -152,37 +153,65 @@ export const StandEditLayoutView = ({
 					</Typography>
 				)}
 			</div>
-			{layout.groups.map((group, groupIndex) => (
-				<StandLayoutSection
-					key={groupIndex}
-					group={group}
-					groupIndex={groupIndex}
-					newsletters={newsletters}
-					disabled={updateInProgress}
-					availableNewsletters={availableNewsletters}
-					onMove={(newsletterId, toGroupIndex, toIndex) =>
+
+			<>
+				<HubEditionSectionDivider
+					onAddSection={() =>
 						dispatch({
-							type: 'move-newsletter',
-							newsletterId,
-							toGroupIndex,
-							toIndex,
-						})
-					}
-					isAddAreaOpen={addAreaGroupIndex === groupIndex}
-					onOpenAddArea={() => setAddAreaGroupIndex(groupIndex)}
-					onCloseAddArea={() => setAddAreaGroupIndex(undefined)}
-					onAdd={(groupIndex, newsletterId) =>
-						dispatch({ type: 'append-newsletter', groupIndex, newsletterId })
-					}
-					onRemove={(groupIndex, newsletterIndex) =>
-						dispatch({
-							type: 'remove-newsletter',
-							groupIndex,
-							newsletterIndex,
+							type: 'add-section',
+							insert: {
+								place: 'before',
+								groupIndex: 0,
+							},
 						})
 					}
 				/>
-			))}
+				{layout.groups.map((group, groupIndex) => (
+					<>
+						<StandLayoutSection
+							key={groupIndex}
+							group={group}
+							groupIndex={groupIndex}
+							newsletters={newsletters}
+							disabled={updateInProgress}
+							availableNewsletters={availableNewsletters}
+							onMove={(newsletterId, toGroupIndex, toIndex) =>
+								dispatch({
+									type: 'move-newsletter',
+									newsletterId,
+									toGroupIndex,
+									toIndex,
+								})
+							}
+							isAddAreaOpen={addAreaGroupIndex === groupIndex}
+							onOpenAddArea={() => setAddAreaGroupIndex(groupIndex)}
+							onCloseAddArea={() => setAddAreaGroupIndex(undefined)}
+							onAdd={(groupIndex, newsletterId) =>
+								dispatch({
+									type: 'append-newsletter',
+									groupIndex,
+									newsletterId,
+								})
+							}
+							onRemove={(groupIndex, newsletterIndex) =>
+								dispatch({
+									type: 'remove-newsletter',
+									groupIndex,
+									newsletterIndex,
+								})
+							}
+						/>
+						<HubEditionSectionDivider
+							onAddSection={() => {
+								dispatch({
+									type: 'add-section',
+									insert: { place: 'after', groupIndex },
+								});
+							}}
+						/>
+					</>
+				))}
+			</>
 			<DiscardLayoutChangesDialog
 				isOpen={isConfirmingCancel}
 				onKeepEditing={() => setIsConfirmingCancel(false)}
