@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { semanticColors, semanticSpacing } from '@guardian/stand';
+import { semanticSpacing } from '@guardian/stand';
 import { Button } from '@guardian/stand/Button';
 import { Typography } from '@guardian/stand/Typography';
 import { Container } from '@mui/material';
