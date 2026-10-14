@@ -134,6 +134,7 @@ describe('standLayoutReducer', () => {
 			newsletterId: 'a',
 		});
 		expect(state).toBe(initial);
+	});
 
 	describe('add-section', () => {
 		it('inserts a new group before the first group', () => {
