@@ -3,6 +3,7 @@ import {
 	deleteNewsletterFromGroup,
 	insertNewsletterIntoGroup,
 	moveNewsletterTo,
+	moveNewsletterToGroup,
 } from '../../lib/modify-layout';
 
 type FeedbackType = 'success' | 'failure';
@@ -13,6 +14,13 @@ export type StandLayoutAction =
 			type: 'move-newsletter-to';
 			groupIndex: number;
 			newsletterIndex: number;
+			newIndex: number;
+	  }
+	| {
+			type: 'move-newsletter-to-group';
+			fromGroupIndex: number;
+			newsletterId: string;
+			toGroupIndex: number;
 			newIndex: number;
 	  }
 	| { type: 'set-pending' }
@@ -73,6 +81,21 @@ export function standLayoutReducer(
 					state.layout,
 					action.groupIndex,
 					action.newsletterIndex,
+					action.newIndex,
+				),
+			};
+		case 'move-newsletter-to-group':
+			if (state.updateInProgress) {
+				return state;
+			}
+			return {
+				...state,
+				feedback: undefined,
+				layout: moveNewsletterToGroup(
+					state.layout,
+					action.fromGroupIndex,
+					action.newsletterId,
+					action.toGroupIndex,
 					action.newIndex,
 				),
 			};

@@ -7,6 +7,7 @@ import {
 import { Button } from '@guardian/stand/Button';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
+import type { DroppableCollectionInsertDropEvent } from 'react-aria-components';
 import type {
 	LayoutGroup,
 	NewsletterData,
@@ -20,7 +21,7 @@ import {
 	useDragAndDrop,
 } from 'react-aria-components';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { getReorderIndex } from '../../lib/modify-layout';
+import { getInsertIndex, getReorderIndex } from '../../lib/modify-layout';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 import { AddNewsletterPanel } from './AddNewsletterPanel';
@@ -40,6 +41,7 @@ const sectionHeaderStyles = css`
 
 // A custom type, so dropping a row into a text field or another app doesn't paste its ID.
 const DRAG_TYPE = 'application/x-newsletter-id';
+const SOURCE_GROUP_TYPE = 'application/x-newsletter-group-index';
 
 const listStyles = css`
 	margin: 0;
@@ -133,6 +135,12 @@ const removeButtonStyles = css`
 	&:hover {
 		background: ${semanticColors.fill.weak};
 	}
+`;
+
+const emptyStyles = css`
+	padding: ${semanticSpacing.stackMd};
+	text-align: center;
+	color: ${semanticColors.text.strong};
 `;
 
 const addButtonRowStyles = css`
@@ -233,11 +241,15 @@ interface SectionProps {
 	newsletters: NewsletterData[];
 	onRemove: (groupIndex: number, newsletterIndex: number) => void;
 	disabled?: boolean;
-	// True while any section's 'Add newsletter' panel is open.
-	isDragDisabled?: boolean;
 	onMove?: (
 		groupIndex: number,
 		newsletterIndex: number,
+		newIndex: number,
+	) => void;
+	onMoveToGroup?: (
+		fromGroupIndex: number,
+		newsletterId: string,
+		toGroupIndex: number,
 		newIndex: number,
 	) => void;
 	availableNewsletters?: NewsletterData[];
@@ -253,8 +265,8 @@ export const StandLayoutSection = ({
 	newsletters,
 	onRemove,
 	disabled,
-	isDragDisabled = false,
 	onMove,
+	onMoveToGroup,
 	availableNewsletters = [],
 	isAddAreaOpen = false,
 	onOpenAddArea,
@@ -265,11 +277,46 @@ export const StandLayoutSection = ({
 	const canAdd = !isMobile && !!onOpenAddArea;
 	// Return focus to the 'Add a newsletter' button when the panel is closed with its Close button.
 	const [focusAddButton, setFocusAddButton] = useState(false);
-	const dragDisabled = isDragDisabled || !!disabled || isMobile || !onMove;
+	const dragDisabled = !!disabled || isMobile || !onMove;
+
+	const moveDroppedItems = async (
+		items: DroppableCollectionInsertDropEvent['items'],
+		index: number,
+	) => {
+		let insertAt = index;
+		for (const item of items) {
+			if (item.kind !== 'text') {
+				continue;
+			}
+			const id = await item.getText(DRAG_TYPE).catch(() => undefined);
+			const from = await item.getText(SOURCE_GROUP_TYPE).catch(() => undefined);
+			if (id === undefined || from === undefined) {
+				continue;
+			}
+			onMoveToGroup?.(Number(from), id, groupIndex, insertAt);
+			insertAt += 1;
+		}
+	};
 
 	const { dragAndDropHooks } = useDragAndDrop({
 		isDisabled: dragDisabled,
-		getItems: (keys) => [...keys].map((key) => ({ [DRAG_TYPE]: String(key) })),
+		acceptedDragTypes: [DRAG_TYPE, SOURCE_GROUP_TYPE],
+		getItems: (keys) =>
+			[...keys].map((key) => ({
+				[DRAG_TYPE]: String(key),
+				[SOURCE_GROUP_TYPE]: String(groupIndex),
+			})),
+		onInsert: async (e) => {
+			const index = getInsertIndex(
+				group.newsletters,
+				String(e.target.key),
+				e.target.dropPosition,
+			);
+			await moveDroppedItems(e.items, index);
+		},
+		onRootDrop: async (e) => {
+			await moveDroppedItems(e.items, group.newsletters.length);
+		},
 		renderDragPreview: (items) => {
 			const id = items[0]?.[DRAG_TYPE] ?? '';
 			return (
@@ -314,6 +361,9 @@ export const StandLayoutSection = ({
 				aria-label={group.title ? `${group.title} newsletters` : 'Newsletters'}
 				keyboardNavigationBehavior="tab"
 				dragAndDropHooks={dragAndDropHooks}
+				renderEmptyState={() => (
+					<div css={emptyStyles}>Drop a newsletter here</div>
+				)}
 			>
 				{group.newsletters.map((newsletterId, newsletterIndex) => (
 					<StandNewsletterRow
