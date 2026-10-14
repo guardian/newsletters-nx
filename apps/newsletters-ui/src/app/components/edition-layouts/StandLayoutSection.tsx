@@ -275,6 +275,7 @@ export const StandLayoutSection = ({
 }: SectionProps) => {
 	const isMobile = useIsMobile();
 	const canAdd = !isMobile && !!onOpenAddArea;
+	const sectionLabel = group.title || 'Section';
 	// Return focus to the 'Add a newsletter' button when the panel is closed with its Close button.
 	const [focusAddButton, setFocusAddButton] = useState(false);
 	const dragDisabled = !!disabled || isMobile || !onMove;
@@ -293,7 +294,11 @@ export const StandLayoutSection = ({
 			if (id === undefined || from === undefined) {
 				continue;
 			}
-			onMoveToGroup?.(Number(from), id, groupIndex, insertAt);
+			const fromGroupIndex = Number(from);
+			if (!id || !Number.isInteger(fromGroupIndex)) {
+				continue;
+			}
+			onMoveToGroup?.(fromGroupIndex, id, groupIndex, insertAt);
 			insertAt += 1;
 		}
 	};
@@ -350,7 +355,7 @@ export const StandLayoutSection = ({
 	});
 
 	return (
-		<section css={sectionStyles} aria-label={group.title}>
+		<section css={sectionStyles} aria-label={sectionLabel}>
 			<div css={sectionHeaderStyles}>
 				<Typography element="h3" variant="bodyBoldMd">
 					{group.title}
