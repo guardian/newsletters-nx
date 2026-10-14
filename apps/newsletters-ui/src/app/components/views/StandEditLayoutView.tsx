@@ -160,26 +160,12 @@ export const StandEditLayoutView = ({
 					newsletters={newsletters}
 					disabled={updateInProgress}
 					availableNewsletters={availableNewsletters}
-					onMove={(groupIndex, newsletterIndex, newIndex) =>
+					onMove={(newsletterId, toGroupIndex, toIndex) =>
 						dispatch({
-							type: 'move-newsletter-to',
-							groupIndex,
-							newsletterIndex,
-							newIndex,
-						})
-					}
-					onMoveToGroup={(
-						fromGroupIndex,
-						newsletterId,
-						toGroupIndex,
-						newIndex,
-					) =>
-						dispatch({
-							type: 'move-newsletter-to-group',
-							fromGroupIndex,
+							type: 'move-newsletter',
 							newsletterId,
 							toGroupIndex,
-							newIndex,
+							toIndex,
 						})
 					}
 					isAddAreaOpen={addAreaGroupIndex === groupIndex}

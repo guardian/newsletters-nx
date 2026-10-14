@@ -12,7 +12,7 @@ import type {
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
-import type { DroppableCollectionInsertDropEvent } from 'react-aria-components';
+import type { DropItem } from 'react-aria-components';
 import {
 	Button as AriaButton,
 	DropIndicator,
@@ -21,7 +21,6 @@ import {
 	useDragAndDrop,
 } from 'react-aria-components';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { getInsertIndex, getReorderIndex } from '../../lib/modify-layout';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 import { AddNewsletterPanel } from './AddNewsletterPanel';
@@ -41,7 +40,6 @@ const sectionHeaderStyles = css`
 
 // A custom type, so dropping a row into a text field or another app doesn't paste its ID.
 const DRAG_TYPE = 'application/x-newsletter-id';
-const SOURCE_GROUP_TYPE = 'application/x-newsletter-group-index';
 
 const listStyles = css`
 	margin: 0;
@@ -71,10 +69,12 @@ const rowStyles = css`
 	}
 `;
 
-const draggableRowStyles = css`
-	cursor: grab;
-	user-select: none;
-	&[data-dragging] {
+const draggableListStyles = css`
+	[role='row'] {
+		cursor: grab;
+		user-select: none;
+	}
+	[data-dragging] {
 		cursor: grabbing;
 	}
 `;
@@ -111,16 +111,6 @@ const dropIndicatorStyles = css`
 	}
 `;
 
-const dragPreviewStyles = css`
-	display: flex;
-	align-items: center;
-	gap: ${semanticSpacing.stackSm};
-	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
-	background-color: ${semanticColors.fill.neutralWeak};
-	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12);
-	cursor: grabbing;
-`;
-
 const detailsStyles = css`
 	flex: 1;
 	display: flex;
@@ -155,27 +145,36 @@ const nameStyles = css`
 	text-decoration: underline;
 `;
 
-const getName = (newsletterId: string, newsletter?: NewsletterData) =>
-	newsletter?.name ?? newsletterId;
-
-const NewsletterSummary = ({
-	newsletterId,
-	newsletter,
-}: {
+interface RowProps {
 	newsletterId: string;
 	newsletter?: NewsletterData;
-}) => {
+	onRemove: () => void;
+	canRemove: boolean;
+	disabled?: boolean;
+}
+
+export const StandNewsletterRow = ({
+	newsletterId,
+	newsletter,
+	onRemove,
+	canRemove,
+	disabled,
+}: RowProps) => {
+	const name = newsletter?.name ?? newsletterId;
 	const thumbnail =
 		newsletter?.illustrationSquare ??
 		newsletter?.illustrationCircle ??
 		newsletter?.illustrationCard;
 
 	return (
-		<>
+		<GridListItem id={newsletterId} textValue={name} css={rowStyles}>
+			<AriaButton slot="drag" css={gripStyles} aria-label={`Reorder ${name}`}>
+				<Icon symbol="drag_indicator" aria-hidden="true" />
+			</AriaButton>
 			<NewsletterThumbnail src={thumbnail} />
 			<div css={detailsStyles}>
 				<Typography element="p" variant="bodyBoldMd" cssOverrides={nameStyles}>
-					{getName(newsletterId, newsletter)}
+					{name}
 				</Typography>
 				{newsletter ? (
 					<NewsletterStatusBadge newsletter={newsletter} />
@@ -185,39 +184,6 @@ const NewsletterSummary = ({
 					</Typography>
 				)}
 			</div>
-		</>
-	);
-};
-
-interface RowProps {
-	newsletterId: string;
-	newsletter?: NewsletterData;
-	onRemove: () => void;
-	canRemove: boolean;
-	disabled?: boolean;
-	isDragDisabled?: boolean;
-}
-
-export const StandNewsletterRow = ({
-	newsletterId,
-	newsletter,
-	onRemove,
-	canRemove,
-	disabled,
-	isDragDisabled,
-}: RowProps) => {
-	const name = getName(newsletterId, newsletter);
-
-	return (
-		<GridListItem
-			id={newsletterId}
-			textValue={name}
-			css={[rowStyles, !isDragDisabled && draggableRowStyles]}
-		>
-			<AriaButton slot="drag" css={gripStyles} aria-label={`Reorder ${name}`}>
-				<Icon symbol="drag_indicator" aria-hidden="true" />
-			</AriaButton>
-			<NewsletterSummary newsletterId={newsletterId} newsletter={newsletter} />
 			{canRemove && (
 				<Button
 					variant="tertiary"
@@ -235,22 +201,21 @@ export const StandNewsletterRow = ({
 	);
 };
 
+// Only one newsletter can be dragged at a time, as selection isn't enabled.
+const getDraggedId = async ([item]: DropItem[]) =>
+	item?.kind === 'text' ? item.getText(DRAG_TYPE) : undefined;
+
 interface SectionProps {
 	group: LayoutGroup;
 	groupIndex: number;
 	newsletters: NewsletterData[];
 	onRemove: (groupIndex: number, newsletterIndex: number) => void;
 	disabled?: boolean;
+	// `toIndex` is the position in this group's current list to insert before.
 	onMove?: (
-		groupIndex: number,
-		newsletterIndex: number,
-		newIndex: number,
-	) => void;
-	onMoveToGroup?: (
-		fromGroupIndex: number,
 		newsletterId: string,
 		toGroupIndex: number,
-		newIndex: number,
+		toIndex: number,
 	) => void;
 	availableNewsletters?: NewsletterData[];
 	isAddAreaOpen?: boolean;
@@ -266,7 +231,6 @@ export const StandLayoutSection = ({
 	onRemove,
 	disabled,
 	onMove,
-	onMoveToGroup,
 	availableNewsletters = [],
 	isAddAreaOpen = false,
 	onOpenAddArea,
@@ -280,78 +244,44 @@ export const StandLayoutSection = ({
 	const [focusAddButton, setFocusAddButton] = useState(false);
 	const dragDisabled = !!disabled || isMobile || !onMove;
 
-	const moveDroppedItems = async (
-		items: DroppableCollectionInsertDropEvent['items'],
-		index: number,
-	) => {
-		let insertAt = index;
-		for (const item of items) {
-			if (item.kind !== 'text') {
-				continue;
-			}
-			const id = await item.getText(DRAG_TYPE).catch(() => undefined);
-			const from = await item.getText(SOURCE_GROUP_TYPE).catch(() => undefined);
-			if (id === undefined || from === undefined) {
-				continue;
-			}
-			const fromGroupIndex = Number(from);
-			if (!id || !Number.isInteger(fromGroupIndex)) {
-				continue;
-			}
-			onMoveToGroup?.(fromGroupIndex, id, groupIndex, insertAt);
-			insertAt += 1;
+	const dropIndex = (key: unknown, dropPosition: string) => {
+		const targetIndex = group.newsletters.indexOf(String(key));
+		if (targetIndex < 0) {
+			return group.newsletters.length;
+		}
+		return dropPosition === 'before' ? targetIndex : targetIndex + 1;
+	};
+	const moveDropped = async (items: DropItem[], toIndex: number) => {
+		const id = await getDraggedId(items);
+		if (id) {
+			onMove?.(id, groupIndex, toIndex);
 		}
 	};
 
+	// Within a section react-aria calls onReorder; from another section, onInsert or onRootDrop.
 	const { dragAndDropHooks } = useDragAndDrop({
 		isDisabled: dragDisabled,
-		acceptedDragTypes: [DRAG_TYPE, SOURCE_GROUP_TYPE],
-		getItems: (keys) =>
-			[...keys].map((key) => ({
-				[DRAG_TYPE]: String(key),
-				[SOURCE_GROUP_TYPE]: String(groupIndex),
-			})),
+		acceptedDragTypes: [DRAG_TYPE],
+		getItems: (keys) => [...keys].map((key) => ({ [DRAG_TYPE]: String(key) })),
+		onReorder: (e) => {
+			const [id] = [...e.keys];
+			if (id !== undefined) {
+				onMove?.(
+					String(id),
+					groupIndex,
+					dropIndex(e.target.key, e.target.dropPosition),
+				);
+			}
+		},
 		onInsert: (e) => {
-			const index = getInsertIndex(
-				group.newsletters,
-				String(e.target.key),
-				e.target.dropPosition,
-			);
-			void moveDroppedItems(e.items, index);
+			void moveDropped(e.items, dropIndex(e.target.key, e.target.dropPosition));
 		},
 		onRootDrop: (e) => {
-			void moveDroppedItems(e.items, group.newsletters.length);
-		},
-		renderDragPreview: (items) => {
-			const id = items[0]?.[DRAG_TYPE] ?? '';
-			return (
-				<div css={dragPreviewStyles}>
-					<Icon symbol="drag_indicator" aria-hidden="true" />
-					<NewsletterSummary
-						newsletterId={id}
-						newsletter={newsletters.find((n) => n.identityName === id)}
-					/>
-				</div>
-			);
+			void moveDropped(e.items, group.newsletters.length);
 		},
 		renderDropIndicator: (target) => (
 			<DropIndicator target={target} css={dropIndicatorStyles} />
 		),
-		onReorder: (e) => {
-			const movedId = [...e.keys][0];
-			if (movedId === undefined || e.target.dropPosition === 'on') {
-				return;
-			}
-			const move = getReorderIndex(
-				group.newsletters,
-				String(movedId),
-				String(e.target.key),
-				e.target.dropPosition,
-			);
-			if (move) {
-				onMove?.(groupIndex, move.from, move.to);
-			}
-		},
 	});
 
 	return (
@@ -362,7 +292,7 @@ export const StandLayoutSection = ({
 				</Typography>
 			</div>
 			<GridList
-				css={listStyles}
+				css={[listStyles, !dragDisabled && draggableListStyles]}
 				aria-label={group.title ? `${group.title} newsletters` : 'Newsletters'}
 				keyboardNavigationBehavior="tab"
 				dragAndDropHooks={dragAndDropHooks}
@@ -379,7 +309,6 @@ export const StandLayoutSection = ({
 						)}
 						canRemove={!isMobile}
 						disabled={disabled}
-						isDragDisabled={dragDisabled}
 						onRemove={() => onRemove(groupIndex, newsletterIndex)}
 					/>
 				))}

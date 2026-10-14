@@ -1,35 +1,58 @@
+import type { Layout } from '@newsletters-nx/newsletters-data-client';
 import { describe, expect, it } from 'vitest';
-import { getReorderIndex } from './modify-layout';
+import { moveNewsletter } from './modify-layout';
 
-const ids = ['a', 'b', 'c'];
+const layout: Layout = {
+	groups: [
+		{ title: 'One', newsletters: ['a', 'b', 'c'] },
+		{ title: 'Two', newsletters: ['d'] },
+	],
+};
 
-describe('getReorderIndex', () => {
-	it('moves an item down when dropped after a later item', () => {
-		expect(getReorderIndex(ids, 'a', 'b', 'after')).toEqual({ from: 0, to: 1 });
+const newslettersIn = (result: Layout) =>
+	result.groups.map((group) => group.newsletters);
+
+describe('moveNewsletter', () => {
+	it('moves a newsletter down within its group', () => {
+		expect(newslettersIn(moveNewsletter(layout, 'a', 0, 2))).toEqual([
+			['b', 'a', 'c'],
+			['d'],
+		]);
 	});
-	it('moves an item up when dropped before an earlier item', () => {
-		expect(getReorderIndex(ids, 'c', 'b', 'before')).toEqual({
-			from: 2,
-			to: 1,
-		});
+	it('moves a newsletter to the end of its group', () => {
+		expect(newslettersIn(moveNewsletter(layout, 'a', 0, 3))).toEqual([
+			['b', 'c', 'a'],
+			['d'],
+		]);
 	});
-	it('moves an item to the top', () => {
-		expect(getReorderIndex(ids, 'c', 'a', 'before')).toEqual({
-			from: 2,
-			to: 0,
-		});
+	it('moves a newsletter up within its group', () => {
+		expect(newslettersIn(moveNewsletter(layout, 'c', 0, 0))).toEqual([
+			['c', 'a', 'b'],
+			['d'],
+		]);
 	});
-	it('moves an item to the bottom', () => {
-		expect(getReorderIndex(ids, 'a', 'c', 'after')).toEqual({ from: 0, to: 2 });
+	it('moves a newsletter into another group', () => {
+		expect(newslettersIn(moveNewsletter(layout, 'b', 1, 0))).toEqual([
+			['a', 'c'],
+			['b', 'd'],
+		]);
 	});
-	it('returns undefined when dropped next to itself', () => {
-		expect(getReorderIndex(ids, 'b', 'a', 'after')).toBeUndefined();
-		expect(getReorderIndex(ids, 'b', 'c', 'before')).toBeUndefined();
-		expect(getReorderIndex(ids, 'b', 'b', 'before')).toBeUndefined();
-		expect(getReorderIndex(ids, 'b', 'b', 'after')).toBeUndefined();
+	it('moves a newsletter into an empty group', () => {
+		const withEmpty: Layout = {
+			groups: [...layout.groups, { title: 'Empty', newsletters: [] }],
+		};
+		expect(newslettersIn(moveNewsletter(withEmpty, 'd', 2, 0))).toEqual([
+			['a', 'b', 'c'],
+			[],
+			['d'],
+		]);
 	});
-	it('returns undefined for an unknown id', () => {
-		expect(getReorderIndex(ids, 'x', 'a', 'before')).toBeUndefined();
-		expect(getReorderIndex(ids, 'a', 'x', 'after')).toBeUndefined();
+	it('returns the same layout when the newsletter is dropped next to itself', () => {
+		expect(moveNewsletter(layout, 'b', 0, 1)).toBe(layout);
+		expect(moveNewsletter(layout, 'b', 0, 2)).toBe(layout);
+	});
+	it('returns the same layout for an unknown newsletter or group', () => {
+		expect(moveNewsletter(layout, 'x', 0, 0)).toBe(layout);
+		expect(moveNewsletter(layout, 'a', 5, 0)).toBe(layout);
 	});
 });

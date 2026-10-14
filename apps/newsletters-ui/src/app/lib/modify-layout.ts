@@ -75,63 +75,35 @@ export const moveNewsletterTo = (
 	});
 };
 
-export const moveNewsletterToGroup = (
+// Moves a newsletter (from wherever it is in the layout) so it is inserted at
+// `toIndex` in the target group's current list, i.e. before the item now at that index.
+// Returns the same layout if the newsletter or group is missing or nothing would change.
+export const moveNewsletter = (
 	layout: Layout,
-	fromGroupIndex: number,
 	newsletterId: string,
 	toGroupIndex: number,
-	newIndex: number,
+	toIndex: number,
 ): Layout => {
-	const fromGroup = layout.groups[fromGroupIndex];
-	if (
-		fromGroupIndex === toGroupIndex ||
-		!fromGroup?.newsletters.includes(newsletterId) ||
-		!layout.groups[toGroupIndex]
-	) {
+	const fromGroupIndex = layout.groups.findIndex((group) =>
+		group.newsletters.includes(newsletterId),
+	);
+	const fromIndex =
+		layout.groups[fromGroupIndex]?.newsletters.indexOf(newsletterId) ?? -1;
+	if (fromIndex < 0 || !layout.groups[toGroupIndex]) {
 		return layout;
 	}
-	const removed = deleteNewsletterFromGroup(
-		layout,
-		fromGroupIndex,
-		fromGroup.newsletters.indexOf(newsletterId),
-	);
+	const sameGroup = fromGroupIndex === toGroupIndex;
+	// Removing the newsletter first shifts later items in the same group up by one.
+	const insertAt = sameGroup && toIndex > fromIndex ? toIndex - 1 : toIndex;
+	if (sameGroup && insertAt === fromIndex) {
+		return layout;
+	}
 	return insertNewsletterIntoGroup(
-		removed,
+		deleteNewsletterFromGroup(layout, fromGroupIndex, fromIndex),
 		toGroupIndex,
-		newIndex,
+		insertAt,
 		newsletterId,
 	);
-};
-
-// Converts a drop before/after a target into the indexes for moveNewsletterTo.
-// Returns undefined if either id is missing or the drop wouldn't change the order.
-export const getReorderIndex = (
-	ids: string[],
-	movedId: string,
-	targetId: string,
-	dropPosition: 'before' | 'after',
-): { from: number; to: number } | undefined => {
-	const from = ids.indexOf(movedId);
-	const targetIndex = ids.indexOf(targetId);
-	if (from < 0 || targetIndex < 0) {
-		return undefined;
-	}
-	const insertAt = dropPosition === 'before' ? targetIndex : targetIndex + 1;
-	// moveNewsletterTo takes the index in the list after the item is removed.
-	const to = insertAt > from ? insertAt - 1 : insertAt;
-	return to === from ? undefined : { from, to };
-};
-
-export const getInsertIndex = (
-	ids: string[],
-	targetId: string,
-	dropPosition: 'before' | 'after' | 'on',
-): number => {
-	const targetIndex = ids.indexOf(targetId);
-	if (targetIndex < 0) {
-		return ids.length;
-	}
-	return dropPosition === 'before' ? targetIndex : targetIndex + 1;
 };
 
 export const insertNewsletterIntoGroup = (

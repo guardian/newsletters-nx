@@ -2,8 +2,7 @@ import type { Layout } from '@newsletters-nx/newsletters-data-client';
 import {
 	deleteNewsletterFromGroup,
 	insertNewsletterIntoGroup,
-	moveNewsletterTo,
-	moveNewsletterToGroup,
+	moveNewsletter,
 } from '../../lib/modify-layout';
 
 type FeedbackType = 'success' | 'failure';
@@ -11,17 +10,10 @@ export type StandLayoutAction =
 	| { type: 'remove-newsletter'; groupIndex: number; newsletterIndex: number }
 	| { type: 'append-newsletter'; groupIndex: number; newsletterId: string }
 	| {
-			type: 'move-newsletter-to';
-			groupIndex: number;
-			newsletterIndex: number;
-			newIndex: number;
-	  }
-	| {
-			type: 'move-newsletter-to-group';
-			fromGroupIndex: number;
+			type: 'move-newsletter';
 			newsletterId: string;
 			toGroupIndex: number;
-			newIndex: number;
+			toIndex: number;
 	  }
 	| { type: 'set-pending' }
 	| { type: 'handle-server-response'; success: boolean };
@@ -70,35 +62,18 @@ export function standLayoutReducer(
 				),
 			};
 		}
-		case 'move-newsletter-to':
-			if (state.updateInProgress) {
+		case 'move-newsletter': {
+			const layout = moveNewsletter(
+				state.layout,
+				action.newsletterId,
+				action.toGroupIndex,
+				action.toIndex,
+			);
+			if (state.updateInProgress || layout === state.layout) {
 				return state;
 			}
-			return {
-				...state,
-				feedback: undefined,
-				layout: moveNewsletterTo(
-					state.layout,
-					action.groupIndex,
-					action.newsletterIndex,
-					action.newIndex,
-				),
-			};
-		case 'move-newsletter-to-group':
-			if (state.updateInProgress) {
-				return state;
-			}
-			return {
-				...state,
-				feedback: undefined,
-				layout: moveNewsletterToGroup(
-					state.layout,
-					action.fromGroupIndex,
-					action.newsletterId,
-					action.toGroupIndex,
-					action.newIndex,
-				),
-			};
+			return { ...state, feedback: undefined, layout };
+		}
 		case 'remove-newsletter':
 			if (state.updateInProgress) {
 				return state;
