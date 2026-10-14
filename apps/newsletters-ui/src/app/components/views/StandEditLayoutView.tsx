@@ -168,7 +168,7 @@ export const StandEditLayoutView = ({
 				</div>
 			)}
 
-			<>
+			<ol>
 				{showAddSectionButtons && (
 					<HubEditionSectionDivider
 						onAddSection={() => {
@@ -231,7 +231,7 @@ export const StandEditLayoutView = ({
 						)}
 					</>
 				))}
-			</>
+			</ol>
 			<DiscardLayoutChangesDialog
 				isOpen={isConfirmingCancel}
 				onKeepEditing={() => setIsConfirmingCancel(false)}

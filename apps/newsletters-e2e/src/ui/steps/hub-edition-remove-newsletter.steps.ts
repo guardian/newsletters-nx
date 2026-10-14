@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from './fixtures';
+
 interface SavedLayout {
 	groups: Array<{ title: string; newsletters: string[] }>;
 }
