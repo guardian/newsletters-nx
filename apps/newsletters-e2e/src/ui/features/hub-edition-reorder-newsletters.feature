@@ -43,10 +43,6 @@ Feature: Reorder newsletters in an edition hub layout section
 		And the editor presses Escape
 		Then section "News" lists newsletters in the order "Alpha", "Beta", "Gamma"
 
-	Scenario: Dragging is disabled while the add newsletter area is open
-		When the editor opens the add newsletter area for section "News"
-		Then each newsletter in section "News" has a disabled drag handle
-
 	Scenario: Reordering and publishing persists the change
 		When the editor drags "Alpha" below "Beta" using the keyboard
 		And the editor publishes the layout

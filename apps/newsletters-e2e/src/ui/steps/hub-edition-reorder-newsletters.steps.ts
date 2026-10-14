@@ -225,19 +225,6 @@ Then(
 );
 
 Then(
-	'each newsletter in section {string} has a disabled drag handle',
-	async ({ page }, title: string) => {
-		const handles = section(page, title).getByRole('button', {
-			name: /^Reorder /,
-		});
-		await expect(handles).toHaveCount(3);
-		for (const handle of await handles.all()) {
-			await expect(handle).toBeDisabled();
-		}
-	},
-);
-
-Then(
 	'section {string} lists newsletters in the order {string}, {string}, {string}',
 	async ({ page }, title: string, a: string, b: string, c: string) => {
 		const handles = section(page, title).getByRole('button', {

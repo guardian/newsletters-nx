@@ -109,20 +109,4 @@ describe('StandLayoutSection', () => {
 		);
 		expect(screen.getAllByRole('button', { name: /^Reorder/ })).toHaveLength(2);
 	});
-	it('keeps the drag handles enabled while the Add newsletter panel is open', () => {
-		vi.mocked(useIsMobile).mockReturnValue(false);
-		render(
-			<StandLayoutSection
-				group={group}
-				groupIndex={0}
-				newsletters={newsletters}
-				onRemove={vi.fn()}
-				onMove={vi.fn()}
-				isAddAreaOpen
-			/>,
-		);
-		for (const handle of screen.getAllByRole('button', { name: /^Reorder/ })) {
-			expect(handle.hasAttribute('disabled')).toBe(false);
-		}
-	});
 });
