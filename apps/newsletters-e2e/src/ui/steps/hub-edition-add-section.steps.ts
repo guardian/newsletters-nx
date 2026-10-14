@@ -1,7 +1,26 @@
+import type { EditionId } from '@newsletters-nx/newsletters-data-client';
+import { editionIdSchema } from '@newsletters-nx/newsletters-data-client';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
-import { Then, When } from './fixtures';
-import { savedLayouts } from './hub-edition-remove-newsletter.steps';
+import { defineParameterType } from 'playwright-bdd';
+import { Given, Then, When } from './fixtures';
+
+defineParameterType({
+	name: 'edition',
+	regexp: /uk|us|au|int|eur|UK|US|AU|INT|EUR/,
+	transformer: (s: string) => editionIdSchema.parse(s.toUpperCase()),
+});
+
+Given(
+	'the stored layout for the {edition} edition consists of the following sections',
+	async ({ storedLayouts }, edition: EditionId, table: DataTable) => {
+		await storedLayouts.create(edition, {
+			groups: table
+				.hashes()
+				.map((row) => ({ title: row.title!, newsletters: [] })),
+		});
+	},
+);
 
 When(
 	'the editor adds a new section to the beginning of the section list',
@@ -45,20 +64,6 @@ Then(
 );
 
 Then(
-	'the layout for edition {string} is saved with the following sections',
-	async ({ page }, edition: string, table: DataTable) => {
-		await expect
-			.poll(() => savedLayouts.get(page)?.length ?? 0)
-			.toBeGreaterThan(0);
-		const [saved] = savedLayouts.get(page) ?? [];
-
-		const expectedSections = table.hashes().map((row) => row.title);
-
-		expect(saved?.groups.map((group) => group.title)).toEqual(expectedSections);
-	},
-);
-
-Then(
 	'there is only 1 section named {string} in the layout',
 	async ({ page }, section: string) => {
 		await expect(
@@ -68,14 +73,22 @@ Then(
 );
 
 Then(
-	'the stored layout for edition {string} consists of the following sections',
-	({ page }, edition: string, table: DataTable) => {
-		const saved = savedLayouts.get(page)?.[0];
+	'the stored layout for the {edition} edition should consist of the following sections',
+	async ({ storedLayouts }, edition: EditionId, table: DataTable) => {
+		const saved = await storedLayouts.get(edition);
 		expect(saved?.groups).toEqual(
 			table.hashes().map((row) => ({
 				title: row.title,
 				newsletters: [],
 			})),
 		);
+	},
+);
+
+Given(
+	'the editor is editing the layout for the {edition} edition',
+	async ({ page }, edition: EditionId) => {
+		// Implement the step to navigate to the specified edition layout page
+		await page.goto(`/layouts/edit/${edition}`);
 	},
 );
