@@ -1,51 +1,128 @@
-import type { Page } from '@playwright/test';
+import type { EditionId } from '@newsletters-nx/newsletters-data-client';
+import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { createFixtureNewsletter } from '../../../helpers/test-fixtures';
 import { Given, Then, When } from './fixtures';
 
-interface SavedLayout {
-	groups: Array<{ title: string; newsletters: string[] }>;
-}
-
-// Layout bodies POSTed by the page, per page (i.e. per scenario).
-const savedLayouts = new WeakMap<Page, SavedLayout[]>();
-
-const identityNameOf = (name: string) => name.toLowerCase();
-
 const parseList = (list: string) => list.split(',').map((n) => n.trim());
+
+// Locators
 
 const dragHandle = (page: Page, name: string) =>
 	page.getByRole('button', { name: `Reorder ${name}`, exact: true });
 
+const dragHandlesIn = (scope: Locator) =>
+	scope.getByRole('button', { name: /^Reorder / });
+
 const section = (page: Page, title: string) =>
 	page.getByRole('region', { name: title, exact: true });
 
-// react-aria keyboard drag: Enter picks up, arrows move between drop targets, Enter drops.
-// The grid can steal focus back from the handle, so retry until the drag has started.
+const rowOf = (page: Page, name: string) =>
+	page.getByRole('row').filter({ hasText: name });
+
+const openLayoutEditor = async (page: Page, edition: string) => {
+	await page.goto(`/layouts/edit/${edition}`);
+	await expect(
+		page.getByRole('button', { name: 'Save and publish layout', exact: true }),
+	).toBeVisible();
+};
+
+// Keyboard drag and drop (react-aria): Enter picks up, ArrowDown moves focus
+// through a focusable "Insert ..." button for each gap, Enter drops.
+
+const dropTargets = (page: Page) =>
+	page.getByRole('button', { name: /^Insert / });
+
+// The gap just above or below `target`, e.g. "Insert between Alpha and Beta".
+const dropTarget = (page: Page, target: string, position: string) =>
+	page.getByRole('button', {
+		name:
+			position === 'above'
+				? new RegExp(`^Insert (before ${target}|between .+ and ${target})$`)
+				: new RegExp(`^Insert (after ${target}|between ${target} and .+)$`),
+	});
+
+// The grid can steal focus back from the handle, so retry until the drag has
+// started, without pressing Enter again once it has.
 const pickUp = async (page: Page, name: string) => {
-	const dropTargets = page.getByRole('button', { name: /^Insert / });
 	await expect(async () => {
-		// Don't press Enter again if a previous attempt already started the drag.
-		if ((await dropTargets.count()) > 0) {
+		if ((await dropTargets(page).count()) > 0) {
 			return;
 		}
 		await dragHandle(page, name).focus();
 		await expect(dragHandle(page, name)).toBeFocused({ timeout: 250 });
 		await page.keyboard.press('Enter');
-		await expect(dropTargets.first()).toBeAttached({ timeout: 500 });
+		await expect(dropTargets(page).first()).toBeAttached({ timeout: 500 });
 	}).toPass({ timeout: 5000 });
 };
 
+const moveWithKeyboard = async (
+	page: Page,
+	name: string,
+	position: string,
+	target: string,
+) => {
+	await pickUp(page, name);
+	const gap = dropTarget(page, target, position);
+	// ArrowDown cycles through the gaps, wrapping round at the end.
+	await expect(async () => {
+		if (!(await gap.evaluate((el) => el === document.activeElement))) {
+			await page.keyboard.press('ArrowDown');
+		}
+		await expect(gap).toBeFocused({ timeout: 250 });
+	}).toPass({ timeout: 5000 });
+	await page.keyboard.press('Enter');
+};
+
+// Mouse drag and drop
+
+const boundingBoxOf = async (locator: Locator) => {
+	const box = await locator.boundingBox();
+	if (!box) {
+		throw new Error(`No bounding box for ${locator.toString()}`);
+	}
+	return box;
+};
+
+// Presses on empty space in the row (between the details and the Remove
+// button) and drags it to `toY`, or to (`toX`, `toY`) if given.
+const dragRow = async (page: Page, name: string, toY: number, toX?: number) => {
+	const row = await boundingBoxOf(rowOf(page, name));
+	const x = row.x + row.width * 0.6;
+	const y = row.y + row.height / 2;
+	await page.mouse.move(x, y);
+	await page.mouse.down();
+	// A small initial move is needed for the drag to start.
+	await page.mouse.move(x, y + 10, { steps: 5 });
+	await page.mouse.move(toX ?? x, toY, { steps: 10 });
+	await page.mouse.up();
+};
+
+const moveWithMouse = async (
+	page: Page,
+	name: string,
+	position: string,
+	target: string,
+) => {
+	const row = await boundingBoxOf(rowOf(page, target));
+	// Aim just inside the target row's top or bottom edge.
+	await dragRow(
+		page,
+		name,
+		position === 'above' ? row.y + 2 : row.y + row.height - 2,
+	);
+};
+
+// Steps
+
+// Stubs the API so that only the editor UI is under test.
 Given(
 	'the editor is editing the {string} layout with section {string} listing {string}',
 	async ({ page }, edition: string, title: string, list: string) => {
 		const names = parseList(list);
-		const saved: SavedLayout[] = [];
-		savedLayouts.set(page, saved);
-		const layout: SavedLayout = {
-			groups: [{ title, newsletters: names.map(identityNameOf) }],
-		};
-		await page.route('**/api/newsletters', async (route) => {
-			await route.fulfill({
+		const identityNameOf = (name: string) => name.toLowerCase();
+		await page.route('**/api/newsletters', (route) =>
+			route.fulfill({
 				json: {
 					ok: true,
 					data: names.map((name) => ({
@@ -54,24 +131,59 @@ Given(
 						status: 'live',
 					})),
 				},
-			});
-		});
-		await page.route(
-			new RegExp(`/api/layouts/${edition}$`, 'i'),
-			async (route) => {
-				if (route.request().method() === 'POST') {
-					saved.push(route.request().postDataJSON() as SavedLayout);
-				}
-				await route.fulfill({ json: { ok: true, data: layout } });
-			},
-		);
-		await page.goto(`/layouts/edit/${edition}`);
-		await expect(
-			page.getByRole('button', {
-				name: 'Save and publish layout',
-				exact: true,
 			}),
-		).toBeVisible();
+		);
+		await page.route(new RegExp(`/api/layouts/${edition}$`, 'i'), (route) =>
+			route.fulfill({
+				json: {
+					ok: true,
+					data: { groups: [{ title, newsletters: names.map(identityNameOf) }] },
+				},
+			}),
+		);
+		await openLayoutEditor(page, edition);
+	},
+);
+
+// Writes to the real (in-memory) API storage; the fixtures undo it afterwards.
+Given(
+	'the {string} layout has section {string} listing stored newsletters {string}',
+	async (
+		{ request, namedNewsletters, storedLayouts },
+		edition: string,
+		title: string,
+		list: string,
+	) => {
+		const identityNames: string[] = [];
+		for (const name of parseList(list)) {
+			const newsletter = await createFixtureNewsletter(request, { name });
+			namedNewsletters.refsByName[name] = { kind: 'launched', ...newsletter };
+			identityNames.push(newsletter.identityName);
+		}
+		await storedLayouts.create(edition.toUpperCase() as EditionId, {
+			groups: [{ title, newsletters: identityNames }],
+		});
+	},
+);
+
+When(
+	'the editor opens the {string} layout for editing',
+	async ({ page }, edition: string) => {
+		await openLayoutEditor(page, edition);
+	},
+);
+
+When(
+	/^the editor moves "(.+)" (above|below) "(.+)" using the (keyboard|mouse)$/,
+	async (
+		{ page },
+		name: string,
+		position: string,
+		target: string,
+		input: string,
+	) => {
+		const move = input === 'keyboard' ? moveWithKeyboard : moveWithMouse;
+		await move(page, name, position, target);
 	},
 );
 
@@ -83,177 +195,12 @@ When(
 	},
 );
 
-const rowOf = (page: Page, name: string) =>
-	page.getByRole('row').filter({ hasText: name });
-
-// Presses on empty space in the row (between the details and the Remove button).
-const dragWithMouse = async (
-	page: Page,
-	name: string,
-	target: string,
-	position: 'before' | 'after',
-) => {
-	const source = await rowOf(page, name).boundingBox();
-	const destination = await rowOf(page, target).boundingBox();
-	expect(source).not.toBeNull();
-	expect(destination).not.toBeNull();
-	if (!source || !destination) {
-		return;
-	}
-	// The gap is the boundary between two rows; aim a pixel inside the target row.
-	const gapY =
-		position === 'before'
-			? destination.y + 2
-			: destination.y + destination.height - 2;
-	const x = source.x + source.width * 0.6;
-	await page.mouse.move(x, source.y + source.height / 2);
-	await page.mouse.down();
-	await page.mouse.move(x, source.y + source.height / 2 + 10, { steps: 5 });
-	await page.mouse.move(x, gapY, { steps: 10 });
-	await page.mouse.up();
-};
-
 When(
 	'the editor drops {string} outside the section using the mouse',
 	async ({ page }, name: string) => {
-		const source = await rowOf(page, name).boundingBox();
-		expect(source).not.toBeNull();
-		if (!source) {
-			return;
-		}
-		const x = source.x + source.width * 0.6;
-		await page.mouse.move(x, source.y + source.height / 2);
-		await page.mouse.down();
-		await page.mouse.move(x, source.y + source.height / 2 + 10, { steps: 5 });
-		await page.mouse.move(5, 5, { steps: 10 });
-		await page.mouse.up();
+		await dragRow(page, name, 5, 5);
 	},
 );
-
-const moveWithKeyboard = async (
-	page: Page,
-	name: string,
-	target: string,
-	position: 'before' | 'after',
-) => {
-	const names = (
-		await page
-			.getByRole('button', { name: /^Reorder / })
-			.evaluateAll((els) =>
-				els.map((el) => el.getAttribute('aria-label') ?? ''),
-			)
-	).map((label) => label.slice('Reorder '.length));
-	const to = names.indexOf(target);
-	expect(to).toBeGreaterThanOrEqual(0);
-	const before = position === 'before' ? names[to - 1] : names[to];
-	const after = position === 'before' ? names[to] : names[to + 1];
-	// react-aria renders a focusable button for each gap, labelled like this.
-	const label = !before
-		? `Insert before ${after}`
-		: !after
-			? `Insert after ${before}`
-			: `Insert between ${before} and ${after}`;
-	const dropTarget = page.getByRole('button', { name: label, exact: true });
-
-	await pickUp(page, name);
-	await expect(dropTarget).toBeAttached();
-	// ArrowDown moves focus through the drop targets, wrapping round at the end.
-	await expect(async () => {
-		const isFocused = await dropTarget.evaluate(
-			(el) => el === document.activeElement,
-		);
-		if (!isFocused) {
-			await page.keyboard.press('ArrowDown');
-		}
-		await expect(dropTarget).toBeFocused({ timeout: 250 });
-	}).toPass({ timeout: 5000 });
-	await page.keyboard.press('Enter');
-};
-
-const positions = { above: 'before', below: 'after' } as const;
-
-When(
-	'the editor moves {string} {word} {string} using the {word}',
-	async (
-		{ page },
-		name: string,
-		position: string,
-		target: string,
-		input: string,
-	) => {
-		const where = positions[position as keyof typeof positions];
-		expect(where, `unknown position "${position}"`).toBeDefined();
-		if (input === 'keyboard') {
-			await moveWithKeyboard(page, name, target, where);
-		} else if (input === 'mouse') {
-			await dragWithMouse(page, name, target, where);
-		} else {
-			throw new Error(`Unknown input method "${input}"`);
-		}
-	},
-);
-
-Given(
-	'the editor has moved {string} below {string}',
-	async ({ page }, name: string, target: string) => {
-		await moveWithKeyboard(page, name, target, 'after');
-	},
-);
-
-When('the editor discards their changes', async ({ page }) => {
-	await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-	await expect(page.getByText('Discard unsaved changes?')).toBeVisible();
-	await page
-		.getByRole('button', { name: 'Discard changes', exact: true })
-		.click();
-});
-
-Then(
-	'each newsletter in section {string} has an enabled drag handle',
-	async ({ page }, title: string) => {
-		const handles = section(page, title).getByRole('button', {
-			name: /^Reorder /,
-		});
-		await expect(handles).not.toHaveCount(0);
-		for (const handle of await handles.all()) {
-			await expect(handle).toBeEnabled();
-		}
-	},
-);
-
-Then(
-	'section {string} lists {string}',
-	async ({ page }, title: string, list: string) => {
-		const handles = section(page, title).getByRole('button', {
-			name: /^Reorder /,
-		});
-		await expect
-			.poll(async () =>
-				handles.evaluateAll((els) =>
-					els.map((el) => el.getAttribute('aria-label')),
-				),
-			)
-			.toEqual(parseList(list).map((n) => `Reorder ${n}`));
-	},
-);
-
-Then(
-	'the published layout lists section {string} as {string}',
-	async ({ page }, title: string, list: string) => {
-		await expect
-			.poll(() => savedLayouts.get(page)?.length ?? 0)
-			.toBeGreaterThan(0);
-		const [saved] = savedLayouts.get(page) ?? [];
-		expect(saved?.groups).toEqual([
-			{ title, newsletters: parseList(list).map(identityNameOf) },
-		]);
-	},
-);
-
-Then('no layout has been published', async ({ page }) => {
-	await page.waitForLoadState('networkidle');
-	expect(savedLayouts.get(page) ?? []).toHaveLength(0);
-});
 
 When(
 	'the editor tabs forward from the drag handle for {string}',
@@ -261,6 +208,31 @@ When(
 		await dragHandle(page, name).focus();
 		await expect(dragHandle(page, name)).toBeFocused();
 		await page.keyboard.press('Tab');
+	},
+);
+
+Then(
+	'section {string} lists {string}',
+	async ({ page }, title: string, list: string) => {
+		const handles = dragHandlesIn(section(page, title));
+		await expect
+			.poll(() =>
+				handles.evaluateAll((els) =>
+					els.map((el) => el.getAttribute('aria-label')),
+				),
+			)
+			.toEqual(parseList(list).map((name) => `Reorder ${name}`));
+	},
+);
+
+Then(
+	'each newsletter in section {string} has an enabled drag handle',
+	async ({ page }, title: string) => {
+		const handles = dragHandlesIn(section(page, title));
+		await expect(handles).not.toHaveCount(0);
+		for (const handle of await handles.all()) {
+			await expect(handle).toBeEnabled();
+		}
 	},
 );
 
