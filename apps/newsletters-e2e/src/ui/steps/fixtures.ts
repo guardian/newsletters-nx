@@ -1,8 +1,15 @@
+import type {
+	EditionId,
+	Layout,
+} from '@newsletters-nx/newsletters-data-client';
 import { test as base, createBdd } from 'playwright-bdd';
 import { deleteDraftNewsletter } from '../../../helpers/draft-newsletter';
 import {
+	backupFixtureLayouts,
+	createFixtureLayout,
 	deleteFixtureDraft,
 	deleteFixtureNewsletter,
+	restoreFixtureLayouts,
 } from '../../../helpers/test-fixtures';
 import CreateDraftNewsletterWizard from '../helpers/create-newsletter-wizard';
 import NewslettersHubLandingPage from '../helpers/newsletters-hub-landing-page';
@@ -33,9 +40,18 @@ interface NamedNewsletters {
 	refsByName: Record<string, NamedNewsletterRef>;
 }
 
+/**
+ * Writes layouts directly to (in-memory) storage. Every edition's layout is
+ * snapshotted before the scenario and restored afterwards.
+ */
+interface StoredLayouts {
+	create: (edition: EditionId, layout: Layout) => Promise<void>;
+}
+
 type Fixtures = {
 	existingDraftNewsletter: ExistingDraftNewsletter;
 	namedNewsletters: NamedNewsletters;
+	storedLayouts: StoredLayouts;
 	createDraftNewsletterWizard: CreateDraftNewsletterWizard;
 	newslettersHubLandingPage: NewslettersHubLandingPage;
 };
@@ -65,6 +81,15 @@ export const test = base.extend<Fixtures>({
 			),
 		);
 	},
+	storedLayouts: async ({ request }, use) => {
+		const backup = await backupFixtureLayouts(request);
+		await use({
+			create: (edition, layout) =>
+				createFixtureLayout(request, edition, layout),
+		});
+		await restoreFixtureLayouts(request, backup);
+	},
+
 	createDraftNewsletterWizard: async ({ page, request }, use) => {
 		const draft = new CreateDraftNewsletterWizard(page, request);
 		await use(draft);
