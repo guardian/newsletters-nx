@@ -168,7 +168,7 @@ export const StandEditLayoutView = ({
 				</div>
 			)}
 
-			<ol>
+			<>
 				{showAddSectionButtons && (
 					<HubEditionSectionDivider
 						onAddSection={() => {
@@ -181,6 +181,7 @@ export const StandEditLayoutView = ({
 								},
 							});
 						}}
+						addSectionAriaLabel="Add section to the beginning"
 					/>
 				)}
 				{layout.groups.map((group, groupIndex) => (
@@ -218,20 +219,39 @@ export const StandEditLayoutView = ({
 								})
 							}
 						/>
-						{showAddSectionButtons && (
+						{showAddSectionButtons && groupIndex < layout.groups.length - 1 && (
 							<HubEditionSectionDivider
 								onAddSection={() => {
 									ariaNotify('Section added');
 									dispatch({
 										type: 'add-section',
-										insert: { place: 'after', groupIndex },
+										insert: {
+											place: 'after',
+											groupIndex,
+										},
 									});
 								}}
+								addSectionAriaLabel={`Add section between ${layout.groups.at(groupIndex)?.title} and ${layout.groups.at(groupIndex + 1)?.title}`}
 							/>
 						)}
 					</>
 				))}
-			</ol>
+				{showAddSectionButtons && (
+					<HubEditionSectionDivider
+						onAddSection={() => {
+							ariaNotify('Section added');
+							dispatch({
+								type: 'add-section',
+								insert: {
+									place: 'after',
+									groupIndex: layout.groups.length - 1,
+								},
+							});
+						}}
+						addSectionAriaLabel="Add section to the end"
+					/>
+				)}
+			</>
 			<DiscardLayoutChangesDialog
 				isOpen={isConfirmingCancel}
 				onKeepEditing={() => setIsConfirmingCancel(false)}

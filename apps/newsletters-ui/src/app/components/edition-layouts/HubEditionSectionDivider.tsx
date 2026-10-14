@@ -18,10 +18,12 @@ const sectionDividerStyles = css`
 
 interface HubEditionSectionDividerProps {
 	onAddSection?: () => void;
+	addSectionAriaLabel?: string;
 }
 
 export const HubEditionSectionDivider = ({
 	onAddSection,
+	addSectionAriaLabel,
 }: HubEditionSectionDividerProps) => {
 	return (
 		<div css={sectionDividerStyles}>
@@ -31,6 +33,7 @@ export const HubEditionSectionDivider = ({
 				variant="tertiary"
 				size="sm"
 				onClick={onAddSection}
+				aria-label={addSectionAriaLabel}
 			>
 				Add section
 			</Button>

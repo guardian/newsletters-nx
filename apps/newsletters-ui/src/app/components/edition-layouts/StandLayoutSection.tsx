@@ -282,7 +282,10 @@ export const StandLayoutSection = ({
 	});
 
 	return (
-		<section css={sectionStyles} aria-label={sectionLabel}>
+		<section
+			css={sectionStyles}
+			aria-label={group.title.length > 0 ? group.title : 'Unnamed section'}
+		>
 			<div css={sectionHeaderStyles}>
 				<Typography element="h3" variant="bodyBoldMd">
 					{group.title}
