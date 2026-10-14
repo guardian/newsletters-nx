@@ -88,7 +88,7 @@ Feature: View and edit an edition hub layout
 		Then the status tooltip shows "<message>"
 
 		Examples:
-			| status    | message                                                                                  |
-			| pending   | Not yet visible on the newsletters hub. It will appear once it's set to Live.           |
-			| paused    | This newsletter is not yet live - it will not appear until its status is updated.        |
-			| cancelled | This newsletter has been cancelled and will not be displayed on the newsletters hub.      |
+			| status    | message                                                                              |
+			| pending   | Not yet visible on the newsletters hub. It will appear once it's set to Live.        |
+			| paused    | This newsletter is not yet live - it will not appear until its status is updated.    |
+			| cancelled | This newsletter has been cancelled and will not be displayed on the newsletters hub. |
