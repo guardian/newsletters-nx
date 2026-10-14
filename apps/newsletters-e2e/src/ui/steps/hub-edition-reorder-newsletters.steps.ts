@@ -11,6 +11,8 @@ const savedLayouts = new WeakMap<Page, SavedLayout[]>();
 
 const identityNameOf = (name: string) => name.toLowerCase();
 
+const parseList = (list: string) => list.split(',').map((n) => n.trim());
+
 const dragHandle = (page: Page, name: string) =>
 	page.getByRole('button', { name: `Reorder ${name}`, exact: true });
 
@@ -34,31 +36,19 @@ const pickUp = async (page: Page, name: string) => {
 };
 
 Given(
-	'the editor is editing the layout for edition {string} with newsletters {string}, {string} and {string} in section {string} and an unassigned newsletter {string}',
-	async (
-		{ page },
-		edition: string,
-		first: string,
-		second: string,
-		third: string,
-		title: string,
-		unassigned: string,
-	) => {
+	'the editor is editing the {string} layout with section {string} listing {string}',
+	async ({ page }, edition: string, title: string, list: string) => {
+		const names = parseList(list);
 		const saved: SavedLayout[] = [];
 		savedLayouts.set(page, saved);
 		const layout: SavedLayout = {
-			groups: [
-				{
-					title,
-					newsletters: [first, second, third].map(identityNameOf),
-				},
-			],
+			groups: [{ title, newsletters: names.map(identityNameOf) }],
 		};
 		await page.route('**/api/newsletters', async (route) => {
 			await route.fulfill({
 				json: {
 					ok: true,
-					data: [first, second, third, unassigned].map((name) => ({
+					data: names.map((name) => ({
 						identityName: identityNameOf(name),
 						name,
 						status: 'live',
@@ -86,27 +76,10 @@ Given(
 );
 
 When(
-	'the editor starts dragging {string} using the keyboard',
+	'the editor cancels a keyboard move of {string}',
 	async ({ page }, name: string) => {
 		await pickUp(page, name);
-	},
-);
-
-When('the editor presses Escape', async ({ page }) => {
-	await page.keyboard.press('Escape');
-});
-
-When(
-	'the editor drags {string} below {string} using the keyboard',
-	async ({ page }, name: string, target: string) => {
-		await moveWithKeyboard(page, name, target, 'after');
-	},
-);
-
-When(
-	'the editor drags {string} above {string} using the keyboard',
-	async ({ page }, name: string, target: string) => {
-		await moveWithKeyboard(page, name, target, 'before');
+		await page.keyboard.press('Escape');
 	},
 );
 
@@ -141,21 +114,7 @@ const dragWithMouse = async (
 };
 
 When(
-	'the editor drags {string} below {string} using the mouse',
-	async ({ page }, name: string, target: string) => {
-		await dragWithMouse(page, name, target, 'after');
-	},
-);
-
-When(
-	'the editor drags {string} above {string} using the mouse',
-	async ({ page }, name: string, target: string) => {
-		await dragWithMouse(page, name, target, 'before');
-	},
-);
-
-When(
-	'the editor drags {string} using the mouse and drops it outside the section',
+	'the editor drops {string} outside the section using the mouse',
 	async ({ page }, name: string) => {
 		const source = await rowOf(page, name).boundingBox();
 		expect(source).not.toBeNull();
@@ -211,13 +170,51 @@ const moveWithKeyboard = async (
 	await page.keyboard.press('Enter');
 };
 
+const positions = { above: 'before', below: 'after' } as const;
+
+When(
+	'the editor moves {string} {word} {string} using the {word}',
+	async (
+		{ page },
+		name: string,
+		position: string,
+		target: string,
+		input: string,
+	) => {
+		const where = positions[position as keyof typeof positions];
+		expect(where, `unknown position "${position}"`).toBeDefined();
+		if (input === 'keyboard') {
+			await moveWithKeyboard(page, name, target, where);
+		} else if (input === 'mouse') {
+			await dragWithMouse(page, name, target, where);
+		} else {
+			throw new Error(`Unknown input method "${input}"`);
+		}
+	},
+);
+
+Given(
+	'the editor has moved {string} below {string}',
+	async ({ page }, name: string, target: string) => {
+		await moveWithKeyboard(page, name, target, 'after');
+	},
+);
+
+When('the editor discards their changes', async ({ page }) => {
+	await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+	await expect(page.getByText('Discard unsaved changes?')).toBeVisible();
+	await page
+		.getByRole('button', { name: 'Discard changes', exact: true })
+		.click();
+});
+
 Then(
 	'each newsletter in section {string} has an enabled drag handle',
 	async ({ page }, title: string) => {
 		const handles = section(page, title).getByRole('button', {
 			name: /^Reorder /,
 		});
-		await expect(handles).toHaveCount(3);
+		await expect(handles).not.toHaveCount(0);
 		for (const handle of await handles.all()) {
 			await expect(handle).toBeEnabled();
 		}
@@ -225,8 +222,8 @@ Then(
 );
 
 Then(
-	'section {string} lists newsletters in the order {string}, {string}, {string}',
-	async ({ page }, title: string, a: string, b: string, c: string) => {
+	'section {string} lists {string}',
+	async ({ page }, title: string, list: string) => {
 		const handles = section(page, title).getByRole('button', {
 			name: /^Reorder /,
 		});
@@ -236,44 +233,36 @@ Then(
 					els.map((el) => el.getAttribute('aria-label')),
 				),
 			)
-			.toEqual([a, b, c].map((n) => `Reorder ${n}`));
+			.toEqual(parseList(list).map((n) => `Reorder ${n}`));
 	},
 );
 
 Then(
-	'the layout for edition {string} is saved with section {string} ordered {string}, {string}, {string}',
-	async (
-		{ page },
-		_edition: string,
-		title: string,
-		a: string,
-		b: string,
-		c: string,
-	) => {
+	'the published layout lists section {string} as {string}',
+	async ({ page }, title: string, list: string) => {
 		await expect
 			.poll(() => savedLayouts.get(page)?.length ?? 0)
 			.toBeGreaterThan(0);
 		const [saved] = savedLayouts.get(page) ?? [];
-		expect(saved?.groups).toEqual([{ title, newsletters: [a, b, c] }]);
+		expect(saved?.groups).toEqual([
+			{ title, newsletters: parseList(list).map(identityNameOf) },
+		]);
 	},
 );
 
-Then('no reordered layout has been published', async ({ page }) => {
+Then('no layout has been published', async ({ page }) => {
 	await page.waitForLoadState('networkidle');
 	expect(savedLayouts.get(page) ?? []).toHaveLength(0);
 });
 
 When(
-	'the editor focuses the drag handle for {string}',
+	'the editor tabs forward from the drag handle for {string}',
 	async ({ page }, name: string) => {
 		await dragHandle(page, name).focus();
 		await expect(dragHandle(page, name)).toBeFocused();
+		await page.keyboard.press('Tab');
 	},
 );
-
-When('the editor presses Tab', async ({ page }) => {
-	await page.keyboard.press('Tab');
-});
 
 Then(
 	'the Remove button for {string} has focus',
