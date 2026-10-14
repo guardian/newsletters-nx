@@ -138,7 +138,7 @@ describe('StandEditLayoutView', () => {
 			renderEditView({ groups: [{ title: 'News', newsletters: [] }] });
 
 			expect(
-				await screen.findAllByRole('button', { name: 'Add section' }),
+				await screen.findAllByRole('button', { name: /Add section/ }),
 			).toHaveLength(2);
 		});
 		it("does not render the 'Add section' buttons when in mobile view", () => {
