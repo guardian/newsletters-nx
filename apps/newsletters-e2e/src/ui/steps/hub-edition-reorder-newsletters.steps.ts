@@ -1,10 +1,20 @@
 import type { EditionId } from '@newsletters-nx/newsletters-data-client';
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import type { DataTable } from 'playwright-bdd';
 import { createFixtureNewsletter } from '../../../helpers/test-fixtures';
 import { Given, Then, When } from './fixtures';
 
 const parseList = (list: string) => list.split(',').map((n) => n.trim());
+
+// Reads a table with a column per section, listing its newsletters from top to bottom.
+const sectionsIn = (table: DataTable) => {
+	const [titles = [], ...rows] = table.raw();
+	return titles.map((title, column) => ({
+		title,
+		names: rows.map((row) => row[column] ?? '').filter(Boolean),
+	}));
+};
 
 // Locators
 
@@ -64,10 +74,18 @@ const moveWithKeyboard = async (
 ) => {
 	await pickUp(page, name);
 	const gap = dropTarget(page, target, position);
-	// ArrowDown cycles through the gaps, wrapping round at the end.
+	// ArrowDown cycles through the gaps in a section, wrapping round at the end;
+	// Tab moves on to the next section.
 	await expect(async () => {
-		if (!(await gap.evaluate((el) => el === document.activeElement))) {
-			await page.keyboard.press('ArrowDown');
+		const focus = await gap.evaluate((el) => {
+			const grid = (e: Element | null) => e?.closest('[role="grid"]');
+			if (el === document.activeElement) {
+				return 'gap';
+			}
+			return grid(el) === grid(document.activeElement) ? 'section' : 'other';
+		});
+		if (focus !== 'gap') {
+			await page.keyboard.press(focus === 'section' ? 'ArrowDown' : 'Tab');
 		}
 		await expect(gap).toBeFocused({ timeout: 250 });
 	}).toPass({ timeout: 5000 });
@@ -116,32 +134,55 @@ const moveWithMouse = async (
 // Steps
 
 // Stubs the API so that only the editor UI is under test.
-Given(
-	'the editor is editing the {string} layout with section {string} listing {string}',
-	async ({ page }, edition: string, title: string, list: string) => {
-		const names = parseList(list);
-		const identityNameOf = (name: string) => name.toLowerCase();
-		await page.route('**/api/newsletters', (route) =>
-			route.fulfill({
-				json: {
-					ok: true,
-					data: names.map((name) => ({
+const editStubbedLayout = async (
+	page: Page,
+	edition: string,
+	sections: Array<{ title: string; names: string[] }>,
+) => {
+	const identityNameOf = (name: string) => name.toLowerCase();
+	await page.route('**/api/newsletters', (route) =>
+		route.fulfill({
+			json: {
+				ok: true,
+				data: sections.flatMap(({ names }) =>
+					names.map((name) => ({
 						identityName: identityNameOf(name),
 						name,
 						status: 'live',
 					})),
+				),
+			},
+		}),
+	);
+	await page.route(new RegExp(`/api/layouts/${edition}$`, 'i'), (route) =>
+		route.fulfill({
+			json: {
+				ok: true,
+				data: {
+					groups: sections.map(({ title, names }) => ({
+						title,
+						newsletters: names.map(identityNameOf),
+					})),
 				},
-			}),
-		);
-		await page.route(new RegExp(`/api/layouts/${edition}$`, 'i'), (route) =>
-			route.fulfill({
-				json: {
-					ok: true,
-					data: { groups: [{ title, newsletters: names.map(identityNameOf) }] },
-				},
-			}),
-		);
-		await openLayoutEditor(page, edition);
+			},
+		}),
+	);
+	await openLayoutEditor(page, edition);
+};
+
+Given(
+	'the editor is editing the {string} layout with section {string} listing {string}',
+	async ({ page }, edition: string, title: string, list: string) => {
+		await editStubbedLayout(page, edition, [{ title, names: parseList(list) }]);
+	},
+);
+
+Given(
+	'the editor is editing the {string} layout with sections:',
+	async ({ page }, edition: string, table: DataTable) => {
+		// Tall enough for every section to be on screen, as mouse drags can't scroll.
+		await page.setViewportSize({ width: 1280, height: 1200 });
+		await editStubbedLayout(page, edition, sectionsIn(table));
 	},
 );
 
@@ -188,6 +229,16 @@ When(
 );
 
 When(
+	'the editor drops {string} into the empty section {string} using the mouse',
+	async ({ page }, name: string, title: string) => {
+		const empty = await boundingBoxOf(
+			section(page, title).getByText('Drop a newsletter here'),
+		);
+		await dragRow(page, name, empty.y + empty.height / 2);
+	},
+);
+
+When(
 	'the editor cancels a keyboard move of {string}',
 	async ({ page }, name: string) => {
 		await pickUp(page, name);
@@ -211,9 +262,8 @@ When(
 	},
 );
 
-Then(
-	'section {string} lists {string}',
-	async ({ page }, title: string, list: string) => {
+Then('the sections list:', async ({ page }, table: DataTable) => {
+	for (const { title, names } of sectionsIn(table)) {
 		const handles = dragHandlesIn(section(page, title));
 		await expect
 			.poll(() =>
@@ -221,20 +271,9 @@ Then(
 					els.map((el) => el.getAttribute('aria-label')),
 				),
 			)
-			.toEqual(parseList(list).map((name) => `Reorder ${name}`));
-	},
-);
-
-Then(
-	'each newsletter in section {string} has an enabled drag handle',
-	async ({ page }, title: string) => {
-		const handles = dragHandlesIn(section(page, title));
-		await expect(handles).not.toHaveCount(0);
-		for (const handle of await handles.all()) {
-			await expect(handle).toBeEnabled();
-		}
-	},
-);
+			.toEqual(names.map((name) => `Reorder ${name}`));
+	}
+});
 
 Then(
 	'the Remove button for {string} has focus',
