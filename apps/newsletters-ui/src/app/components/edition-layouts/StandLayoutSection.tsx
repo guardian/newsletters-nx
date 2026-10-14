@@ -7,12 +7,12 @@ import {
 import { Button } from '@guardian/stand/Button';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
-import type { DroppableCollectionInsertDropEvent } from 'react-aria-components';
 import type {
 	LayoutGroup,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
+import type { DroppableCollectionInsertDropEvent } from 'react-aria-components';
 import {
 	Button as AriaButton,
 	DropIndicator,
@@ -306,16 +306,16 @@ export const StandLayoutSection = ({
 				[DRAG_TYPE]: String(key),
 				[SOURCE_GROUP_TYPE]: String(groupIndex),
 			})),
-		onInsert: async (e) => {
+		onInsert: (e) => {
 			const index = getInsertIndex(
 				group.newsletters,
 				String(e.target.key),
 				e.target.dropPosition,
 			);
-			await moveDroppedItems(e.items, index);
+			void moveDroppedItems(e.items, index);
 		},
-		onRootDrop: async (e) => {
-			await moveDroppedItems(e.items, group.newsletters.length);
+		onRootDrop: (e) => {
+			void moveDroppedItems(e.items, group.newsletters.length);
 		},
 		renderDragPreview: (items) => {
 			const id = items[0]?.[DRAG_TYPE] ?? '';
