@@ -246,10 +246,6 @@ export const StandLayoutSection = ({
 
 	const dropIndex = (key: unknown, dropPosition: string) => {
 		const targetIndex = group.newsletters.indexOf(String(key));
-		if (targetIndex < 0) {
-			// Target not in this section (e.g. empty section): append to the end.
-			return group.newsletters.length;
-		}
 		return dropPosition === 'before' ? targetIndex : targetIndex + 1;
 	};
 	const moveDropped = async (items: DropItem[], toIndex: number) => {
