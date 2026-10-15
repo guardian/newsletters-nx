@@ -274,6 +274,7 @@ export const StandEditLayoutView = ({
 				isOpen={isConfirmingDeleteSection}
 				onCancel={() => dispatch({ type: 'cancel-delete-section' })}
 				onConfirm={() => {
+					ariaNotify('Section deleted');
 					dispatch({ type: 'confirm-delete-section' });
 				}}
 			/>
