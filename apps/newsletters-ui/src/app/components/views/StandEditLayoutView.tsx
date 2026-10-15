@@ -51,7 +51,6 @@ const ariaNotify = (text: string) => {
 	/** @ts-expect-error typescript DOM typings do not yet know about ariaNotify() */
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- document.ariaNotify is not yet included in DOM typings
 	document.ariaNotify?.(text);
-	/** eslint-enable */
 };
 
 export const StandEditLayoutView = ({
@@ -187,7 +186,6 @@ export const StandEditLayoutView = ({
 				{layout.groups.map((group, groupIndex) => (
 					<>
 						<StandLayoutSection
-							key={groupIndex}
 							group={group}
 							groupIndex={groupIndex}
 							newsletters={newsletters}
