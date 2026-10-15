@@ -10,7 +10,7 @@ interface Props {
 export const DeleteSectionDialog = ({ isOpen, onCancel, onConfirm }: Props) => (
 	<Modal isOpen={isOpen} onOpenChange={(open) => !open && onCancel()}>
 		<Dialog>
-			<Dialog.Dismiss ariaLabel="Cancel" onPress={onCancel} />
+			<Dialog.Dismiss ariaLabel="Close" onPress={onCancel} />
 			<Dialog.Header>
 				Are you sure you want to delete this section?
 			</Dialog.Header>
