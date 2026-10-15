@@ -12,6 +12,50 @@ const makeLayout = (): Layout => ({
 	],
 });
 describe('standLayoutReducer', () => {
+	it('moves a newsletter within its section only', () => {
+		const state = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+			type: 'move-newsletter',
+			newsletterId: 'a',
+			toGroupIndex: 0,
+			toIndex: 3,
+		});
+		expect(state.layout.groups[0]?.newsletters).toEqual(['b', 'c', 'a']);
+		expect(state.layout.groups[1]?.newsletters).toEqual(['d']);
+		expect(state.original.groups[0]?.newsletters).toEqual(['a', 'b', 'c']);
+	});
+	it('ignores moves while an update is in progress', () => {
+		const initial = {
+			...makeStandLayoutState(makeLayout()),
+			updateInProgress: true,
+		};
+		const state = standLayoutReducer(initial, {
+			type: 'move-newsletter',
+			newsletterId: 'a',
+			toGroupIndex: 0,
+			toIndex: 3,
+		});
+		expect(state).toBe(initial);
+	});
+	it('moves a newsletter into another section', () => {
+		const state = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+			type: 'move-newsletter',
+			newsletterId: 'b',
+			toGroupIndex: 1,
+			toIndex: 1,
+		});
+		expect(state.layout.groups[0]?.newsletters).toEqual(['a', 'c']);
+		expect(state.layout.groups[1]?.newsletters).toEqual(['d', 'b']);
+	});
+	it('leaves the state unchanged when a move would not change the order', () => {
+		const initial = makeStandLayoutState(makeLayout());
+		const state = standLayoutReducer(initial, {
+			type: 'move-newsletter',
+			newsletterId: 'a',
+			toGroupIndex: 0,
+			toIndex: 1,
+		});
+		expect(state).toBe(initial);
+	});
 	it('removes the newsletter from the given section only', () => {
 		const state = standLayoutReducer(makeStandLayoutState(makeLayout()), {
 			type: 'remove-newsletter',
