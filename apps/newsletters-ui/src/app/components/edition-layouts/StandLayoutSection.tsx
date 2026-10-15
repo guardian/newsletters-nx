@@ -240,7 +240,6 @@ export const StandLayoutSection = ({
 }: SectionProps) => {
 	const isMobile = useIsMobile();
 	const canAdd = !isMobile && !!onOpenAddArea;
-	const sectionLabel = group.title || 'Section';
 	// Return focus to the 'Add a newsletter' button when the panel is closed with its Close button.
 	const [focusAddButton, setFocusAddButton] = useState(false);
 	const dragDisabled = !!disabled || isMobile || !onMove;
