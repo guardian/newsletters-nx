@@ -2,9 +2,15 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { usePermissions } from '../../hooks/user-hooks';
 import { EditLayoutView } from './EditLayoutView';
+
+vi.mock('../../api-requests/fetch-api-data', () => ({
+	fetchApiData: vi.fn(),
+	fetchPostApiData: vi.fn(),
+}));
 
 vi.mock('../../featureSwitches', () => ({
 	isFeatureSwitchEnabled: () => true,
@@ -273,6 +279,39 @@ describe('StandEditLayoutView', () => {
 			expect(
 				screen.queryByRole('region', { name: 'Add newsletters' }),
 			).toBeNull();
+		});
+	});
+
+	describe('adding sections', () => {
+		const setup = async () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(useIsMobile).mockReturnValue(false);
+			renderEditView({ groups: [{ title: 'News', newsletters: [] }] });
+			await screen.findByRole('button', { name: 'Save and publish layout' });
+		};
+
+		it("disables the 'Add section' buttons when an update is in progress", async () => {
+			// A request that never settles keeps the update in progress.
+			vi.mocked(fetchPostApiData).mockReturnValue(new Promise(() => undefined));
+			await setup();
+			const addSectionButtons = screen.getAllByRole('button', {
+				name: /Add section/,
+			});
+			expect(addSectionButtons).toHaveLength(2);
+			addSectionButtons.forEach((button) => expect(button).toBeEnabled());
+
+			fireEvent.click(
+				screen.getByRole('button', { name: 'Save and publish layout' }),
+			);
+
+			await vi.waitFor(() =>
+				screen
+					.getAllByRole('button', { name: /Add section/ })
+					.forEach((button) => expect(button).toBeDisabled()),
+			);
 		});
 	});
 });

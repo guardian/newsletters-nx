@@ -183,6 +183,7 @@ export const StandEditLayoutView = ({
 					<HubEditionSectionDivider
 						onAddSection={() => handleAddSection('before', 0)}
 						addSectionAriaLabel="Add section to the beginning"
+						disabled={state.updateInProgress}
 					/>
 				)}
 				{layout.groups.map((group, groupIndex) => (
@@ -223,6 +224,7 @@ export const StandEditLayoutView = ({
 							<HubEditionSectionDivider
 								onAddSection={() => handleAddSection('after', groupIndex)}
 								addSectionAriaLabel={`Add section between ${layout.groups.at(groupIndex)?.title} and ${layout.groups.at(groupIndex + 1)?.title}`}
+								disabled={state.updateInProgress}
 							/>
 						)}
 					</>
@@ -233,6 +235,7 @@ export const StandEditLayoutView = ({
 							handleAddSection('after', layout.groups.length - 1)
 						}
 						addSectionAriaLabel="Add section to the end"
+						disabled={state.updateInProgress}
 					/>
 				)}
 			</>
