@@ -243,6 +243,7 @@ export const StandEditLayoutView = ({
 									groupIndex,
 								});
 							}}
+							onRenameSection={() => {}}
 						/>
 						{showAddSectionButtons && groupIndex < layout.groups.length - 1 && (
 							<HubEditionSectionDivider
