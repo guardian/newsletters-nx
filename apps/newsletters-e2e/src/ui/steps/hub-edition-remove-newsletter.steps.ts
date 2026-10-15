@@ -7,7 +7,7 @@ interface SavedLayout {
 	groups: Array<{ title: string; newsletters: string[] }>;
 }
 // Layout bodies POSTed by the page, per page (i.e. per scenario).
-export const savedLayouts = new WeakMap<Page, SavedLayout[]>();
+const savedLayouts = new WeakMap<Page, SavedLayout[]>();
 const identityNameOf = (name: string) => name.toLowerCase();
 Given(
 	'the editor is editing the layout for edition {string} with the following sections',
