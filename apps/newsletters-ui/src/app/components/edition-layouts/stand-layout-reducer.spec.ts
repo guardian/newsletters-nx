@@ -137,13 +137,13 @@ describe('standLayoutReducer', () => {
 	});
 
 	describe('add-section', () => {
-		it('inserts a new group before the first group', () => {
-			const initialGroup = {
+		it('inserts a new section before the first section', () => {
+			const initialSection = {
 				title: 'News',
 				newsletters: ['first-edition', 'breaking-news'],
 			};
 			const layout: Layout = {
-				groups: [initialGroup],
+				groups: [initialSection],
 			};
 
 			const state = makeStandLayoutState(layout);
@@ -154,12 +154,12 @@ describe('standLayoutReducer', () => {
 
 			expect(adding).toMatchObject({
 				layout: {
-					groups: [{ title: '', newsletters: [] }, initialGroup],
+					groups: [{ title: '', newsletters: [] }, initialSection],
 				},
 			});
 		});
 
-		it('inserts a new group when there are no groups', () => {
+		it('inserts a new section when there are no sections', () => {
 			const state = makeStandLayoutState({ groups: [] });
 			const adding = standLayoutReducer(state, {
 				type: 'add-section',
@@ -169,58 +169,58 @@ describe('standLayoutReducer', () => {
 			expect(adding.layout.groups).toEqual([{ title: '', newsletters: [] }]);
 		});
 
-		it('inserts a new group after the last group', () => {
-			const initialGroups = makeLayout().groups;
-			const state = makeStandLayoutState({ groups: initialGroups });
+		it('inserts a new section after the last section', () => {
+			const initialSections = makeLayout().groups;
+			const state = makeStandLayoutState({ groups: initialSections });
 			const adding = standLayoutReducer(state, {
 				type: 'add-section',
-				insert: { place: 'after', groupIndex: initialGroups.length - 1 },
+				insert: { place: 'after', groupIndex: initialSections.length - 1 },
 			});
 
 			expect(adding.layout.groups).toEqual([
-				...initialGroups,
+				...initialSections,
 				{ title: '', newsletters: [] },
 			]);
 		});
 
-		describe('inserting new grups', () => {
-			const newsGroup = { title: 'News', newsletters: ['a'] };
-			const sportGroup = { title: 'Sport', newsletters: ['b'] };
-			const cultureGroup = { title: 'Culture', newsletters: ['c'] };
-			const blankGroup = { title: '', newsletters: [] };
+		describe('inserting new sections between sections', () => {
+			const newsSection = { title: 'News', newsletters: ['a'] };
+			const sportSection = { title: 'Sport', newsletters: ['b'] };
+			const cultureSection = { title: 'Culture', newsletters: ['c'] };
+			const blankSection = { title: '', newsletters: [] };
 
 			it.each([
 				{
 					place: 'after',
 					groupIndex: 0,
-					expectedGroups: [newsGroup, blankGroup, sportGroup, cultureGroup],
+					expectedSections: [newsSection, blankSection, sportSection, cultureSection],
 				},
 				{
 					place: 'before',
 					groupIndex: 1,
-					expectedGroups: [newsGroup, blankGroup, sportGroup, cultureGroup],
+					expectedSections: [newsSection, blankSection, sportSection, cultureSection],
 				},
 				{
 					place: 'after',
 					groupIndex: 1,
-					expectedGroups: [newsGroup, sportGroup, blankGroup, cultureGroup],
+					expectedSections: [newsSection, sportSection, blankSection, cultureSection],
 				},
 				{
 					place: 'before',
 					groupIndex: 2,
-					expectedGroups: [newsGroup, sportGroup, blankGroup, cultureGroup],
+					expectedSections: [newsSection, sportSection, blankSection, cultureSection],
 				},
 			] as const)(
-				'inserts a new group between existing groups using $place groupIndex $groupIndex',
-				({ place, groupIndex, expectedGroups }) => {
-					const initialGroups = [newsGroup, sportGroup, cultureGroup];
-					const state = makeStandLayoutState({ groups: initialGroups });
+				'inserts a new section between existing sections using $place groupIndex $groupIndex',
+				({ place, groupIndex, expectedSections }) => {
+					const initialSections = [newsSection, sportSection, cultureSection];
+					const state = makeStandLayoutState({ groups: initialSections });
 					const adding = standLayoutReducer(state, {
 						type: 'add-section',
 						insert: { place, groupIndex },
 					});
 
-					expect(adding.layout.groups).toEqual(expectedGroups);
+					expect(adding.layout.groups).toEqual(expectedSections);
 				},
 			);
 		});
