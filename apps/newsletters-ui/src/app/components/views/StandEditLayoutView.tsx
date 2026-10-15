@@ -124,6 +124,17 @@ export const StandEditLayoutView = ({
 		dispatch({ type: 'handle-server-response', success: !!result });
 	};
 
+	const handleAddSection = (place: 'before' | 'after', groupIndex: number) => {
+		ariaNotify('Section added');
+		dispatch({
+			type: 'add-section',
+			insert: {
+				place,
+				groupIndex,
+			},
+		});
+	};
+
 	return (
 		<Container maxWidth="lg" css={contentStyles}>
 			<HubEditionHeader
@@ -170,16 +181,7 @@ export const StandEditLayoutView = ({
 			<>
 				{showAddSectionButtons && (
 					<HubEditionSectionDivider
-						onAddSection={() => {
-							ariaNotify('Section added');
-							dispatch({
-								type: 'add-section',
-								insert: {
-									place: 'before',
-									groupIndex: 0,
-								},
-							});
-						}}
+						onAddSection={() => handleAddSection('before', 0)}
 						addSectionAriaLabel="Add section to the beginning"
 					/>
 				)}
@@ -219,16 +221,7 @@ export const StandEditLayoutView = ({
 						/>
 						{showAddSectionButtons && groupIndex < layout.groups.length - 1 && (
 							<HubEditionSectionDivider
-								onAddSection={() => {
-									ariaNotify('Section added');
-									dispatch({
-										type: 'add-section',
-										insert: {
-											place: 'after',
-											groupIndex,
-										},
-									});
-								}}
+								onAddSection={() => handleAddSection('after', groupIndex)}
 								addSectionAriaLabel={`Add section between ${layout.groups.at(groupIndex)?.title} and ${layout.groups.at(groupIndex + 1)?.title}`}
 							/>
 						)}
@@ -236,16 +229,9 @@ export const StandEditLayoutView = ({
 				))}
 				{showAddSectionButtons && (
 					<HubEditionSectionDivider
-						onAddSection={() => {
-							ariaNotify('Section added');
-							dispatch({
-								type: 'add-section',
-								insert: {
-									place: 'after',
-									groupIndex: layout.groups.length - 1,
-								},
-							});
-						}}
+						onAddSection={() =>
+							handleAddSection('after', layout.groups.length - 1)
+						}
 						addSectionAriaLabel="Add section to the end"
 					/>
 				)}
