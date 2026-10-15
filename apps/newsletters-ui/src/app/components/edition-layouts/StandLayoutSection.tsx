@@ -24,6 +24,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 import { AddNewsletterPanel } from './AddNewsletterPanel';
+import { getSectionAriaLabel } from './utils';
 
 const sectionStyles = css`
 	display: flex;
@@ -282,10 +283,7 @@ export const StandLayoutSection = ({
 	});
 
 	return (
-		<section
-			css={sectionStyles}
-			aria-label={group.title.length > 0 ? group.title : 'Unnamed section'}
-		>
+		<section css={sectionStyles} aria-label={getSectionAriaLabel(group.title)}>
 			<div css={sectionHeaderStyles}>
 				<Typography element="h3" variant="bodyBoldMd">
 					{group.title}

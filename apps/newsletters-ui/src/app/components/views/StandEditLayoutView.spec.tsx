@@ -313,5 +313,31 @@ describe('StandEditLayoutView', () => {
 					.forEach((button) => expect(button).toBeDisabled()),
 			);
 		});
+
+		it("uses the text 'Unnamed section' to describe sections with no name in the 'between' 'Add section' buttons", async () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(useIsMobile).mockReturnValue(false);
+			renderEditView({
+				groups: [
+					{ title: '', newsletters: [] },
+					{ title: 'Sport', newsletters: [] },
+					{ title: '', newsletters: [] },
+				],
+			});
+
+			expect(
+				await screen.findByRole('button', {
+					name: 'Add section between Unnamed section and Sport',
+				}),
+			).toBeTruthy();
+			expect(
+				screen.getByRole('button', {
+					name: 'Add section between Sport and Unnamed section',
+				}),
+			).toBeTruthy();
+		});
 	});
 });

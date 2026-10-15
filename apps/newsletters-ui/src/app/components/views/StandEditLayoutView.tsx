@@ -25,6 +25,7 @@ import {
 	standLayoutReducer,
 } from '../edition-layouts/stand-layout-reducer';
 import { StandLayoutSection } from '../edition-layouts/StandLayoutSection';
+import { getSectionAriaLabel } from '../edition-layouts/utils';
 import { HubEditionHeader } from '../HubEditionHeader';
 
 const contentStyles = css`
@@ -223,7 +224,7 @@ export const StandEditLayoutView = ({
 						{showAddSectionButtons && groupIndex < layout.groups.length - 1 && (
 							<HubEditionSectionDivider
 								onAddSection={() => handleAddSection('after', groupIndex)}
-								addSectionAriaLabel={`Add section between ${layout.groups.at(groupIndex)?.title} and ${layout.groups.at(groupIndex + 1)?.title}`}
+								addSectionAriaLabel={`Add section between ${getSectionAriaLabel(layout.groups.at(groupIndex)?.title)} and ${getSectionAriaLabel(layout.groups.at(groupIndex + 1)?.title)}`}
 								disabled={state.updateInProgress}
 							/>
 						)}
