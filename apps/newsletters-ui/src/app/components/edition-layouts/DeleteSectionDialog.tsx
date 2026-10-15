@@ -21,7 +21,7 @@ export const DeleteSectionDialog = ({ isOpen, onCancel, onConfirm }: Props) => (
 				<Button variant="tertiary" slot="close" onPress={onCancel}>
 					Cancel
 				</Button>
-				<Button onPress={onConfirm}>Discard changes</Button>
+				<Button onPress={onConfirm}>Confirm deletion</Button>
 			</Dialog.Buttons>
 		</Dialog>
 	</Modal>
