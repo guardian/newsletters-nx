@@ -230,6 +230,7 @@ interface SectionProps {
 	onCloseAddArea?: () => void;
 	onAdd?: (groupIndex: number, identityName: string) => void;
 	onRenameSection: (name: string) => void;
+	onDeleteSection: () => void;
 }
 
 export const StandLayoutSection = ({
@@ -245,6 +246,7 @@ export const StandLayoutSection = ({
 	onCloseAddArea,
 	onAdd,
 	onRenameSection,
+	onDeleteSection,
 }: SectionProps) => {
 	const isMobile = useIsMobile();
 	const canAdd = !isMobile && !!onOpenAddArea;
@@ -303,7 +305,11 @@ export const StandLayoutSection = ({
 							value={group.title}
 						/>
 
-						<Button icon="delete" variant="tertiary">
+						<Button
+							icon="delete"
+							variant="tertiary"
+							onClick={() => onDeleteSection()}
+						>
 							Delete section
 						</Button>
 					</>

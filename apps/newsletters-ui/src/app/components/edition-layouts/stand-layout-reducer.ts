@@ -1,6 +1,7 @@
 import type { Layout } from '@newsletters-nx/newsletters-data-client';
 import {
 	addNewGroup,
+	deleteGroup,
 	deleteNewsletterFromGroup,
 	insertNewsletterIntoGroup,
 	moveNewsletter,
@@ -21,12 +22,18 @@ export type StandLayoutAction =
 	| {
 			type: 'add-section';
 			insert: { place: 'before' | 'after'; groupIndex: number };
+	  }
+	| { type: 'request-delete-section'; groupIndex: number }
+	| { type: 'cancel-delete-section' }
+	| {
+			type: 'confirm-delete-section';
 	  };
 export type StandLayoutState = {
 	layout: Layout;
 	original: Layout;
 	updateInProgress: boolean;
 	feedback?: FeedbackType;
+	confirmingDeletionOfSection?: number;
 };
 export const makeStandLayoutState = (original: Layout): StandLayoutState => ({
 	layout: original,
@@ -102,6 +109,43 @@ export function standLayoutReducer(
 				...state,
 				feedback: undefined,
 				layout: addNewGroup(state.layout, insertAt),
+			};
+		}
+
+		case 'request-delete-section': {
+			if (state.updateInProgress) {
+				return state;
+			}
+			return {
+				...state,
+				confirmingDeletionOfSection: action.groupIndex,
+			};
+		}
+
+		case 'cancel-delete-section': {
+			if (state.updateInProgress) {
+				return state;
+			}
+
+			return {
+				...state,
+				confirmingDeletionOfSection: undefined,
+			};
+		}
+
+		case 'confirm-delete-section': {
+			if (
+				state.updateInProgress ||
+				state.confirmingDeletionOfSection === undefined
+			) {
+				return state;
+			}
+
+			return {
+				...state,
+				confirmingDeletionOfSection: undefined,
+				feedback: undefined,
+				layout: deleteGroup(state.layout, state.confirmingDeletionOfSection),
 			};
 		}
 	}

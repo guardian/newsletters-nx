@@ -18,6 +18,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { isAddableStatus } from '../../lib/modify-layout';
+import { DeleteSectionDialog } from '../edition-layouts/DeleteSectionDialog';
 import { DiscardLayoutChangesDialog } from '../edition-layouts/DiscardLayoutChangesDialog';
 import { HubEditionSectionDivider } from '../edition-layouts/HubEditionSectionDivider';
 import {
@@ -93,6 +94,9 @@ export const StandEditLayoutView = ({
 	const readOnlyPath = `/layouts/${editionId.toLowerCase()}`;
 
 	const showAddSectionButtons = !isMobile;
+
+	const isConfirmingDeleteSection =
+		state.confirmingDeletionOfSection !== undefined;
 
 	// `permissions` is undefined while still loading, so only redirect once
 	// we know the user can't edit.
@@ -233,6 +237,12 @@ export const StandEditLayoutView = ({
 									newsletterIndex,
 								})
 							}
+							onDeleteSection={() => {
+								dispatch({
+									type: 'request-delete-section',
+									groupIndex,
+								});
+							}}
 						/>
 						{showAddSectionButtons && groupIndex < layout.groups.length - 1 && (
 							<HubEditionSectionDivider
@@ -257,6 +267,14 @@ export const StandEditLayoutView = ({
 				isOpen={isConfirmingCancel}
 				onKeepEditing={() => setIsConfirmingCancel(false)}
 				onDiscard={() => void navigate(readOnlyPath)}
+			/>
+
+			<DeleteSectionDialog
+				isOpen={isConfirmingDeleteSection}
+				onCancel={() => dispatch({ type: 'cancel-delete-section' })}
+				onConfirm={() => {
+					dispatch({ type: 'confirm-delete-section' });
+				}}
 			/>
 		</Container>
 	);
