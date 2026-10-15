@@ -96,7 +96,7 @@ export const test = base.extend<Fixtures>({
 				};
 				if (!response.ok() || !json.ok || json.data === undefined) {
 					throw new Error(
-						`Failed to back up fixture layouts (${response.status()}): ${json.message ?? JSON.stringify(json)}`,
+						`Failed to load layouts (${response.status()}): ${json.message ?? JSON.stringify(json)}`,
 					);
 				}
 				return json.data;
