@@ -13,7 +13,7 @@ import {
 	editionNames,
 	makeBlankLayout,
 } from '@newsletters-nx/newsletters-data-client';
-import { useReducer, useState } from 'react';
+import { Fragment, useReducer, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -188,7 +188,10 @@ export const StandEditLayoutView = ({
 					/>
 				)}
 				{layout.groups.map((group, groupIndex) => (
-					<>
+					<Fragment
+						// Index key added to avoid react warning.
+						key={groupIndex}
+					>
 						<StandLayoutSection
 							group={group}
 							groupIndex={groupIndex}
@@ -228,7 +231,7 @@ export const StandEditLayoutView = ({
 								disabled={state.updateInProgress}
 							/>
 						)}
-					</>
+					</Fragment>
 				))}
 				{showAddSectionButtons && (
 					<HubEditionSectionDivider
