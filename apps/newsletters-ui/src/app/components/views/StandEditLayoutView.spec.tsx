@@ -154,7 +154,7 @@ describe('StandEditLayoutView', () => {
 			});
 			vi.mocked(useIsMobile).mockReturnValue(true);
 			renderEditView({ groups: [{ title: 'News', newsletters: [] }] });
-			expect(screen.queryByRole('button', { name: 'Add section' })).toBeNull();
+			expect(screen.queryByRole('button', { name: /Add section/ })).toBeNull();
 		});
 	});
 
