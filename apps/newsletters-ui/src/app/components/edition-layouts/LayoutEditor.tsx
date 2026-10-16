@@ -1,4 +1,6 @@
-import { History, Redo, Undo } from '@mui/icons-material';
+import HistoryIcon from '@mui/icons-material/History';
+import RedoIcon from '@mui/icons-material/Redo';
+import UndoIcon from '@mui/icons-material/Undo';
 import {
 	Alert,
 	Badge,
@@ -91,7 +93,7 @@ export const LayoutEditor = ({
 						<Button
 							variant="outlined"
 							disabled={updateInProgress || !hasHistory}
-							startIcon={<Undo />}
+							startIcon={<UndoIcon />}
 							onClick={() => dispatch({ type: 'undo' })}
 						>
 							Undo
@@ -104,7 +106,7 @@ export const LayoutEditor = ({
 						<Button
 							variant="outlined"
 							disabled={updateInProgress || !canRedo}
-							startIcon={<Redo />}
+							startIcon={<RedoIcon />}
 							onClick={() => dispatch({ type: 'redo' })}
 						>
 							Redo
@@ -113,7 +115,7 @@ export const LayoutEditor = ({
 					<Button
 						variant="outlined"
 						disabled={updateInProgress || !hasHistory}
-						startIcon={<History />}
+						startIcon={<HistoryIcon />}
 						onClick={() => dispatch({ type: 'reset' })}
 					>
 						Reset
