@@ -138,7 +138,6 @@ export const StandEditLayoutView = ({
 	};
 
 	const handleAddSection = (place: 'before' | 'after', groupIndex: number) => {
-		ariaNotify('Section added');
 		dispatch({
 			type: 'add-section',
 			insert: {
@@ -146,6 +145,7 @@ export const StandEditLayoutView = ({
 				groupIndex,
 			},
 		});
+		ariaNotify('Section added');
 	};
 
 	return (
