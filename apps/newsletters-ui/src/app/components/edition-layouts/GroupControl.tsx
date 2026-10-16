@@ -1,5 +1,6 @@
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import Add from '@mui/icons-material/Add';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Box, Button, Card, IconButton } from '@mui/material';
 import type {
 	LayoutGroup,
@@ -94,7 +95,7 @@ export const GroupControl = ({
 										})
 									}
 								>
-									<ArrowBack />
+									<ArrowBackIcon />
 								</IconButton>
 								<Button
 									onClick={() =>
@@ -117,7 +118,7 @@ export const GroupControl = ({
 										})
 									}
 								>
-									<ArrowForward />
+									<ArrowForwardIcon />
 								</IconButton>
 							</Box>
 							<NewsletterCard
