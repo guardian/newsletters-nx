@@ -5,6 +5,7 @@ import {
 	deleteNewsletterFromGroup,
 	insertNewsletterIntoGroup,
 	moveNewsletter,
+	renameGroup,
 } from '../../lib/modify-layout';
 
 type FeedbackType = 'success' | 'failure';
@@ -27,7 +28,13 @@ export type StandLayoutAction =
 	| { type: 'cancel-delete-section' }
 	| {
 			type: 'confirm-delete-section';
+	  }
+	| {
+			type: 'rename-section';
+			groupIndex: number;
+			name: string;
 	  };
+
 export type StandLayoutState = {
 	layout: Layout;
 	original: Layout;
@@ -146,6 +153,17 @@ export function standLayoutReducer(
 				confirmingDeletionOfSection: undefined,
 				feedback: undefined,
 				layout: deleteGroup(state.layout, state.confirmingDeletionOfSection),
+			};
+		}
+
+		case 'rename-section': {
+			if (state.updateInProgress) {
+				return state;
+			}
+
+			return {
+				...state,
+				layout: renameGroup(state.layout, action.groupIndex, action.name),
 			};
 		}
 	}

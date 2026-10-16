@@ -258,10 +258,10 @@ describe('standLayoutReducer', () => {
 		});
 
 		it('clears the stored section when deletion is cancelled', () => {
-			const requested = standLayoutReducer(
-				makeStandLayoutState(makeLayout()),
-				{ type: 'request-delete-section', groupIndex: 1 },
-			);
+			const requested = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+				type: 'request-delete-section',
+				groupIndex: 1,
+			});
 			const cancelled = standLayoutReducer(requested, {
 				type: 'cancel-delete-section',
 			});
@@ -271,10 +271,10 @@ describe('standLayoutReducer', () => {
 		});
 
 		it('clears the stored section when deletion is confirmed', () => {
-			const requested = standLayoutReducer(
-				makeStandLayoutState(makeLayout()),
-				{ type: 'request-delete-section', groupIndex: 1 },
-			);
+			const requested = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+				type: 'request-delete-section',
+				groupIndex: 1,
+			});
 			const confirmed = standLayoutReducer(requested, {
 				type: 'confirm-delete-section',
 			});
@@ -283,10 +283,10 @@ describe('standLayoutReducer', () => {
 		});
 
 		it('removes the stored section from the layout when deletion is confirmed', () => {
-			const requested = standLayoutReducer(
-				makeStandLayoutState(makeLayout()),
-				{ type: 'request-delete-section', groupIndex: 0 },
-			);
+			const requested = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+				type: 'request-delete-section',
+				groupIndex: 0,
+			});
 			const confirmed = standLayoutReducer(requested, {
 				type: 'confirm-delete-section',
 			});
@@ -316,6 +316,22 @@ describe('standLayoutReducer', () => {
 			});
 
 			expect(state).toBe(pending);
+		});
+	});
+
+	describe('rename-section', () => {
+		it('updates the title for a renamed section', () => {
+			const state = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+				type: 'rename-section',
+				groupIndex: 1,
+				name: 'Culture',
+			});
+
+			expect(state.layout.groups).toEqual([
+				{ title: 'News', newsletters: ['a', 'b', 'c'] },
+				{ title: 'Culture', newsletters: ['d'] },
+			]);
+			expect(state.original).toEqual(makeLayout());
 		});
 	});
 });
