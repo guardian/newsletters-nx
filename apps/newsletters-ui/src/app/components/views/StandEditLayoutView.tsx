@@ -41,6 +41,18 @@ const loadingStyles = css`
 	padding: ${semanticSpacing.stackLg};
 `;
 
+/** Visually hidden, but remains in a11y tree  */
+const feedbackHiddenStyles = css`
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px
+	overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+`;
+
 interface Props {
 	editionId: string;
 	layout?: Layout;
@@ -163,21 +175,19 @@ export const StandEditLayoutView = ({
 					Save and publish layout
 				</Button>
 			</HubEditionHeader>
-			{feedback && (
-				<div role="status">
-					{feedback === 'success' && (
-						<Typography element="p" variant="bodyMd">
-							Layout updated. It will take some time for the site to update.
-						</Typography>
-					)}
-					{feedback === 'failure' && (
-						<Typography element="p" variant="bodyMd">
-							Failed to update. If the problem persists, please contact Central
-							Production.
-						</Typography>
-					)}
-				</div>
-			)}
+			<div role="status" css={!feedback && feedbackHiddenStyles}>
+				{feedback === 'success' && (
+					<Typography element="p" variant="bodyMd">
+						Layout updated. It will take some time for the site to update.
+					</Typography>
+				)}
+				{feedback === 'failure' && (
+					<Typography element="p" variant="bodyMd">
+						Failed to update. If the problem persists, please contact Central
+						Production.
+					</Typography>
+				)}
+			</div>
 
 			<>
 				{showAddSectionButtons && (
