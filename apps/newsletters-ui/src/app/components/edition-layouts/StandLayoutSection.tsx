@@ -24,6 +24,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 import { NewsletterStatusBadge } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 import { AddNewsletterPanel } from './AddNewsletterPanel';
+import { getSectionAriaLabel } from './utils';
 
 const sectionStyles = css`
 	display: flex;
@@ -239,7 +240,6 @@ export const StandLayoutSection = ({
 }: SectionProps) => {
 	const isMobile = useIsMobile();
 	const canAdd = !isMobile && !!onOpenAddArea;
-	const sectionLabel = group.title || 'Section';
 	// Return focus to the 'Add a newsletter' button when the panel is closed with its Close button.
 	const [focusAddButton, setFocusAddButton] = useState(false);
 	const dragDisabled = !!disabled || isMobile || !onMove;
@@ -282,7 +282,7 @@ export const StandLayoutSection = ({
 	});
 
 	return (
-		<section css={sectionStyles} aria-label={sectionLabel}>
+		<section css={sectionStyles} aria-label={getSectionAriaLabel(group.title)}>
 			<div css={sectionHeaderStyles}>
 				<Typography element="h3" variant="bodyBoldMd">
 					{group.title}

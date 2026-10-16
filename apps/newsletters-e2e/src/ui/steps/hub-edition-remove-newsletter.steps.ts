@@ -1,12 +1,60 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import type { DataTable } from 'playwright-bdd';
 import { Given, Then, When } from './fixtures';
+
 interface SavedLayout {
 	groups: Array<{ title: string; newsletters: string[] }>;
 }
 // Layout bodies POSTed by the page, per page (i.e. per scenario).
 const savedLayouts = new WeakMap<Page, SavedLayout[]>();
 const identityNameOf = (name: string) => name.toLowerCase();
+Given(
+	'the editor is editing the layout for edition {string} with the following sections',
+	async ({ page }, edition: string, sections: DataTable) => {
+		const saved: SavedLayout[] = [];
+		savedLayouts.set(page, saved);
+
+		const titles = sections.hashes().map((row) => row.title!);
+
+		const layout: SavedLayout = {
+			groups: titles.map((title) => ({
+				title,
+				newsletters: [],
+			})),
+		};
+		await page.route('**/api/newsletters', async (route) => {
+			await route.fulfill({
+				json: {
+					ok: true,
+					data: titles.map((name) => ({
+						identityName: identityNameOf(name),
+						name,
+						status: 'live',
+					})),
+				},
+			});
+		});
+		await page.route(
+			new RegExp(`/api/layouts/${edition}$`, 'i'),
+			async (route) => {
+				if (route.request().method() === 'POST') {
+					saved.push(route.request().postDataJSON() as SavedLayout);
+					await route.fulfill({ json: { ok: true, data: layout } });
+					return;
+				}
+				await route.fulfill({ json: { ok: true, data: layout } });
+			},
+		);
+		await page.goto(`/layouts/edit/${edition}`);
+		await expect(
+			page.getByRole('button', {
+				name: 'Save and publish layout',
+				exact: true,
+			}),
+		).toBeVisible();
+	},
+);
 Given(
 	'the editor is editing the layout for edition {string} with newsletters {string} and {string} in section {string}',
 	async (
@@ -58,6 +106,7 @@ Given(
 		).toBeVisible();
 	},
 );
+
 When(
 	'the editor removes {string} from the layout',
 	async ({ page }, name: string) => {

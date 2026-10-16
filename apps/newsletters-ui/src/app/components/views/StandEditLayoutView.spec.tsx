@@ -1,8 +1,16 @@
+import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { fetchPostApiData } from '../../api-requests/fetch-api-data';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { usePermissions } from '../../hooks/user-hooks';
 import { EditLayoutView } from './EditLayoutView';
+
+vi.mock('../../api-requests/fetch-api-data', () => ({
+	fetchApiData: vi.fn(),
+	fetchPostApiData: vi.fn(),
+}));
 
 vi.mock('../../featureSwitches', () => ({
 	isFeatureSwitchEnabled: () => true,
@@ -10,6 +18,10 @@ vi.mock('../../featureSwitches', () => ({
 
 vi.mock('../../hooks/user-hooks', () => ({
 	usePermissions: vi.fn(),
+}));
+
+vi.mock('../../hooks/useIsMobile', () => ({
+	useIsMobile: vi.fn(),
 }));
 
 afterEach(() => {
@@ -121,6 +133,28 @@ describe('StandEditLayoutView', () => {
 
 			await screen.findByRole('heading', { name: 'Read-only layout' });
 			expect(router.state.location.pathname).toBe('/layouts/uk');
+		});
+
+		it("renders the 'Add section' buttons when in desktop view", async () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(useIsMobile).mockReturnValue(false);
+			renderEditView({ groups: [{ title: 'News', newsletters: [] }] });
+
+			expect(
+				await screen.findAllByRole('button', { name: /Add section/ }),
+			).toHaveLength(2);
+		});
+		it("does not render the 'Add section' buttons when in mobile view", () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(useIsMobile).mockReturnValue(true);
+			renderEditView({ groups: [{ title: 'News', newsletters: [] }] });
+			expect(screen.queryByRole('button', { name: /Add section/ })).toBeNull();
 		});
 	});
 
@@ -245,6 +279,65 @@ describe('StandEditLayoutView', () => {
 			expect(
 				screen.queryByRole('region', { name: 'Add newsletters' }),
 			).toBeNull();
+		});
+	});
+
+	describe('adding sections', () => {
+		const setup = async () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(useIsMobile).mockReturnValue(false);
+			renderEditView({ groups: [{ title: 'News', newsletters: [] }] });
+			await screen.findByRole('button', { name: 'Save and publish layout' });
+		};
+
+		it("disables the 'Add section' buttons when an update is in progress", async () => {
+			// A request that never settles keeps the update in progress.
+			vi.mocked(fetchPostApiData).mockReturnValue(new Promise(() => undefined));
+			await setup();
+			const addSectionButtons = screen.getAllByRole('button', {
+				name: /Add section/,
+			});
+			expect(addSectionButtons).toHaveLength(2);
+			addSectionButtons.forEach((button) => expect(button).toBeEnabled());
+
+			fireEvent.click(
+				screen.getByRole('button', { name: 'Save and publish layout' }),
+			);
+
+			await vi.waitFor(() =>
+				screen
+					.getAllByRole('button', { name: /Add section/ })
+					.forEach((button) => expect(button).toBeDisabled()),
+			);
+		});
+
+		it("uses the text 'Unnamed section' to describe sections with no name in the 'between' 'Add section' buttons", async () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(useIsMobile).mockReturnValue(false);
+			renderEditView({
+				groups: [
+					{ title: '', newsletters: [] },
+					{ title: 'Sport', newsletters: [] },
+					{ title: '', newsletters: [] },
+				],
+			});
+
+			expect(
+				await screen.findByRole('button', {
+					name: 'Add section between Unnamed section and Sport',
+				}),
+			).toBeTruthy();
+			expect(
+				screen.getByRole('button', {
+					name: 'Add section between Sport and Unnamed section',
+				}),
+			).toBeTruthy();
 		});
 	});
 });

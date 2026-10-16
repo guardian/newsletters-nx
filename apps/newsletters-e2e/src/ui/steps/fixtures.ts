@@ -46,6 +46,7 @@ interface NamedNewsletters {
  */
 interface StoredLayouts {
 	create: (edition: EditionId, layout: Layout) => Promise<void>;
+	get: (edition: EditionId) => Promise<Layout | undefined>;
 }
 
 type Fixtures = {
@@ -86,6 +87,20 @@ export const test = base.extend<Fixtures>({
 		await use({
 			create: (edition, layout) =>
 				createFixtureLayout(request, edition, layout),
+			get: async (edition) => {
+				const response = await request.get(`/api/layouts/${edition}`);
+				const json = (await response.json()) as {
+					ok: boolean;
+					message?: string;
+					data?: Layout;
+				};
+				if (!response.ok() || !json.ok || json.data === undefined) {
+					throw new Error(
+						`Failed to load layouts (${response.status()}): ${json.message ?? JSON.stringify(json)}`,
+					);
+				}
+				return json.data;
+			},
 		});
 		await restoreFixtureLayouts(request, backup);
 	},
