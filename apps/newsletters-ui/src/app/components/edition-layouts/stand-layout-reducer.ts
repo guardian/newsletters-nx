@@ -1,5 +1,6 @@
 import type { Layout } from '@newsletters-nx/newsletters-data-client';
 import {
+	addNewGroup,
 	deleteNewsletterFromGroup,
 	insertNewsletterIntoGroup,
 	moveNewsletter,
@@ -16,7 +17,11 @@ export type StandLayoutAction =
 			toIndex: number;
 	  }
 	| { type: 'set-pending' }
-	| { type: 'handle-server-response'; success: boolean };
+	| { type: 'handle-server-response'; success: boolean }
+	| {
+			type: 'add-section';
+			insert: { place: 'before' | 'after'; groupIndex: number };
+	  };
 export type StandLayoutState = {
 	layout: Layout;
 	original: Layout;
@@ -87,5 +92,17 @@ export function standLayoutReducer(
 					action.newsletterIndex,
 				),
 			};
+		case 'add-section': {
+			if (state.updateInProgress) {
+				return state;
+			}
+			const insertOffset = action.insert.place === 'before' ? 0 : 1;
+			const insertAt = action.insert.groupIndex + insertOffset;
+			return {
+				...state,
+				feedback: undefined,
+				layout: addNewGroup(state.layout, insertAt),
+			};
+		}
 	}
 }

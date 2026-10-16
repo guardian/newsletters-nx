@@ -135,4 +135,94 @@ describe('standLayoutReducer', () => {
 		});
 		expect(state).toBe(initial);
 	});
+
+	describe('add-section', () => {
+		it('inserts a new section before the first section', () => {
+			const initialSection = {
+				title: 'News',
+				newsletters: ['first-edition', 'breaking-news'],
+			};
+			const layout: Layout = {
+				groups: [initialSection],
+			};
+
+			const state = makeStandLayoutState(layout);
+			const adding = standLayoutReducer(state, {
+				type: 'add-section',
+				insert: { place: 'before', groupIndex: 0 },
+			});
+
+			expect(adding).toMatchObject({
+				layout: {
+					groups: [{ title: '', newsletters: [] }, initialSection],
+				},
+			});
+		});
+
+		it('inserts a new section when there are no sections', () => {
+			const state = makeStandLayoutState({ groups: [] });
+			const adding = standLayoutReducer(state, {
+				type: 'add-section',
+				insert: { place: 'before', groupIndex: 0 },
+			});
+
+			expect(adding.layout.groups).toEqual([{ title: '', newsletters: [] }]);
+		});
+
+		it('inserts a new section after the last section', () => {
+			const initialSections = makeLayout().groups;
+			const state = makeStandLayoutState({ groups: initialSections });
+			const adding = standLayoutReducer(state, {
+				type: 'add-section',
+				insert: { place: 'after', groupIndex: initialSections.length - 1 },
+			});
+
+			expect(adding.layout.groups).toEqual([
+				...initialSections,
+				{ title: '', newsletters: [] },
+			]);
+		});
+
+		describe('inserting new sections between sections', () => {
+			const newsSection = { title: 'News', newsletters: ['a'] };
+			const sportSection = { title: 'Sport', newsletters: ['b'] };
+			const cultureSection = { title: 'Culture', newsletters: ['c'] };
+			const blankSection = { title: '', newsletters: [] };
+
+			it.each([
+				{
+					place: 'after',
+					groupIndex: 0,
+					expectedSections: [newsSection, blankSection, sportSection, cultureSection],
+				},
+				{
+					place: 'before',
+					groupIndex: 1,
+					expectedSections: [newsSection, blankSection, sportSection, cultureSection],
+				},
+				{
+					place: 'after',
+					groupIndex: 1,
+					expectedSections: [newsSection, sportSection, blankSection, cultureSection],
+				},
+				{
+					place: 'before',
+					groupIndex: 2,
+					expectedSections: [newsSection, sportSection, blankSection, cultureSection],
+				},
+			] as const)(
+				'inserts a new section between existing sections using $place groupIndex $groupIndex',
+				({ place, groupIndex, expectedSections }) => {
+					const initialSections = [newsSection, sportSection, cultureSection];
+					const state = makeStandLayoutState({ groups: initialSections });
+					const adding = standLayoutReducer(state, {
+						type: 'add-section',
+						insert: { place, groupIndex },
+					});
+
+					expect(adding.layout.groups).toEqual(expectedSections);
+				},
+			);
+		});
+	});
 });

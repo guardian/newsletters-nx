@@ -13,16 +13,19 @@ import {
 	editionNames,
 	makeBlankLayout,
 } from '@newsletters-nx/newsletters-data-client';
-import { useReducer, useState } from 'react';
+import { Fragment, useReducer, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { isAddableStatus } from '../../lib/modify-layout';
 import { DiscardLayoutChangesDialog } from '../edition-layouts/DiscardLayoutChangesDialog';
+import { HubEditionSectionDivider } from '../edition-layouts/HubEditionSectionDivider';
 import {
 	makeStandLayoutState,
 	standLayoutReducer,
 } from '../edition-layouts/stand-layout-reducer';
 import { StandLayoutSection } from '../edition-layouts/StandLayoutSection';
+import { getSectionAriaLabel } from '../edition-layouts/utils';
 import { HubEditionHeader } from '../HubEditionHeader';
 
 const contentStyles = css`
@@ -38,12 +41,30 @@ const loadingStyles = css`
 	padding: ${semanticSpacing.stackLg};
 `;
 
+/** Visually hidden, but remains in a11y tree  */
+const feedbackHiddenStyles = css`
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+`;
+
 interface Props {
 	editionId: string;
 	layout?: Layout;
 	newsletters: NewsletterData[];
 	permissions: UserPermissions | undefined;
 }
+
+const ariaNotify = (text: string) => {
+	/** @ts-expect-error typescript DOM typings do not yet know about ariaNotify() */
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- document.ariaNotify is not yet included in DOM typings
+	document.ariaNotify?.(text);
+};
 
 export const StandEditLayoutView = ({
 	editionId,
@@ -62,12 +83,16 @@ export const StandEditLayoutView = ({
 	const [addAreaGroupIndex, setAddAreaGroupIndex] = useState<number>();
 	const navigate = useNavigate();
 
+	const isMobile = useIsMobile();
+
 	const parsedEdition = editionIdSchema.safeParse(editionId);
 	const editionName = parsedEdition.success
 		? editionNames[parsedEdition.data]
 		: editionId;
 	const canEdit = !!permissions?.editEverything;
 	const readOnlyPath = `/layouts/${editionId.toLowerCase()}`;
+
+	const showAddSectionButtons = !isMobile;
 
 	// `permissions` is undefined while still loading, so only redirect once
 	// we know the user can't edit.
@@ -112,6 +137,17 @@ export const StandEditLayoutView = ({
 		dispatch({ type: 'handle-server-response', success: !!result });
 	};
 
+	const handleAddSection = (place: 'before' | 'after', groupIndex: number) => {
+		dispatch({
+			type: 'add-section',
+			insert: {
+				place,
+				groupIndex,
+			},
+		});
+		ariaNotify('Section added');
+	};
+
 	return (
 		<Container maxWidth="lg" css={contentStyles}>
 			<HubEditionHeader
@@ -139,7 +175,7 @@ export const StandEditLayoutView = ({
 					Save and publish layout
 				</Button>
 			</HubEditionHeader>
-			<div role="status">
+			<div role="status" css={!feedback && feedbackHiddenStyles}>
 				{feedback === 'success' && (
 					<Typography element="p" variant="bodyMd">
 						Layout updated. It will take some time for the site to update.
@@ -152,37 +188,71 @@ export const StandEditLayoutView = ({
 					</Typography>
 				)}
 			</div>
-			{layout.groups.map((group, groupIndex) => (
-				<StandLayoutSection
-					key={groupIndex}
-					group={group}
-					groupIndex={groupIndex}
-					newsletters={newsletters}
-					disabled={updateInProgress}
-					availableNewsletters={availableNewsletters}
-					onMove={(newsletterId, toGroupIndex, toIndex) =>
-						dispatch({
-							type: 'move-newsletter',
-							newsletterId,
-							toGroupIndex,
-							toIndex,
-						})
-					}
-					isAddAreaOpen={addAreaGroupIndex === groupIndex}
-					onOpenAddArea={() => setAddAreaGroupIndex(groupIndex)}
-					onCloseAddArea={() => setAddAreaGroupIndex(undefined)}
-					onAdd={(groupIndex, newsletterId) =>
-						dispatch({ type: 'append-newsletter', groupIndex, newsletterId })
-					}
-					onRemove={(groupIndex, newsletterIndex) =>
-						dispatch({
-							type: 'remove-newsletter',
-							groupIndex,
-							newsletterIndex,
-						})
-					}
-				/>
-			))}
+
+			<>
+				{showAddSectionButtons && (
+					<HubEditionSectionDivider
+						onAddSection={() => handleAddSection('before', 0)}
+						addSectionAriaLabel="Add section to the beginning"
+						disabled={state.updateInProgress}
+					/>
+				)}
+				{layout.groups.map((group, groupIndex) => (
+					<Fragment
+						// Index key added to avoid react warning.
+						key={groupIndex}
+					>
+						<StandLayoutSection
+							group={group}
+							groupIndex={groupIndex}
+							newsletters={newsletters}
+							disabled={updateInProgress}
+							availableNewsletters={availableNewsletters}
+							onMove={(newsletterId, toGroupIndex, toIndex) =>
+								dispatch({
+									type: 'move-newsletter',
+									newsletterId,
+									toGroupIndex,
+									toIndex,
+								})
+							}
+							isAddAreaOpen={addAreaGroupIndex === groupIndex}
+							onOpenAddArea={() => setAddAreaGroupIndex(groupIndex)}
+							onCloseAddArea={() => setAddAreaGroupIndex(undefined)}
+							onAdd={(groupIndex, newsletterId) =>
+								dispatch({
+									type: 'append-newsletter',
+									groupIndex,
+									newsletterId,
+								})
+							}
+							onRemove={(groupIndex, newsletterIndex) =>
+								dispatch({
+									type: 'remove-newsletter',
+									groupIndex,
+									newsletterIndex,
+								})
+							}
+						/>
+						{showAddSectionButtons && groupIndex < layout.groups.length - 1 && (
+							<HubEditionSectionDivider
+								onAddSection={() => handleAddSection('after', groupIndex)}
+								addSectionAriaLabel={`Add section between ${getSectionAriaLabel(layout.groups.at(groupIndex)?.title)} and ${getSectionAriaLabel(layout.groups.at(groupIndex + 1)?.title)}`}
+								disabled={state.updateInProgress}
+							/>
+						)}
+					</Fragment>
+				))}
+				{showAddSectionButtons && (
+					<HubEditionSectionDivider
+						onAddSection={() =>
+							handleAddSection('after', layout.groups.length - 1)
+						}
+						addSectionAriaLabel="Add section to the end"
+						disabled={state.updateInProgress}
+					/>
+				)}
+			</>
 			<DiscardLayoutChangesDialog
 				isOpen={isConfirmingCancel}
 				onKeepEditing={() => setIsConfirmingCancel(false)}
