@@ -18,6 +18,9 @@ export default defineConfig([
 			'react-hooks/static-components': 'warn',
 			// Typescript already does this.
 			'react/prop-types': 'off',
+			// The material-ui icons barrel file has > 10,000 exports.
+			// Require direct imports over the barrel file
+			'no-restricted-imports': ['error', '@mui/icons-material'],
 		},
 	},
 	{
