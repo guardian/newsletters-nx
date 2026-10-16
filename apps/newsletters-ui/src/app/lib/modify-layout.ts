@@ -1,7 +1,13 @@
 import type {
 	Layout,
 	LayoutGroup,
+	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+
+// Cancelled newsletters wouldn't be shown on the site, so they can't be
+// placed in a layout. Listed explicitly so any new status is excluded by default.
+export const isAddableStatus = (status: NewsletterData['status']): boolean =>
+	status === 'live' || status === 'pending' || status === 'paused';
 
 const makeBlankGroup = () => ({
 	title: '',
@@ -67,6 +73,37 @@ export const moveNewsletterTo = (
 			...newArray.slice(newIndex),
 		],
 	});
+};
+
+// Moves a newsletter (from wherever it is in the layout) so it is inserted at
+// `toIndex` in the target group's current list, i.e. before the item now at that index.
+// Returns the same layout if the newsletter or group is missing or nothing would change.
+export const moveNewsletter = (
+	layout: Layout,
+	newsletterId: string,
+	toGroupIndex: number,
+	toIndex: number,
+): Layout => {
+	const fromGroupIndex = layout.groups.findIndex((group) =>
+		group.newsletters.includes(newsletterId),
+	);
+	const fromIndex =
+		layout.groups[fromGroupIndex]?.newsletters.indexOf(newsletterId) ?? -1;
+	if (fromIndex < 0 || !layout.groups[toGroupIndex]) {
+		return layout;
+	}
+	const sameGroup = fromGroupIndex === toGroupIndex;
+	// Removing the newsletter first shifts later items in the same group up by one.
+	const insertAt = sameGroup && toIndex > fromIndex ? toIndex - 1 : toIndex;
+	if (sameGroup && insertAt === fromIndex) {
+		return layout;
+	}
+	return insertNewsletterIntoGroup(
+		deleteNewsletterFromGroup(layout, fromGroupIndex, fromIndex),
+		toGroupIndex,
+		insertAt,
+		newsletterId,
+	);
 };
 
 export const insertNewsletterIntoGroup = (

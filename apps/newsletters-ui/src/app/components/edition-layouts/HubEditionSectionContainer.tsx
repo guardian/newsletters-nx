@@ -165,9 +165,9 @@ export const HubEditionSectionContainer = ({
 			</Typography>
 		</header>
 		<ul css={newsletterListStyles}>
-			{section.newsletters.map((newsletterId) => (
+			{section.newsletters.map((newsletterId, index) => (
 				<NewsletterListItem
-					key={newsletterId}
+					key={`${newsletterId}-${index}`}
 					newsletter={newsletters.find(
 						(newsletter) => newsletter.identityName === newsletterId,
 					)}
