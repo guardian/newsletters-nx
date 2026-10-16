@@ -193,22 +193,42 @@ describe('standLayoutReducer', () => {
 				{
 					place: 'after',
 					groupIndex: 0,
-					expectedSections: [newsSection, blankSection, sportSection, cultureSection],
+					expectedSections: [
+						newsSection,
+						blankSection,
+						sportSection,
+						cultureSection,
+					],
 				},
 				{
 					place: 'before',
 					groupIndex: 1,
-					expectedSections: [newsSection, blankSection, sportSection, cultureSection],
+					expectedSections: [
+						newsSection,
+						blankSection,
+						sportSection,
+						cultureSection,
+					],
 				},
 				{
 					place: 'after',
 					groupIndex: 1,
-					expectedSections: [newsSection, sportSection, blankSection, cultureSection],
+					expectedSections: [
+						newsSection,
+						sportSection,
+						blankSection,
+						cultureSection,
+					],
 				},
 				{
 					place: 'before',
 					groupIndex: 2,
-					expectedSections: [newsSection, sportSection, blankSection, cultureSection],
+					expectedSections: [
+						newsSection,
+						sportSection,
+						blankSection,
+						cultureSection,
+					],
 				},
 			] as const)(
 				'inserts a new section between existing sections using $place groupIndex $groupIndex',
@@ -223,6 +243,79 @@ describe('standLayoutReducer', () => {
 					expect(adding.layout.groups).toEqual(expectedSections);
 				},
 			);
+		});
+	});
+
+	describe('delete-section', () => {
+		it('stores the section for which deletion was requested', () => {
+			const state = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+				type: 'request-delete-section',
+				groupIndex: 1,
+			});
+
+			expect(state.confirmingDeletionOfSection).toBe(1);
+			expect(state.layout).toEqual(makeLayout());
+		});
+
+		it('clears the stored section when deletion is cancelled', () => {
+			const requested = standLayoutReducer(
+				makeStandLayoutState(makeLayout()),
+				{ type: 'request-delete-section', groupIndex: 1 },
+			);
+			const cancelled = standLayoutReducer(requested, {
+				type: 'cancel-delete-section',
+			});
+
+			expect(cancelled.confirmingDeletionOfSection).toBeUndefined();
+			expect(cancelled.layout).toEqual(makeLayout());
+		});
+
+		it('clears the stored section when deletion is confirmed', () => {
+			const requested = standLayoutReducer(
+				makeStandLayoutState(makeLayout()),
+				{ type: 'request-delete-section', groupIndex: 1 },
+			);
+			const confirmed = standLayoutReducer(requested, {
+				type: 'confirm-delete-section',
+			});
+
+			expect(confirmed.confirmingDeletionOfSection).toBeUndefined();
+		});
+
+		it('removes the stored section from the layout when deletion is confirmed', () => {
+			const requested = standLayoutReducer(
+				makeStandLayoutState(makeLayout()),
+				{ type: 'request-delete-section', groupIndex: 0 },
+			);
+			const confirmed = standLayoutReducer(requested, {
+				type: 'confirm-delete-section',
+			});
+
+			expect(confirmed.layout.groups).toEqual([
+				{ title: 'Sport', newsletters: ['d'] },
+			]);
+			expect(confirmed.original).toEqual(makeLayout());
+		});
+
+		it('does not change the layout when confirming without a stored section', () => {
+			const initial = makeStandLayoutState(makeLayout());
+			const state = standLayoutReducer(initial, {
+				type: 'confirm-delete-section',
+			});
+
+			expect(state).toBe(initial);
+		});
+
+		it('ignores delete requests while an update is in progress', () => {
+			const pending = standLayoutReducer(makeStandLayoutState(makeLayout()), {
+				type: 'set-pending',
+			});
+			const state = standLayoutReducer(pending, {
+				type: 'request-delete-section',
+				groupIndex: 0,
+			});
+
+			expect(state).toBe(pending);
 		});
 	});
 });

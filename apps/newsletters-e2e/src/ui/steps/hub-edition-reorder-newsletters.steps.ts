@@ -102,17 +102,73 @@ const boundingBoxOf = async (locator: Locator) => {
 	return box;
 };
 
-// Presses on empty space in the row (between the details and the Remove
-// button) and drags it to `toY`, or to (`toX`, `toY`) if given.
-const dragRow = async (page: Page, name: string, toY: number, toX?: number) => {
-	const row = await boundingBoxOf(rowOf(page, name));
-	const x = row.x + row.width * 0.6;
-	const y = row.y + row.height / 2;
-	await page.mouse.move(x, y);
+/**
+ *
+ * Get offset from top left corner of page element to the center of its bounding box
+ * @param row
+ * @returns
+ */
+const centerOffset = async (element: Locator) => {
+	const bbox = await boundingBoxOf(element);
+	return { x: bbox.width / 2, y: bbox.height / 2 };
+};
+
+/**
+ * Get offset from top left corner of a row to a draggable point in the middle
+ * @returns
+ */
+const rowDragStartOffset = async (row: Locator) => {
+	const bbox = await boundingBoxOf(row);
+	return { x: bbox.width * 0.6, y: bbox.height / 2 };
+};
+
+/**
+ * Get offset from top left corner of a row to a drag end position.
+ *
+ * @param row
+ * @param position 'above' | 'below' - create an offset for dragging a row above/below this one
+ * @returns
+ */
+const rowDragEndOffset = async (row: Locator, position: string) => {
+	const bbox = await boundingBoxOf(row);
+	return { x: 0, y: position === 'above' ? 2 : bbox.height - 2 };
+};
+
+const dragWithMouse = async (
+	page: Page,
+	from: {
+		locator: Locator;
+		offset: { x: number; y: number };
+	},
+	to: {
+		locator: Locator;
+		offset: { x: number; y: number };
+	},
+) => {
+	// Needs to be in view to move mouse over it.
+	await from.locator.scrollIntoViewIfNeeded();
+	const fromBB = await boundingBoxOf(from.locator);
+
+	const dragStart = {
+		x: fromBB.x + from.offset.x,
+		y: fromBB.y + from.offset.y,
+	};
+
+	await page.mouse.move(dragStart.x, dragStart.y);
 	await page.mouse.down();
 	// A small initial move is needed for the drag to start.
-	await page.mouse.move(x, y + 10, { steps: 5 });
-	await page.mouse.move(toX ?? x, toY, { steps: 10 });
+	await page.mouse.move(dragStart.x, dragStart.y + 10, { steps: 5 });
+
+	// Scroll into view so we can drag to it
+	await to.locator.scrollIntoViewIfNeeded();
+	const toBB = await boundingBoxOf(to.locator);
+
+	const dragEnd = {
+		x: toBB.x + to.offset.x,
+		y: toBB.y + to.offset.y,
+	};
+
+	await page.mouse.move(dragEnd.x, dragEnd.y, { steps: 10 });
 	await page.mouse.up();
 };
 
@@ -122,12 +178,19 @@ const moveWithMouse = async (
 	position: string,
 	target: string,
 ) => {
-	const row = await boundingBoxOf(rowOf(page, target));
-	// Aim just inside the target row's top or bottom edge.
-	await dragRow(
+	const fromRow = rowOf(page, name);
+	const toRow = rowOf(page, target);
+
+	await dragWithMouse(
 		page,
-		name,
-		position === 'above' ? row.y + 2 : row.y + row.height - 2,
+		{
+			locator: fromRow,
+			offset: await rowDragStartOffset(fromRow),
+		},
+		{
+			locator: toRow,
+			offset: await rowDragEndOffset(toRow, position),
+		},
 	);
 };
 
@@ -231,10 +294,21 @@ When(
 When(
 	'the editor drops {string} into the empty section {string} using the mouse',
 	async ({ page }, name: string, title: string) => {
-		const empty = await boundingBoxOf(
-			section(page, title).getByText('Drop a newsletter here'),
+		const fromRow = rowOf(page, name);
+
+		const emptyArea = section(page, title).getByText('Drop a newsletter here');
+
+		await dragWithMouse(
+			page,
+			{
+				locator: fromRow,
+				offset: await rowDragStartOffset(fromRow),
+			},
+			{
+				locator: emptyArea,
+				offset: await centerOffset(emptyArea),
+			},
 		);
-		await dragRow(page, name, empty.y + empty.height / 2);
 	},
 );
 
@@ -249,7 +323,21 @@ When(
 When(
 	'the editor drops {string} outside the section using the mouse',
 	async ({ page }, name: string) => {
-		await dragRow(page, name, 5, 5);
+		const body = page.locator('body');
+
+		const fromRow = rowOf(page, name);
+
+		await dragWithMouse(
+			page,
+			{
+				locator: fromRow,
+				offset: await rowDragStartOffset(fromRow),
+			},
+			{
+				locator: body,
+				offset: { x: 5, y: 5 },
+			},
+		);
 	},
 );
 

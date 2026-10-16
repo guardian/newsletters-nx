@@ -3,7 +3,12 @@ import { editionIdSchema } from '@newsletters-nx/newsletters-data-client';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import { defineParameterType } from 'playwright-bdd';
-import { Given, Then, When } from './fixtures';
+import { createBdd } from 'playwright-bdd';
+import { test } from './fixtures';
+
+const { Given, Then, When } = createBdd(test, {
+	tags: '@feature-add-section-to-layout',
+});
 
 defineParameterType({
 	name: 'edition',

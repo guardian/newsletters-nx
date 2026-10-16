@@ -2,10 +2,12 @@ import { css } from '@emotion/react';
 import {
 	semanticColors,
 	semanticRadius,
+	semanticSizing,
 	semanticSpacing,
 } from '@guardian/stand';
 import { Button } from '@guardian/stand/Button';
 import { Icon } from '@guardian/stand/Icon';
+import { TextInput } from '@guardian/stand/TextInput';
 import { Typography } from '@guardian/stand/Typography';
 import type {
 	LayoutGroup,
@@ -35,6 +37,10 @@ const sectionStyles = css`
 `;
 
 const sectionHeaderStyles = css`
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	align-items: end;
 	background-color: ${semanticColors.bg.raisedLevel2};
 	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 `;
@@ -223,6 +229,8 @@ interface SectionProps {
 	onOpenAddArea?: () => void;
 	onCloseAddArea?: () => void;
 	onAdd?: (groupIndex: number, identityName: string) => void;
+	onRenameSection: (name: string) => void;
+	onDeleteSection: () => void;
 }
 
 export const StandLayoutSection = ({
@@ -237,6 +245,8 @@ export const StandLayoutSection = ({
 	onOpenAddArea,
 	onCloseAddArea,
 	onAdd,
+	onRenameSection,
+	onDeleteSection,
 }: SectionProps) => {
 	const isMobile = useIsMobile();
 	const canAdd = !isMobile && !!onOpenAddArea;
@@ -284,9 +294,31 @@ export const StandLayoutSection = ({
 	return (
 		<section css={sectionStyles} aria-label={getSectionAriaLabel(group.title)}>
 			<div css={sectionHeaderStyles}>
-				<Typography element="h3" variant="bodyBoldMd">
-					{group.title}
-				</Typography>
+				{!isMobile && (
+					<>
+						<TextInput
+							css={css`
+								max-width: ${semanticSizing.input.maxWidthPx};
+							`}
+							onChange={onRenameSection}
+							label="Section title"
+							value={group.title}
+						/>
+
+						<Button
+							icon="delete"
+							variant="tertiary"
+							onClick={() => onDeleteSection()}
+						>
+							Delete section
+						</Button>
+					</>
+				)}
+				{isMobile && (
+					<Typography element="h3" variant="bodyBoldMd">
+						{group.title}
+					</Typography>
+				)}
 			</div>
 			<GridList
 				css={[listStyles, !dragDisabled && draggableListStyles]}
