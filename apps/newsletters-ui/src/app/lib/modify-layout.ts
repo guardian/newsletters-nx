@@ -149,3 +149,13 @@ export const deleteGroup = (
 		],
 	};
 };
+
+export const renameGroup = (
+	layout: Layout,
+	groupIndex: number,
+	name: string,
+) => {
+	return updateLayoutGroup(layout, groupIndex, {
+		title: name,
+	});
+};
