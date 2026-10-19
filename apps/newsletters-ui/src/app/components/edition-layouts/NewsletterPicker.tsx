@@ -1,4 +1,5 @@
-import { RadioButtonChecked, RadioButtonUnchecked } from '@mui/icons-material';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import type { StackProps } from '@mui/material';
 import {
 	Checkbox,
@@ -61,8 +62,8 @@ export const NewsletterPicker = ({
 							onClick={() => setSelectedNewsletter(newsletter.identityName)}
 						>
 							<Checkbox
-								checkedIcon={<RadioButtonChecked />}
-								icon={<RadioButtonUnchecked />}
+								checkedIcon={<RadioButtonCheckedIcon />}
+								icon={<RadioButtonUncheckedIcon />}
 								size="small"
 								checked={newsletter.identityName === selectedNewsletter}
 								tabIndex={-1}
