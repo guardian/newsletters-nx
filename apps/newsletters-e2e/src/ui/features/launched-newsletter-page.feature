@@ -15,6 +15,7 @@ Feature: Launched newsletter: open it and find my way around
       Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
       When the editor goes to "/newsletters/afternoon-update"
       Then the detail page for "Afternoon update" is shown
+      And the "Details" tab is selected
 
     Scenario: An address for a newsletter that doesn't exist shows an error
       When the editor goes to "/newsletters/no-such-newsletter"
@@ -53,6 +54,21 @@ Feature: Launched newsletter: open it and find my way around
       When the editor opens the detail page for "Afternoon update"
       And the editor selects "Back to all newsletters"
       Then the editor is taken to the All Newsletters page
+
+  Rule: Tabs separate a newsletter's details from its layout
+
+    Scenario: The page opens on the Details tab
+      Given a launched newsletter "Afternoon update"
+      When the editor opens the detail page for "Afternoon update"
+      Then the "Details" tab is selected
+
+    # Temporary until the Layout tab is built. It keeps the existing preview
+    # reachable.
+    Scenario: The Layout tab opens the existing preview
+      Given a launched newsletter "Afternoon update"
+      When the editor opens the detail page for "Afternoon update"
+      And the editor selects the "Layout" tab
+      Then the existing preview for "Afternoon update" is shown
 
   Rule: The header adapts to the screen size
 
