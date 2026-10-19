@@ -77,6 +77,10 @@ export function Layout(props: IRootRoute) {
 	})();
 	const isAllNewslettersRoute = location.pathname === '/all';
 	const isHomeRoute = location.pathname === '/';
+	// The launched newsletter page sits closer to the nav than other pages: 44px
+	// above the back link in total (this padding plus ContentWrapper's 24px).
+	const isLaunchedNewsletterPage =
+		location.pathname.startsWith('/newsletters/');
 	const isNewslettersHubLandingRoute = location.pathname === '/layouts';
 	// /all and the home page use the same Stand top bar / alert banner shell as the wizard.
 	const usesStandShell =
@@ -131,7 +135,10 @@ export function Layout(props: IRootRoute) {
 				<StandAlertBanner isOnCode={isOnCode} />
 			)}
 			{Nav}
-			<Box sx={{ pt: 8, pb: 8 }} component={'main'}>
+			<Box
+				sx={{ pt: isLaunchedNewsletterPage ? 2.5 : 8, pb: 8 }}
+				component={'main'}
+			>
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
