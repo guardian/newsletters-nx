@@ -26,6 +26,7 @@ const MOBILE_MAX_WIDTH = '393px';
 const untilStacked = `@media (max-width: ${STACKED_MAX_WIDTH})`;
 const untilMobile = `@media (max-width: ${MOBILE_MAX_WIDTH})`;
 
+// TODO: Share this mapping with other launched-newsletter views to avoid drift.
 const regionNames: Record<NonNullable<RegionFocus>, string> = {
 	UK: 'United Kingdom',
 	US: 'United States',

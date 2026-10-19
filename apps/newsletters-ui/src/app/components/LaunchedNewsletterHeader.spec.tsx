@@ -30,14 +30,16 @@ describe('LaunchedNewsletterHeader', () => {
 		expect(screen.getByRole('heading', { level: 2 }).textContent).toBe(
 			'Afternoon update',
 		);
-		expect(screen.getByText('News | Article based | Australia')).toBeTruthy();
-		expect(screen.getByText('Pending')).toBeTruthy();
+		expect(
+			screen.queryByText('News | Article based | Australia'),
+		).not.toBeNull();
+		expect(screen.queryByText('Pending')).not.toBeNull();
 	});
 
 	it('leaves out details that are not set from the label', () => {
 		renderHeader(newsletter({ regionFocus: undefined }));
 
-		expect(screen.getByText('News | Article based')).toBeTruthy();
+		expect(screen.queryByText('News | Article based')).not.toBeNull();
 	});
 
 	it('links back to all newsletters', () => {
@@ -53,6 +55,6 @@ describe('LaunchedNewsletterHeader', () => {
 	it('shows a placeholder when there is no graphic', () => {
 		renderHeader(newsletter());
 
-		expect(screen.getByText('No image')).toBeTruthy();
+		expect(screen.queryByText('No image')).not.toBeNull();
 	});
 });

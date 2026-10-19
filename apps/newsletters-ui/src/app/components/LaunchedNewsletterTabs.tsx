@@ -18,7 +18,7 @@ const barStyles = css`
 
 // Stand adds a left border to the first tab; this design does not want it.
 const firstTabStyles = css`
-	&&:first-child {
+	&&:first-of-type {
 		border-left: none;
 	}
 `;

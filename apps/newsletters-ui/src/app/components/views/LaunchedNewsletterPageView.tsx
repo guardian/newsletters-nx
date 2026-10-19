@@ -10,6 +10,7 @@ export const LaunchedNewsletterPageView = () => {
 	if (!matchedItem) {
 		return (
 			<ContentWrapper>
+				{/* Temporary copy until a dedicated Stand not-found state is designed. */}
 				<article>NOT FOUND!</article>
 			</ContentWrapper>
 		);
@@ -18,6 +19,7 @@ export const LaunchedNewsletterPageView = () => {
 	if (!isNewsletterData(matchedItem)) {
 		return (
 			<ContentWrapper>
+				{/* Temporary copy until a dedicated Stand invalid-data state is designed. */}
 				<article>NOT VALID DATA!</article>
 			</ContentWrapper>
 		);
