@@ -181,3 +181,28 @@ Then('the header shows the title above the graphic', async ({ page }) => {
 Then('the header does not show the newsletter graphic', async ({ page }) => {
 	await expect(pageHeader(page).locator('img')).toBeHidden();
 });
+Given(
+	'a launched newsletter {string}',
+	async ({ request, namedNewsletters }, name: string) => {
+		await createLaunched(request, namedNewsletters, name);
+	},
+);
+When('the editor selects the {string} tab', async ({ page }, tab: string) => {
+	await page.getByRole('tab', { name: tab }).click();
+});
+Then('the {string} tab is selected', async ({ page }, tab: string) => {
+	await expect(page.getByRole('tab', { name: tab })).toHaveAttribute(
+		'aria-selected',
+		'true',
+	);
+});
+Then(
+	'the existing preview for {string} is shown',
+	async ({ page, namedNewsletters }, name: string) => {
+		await expect(page).toHaveURL(
+			new RegExp(
+				`/launched/preview/${identityNameFor(namedNewsletters, name)}$`,
+			),
+		);
+	},
+);
