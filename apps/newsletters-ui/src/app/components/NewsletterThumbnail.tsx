@@ -3,9 +3,9 @@ import { semanticColors, semanticRadius } from '@guardian/stand';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
 
-const size = '60px';
+const defaultSize = '60px';
 
-const thumbnailStyle = css`
+const thumbnailStyle = (size: string) => css`
 	width: ${size};
 	height: ${size};
 	flex-shrink: 0;
@@ -13,8 +13,8 @@ const thumbnailStyle = css`
 	border-radius: ${semanticRadius.cornerSm};
 `;
 
-const fallbackStyle = css`
-	${thumbnailStyle};
+const fallbackStyle = (size: string) => css`
+	${thumbnailStyle(size)};
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -27,17 +27,22 @@ const fallbackStyle = css`
 
 export interface NewsletterThumbnailProps {
 	src?: string;
+	/** CSS length for both width and height. Defaults to 60px. */
+	size?: string;
 }
 
 // A newsletter's thumbnail, or a fallback when it has none. Purely
 // decorative: the row's title text already identifies the newsletter, so
 // the image carries no alt text and the fallback isn't exposed to the
 // accessibility tree (its "No image" text is enough on its own).
-export const NewsletterThumbnail = ({ src }: NewsletterThumbnailProps) =>
+export const NewsletterThumbnail = ({
+	src,
+	size = defaultSize,
+}: NewsletterThumbnailProps) =>
 	src ? (
-		<img src={src} alt="" css={thumbnailStyle} />
+		<img src={src} alt="" css={thumbnailStyle(size)} />
 	) : (
-		<div css={fallbackStyle} aria-hidden="true">
+		<div css={fallbackStyle(size)} aria-hidden="true">
 			<Icon size="sm" symbol="image" />
 			<Typography element="span" variant="bodyXs">
 				No image

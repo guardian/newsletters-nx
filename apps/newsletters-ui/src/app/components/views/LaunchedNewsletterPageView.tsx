@@ -1,8 +1,8 @@
 import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
+import { LaunchedNewsletterHeader } from '../LaunchedNewsletterHeader';
 
-// Placeholder page for a launched newsletter. Replaced by the full page in #939.
 export const LaunchedNewsletterPageView = () => {
 	const matchedItem = useLoaderData<unknown>();
 
@@ -24,9 +24,8 @@ export const LaunchedNewsletterPageView = () => {
 
 	return (
 		<ContentWrapper>
-			<article>
-				<h2>{matchedItem.name}</h2>
-			</article>
+			<LaunchedNewsletterHeader newsletter={matchedItem} />
+			{/* Space for the tabs (#940). */}
 		</ContentWrapper>
 	);
 };
