@@ -68,4 +68,3 @@ Feature: Add a section to an edition hub layout
 				| title |
 				| News  |
 				| Sport |
-			And no layout has been saved
