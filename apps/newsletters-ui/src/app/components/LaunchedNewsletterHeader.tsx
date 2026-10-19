@@ -39,7 +39,7 @@ const headerStyles = css`
 	background-color: ${semanticColors.bg.raisedLevel2};
 
 	@media (max-width: 600px) {
-		flex-direction: column-reverse;
+		flex-direction: column;
 		align-items: flex-start;
 	}
 `;
