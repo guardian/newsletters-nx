@@ -47,7 +47,6 @@ const backLinkStyles = css`
 	display: inline-flex;
 	align-items: center;
 	gap: ${semanticSpacing.stackXxs};
-	margin-bottom: ${semanticSpacing.stackMd};
 	color: ${semanticColors.text.strong};
 	text-decoration: none;
 `;
@@ -109,8 +108,10 @@ const graphicStyles = css`
 
 export const LaunchedNewsletterHeader = ({
 	newsletter,
+	children,
 }: {
 	newsletter: NewsletterData;
+	children?: React.ReactNode;
 }) => (
 	<>
 		<Link to="/all" css={backLinkStyles}>
@@ -123,31 +124,34 @@ export const LaunchedNewsletterHeader = ({
 				Back to all newsletters
 			</Typography>
 		</Link>
-		<header css={headerStyles}>
-			<div css={textStyles}>
-				<NewsletterStatusBadge newsletter={newsletter} />
-				<Typography
-					element="h2"
-					variant="headingCompact2Xl"
-					cssOverrides={titleStyles}
-				>
-					{newsletter.name}
-				</Typography>
-				<Typography
-					element="p"
-					variant="bodyCompactSm"
-					cssOverrides={labelStyles}
-				>
-					{formatLabel(newsletter)}
-				</Typography>
-			</div>
-			<div css={graphicStyles}>
-				<NewsletterThumbnail
-					src={toThumbnailUrl(newsletter)}
-					size="120px"
-					height="100%"
-				/>
-			</div>
-		</header>
+		<div>
+			<header css={headerStyles}>
+				<div css={textStyles}>
+					<NewsletterStatusBadge newsletter={newsletter} />
+					<Typography
+						element="h2"
+						variant="headingCompact2Xl"
+						cssOverrides={titleStyles}
+					>
+						{newsletter.name}
+					</Typography>
+					<Typography
+						element="p"
+						variant="bodyCompactSm"
+						cssOverrides={labelStyles}
+					>
+						{formatLabel(newsletter)}
+					</Typography>
+				</div>
+				<div css={graphicStyles}>
+					<NewsletterThumbnail
+						src={toThumbnailUrl(newsletter)}
+						size="120px"
+						height="100%"
+					/>
+				</div>
+			</header>
+			{children}
+		</div>
 	</>
 );
