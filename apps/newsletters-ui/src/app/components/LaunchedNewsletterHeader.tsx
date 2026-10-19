@@ -49,6 +49,11 @@ const backLinkStyles = css`
 	gap: ${semanticSpacing.stackXxs};
 	margin-bottom: ${semanticSpacing.stackMd};
 	color: ${semanticColors.text.strong};
+	text-decoration: none;
+`;
+
+// Underline the text only, not the arrow icon.
+const backLinkTextStyles = css`
 	text-decoration: underline;
 `;
 
@@ -110,7 +115,11 @@ export const LaunchedNewsletterHeader = ({
 	<>
 		<Link to="/all" css={backLinkStyles}>
 			<Icon symbol="arrow_back" size="sm" />
-			<Typography element="span" variant="headingCompactSm">
+			<Typography
+				element="span"
+				variant="headingCompactSm"
+				cssOverrides={backLinkTextStyles}
+			>
 				Back to all newsletters
 			</Typography>
 		</Link>
