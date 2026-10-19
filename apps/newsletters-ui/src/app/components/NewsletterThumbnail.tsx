@@ -5,16 +5,16 @@ import { Typography } from '@guardian/stand/Typography';
 
 const defaultSize = '60px';
 
-const thumbnailStyle = (size: string) => css`
+const thumbnailStyle = (size: string, height: string) => css`
 	width: ${size};
-	height: ${size};
+	height: ${height};
 	flex-shrink: 0;
 	object-fit: cover;
 	border-radius: ${semanticRadius.cornerSm};
 `;
 
-const fallbackStyle = (size: string) => css`
-	${thumbnailStyle(size)};
+const fallbackStyle = (size: string, height: string) => css`
+	${thumbnailStyle(size, height)};
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -29,6 +29,8 @@ export interface NewsletterThumbnailProps {
 	src?: string;
 	/** CSS length for both width and height. Defaults to 60px. */
 	size?: string;
+	/** CSS length for the height. Defaults to `size`. */
+	height?: string;
 }
 
 // A newsletter's thumbnail, or a fallback when it has none. Purely
@@ -38,11 +40,12 @@ export interface NewsletterThumbnailProps {
 export const NewsletterThumbnail = ({
 	src,
 	size = defaultSize,
+	height = size,
 }: NewsletterThumbnailProps) =>
 	src ? (
-		<img src={src} alt="" css={thumbnailStyle(size)} />
+		<img src={src} alt="" css={thumbnailStyle(size, height)} />
 	) : (
-		<div css={fallbackStyle(size)} aria-hidden="true">
+		<div css={fallbackStyle(size, height)} aria-hidden="true">
 			<Icon size="sm" symbol="image" />
 			<Typography element="span" variant="bodyXs">
 				No image

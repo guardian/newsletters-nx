@@ -44,20 +44,22 @@ export const getDraftStatusBadgeContent = (
 		: { label: `Draft • ${progress}%`, color: 'yellow' };
 };
 
-export type NewsletterStatusBadgeProps =
+export type NewsletterStatusBadgeProps = (
 	| { newsletter: NewsletterData; draft?: never }
-	| { draft: DraftNewsletterData; newsletter?: never };
+	| { draft: DraftNewsletterData; newsletter?: never }
+) & { size?: BadgeProps['size'] };
 
 export const NewsletterStatusBadge = ({
 	newsletter,
 	draft,
+	size,
 }: NewsletterStatusBadgeProps) => {
 	const { label, color } = newsletter
 		? getLaunchedStatusBadgeContent(newsletter.status)
 		: getDraftStatusBadgeContent(draft);
 
 	return (
-		<Badge color={color} weight="strong">
+		<Badge color={color} weight="strong" size={size}>
 			{label}
 		</Badge>
 	);
