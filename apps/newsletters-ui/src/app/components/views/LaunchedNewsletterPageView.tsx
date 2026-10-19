@@ -2,6 +2,7 @@ import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { LaunchedNewsletterHeader } from '../LaunchedNewsletterHeader';
+import { LaunchedNewsletterTabs } from '../LaunchedNewsletterTabs';
 
 export const LaunchedNewsletterPageView = () => {
 	const matchedItem = useLoaderData<unknown>();
@@ -24,8 +25,12 @@ export const LaunchedNewsletterPageView = () => {
 
 	return (
 		<ContentWrapper>
-			<LaunchedNewsletterHeader newsletter={matchedItem} />
-			{/* Space for the tabs (#940). */}
+			<LaunchedNewsletterHeader newsletter={matchedItem}>
+				<LaunchedNewsletterTabs
+					identityName={matchedItem.identityName}
+					selected="details"
+				/>
+			</LaunchedNewsletterHeader>
 		</ContentWrapper>
 	);
 };
