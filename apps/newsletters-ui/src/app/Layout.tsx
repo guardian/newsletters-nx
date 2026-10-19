@@ -46,6 +46,11 @@ const frameCss = css`
 
 interface IRootRoute {
 	outlet?: undefined | React.ReactNode;
+	/**
+	 * Sits the page closer to the nav: 44px above the page content in total
+	 * (this padding plus ContentWrapper's 24px).
+	 */
+	compactTopPadding?: boolean;
 }
 
 const StandAlertBanner = ({ isOnCode }: { isOnCode: boolean }) => (
@@ -77,10 +82,6 @@ export function Layout(props: IRootRoute) {
 	})();
 	const isAllNewslettersRoute = location.pathname === '/all';
 	const isHomeRoute = location.pathname === '/';
-	// The launched newsletter page sits closer to the nav than other pages: 44px
-	// above the back link in total (this padding plus ContentWrapper's 24px).
-	const isLaunchedNewsletterPage =
-		location.pathname.startsWith('/newsletters/');
 	const isNewslettersHubLandingRoute = location.pathname === '/layouts';
 	// /all and the home page use the same Stand top bar / alert banner shell as the wizard.
 	const usesStandShell =
@@ -136,7 +137,7 @@ export function Layout(props: IRootRoute) {
 			)}
 			{Nav}
 			<Box
-				sx={{ pt: isLaunchedNewsletterPage ? 2.5 : 8, pb: 8 }}
+				sx={{ pt: props.compactTopPadding ? 2.5 : 8, pb: 8 }}
 				component={'main'}
 			>
 				{props.outlet ?? <Outlet />}

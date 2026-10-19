@@ -3,8 +3,8 @@ import {
 	semanticColors,
 	semanticRadius,
 	semanticSpacing,
-	semanticTypography,
 } from '@guardian/stand';
+import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
 import type {
 	NewsletterData,
@@ -17,6 +17,14 @@ import {
 } from '../lib/all-newsletters-rows';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { NewsletterThumbnail } from './NewsletterThumbnail';
+
+// These widths come from the Figma design and don't match Stand's breakpoints
+// (sm 0, md 830, lg 1056). They are explicit here for now and could be added
+// to Stand later, at which point these can switch to its `until` helpers.
+const STACKED_MAX_WIDTH = '600px';
+const MOBILE_MAX_WIDTH = '393px';
+const untilStacked = `@media (max-width: ${STACKED_MAX_WIDTH})`;
+const untilMobile = `@media (max-width: ${MOBILE_MAX_WIDTH})`;
 
 const regionNames: Record<NonNullable<RegionFocus>, string> = {
 	UK: 'United Kingdom',
@@ -35,27 +43,19 @@ const formatLabel = ({ theme, category, regionFocus }: NewsletterData) =>
 		.filter(Boolean)
 		.join(' | ');
 
-// The back link and header are one block, so the 16px between them doesn't
-// depend on the page wrapper's own gap.
-const pageHeaderStyles = css`
-	display: flex;
-	flex-direction: column;
-	gap: ${semanticSpacing.stackMd};
-`;
-
 const backLinkStyles = css`
-	align-self: flex-start;
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	gap: ${semanticSpacing.stackXxs};
+	margin-bottom: ${semanticSpacing.stackMd};
 	color: ${semanticColors.text.strong};
-	font: ${semanticTypography.headingCompactSm.font};
-	white-space: nowrap;
 	text-decoration: underline;
 `;
 
 // Padding is 16px except 24px below, and the graphic stretches to the height
 // of the text column (the "graphic" is 120px wide).
+// At 600px and below the header stacks into a column, and the graphic is
+// hidden at 393px and below.
 const headerStyles = css`
 	display: flex;
 	align-items: stretch;
@@ -66,7 +66,7 @@ const headerStyles = css`
 	border-bottom: 1px solid ${semanticColors.border.weak};
 	border-radius: ${semanticRadius.cornerSm} ${semanticRadius.cornerSm} 0 0;
 
-	@media (max-width: 600px) {
+	${untilStacked} {
 		flex-direction: column;
 	}
 `;
@@ -93,11 +93,11 @@ const labelStyles = css`
 const graphicStyles = css`
 	flex-shrink: 0;
 
-	@media (max-width: 600px) {
+	${untilStacked} {
 		height: 5.2rem;
 	}
 
-	@media (max-width: 393px) {
+	${untilMobile} {
 		display: none;
 	}
 `;
@@ -107,20 +107,16 @@ export const LaunchedNewsletterHeader = ({
 }: {
 	newsletter: NewsletterData;
 }) => (
-	<div css={pageHeaderStyles}>
+	<>
 		<Link to="/all" css={backLinkStyles}>
-			{/* The design's 12px arrow, centred in an 18px box. */}
-			<svg width="18" height="16" viewBox="24 39 18 16" aria-hidden="true">
-				<path
-					d="M39 46.25H29.8725L34.065 42.0575L33 41L27 47L33 53L34.0575 51.9425L29.8725 47.75H39V46.25Z"
-					fill="currentColor"
-				/>
-			</svg>
-			Back to all newsletters
+			<Icon symbol="arrow_back" size="sm" />
+			<Typography element="span" variant="headingCompactSm">
+				Back to all newsletters
+			</Typography>
 		</Link>
 		<header css={headerStyles}>
 			<div css={textStyles}>
-				<NewsletterStatusBadge newsletter={newsletter} size="xs" />
+				<NewsletterStatusBadge newsletter={newsletter} />
 				<Typography
 					element="h2"
 					variant="headingCompact2Xl"
@@ -144,5 +140,5 @@ export const LaunchedNewsletterHeader = ({
 				/>
 			</div>
 		</header>
-	</div>
+	</>
 );
