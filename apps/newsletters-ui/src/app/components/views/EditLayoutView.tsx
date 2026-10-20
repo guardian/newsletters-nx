@@ -1,15 +1,22 @@
-import { Typography } from '@mui/material';
+import { Typography as StandTypography } from '@guardian/stand/Typography';
+import { Container, Typography } from '@mui/material';
 import type {
 	Layout,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { makeBlankLayout } from '@newsletters-nx/newsletters-data-client';
+import {
+	editionIdSchema,
+	makeBlankLayout,
+} from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useLocation } from 'react-router-dom';
+import * as z from 'zod';
 import { ContentWrapper } from '../../ContentWrapper';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import { usePermissions } from '../../hooks/user-hooks';
 import { LayoutEditor } from '../edition-layouts/LayoutEditor';
 import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
+import { Stand404Block } from '../errors/Stand404Block';
+import { StandErrorBlock } from '../errors/StandErrorBlock';
 import { StandEditLayoutView } from './StandEditLayoutView';
 
 export const EditLayoutView = () => {
@@ -21,11 +28,31 @@ export const EditLayoutView = () => {
 	const permissions = usePermissions();
 	const editionId = location.pathname.split('/').pop()?.toUpperCase();
 
-	if (!data || !editionId) {
-		return <MissingLayoutContent editionId={editionId} />;
-	}
-
 	if (isFeatureSwitchEnabled('switch-stand')) {
+		if (!z.validate(editionIdSchema, editionId)) {
+			return (
+				<Container maxWidth="lg">
+					<Stand404Block />
+				</Container>
+			);
+		}
+
+		if (!data) {
+			return (
+				<Container maxWidth="lg">
+					<StandErrorBlock
+						title="Newsletters data could not be loaded"
+						description={
+							<StandTypography element="p">
+								Please try again later.
+							</StandTypography>
+						}
+						backText="Return to previous page"
+					/>
+				</Container>
+			);
+		}
+
 		return (
 			<StandEditLayoutView
 				editionId={editionId}
@@ -34,6 +61,10 @@ export const EditLayoutView = () => {
 				permissions={permissions}
 			/>
 		);
+	}
+
+	if (!data?.layout || !editionId) {
+		return <MissingLayoutContent editionId={editionId} />;
 	}
 
 	return (
