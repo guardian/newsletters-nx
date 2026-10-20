@@ -3,34 +3,44 @@ import { semanticColors, semanticRadius } from '@guardian/stand';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
 
-const defaultSize = '60px';
+export type NewsletterThumbnailVariant = 'large' | 'medium' | 'small';
 
-const thumbnailStyle = (size: string, height: string) => css`
-	width: ${size};
+const variantSizes: Record<
+	NewsletterThumbnailVariant,
+	{ width: string; height: string }
+> = {
+	large: { width: '120px', height: '83px' },
+	medium: { width: '80px', height: '55px' },
+	small: { width: '60px', height: '60px' },
+};
+
+const thumbnailStyle = (width: string, height: string) => css`
+	width: ${width};
 	height: ${height};
 	flex-shrink: 0;
 	object-fit: cover;
 	border-radius: ${semanticRadius.cornerSm};
 `;
 
-const fallbackStyle = (size: string, height: string) => css`
-	${thumbnailStyle(size, height)};
+const fallbackStyle = (width: string, height: string) => css`
+	${thumbnailStyle(width, height)};
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: 2px;
-	background-color: ${semanticColors.fill.neutralWeak};
+	background-color: ${semanticColors.bg.raisedLevel3};
 	color: ${semanticColors.text.weak};
 	text-align: center;
 `;
 
 export interface NewsletterThumbnailProps {
 	src?: string;
-	/** CSS length for both width and height. Defaults to 60px. */
-	size?: string;
-	/** CSS length for the height. Defaults to `size`. */
-	height?: string;
+	/**
+	 * `large` is 120x83, `medium` is 80x55 and `small` (default) is a 60x60
+	 * square. The large variant has a larger fallback.
+	 */
+	variant?: NewsletterThumbnailVariant;
 }
 
 // A newsletter's thumbnail, or a fallback when it has none. Purely
@@ -39,16 +49,19 @@ export interface NewsletterThumbnailProps {
 // accessibility tree (its "No image" text is enough on its own).
 export const NewsletterThumbnail = ({
 	src,
-	size = defaultSize,
-	height = size,
-}: NewsletterThumbnailProps) =>
-	src ? (
-		<img src={src} alt="" css={thumbnailStyle(size, height)} />
+	variant = 'small',
+}: NewsletterThumbnailProps) => {
+	const isLarge = variant === 'large';
+	const { width, height } = variantSizes[variant];
+
+	return src ? (
+		<img src={src} alt="" css={thumbnailStyle(width, height)} />
 	) : (
-		<div css={fallbackStyle(size, height)} aria-hidden="true">
-			<Icon size="sm" symbol="image" />
-			<Typography element="span" variant="bodyXs">
+		<div css={fallbackStyle(width, height)} aria-hidden="true">
+			<Icon size={isLarge ? 'lg' : 'sm'} symbol="image" />
+			<Typography element="span" variant={isLarge ? 'bodyLg' : 'bodyXs'}>
 				No image
 			</Typography>
 		</div>
 	);
+};

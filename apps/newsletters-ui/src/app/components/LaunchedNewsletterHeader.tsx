@@ -133,8 +133,7 @@ export const LaunchedNewsletterHeader = ({
 				<div css={graphicStyles}>
 					<NewsletterThumbnail
 						src={newsletter.illustrationCard ?? undefined}
-						size="120px"
-						height="82.88px"
+						variant="large"
 					/>
 				</div>
 			</header>
