@@ -148,7 +148,7 @@ export const LaunchedNewsletterHeader = ({
 					<NewsletterThumbnail
 						src={toThumbnailUrl(newsletter)}
 						size="120px"
-						height="100%"
+						height="82.88px"
 					/>
 				</div>
 			</header>
