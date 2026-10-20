@@ -57,7 +57,7 @@ export const formatPillarCategoryLabel = (
 // illustrations, closest aspect ratio to the thumbnail's square slot first
 // (illustrationSquare is 1:1, illustrationCircle at least crops symmetrically,
 // illustrationCard is 5:4 and would lose the most content to the crop).
-const toThumbnailUrl = (
+export const toThumbnailUrl = (
 	newsletter: Pick<
 		DraftNewsletterData,
 		'illustrationCircle' | 'illustrationSquare' | 'illustrationCard'

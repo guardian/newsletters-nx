@@ -15,7 +15,7 @@ checkFeatureSwitchURLParams();
 // `switch-stand` is on, so other users never reach it.
 export const newslettersRoute: RouteObject = {
 	path: '/newsletters',
-	element: <Layout />,
+	element: <Layout compactTopPadding />,
 	errorElement: <ErrorPage />,
 	children: [
 		{
