@@ -81,7 +81,7 @@ Given(
 	'a launched newsletter {string} with a newsletter graphic',
 	async ({ request, namedNewsletters }, name: string) => {
 		await createLaunched(request, namedNewsletters, name, {
-			illustrationSquare: GRAPHIC_URL,
+			illustrationCard: GRAPHIC_URL,
 		});
 	},
 );
@@ -117,7 +117,7 @@ When(
 			request,
 			namedNewsletters,
 			'Afternoon update',
-			{ illustrationSquare: GRAPHIC_URL },
+			{ illustrationCard: GRAPHIC_URL },
 		);
 		await page.goto(`/newsletters/${identityName}`);
 	},
