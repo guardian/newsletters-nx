@@ -59,6 +59,18 @@ export const denyAll = (): UserPermissions => ({
 	useJsonEditor: false,
 });
 
+/**
+ *
+ * Provides all permissions to user.
+ *
+ * Use with caution
+ *
+ */
+export const grantAll = (): UserPermissions => ({
+	editEverything: true,
+	useJsonEditor: true,
+});
+
 export const levelToPermissions = (
 	accessLevel: UserAccessLevel,
 ): UserPermissions => {
