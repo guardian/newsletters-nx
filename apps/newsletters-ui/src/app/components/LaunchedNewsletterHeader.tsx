@@ -6,12 +6,10 @@ import {
 } from '@guardian/stand';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
-import type {
-	NewsletterData,
-	RegionFocus,
-} from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { Link } from 'react-router-dom';
 import { formatPillarCategoryLabel } from '../lib/all-newsletters-rows';
+import { regionNames } from '../lib/region-names';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { NewsletterThumbnail } from './NewsletterThumbnail';
 
@@ -22,15 +20,6 @@ const STACKED_MAX_WIDTH = '600px';
 const MOBILE_MAX_WIDTH = '393px';
 const untilStacked = `@media (max-width: ${STACKED_MAX_WIDTH})`;
 const untilMobile = `@media (max-width: ${MOBILE_MAX_WIDTH})`;
-
-// TODO: Share this mapping with other launched-newsletter views to avoid drift.
-const regionNames: Record<NonNullable<RegionFocus>, string> = {
-	UK: 'United Kingdom',
-	US: 'United States',
-	AU: 'Australia',
-	INT: 'International',
-	EUR: 'Europe',
-};
 
 // "News | Article based | Australia" - anything not set is left out.
 const formatLabel = ({ theme, category, regionFocus }: NewsletterData) =>
