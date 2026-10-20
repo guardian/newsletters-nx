@@ -11,10 +11,7 @@ import type {
 	RegionFocus,
 } from '@newsletters-nx/newsletters-data-client';
 import { Link } from 'react-router-dom';
-import {
-	formatPillarCategoryLabel,
-	toThumbnailUrl,
-} from '../lib/all-newsletters-rows';
+import { formatPillarCategoryLabel } from '../lib/all-newsletters-rows';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { NewsletterThumbnail } from './NewsletterThumbnail';
 
@@ -146,7 +143,7 @@ export const LaunchedNewsletterHeader = ({
 				</div>
 				<div css={graphicStyles}>
 					<NewsletterThumbnail
-						src={toThumbnailUrl(newsletter)}
+						src={newsletter.illustrationCard ?? undefined}
 						size="120px"
 						height="82.88px"
 					/>

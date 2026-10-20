@@ -57,4 +57,18 @@ describe('LaunchedNewsletterHeader', () => {
 
 		expect(screen.queryByText('No image')).not.toBeNull();
 	});
+
+	it('shows the standard (card) graphic', () => {
+		const { container } = renderHeader(
+			newsletter({
+				illustrationCard: 'https://example.com/card.png',
+				illustrationSquare: 'https://example.com/square.png',
+				illustrationCircle: 'https://example.com/circle.png',
+			}),
+		);
+
+		expect(container.querySelector('img')?.getAttribute('src')).toBe(
+			'https://example.com/card.png',
+		);
+	});
 });
