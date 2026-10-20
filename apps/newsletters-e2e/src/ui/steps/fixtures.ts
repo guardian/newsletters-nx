@@ -8,6 +8,7 @@ import {
 	backupFixtureLayouts,
 	createFixtureLayout,
 	deleteFixtureDraft,
+	deleteFixtureLayout,
 	deleteFixtureNewsletter,
 	restoreFixtureLayouts,
 } from '../../../helpers/test-fixtures';
@@ -47,6 +48,7 @@ interface NamedNewsletters {
 interface StoredLayouts {
 	create: (edition: EditionId, layout: Layout) => Promise<void>;
 	get: (edition: EditionId) => Promise<Layout | undefined>;
+	delete: (edition: EditionId) => Promise<void>;
 }
 
 type Fixtures = {
@@ -87,6 +89,7 @@ export const test = base.extend<Fixtures>({
 		await use({
 			create: (edition, layout) =>
 				createFixtureLayout(request, edition, layout),
+			delete: (edition) => deleteFixtureLayout(request, edition),
 			get: async (edition) => {
 				const response = await request.get(`/api/layouts/${edition}`);
 				const json = (await response.json()) as {
