@@ -3,11 +3,16 @@ import type {
 	Theme,
 } from '@newsletters-nx/newsletters-data-client';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 // "01 June 26", or undefined when there's no real date.
 export const formatShortDate = (value?: Date | string | null) => {
 	// `?? null` because dayjs(undefined) means "now", whereas dayjs(null) is invalid.
-	const date = dayjs(value ?? null);
+	// UTC because dates are saved as midnight UTC (see `DateInput`), so local
+	// time would show the day before for anyone west of UTC.
+	const date = dayjs.utc(value ?? null);
 	// Missing dates can arrive as null/0, which z.coerce.date() turns into the
 	// 1970 epoch, so treat that as "no date".
 	return date.isValid() && date.valueOf() > 0

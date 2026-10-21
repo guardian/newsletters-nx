@@ -14,9 +14,9 @@ const newsletter = (overrides: Partial<NewsletterData> = {}) =>
 		regionFocus: 'AU',
 		frequency: 'Weekly',
 		group: 'News in depth',
-		// Midday UTC, so the dates are the same in any test timezone.
-		launchDate: new Date('2026-06-01T12:00:00.000Z'),
-		signUpPageDate: new Date('2026-07-15T12:00:00.000Z'),
+		// Dates are saved as midnight UTC (see `DateInput`).
+		launchDate: new Date('2026-06-01T00:00:00.000Z'),
+		signUpPageDate: new Date('2026-07-15T00:00:00.000Z'),
 		privateUntilLaunch: false,
 		...overrides,
 	}) as NewsletterData;
