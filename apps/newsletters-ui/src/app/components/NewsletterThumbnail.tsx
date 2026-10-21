@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { semanticColors, semanticRadius } from '@guardian/stand';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
+import type { CSSProperties } from 'react';
 
 export type NewsletterThumbnailVariant = 'large' | 'medium' | 'small';
 
@@ -14,16 +15,18 @@ const variantSizes: Record<
 	small: { width: '60px', height: '60px' },
 };
 
-const thumbnailStyle = (width: string, height: string) => css`
-	width: ${width};
-	height: ${height};
+// Dimensions are set per-instance via CSS variables in the style prop, so the
+// styles below stay static (see Emotion best practices).
+const thumbnailStyle = css`
+	width: var(--thumbnail-width);
+	height: var(--thumbnail-height);
 	flex-shrink: 0;
 	object-fit: cover;
 	border-radius: ${semanticRadius.cornerSm};
 `;
 
-const fallbackStyle = (width: string, height: string) => css`
-	${thumbnailStyle(width, height)};
+const fallbackStyle = css`
+	${thumbnailStyle};
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -53,11 +56,15 @@ export const NewsletterThumbnail = ({
 }: NewsletterThumbnailProps) => {
 	const isLarge = variant === 'large';
 	const { width, height } = variantSizes[variant];
+	const dimensions = {
+		'--thumbnail-width': width,
+		'--thumbnail-height': height,
+	} as CSSProperties;
 
 	return src ? (
-		<img src={src} alt="" css={thumbnailStyle(width, height)} />
+		<img src={src} alt="" css={thumbnailStyle} style={dimensions} />
 	) : (
-		<div css={fallbackStyle(width, height)} aria-hidden="true">
+		<div css={fallbackStyle} style={dimensions} aria-hidden="true">
 			<Icon size={isLarge ? 'lg' : 'sm'} symbol="image" />
 			<Typography element="span" variant={isLarge ? 'bodyLg' : 'bodyXs'}>
 				No image
