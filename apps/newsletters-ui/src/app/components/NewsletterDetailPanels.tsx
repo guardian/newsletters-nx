@@ -49,6 +49,10 @@ const valueStyles = css`
 	overflow-wrap: anywhere;
 `;
 
+// Undefined stays undefined so the field shows "Not set".
+const yesNo = (value?: boolean) =>
+	value === undefined ? undefined : value ? 'Yes' : 'No';
+
 const isEmpty = (value: ReactNode) =>
 	value === undefined || value === null || value === '';
 
