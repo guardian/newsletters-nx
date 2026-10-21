@@ -19,3 +19,12 @@ export const formatPillarCategoryLabel = (
 		.map(humanize);
 	return labels.length > 0 ? labels.join(' | ') : undefined;
 };
+
+// `undefined` means no real edit date is known (see `deriveUpdatedTimestamp`),
+// not an invalid value.
+export const formatLastUpdated = (timestamp?: number): string => {
+	if (!timestamp) {
+		return 'Unknown';
+	}
+	return new Date(timestamp).toDateString();
+};

@@ -2,8 +2,7 @@ import { Badge } from '@guardian/stand/Badge';
 import { TableCell, TableRow } from '@guardian/stand/Table';
 import { Typography } from '@guardian/stand/Typography';
 import type { NewsletterRow } from '../../lib/all-newsletters-rows';
-import { formatPillarCategoryLabel } from '../../lib/format';
-import { formatLastUpdated } from '../../lib/format-last-updated';
+import { formatLastUpdated, formatPillarCategoryLabel } from '../../lib/format';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 import {
 	detailsStyle,
