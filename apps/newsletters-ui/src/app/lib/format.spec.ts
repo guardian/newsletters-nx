@@ -2,8 +2,25 @@ import { describe, expect, it } from 'vitest';
 import {
 	formatLastUpdated,
 	formatPillarCategoryLabel,
+	formatShortDate,
 	humanize,
 } from './format';
+
+describe('formatShortDate', () => {
+	it('formats a date as "DD MMMM YY"', () => {
+		// Midday UTC, so the date is the same in any test timezone.
+		expect(formatShortDate('2026-06-01T12:00:00.000Z')).toBe('01 June 26');
+	});
+
+	it('returns undefined when there is no date', () => {
+		expect(formatShortDate(undefined)).toBeUndefined();
+	});
+
+	// z.coerce.date() turns a stored null/0 into the 1970 epoch.
+	it('returns undefined for the 1970 epoch', () => {
+		expect(formatShortDate(new Date(0))).toBeUndefined();
+	});
+});
 
 describe('humanize', () => {
 	it.each([

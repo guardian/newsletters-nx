@@ -1,6 +1,7 @@
 import type { RegionFocus } from '@newsletters-nx/newsletters-data-client';
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import type { DataTable } from 'playwright-bdd';
 import { createFixtureNewsletter } from '../../../helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
@@ -11,9 +12,10 @@ type FixtureOverrides = Parameters<typeof createFixtureNewsletter>[1];
 
 const GRAPHIC_URL = 'https://example.com/graphic.png';
 
-// The page header is the only <header> containing the newsletter's h2.
+// The page header is the only <header> with an h2 outside a panel (each
+// StandPanel is a <section> with its own <header>).
 const pageHeader = (page: Page): Locator =>
-	page.locator('header', { has: page.getByRole('heading', { level: 2 }) });
+	page.locator('xpath=//header[not(ancestor::section)][.//h2]');
 
 const createLaunched = async (
 	request: APIRequestContext,
@@ -204,5 +206,44 @@ Then(
 				`/launched/preview/${identityNameFor(namedNewsletters, name)}$`,
 			),
 		);
+	},
+);
+
+// Midday UTC, so the date shown is the same in any browser timezone.
+const middayUtc = (isoDate: string) => new Date(`${isoDate}T12:00:00.000Z`);
+
+Given(
+	'a launched newsletter {string} launching on {string} and promoted from {string}',
+	async (
+		{ request, namedNewsletters },
+		name: string,
+		launchDate: string,
+		promotionDate: string,
+	) => {
+		await createLaunched(request, namedNewsletters, name, {
+			launchDate: middayUtc(launchDate),
+			signUpPageDate: middayUtc(promotionDate),
+		});
+	},
+);
+
+Then(
+	'the {string} panel shows:',
+	async ({ page }, panelName: string, table: DataTable) => {
+		const panel = page.locator('section', {
+			has: page.getByRole('heading', {
+				level: 2,
+				name: panelName,
+				exact: true,
+			}),
+		});
+		for (const [label, value] of Object.entries(table.rowsHash())) {
+			await expect(
+				panel
+					.locator('dt')
+					.filter({ hasText: new RegExp(`^${label}$`) })
+					.locator('xpath=following-sibling::dd[1]'),
+			).toHaveText(value);
+		}
 	},
 );
