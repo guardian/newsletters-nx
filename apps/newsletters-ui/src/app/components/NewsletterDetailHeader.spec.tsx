@@ -2,7 +2,7 @@ import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { cleanup, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
-import { LaunchedNewsletterHeader } from './LaunchedNewsletterHeader';
+import { NewsletterDetailHeader } from './NewsletterDetailHeader';
 
 afterEach(cleanup);
 
@@ -19,11 +19,11 @@ const newsletter = (overrides: Partial<NewsletterData> = {}) =>
 const renderHeader = (data: NewsletterData) =>
 	render(
 		<MemoryRouter>
-			<LaunchedNewsletterHeader newsletter={data} />
+			<NewsletterDetailHeader newsletter={data} />
 		</MemoryRouter>,
 	);
 
-describe('LaunchedNewsletterHeader', () => {
+describe('NewsletterDetailHeader', () => {
 	it('shows the name, label and status', () => {
 		renderHeader(newsletter());
 

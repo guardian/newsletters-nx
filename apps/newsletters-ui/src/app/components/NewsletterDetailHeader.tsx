@@ -93,7 +93,7 @@ const graphicStyles = css`
 	}
 `;
 
-export const LaunchedNewsletterHeader = ({
+export const NewsletterDetailHeader = ({
 	newsletter,
 	children,
 }: {

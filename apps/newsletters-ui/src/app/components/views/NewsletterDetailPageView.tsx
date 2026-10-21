@@ -1,9 +1,9 @@
 import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
-import { LaunchedNewsletterHeader } from '../LaunchedNewsletterHeader';
+import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 
-export const LaunchedNewsletterPageView = () => {
+export const NewsletterDetailPageView = () => {
 	const matchedItem = useLoaderData<unknown>();
 
 	if (!matchedItem) {
@@ -26,7 +26,7 @@ export const LaunchedNewsletterPageView = () => {
 
 	return (
 		<ContentWrapper>
-			<LaunchedNewsletterHeader newsletter={matchedItem} />
+			<NewsletterDetailHeader newsletter={matchedItem} />
 		</ContentWrapper>
 	);
 };
