@@ -8,7 +8,7 @@ import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { Link } from 'react-router-dom';
-import { formatPillarCategoryLabel } from '../lib/all-newsletters-rows';
+import { formatPillarCategoryLabel } from '../lib/format';
 import { regionNames } from '../lib/region-names';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { NewsletterThumbnail } from './NewsletterThumbnail';

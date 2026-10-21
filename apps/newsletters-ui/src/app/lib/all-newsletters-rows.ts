@@ -36,23 +36,6 @@ export interface NewsletterRow {
 	statusBadge: BadgeContent;
 }
 
-// `theme`/`category` are kebab-cased identifiers; the design shows them
-// capitalised words (e.g. "Article based").
-const humanize = (value: string): string => {
-	const withSpaces = value.replace(/-/g, ' ');
-	return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
-};
-
-export const formatPillarCategoryLabel = (
-	theme?: Theme,
-	category?: NewsletterCategory,
-): string | undefined => {
-	const labels = [theme, category]
-		.filter((value): value is NonNullable<typeof value> => Boolean(value))
-		.map(humanize);
-	return labels.length > 0 ? labels.join(' | ') : undefined;
-};
-
 // `NewsletterData` has no single thumbnail field; fall back through the
 // illustrations, closest aspect ratio to the thumbnail's square slot first
 // (illustrationSquare is 1:1, illustrationCircle at least crops symmetrically,
