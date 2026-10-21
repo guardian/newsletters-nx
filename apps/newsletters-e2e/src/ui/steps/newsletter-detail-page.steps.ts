@@ -209,8 +209,8 @@ Then(
 	},
 );
 
-// Midday UTC, so the date shown is the same in any browser timezone.
-const middayUtc = (isoDate: string) => new Date(`${isoDate}T12:00:00.000Z`);
+// Midnight UTC, as `DateInput` saves dates.
+const midnightUtc = (isoDate: string) => new Date(`${isoDate}T00:00:00.000Z`);
 
 Given(
 	'a launched newsletter {string} launching on {string} and promoted from {string}',
@@ -221,8 +221,8 @@ Given(
 		promotionDate: string,
 	) => {
 		await createLaunched(request, namedNewsletters, name, {
-			launchDate: middayUtc(launchDate),
-			signUpPageDate: middayUtc(promotionDate),
+			launchDate: midnightUtc(launchDate),
+			signUpPageDate: midnightUtc(promotionDate),
 		});
 	},
 );

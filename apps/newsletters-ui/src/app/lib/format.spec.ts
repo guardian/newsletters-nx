@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
 	formatLastUpdated,
 	formatPillarCategoryLabel,
@@ -8,8 +8,8 @@ import {
 
 describe('formatShortDate', () => {
 	it('formats a date as "DD MMMM YY"', () => {
-		// Midday UTC, so the date is the same in any test timezone.
-		expect(formatShortDate('2026-06-01T12:00:00.000Z')).toBe('01 June 26');
+		// Dates are saved as midnight UTC (see `DateInput`).
+		expect(formatShortDate('2026-06-01T00:00:00.000Z')).toBe('01 June 26');
 	});
 
 	it('returns undefined when there is no date', () => {
@@ -19,6 +19,26 @@ describe('formatShortDate', () => {
 	// z.coerce.date() turns a stored null/0 into the 1970 epoch.
 	it('returns undefined for the 1970 epoch', () => {
 		expect(formatShortDate(new Date(0))).toBeUndefined();
+	});
+
+	describe('west of UTC', () => {
+		const originalTz = process.env['TZ'];
+		beforeEach(() => {
+			process.env['TZ'] = 'America/New_York';
+		});
+		afterEach(() => {
+			if (originalTz === undefined) {
+				delete process.env['TZ'];
+			} else {
+				process.env['TZ'] = originalTz;
+			}
+		});
+
+		it('shows the saved day, not the day before', () => {
+			expect(formatShortDate(new Date('2026-06-01T00:00:00.000Z'))).toBe(
+				'01 June 26',
+			);
+		});
 	});
 });
 
