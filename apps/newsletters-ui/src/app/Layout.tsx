@@ -46,6 +46,11 @@ const frameCss = css`
 
 interface IRootRoute {
 	outlet?: undefined | React.ReactNode;
+	/**
+	 * Sits the page closer to the nav: 44px above the page content in total
+	 * (this padding plus ContentWrapper's 24px).
+	 */
+	compactTopPadding?: boolean;
 }
 
 const StandAlertBanner = ({ isOnCode }: { isOnCode: boolean }) => (
@@ -131,7 +136,10 @@ export function Layout(props: IRootRoute) {
 				<StandAlertBanner isOnCode={isOnCode} />
 			)}
 			{Nav}
-			<Box sx={{ pt: 8, pb: 8 }} component={'main'}>
+			<Box
+				sx={{ pt: props.compactTopPadding ? 2.5 : 8, pb: 8 }}
+				component={'main'}
+			>
 				{props.outlet ?? <Outlet />}
 			</Box>
 		</div>
