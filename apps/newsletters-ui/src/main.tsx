@@ -8,6 +8,7 @@ import { draftRoute } from './app/routes/drafts';
 import { homeRoute } from './app/routes/home';
 import { launchedRoute } from './app/routes/launched';
 import { layoutsRoute } from './app/routes/layouts';
+import { newslettersRoutes } from './app/routes/newsletters';
 import { appTheme } from './app-theme';
 import { addGuardianFonts } from './fonts';
 import '@guardian/stand/util/reset.css';
@@ -21,6 +22,8 @@ const router = createBrowserRouter([
 	draftRoute,
 	launchedRoute,
 	layoutsRoute,
+	// Only registered when `switch-stand` is on.
+	...newslettersRoutes,
 	// Always registered; AllNewslettersView itself shows a message in place
 	// of the table when the Stand design isn't enabled.
 	allNewslettersRoute,
