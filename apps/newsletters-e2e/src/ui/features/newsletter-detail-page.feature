@@ -70,6 +70,26 @@ Feature: Launched newsletter: open it and find my way around
       And the editor selects the "Layout" tab
       Then the existing preview for "Afternoon update" is shown
 
+  Rule: The Details tab shows the newsletter's attributes and launch details
+
+    Scenario: The Attributes panel shows what kind of newsletter it is
+      Given a launched newsletter "Afternoon update" with status "pending" and region focus "AU"
+      When the editor opens the detail page for "Afternoon update"
+      Then the "Attributes" panel shows:
+        | Name               | Afternoon update |
+        | Newsletter status  | Pending          |
+        | Pillar             | News             |
+        | Region focus       | AU               |
+        | Type of newsletter | Article based    |
+
+    Scenario: The Launch panel shows when the newsletter launches
+      Given a launched newsletter "Afternoon update" launching on "2026-06-01" and promoted from "2026-07-15"
+      When the editor opens the detail page for "Afternoon update"
+      Then the "Launch" panel shows:
+        | Launch date          | 01 June 26 |
+        | Promotion date       | 15 July 26 |
+        | Private until launch | No         |
+
   Rule: The header adapts to the screen size
 
     Scenario: The header stacks on a small screen
