@@ -60,6 +60,7 @@ describe('NewsletterDetailPanels', () => {
 					regionFocus: undefined,
 					frequency: '',
 					launchDate: undefined,
+					privateUntilLaunch: undefined,
 				})}
 			/>,
 		);
@@ -67,5 +68,12 @@ describe('NewsletterDetailPanels', () => {
 		expect(valueFor('Region focus')).toBe('Not set');
 		expect(valueFor('Frequency')).toBe('Not set');
 		expect(valueFor('Launch date')).toBe('Not set');
+		expect(valueFor('Private until launch')).toBe('Not set');
+	});
+
+	it('shows "No" when not private until launch', () => {
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+
+		expect(valueFor('Private until launch')).toBe('No');
 	});
 });
