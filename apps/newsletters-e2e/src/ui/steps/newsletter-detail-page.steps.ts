@@ -12,10 +12,13 @@ type FixtureOverrides = Parameters<typeof createFixtureNewsletter>[1];
 
 const GRAPHIC_URL = 'https://example.com/graphic.png';
 
-// The page header is the only <header> with an h2 outside a panel (each
-// StandPanel is a <section> with its own <header>).
+// The page header is the only banner with an h2. The main nav is also a
+// banner but has no h2, and the panels' <header>s are inside <section>s, so
+// they aren't banners.
 const pageHeader = (page: Page): Locator =>
-	page.locator('xpath=//header[not(ancestor::section)][.//h2]');
+	page
+		.getByRole('banner')
+		.filter({ has: page.getByRole('heading', { level: 2 }) });
 
 const createLaunched = async (
 	request: APIRequestContext,
