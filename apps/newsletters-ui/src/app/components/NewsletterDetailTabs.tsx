@@ -25,7 +25,7 @@ const firstTabStyles = css`
 
 // Driven by the route: selecting a tab navigates, so the URL changes and Back
 // works. Layout links to the existing preview until the Layout tab is built.
-export const LaunchedNewsletterTabs = ({ identityName, selected }: Props) => {
+export const NewsletterDetailTabs = ({ identityName, selected }: Props) => {
 	const navigate = useNavigate();
 	const id = encodeURIComponent(identityName);
 

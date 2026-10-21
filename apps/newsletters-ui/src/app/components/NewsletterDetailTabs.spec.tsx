@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
-import { LaunchedNewsletterTabs } from './LaunchedNewsletterTabs';
+import { NewsletterDetailTabs } from './NewsletterDetailTabs';
 
 afterEach(cleanup);
 
@@ -15,7 +15,7 @@ const renderTabs = () =>
 					path="*"
 					element={
 						<>
-							<LaunchedNewsletterTabs
+							<NewsletterDetailTabs
 								identityName="afternoon-update"
 								selected="details"
 							/>
@@ -27,7 +27,7 @@ const renderTabs = () =>
 		</MemoryRouter>,
 	);
 
-describe('LaunchedNewsletterTabs', () => {
+describe('NewsletterDetailTabs', () => {
 	it('selects the Details tab', () => {
 		renderTabs();
 		expect(
