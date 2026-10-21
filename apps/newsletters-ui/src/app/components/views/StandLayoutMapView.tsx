@@ -16,6 +16,7 @@ import type {
 import { editionIds } from '@newsletters-nx/newsletters-data-client';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useLoaderData, useNavigate } from 'react-router-dom';
+import { regionNames } from '../../lib/region-names';
 import { titleStyle } from '../home/home.styles';
 import { FlagAtom } from '../icons/FlagAtom';
 
@@ -34,18 +35,6 @@ const getDescription = (
 		(group) => group.newsletters,
 	).length;
 	return `${plural(newsletterCount, 'newsletter')} in ${plural(layout.groups.length, 'group')}`;
-};
-
-const getEditionName = (editionId: EditionId): string => {
-	const mapping: Record<EditionId, string> = {
-		UK: 'United Kingdom',
-		US: 'United States',
-		AU: 'Australia',
-		EUR: 'Europe',
-		INT: 'International',
-	};
-
-	return mapping[editionId];
 };
 
 const mainStyle = css`
@@ -112,9 +101,9 @@ export const StandLayoutMapView = () => {
 									href={`/layouts/${editionId.toLowerCase()}`}
 									description={getDescription(editionsLayouts, editionId)}
 									icon={<FlagAtom editionId={editionId} />}
-									aria-label={getEditionName(editionId)}
+									aria-label={regionNames[editionId]}
 								>
-									{getEditionName(editionId)}
+									{regionNames[editionId]}
 								</Tile>
 							</Item>
 						))}
