@@ -243,8 +243,8 @@ Then(
 		for (const [label, value] of Object.entries(table.rowsHash())) {
 			await expect(
 				panel
-					.locator('dt')
-					.filter({ hasText: new RegExp(`^${label}$`) })
+					.getByText(label, { exact: true })
+					.and(panel.locator('dt'))
 					.locator('xpath=following-sibling::dd[1]'),
 			).toHaveText(value);
 		}
