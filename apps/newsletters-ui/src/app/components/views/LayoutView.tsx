@@ -12,6 +12,7 @@ import {
 	makeBlankLayout,
 } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useLocation } from 'react-router-dom';
+import z from 'zod';
 import { ContentWrapper } from '../../ContentWrapper';
 import { isFeatureSwitchEnabled } from '../../featureSwitches';
 import { usePermissions } from '../../hooks/user-hooks';
@@ -20,6 +21,8 @@ import { HubEditionSectionContainer } from '../edition-layouts/HubEditionSection
 import { LayoutDisplay } from '../edition-layouts/LayoutDisplay';
 import { MissingLayoutContent } from '../edition-layouts/MissingLayoutContent';
 import { EditLayoutButton } from '../EditLayoutButton';
+import { Stand404Block } from '../errors/Stand404Block';
+import { StandErrorBlock } from '../errors/StandErrorBlock';
 import { HubEditionHeader } from '../HubEditionHeader';
 import { NavigateButton } from '../NavigateButton';
 
@@ -56,67 +59,93 @@ export const LayoutView = () => {
 	const permissions = usePermissions();
 	const editionId = location.pathname.split('/').pop()?.toUpperCase();
 
-	if (!data || !editionId) {
-		return <MissingLayoutContent editionId={editionId} />;
-	}
-	const parsedEdition = editionIdSchema.safeParse(editionId);
-	const editionName = parsedEdition.success
-		? editionNames[parsedEdition.data]
-		: editionId;
+	if (isUsingStand) {
+		if (!z.validate(editionIdSchema, editionId)) {
+			return (
+				<Container maxWidth="lg" css={contentStyles}>
+					<Stand404Block />
+				</Container>
+			);
+		}
 
-	return isUsingStand ? (
-		<Container maxWidth="lg" css={contentStyles}>
-			<HubEditionHeader
-				title={editionName}
-				breadcrumbs={{
-					ancestors: [{ label: 'Newsletters front', href: '/layouts' }],
-					currentLabel: editionName,
-				}}
-			>
-				{permissions?.editEverything && (
-					<EditLayoutButton editionId={editionId} />
-				)}
-			</HubEditionHeader>
-
-			{data.layout?.groups.length ? (
-				data.layout.groups.map((section, index) => (
-					// eslint-disable-next-line react/jsx-key -- Sections have no guaranteed unique ID and are not reordered on this read-only page.
-					<HubEditionSectionContainer
-						section={section}
-						sectionNumber={index + 1}
-						newsletters={data.newsletters}
+		if (!data) {
+			return (
+				<Container maxWidth="lg" css={contentStyles}>
+					<StandErrorBlock
+						title="Newsletters data could not be loaded"
+						description={
+							<StandTypography element="p">
+								Please try again later.
+							</StandTypography>
+						}
+						backText="Return to previous page"
 					/>
-				))
-			) : (
-				<div css={emptyStateStyles}>
-					<StandTypography
-						element="p"
-						variant="bodyMd"
-						cssOverrides={emptyStateTextStyles}
-					>
-						{'No content available. Click on "Edit layout" to add content.'}
-					</StandTypography>
-				</div>
-			)}
-		</Container>
-	) : (
-		<ContentWrapper>
-			<Typography variant="h2">Layout for {editionId}</Typography>
-			<LayoutDisplay
-				newsletters={data.newsletters}
-				layout={data.layout ?? makeBlankLayout()}
-			/>
-			{permissions?.editEverything && (
-				<Box sx={{ paddingY: 2 }}>
-					<NavigateButton href={`/layouts/edit/${editionId}`}>
-						Edit layout
-					</NavigateButton>
-					<NavigateButton href={`/layouts/edit-json/${editionId}`}>
-						{' '}
-						edit layout as JSON
-					</NavigateButton>
-				</Box>
-			)}
-		</ContentWrapper>
-	);
+				</Container>
+			);
+		}
+
+		const region = editionIdSchema.safeParse(editionId);
+		const regionName = region.success ? regionNames[region.data] : editionId;
+
+		return (
+			<Container maxWidth="lg" css={contentStyles}>
+				<HubEditionHeader
+					title={regionName}
+					breadcrumbs={{
+						ancestors: [{ label: 'Newsletters front', href: '/layouts' }],
+						currentLabel: regionName,
+					}}
+				>
+					{permissions?.editEverything && (
+						<EditLayoutButton editionId={editionId} />
+					)}
+				</HubEditionHeader>
+
+				{data.layout?.groups.length ? (
+					data.layout.groups.map((section, index) => (
+						<HubEditionSectionContainer
+							key={`${section.title}-${index}`}
+							section={section}
+							sectionNumber={index + 1}
+							newsletters={data.newsletters}
+						/>
+					))
+				) : (
+					<div css={emptyStateStyles}>
+						<StandTypography
+							element="p"
+							variant="bodyMd"
+							cssOverrides={emptyStateTextStyles}
+						>
+							{'No content available. Click on "Edit layout" to add content.'}
+						</StandTypography>
+					</div>
+				)}
+			</Container>
+		);
+	} else {
+		if (!z.validate(editionIdSchema, editionId) || !data?.layout) {
+			return <MissingLayoutContent editionId={editionId} />;
+		}
+		return (
+			<ContentWrapper>
+				<Typography variant="h2">Layout for {editionId}</Typography>
+				<LayoutDisplay
+					newsletters={data.newsletters}
+					layout={data.layout ?? makeBlankLayout()}
+				/>
+				{permissions?.editEverything && (
+					<Box sx={{ paddingY: 2 }}>
+						<NavigateButton href={`/layouts/edit/${editionId}`}>
+							Edit layout
+						</NavigateButton>
+						<NavigateButton href={`/layouts/edit-json/${editionId}`}>
+							{' '}
+							edit layout as JSON
+						</NavigateButton>
+					</Box>
+				)}
+			</ContentWrapper>
+		);
+	}
 };
