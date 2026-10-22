@@ -3,7 +3,7 @@ import { semanticColors, semanticSpacing } from '@guardian/stand';
 import { Typography } from '@guardian/stand/Typography';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import type { ReactNode } from 'react';
-import { formatShortDate, humanize } from '../lib/format';
+import { humanize } from '../lib/format';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
 
@@ -37,10 +37,6 @@ const valueStyles = css`
 	color: ${semanticColors.text.strong};
 	overflow-wrap: anywhere;
 `;
-
-// Undefined stays undefined so the field shows "Not set".
-const yesNo = (value?: boolean) =>
-	value === undefined ? undefined : value ? 'Yes' : 'No';
 
 const isEmpty = (value: ReactNode) =>
 	value === undefined || value === null || value === '';
@@ -91,21 +87,6 @@ export const NewsletterDetailPanels = ({
 					{humanize(newsletter.category)}
 				</Field>
 				<Field label="MMA group">{newsletter.group}</Field>
-			</dl>
-		</StandPanel>
-
-		<StandPanel name="Launch" id="launch">
-			<dl css={listStyles}>
-				<Field label="Launch date">
-					{formatShortDate(newsletter.launchDate)}
-				</Field>
-				{/* `signUpPageDate` is the promotion date, to be confirmed in #944. */}
-				<Field label="Promotion date">
-					{formatShortDate(newsletter.signUpPageDate)}
-				</Field>
-				<Field label="Private until launch">
-					{yesNo(newsletter.privateUntilLaunch)}
-				</Field>
 			</dl>
 		</StandPanel>
 	</div>

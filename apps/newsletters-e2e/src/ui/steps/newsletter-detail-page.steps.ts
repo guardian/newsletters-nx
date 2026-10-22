@@ -212,24 +212,6 @@ Then(
 	},
 );
 
-// Midnight UTC, as `DateInput` saves dates.
-const midnightUtc = (isoDate: string) => new Date(`${isoDate}T00:00:00.000Z`);
-
-Given(
-	'a launched newsletter {string} launching on {string} and promoted from {string}',
-	async (
-		{ request, namedNewsletters },
-		name: string,
-		launchDate: string,
-		promotionDate: string,
-	) => {
-		await createLaunched(request, namedNewsletters, name, {
-			launchDate: midnightUtc(launchDate),
-			signUpPageDate: midnightUtc(promotionDate),
-		});
-	},
-);
-
 Then(
 	'the {string} panel shows:',
 	async ({ page }, panelName: string, table: DataTable) => {
