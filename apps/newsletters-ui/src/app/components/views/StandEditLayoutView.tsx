@@ -14,7 +14,7 @@ import {
 	makeBlankLayout,
 } from '@newsletters-nx/newsletters-data-client';
 import { Fragment, useReducer, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { isAddableStatus } from '../../lib/modify-layout';
@@ -28,6 +28,7 @@ import {
 import { StandLayoutSection } from '../edition-layouts/StandLayoutSection';
 import { getSectionAriaLabel } from '../edition-layouts/utils';
 import { HubEditionHeader } from '../HubEditionHeader';
+import { PermissionDeniedBlock } from '../PermissionDeniedBlock';
 
 const contentStyles = css`
 	display: flex;
@@ -101,7 +102,11 @@ export const StandEditLayoutView = ({
 	// `permissions` is undefined while still loading, so only redirect once
 	// we know the user can't edit.
 	if (permissions && !canEdit) {
-		return <Navigate to={readOnlyPath} replace />;
+		return (
+			<Container maxWidth="lg" css={contentStyles}>
+				<PermissionDeniedBlock />
+			</Container>
+		);
 	}
 
 	if (!permissions) {

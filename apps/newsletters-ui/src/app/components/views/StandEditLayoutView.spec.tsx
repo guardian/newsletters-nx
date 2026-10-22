@@ -59,27 +59,16 @@ describe('StandEditLayoutView', () => {
 		expect(screen.queryAllByRole('region')).toHaveLength(0);
 	});
 
-	it('redirects users without edit permission to the read-only page', async () => {
+	it('displays an error message  to users without edit permission', async () => {
 		vi.mocked(usePermissions).mockReturnValue({
 			editEverything: false,
 			useJsonEditor: false,
 		});
-		const router = renderEditView({ groups: [] });
+		renderEditView({ groups: [] });
 
-		await screen.findByRole('heading', { name: 'Read-only layout' });
-		expect(router.state.location.pathname).toBe('/layouts/uk');
-	});
-
-	it('does not redirect while permissions are still loading', async () => {
-		vi.mocked(usePermissions).mockReturnValue(undefined);
-		const router = renderEditView({ groups: [] });
-
-		await vi.waitFor(() => expect(router.state.initialized).toBe(true));
-		expect(router.state.location.pathname).toBe('/layouts/edit/uk');
-		expect(screen.getByText('Loading...')).toBeTruthy();
-		expect(
-			screen.queryByRole('heading', { name: 'Read-only layout' }),
-		).toBeNull();
+		await screen.findByRole('heading', {
+			name: 'You do not have permission for this area of the Newsletters tool',
+		});
 	});
 
 	describe('cancelling', () => {
