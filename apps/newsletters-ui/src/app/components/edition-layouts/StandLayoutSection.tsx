@@ -57,6 +57,11 @@ const listStyles = css`
 	&:not(:empty) {
 		border-bottom: 1px solid ${semanticColors.border.weak};
 	}
+	/* Root drop target: shown when dragging over an empty section, where there are no rows to show a between-rows indicator. */
+	&[data-drop-target] {
+		outline: 2px solid ${semanticColors.border.focused};
+		outline-offset: -2px;
+	}
 `;
 
 const rowStyles = css`
