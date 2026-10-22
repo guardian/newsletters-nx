@@ -20,7 +20,7 @@ export const mapLoader: LoaderFunction = async (): Promise<{
 
 export const layoutLoader: LoaderFunction = async ({
 	params,
-}): Promise<{ layout: Layout; newsletters: NewsletterData[] } | undefined> => {
+}): Promise<{ layout?: Layout; newsletters: NewsletterData[] } | undefined> => {
 	const { id } = params;
 	if (!id) {
 		return undefined;
@@ -31,7 +31,7 @@ export const layoutLoader: LoaderFunction = async ({
 		fetchApiData<NewsletterData[]>(`api/newsletters`),
 	]);
 
-	if (!layout || !newsletters) {
+	if (!newsletters) {
 		return undefined;
 	}
 
