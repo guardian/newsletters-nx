@@ -92,7 +92,7 @@ Feature: Launched newsletter: open it and find my way around
         | Attributes              |
         | Launch                  |
         | Sign-up copy and images |
-        | Tags and campaigns      |
+        | Sign-up page and tags   |
         | Links                   |
         | Integrations            |
         | Technical output        |
@@ -107,7 +107,7 @@ Feature: Launched newsletter: open it and find my way around
         | Attributes              |
         | Launch                  |
         | Sign-up copy and images |
-        | Tags and campaigns      |
+        | Sign-up page and tags   |
         | Links                   |
         | Integrations            |
         | Technical output        |
@@ -141,7 +141,7 @@ Feature: Launched newsletter: open it and find my way around
         | panel                   |
         | Attributes              |
         | Sign-up copy and images |
-        | Tags and campaigns      |
+        | Sign-up page and tags   |
         | Links                   |
         | Integrations            |
 
