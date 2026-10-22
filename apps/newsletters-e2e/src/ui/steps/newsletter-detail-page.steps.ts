@@ -12,15 +12,14 @@ type FixtureOverrides = Parameters<typeof createFixtureNewsletter>[1];
 
 const GRAPHIC_URL = 'https://example.com/graphic.png';
 
-// The page header is the first <header> with an h2 (panel headers come after). It sits inside <main>, so
-// it doesn't have the implicit `banner` role (a <header> is only a banner when
-// it isn't nested in main/section/article etc.), hence the element selector.
+// The page header is the only <header> in <main> with an h2 (panel headers
+// use h3). It isn't a `banner` because a <header> nested in <main> has no
+// implicit landmark role, hence the element selector.
 const pageHeader = (page: Page): Locator =>
 	page
 		.getByRole('main')
 		.locator('header')
-		.filter({ has: page.getByRole('heading', { level: 2 }) })
-		.first();
+		.filter({ has: page.getByRole('heading', { level: 2 }) });
 
 const createLaunched = async (
 	request: APIRequestContext,
@@ -85,7 +84,7 @@ Given(
 );
 
 Given(
-	'a launched newsletter {string} with a newsletter graphic',
+	'a launched newsletter {string} with a card graphic',
 	async ({ request, namedNewsletters }, name: string) => {
 		await createLaunched(request, namedNewsletters, name, {
 			illustrationCard: GRAPHIC_URL,
@@ -94,7 +93,7 @@ Given(
 );
 
 Given(
-	'a launched newsletter {string} with no newsletter graphic',
+	'a launched newsletter {string} with no card graphic',
 	async ({ request, namedNewsletters }, name: string) => {
 		await createLaunched(request, namedNewsletters, name);
 	},
@@ -167,7 +166,7 @@ Then(
 	},
 );
 
-Then('the header shows the newsletter graphic', async ({ page }) => {
+Then('the header shows the card graphic', async ({ page }) => {
 	await expect(pageHeader(page).locator('img')).toBeVisible();
 });
 
@@ -185,7 +184,7 @@ Then('the header shows the title above the graphic', async ({ page }) => {
 	expect(title.y + title.height).toBeLessThanOrEqual(graphic.y);
 });
 
-Then('the header does not show the newsletter graphic', async ({ page }) => {
+Then('the header does not show the card graphic', async ({ page }) => {
 	await expect(pageHeader(page).locator('img')).toBeHidden();
 });
 Given(
@@ -219,7 +218,7 @@ Then(
 	async ({ page }, panelName: string, table: DataTable) => {
 		const panel = page.locator('section', {
 			has: page.getByRole('heading', {
-				level: 2,
+				level: 3,
 				name: panelName,
 				exact: true,
 			}),

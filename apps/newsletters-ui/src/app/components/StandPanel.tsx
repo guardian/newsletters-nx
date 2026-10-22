@@ -76,7 +76,7 @@ export const StandPanel = ({
 	return (
 		<section id={id} css={[wrapperStyle, subgrid && subgridStyle]}>
 			<header css={[headStyle, subgrid && subgridHeadStyle]}>
-				<Typography element="h2" variant="bodyBoldMd">
+				<Typography element="h3" variant="bodyBoldMd">
 					{name}
 				</Typography>
 				{actions}

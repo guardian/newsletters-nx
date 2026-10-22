@@ -38,12 +38,12 @@ Feature: Launched newsletter: open it and find my way around
 	Rule: The header shows the newsletter's card graphic
 
 		Scenario: A newsletter with a card graphic shows it
-			Given a launched newsletter "Afternoon update" with a newsletter graphic
+			Given a launched newsletter "Afternoon update" with a card graphic
 			When the editor opens the detail page for "Afternoon update"
-			Then the header shows the newsletter graphic
+			Then the header shows the card graphic
 
 		Scenario: A newsletter without a card graphic shows a placeholder
-			Given a launched newsletter "Afternoon update" with no newsletter graphic
+			Given a launched newsletter "Afternoon update" with no card graphic
 			When the editor opens the detail page for "Afternoon update"
 			Then the header shows "No image"
 
@@ -92,4 +92,4 @@ Feature: Launched newsletter: open it and find my way around
 		Scenario: The graphic is hidden on mobile
 			Given the editor is using a mobile viewport
 			When the editor opens the detail page for a launched newsletter
-			Then the header does not show the newsletter graphic
+			Then the header does not show the card graphic

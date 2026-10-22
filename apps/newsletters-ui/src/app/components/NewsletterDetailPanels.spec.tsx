@@ -5,9 +5,7 @@ import { NewsletterDetailPanels } from './NewsletterDetailPanels';
 
 afterEach(cleanup);
 
-const newsletter = (
-	overrides: Partial<Record<keyof NewsletterData, unknown>> = {},
-) =>
+const newsletter = (overrides: Partial<NewsletterData> = {}) =>
 	({
 		name: 'Afternoon update',
 		status: 'live',
@@ -43,7 +41,8 @@ describe('NewsletterDetailPanels', () => {
 				newsletter={newsletter({
 					regionFocus: undefined,
 					frequency: '',
-					group: null,
+					// The schema says group is required, but guard against bad API data.
+					group: null as unknown as string,
 				})}
 			/>,
 		);
