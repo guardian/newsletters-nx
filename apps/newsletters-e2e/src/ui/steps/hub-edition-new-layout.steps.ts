@@ -47,7 +47,6 @@ When(
 	"the user navigates to the 'edit layout' page for edition {string}",
 	async ({ page }, edition: string) => {
 		await gotToEditionEditLayoutPage(page, edition);
-		await page.goto(`/layouts/edit/${edition}`);
 	},
 );
 
