@@ -1,23 +1,33 @@
 import { css } from '@emotion/react';
 import { semanticColors, semanticSpacing } from '@guardian/stand';
 import { Typography } from '@guardian/stand/Typography';
+import { until } from '@guardian/stand/utils';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import type { ReactNode } from 'react';
 import { humanize } from '../lib/format';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
 
+// One grid across all the panels, so the label column is as wide as the
+// widest label in any panel. Panels and lists pass it down with subgrid.
 const panelsStyles = css`
-	display: flex;
-	flex-direction: column;
-	gap: ${semanticSpacing.stackMd};
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	column-gap: ${semanticSpacing.stackSm};
+	row-gap: ${semanticSpacing.stackMd};
 	margin-top: ${semanticSpacing.stackMd};
+
+	/* Values wrap underneath their labels. */
+	${until.md} {
+		grid-template-columns: minmax(0, 1fr);
+	}
 `;
 
 const listStyles = css`
 	display: grid;
-	grid-template-columns: 250px minmax(0, 1fr);
-	gap: ${semanticSpacing.stackSm};
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+	row-gap: ${semanticSpacing.stackSm};
 	margin: 0;
 `;
 
@@ -26,6 +36,7 @@ const rowStyles = css`
 	grid-column: 1 / -1;
 	grid-template-columns: subgrid;
 	align-items: start;
+	row-gap: ${semanticSpacing.stackXxs};
 `;
 
 const weakTextStyles = css`
@@ -74,7 +85,7 @@ export const NewsletterDetailPanels = ({
 	newsletter: NewsletterData;
 }) => (
 	<div css={panelsStyles}>
-		<StandPanel name="Attributes" id="attributes">
+		<StandPanel name="Attributes" id="attributes" subgrid>
 			<dl css={listStyles}>
 				<Field label="Name">{newsletter.name}</Field>
 				<Field label="Newsletter status">
