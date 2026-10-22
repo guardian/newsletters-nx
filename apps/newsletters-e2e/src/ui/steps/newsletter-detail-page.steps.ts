@@ -12,13 +12,15 @@ type FixtureOverrides = Parameters<typeof createFixtureNewsletter>[1];
 
 const GRAPHIC_URL = 'https://example.com/graphic.png';
 
-// The page header is the only banner with an h2. The main nav is also a
-// banner but has no h2, and the panels' <header>s are inside <section>s, so
-// they aren't banners.
+// The page header is the first <header> with an h2 (panel headers come after). It sits inside <main>, so
+// it doesn't have the implicit `banner` role (a <header> is only a banner when
+// it isn't nested in main/section/article etc.), hence the element selector.
 const pageHeader = (page: Page): Locator =>
 	page
-		.getByRole('banner')
-		.filter({ has: page.getByRole('heading', { level: 2 }) });
+		.getByRole('main')
+		.locator('header')
+		.filter({ has: page.getByRole('heading', { level: 2 }) })
+		.first();
 
 const createLaunched = async (
 	request: APIRequestContext,
