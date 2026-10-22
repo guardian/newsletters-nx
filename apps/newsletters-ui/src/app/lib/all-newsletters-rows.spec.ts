@@ -10,7 +10,6 @@ import {
 import { describe, expect, it } from 'vitest';
 import {
 	draftNewsletterToRow,
-	formatPillarCategoryLabel,
 	launchedNewsletterToRow,
 } from './all-newsletters-rows';
 
@@ -160,20 +159,5 @@ describe('draftNewsletterToRow', () => {
 		expect(
 			draftNewsletterToRow(draft({ meta: metaData })).lastUpdated,
 		).toBeUndefined();
-	});
-});
-
-describe('formatPillarCategoryLabel', () => {
-	it.each([
-		[
-			'both theme and category',
-			'news',
-			'article-based',
-			'News | Article based',
-		],
-		['only theme', 'news', undefined, 'News'],
-		['neither', undefined, undefined, undefined],
-	] as const)('%s', (_, theme, category, expected) => {
-		expect(formatPillarCategoryLabel(theme, category)).toBe(expected);
 	});
 });
