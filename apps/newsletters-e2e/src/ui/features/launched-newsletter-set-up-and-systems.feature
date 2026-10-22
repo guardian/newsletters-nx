@@ -10,19 +10,21 @@ Feature: Launched newsletter: set-up and other systems
   Background:
     Given an editor's workspace uses the Stand design
 
-  Rule: Tags and campaigns shows the newsletter's tags
+  Rule: Sign-up page and tags shows the newsletter's sign-up page and tags
 
-    Scenario: The panel lists the tags
+    Scenario: The panel lists the sign-up page path and the tags
       Given a launched newsletter "Afternoon update" with these details:
-        | field      | value                                                     |
-        | series tag | australia-news/series/guardian-australia-afternoon-update |
+        | field             | value                                                                                                         |
+        | sign-up page path | /australia-news/2022/oct/13/afternoon-update-newsletter-best-daily-news-email-guardian-australia-free-sign-up |
+        | series tag        | australia-news/series/guardian-australia-afternoon-update                                                     |
       When the editor opens the detail page for "Afternoon update"
-      Then the "Tags and campaigns" panel shows:
-        | label                | value                                                     |
-        | Series tag           | australia-news/series/guardian-australia-afternoon-update |
-        | Tag description      | Not set                                                   |
-        | Campaign tag         | Not set                                                   |
-        | Campaign description | Not set                                                   |
+      Then the "Sign-up page and tags" panel shows:
+        | label                | value                                                                                                         |
+        | Path to sign-up page | /australia-news/2022/oct/13/afternoon-update-newsletter-best-daily-news-email-guardian-australia-free-sign-up |
+        | Series tag           | australia-news/series/guardian-australia-afternoon-update                                                     |
+        | Tag description      | Not set                                                                                                       |
+        | Campaign tag         | Not set                                                                                                       |
+        | Campaign description | Not set                                                                                                       |
 
   @edit
   Rule: Editors can change the tags
@@ -30,14 +32,14 @@ Feature: Launched newsletter: set-up and other systems
     Scenario: The editor changes the campaign tag
       Given a launched newsletter "Afternoon update" with no campaign tag
       And the editor can edit newsletters
-      When the editor changes "Campaign tag" to "campaign/email/afternoon-update" in the "Tags and campaigns" panel
-      Then the "Tags and campaigns" panel shows "Campaign tag" as "campaign/email/afternoon-update"
+      When the editor changes "Campaign tag" to "campaign/email/afternoon-update" in the "Sign-up page and tags" panel
+      Then the "Sign-up page and tags" panel shows "Campaign tag" as "campaign/email/afternoon-update"
 
     Scenario: A series tag must be a tag path
       Given a launched newsletter "Afternoon update"
       And the editor can edit newsletters
       When the editor tries to save "https://www.theguardian.com/world/series/first-edition" as the "Series tag"
-      Then the "Tags and campaigns" panel stays in edit mode
+      Then the "Sign-up page and tags" panel stays in edit mode
       And "Series tag" shows an error
 
     # Open question: Tag description (seriesTagDescription) is in the Figma
@@ -53,15 +55,15 @@ Feature: Launched newsletter: set-up and other systems
       # title-format: <label> <status> shows a <badge> badge
       Examples:
         | thing          | status    | panel              | label                          | badge     |
-        | tag            | REQUESTED | Tags and campaigns | Tag creation status            | Requested |
-        | tag            | COMPLETED | Tags and campaigns | Tag creation status            | Completed |
-        | sign-up page   | REQUESTED | Tags and campaigns | Sign-up page creation status   | Requested |
+        | tag            | REQUESTED | Sign-up page and tags | Tag creation status            | Requested |
+        | tag            | COMPLETED | Sign-up page and tags | Tag creation status            | Completed |
+        | sign-up page   | REQUESTED | Sign-up page and tags | Sign-up page creation status   | Requested |
         | Braze campaign | REQUESTED | Integrations       | Braze campaign creation status | Requested |
 
     Scenario: Creation statuses are hidden once the newsletter has gone live
       Given a launched newsletter "Afternoon update" with status "live"
       When the editor opens the detail page for "Afternoon update"
-      Then the "Tags and campaigns" panel doesn't show "Tag creation status" or "Sign-up page creation status"
+      Then the "Sign-up page and tags" panel doesn't show "Tag creation status" or "Sign-up page creation status"
       And the "Integrations" panel doesn't show "Braze campaign creation status"
 
     # Open question: how should NOT_REQUESTED look?
@@ -78,8 +80,8 @@ Feature: Launched newsletter: set-up and other systems
       # title-format: The <thing> is marked as created
       Examples:
         | thing          | panel              | label                          |
-        | tag            | Tags and campaigns | Tag creation status            |
-        | sign-up page   | Tags and campaigns | Sign-up page creation status   |
+        | tag            | Sign-up page and tags | Tag creation status            |
+        | sign-up page   | Sign-up page and tags | Sign-up page creation status   |
         | Braze campaign | Integrations       | Braze campaign creation status |
 
   Rule: Integrations shows the Braze and Ophan values
