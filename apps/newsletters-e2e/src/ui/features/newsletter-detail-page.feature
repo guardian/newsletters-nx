@@ -35,14 +35,14 @@ Feature: Launched newsletter: open it and find my way around
 			When the editor opens the detail page for "Afternoon update"
 			Then the header shows the label "News | Article based"
 
-	Rule: The header shows the newsletter's graphic
+	Rule: The header shows the newsletter's card graphic
 
-		Scenario: A newsletter with a graphic shows it
+		Scenario: A newsletter with a card graphic shows it
 			Given a launched newsletter "Afternoon update" with a newsletter graphic
 			When the editor opens the detail page for "Afternoon update"
 			Then the header shows the newsletter graphic
 
-		Scenario: A newsletter without a graphic shows a placeholder
+		Scenario: A newsletter without a card graphic shows a placeholder
 			Given a launched newsletter "Afternoon update" with no newsletter graphic
 			When the editor opens the detail page for "Afternoon update"
 			Then the header shows "No image"

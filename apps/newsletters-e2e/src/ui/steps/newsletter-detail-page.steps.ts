@@ -225,12 +225,11 @@ Then(
 			}),
 		});
 		for (const [label, value] of Object.entries(table.rowsHash())) {
-			await expect(
-				panel
-					.getByText(label, { exact: true })
-					.and(panel.locator('dt'))
-					.locator('xpath=following-sibling::dd[1]'),
-			).toHaveText(value);
+			// Find the row whose label (term) matches, then check its value.
+			const row = panel.locator('dl > div').filter({
+				has: page.getByText(label, { exact: true }).and(page.getByRole('term')),
+			});
+			await expect(row.getByRole('definition')).toHaveText(value);
 		}
 	},
 );

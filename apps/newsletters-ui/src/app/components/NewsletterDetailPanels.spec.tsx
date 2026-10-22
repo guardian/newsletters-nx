@@ -5,7 +5,9 @@ import { NewsletterDetailPanels } from './NewsletterDetailPanels';
 
 afterEach(cleanup);
 
-const newsletter = (overrides: Partial<NewsletterData> = {}) =>
+const newsletter = (
+	overrides: Partial<Record<keyof NewsletterData, unknown>> = {},
+) =>
 	({
 		name: 'Afternoon update',
 		status: 'live',
@@ -19,9 +21,7 @@ const newsletter = (overrides: Partial<NewsletterData> = {}) =>
 
 // The text of the <dd> paired with the <dt> labelled `label`.
 const valueFor = (label: string) =>
-	screen
-		.getAllByText(label, { exact: true })
-		.find((element) => element.tagName === 'DT')?.nextElementSibling
+	screen.getByText(label, { exact: true, selector: 'dt' }).nextElementSibling
 		?.textContent;
 
 describe('NewsletterDetailPanels', () => {
@@ -43,11 +43,13 @@ describe('NewsletterDetailPanels', () => {
 				newsletter={newsletter({
 					regionFocus: undefined,
 					frequency: '',
+					group: null,
 				})}
 			/>,
 		);
 
 		expect(valueFor('Region focus')).toBe('Not set');
 		expect(valueFor('Frequency')).toBe('Not set');
+		expect(valueFor('MMA group')).toBe('Not set');
 	});
 });
