@@ -5,7 +5,9 @@ import { NewsletterDetailPanels } from './NewsletterDetailPanels';
 
 afterEach(cleanup);
 
-const newsletter = (overrides: Partial<NewsletterData> = {}) =>
+const newsletter = (
+	overrides: Partial<Record<keyof NewsletterData, unknown>> = {},
+) =>
 	({
 		name: 'Afternoon update',
 		status: 'live',
