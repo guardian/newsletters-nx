@@ -8,7 +8,6 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	editionIdSchema,
-	editionNames,
 	makeBlankLayout,
 } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useLocation } from 'react-router-dom';
