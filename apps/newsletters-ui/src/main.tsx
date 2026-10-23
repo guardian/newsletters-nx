@@ -1,3 +1,4 @@
+import { ToastRegion } from '@guardian/stand/Toast';
 import { ThemeProvider } from '@mui/material';
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
@@ -37,6 +38,7 @@ root.render(
 		<DefaultStyles>
 			<ThemeProvider theme={appTheme}>
 				<RouterProvider router={router} />
+				<ToastRegion />
 			</ThemeProvider>
 		</DefaultStyles>
 	</StrictMode>,

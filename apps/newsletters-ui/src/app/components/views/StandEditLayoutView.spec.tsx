@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest';
+import { toastQueue, ToastRegion } from '@guardian/stand/Toast';
 import type { Layout } from '@newsletters-nx/newsletters-data-client';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
@@ -8,6 +9,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 import { usePermissions } from '../../hooks/user-hooks';
 import { EditLayoutView } from './EditLayoutView';
 
+vi.mock('@guardian/stand/Toast', { spy: true });
 vi.mock('../../api-requests/fetch-api-data', () => ({
 	fetchApiData: vi.fn(),
 	fetchPostApiData: vi.fn(),
@@ -42,7 +44,13 @@ const renderEditView = (layout?: unknown, newsletters: unknown[] = []) => {
 		],
 		{ initialEntries: ['/layouts/edit/uk'] },
 	);
-	render(<RouterProvider router={router} />);
+	render(
+		<>
+			<RouterProvider router={router} />
+			{/** For testing toast behaviour */}
+			<ToastRegion />
+		</>,
+	);
 	return router;
 };
 
@@ -97,20 +105,47 @@ describe('StandEditLayoutView', () => {
 			await screen.findByRole('heading', { name: 'Read-only layout' });
 			expect(router.state.location.pathname).toBe('/layouts/UK');
 		});
-		it('displays an error message when a publish is unsuccessful', async () => {
+		it('triggers a success toast when a publish is successful', async () => {
 			vi.mocked(fetchPostApiData).mockReturnValue(
-				new Promise<undefined>((res) => res(undefined)),
+				new Promise<Layout>((res) =>
+					res({ groups: [{ title: 'a', newsletters: [] }] }),
+				),
 			);
-			const router = renderWithEditor();
+			renderWithEditor();
 
 			fireEvent.click(
 				await screen.findByRole('button', { name: 'Save and publish layout' }),
 			);
 
-			const element = await screen.findByRole('status');
+			await screen.findByRole('alertdialog');
 
-			expect(element).toHaveTextContent('Failed to update.');
-			expect(router.state.location.pathname).toBe('/layouts/edit/uk');
+			// eslint-disable-next-line @typescript-eslint/unbound-method -- We are not invoking this function. We only care that it has been called
+			expect(vi.mocked(toastQueue.add)).toHaveBeenCalledWith({
+				level: 'information',
+				title: 'Layout updated',
+				subject: 'It will take some time for the site to update',
+				showIcon: true,
+			});
+		});
+		it('triggers an error toast when a publish is unsuccessful', async () => {
+			vi.mocked(fetchPostApiData).mockReturnValue(
+				new Promise<undefined>((res) => res(undefined)),
+			);
+			renderWithEditor();
+
+			fireEvent.click(
+				await screen.findByRole('button', { name: 'Save and publish layout' }),
+			);
+
+			await screen.findByRole('alertdialog');
+
+			// eslint-disable-next-line @typescript-eslint/unbound-method -- We are not invoking this function. We only care that it has been called
+			expect(vi.mocked(toastQueue.add)).toHaveBeenCalledWith({
+				level: 'error',
+				title: 'Failed to update',
+				subject: 'If the problem persists, please contact Central Production',
+				showIcon: true,
+			});
 		});
 	});
 
