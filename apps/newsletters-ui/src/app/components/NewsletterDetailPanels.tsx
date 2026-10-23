@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
+import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
@@ -132,7 +133,13 @@ export const NewsletterDetailPanels = ({
 					<Field label="Sign-up page creation status">
 						<WorkflowStatusBadge status={newsletter.signupPageCreationStatus} />
 					</Field>
-					<Field label="Path to sign-up page">{newsletter.signupPage}</Field>
+					<Field label="Path to sign-up page">
+						{newsletter.signupPage ? (
+							<Link href={`https://theguardian.com${newsletter.signupPage}`}>
+								{newsletter.signupPage}
+							</Link>
+						) : undefined}
+					</Field>
 				</dl>
 			</div>
 			<div css={sectionStyles}>

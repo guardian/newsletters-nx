@@ -113,6 +113,13 @@ describe('NewsletterDetailPanels', () => {
 		expect(valueFor('Path to sign-up page')).toBe(
 			'/global/sign-up-for-afternoon-update',
 		);
+		expect(
+			screen
+				.getByRole('link', {
+					name: '/global/sign-up-for-afternoon-update',
+				})
+				.getAttribute('href'),
+		).toBe('https://theguardian.com/global/sign-up-for-afternoon-update');
 		expect(valueFor('Series tag')).toBe('news/series/afternoon-update');
 		expect(valueFor('Tag description')).toBe('The afternoon news briefing');
 		expect(valueFor('Campaign tag')).toBe(
@@ -147,6 +154,7 @@ describe('NewsletterDetailPanels', () => {
 			]) {
 				expect(valueFor(label)).toBe('Not set');
 			}
+			expect(screen.queryByRole('link')).toBeNull();
 		},
 	);
 });
