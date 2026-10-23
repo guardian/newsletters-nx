@@ -134,19 +134,27 @@ export const StandEditLayoutView = ({
 		);
 
 		if (!result) {
-			toastQueue.add({
-				level: 'error',
-				title: 'Failed to update',
-				subject: 'If the problem persists, please contact Central Production',
-				showIcon: true,
-			});
+			toastQueue.add(
+				{
+					level: 'error',
+					title: 'Failed to update',
+					subject: 'If the problem persists, please contact Central Production',
+					showIcon: true,
+				},
+				{
+					timeout: 5_000,
+				},
+			);
 		} else {
-			toastQueue.add({
-				level: 'information',
-				title: 'Layout updated',
-				subject: 'It will take some time for the site to update',
-				showIcon: true,
-			});
+			toastQueue.add(
+				{
+					level: 'information',
+					title: 'Layout updated',
+					subject: 'It will take some time for the site to update',
+					showIcon: true,
+				},
+				{ timeout: 5_000 },
+			);
 			void navigate(`/layouts/${editionId}`);
 		}
 	};
