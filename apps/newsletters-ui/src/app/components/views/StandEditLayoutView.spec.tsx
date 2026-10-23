@@ -81,6 +81,10 @@ describe('StandEditLayoutView', () => {
 	});
 
 	describe('publishing', () => {
+		beforeEach(() => {
+			// Avoid showing toasts from previous tests
+			toastQueue.clear();
+		});
 		const layout = { groups: [] };
 		const newsletters: unknown[] = [];
 		const renderWithEditor = () => {
@@ -136,7 +140,6 @@ describe('StandEditLayoutView', () => {
 			fireEvent.click(
 				await screen.findByRole('button', { name: 'Save and publish layout' }),
 			);
-
 			await screen.findByRole('alertdialog');
 
 			// eslint-disable-next-line @typescript-eslint/unbound-method -- We are not invoking this function. We only care that it has been called
