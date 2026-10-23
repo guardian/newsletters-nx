@@ -25,6 +25,66 @@ const valueFor = (label: string) =>
 		?.textContent;
 
 describe('NewsletterDetailPanels', () => {
+	it('shows the Copy panel above Sign-up page and tags with plain text values', () => {
+		render(
+			<NewsletterDetailPanels
+				newsletter={newsletter({
+					signUpHeadline: 'Your afternoon briefing',
+					signUpDescription: 'Sign up for the daily news',
+					signUpEmbedDescription: 'A short news briefing',
+					mailSuccessDescription: 'Thank you for signing up',
+					highlightCardTitle: 'The news you need',
+				})}
+			/>,
+		);
+
+		expect(
+			screen
+				.getAllByRole('heading', { level: 3 })
+				.map((heading) => heading.textContent),
+		).toEqual(['Attributes', 'Copy', 'Sign-up page and tags']);
+		expect(valueFor('Headline')).toBe('Your afternoon briefing');
+		expect(valueFor('Sign-up description')).toBe('Sign up for the daily news');
+		expect(valueFor('Embed description')).toBe('A short news briefing');
+		expect(valueFor('Success message')).toBe('Thank you for signing up');
+		expect(valueFor('Highlight card message')).toBe('The news you need');
+		const panel = screen
+			.getByRole('heading', { name: 'Copy', level: 3 })
+			.closest('section');
+		if (!panel) {
+			throw new Error('Expected the Copy panel to exist');
+		}
+		expect(within(panel).queryByRole('link')).toBeNull();
+		expect(within(panel).queryByRole('textbox')).toBeNull();
+	});
+
+	it.each([undefined, ''])(
+		'shows "Not set" for copy values that are %s',
+		(value) => {
+			render(
+				<NewsletterDetailPanels
+					newsletter={newsletter({
+						signUpHeadline: value,
+						signUpDescription: value,
+						signUpEmbedDescription: value,
+						mailSuccessDescription: value,
+						highlightCardTitle: value,
+					})}
+				/>,
+			);
+
+			for (const label of [
+				'Headline',
+				'Sign-up description',
+				'Embed description',
+				'Success message',
+				'Highlight card message',
+			]) {
+				expect(valueFor(label)).toBe('Not set');
+			}
+		},
+	);
+
 	it.each([
 		['NOT_REQUESTED', 'Not requested'],
 		['REQUESTED', 'Requested'],

@@ -120,6 +120,11 @@ type FixtureNewsletterOverrides = Partial<
 		| 'composerCampaignTag'
 		| 'signupPageCreationStatus'
 		| 'tagCreationStatus'
+		| 'signUpHeadline'
+		| 'signUpDescription'
+		| 'signUpEmbedDescription'
+		| 'mailSuccessDescription'
+		| 'highlightCardTitle'
 	>
 > & {
 	theme?: Theme;
