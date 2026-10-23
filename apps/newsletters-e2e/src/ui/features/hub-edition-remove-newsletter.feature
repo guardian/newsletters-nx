@@ -13,7 +13,7 @@ Feature: Remove a newsletter from an edition hub layout section
 		And "Beta" is still listed in the layout
 		When the editor publishes the layout
 		Then the layout for edition "uk" is saved with only "beta" in section "News"
-		And a success message is shown
+		Then the editor is returned to the read-only layout for edition "uk"
 
 	Scenario: Removing a newsletter and cancelling leaves stored data unchanged
 		Given the editor is editing the layout for edition "uk" with newsletters "Alpha" and "Beta" in section "News"
