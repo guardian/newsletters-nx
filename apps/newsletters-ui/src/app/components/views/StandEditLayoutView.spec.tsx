@@ -17,7 +17,7 @@ vi.mock('../../api-requests/fetch-api-data', () => ({
 }));
 
 vi.mock('../../featureSwitches', () => ({
-	isFeatureSwitchEnabled: () => true,
+	isFeatureSwitchEnabled: () => false,
 }));
 
 vi.mock('../../hooks/user-hooks', () => ({
