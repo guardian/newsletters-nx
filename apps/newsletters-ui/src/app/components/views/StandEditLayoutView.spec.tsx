@@ -5,6 +5,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
+import { DEFAULT_TOAST_TIMEOUT_MS } from '../../constants';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { usePermissions } from '../../hooks/user-hooks';
 import { EditLayoutView } from './EditLayoutView';
@@ -124,12 +125,15 @@ describe('StandEditLayoutView', () => {
 			await screen.findByRole('alertdialog');
 
 			// eslint-disable-next-line @typescript-eslint/unbound-method -- We are not invoking this function. We only care that it has been called
-			expect(vi.mocked(toastQueue.add)).toHaveBeenCalledWith({
-				level: 'information',
-				title: 'Layout updated',
-				subject: 'It will take some time for the site to update',
-				showIcon: true,
-			});
+			expect(vi.mocked(toastQueue.add)).toHaveBeenCalledWith(
+				{
+					level: 'information',
+					title: 'Layout updated',
+					subject: 'It will take some time for the site to update',
+					showIcon: true,
+				},
+				{ timeout: DEFAULT_TOAST_TIMEOUT_MS },
+			);
 		});
 		it('triggers an error toast when a publish is unsuccessful', async () => {
 			vi.mocked(fetchPostApiData).mockReturnValue(
@@ -143,12 +147,15 @@ describe('StandEditLayoutView', () => {
 			await screen.findByRole('alertdialog');
 
 			// eslint-disable-next-line @typescript-eslint/unbound-method -- We are not invoking this function. We only care that it has been called
-			expect(vi.mocked(toastQueue.add)).toHaveBeenCalledWith({
-				level: 'error',
-				title: 'Failed to update',
-				subject: 'If the problem persists, please contact Central Production',
-				showIcon: true,
-			});
+			expect(vi.mocked(toastQueue.add)).toHaveBeenCalledWith(
+				{
+					level: 'error',
+					title: 'Failed to update',
+					subject: 'If the problem persists, please contact Central Production',
+					showIcon: true,
+				},
+				{ timeout: DEFAULT_TOAST_TIMEOUT_MS },
+			);
 		});
 	});
 

@@ -17,6 +17,7 @@ import {
 import { Fragment, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
+import { DEFAULT_TOAST_TIMEOUT_MS } from '../../constants';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { isAddableStatus } from '../../lib/modify-layout';
 import { DeleteSectionDialog } from '../edition-layouts/DeleteSectionDialog';
@@ -142,7 +143,7 @@ export const StandEditLayoutView = ({
 					showIcon: true,
 				},
 				{
-					timeout: 5_000,
+					timeout: DEFAULT_TOAST_TIMEOUT_MS,
 				},
 			);
 		} else {
@@ -153,7 +154,7 @@ export const StandEditLayoutView = ({
 					subject: 'It will take some time for the site to update',
 					showIcon: true,
 				},
-				{ timeout: 5_000 },
+				{ timeout: DEFAULT_TOAST_TIMEOUT_MS },
 			);
 			void navigate(`/layouts/${editionId}`);
 		}
