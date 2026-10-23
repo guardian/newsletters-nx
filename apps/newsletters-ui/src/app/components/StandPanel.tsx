@@ -17,11 +17,27 @@ interface StandPanelProps {
 
 	/** Displayed in body */
 	children?: React.ReactNode;
+
+	/**
+	 * Pass the parent grid's columns through to the body (CSS subgrid), so
+	 * content lines up across panels. The parent must be a grid.
+	 */
+	subgrid?: boolean;
 }
 
 const wrapperStyle = css`
 	display: flex;
 	flex-flow: column nowrap;
+`;
+
+const subgridStyle = css`
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+`;
+
+const subgridHeadStyle = css`
+	grid-column: 1 / -1;
 `;
 
 const headStyle = css`
@@ -55,16 +71,17 @@ export const StandPanel = ({
 	children,
 	name,
 	actions,
+	subgrid = false,
 }: StandPanelProps) => {
 	return (
-		<section id={id} css={wrapperStyle}>
-			<header css={headStyle}>
-				<Typography element="h2" variant="bodyBoldMd">
+		<section id={id} css={[wrapperStyle, subgrid && subgridStyle]}>
+			<header css={[headStyle, subgrid && subgridHeadStyle]}>
+				<Typography element="h3" variant="bodyBoldMd">
 					{name}
 				</Typography>
 				{actions}
 			</header>
-			<div css={bodyStyle}>{children}</div>
+			<div css={[bodyStyle, subgrid && subgridStyle]}>{children}</div>
 		</section>
 	);
 };

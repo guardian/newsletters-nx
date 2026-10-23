@@ -107,7 +107,12 @@ export async function deleteFixtureDraft(
 type FixtureNewsletterOverrides = Partial<
 	Pick<
 		NewsletterData,
-		'identityName' | 'name' | 'status' | 'illustrationSquare' | 'illustrationCard' | 'regionFocus'
+		| 'identityName'
+		| 'name'
+		| 'status'
+		| 'illustrationSquare'
+		| 'illustrationCard'
+		| 'regionFocus'
 	>
 > & {
 	theme?: Theme;

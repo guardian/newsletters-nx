@@ -1,6 +1,7 @@
 import type { RegionFocus } from '@newsletters-nx/newsletters-data-client';
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import type { DataTable } from 'playwright-bdd';
 import { createFixtureNewsletter } from '../../../helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
@@ -11,9 +12,14 @@ type FixtureOverrides = Parameters<typeof createFixtureNewsletter>[1];
 
 const GRAPHIC_URL = 'https://example.com/graphic.png';
 
-// The page header is the only <header> containing the newsletter's h2.
+// The page header is the only <header> in <main> with an h2 (panel headers
+// use h3). It isn't a `banner` because a <header> nested in <main> has no
+// implicit landmark role, hence the element selector.
 const pageHeader = (page: Page): Locator =>
-	page.locator('header', { has: page.getByRole('heading', { level: 2 }) });
+	page
+		.getByRole('main')
+		.locator('header')
+		.filter({ has: page.getByRole('heading', { level: 2 }) });
 
 const createLaunched = async (
 	request: APIRequestContext,
@@ -78,7 +84,7 @@ Given(
 );
 
 Given(
-	'a launched newsletter {string} with a newsletter graphic',
+	'a launched newsletter {string} with a card graphic',
 	async ({ request, namedNewsletters }, name: string) => {
 		await createLaunched(request, namedNewsletters, name, {
 			illustrationCard: GRAPHIC_URL,
@@ -87,7 +93,7 @@ Given(
 );
 
 Given(
-	'a launched newsletter {string} with no newsletter graphic',
+	'a launched newsletter {string} with no card graphic',
 	async ({ request, namedNewsletters }, name: string) => {
 		await createLaunched(request, namedNewsletters, name);
 	},
@@ -160,7 +166,7 @@ Then(
 	},
 );
 
-Then('the header shows the newsletter graphic', async ({ page }) => {
+Then('the header shows the card graphic', async ({ page }) => {
 	await expect(pageHeader(page).locator('img')).toBeVisible();
 });
 
@@ -178,7 +184,7 @@ Then('the header shows the title above the graphic', async ({ page }) => {
 	expect(title.y + title.height).toBeLessThanOrEqual(graphic.y);
 });
 
-Then('the header does not show the newsletter graphic', async ({ page }) => {
+Then('the header does not show the card graphic', async ({ page }) => {
 	await expect(pageHeader(page).locator('img')).toBeHidden();
 });
 Given(
@@ -204,5 +210,25 @@ Then(
 				`/launched/preview/${identityNameFor(namedNewsletters, name)}$`,
 			),
 		);
+	},
+);
+
+Then(
+	'the {string} panel shows:',
+	async ({ page }, panelName: string, table: DataTable) => {
+		const panel = page.locator('section', {
+			has: page.getByRole('heading', {
+				level: 3,
+				name: panelName,
+				exact: true,
+			}),
+		});
+		for (const [label, value] of Object.entries(table.rowsHash())) {
+			// Find the row whose label (term) matches, then check its value.
+			const row = panel.locator('dl > div').filter({
+				has: page.getByText(label, { exact: true }).and(page.getByRole('term')),
+			});
+			await expect(row.getByRole('definition')).toHaveText(value);
+		}
 	},
 );

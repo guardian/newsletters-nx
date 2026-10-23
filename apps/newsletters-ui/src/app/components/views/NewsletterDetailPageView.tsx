@@ -2,6 +2,7 @@ import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData } from 'react-router-dom';
 import { ContentWrapper } from '../../ContentWrapper';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
+import { NewsletterDetailPanels } from '../NewsletterDetailPanels';
 import { NewsletterDetailTabs } from '../NewsletterDetailTabs';
 
 export const NewsletterDetailPageView = () => {
@@ -33,6 +34,7 @@ export const NewsletterDetailPageView = () => {
 					selected="details"
 				/>
 			</NewsletterDetailHeader>
+			<NewsletterDetailPanels newsletter={matchedItem} />
 		</ContentWrapper>
 	);
 };
