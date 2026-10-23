@@ -3,7 +3,11 @@ import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	brazeSubscribeEventName,
+	brazeUnsubscribeEventName,
+	type NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import type { ReactNode } from 'react';
 import { humanize } from '../lib/format';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
@@ -226,6 +230,28 @@ export const NewsletterDetailPanels = ({
 					</Field>
 				</dl>
 			</div>
+		</StandPanel>
+		<StandPanel name="Integrations" id="integrations" subgrid>
+			<dl css={listStyles}>
+				<Field label="brazeNewsletterName">
+					{newsletter.brazeNewsletterName}
+				</Field>
+				<Field label="brazeSubscribeAttributeName">
+					{newsletter.brazeSubscribeAttributeName}
+				</Field>
+				<Field label="brazeSubscribeEventNamePrefix">
+					{newsletter.brazeSubscribeEventNamePrefix}
+				</Field>
+				<Field label="brazeSubscribeAttributeNameAlternate">
+					{newsletter.brazeSubscribeAttributeNameAlternate}
+				</Field>
+				<Field label="braze subscribe event name">
+					{brazeSubscribeEventName.generate(newsletter)}
+				</Field>
+				<Field label="braze unsubscribe event name">
+					{brazeUnsubscribeEventName.generate(newsletter)}
+				</Field>
+			</dl>
 		</StandPanel>
 	</div>
 );
