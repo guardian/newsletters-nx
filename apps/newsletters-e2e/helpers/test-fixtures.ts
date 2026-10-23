@@ -113,6 +113,13 @@ type FixtureNewsletterOverrides = Partial<
 		| 'illustrationSquare'
 		| 'illustrationCard'
 		| 'regionFocus'
+		| 'signupPage'
+		| 'seriesTag'
+		| 'seriesTagDescription'
+		| 'composerTag'
+		| 'composerCampaignTag'
+		| 'signupPageCreationStatus'
+		| 'tagCreationStatus'
 	>
 > & {
 	theme?: Theme;
