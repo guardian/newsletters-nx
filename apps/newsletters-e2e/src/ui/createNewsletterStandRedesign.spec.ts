@@ -2,7 +2,7 @@ import { expect, type Page, test } from '@playwright/test';
 import { cleanupStaleTestDrafts } from '../../helpers/draft-newsletter';
 
 const DRAFT_NAME_PREFIX = 'Playwright Create Test';
-const CREATE_URL = '/drafts/newsletter-data?switch-stand=true';
+const CREATE_URL = '/drafts/newsletter-data?switch-legacy=false';
 
 async function completeIntroStep(page: Page) {
 	const startButton = page.getByRole('button', { name: 'Continue' });

@@ -12,7 +12,7 @@ Given(
 			pillar: 'news',
 			status: 'draft',
 			sort: 'newsletter-name',
-			'switch-stand': 'true',
+			'switch-legacy': 'false',
 		});
 		await page.goto(`/all?${params.toString()}`);
 		const rows = page.locator('tr[data-href]');
@@ -37,7 +37,7 @@ Then(
 		await expect(page).toHaveURL(
 			(url) =>
 				resetParams.every((param) => !url.searchParams.has(param)) &&
-				url.searchParams.get('switch-stand') === 'true',
+				url.searchParams.get('switch-legacy') === 'false',
 		);
 	},
 );

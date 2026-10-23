@@ -15,8 +15,8 @@ Unlike legacy Cucumber/Selenium runners, `playwright-bdd` shards scenarios
 across parallel, asynchronous workers — there is no shared browser session to
 lean on. Every scenario must set up its own state and stand on its own.
 
-* **Don't** rely on a newsletter created by a previous scenario still existing.
-* **Do** create the draft you need via the API helpers in
+- **Don't** rely on a newsletter created by a previous scenario still existing.
+- **Do** create the draft you need via the API helpers in
   `helpers/draft-newsletter.ts` (`createDraftNewsletter`,
   `updateDraftNewsletter`) inside the scenario's own `Given`.
 
@@ -24,32 +24,36 @@ lean on. Every scenario must set up its own state and stand on its own.
 
 ## 2. Declarative over imperative
 
-Capture *what* the system does, not *how* the UI is driven. Push clicks,
+Capture _what_ the system does, not _how_ the UI is driven. Push clicks,
 field-filling and URL navigation down into step definitions/fixtures. See
 [Cucumber's guidance on BDD](https://cucumber.io/docs/bdd/) for the underlying
 rationale.
 
 ### ❌ BAD — imperative, brittle
+
 ```gherkin
 Scenario: Launching a newsletter
-  Given I navigate to "/drafts/newsletter-data?switch-stand=true"
+  Given I navigate to "/drafts/newsletter-data?switch-legacy=false"
   And I fill in "name" with "Weekend Reading"
   And I click "Save and continue"
   ...
   When I click "Request Launch"
   Then I should see "launched"
 ```
-*Why it fails:* every wizard-copy tweak (button labels have already changed
+
+_Why it fails:_ every wizard-copy tweak (button labels have already changed
 from `Next`/`Request Launch` once, in the Stand redesign) breaks this file,
 even though "a draft can be launched" hasn't changed.
 
 ### ✅ GOOD — declarative, fixture-driven
+
 ```gherkin
 Scenario: Launching a newsletter that is ready
   Given a draft newsletter with all required data and rendering options
   When the admin submits the launch request
   Then the newsletter's status becomes launched
 ```
+
 The fixture behind `Given` seeds the draft through the API helpers, bypassing
 the wizard UI entirely.
 
@@ -57,13 +61,14 @@ the wizard UI entirely.
 
 ## 3. One scenario, one behaviour
 
-The [Cardinal Rule of BDD](https://automationpanda.com/bdd/): *one scenario,
-one behaviour*. No "super-scenarios" stacking multiple `When`/`Then` pairs.
+The [Cardinal Rule of BDD](https://automationpanda.com/bdd/): _one scenario,
+one behaviour_. No "super-scenarios" stacking multiple `When`/`Then` pairs.
 
-* Keep scenarios to **3–5 steps**; treat 8 as a hard ceiling.
-* **Given** = past state, **When** = the action, **Then** = the assertion.
+- Keep scenarios to **3–5 steps**; treat 8 as a hard ceiling.
+- **Given** = past state, **When** = the action, **Then** = the assertion.
 
 ### ❌ BAD — multi-behaviour monolith
+
 ```gherkin
 Scenario: Editing rendering options
   Given a draft with default rendering options
@@ -74,12 +79,14 @@ Scenario: Editing rendering options
 ```
 
 ### ✅ GOOD — singular focus
+
 ```gherkin
 Scenario: Contact email is saved after a reload
   Given a draft with default rendering options
   When the admin sets the contact email and reloads the page
   Then the saved contact email is shown
 ```
+
 (This is the exact shape of bug #740 — a field-type-sensitive save failure
 that only showed up on reload. Narrow scenarios like this are what catch it;
 a monolith re-asserting three fields at once is what missed it.)
@@ -91,10 +98,11 @@ a monolith re-asserting three fields at once is what missed it.)
 Because scenarios run out of order across workers, nothing may depend on data
 another scenario created.
 
-* `Background` steps must apply to **every** scenario in the file — drop it
+- `Background` steps must apply to **every** scenario in the file — drop it
   rather than force a fit.
 
 ### ❌ BAD — leaking state
+
 ```gherkin
 Feature: Newsletter drafts
 
@@ -106,10 +114,12 @@ Scenario: Launch the draft
   When the admin launches "Weekend Reading"
   Then its status becomes launched
 ```
+
 This only passes today because CI forces `workers: 1`; it fails the moment
 scenarios run out of order or on different workers.
 
 ### ✅ GOOD — atomic via fixtures
+
 ```gherkin
 Feature: Newsletter drafts
 
@@ -120,6 +130,7 @@ Scenario: Launch a ready draft
   When the admin submits the launch request
   Then the newsletter's status becomes launched
 ```
+
 `Background` steps run before **every** scenario in the file, so this one
 creates a fresh, isolated draft for each scenario via the API helpers (see
 rule 1) rather than depending on state left behind by another scenario or
@@ -131,6 +142,7 @@ version of this pattern.
 ## 5. Playwright-BDD specifics
 
 ### Scenario Outline titles
+
 Row-index titles (`Example #1`) break test-history tracking when rows are
 reordered. Always pin titles with
 [`# title-format:`](https://vitalets.github.io/playwright-bdd/#/writing-features/customize-examples-title):
@@ -149,6 +161,7 @@ Scenario Outline: Launch readiness depends on newsletter category
 ```
 
 ### Native tags
+
 Use playwright-bdd's built-in
 [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
 instead of custom skip/config step logic: `@skip`/`@fixme`, `@only`, `@slow`,
@@ -165,7 +178,8 @@ Scenario: Completing the full Stand creation wizard
 ---
 
 ## Further reading
-* [Cucumber: What is BDD?](https://cucumber.io/docs/bdd/)
-* [Gherkin reference](https://cucumber.io/docs/gherkin/reference/)
-* [Automation Panda: BDD 101](https://automationpanda.com/bdd/)
-* [playwright-bdd documentation](https://vitalets.github.io/playwright-bdd/)
+
+- [Cucumber: What is BDD?](https://cucumber.io/docs/bdd/)
+- [Gherkin reference](https://cucumber.io/docs/gherkin/reference/)
+- [Automation Panda: BDD 101](https://automationpanda.com/bdd/)
+- [playwright-bdd documentation](https://vitalets.github.io/playwright-bdd/)

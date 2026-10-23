@@ -28,7 +28,7 @@ export const EditLayoutView = () => {
 	const permissions = usePermissions();
 	const editionId = location.pathname.split('/').pop()?.toUpperCase();
 
-	if (isFeatureSwitchEnabled('switch-stand')) {
+	if (!isFeatureSwitchEnabled('switch-legacy')) {
 		if (!z.validate(editionIdSchema, editionId)) {
 			return (
 				<Container maxWidth="lg">

@@ -14,26 +14,26 @@ Given(
 Given("an editor's workspace uses the Legacy design", async ({ page }) => {
 	// Full page navigation so `checkFeatureSwitchURLParams` (called at module
 	// load) picks up the query param and (re)writes it to localStorage.
-	await page.goto('/drafts?switch-stand=false');
+	await page.goto('/drafts?switch-legacy=true');
 });
 
 Given("an editor's workspace uses the Stand design", async ({ page }) => {
-	await page.goto('/drafts?switch-stand=true');
+	await page.goto('/drafts?switch-legacy=false');
 });
 
 Given('the editor is using the Stand workspace', async ({ page }) => {
-	await page.goto('/drafts?switch-stand=true');
+	await page.goto('/drafts?switch-legacy=false');
 });
 
 When(
 	'the editor opens the newsletter creation step using the Stand design',
 	async ({ page }) => {
-		await page.goto('/drafts/newsletter-data?switch-stand=true');
+		await page.goto('/drafts/newsletter-data?switch-legacy=false');
 	},
 );
 
 When('the editor opens the newsletter creation step', async ({ page }) => {
-	// No switch-stand query param here: `checkFeatureSwitchURLParams` only
+	// No switch-legacy query param here: `checkFeatureSwitchURLParams` only
 	// writes params present in the URL, so the design set by the preceding
 	// Given step is left untouched.
 	await page.goto('/drafts/newsletter-data');

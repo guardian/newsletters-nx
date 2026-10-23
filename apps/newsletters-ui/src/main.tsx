@@ -25,7 +25,7 @@ const router = createBrowserRouter([
 	draftRoute,
 	launchedRoute,
 	layoutsRoute,
-	// Only registered when `switch-stand` is on.
+	// Only registered when `switch-legacy` is on.
 	...newslettersRoutes,
 	// Always registered; AllNewslettersView itself shows a message in place
 	// of the table when the Stand design isn't enabled.

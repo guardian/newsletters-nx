@@ -45,11 +45,11 @@ and link the tracking issue.
 
 The UI is mid-migration from MUI to
 [`@guardian/stand`](https://github.com/guardian/stand). Both UIs live in the
-codebase: the Stand version is off by default and opt-in per browser via the
-`switch-stand` feature switch, e.g.
+codebase: the Stand version is on by default and opt-out per browser via the
+`switch-legacy` feature switch, e.g.
 
 ```
-https://newsletters-tool.local.dev-gutools.co.uk/drafts?switch-stand=true
+https://newsletters-tool.local.dev-gutools.co.uk/drafts?switch-legacy=true
 ```
 
 If you're touching the UI, read [Stand migration](docs/stand-migration.md)
@@ -61,6 +61,5 @@ which of the parallel `Stand*` components to change.
 ⚠️ **Changes to [`libs/newsletters-data-client`](libs/newsletters-data-client)
 can affect newsletter data used in PROD by other Guardian applications.** Read
 [that package's README](libs/newsletters-data-client/README.md) first.
-
 
 Merging to `main` deploys to PROD.

@@ -89,7 +89,7 @@ export function Layout(props: IRootRoute) {
 		isAllNewslettersRoute ||
 		isHomeRoute ||
 		isNewslettersHubLandingRoute;
-	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
+	const isUsingStand = !isFeatureSwitchEnabled('switch-legacy');
 
 	useEffect(() => {
 		let hostname = 'user-telemetry.gutools.co.uk';

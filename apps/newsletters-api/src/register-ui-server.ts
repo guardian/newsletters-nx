@@ -26,7 +26,7 @@ const routeMap = {
 		'/launch-newsletter',
 	],
 	'/layouts': ['', '/:id', '/edit/:id', '/edit-json/:id'],
-	// Stand launched newsletter page (switch-stand).
+	// Stand launched newsletter page (!switch-legacy).
 	'/newsletters': ['/:id', '/:id/details'],
 };
 
