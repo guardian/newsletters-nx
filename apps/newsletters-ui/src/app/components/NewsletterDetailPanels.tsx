@@ -33,8 +33,13 @@ const listStyles = css`
 	display: grid;
 	grid-column: 1 / -1;
 	grid-template-columns: subgrid;
-	row-gap: ${semanticSpacing.stackSm};
 	margin: 0;
+
+	${until.md} {
+		row-gap: ${baseSpacing['20Rem']};
+	}
+
+	row-gap: ${semanticSpacing.stackSm};
 `;
 
 const listGroupStyles = css`
@@ -98,7 +103,10 @@ const hrStyles = css`
 	border: 1px solid ${semanticColors.border.weak};
 	flex: 1 0 0;
 
-	margin: 12px 0;
+	${until.md} {
+		margin: ${baseSpacing['20Rem']} 0;
+	}
+	margin: ${semanticSpacing.stackSm} 0;
 
 	/** Full width */
 	width: 100%;
