@@ -76,11 +76,32 @@ Feature: Launched newsletter: open it and find my way around
 			Given a launched newsletter "Afternoon update" with status "pending" and region focus "AU"
 			When the editor opens the detail page for "Afternoon update"
 			Then the "Attributes" panel shows:
+				| label              | value            |
 				| Name               | Afternoon update |
 				| Newsletter status  | Pending          |
 				| Pillar             | News             |
 				| Region focus       | AU               |
 				| Type of newsletter | Article based    |
+
+	Rule: Sign-up page and tags shows the newsletter's sign-up page and tags
+
+		Scenario: The panel lists the sign-up page path and the tags
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                        | value                                                                                                         |
+				| sign-up page creation status | COMPLETED                                                                                                     |
+				| tag creation status          | REQUESTED                                                                                                     |
+				| sign-up page path            | /australia-news/2022/oct/13/afternoon-update-newsletter-best-daily-news-email-guardian-australia-free-sign-up |
+				| series tag                   | australia-news/series/guardian-australia-afternoon-update                                                     |
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Sign-up page and tags" panel shows:
+				| label                        | value                                                                                                         |
+				| Sign-up page creation status | Completed                                                                                                     |
+				| Tag creation status          | Requested                                                                                                     |
+				| Path to sign-up page         | /australia-news/2022/oct/13/afternoon-update-newsletter-best-daily-news-email-guardian-australia-free-sign-up |
+				| Series tag                   | australia-news/series/guardian-australia-afternoon-update                                                     |
+				| Tag description              | Not set                                                                                                       |
+				| Campaign tag                 | Not set                                                                                                       |
+				| Campaign description         | Not set                                                                                                       |
 
 	Rule: The header adapts to the screen size
 
