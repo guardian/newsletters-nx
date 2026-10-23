@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { baseColors, semanticColors, semanticSizing } from '@guardian/stand';
 import { Avatar as StandAvatar } from '@guardian/stand/Avatar';
 import type { TopBarTheme } from '@guardian/stand/TopBar';
@@ -55,6 +56,11 @@ const topBarTheme: TopBarTheme = {
 	},
 };
 
+/** Make the top bar a css anchoring target */
+const topBarStyle = css`
+	anchor-name: --top-bar;
+`;
+
 export function StandMainNav() {
 	const userProfile = useProfile();
 	const userName = userProfile?.name ?? 'Logged in user';
@@ -84,7 +90,7 @@ export function StandMainNav() {
 	}, [navLinks]);
 
 	return (
-		<TopBar theme={topBarTheme}>
+		<TopBar theme={topBarTheme} cssOverrides={topBarStyle}>
 			<TopBarToolName
 				name="Newsletter"
 				href="/"

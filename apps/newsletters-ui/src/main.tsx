@@ -1,3 +1,5 @@
+import { css } from '@emotion/react';
+import { baseSpacing } from '@guardian/stand';
 import { ToastRegion } from '@guardian/stand/Toast';
 import { ThemeProvider } from '@mui/material';
 import { StrictMode } from 'react';
@@ -30,6 +32,14 @@ const router = createBrowserRouter([
 	allNewslettersRoute,
 ]);
 
+/** Position all toasts under the top bar */
+const toastStyles = css`
+	position: fixed;
+	position-anchor: --top-bar;
+	top: anchor(bottom);
+	margin-top: ${baseSpacing['20Px']};
+`;
+
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement,
 );
@@ -38,7 +48,11 @@ root.render(
 		<DefaultStyles>
 			<ThemeProvider theme={appTheme}>
 				<RouterProvider router={router} />
-				<ToastRegion />
+				<ToastRegion
+					toastProps={{
+						cssOverrides: toastStyles,
+					}}
+				/>
 			</ThemeProvider>
 		</DefaultStyles>
 	</StrictMode>,
