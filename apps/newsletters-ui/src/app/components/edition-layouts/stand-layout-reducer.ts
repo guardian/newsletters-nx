@@ -8,7 +8,6 @@ import {
 	renameGroup,
 } from '../../lib/modify-layout';
 
-type FeedbackType = 'success' | 'failure';
 export type StandLayoutAction =
 	| { type: 'remove-newsletter'; groupIndex: number; newsletterIndex: number }
 	| { type: 'append-newsletter'; groupIndex: number; newsletterId: string }
@@ -19,7 +18,6 @@ export type StandLayoutAction =
 			toIndex: number;
 	  }
 	| { type: 'set-pending' }
-	| { type: 'handle-server-response'; success: boolean }
 	| {
 			type: 'add-section';
 			insert: { place: 'before' | 'after'; groupIndex: number };
@@ -39,7 +37,6 @@ export type StandLayoutState = {
 	layout: Layout;
 	original: Layout;
 	updateInProgress: boolean;
-	feedback?: FeedbackType;
 	confirmingDeletionOfSection?: number;
 };
 export const makeStandLayoutState = (original: Layout): StandLayoutState => ({
@@ -53,15 +50,7 @@ export function standLayoutReducer(
 ): StandLayoutState {
 	switch (action.type) {
 		case 'set-pending':
-			return { ...state, updateInProgress: true, feedback: undefined };
-		case 'handle-server-response':
-			return {
-				...state,
-				updateInProgress: false,
-				feedback: action.success ? 'success' : 'failure',
-				// A published layout becomes the new baseline for detecting unsaved changes.
-				original: action.success ? state.layout : state.original,
-			};
+			return { ...state, updateInProgress: true };
 		case 'append-newsletter': {
 			const group = state.layout.groups[action.groupIndex];
 			const isAssigned = state.layout.groups.some((g) =>
@@ -72,7 +61,6 @@ export function standLayoutReducer(
 			}
 			return {
 				...state,
-				feedback: undefined,
 				layout: insertNewsletterIntoGroup(
 					state.layout,
 					action.groupIndex,
@@ -91,7 +79,7 @@ export function standLayoutReducer(
 			if (state.updateInProgress || layout === state.layout) {
 				return state;
 			}
-			return { ...state, feedback: undefined, layout };
+			return { ...state, layout };
 		}
 		case 'remove-newsletter':
 			if (state.updateInProgress) {
@@ -99,7 +87,6 @@ export function standLayoutReducer(
 			}
 			return {
 				...state,
-				feedback: undefined,
 				layout: deleteNewsletterFromGroup(
 					state.layout,
 					action.groupIndex,
@@ -114,7 +101,6 @@ export function standLayoutReducer(
 			const insertAt = action.insert.groupIndex + insertOffset;
 			return {
 				...state,
-				feedback: undefined,
 				layout: addNewGroup(state.layout, insertAt),
 			};
 		}
@@ -151,7 +137,6 @@ export function standLayoutReducer(
 			return {
 				...state,
 				confirmingDeletionOfSection: undefined,
-				feedback: undefined,
 				layout: deleteGroup(state.layout, state.confirmingDeletionOfSection),
 			};
 		}

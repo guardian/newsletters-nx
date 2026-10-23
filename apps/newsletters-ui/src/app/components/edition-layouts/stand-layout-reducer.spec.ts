@@ -99,23 +99,6 @@ describe('standLayoutReducer', () => {
 		});
 		expect(after).toBe(pending);
 	});
-	it('records success and failure feedback', () => {
-		const pending = standLayoutReducer(makeStandLayoutState(makeLayout()), {
-			type: 'set-pending',
-		});
-		expect(
-			standLayoutReducer(pending, {
-				type: 'handle-server-response',
-				success: true,
-			}),
-		).toMatchObject({ updateInProgress: false, feedback: 'success' });
-		expect(
-			standLayoutReducer(pending, {
-				type: 'handle-server-response',
-				success: false,
-			}),
-		).toMatchObject({ updateInProgress: false, feedback: 'failure' });
-	});
 	it('appends a newsletter to the bottom of the given section', () => {
 		const state = standLayoutReducer(makeStandLayoutState(makeLayout()), {
 			type: 'append-newsletter',

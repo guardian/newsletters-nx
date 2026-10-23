@@ -165,9 +165,6 @@ Then(
 		expect(saved?.groups).toEqual([{ title, newsletters: [identityName] }]);
 	},
 );
-Then('a success message is shown', async ({ page }) => {
-	await expect(page.getByText(/Layout updated/)).toBeVisible();
-});
 Then('no layout has been saved', async ({ page }) => {
 	// Let the UI settle so a slow request can't make this pass by accident.
 	await page.waitForLoadState('networkidle');
