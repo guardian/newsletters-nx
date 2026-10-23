@@ -101,7 +101,7 @@ Feature: Reorder newsletters in an edition hub layout section
 			And the editor opens the "uk" layout for editing
 			When the editor moves "Alpha" below "Beta" using the keyboard
 			And the editor publishes the layout
-			Then a success message is shown
+			Then the editor is returned to the read-only layout for edition "uk"
 			When the editor opens the "uk" layout for editing
 			Then the sections list:
 				| News  |

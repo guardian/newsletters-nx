@@ -143,7 +143,11 @@ export const StandEditLayoutView = ({
 			`/api/layouts/${editionId}`,
 			layout,
 		);
-		dispatch({ type: 'handle-server-response', success: !!result });
+		if (!result) {
+			dispatch({ type: 'handle-server-response', success: !!result });
+		} else {
+			await navigate(`/layouts/${editionId}`);
+		}
 	};
 
 	const handleAddSection = (place: 'before' | 'after', groupIndex: number) => {

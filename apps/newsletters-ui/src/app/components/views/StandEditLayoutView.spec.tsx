@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest';
+import type { Layout } from '@newsletters-nx/newsletters-data-client';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -68,6 +69,48 @@ describe('StandEditLayoutView', () => {
 
 		await screen.findByRole('heading', {
 			name: 'You do not have permission for this area of the Newsletters tool',
+		});
+	});
+
+	describe('publishing', () => {
+		const layout = { groups: [] };
+		const newsletters: unknown[] = [];
+		const renderWithEditor = () => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			return renderEditView(layout, newsletters);
+		};
+		it('returns to the read-only page when a publish is successful', async () => {
+			vi.mocked(fetchPostApiData).mockReturnValue(
+				new Promise<Layout>((res) =>
+					res({ groups: [{ title: 'a', newsletters: [] }] }),
+				),
+			);
+			const router = renderWithEditor();
+
+			fireEvent.click(
+				await screen.findByRole('button', { name: 'Save and publish layout' }),
+			);
+
+			await screen.findByRole('heading', { name: 'Read-only layout' });
+			expect(router.state.location.pathname).toBe('/layouts/UK');
+		});
+		it('displays an error message when a publish is unsuccessful', async () => {
+			vi.mocked(fetchPostApiData).mockReturnValue(
+				new Promise<undefined>((res) => res(undefined)),
+			);
+			const router = renderWithEditor();
+
+			fireEvent.click(
+				await screen.findByRole('button', { name: 'Save and publish layout' }),
+			);
+
+			const element = await screen.findByRole('status');
+
+			expect(element).toHaveTextContent('Failed to update.');
+			expect(router.state.location.pathname).toBe('/layouts/edit/uk');
 		});
 	});
 
