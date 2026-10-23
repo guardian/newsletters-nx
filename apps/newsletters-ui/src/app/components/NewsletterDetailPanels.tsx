@@ -37,6 +37,14 @@ const listStyles = css`
 	margin: 0;
 `;
 
+const listGroupStyles = css`
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+	row-gap: ${semanticSpacing.stackSm};
+	margin: 0;
+`;
+
 const rowStyles = css`
 	display: grid;
 	grid-column: 1 / -1;
@@ -85,6 +93,20 @@ const thumbnailStyles = css`
 	object-fit: contain;
 	flex: none;
 `;
+const hrStyles = css`
+	height: 1px;
+	border: 1px solid ${semanticColors.border.weak};
+	flex: 1 0 0;
+
+	margin: 12px 0;
+
+	/** Full width */
+	width: 100%;
+
+	/** Take up a full grid-row */
+	grid-column: 1/-1;
+`;
+
 const isEmpty = (value: ReactNode) =>
 	value === undefined || value === null || value === '';
 
@@ -232,26 +254,41 @@ export const NewsletterDetailPanels = ({
 			</div>
 		</StandPanel>
 		<StandPanel name="Integrations" id="integrations" subgrid>
-			<dl css={listStyles}>
-				<Field label="brazeNewsletterName">
-					{newsletter.brazeNewsletterName}
-				</Field>
-				<Field label="brazeSubscribeAttributeName">
-					{newsletter.brazeSubscribeAttributeName}
-				</Field>
-				<Field label="brazeSubscribeEventNamePrefix">
-					{newsletter.brazeSubscribeEventNamePrefix}
-				</Field>
-				<Field label="brazeSubscribeAttributeNameAlternate">
-					{newsletter.brazeSubscribeAttributeNameAlternate}
-				</Field>
-				<Field label="braze subscribe event name">
-					{brazeSubscribeEventName.generate(newsletter)}
-				</Field>
-				<Field label="braze unsubscribe event name">
-					{brazeUnsubscribeEventName.generate(newsletter)}
-				</Field>
-			</dl>
+			<div css={listGroupStyles}>
+				<Typography element="h3" variant="bodyBoldMd">
+					Braze values
+				</Typography>
+				<dl css={listStyles}>
+					<Field label="brazeNewsletterName">
+						{newsletter.brazeNewsletterName}
+					</Field>
+					<Field label="brazeSubscribeAttributeName">
+						{newsletter.brazeSubscribeAttributeName}
+					</Field>
+					<Field label="brazeSubscribeEventNamePrefix">
+						{newsletter.brazeSubscribeEventNamePrefix}
+					</Field>
+					<Field label="brazeSubscribeAttributeNameAlternate">
+						{newsletter.brazeSubscribeAttributeNameAlternate}
+					</Field>
+					<Field label="braze subscribe event name">
+						{brazeSubscribeEventName.generate(newsletter)}
+					</Field>
+					<Field label="braze unsubscribe event name">
+						{brazeUnsubscribeEventName.generate(newsletter)}
+					</Field>
+				</dl>
+			</div>
+			<hr css={hrStyles} />
+			<div css={listGroupStyles}>
+				<Typography element="h3" variant="bodyBoldMd">
+					Ophan values
+				</Typography>
+				<dl css={listStyles}>
+					<Field label="campaignName">{newsletter.campaignName}</Field>
+					<Field label="campaignCode">{newsletter.campaignCode}</Field>
+				</dl>
+			</div>
 		</StandPanel>
 	</div>
 );
