@@ -1,5 +1,5 @@
 export const featureSwitches = {
-	'switch-stand': false,
+	'switch-legacy': false,
 } as const satisfies Record<`switch-${string}`, boolean>;
 
 export type FeatureSwitchName = keyof typeof featureSwitches;

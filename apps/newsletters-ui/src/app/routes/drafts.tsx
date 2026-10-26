@@ -30,42 +30,42 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'newsletter-data/:listId',
-			element: isFeatureSwitchEnabled('switch-stand') ? (
-				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
-			) : (
+			element: isFeatureSwitchEnabled('switch-legacy') ? (
 				<WizardContainer wizardId="NEWSLETTER_DATA" />
+			) : (
+				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
 			),
 		},
 		{
 			path: 'newsletter-data-rendering/:listId',
-			element: isFeatureSwitchEnabled('switch-stand') ? (
-				<StandRedesignWizardContainer wizardId="RENDERING_OPTIONS" />
-			) : (
+			element: isFeatureSwitchEnabled('switch-legacy') ? (
 				<WizardContainer wizardId="RENDERING_OPTIONS" />
+			) : (
+				<StandRedesignWizardContainer wizardId="RENDERING_OPTIONS" />
 			),
 		},
 		{
 			path: 'newsletter-data',
-			element: isFeatureSwitchEnabled('switch-stand') ? (
-				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
-			) : (
+			element: isFeatureSwitchEnabled('switch-legacy') ? (
 				<WizardContainer wizardId="NEWSLETTER_DATA" />
+			) : (
+				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
 			),
 		},
 		{
 			path: 'launch-newsletter/:listId',
-			element: isFeatureSwitchEnabled('switch-stand') ? (
-				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
-			) : (
+			element: isFeatureSwitchEnabled('switch-legacy') ? (
 				<WizardContainer wizardId="LAUNCH_NEWSLETTER" />
+			) : (
+				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
 			),
 		},
 		{
 			path: 'launch-newsletter',
-			element: isFeatureSwitchEnabled('switch-stand') ? (
-				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
-			) : (
+			element: isFeatureSwitchEnabled('switch-legacy') ? (
 				<WizardContainer wizardId="LAUNCH_NEWSLETTER" />
+			) : (
+				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
 			),
 		},
 	],

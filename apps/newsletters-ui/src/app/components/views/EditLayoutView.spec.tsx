@@ -51,7 +51,7 @@ const renderEditLayoutView = (
 
 describe('EditLayoutView unknown edition', () => {
 	it('Stand: renders a 404 error if the editionId is invalid', async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 		vi.mocked(usePermissions).mockReturnValue({
 			editEverything: true,
 			useJsonEditor: false,
@@ -71,7 +71,7 @@ describe('EditLayoutView unknown edition', () => {
 		).toBeVisible();
 	});
 	it(`Legacy: renders a 'no such edition' warning if the editionId is invalid`, async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
 		vi.mocked(usePermissions).mockReturnValue({
 			editEverything: true,
 			useJsonEditor: false,
@@ -91,7 +91,7 @@ describe('EditLayoutView unknown edition', () => {
 
 describe('EditLayoutView missing data', () => {
 	it('Stand: renders a 500 error if the newsletters data could not be loaded', async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 		vi.mocked(usePermissions).mockReturnValue({
 			editEverything: true,
 			useJsonEditor: false,
@@ -102,7 +102,7 @@ describe('EditLayoutView missing data', () => {
 		).toBeVisible();
 	});
 	it(`Legacy: renders 'no layout set' warning if newsletter data could not be loaded`, async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
 		renderEditLayoutView('uk', undefined);
 		expect(await screen.findByText('no layout set for "UK"')).toBeVisible();
 	});
@@ -110,7 +110,7 @@ describe('EditLayoutView missing data', () => {
 
 describe('LayoutView missing layout', () => {
 	it('Stand: renders the empty state if there is no layout data', async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 		vi.mocked(usePermissions).mockReturnValue({
 			editEverything: true,
 			useJsonEditor: false,
@@ -138,7 +138,7 @@ describe('LayoutView missing layout', () => {
 	});
 
 	it(`Legacy: renders the 'no layout set' warning if there is no layout data`, async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
 		vi.mocked(usePermissions).mockReturnValue({
 			editEverything: true,
 			useJsonEditor: false,

@@ -52,7 +52,7 @@ export const LayoutView = () => {
 		{ layout?: Layout; newsletters: NewsletterData[] } | undefined
 	>();
 
-	const isUsingStand = isFeatureSwitchEnabled('switch-stand');
+	const isUsingStand = !isFeatureSwitchEnabled('switch-legacy');
 
 	const location = useLocation();
 	const permissions = usePermissions();

@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { enableLegacyDesign } from './helpers/shared';
 
 test.describe('Top nav - launched', () => {
+	test.beforeEach(async ({ page }) => {
+		await enableLegacyDesign(page);
+	});
 	test('appears in the launched list', async ({ page }) => {
 		await page.goto('/');
 		const launchedButton = page
@@ -49,7 +53,10 @@ test.describe('Top nav - launched', () => {
 
 		await expect(page).toHaveURL('/launched/edit/playwright-launched-seed');
 
-		const nameInput = page.getByRole('textbox', { name: 'Name the newsletter', exact: true });
+		const nameInput = page.getByRole('textbox', {
+			name: 'Name the newsletter',
+			exact: true,
+		});
 		await expect(nameInput).toBeEditable();
 
 		const frequencyDropDown = page.getByTestId('frequency-select');

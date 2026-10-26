@@ -15,7 +15,7 @@ const allNewslettersTable = (page: Page) =>
 	page.getByRole('grid', { name: 'All newsletters' });
 
 When('the editor opens the All Newsletters view', async ({ page }) => {
-	// No switch-stand param: that would set the design rather than read it.
+	// No switch-legacy param: that would set the design rather than read it.
 	await page.goto('/all');
 });
 

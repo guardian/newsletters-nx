@@ -1,6 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { enableLegacyDesign } from './helpers/shared';
 
 test.describe('UI Tests', () => {
+	test.beforeEach(async ({ page }) => {
+		await enableLegacyDesign(page);
+	});
 	test.describe('Header menu journeys', () => {
 		test('should load home page and click Launched button', async ({
 			page,
@@ -57,9 +61,7 @@ test.describe('UI Tests', () => {
 			await expect(page).toHaveURL('/templates');
 		});
 
-		test('should load home page and click Layouts button', async ({
-			page,
-		}) => {
+		test('should load home page and click Layouts button', async ({ page }) => {
 			await page.goto('/');
 			await page.waitForLoadState('networkidle');
 
@@ -77,4 +79,3 @@ test.describe('UI Tests', () => {
 		});
 	});
 });
-

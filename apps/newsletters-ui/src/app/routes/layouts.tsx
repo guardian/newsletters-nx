@@ -10,10 +10,10 @@ import { Layout } from '../Layout';
 import { layoutLoader, mapLoader } from '../loaders/layouts';
 
 const LayoutsMapElement = () =>
-	isFeatureSwitchEnabled('switch-stand') ? (
-		<StandLayoutMapView />
-	) : (
+	isFeatureSwitchEnabled('switch-legacy') ? (
 		<LayoutMapView />
+	) : (
+		<StandLayoutMapView />
 	);
 
 export const layoutsRoute: RouteObject = {

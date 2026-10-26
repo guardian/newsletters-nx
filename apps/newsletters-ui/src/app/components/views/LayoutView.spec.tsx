@@ -56,7 +56,7 @@ const renderLayoutView = (
 
 describe('LayoutView edit button', () => {
 	beforeEach(() => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 	});
 	it.each(['uk', 'us', 'au', 'int', 'eur'])(
 		'navigates to the editable %s layout',
@@ -97,7 +97,7 @@ describe('LayoutView edit button', () => {
 
 describe('LayoutView empty state', () => {
 	beforeEach(() => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 	});
 	it.each([undefined, { groups: [] }])(
 		'shows the empty state below the header when there are no sections (%j)',
@@ -117,7 +117,7 @@ describe('LayoutView empty state', () => {
 
 	it('does not show the empty state when a section exists, even without newsletters', async () => {
 		beforeEach(() => {
-			vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+			vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 		});
 		renderLayoutView('uk', {
 			layout: {
@@ -137,7 +137,7 @@ describe('LayoutView empty state', () => {
 
 describe('LayoutView sections', () => {
 	beforeEach(() => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 	});
 	it('renders a numbered section container for each layout group', async () => {
 		renderLayoutView('uk', {
@@ -197,7 +197,7 @@ describe('LayoutView sections', () => {
 
 describe('LayoutView unknown edition', () => {
 	it('Stand: renders a 404 error if the editionId is invalid', async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 		vi.mocked(usePermissions).mockReturnValue({
 			editEverything: true,
 			useJsonEditor: false,
@@ -217,7 +217,7 @@ describe('LayoutView unknown edition', () => {
 		).toBeVisible();
 	});
 	it(`Legacy: renders a 'no such edition' warning if the editionId is invalid`, async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
 		renderLayoutView(UNKNOWN_EDITION_ID, {
 			layout: {
 				groups: [
@@ -238,14 +238,14 @@ describe('LayoutView unknown edition', () => {
 
 describe('LayoutView missing data', () => {
 	it('Stand: renders a 500 error if the newsletters data could not be loaded', async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 		renderLayoutView('uk', undefined);
 		expect(
 			await screen.findByText('Newsletters data could not be loaded'),
 		).toBeVisible();
 	});
 	it(`Legacy: renders 'no layout set' warning if newsletter data could not be loaded`, async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
 		renderLayoutView('uk', undefined);
 		expect(await screen.findByText('no layout set for "UK"')).toBeVisible();
 	});
@@ -253,7 +253,7 @@ describe('LayoutView missing data', () => {
 
 describe('LayoutView missing layout', () => {
 	it('Stand: renders the empty state if there is no layout data', async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
 		renderLayoutView('uk', {
 			layout: undefined,
 			newsletters: [],
@@ -269,7 +269,7 @@ describe('LayoutView missing layout', () => {
 	});
 
 	it(`Legacy: renders the 'no layout set' warning if there is no layout data`, async () => {
-		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(false);
+		vi.mocked(isFeatureSwitchEnabled).mockReturnValue(true);
 		renderLayoutView('uk', {
 			layout: undefined,
 			newsletters: [],

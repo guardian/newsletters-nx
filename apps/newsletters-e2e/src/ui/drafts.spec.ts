@@ -4,6 +4,7 @@ import {
 	createDraftNewsletter,
 	deleteDraftNewsletter,
 } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const DRAFT_NAME_PREFIX = 'Draft newsletter - playwright test';
 
@@ -15,7 +16,8 @@ test.describe.serial('Top nav - drafts', () => {
 		await cleanupStaleTestDrafts(request, DRAFT_NAME_PREFIX);
 	});
 
-	test.beforeEach(async ({ request }, testInfo) => {
+	test.beforeEach(async ({ page, request }, testInfo) => {
+		await enableLegacyDesign(page);
 		draftName = `${DRAFT_NAME_PREFIX} - ${testInfo.title}`;
 		listId = await createDraftNewsletter(request, draftName);
 	});

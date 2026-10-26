@@ -11,12 +11,12 @@ import { listLoader } from '../loaders/newsletters';
 import { renderingTemplateListLoader } from '../loaders/rendering-templates';
 
 const HomeElement = () =>
-	isFeatureSwitchEnabled('switch-stand') ? <HomeView /> : <HomeMenu />;
+	isFeatureSwitchEnabled('switch-legacy') ? <HomeMenu /> : <HomeView />;
 
 const homeLoader: LoaderFunction = (args) =>
-	isFeatureSwitchEnabled('switch-stand')
-		? allNewslettersLoader(args)
-		: listLoader(args);
+	isFeatureSwitchEnabled('switch-legacy')
+		? listLoader(args)
+		: allNewslettersLoader(args);
 
 export const homeRoute: RouteObject = {
 	path: '/',

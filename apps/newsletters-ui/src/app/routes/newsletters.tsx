@@ -12,7 +12,7 @@ import { detailLoader } from '../loaders/newsletters';
 checkFeatureSwitchURLParams();
 
 // Nothing links here until switch-over. The route is only registered when
-// `switch-stand` is on, so other users never reach it.
+// `switch-legacy` is off, so other users never reach it.
 export const newslettersRoute: RouteObject = {
 	path: '/newsletters',
 	element: <Layout compactTopPadding />,
@@ -36,7 +36,7 @@ export const newslettersRoute: RouteObject = {
 };
 
 export const newslettersRoutes: RouteObject[] = isFeatureSwitchEnabled(
-	'switch-stand',
+	'switch-legacy',
 )
-	? [newslettersRoute]
-	: [];
+	? []
+	: [newslettersRoute];

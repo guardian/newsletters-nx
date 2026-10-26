@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const UK_LAYOUT_NEWSLETTER_NAME = 'Playwright Article Test';
 
 test.describe('Top nav - layouts', () => {
 	test.beforeEach(async ({ page, request }) => {
+		await enableLegacyDesign(page);
 		// make sure the seeded newsletter is in its expected state
 		// regardless of whether other tests have been messing around with it
 		await patchNewsletter(request, 9001, {

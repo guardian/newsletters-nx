@@ -10,7 +10,7 @@ const sectionRows = (page: Page, title: string): Locator =>
 	section(page, title).locator('tr[data-href]');
 
 When('the editor opens the homepage', async ({ page }) => {
-	// No switch-stand param, so the design chosen earlier is kept.
+	// No switch-legacy param, so the design chosen earlier is kept.
 	await page.goto('/');
 });
 

@@ -3,20 +3,20 @@
 The UI is being migrated from [MUI](https://mui.com/) to
 [`@guardian/stand`](https://github.com/guardian/stand), the Guardian's design
 system for internal tools. Both UIs currently exist in the codebase, selected at
-runtime by a feature switch. MUI is still the default; nothing has been removed.
+runtime by a feature switch. Stand is now the default, but users can revert to legacy via feature-switch.
 
 ## The feature switch
 
-`switch-stand`, defined in
+`switch-legacy`, defined in
 [`featureSwitches.ts`](../apps/newsletters-ui/src/app/featureSwitches.ts),
 defaults to `false`. Opt in with a query param, which persists in
 `localStorage`:
 
 ```
-https://newsletters-tool.local.dev-gutools.co.uk/drafts?switch-stand=true
+https://newsletters-tool.local.dev-gutools.co.uk/drafts?switch-legacy=true
 ```
 
-Use `?switch-stand=false` to turn it off.
+Use `?switch-legacy=false` to turn it off.
 
 ## What's migrated
 
@@ -28,7 +28,7 @@ Use `?switch-stand=false` to turn it off.
 
 Stand versions are parallel files prefixed `Stand*` / `StandRedesign*` (nav,
 wizard, step nav, schema form, markdown view, dialogs, issue reports), so the
-MUI originals are untouched. Search for `isFeatureSwitchEnabled('switch-stand')`
+MUI originals are untouched. Search for `isFeatureSwitchEnabled('switch-legacy')`
 to find the places that branch on it.
 
 Stand's reset and font CSS is imported globally in
@@ -53,7 +53,7 @@ read and write the same draft data, so a draft can be continued in either UI.
   [`createNewsletter.spec.ts`](../apps/newsletters-e2e/src/ui/createNewsletter.spec.ts).
 - `@guardian/stand` is pinned to an exact version and is pre-1.0 — bump it deliberately.
 
-
 ## Completing the migration
+
 Finishing means migrating the remaining screens, then removing the switch, the
 MUI components and theme, the MUI dependencies, and the `StandRedesign` prefixes.

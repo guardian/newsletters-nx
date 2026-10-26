@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test';
 import { cleanupStaleTestDrafts } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const DRAFT_NAME_PREFIX = 'Playwright Create Test';
 const CREATE_URL = '/drafts/newsletter-data';
@@ -213,9 +214,9 @@ test.describe('Create draft newsletter journey', () => {
 		await cleanupStaleTestDrafts(request, DRAFT_NAME_PREFIX);
 	});
 
-	// eslint-disable-next-line no-empty-pattern -- stuck between 'no-empty-pattern' (eslint) and 'First argument must use the object destructuring pattern' (playwright)
-	test.beforeEach(({}, testInfo) => {
+	test.beforeEach(async ({ page }, testInfo) => {
 		draftName = `${DRAFT_NAME_PREFIX} - ${testInfo.title}`;
+		await enableLegacyDesign(page);
 	});
 
 	test.afterEach(async ({ request }) => {
@@ -305,9 +306,9 @@ test.describe('Wizard step nav skip functionality', () => {
 		await cleanupStaleTestDrafts(request, DRAFT_NAME_PREFIX);
 	});
 
-	// eslint-disable-next-line no-empty-pattern -- stuck between 'no-empty-pattern' (eslint) and 'First argument must use the object destructuring pattern' (playwright)
-	test.beforeEach(({}, testInfo) => {
+	test.beforeEach(async ({ page }, testInfo) => {
 		draftName = `${DRAFT_NAME_PREFIX} - ${testInfo.title}`;
+		await enableLegacyDesign(page);
 	});
 
 	test.afterEach(async ({ request }) => {

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 // 'Playwright Article Test' is pre-seeded in newsletters.local.json
 const NEWSLETTER_ID_NAME = 'playwright-article-test';
@@ -8,6 +9,9 @@ const DETAIL_URL_PATTERN = new RegExp(`/launched/${NEWSLETTER_ID_NAME}$`);
 const EDIT_URL_PATTERN = new RegExp(`/launched/edit/${NEWSLETTER_ID_NAME}$`);
 
 test.describe('Edit article-based newsletter', () => {
+	test.beforeEach(async ({ page }) => {
+		await enableLegacyDesign(page);
+	});
 	test.afterEach(async ({ request }) => {
 		await patchNewsletter(request, LIST_ID, {
 			name: 'Playwright Article Test',
@@ -78,14 +82,11 @@ test.describe('Edit article-based newsletter', () => {
 			.getByLabel('Highlight card message')
 			.fill('Updated Article Test highlight');
 
-
 		await page
 			.getByLabel('Add the series tag')
 			.fill('tests/series/playwright-article-updated');
 
-		await page
-			.getByLabel('Campaign tag')
-			.fill('tests/playwright-article-test');
+		await page.getByLabel('Campaign tag').fill('tests/playwright-article-test');
 
 		await page
 			.getByLabel('Campaign description')

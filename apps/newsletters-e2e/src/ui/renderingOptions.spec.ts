@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const NEWSLETTER_ID_NAME = 'playwright-article-test';
 const RENDERING_OPTIONS_URL_PATTERN = new RegExp(
@@ -8,6 +9,7 @@ const RENDERING_OPTIONS_URL_PATTERN = new RegExp(
 
 test.describe('Rendering options', () => {
 	test.beforeEach(async ({ page }) => {
+		await enableLegacyDesign(page);
 		await page.goto('/');
 		await page
 			.locator('header')
