@@ -91,7 +91,7 @@ const Field = ({
 	label: string;
 	children?: ReactNode;
 }) => (
-	<div css={rowStyles}>
+	<div role="group" aria-label={label} css={rowStyles}>
 		<Typography element="dt" variant="bodySm" cssOverrides={weakTextStyles}>
 			{label}
 		</Typography>
