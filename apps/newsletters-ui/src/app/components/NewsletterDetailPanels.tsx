@@ -275,6 +275,11 @@ export const NewsletterDetailPanels = ({
 					Braze values
 				</Typography>
 				<dl css={listStyles}>
+					<Field label="Braze campaign creation status">
+						<WorkflowStatusBadge
+							status={newsletter.brazeCampaignCreationStatus}
+						/>
+					</Field>
 					<Field label="brazeNewsletterName">
 						{newsletter.brazeNewsletterName}
 					</Field>
