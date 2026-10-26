@@ -25,7 +25,7 @@ Feature: Remove a section from an edition hub layout
 				| title |
 				| News  |
 				| Sport |
-			And a success message is shown
+			Then the editor is returned to the read-only layout for edition "uk"
 
 	Rule: Cancelling an edit leaves the stored data unchanged
 		Background:

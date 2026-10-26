@@ -114,6 +114,18 @@ type FixtureNewsletterOverrides = Partial<
 		| 'illustrationCard'
 		| 'regionFocus'
 		| 'renderingOptions'
+		| 'signupPage'
+		| 'seriesTag'
+		| 'seriesTagDescription'
+		| 'composerTag'
+		| 'composerCampaignTag'
+		| 'signupPageCreationStatus'
+		| 'tagCreationStatus'
+		| 'signUpHeadline'
+		| 'signUpDescription'
+		| 'signUpEmbedDescription'
+		| 'mailSuccessDescription'
+		| 'highlightCardTitle'
 	>
 > & {
 	theme?: Theme;

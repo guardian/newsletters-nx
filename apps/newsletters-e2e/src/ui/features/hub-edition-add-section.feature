@@ -26,7 +26,7 @@ Feature: Add a section to an edition hub layout
 				|       |
 				| News  |
 				| Sport |
-			And a success message is shown
+			Then the editor is returned to the read-only layout for edition "uk"
 
 		Scenario: Adding a section to the end of the section list
 			When the editor adds a new section to the end of the section list
@@ -37,7 +37,7 @@ Feature: Add a section to an edition hub layout
 				| News  |
 				| Sport |
 				|       |
-			And a success message is shown
+			Then the editor is returned to the read-only layout for edition "uk"
 
 		Scenario: Adding a section between the "News" and "Sport" sections
 			When the editor adds a new section between the "News" and "Sport" sections
@@ -48,7 +48,7 @@ Feature: Add a section to an edition hub layout
 				| News  |
 				|       |
 				| Sport |
-			And a success message is shown
+			Then the editor is returned to the read-only layout for edition "uk"
 
 	Rule: Cancelling an edit leaves the stored data unchanged
 

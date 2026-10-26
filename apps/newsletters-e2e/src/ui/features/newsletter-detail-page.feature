@@ -76,6 +76,7 @@ Feature: Launched newsletter: open it and find my way around
 			Given a launched newsletter "Afternoon update" with status "pending" and region focus "AU"
 			When the editor opens the detail page for "Afternoon update"
 			Then the "Attributes" panel shows:
+				| label              | value            |
 				| Name               | Afternoon update |
 				| Newsletter status  | Pending          |
 				| Pillar             | News             |
@@ -97,6 +98,54 @@ Feature: Launched newsletter: open it and find my way around
 				| Main banner graphic          | Not set |
 				| Main banner graphic (mobile) | Not set |
 				| Newsletter square (1:1)      | Not set |
+
+	Rule: Copy shows the newsletter's reader-facing text
+
+		Scenario: The Copy panel lists the newsletter's copy
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                  | value                      |
+				| headline               | Your afternoon briefing    |
+				| sign-up description    | Sign up for the daily news |
+				| embed description      | A short news briefing      |
+				| success message        | Thank you for signing up   |
+				| highlight card message | The news you need          |
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Copy" panel shows:
+				| label                  | value                      |
+				| Headline               | Your afternoon briefing    |
+				| Sign-up description    | Sign up for the daily news |
+				| Embed description      | A short news briefing      |
+				| Success message        | Thank you for signing up   |
+				| Highlight card message | The news you need          |
+
+		Scenario: Copy that is not defined shows Not set
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Copy" panel shows:
+				| label                  | value   |
+				| Headline               | Not set |
+				| Success message        | Not set |
+				| Highlight card message | Not set |
+
+	Rule: Sign-up page and tags shows the newsletter's sign-up page and tags
+
+		Scenario: The panel lists the sign-up page path and the tags
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                        | value                                                                                                         |
+				| sign-up page creation status | COMPLETED                                                                                                     |
+				| tag creation status          | REQUESTED                                                                                                     |
+				| sign-up page path            | /australia-news/2022/oct/13/afternoon-update-newsletter-best-daily-news-email-guardian-australia-free-sign-up |
+				| series tag                   | australia-news/series/guardian-australia-afternoon-update                                                     |
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Sign-up page and tags" panel shows:
+				| label                        | value                                                                                                         |
+				| Sign-up page creation status | Completed                                                                                                     |
+				| Tag creation status          | Requested                                                                                                     |
+				| Path to sign-up page         | /australia-news/2022/oct/13/afternoon-update-newsletter-best-daily-news-email-guardian-australia-free-sign-up |
+				| Series tag                   | australia-news/series/guardian-australia-afternoon-update                                                     |
+				| Tag description              | Not set                                                                                                       |
+				| Campaign tag                 | Not set                                                                                                       |
+				| Campaign description         | Not set                                                                                                       |
 
 	Rule: The header adapts to the screen size
 

@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { semanticSpacing } from '@guardian/stand';
 import { Button } from '@guardian/stand/Button';
+import { toastQueue } from '@guardian/stand/Toast';
 import { Typography } from '@guardian/stand/Typography';
 import { Container } from '@mui/material';
 import type {
@@ -16,6 +17,7 @@ import {
 import { Fragment, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchPostApiData } from '../../api-requests/fetch-api-data';
+import { DEFAULT_TOAST_TIMEOUT_MS } from '../../constants';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { isAddableStatus } from '../../lib/modify-layout';
 import { DeleteSectionDialog } from '../edition-layouts/DeleteSectionDialog';
@@ -43,18 +45,6 @@ const loadingStyles = css`
 	padding: ${semanticSpacing.stackLg};
 `;
 
-/** Visually hidden, but remains in a11y tree  */
-const feedbackHiddenStyles = css`
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
-`;
-
 interface Props {
 	editionId: string;
 	layout?: Layout;
@@ -79,7 +69,7 @@ export const StandEditLayoutView = ({
 		originalLayout,
 		makeStandLayoutState,
 	);
-	const { layout, original, updateInProgress, feedback } = state;
+	const { layout, original, updateInProgress } = state;
 	const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
 	// Only one section's 'Add newsletter' area can be open at a time.
 	const [addAreaGroupIndex, setAddAreaGroupIndex] = useState<number>();
@@ -143,7 +133,31 @@ export const StandEditLayoutView = ({
 			`/api/layouts/${editionId}`,
 			layout,
 		);
-		dispatch({ type: 'handle-server-response', success: !!result });
+
+		if (!result) {
+			toastQueue.add(
+				{
+					level: 'error',
+					title: 'Failed to update',
+					subject: 'If the problem persists, please contact Central Production',
+					showIcon: true,
+				},
+				{
+					timeout: DEFAULT_TOAST_TIMEOUT_MS,
+				},
+			);
+		} else {
+			toastQueue.add(
+				{
+					level: 'information',
+					title: 'Layout updated',
+					subject: 'It will take some time for the site to update',
+					showIcon: true,
+				},
+				{ timeout: DEFAULT_TOAST_TIMEOUT_MS },
+			);
+			void navigate(`/layouts/${editionId}`);
+		}
 	};
 
 	const handleAddSection = (place: 'before' | 'after', groupIndex: number) => {
@@ -184,20 +198,6 @@ export const StandEditLayoutView = ({
 					Save and publish layout
 				</Button>
 			</HubEditionHeader>
-			<div role="status" css={!feedback && feedbackHiddenStyles}>
-				{feedback === 'success' && (
-					<Typography element="p" variant="bodyMd">
-						Layout updated. It will take some time for the site to update.
-					</Typography>
-				)}
-				{feedback === 'failure' && (
-					<Typography element="p" variant="bodyMd">
-						Failed to update. If the problem persists, please contact Central
-						Production.
-					</Typography>
-				)}
-			</div>
-
 			<>
 				{showAddSectionButtons && (
 					<HubEditionSectionDivider
