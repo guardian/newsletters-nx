@@ -1,4 +1,5 @@
 import type { RegionFocus } from '@newsletters-nx/newsletters-data-client';
+import { workflowStatusEnumSchema } from '@newsletters-nx/newsletters-data-client';
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
@@ -49,6 +50,47 @@ const identityNameFor = (
 	}
 	return ref.identityName;
 };
+
+Given(
+	'a launched newsletter {string} with these details:',
+	async ({ request, namedNewsletters }, name: string, table: DataTable) => {
+		const overrides: FixtureOverrides = {};
+		for (const { field, value } of table.hashes()) {
+			if (field === undefined || value === undefined) {
+				throw new Error(
+					'Newsletter details table must have "field" and "value" columns',
+				);
+			}
+			switch (field) {
+				case 'sign-up page creation status':
+					overrides.signupPageCreationStatus =
+						workflowStatusEnumSchema.parse(value);
+					break;
+				case 'tag creation status':
+					overrides.tagCreationStatus = workflowStatusEnumSchema.parse(value);
+					break;
+				case 'sign-up page path':
+					overrides.signupPage = value;
+					break;
+				case 'series tag':
+					overrides.seriesTag = value;
+					break;
+				case 'tag description':
+					overrides.seriesTagDescription = value;
+					break;
+				case 'campaign tag':
+					overrides.composerTag = value;
+					break;
+				case 'campaign description':
+					overrides.composerCampaignTag = value;
+					break;
+				default:
+					throw new Error(`Unknown newsletter detail field: "${field}"`);
+			}
+		}
+		await createLaunched(request, namedNewsletters, name, overrides);
+	},
+);
 
 Given(
 	'a launched newsletter {string} with identity name {string}',
@@ -223,7 +265,10 @@ Then(
 				exact: true,
 			}),
 		});
-		for (const [label, value] of Object.entries(table.rowsHash())) {
+		for (const { label, value } of table.hashes()) {
+			if (label === undefined || value === undefined) {
+				throw new Error('Panel table must have "label" and "value" columns');
+			}
 			// Find the row whose label (term) matches, then check its value.
 			const row = panel.locator('dl > div').filter({
 				has: page.getByText(label, { exact: true }).and(page.getByRole('term')),

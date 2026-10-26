@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
-import { semanticColors, semanticSpacing } from '@guardian/stand';
+import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
+import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
@@ -7,6 +8,7 @@ import type { ReactNode } from 'react';
 import { humanize } from '../lib/format';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
+import { WorkflowStatusBadge } from './WorkflowStatusBadge';
 
 // One grid across all the panels, so the label column is as wide as the
 // widest label in any panel. Panels and lists pass it down with subgrid.
@@ -37,6 +39,24 @@ const rowStyles = css`
 	grid-template-columns: subgrid;
 	align-items: start;
 	row-gap: ${semanticSpacing.stackXxs};
+`;
+
+const sectionStyles = css`
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+	row-gap: ${semanticSpacing.stackSm};
+
+	& + & {
+		margin-top: ${baseSpacing['12Px']};
+		padding-top: ${baseSpacing['12Px']};
+		border-top: 1px solid ${semanticColors.border.weak};
+	}
+`;
+
+const subheadingStyles = css`
+	grid-column: 1 / -1;
+	margin: 0;
 `;
 
 const weakTextStyles = css`
@@ -99,6 +119,51 @@ export const NewsletterDetailPanels = ({
 				</Field>
 				<Field label="MMA group">{newsletter.group}</Field>
 			</dl>
+		</StandPanel>
+		<StandPanel name="Sign-up page and tags" id="sign-up-page-and-tags" subgrid>
+			<div css={sectionStyles}>
+				<Typography
+					element="h4"
+					variant="bodyBoldSm"
+					cssOverrides={subheadingStyles}
+				>
+					Sign-up page
+				</Typography>
+				<dl css={listStyles}>
+					<Field label="Sign-up page creation status">
+						<WorkflowStatusBadge status={newsletter.signupPageCreationStatus} />
+					</Field>
+					<Field label="Path to sign-up page">
+						{newsletter.signupPage ? (
+							<Link href={`https://theguardian.com${newsletter.signupPage}`}>
+								{newsletter.signupPage}
+							</Link>
+						) : undefined}
+					</Field>
+				</dl>
+			</div>
+			<div css={sectionStyles}>
+				<Typography
+					element="h4"
+					variant="bodyBoldSm"
+					cssOverrides={subheadingStyles}
+				>
+					Tags
+				</Typography>
+				<dl css={listStyles}>
+					<Field label="Tag creation status">
+						<WorkflowStatusBadge status={newsletter.tagCreationStatus} />
+					</Field>
+					<Field label="Series tag">{newsletter.seriesTag}</Field>
+					<Field label="Tag description">
+						{newsletter.seriesTagDescription}
+					</Field>
+					<Field label="Campaign tag">{newsletter.composerTag}</Field>
+					<Field label="Campaign description">
+						{newsletter.composerCampaignTag}
+					</Field>
+				</dl>
+			</div>
 		</StandPanel>
 	</div>
 );
