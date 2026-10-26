@@ -76,14 +76,18 @@ export default defineConfig({
 		},
 	],
 
-	// CI: API is already started in GitHub Actions workflow
+	// CI: Playwright starts the API, which also serves the built UI
 	// Local: npm run dev starts both API and UI
 	webServer: isCI
 		? {
-				command: 'pnpm --filter=@newsletters-nx/newsletters-api serve',
+				command:
+					'pnpm --filter=@newsletters-nx/newsletters-api exec tsx src/main.ts',
 				url: 'http://localhost:3000/healthcheck',
 				reuseExistingServer: true,
 				timeout: 300000,
+				env: {
+					NEWSLETTERS_UI_SERVE: 'true',
+				},
 			}
 		: {
 				command: '(cd ../../ && pnpm run dev)',
