@@ -88,13 +88,14 @@ Feature: Launched newsletter: open it and find my way around
 		Scenario: The Images panel lists the images in order
 			Given a launched newsletter "Afternoon update" with all four images
 			When the editor opens the detail page for "Afternoon update"
-			Then the "Images" panel shows the images in order
+			Then the "Images" panel lists image URLs in this order
 			And the "Images" panel shows a thumbnail for "Newsletter graphic (5:3)"
 
 		Scenario: An image that isn't set shows "Not set"
 			Given a launched newsletter "Afternoon update" with a card graphic
 			When the editor opens the detail page for "Afternoon update"
 			Then the "Images" panel shows:
+				| label                        | value   |
 				| Main banner graphic          | Not set |
 				| Main banner graphic (mobile) | Not set |
 				| Newsletter square (1:1)      | Not set |

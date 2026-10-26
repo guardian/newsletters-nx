@@ -10,6 +10,7 @@ import { Given, Then, When } from './fixtures';
 type Status = 'paused' | 'cancelled' | 'live' | 'pending';
 type NamedNewsletters = { refsByName: Record<string, NamedNewsletterRef> };
 type FixtureOverrides = Parameters<typeof createFixtureNewsletter>[1];
+type PanelRow = { label: string; value: string };
 
 const GRAPHIC_URL = 'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg';
 const SQUARE_URL =
@@ -17,6 +18,11 @@ const SQUARE_URL =
 const BANNER_URL = 'https://uploads.guim.co.uk/2025/06/30/Business.jpg';
 const BANNER_MOBILE_URL =
 	'https://uploads.guim.co.uk/2024/08/14/BreakingNewsAustralia_Red_2_email-header.png';
+const DEFAULT_RENDERING_OPTION_FLAGS = {
+	displayDate: false,
+	displayStandfirst: false,
+	displayImageCaptions: false,
+};
 
 // The page header is the only <header> in <main> with an h2 (panel headers
 // use h3). It isn't a `banner` because a <header> nested in <main> has no
@@ -26,6 +32,34 @@ const pageHeader = (page: Page): Locator =>
 		.getByRole('main')
 		.locator('header')
 		.filter({ has: page.getByRole('heading', { level: 2 }) });
+
+const panelByName = (page: Page, panelName: string): Locator =>
+	page.locator('section', {
+		has: page.getByRole('heading', {
+			level: 3,
+			name: panelName,
+			exact: true,
+		}),
+	});
+
+const definitionForLabel = (
+	panel: Locator,
+	label: string,
+): Locator =>
+	panel
+		.getByRole('term', { name: label, exact: true })
+		.locator('xpath=ancestor::div[1]')
+		.getByRole('definition');
+
+const expectPanelRowsInOrder = async (
+	panel: Locator,
+	rows: PanelRow[],
+): Promise<void> => {
+	await expect(panel.getByRole('term')).toHaveText(rows.map(({ label }) => label));
+	for (const { label, value } of rows) {
+		await expect(definitionForLabel(panel, label)).toHaveText(value);
+	}
+};
 
 const createLaunched = async (
 	request: APIRequestContext,
@@ -168,6 +202,7 @@ Given(
 			illustrationCard: GRAPHIC_URL,
 			illustrationSquare: SQUARE_URL,
 			renderingOptions: {
+				...DEFAULT_RENDERING_OPTION_FLAGS,
 				mainBannerUrl: BANNER_URL,
 				mainBannerMobileUrl: BANNER_MOBILE_URL,
 			},
@@ -291,22 +326,12 @@ Then(
 Then(
 	'the {string} panel shows:',
 	async ({ page }, panelName: string, table: DataTable) => {
-		const panel = page.locator('section', {
-			has: page.getByRole('heading', {
-				level: 3,
-				name: panelName,
-				exact: true,
-			}),
-		});
+		const panel = panelByName(page, panelName);
 		for (const { label, value } of table.hashes()) {
 			if (label === undefined || value === undefined) {
 				throw new Error('Panel table must have "label" and "value" columns');
 			}
-			// Find the row whose label (term) matches, then check its value.
-			const row = panel.locator('dl > div').filter({
-				has: page.getByText(label, { exact: true }).and(page.getByRole('term')),
-			});
-			await expect(row.getByRole('definition')).toHaveText(value);
+			await expect(definitionForLabel(panel, label)).toHaveText(value);
 		}
 	},
 );
@@ -314,41 +339,22 @@ Then(
 Then(
 	'the {string} panel shows a thumbnail for {string}',
 	async ({ page }, panelName: string, label: string) => {
-		const panel = page.locator('section', {
-			has: page.getByRole('heading', {
-				level: 3,
-				name: panelName,
-				exact: true,
-			}),
-		});
-		const row = panel.locator('dl > div').filter({
-			has: page.getByText(label, { exact: true }).and(page.getByRole('term')),
-		});
-		await expect(row.locator('img')).toBeVisible();
+		const panel = panelByName(page, panelName);
+		await expect(definitionForLabel(panel, label).getByRole('img')).toBeVisible();
 	},
 );
 
 Then(
-	'the {string} panel shows the images in order',
+	'the {string} panel lists image URLs in this order',
 	async ({ page }, panelName: string) => {
-		const panel = page.locator('section', {
-			has: page.getByRole('heading', {
-				level: 3,
-				name: panelName,
-				exact: true,
-			}),
-		});
-		await expect(panel.getByRole('term')).toHaveText([
-			'Main banner graphic',
-			'Main banner graphic (mobile)',
-			'Newsletter graphic (5:3)',
-			'Newsletter square (1:1)',
-		]);
-		await expect(panel.getByRole('definition')).toHaveText([
-			BANNER_URL,
-			BANNER_MOBILE_URL,
-			GRAPHIC_URL,
-			SQUARE_URL,
-		]);
+		const panel = panelByName(page, panelName);
+		const expectedRows: PanelRow[] = [
+			{ label: 'Main banner graphic', value: BANNER_URL },
+			{ label: 'Main banner graphic (mobile)', value: BANNER_MOBILE_URL },
+			{ label: 'Newsletter graphic (5:3)', value: GRAPHIC_URL },
+			{ label: 'Newsletter square (1:1)', value: SQUARE_URL },
+		];
+
+		await expectPanelRowsInOrder(panel, expectedRows);
 	},
 );

@@ -115,7 +115,7 @@ const ImageField = ({ label, url }: { label: string; url?: string }) => (
 	<Field label={label}>
 		{url ? (
 			<span css={imageRowStyles}>
-				<img src={url} alt="" css={thumbnailStyles} />
+				<img src={url} alt={`${label} thumbnail`} css={thumbnailStyles} />
 				<a href={url} target="_blank" rel="noreferrer">
 					{url}
 				</a>

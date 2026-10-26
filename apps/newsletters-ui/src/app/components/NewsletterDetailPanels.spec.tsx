@@ -163,6 +163,11 @@ describe('NewsletterDetailPanels', () => {
 		expect(valueFor('Main banner graphic')).toBe(
 			'https://uploads.guim.co.uk/2025/06/30/Business.jpg',
 		);
+		expect(
+			screen
+				.getByRole('img', { name: 'Main banner graphic thumbnail' })
+				.getAttribute('src'),
+		).toBe('https://uploads.guim.co.uk/2025/06/30/Business.jpg');
 		expect(valueFor('Main banner graphic (mobile)')).toBe('Not set');
 		expect(valueFor('Newsletter graphic (5:3)')).toBe(
 			'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
