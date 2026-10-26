@@ -83,6 +83,34 @@ Feature: Launched newsletter: open it and find my way around
 				| Region focus       | AU               |
 				| Type of newsletter | Article based    |
 
+	Rule: Copy shows the newsletter's reader-facing text
+
+		Scenario: The Copy panel lists the newsletter's copy
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                  | value                      |
+				| headline               | Your afternoon briefing    |
+				| sign-up description    | Sign up for the daily news |
+				| embed description      | A short news briefing      |
+				| success message        | Thank you for signing up   |
+				| highlight card message | The news you need          |
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Copy" panel shows:
+				| label                  | value                      |
+				| Headline               | Your afternoon briefing    |
+				| Sign-up description    | Sign up for the daily news |
+				| Embed description      | A short news briefing      |
+				| Success message        | Thank you for signing up   |
+				| Highlight card message | The news you need          |
+
+		Scenario: Copy that is not defined shows Not set
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Copy" panel shows:
+				| label                  | value   |
+				| Headline               | Not set |
+				| Success message        | Not set |
+				| Highlight card message | Not set |
+
 	Rule: Sign-up page and tags shows the newsletter's sign-up page and tags
 
 		Scenario: The panel lists the sign-up page path and the tags

@@ -120,6 +120,23 @@ export const NewsletterDetailPanels = ({
 				<Field label="MMA group">{newsletter.group}</Field>
 			</dl>
 		</StandPanel>
+		<StandPanel name="Copy" id="copy" subgrid>
+			<dl css={listStyles}>
+				<Field label="Headline">{newsletter.signUpHeadline}</Field>
+				<Field label="Sign-up description">
+					{newsletter.signUpDescription}
+				</Field>
+				<Field label="Embed description">
+					{newsletter.signUpEmbedDescription}
+				</Field>
+				<Field label="Success message">
+					{newsletter.mailSuccessDescription}
+				</Field>
+				<Field label="Highlight card message">
+					{newsletter.highlightCardTitle}
+				</Field>
+			</dl>
+		</StandPanel>
 		<StandPanel name="Sign-up page and tags" id="sign-up-page-and-tags" subgrid>
 			<div css={sectionStyles}>
 				<Typography

@@ -62,6 +62,21 @@ Given(
 				);
 			}
 			switch (field) {
+				case 'headline':
+					overrides.signUpHeadline = value;
+					break;
+				case 'sign-up description':
+					overrides.signUpDescription = value;
+					break;
+				case 'embed description':
+					overrides.signUpEmbedDescription = value;
+					break;
+				case 'success message':
+					overrides.mailSuccessDescription = value;
+					break;
+				case 'highlight card message':
+					overrides.highlightCardTitle = value;
+					break;
 				case 'sign-up page creation status':
 					overrides.signupPageCreationStatus =
 						workflowStatusEnumSchema.parse(value);
