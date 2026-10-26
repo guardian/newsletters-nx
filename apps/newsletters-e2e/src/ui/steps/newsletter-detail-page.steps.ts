@@ -42,13 +42,17 @@ const panelByName = (page: Page, panelName: string): Locator =>
 		}),
 	});
 
+const exactText = (text: string): RegExp =>
+	new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+
 const definitionForLabel = (
 	panel: Locator,
 	label: string,
 ): Locator =>
 	panel
-		.getByRole('term', { name: label, exact: true })
-		.locator('xpath=ancestor::div[1]')
+		.getByRole('term')
+		.filter({ hasText: exactText(label) })
+		.locator('..')
 		.getByRole('definition');
 
 const expectPanelRowsInOrder = async (
