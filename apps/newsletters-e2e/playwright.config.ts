@@ -37,6 +37,20 @@ export default defineConfig({
 			},
 		],
 		['list'],
+		// In CI the suite is sharded across jobs (see .github/workflows/ci.yml);
+		// each shard emits a blob report which a follow-up job merges into a
+		// single HTML report.
+		...(isCI
+			? ([
+					[
+						'blob',
+						{
+							outputDir:
+								'../../dist/.playwright/apps/newsletters-e2e/blob-report',
+						},
+					],
+				] as const)
+			: []),
 		[
 			'./reporters/summary-reporter.ts',
 			{
