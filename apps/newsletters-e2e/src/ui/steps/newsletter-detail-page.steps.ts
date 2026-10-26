@@ -45,10 +45,7 @@ const panelByName = (page: Page, panelName: string): Locator =>
 const exactText = (text: string): RegExp =>
 	new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
 
-const definitionForLabel = (
-	panel: Locator,
-	label: string,
-): Locator =>
+const definitionForLabel = (panel: Locator, label: string): Locator =>
 	panel
 		.getByRole('term')
 		.filter({ hasText: exactText(label) })
@@ -59,7 +56,9 @@ const expectPanelRowsInOrder = async (
 	panel: Locator,
 	rows: PanelRow[],
 ): Promise<void> => {
-	await expect(panel.getByRole('term')).toHaveText(rows.map(({ label }) => label));
+	await expect(panel.getByRole('term')).toHaveText(
+		rows.map(({ label }) => label),
+	);
 	for (const { label, value } of rows) {
 		await expect(definitionForLabel(panel, label)).toHaveText(value);
 	}
@@ -344,7 +343,9 @@ Then(
 	'the {string} panel shows a thumbnail for {string}',
 	async ({ page }, panelName: string, label: string) => {
 		const panel = panelByName(page, panelName);
-		await expect(definitionForLabel(panel, label).getByRole('img')).toBeVisible();
+		await expect(
+			definitionForLabel(panel, label).getByRole('img'),
+		).toBeVisible();
 	},
 );
 
