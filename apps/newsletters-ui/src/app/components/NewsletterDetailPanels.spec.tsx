@@ -42,7 +42,7 @@ describe('NewsletterDetailPanels', () => {
 			screen
 				.getAllByRole('heading', { level: 3 })
 				.map((heading) => heading.textContent),
-		).toEqual(['Attributes', 'Copy', 'Sign-up page and tags']);
+		).toEqual(['Attributes', 'Images', 'Copy', 'Sign-up page and tags']);
 		expect(valueFor('Headline')).toBe('Your afternoon briefing');
 		expect(valueFor('Sign-up description')).toBe('Sign up for the daily news');
 		expect(valueFor('Embed description')).toBe('A short news briefing');
