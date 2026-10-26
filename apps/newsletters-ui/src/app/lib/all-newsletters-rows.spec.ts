@@ -28,6 +28,7 @@ const launched = (
 ): NewsletterDataWithMeta =>
 	({
 		identityName: 'politics-weekly',
+		listId: 6069,
 		name: 'Politics Weekly',
 		category: 'article-based',
 		theme: 'news',
@@ -48,9 +49,21 @@ const draft = (overrides: Partial<DraftWithIdAndMeta> = {}) =>
 	}) as DraftWithIdAndMeta;
 
 describe('launchedNewsletterToRow', () => {
+	it('distinguishes records with the same identity name without changing their links', () => {
+		const first = launchedNewsletterToRow(
+			launched({ identityName: 'at-test', listId: 6069 }),
+		);
+		const second = launchedNewsletterToRow(
+			launched({ identityName: 'at-test', listId: 6070 }),
+		);
+		expect(first.id).not.toBe(second.id);
+		expect(first.href).toBe('/launched/at-test');
+		expect(second.href).toBe(first.href);
+	});
+
 	it('maps the core row information', () => {
 		expect(launchedNewsletterToRow(launched())).toEqual({
-			id: 'launched-politics-weekly',
+			id: 'launched-politics-weekly-6069',
 			kind: 'launched',
 			href: '/launched/politics-weekly',
 			name: 'Politics Weekly',

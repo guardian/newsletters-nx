@@ -30,6 +30,7 @@ const launched = (
 ): NewsletterDataWithMeta =>
 	({
 		identityName,
+		listId: 1,
 		name: identityName,
 		category: 'article-based',
 		theme: 'news',
@@ -62,6 +63,25 @@ beforeEach(() => {
 });
 
 describe('allNewslettersLoader', () => {
+	it('preserves both launched records when they share an identity name', async () => {
+		mockFetchNewsletterList.mockResolvedValue([
+			{ ...launched('at-test', 300), listId: 6069 },
+			{ ...launched('at-test', 200), listId: 6070 },
+		]);
+		mockFetchDraftNewsletterList.mockResolvedValue([]);
+
+		const { rows } = await runLoader();
+
+		expect(rows.map((row) => row.id)).toEqual([
+			'launched-at-test-6069',
+			'launched-at-test-6070',
+		]);
+		expect(rows.map((row) => row.href)).toEqual([
+			'/launched/at-test',
+			'/launched/at-test',
+		]);
+	});
+
 	it('combines both sources into one list of rows', async () => {
 		mockFetchNewsletterList.mockResolvedValue([launched('politics', 300)]);
 		mockFetchDraftNewsletterList.mockResolvedValue([draft(12, 200)]);
@@ -69,7 +89,7 @@ describe('allNewslettersLoader', () => {
 		const { rows, failedSources } = await runLoader();
 
 		expect(rows.map((row) => row.id)).toEqual([
-			'launched-politics',
+			'launched-politics-1',
 			'draft-12',
 		]);
 		expect(failedSources).toEqual([]);
@@ -81,7 +101,7 @@ describe('allNewslettersLoader', () => {
 				name: 'puts the most recently updated newsletter first',
 				launchedList: [launched('oldest', 100), launched('newest', 300)],
 				draftList: [draft(12, 200)],
-				expectedIds: ['launched-newest', 'draft-12', 'launched-oldest'],
+				expectedIds: ['launched-newest-1', 'draft-12', 'launched-oldest-1'],
 			},
 			{
 				name: 'interleaves launched newsletters and drafts by date, not by source',
@@ -91,10 +111,10 @@ describe('allNewslettersLoader', () => {
 				],
 				draftList: [draft(1, 300), draft(2, 200)],
 				expectedIds: [
-					'launched-launched-new',
+					'launched-launched-new-1',
 					'draft-1',
 					'draft-2',
-					'launched-launched-old',
+					'launched-launched-old-1',
 				],
 			},
 			{
@@ -104,7 +124,7 @@ describe('allNewslettersLoader', () => {
 					launched('dated', 100),
 				],
 				draftList: [],
-				expectedIds: ['launched-dated', 'launched-undated'],
+				expectedIds: ['launched-dated-1', 'launched-undated-1'],
 			},
 			{
 				name: 'breaks ties on the same update date by id, for a deterministic order',
@@ -113,7 +133,7 @@ describe('allNewslettersLoader', () => {
 					{ ...launched('a', 0), meta: makeBlankMeta() },
 				],
 				draftList: [],
-				expectedIds: ['launched-a', 'launched-b'],
+				expectedIds: ['launched-a-1', 'launched-b-1'],
 			},
 		])('$name', async ({ launchedList, draftList, expectedIds }) => {
 			mockFetchNewsletterList.mockResolvedValue(launchedList);
@@ -149,7 +169,7 @@ describe('allNewslettersLoader', () => {
 				name: 'still shows the launched newsletters when the drafts fail',
 				launchedResult: [launched('politics', 300)],
 				draftResult: undefined,
-				expectedIds: ['launched-politics'],
+				expectedIds: ['launched-politics-1'],
 				expectedFailedSources: ['draft'],
 			},
 			{

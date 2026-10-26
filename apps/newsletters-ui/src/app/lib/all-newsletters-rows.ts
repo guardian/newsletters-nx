@@ -61,7 +61,7 @@ export const toThumbnailUrl = (
 export const launchedNewsletterToRow = (
 	newsletter: NewsletterDataWithMeta,
 ): NewsletterRow => ({
-	id: `launched-${newsletter.identityName}`,
+	id: `launched-${newsletter.identityName}-${newsletter.listId}`,
 	kind: 'launched',
 	href: `/launched/${newsletter.identityName}`,
 	name: newsletter.name,
