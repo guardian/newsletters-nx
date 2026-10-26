@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
 
@@ -6,7 +7,13 @@ const LIST_ID = 9002;
 const DETAIL_URL_PATTERN = new RegExp(`/launched/${NEWSLETTER_ID_NAME}$`);
 const EDIT_URL_PATTERN = new RegExp(`/launched/edit/${NEWSLETTER_ID_NAME}$`);
 
+async function enableLegacyDesign(page: Page) {
+	await page.goto('/drafts?switch-legacy=true');
+}
 test.describe('Edit fronts-based newsletter', () => {
+	test.beforeEach(async ({ page }) => {
+		await enableLegacyDesign(page);
+	});
 	test.afterEach(async ({ request }) => {
 		// Reset the newsletter to its original seeded state so other tests are not affected.
 		await patchNewsletter(request, LIST_ID, {
@@ -76,9 +83,7 @@ test.describe('Edit fronts-based newsletter', () => {
 			.getByLabel('Highlight card message')
 			.fill('Updated Fronts Test highlight');
 
-		await page
-			.getByLabel('Campaign tag')
-			.fill('tests/playwright-fronts-test');
+		await page.getByLabel('Campaign tag').fill('tests/playwright-fronts-test');
 
 		await page
 			.getByLabel('Campaign description')

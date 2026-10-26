@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
 
@@ -7,7 +8,14 @@ const LIST_ID = 9001;
 const DETAIL_URL_PATTERN = new RegExp(`/launched/${NEWSLETTER_ID_NAME}$`);
 const EDIT_URL_PATTERN = new RegExp(`/launched/edit/${NEWSLETTER_ID_NAME}$`);
 
+async function enableLegacyDesign(page: Page) {
+	await page.goto('/drafts?switch-legacy=true');
+}
+
 test.describe('Edit article-based newsletter', () => {
+	test.beforeEach(async ({ page }) => {
+		await enableLegacyDesign(page);
+	});
 	test.afterEach(async ({ request }) => {
 		await patchNewsletter(request, LIST_ID, {
 			name: 'Playwright Article Test',
@@ -78,14 +86,11 @@ test.describe('Edit article-based newsletter', () => {
 			.getByLabel('Highlight card message')
 			.fill('Updated Article Test highlight');
 
-
 		await page
 			.getByLabel('Add the series tag')
 			.fill('tests/series/playwright-article-updated');
 
-		await page
-			.getByLabel('Campaign tag')
-			.fill('tests/playwright-article-test');
+		await page.getByLabel('Campaign tag').fill('tests/playwright-article-test');
 
 		await page
 			.getByLabel('Campaign description')

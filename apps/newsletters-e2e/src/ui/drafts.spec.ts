@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import {
 	cleanupStaleTestDrafts,
@@ -7,6 +8,10 @@ import {
 
 const DRAFT_NAME_PREFIX = 'Draft newsletter - playwright test';
 
+async function enableLegacyDesign(page: Page) {
+	await page.goto('/drafts?switch-legacy=true');
+}
+
 test.describe.serial('Top nav - drafts', () => {
 	let listId: number;
 	let draftName: string;
@@ -15,7 +20,8 @@ test.describe.serial('Top nav - drafts', () => {
 		await cleanupStaleTestDrafts(request, DRAFT_NAME_PREFIX);
 	});
 
-	test.beforeEach(async ({ request }, testInfo) => {
+	test.beforeEach(async ({ page, request }, testInfo) => {
+		await enableLegacyDesign(page);
 		draftName = `${DRAFT_NAME_PREFIX} - ${testInfo.title}`;
 		listId = await createDraftNewsletter(request, draftName);
 	});
