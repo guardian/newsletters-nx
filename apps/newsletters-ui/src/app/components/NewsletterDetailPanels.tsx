@@ -69,6 +69,18 @@ const valueStyles = css`
 	overflow-wrap: anywhere;
 `;
 
+const imageRowStyles = css`
+	display: flex;
+	align-items: center;
+	gap: ${semanticSpacing.stackSm};
+`;
+const thumbnailStyles = css`
+	width: 96px;
+	height: auto;
+	max-height: 96px;
+	object-fit: contain;
+	flex: none;
+`;
 const isEmpty = (value: ReactNode) =>
 	value === undefined || value === null || value === '';
 
@@ -79,7 +91,7 @@ const Field = ({
 	label: string;
 	children?: ReactNode;
 }) => (
-	<div css={rowStyles}>
+	<div role="group" aria-label={label} css={rowStyles}>
 		<Typography element="dt" variant="bodySm" cssOverrides={weakTextStyles}>
 			{label}
 		</Typography>
@@ -99,6 +111,18 @@ const Field = ({
 	</div>
 );
 
+const ImageField = ({ label, url }: { label: string; url?: string }) => (
+	<Field label={label}>
+		{url ? (
+			<span css={imageRowStyles}>
+				<img src={url} alt={`${label} thumbnail`} css={thumbnailStyles} />
+				<a href={url} target="_blank" rel="noreferrer">
+					{url}
+				</a>
+			</span>
+		) : undefined}
+	</Field>
+);
 export const NewsletterDetailPanels = ({
 	newsletter,
 }: {
@@ -120,6 +144,27 @@ export const NewsletterDetailPanels = ({
 				<Field label="MMA group">{newsletter.group}</Field>
 			</dl>
 		</StandPanel>
+		<StandPanel name="Images" id="images" subgrid>
+			<dl css={listStyles}>
+				<ImageField
+					label="Main banner graphic"
+					url={newsletter.renderingOptions?.mainBannerUrl}
+				/>
+				<ImageField
+					label="Main banner graphic (mobile)"
+					url={newsletter.renderingOptions?.mainBannerMobileUrl}
+				/>
+				<ImageField
+					label="Newsletter graphic (5:3)"
+					url={newsletter.illustrationCard}
+				/>
+				<ImageField
+					label="Newsletter square (1:1)"
+					url={newsletter.illustrationSquare}
+				/>
+			</dl>
+		</StandPanel>
+
 		<StandPanel name="Copy" id="copy" subgrid>
 			<dl css={listStyles}>
 				<Field label="Headline">{newsletter.signUpHeadline}</Field>

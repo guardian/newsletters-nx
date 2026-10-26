@@ -42,7 +42,7 @@ describe('NewsletterDetailPanels', () => {
 			screen
 				.getAllByRole('heading', { level: 3 })
 				.map((heading) => heading.textContent),
-		).toEqual(['Attributes', 'Copy', 'Sign-up page and tags']);
+		).toEqual(['Attributes', 'Images', 'Copy', 'Sign-up page and tags']);
 		expect(valueFor('Headline')).toBe('Your afternoon briefing');
 		expect(valueFor('Sign-up description')).toBe('Sign up for the daily news');
 		expect(valueFor('Embed description')).toBe('A short news briefing');
@@ -146,6 +146,33 @@ describe('NewsletterDetailPanels', () => {
 		expect(valueFor('Region focus')).toBe('Not set');
 		expect(valueFor('Frequency')).toBe('Not set');
 		expect(valueFor('MMA group')).toBe('Not set');
+	});
+
+	it('shows the images, or "Not set" when empty', () => {
+		render(
+			<NewsletterDetailPanels
+				newsletter={newsletter({
+					illustrationCard:
+						'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
+					renderingOptions: {
+						mainBannerUrl: 'https://uploads.guim.co.uk/2025/06/30/Business.jpg',
+					},
+				})}
+			/>,
+		);
+		expect(valueFor('Main banner graphic')).toBe(
+			'https://uploads.guim.co.uk/2025/06/30/Business.jpg',
+		);
+		expect(
+			screen
+				.getByRole('img', { name: 'Main banner graphic thumbnail' })
+				.getAttribute('src'),
+		).toBe('https://uploads.guim.co.uk/2025/06/30/Business.jpg');
+		expect(valueFor('Main banner graphic (mobile)')).toBe('Not set');
+		expect(valueFor('Newsletter graphic (5:3)')).toBe(
+			'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
+		);
+		expect(valueFor('Newsletter square (1:1)')).toBe('Not set');
 	});
 
 	it('shows the sign-up page and tags from the newsletter', () => {
