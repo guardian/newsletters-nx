@@ -126,6 +126,13 @@ type FixtureNewsletterOverrides = Partial<
 		| 'signUpEmbedDescription'
 		| 'mailSuccessDescription'
 		| 'highlightCardTitle'
+		| 'brazeCampaignCreationStatus'
+		| 'brazeNewsletterName'
+		| 'brazeSubscribeAttributeName'
+		| 'brazeSubscribeAttributeNameAlternate'
+		| 'brazeSubscribeEventNamePrefix'
+		| 'campaignCode'
+		| 'campaignName'
 	>
 > & {
 	theme?: Theme;
