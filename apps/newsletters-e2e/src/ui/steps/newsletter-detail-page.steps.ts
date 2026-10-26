@@ -345,15 +345,22 @@ Then(
 );
 
 Then(
-	'the {string} panel lists image URLs in this order',
-	async ({ page }, panelName: string) => {
+	'the {string} panel lists these images in order:',
+	async ({ page }, panelName: string, table: DataTable) => {
 		const panel = panelByName(page, panelName);
-		const expectedRows: PanelRow[] = [
-			{ label: 'Main banner graphic', value: BANNER_URL },
-			{ label: 'Main banner graphic (mobile)', value: BANNER_MOBILE_URL },
-			{ label: 'Newsletter graphic (5:3)', value: GRAPHIC_URL },
-			{ label: 'Newsletter square (1:1)', value: SQUARE_URL },
-		];
+		const urlsByLabel: Record<string, string> = {
+			'Main banner graphic': BANNER_URL,
+			'Main banner graphic (mobile)': BANNER_MOBILE_URL,
+			'Newsletter graphic (5:3)': GRAPHIC_URL,
+			'Newsletter square (1:1)': SQUARE_URL,
+		};
+		const expectedRows: PanelRow[] = table.hashes().map(({ label }) => {
+			const value = label && urlsByLabel[label];
+			if (!value) {
+				throw new Error(`Unknown image label: ${label}`);
+			}
+			return { label: label, value };
+		});
 
 		await expectPanelRowsInOrder(panel, expectedRows);
 	},
