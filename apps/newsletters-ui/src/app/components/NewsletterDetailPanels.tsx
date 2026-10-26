@@ -297,7 +297,7 @@ export const NewsletterDetailPanels = ({
 						{newsletter.brazeSubscribeEventNamePrefix}
 					</Field>
 					<Field label="brazeSubscribeAttributeNameAlternate">
-						{newsletter.brazeSubscribeAttributeNameAlternate && (
+						{newsletter.brazeSubscribeAttributeNameAlternate?.length ? (
 							<ul css={fieldListStyles}>
 								{newsletter.brazeSubscribeAttributeNameAlternate.map(
 									(item, idx) => (
@@ -305,7 +305,7 @@ export const NewsletterDetailPanels = ({
 									),
 								)}
 							</ul>
-						)}
+						) : null}
 					</Field>
 					<Field label="braze subscribe event name">
 						{brazeSubscribeEventName.generate(newsletter)}
