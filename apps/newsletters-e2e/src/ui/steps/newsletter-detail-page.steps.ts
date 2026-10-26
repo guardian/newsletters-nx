@@ -10,7 +10,12 @@ type Status = 'paused' | 'cancelled' | 'live' | 'pending';
 type NamedNewsletters = { refsByName: Record<string, NamedNewsletterRef> };
 type FixtureOverrides = Parameters<typeof createFixtureNewsletter>[1];
 
-const GRAPHIC_URL = 'https://example.com/graphic.png';
+const GRAPHIC_URL = 'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg';
+const SQUARE_URL =
+	'https://uploads.guim.co.uk/2025/05/15/Matters_of_opinion_11.jpg';
+const BANNER_URL = 'https://uploads.guim.co.uk/2025/06/30/Business.jpg';
+const BANNER_MOBILE_URL =
+	'https://uploads.guim.co.uk/2024/08/14/BreakingNewsAustralia_Red_2_email-header.png';
 
 // The page header is the only <header> in <main> with an h2 (panel headers
 // use h3). It isn't a `banner` because a <header> nested in <main> has no
@@ -99,6 +104,19 @@ Given(
 	},
 );
 
+Given(
+	'a launched newsletter {string} with all four images',
+	async ({ request, namedNewsletters }, name: string) => {
+		await createLaunched(request, namedNewsletters, name, {
+			illustrationCard: GRAPHIC_URL,
+			illustrationSquare: SQUARE_URL,
+			renderingOptions: {
+				mainBannerUrl: BANNER_URL,
+				mainBannerMobileUrl: BANNER_MOBILE_URL,
+			},
+		});
+	},
+);
 Given('the editor is using a small viewport', async ({ page }) => {
 	// Between the mobile (<=393px) and stacked (<=600px) breakpoints.
 	await page.setViewportSize({ width: 500, height: 800 });
@@ -230,5 +248,47 @@ Then(
 			});
 			await expect(row.getByRole('definition')).toHaveText(value);
 		}
+	},
+);
+
+Then(
+	'the {string} panel shows a thumbnail for {string}',
+	async ({ page }, panelName: string, label: string) => {
+		const panel = page.locator('section', {
+			has: page.getByRole('heading', {
+				level: 3,
+				name: panelName,
+				exact: true,
+			}),
+		});
+		const row = panel.locator('dl > div').filter({
+			has: page.getByText(label, { exact: true }).and(page.getByRole('term')),
+		});
+		await expect(row.locator('img')).toBeVisible();
+	},
+);
+
+Then(
+	'the {string} panel shows the images in order',
+	async ({ page }, panelName: string) => {
+		const panel = page.locator('section', {
+			has: page.getByRole('heading', {
+				level: 3,
+				name: panelName,
+				exact: true,
+			}),
+		});
+		await expect(panel.getByRole('term')).toHaveText([
+			'Main banner graphic',
+			'Main banner graphic (mobile)',
+			'Newsletter graphic (5:3)',
+			'Newsletter square (1:1)',
+		]);
+		await expect(panel.getByRole('definition')).toHaveText([
+			BANNER_URL,
+			BANNER_MOBILE_URL,
+			GRAPHIC_URL,
+			SQUARE_URL,
+		]);
 	},
 );

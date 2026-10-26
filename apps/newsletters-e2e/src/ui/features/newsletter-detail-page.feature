@@ -82,6 +82,22 @@ Feature: Launched newsletter: open it and find my way around
 				| Region focus       | AU               |
 				| Type of newsletter | Article based    |
 
+	Rule: The Details tab shows the newsletter's images
+
+		Scenario: The Images panel lists the images in order
+			Given a launched newsletter "Afternoon update" with all four images
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Images" panel shows the images in order
+			And the "Images" panel shows a thumbnail for "Newsletter graphic (5:3)"
+
+		Scenario: An image that isn't set shows "Not set"
+			Given a launched newsletter "Afternoon update" with a card graphic
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Images" panel shows:
+				| Main banner graphic          | Not set |
+				| Main banner graphic (mobile) | Not set |
+				| Newsletter square (1:1)      | Not set |
+
 	Rule: The header adapts to the screen size
 
 		Scenario: The header stacks on a small screen

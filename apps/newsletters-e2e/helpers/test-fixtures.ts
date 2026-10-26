@@ -113,6 +113,7 @@ type FixtureNewsletterOverrides = Partial<
 		| 'illustrationSquare'
 		| 'illustrationCard'
 		| 'regionFocus'
+		| 'renderingOptions'
 	>
 > & {
 	theme?: Theme;

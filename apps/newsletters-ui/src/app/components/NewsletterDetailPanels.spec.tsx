@@ -51,4 +51,26 @@ describe('NewsletterDetailPanels', () => {
 		expect(valueFor('Frequency')).toBe('Not set');
 		expect(valueFor('MMA group')).toBe('Not set');
 	});
+
+	it('shows the images, or "Not set" when empty', () => {
+		render(
+			<NewsletterDetailPanels
+				newsletter={newsletter({
+					illustrationCard:
+						'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
+					renderingOptions: {
+						mainBannerUrl: 'https://uploads.guim.co.uk/2025/06/30/Business.jpg',
+					},
+				})}
+			/>,
+		);
+		expect(valueFor('Main banner graphic')).toBe(
+			'https://uploads.guim.co.uk/2025/06/30/Business.jpg',
+		);
+		expect(valueFor('Main banner graphic (mobile)')).toBe('Not set');
+		expect(valueFor('Newsletter graphic (5:3)')).toBe(
+			'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
+		);
+		expect(valueFor('Newsletter square (1:1)')).toBe('Not set');
+	});
 });
