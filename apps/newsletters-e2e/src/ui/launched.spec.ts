@@ -1,9 +1,5 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-
-async function enableLegacyDesign(page: Page) {
-	await page.goto('/drafts?switch-legacy=true');
-}
+import { enableLegacyDesign } from './helpers/shared';
 
 test.describe('Top nav - launched', () => {
 	test.beforeEach(async ({ page }) => {

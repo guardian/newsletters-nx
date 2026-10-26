@@ -1,12 +1,9 @@
 import { expect, type Page, test } from '@playwright/test';
 import { cleanupStaleTestDrafts } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const DRAFT_NAME_PREFIX = 'Playwright Create Test';
 const CREATE_URL = '/drafts/newsletter-data';
-
-async function enableLegacyDesign(page: Page) {
-	await page.goto('/drafts?switch-legacy=true');
-}
 
 async function completeIntroStep(page: Page) {
 	const startButton = page.getByRole('button', { name: 'Start' });

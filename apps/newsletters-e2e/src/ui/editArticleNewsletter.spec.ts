@@ -1,16 +1,12 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 // 'Playwright Article Test' is pre-seeded in newsletters.local.json
 const NEWSLETTER_ID_NAME = 'playwright-article-test';
 const LIST_ID = 9001;
 const DETAIL_URL_PATTERN = new RegExp(`/launched/${NEWSLETTER_ID_NAME}$`);
 const EDIT_URL_PATTERN = new RegExp(`/launched/edit/${NEWSLETTER_ID_NAME}$`);
-
-async function enableLegacyDesign(page: Page) {
-	await page.goto('/drafts?switch-legacy=true');
-}
 
 test.describe('Edit article-based newsletter', () => {
 	test.beforeEach(async ({ page }) => {

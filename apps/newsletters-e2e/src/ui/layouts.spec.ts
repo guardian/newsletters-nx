@@ -1,12 +1,8 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const UK_LAYOUT_NEWSLETTER_NAME = 'Playwright Article Test';
-
-async function enableLegacyDesign(page: Page) {
-	await page.goto('/drafts?switch-legacy=true');
-}
 
 test.describe('Top nav - layouts', () => {
 	test.beforeEach(async ({ page, request }) => {

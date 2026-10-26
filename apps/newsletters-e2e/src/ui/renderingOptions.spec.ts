@@ -1,15 +1,11 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const NEWSLETTER_ID_NAME = 'playwright-article-test';
 const RENDERING_OPTIONS_URL_PATTERN = new RegExp(
 	`/launched/rendering-options/${NEWSLETTER_ID_NAME}`,
 );
-
-async function enableLegacyDesign(page: Page) {
-	await page.goto('/drafts?switch-legacy=true');
-}
 
 test.describe('Rendering options', () => {
 	test.beforeEach(async ({ page }) => {

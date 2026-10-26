@@ -1,16 +1,12 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import {
 	cleanupStaleTestDrafts,
 	createDraftNewsletter,
 	deleteDraftNewsletter,
 } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const DRAFT_NAME_PREFIX = 'Draft newsletter - playwright test';
-
-async function enableLegacyDesign(page: Page) {
-	await page.goto('/drafts?switch-legacy=true');
-}
 
 test.describe.serial('Top nav - drafts', () => {
 	let listId: number;

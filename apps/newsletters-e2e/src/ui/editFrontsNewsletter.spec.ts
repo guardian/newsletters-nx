@@ -1,15 +1,12 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { patchNewsletter } from '../../helpers/draft-newsletter';
+import { enableLegacyDesign } from './helpers/shared';
 
 const NEWSLETTER_ID_NAME = 'playwright-fronts-test';
 const LIST_ID = 9002;
 const DETAIL_URL_PATTERN = new RegExp(`/launched/${NEWSLETTER_ID_NAME}$`);
 const EDIT_URL_PATTERN = new RegExp(`/launched/edit/${NEWSLETTER_ID_NAME}$`);
 
-async function enableLegacyDesign(page: Page) {
-	await page.goto('/drafts?switch-legacy=true');
-}
 test.describe('Edit fronts-based newsletter', () => {
 	test.beforeEach(async ({ page }) => {
 		await enableLegacyDesign(page);
