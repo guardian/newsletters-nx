@@ -12,6 +12,10 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
+    # Image tag must match the @playwright/test version
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --ipc=host
     env:
       USE_IN_MEMORY_STORAGE: 'true'
       CI: 'true'
@@ -33,31 +37,10 @@ jobs:
       - name: Install dependencies
         run: pnpm ci
 
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Build UI for E2e tests
-        run: pnpm --filter=@newsletters-nx/newsletters-ui build
-
-      # NEW: Start API server in background with UI serving enabled
-      - name: Start API Server
-        env:
-          USE_DEVELOPER_PROFILE: 'true'
-          NEWSLETTERS_UI_SERVE: 'true'
+      - name: Build UI and API
         run: |
-          pnpm --filter=@newsletters-nx/newsletters-api serve &
-          API_PID=$!
-          echo "API_PID=$API_PID" >> $GITHUB_ENV
-          echo "Waiting for API to be ready..."
-          for i in {1..30}; do
-            if curl -s http://localhost:3000/api/newsletters > /dev/null 2>&1; then
-              echo "API server is ready on port 3000"
-              break
-            fi
-            echo "⏳ Waiting for API server... ($i/30)"
-            sleep 2
-          done
-          curl -s http://localhost:3000/api/newsletters || echo "API might not be fully ready"
+          pnpm run bundle:ui
+          pnpm run bundle:api
 
       - name: Run Playwright E2E tests
         run: pnpm run test:e2e
@@ -78,16 +61,6 @@ jobs:
             echo "E2E tests failed with status '$(cat $PLAYWRIGHT_SUMMARY_REPORT_PATH)'. Check the Playwright report for details."
             exit 1
           fi
-
-      # Stop API server after tests
-      - name: Stop API Server
-        if: always()
-        run: |
-          if [ ! -z "$API_PID" ]; then
-            kill $API_PID 2>/dev/null || true
-          fi
-          # Also kill any remaining processes on port 3000
-          lsof -ti:3000 | xargs kill -9 2>/dev/null || true
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v7

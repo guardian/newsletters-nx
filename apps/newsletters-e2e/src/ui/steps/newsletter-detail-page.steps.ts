@@ -10,19 +10,8 @@ import { Given, Then, When } from './fixtures';
 type Status = 'paused' | 'cancelled' | 'live' | 'pending';
 type NamedNewsletters = { refsByName: Record<string, NamedNewsletterRef> };
 type FixtureOverrides = Parameters<typeof createFixtureNewsletter>[1];
-type PanelRow = { label: string; value: string };
 
-const GRAPHIC_URL = 'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg';
-const SQUARE_URL =
-	'https://uploads.guim.co.uk/2025/05/15/Matters_of_opinion_11.jpg';
-const BANNER_URL = 'https://uploads.guim.co.uk/2025/06/30/Business.jpg';
-const BANNER_MOBILE_URL =
-	'https://uploads.guim.co.uk/2024/08/14/BreakingNewsAustralia_Red_2_email-header.png';
-const DEFAULT_RENDERING_OPTION_FLAGS = {
-	displayDate: false,
-	displayStandfirst: false,
-	displayImageCaptions: false,
-};
+const GRAPHIC_URL = 'https://example.com/graphic.png';
 
 // The page header is the only <header> in <main> with an h2 (panel headers
 // use h3). It isn't a `banner` because a <header> nested in <main> has no
@@ -32,32 +21,6 @@ const pageHeader = (page: Page): Locator =>
 		.getByRole('main')
 		.locator('header')
 		.filter({ has: page.getByRole('heading', { level: 2 }) });
-
-const panelByName = (page: Page, panelName: string): Locator =>
-	page.locator('section', {
-		has: page.getByRole('heading', {
-			level: 3,
-			name: panelName,
-			exact: true,
-		}),
-	});
-
-const definitionForLabel = (panel: Locator, label: string): Locator =>
-	panel
-		.getByRole('group', { name: label, exact: true })
-		.getByRole('definition');
-
-const expectPanelRowsInOrder = async (
-	panel: Locator,
-	rows: PanelRow[],
-): Promise<void> => {
-	await expect(panel.getByRole('term')).toHaveText(
-		rows.map(({ label }) => label),
-	);
-	for (const { label, value } of rows) {
-		await expect(definitionForLabel(panel, label)).toHaveText(value);
-	}
-};
 
 const createLaunched = async (
 	request: APIRequestContext,
@@ -193,20 +156,6 @@ Given(
 	},
 );
 
-Given(
-	'a launched newsletter {string} with all four images',
-	async ({ request, namedNewsletters }, name: string) => {
-		await createLaunched(request, namedNewsletters, name, {
-			illustrationCard: GRAPHIC_URL,
-			illustrationSquare: SQUARE_URL,
-			renderingOptions: {
-				...DEFAULT_RENDERING_OPTION_FLAGS,
-				mainBannerUrl: BANNER_URL,
-				mainBannerMobileUrl: BANNER_MOBILE_URL,
-			},
-		});
-	},
-);
 Given('the editor is using a small viewport', async ({ page }) => {
 	// Between the mobile (<=393px) and stacked (<=600px) breakpoints.
 	await page.setViewportSize({ width: 500, height: 800 });
@@ -324,44 +273,22 @@ Then(
 Then(
 	'the {string} panel shows:',
 	async ({ page }, panelName: string, table: DataTable) => {
-		const panel = panelByName(page, panelName);
+		const panel = page.locator('section', {
+			has: page.getByRole('heading', {
+				level: 3,
+				name: panelName,
+				exact: true,
+			}),
+		});
 		for (const { label, value } of table.hashes()) {
 			if (label === undefined || value === undefined) {
 				throw new Error('Panel table must have "label" and "value" columns');
 			}
-			await expect(definitionForLabel(panel, label)).toHaveText(value);
+			// Find the row whose label (term) matches, then check its value.
+			const row = panel.locator('dl > div').filter({
+				has: page.getByText(label, { exact: true }).and(page.getByRole('term')),
+			});
+			await expect(row.getByRole('definition')).toHaveText(value);
 		}
-	},
-);
-
-Then(
-	'the {string} panel shows a thumbnail for {string}',
-	async ({ page }, panelName: string, label: string) => {
-		const panel = panelByName(page, panelName);
-		await expect(
-			definitionForLabel(panel, label).getByRole('img'),
-		).toBeVisible();
-	},
-);
-
-Then(
-	'the {string} panel lists these images in order:',
-	async ({ page }, panelName: string, table: DataTable) => {
-		const panel = panelByName(page, panelName);
-		const urlsByLabel: Record<string, string> = {
-			'Main banner graphic': BANNER_URL,
-			'Main banner graphic (mobile)': BANNER_MOBILE_URL,
-			'Newsletter graphic (5:3)': GRAPHIC_URL,
-			'Newsletter square (1:1)': SQUARE_URL,
-		};
-		const expectedRows: PanelRow[] = table.hashes().map(({ label }) => {
-			const value = label && urlsByLabel[label];
-			if (!value) {
-				throw new Error(`Unknown image label: ${label}`);
-			}
-			return { label: label, value };
-		});
-
-		await expectPanelRowsInOrder(panel, expectedRows);
 	},
 );
