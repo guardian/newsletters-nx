@@ -115,6 +115,14 @@ const hrStyles = css`
 	grid-column: 1/-1;
 `;
 
+/** For styling lists in a <Field /> */
+const fieldListStyles = css`
+	display: flex;
+	flex-flow: column nowrap;
+	gap: ${semanticSpacing.stackXxs};
+	list-style: none;
+`;
+
 const isEmpty = (value: ReactNode) =>
 	value === undefined || value === null || value === '';
 
@@ -277,7 +285,15 @@ export const NewsletterDetailPanels = ({
 						{newsletter.brazeSubscribeEventNamePrefix}
 					</Field>
 					<Field label="brazeSubscribeAttributeNameAlternate">
-						{newsletter.brazeSubscribeAttributeNameAlternate}
+						{newsletter.brazeSubscribeAttributeNameAlternate && (
+							<ul css={fieldListStyles}>
+								{newsletter.brazeSubscribeAttributeNameAlternate.map(
+									(item, idx) => (
+										<li key={idx}>{item}</li>
+									),
+								)}
+							</ul>
+						)}
 					</Field>
 					<Field label="braze subscribe event name">
 						{brazeSubscribeEventName.generate(newsletter)}
