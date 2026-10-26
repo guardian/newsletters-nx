@@ -302,6 +302,30 @@ describe('NewsletterDetailPanels', () => {
 
 		expect(valueFor('brazeSubscribeAttributeNameAlternate')).toBe('Not set');
 	});
+	it.each([undefined, ''])(
+		'shows "Not set" for braze values that are %s',
+		(value) => {
+			render(
+				<NewsletterDetailPanels
+					newsletter={newsletter({
+						brazeNewsletterName: value,
+						brazeSubscribeAttributeName: value,
+						brazeSubscribeEventNamePrefix: value,
+					})}
+				/>,
+			);
+
+			for (const label of [
+				'brazeNewsletterName',
+				'brazeSubscribeAttributeName',
+				'brazeSubscribeEventNamePrefix',
+				'braze subscribe event name',
+				'braze unsubscribe event name',
+			]) {
+				expect(valueFor(label)).toBe('Not set');
+			}
+		},
+	);
 
 	it('shows ophan values from the newsletter', () => {
 		render(

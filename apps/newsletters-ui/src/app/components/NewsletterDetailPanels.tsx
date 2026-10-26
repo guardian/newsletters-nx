@@ -308,10 +308,14 @@ export const NewsletterDetailPanels = ({
 						) : null}
 					</Field>
 					<Field label="braze subscribe event name">
-						{brazeSubscribeEventName.generate(newsletter)}
+						{newsletter.brazeSubscribeEventNamePrefix
+							? brazeSubscribeEventName.generate(newsletter)
+							: undefined}
 					</Field>
 					<Field label="braze unsubscribe event name">
-						{brazeUnsubscribeEventName.generate(newsletter)}
+						{newsletter.brazeSubscribeEventNamePrefix
+							? brazeUnsubscribeEventName.generate(newsletter)
+							: undefined}
 					</Field>
 				</dl>
 			</section>
