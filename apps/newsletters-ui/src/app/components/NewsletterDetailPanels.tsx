@@ -271,7 +271,7 @@ export const NewsletterDetailPanels = ({
 		</StandPanel>
 		<StandPanel name="Integrations" id="integrations" subgrid>
 			<div css={listGroupStyles}>
-				<Typography element="h3" variant="bodyBoldMd">
+				<Typography element="h4" variant="bodyBoldMd">
 					Braze values
 				</Typography>
 				<dl css={listStyles}>
@@ -310,7 +310,7 @@ export const NewsletterDetailPanels = ({
 			</div>
 			<hr css={hrStyles} />
 			<div css={listGroupStyles}>
-				<Typography element="h3" variant="bodyBoldMd">
+				<Typography element="h4" variant="bodyBoldMd">
 					Ophan values
 				</Typography>
 				<dl css={listStyles}>
