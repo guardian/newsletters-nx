@@ -124,6 +124,8 @@ Feature: Launched newsletter: open it and find my way around
 				| Success message        | Thank you for signing up   |
 				| Highlight card message | The news you need          |
 
+			And the read-only Copy fields align with the Attributes fields
+
 		Scenario: Copy that is not defined shows Not set
 			Given a launched newsletter "Afternoon update"
 			When the editor opens the detail page for "Afternoon update"
@@ -132,6 +134,58 @@ Feature: Launched newsletter: open it and find my way around
 				| Headline               | Not set |
 				| Success message        | Not set |
 				| Highlight card message | Not set |
+
+	Rule: Editors can edit and save Copy
+
+		Scenario: Saved Copy survives a reload
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Copy panel
+			And the editor fills in Copy:
+				| label                  | value               |
+				| Headline               | Updated headline    |
+				| Sign-up description    | Updated description |
+				| Embed description      | Updated embed       |
+				| Success message        | Updated success     |
+				| Highlight card message | Updated highlight   |
+			And the editor saves Copy using Enter
+			And the editor reloads the newsletter detail page
+			Then the "Copy" panel shows:
+				| label                  | value               |
+				| Headline               | Updated headline    |
+				| Sign-up description    | Updated description |
+				| Embed description      | Updated embed       |
+				| Success message        | Updated success     |
+				| Highlight card message | Updated highlight   |
+
+		Scenario: Cancelling discards Copy edits
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Copy panel
+			And the editor fills in Copy:
+				| label    | value        |
+				| Headline | Discard this |
+			And the editor cancels Copy editing
+			And the editor reloads the newsletter detail page
+			Then the "Copy" panel shows:
+				| label    | value   |
+				| Headline | Not set |
+
+		Scenario: A failed Copy save preserves the editor's values
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Copy panel
+			And the editor fills in Copy:
+				| label    | value            |
+				| Headline | Keep these edits |
+			And the next Copy save fails
+			And the editor submits Copy
+			Then Copy remains editable with headline "Keep these edits" and a save error
+			When the editor saves Copy
+			And the editor reloads the newsletter detail page
+			Then the "Copy" panel shows:
+				| label    | value            |
+				| Headline | Keep these edits |
 
 	Rule: Sign-up page and tags shows the newsletter's sign-up page and tags
 

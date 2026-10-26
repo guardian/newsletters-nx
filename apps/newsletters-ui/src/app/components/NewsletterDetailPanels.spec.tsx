@@ -1,13 +1,37 @@
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { cleanup, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	within,
+} from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { usePermissions } from '../hooks/user-hooks';
 import { NewsletterDetailPanels } from './NewsletterDetailPanels';
 
-afterEach(cleanup);
+afterEach(() => {
+	cleanup();
+	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
+});
+
+vi.mock('../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
+vi.mock('../api-requests/request-newsletter-edit', () => ({
+	requestNewsletterEdit: vi.fn(),
+}));
+beforeEach(() => {
+	vi.resetAllMocks();
+	Object.defineProperty(Element.prototype, 'scrollIntoView', {
+		configurable: true,
+		value: vi.fn(),
+	});
+});
 
 const newsletter = (overrides: Partial<NewsletterData> = {}) =>
 	({
 		name: 'Afternoon update',
+		listId: 123,
 		status: 'live',
 		theme: 'news',
 		category: 'article-based',
@@ -26,6 +50,168 @@ const valueFor = (label: string) =>
 		?.textContent;
 
 describe('NewsletterDetailPanels', () => {
+	it('uses single-line inputs for Headline and Success message and textareas for other Copy fields', () => {
+		vi.mocked(usePermissions).mockReturnValue({
+			editEverything: true,
+			useJsonEditor: false,
+		});
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		for (const name of ['Headline', 'Success message']) {
+			expect(screen.getByRole('textbox', { name }).tagName).toBe('INPUT');
+		}
+		for (const name of [
+			'Sign-up description',
+			'Embed description',
+			'Highlight card message',
+		]) {
+			expect(screen.getByRole('textbox', { name }).tagName).toBe('TEXTAREA');
+		}
+	});
+
+	it('does not save when a required Copy description is empty', () => {
+		vi.mocked(usePermissions).mockReturnValue({
+			editEverything: true,
+			useJsonEditor: false,
+		});
+		render(
+			<NewsletterDetailPanels
+				newsletter={newsletter({
+					signUpDescription: 'Required description',
+					signUpEmbedDescription: 'Required embed',
+				})}
+			/>,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.change(
+			screen.getByRole('textbox', { name: 'Sign-up description' }),
+			{
+				target: { value: '' },
+			},
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+		expect(screen.getByText('Editing')).toBeTruthy();
+	});
+
+	it('allows optional Copy values to be cleared', async () => {
+		vi.mocked(usePermissions).mockReturnValue({
+			editEverything: true,
+			useJsonEditor: false,
+		});
+		const original = newsletter({
+			signUpHeadline: 'Remove this',
+			signUpDescription: 'Description',
+			signUpEmbedDescription: 'Embed',
+		});
+		vi.mocked(requestNewsletterEdit).mockResolvedValue({
+			ok: true,
+			data: { ...original, signUpHeadline: '' },
+		});
+		render(<NewsletterDetailPanels newsletter={original} />);
+		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.change(screen.getByRole('textbox', { name: 'Headline' }), {
+			target: { value: '' },
+		});
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		await screen.findByRole('button', { name: 'Edit' });
+		expect(valueFor('Headline')).toBe('Not set');
+	});
+
+	it('saves only Copy fields and shows the persisted response', async () => {
+		vi.mocked(usePermissions).mockReturnValue({
+			editEverything: true,
+			useJsonEditor: false,
+		});
+		const original = newsletter({
+			signUpHeadline: 'Original',
+			signUpDescription: 'Description',
+			signUpEmbedDescription: 'Embed',
+		});
+		vi.mocked(requestNewsletterEdit).mockResolvedValue({
+			ok: true,
+			data: { ...original, signUpHeadline: 'Updated headline' },
+		});
+		render(<NewsletterDetailPanels newsletter={original} />);
+		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.change(screen.getByRole('textbox', { name: 'Headline' }), {
+			target: { value: 'Updated headline' },
+		});
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		await screen.findByRole('button', { name: 'Edit' });
+		expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
+			signUpHeadline: 'Updated headline',
+			signUpDescription: 'Description',
+			signUpEmbedDescription: 'Embed',
+			mailSuccessDescription: '',
+			highlightCardTitle: '',
+		});
+		expect(valueFor('Headline')).toBe('Updated headline');
+	});
+
+	it('discards cancelled Copy values and starts the next edit from saved values', () => {
+		vi.mocked(usePermissions).mockReturnValue({
+			editEverything: true,
+			useJsonEditor: false,
+		});
+		render(
+			<NewsletterDetailPanels
+				newsletter={newsletter({ signUpHeadline: 'Original' })}
+			/>,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.change(screen.getByRole('textbox', { name: 'Headline' }), {
+			target: { value: 'Discard me' },
+		});
+		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+		expect(valueFor('Headline')).toBe('Original');
+		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		expect(screen.getByRole('textbox', { name: 'Headline' }).value).toBe(
+			'Original',
+		);
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		['Save rejected', 'Save rejected'],
+		[
+			undefined,
+			'Changes could not be saved. Your edits have been kept. Please try again.',
+		],
+	])(
+		'retains Copy inputs and shows one error when saving fails (%s)',
+		async (message, expectedError) => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			vi.mocked(requestNewsletterEdit).mockResolvedValue({
+				ok: false,
+				message,
+			});
+			render(
+				<NewsletterDetailPanels
+					newsletter={newsletter({
+						signUpDescription: 'Description',
+						signUpEmbedDescription: 'Embed',
+					})}
+				/>,
+			);
+			fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+			fireEvent.change(screen.getByRole('textbox', { name: 'Headline' }), {
+				target: { value: 'Keep this' },
+			});
+			fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+			const alert = await screen.findByRole('alert');
+			expect(alert.textContent).toBe(expectedError);
+			expect(screen.getAllByRole('alert')).toHaveLength(1);
+			expect(screen.getByRole('textbox', { name: 'Headline' }).value).toBe(
+				'Keep this',
+			);
+			expect(screen.getByText('Editing')).toBeTruthy();
+		},
+	);
+
 	it('shows the Copy panel above Sign-up page and tags with plain text values', () => {
 		render(
 			<NewsletterDetailPanels
