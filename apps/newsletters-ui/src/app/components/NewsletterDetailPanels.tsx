@@ -270,8 +270,15 @@ export const NewsletterDetailPanels = ({
 			</div>
 		</StandPanel>
 		<StandPanel name="Integrations" id="integrations" subgrid>
-			<div css={listGroupStyles}>
-				<Typography element="h4" variant="bodyBoldMd">
+			<section
+				css={listGroupStyles}
+				aria-labelledby="integrations-braze-values"
+			>
+				<Typography
+					id="integrations-braze-values"
+					element="h4"
+					variant="bodyBoldMd"
+				>
 					Braze values
 				</Typography>
 				<dl css={listStyles}>
@@ -307,17 +314,24 @@ export const NewsletterDetailPanels = ({
 						{brazeUnsubscribeEventName.generate(newsletter)}
 					</Field>
 				</dl>
-			</div>
+			</section>
 			<hr css={hrStyles} />
-			<div css={listGroupStyles}>
-				<Typography element="h4" variant="bodyBoldMd">
+			<section
+				css={listGroupStyles}
+				aria-labelledby="integrations-ophan-values"
+			>
+				<Typography
+					id="integrations-ophan-values"
+					element="h4"
+					variant="bodyBoldMd"
+				>
 					Ophan values
 				</Typography>
 				<dl css={listStyles}>
-					<Field label="campaignName">{newsletter.campaignName}</Field>
-					<Field label="campaignCode">{newsletter.campaignCode}</Field>
+					<Field label="Campaign name">{newsletter.campaignName}</Field>
+					<Field label="Campaign code">{newsletter.campaignCode}</Field>
 				</dl>
-			</div>
+			</section>
 		</StandPanel>
 	</div>
 );

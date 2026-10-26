@@ -153,6 +153,38 @@ Feature: Launched newsletter: open it and find my way around
 				| Campaign tag                 | Not set                                                                                                       |
 				| Campaign description         | Not set                                                                                                       |
 
+	Rule: Integrations shows the Braze and Ophan values
+
+		Scenario: Braze values are grouped under "Braze values"
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                                | value                                |
+				| braze campaign creation status       | REQUESTED                            |
+				| brazeNewsletterName                  | Editorial_AfternoonUpdateAUS         |
+				| brazeSubscribeAttributeName          | AfternoonUpdateAus_Subscribe_Email   |
+				| brazeSubscribeEventNamePrefix        | afternoon_update_aus                 |
+				| brazeSubscribeAttributeNameAlternate | email_subscribe_afternoon_update_aus |
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Integrations" panel shows under "Braze values":
+				| label                                | value                                       |
+				| Braze campaign creation status       | Requested                                   |
+				| brazeNewsletterName                  | Editorial_AfternoonUpdateAUS                |
+				| brazeSubscribeAttributeName          | AfternoonUpdateAus_Subscribe_Email          |
+				| brazeSubscribeEventNamePrefix        | afternoon_update_aus                        |
+				| brazeSubscribeAttributeNameAlternate | email_subscribe_afternoon_update_aus        |
+				| braze subscribe event name           | afternoon_update_aus_subscribe_email_date   |
+				| braze unsubscribe event name         | afternoon_update_aus_unsubscribe_email_date |
+
+		Scenario: Ophan values are grouped under "Ophan values"
+			Given a launched newsletter "Afternoon update" with these details:
+				| field         | value                   |
+				| campaign name | AfternoonUpdateAUS      |
+				| campaign code | afternoonupdateau_email |
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Integrations" panel shows under "Ophan values":
+				| label         | value                   |
+				| Campaign name | AfternoonUpdateAUS      |
+				| Campaign code | afternoonupdateau_email |
+
 	Rule: The header adapts to the screen size
 
 		Scenario: The header stacks on a small screen

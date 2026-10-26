@@ -136,6 +136,28 @@ Given(
 				case 'campaign description':
 					overrides.composerCampaignTag = value;
 					break;
+				case 'braze campaign creation status':
+					overrides.brazeCampaignCreationStatus =
+						workflowStatusEnumSchema.parse(value);
+					break;
+				case 'brazeNewsletterName':
+					overrides.brazeNewsletterName = value;
+					break;
+				case 'brazeSubscribeAttributeName':
+					overrides.brazeSubscribeAttributeName = value;
+					break;
+				case 'brazeSubscribeEventNamePrefix':
+					overrides.brazeSubscribeEventNamePrefix = value;
+					break;
+				case 'brazeSubscribeAttributeNameAlternate':
+					overrides.brazeSubscribeAttributeNameAlternate = [value];
+					break;
+				case 'campaign name':
+					overrides.campaignName = value;
+					break;
+				case 'campaign code':
+					overrides.campaignCode = value;
+					break;
 				default:
 					throw new Error(`Unknown newsletter detail field: "${field}"`);
 			}
@@ -363,5 +385,34 @@ Then(
 		});
 
 		await expectPanelRowsInOrder(panel, expectedRows);
+	},
+);
+
+Then(
+	'the {string} panel shows under {string}:',
+	async ({ page }, panelName: string, groupName: string, table: DataTable) => {
+		const panel = page.locator('section', {
+			has: page.getByRole('heading', {
+				level: 3,
+				name: panelName,
+				exact: true,
+			}),
+		});
+
+		const group = panel.getByRole('region', {
+			name: groupName,
+			exact: true,
+		});
+
+		for (const { label, value } of table.hashes()) {
+			if (label === undefined || value === undefined) {
+				throw new Error('Panel table must have "label" and "value" columns');
+			}
+			// Find the row whose label (term) matches, then check its value.
+			const row = group.locator('div').filter({
+				has: page.getByText(label, { exact: true }).and(page.getByRole('term')),
+			});
+			await expect(row.getByRole('definition')).toHaveText(value);
+		}
 	},
 );
