@@ -92,10 +92,6 @@ const mutedStyle = css`
 	color: ${semanticColors.text.weak};
 `;
 
-const linkButtonStyle = css`
-	text-decoration: underline;
-`;
-
 const footerStyle = css`
 	grid-column: 1 / -1;
 	margin-top: ${baseSpacing['16Rem']};
@@ -241,7 +237,6 @@ const EditableStandPanel = ({
 								type="button"
 								variant="tertiary"
 								size="sm"
-								cssOverrides={linkButtonStyle}
 								isDisabled={isSaving}
 								onPress={() => {
 									onCancel?.();
