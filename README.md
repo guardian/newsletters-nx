@@ -63,4 +63,3 @@ can affect newsletter data used in PROD by other Guardian applications.** Read
 [that package's README](libs/newsletters-data-client/README.md) first.
 
 Merging to `main` deploys to PROD.
-
