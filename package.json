@@ -12,7 +12,7 @@
 		"build": "pnpm -r build",
 		"test": "pnpm -r --parallel --aggregate-output test",
 		"prepare": "husky",
-		"postinstall": "npm install --prefix cdk",
+		"postinstall": "[ -n \"$CI\" ] || npm install --prefix cdk",
 		"bundle:api": "pnpm --filter=@newsletters-nx/newsletters-api bundle",
 		"bundle:ui": "pnpm --filter=@newsletters-nx/newsletters-ui bundle",
 		"test:e2e": "pnpm --filter=@newsletters-nx/newsletters-e2e e2e",
