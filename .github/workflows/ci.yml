@@ -42,6 +42,15 @@ jobs:
           pnpm run bundle:ui
           pnpm run bundle:api
 
+      - name: Upload bundles
+        uses: actions/upload-artifact@v7
+        with:
+          name: bundles
+          path: |
+            dist/apps/newsletters-api
+            dist/apps/newsletters-ui
+          retention-days: 1
+
       - name: Run Playwright E2E tests
         run: pnpm run test:e2e
 
@@ -116,7 +125,14 @@ jobs:
           npm run test
           npm run synth
 
-  # Deploy job - waits for both E2E tests and build/test to pass
+      - name: Upload CDK templates
+        uses: actions/upload-artifact@v7
+        with:
+          name: cdk-out
+          path: cdk/cdk.out
+          retention-days: 1
+
+  # Deploy job - waits for E2E tests (which build the bundles) and build/test (which synths CDK)
   deploy:
     name: Build, test and deploy to riff-raff
     runs-on: ubuntu-latest
@@ -128,37 +144,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v6
-
-      - uses: actions/setup-node@v7
+      - name: Download bundles
+        uses: actions/download-artifact@v8
         with:
-          node-version-file: '.nvmrc'
-          cache: 'pnpm'
+          name: bundles
+          path: dist/apps
 
-        # Install then build production-ready bundled files
-      - name: Install deps
-        run: |
-          pnpm ci
-      - name: lint and test
-        run: |
-          pnpm run lint
-          pnpm run test
+      - name: Download CDK templates
+        uses: actions/download-artifact@v8
+        with:
+          name: cdk-out
+          path: cdk/cdk.out
 
-      - name: Bundle and zip
+      - name: Zip bundles
         run: |
-          pnpm run bundle:ui
-          pnpm run bundle:api
           zip -r dist/newsletters-tool.zip dist
           cp dist/newsletters-tool.zip dist/newsletters-api.zip
-
-        # Build Cloudformation definition from CDK
-      - name: Build and synth CDK
-        working-directory: ./cdk
-        run: |
-          npm ci
-          npm run lint
-          npm run test
-          npm run synth
 
         # Upload artifacts for newsletters internal tool
       - name: Upload riff-raff artifacts - newsletters-tool
