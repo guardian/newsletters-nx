@@ -53,7 +53,17 @@ export const CopyPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 	const current = { ...newsletter, ...savedCopy };
 	const [draft, setDraft] = useState<Partial<NewsletterData>>({});
 	const save = async (): Promise<boolean | string> => {
-		const parsed = copySchema.safeParse(draft);
+		const parsed = copySchema.safeParse({
+			...draft,
+			signUpHeadline:
+				draft.signUpHeadline === '' ? undefined : draft.signUpHeadline,
+			mailSuccessDescription:
+				draft.mailSuccessDescription === ''
+					? undefined
+					: draft.mailSuccessDescription,
+			highlightCardTitle:
+				draft.highlightCardTitle === '' ? undefined : draft.highlightCardTitle,
+		});
 		if (!parsed.success) {
 			return parsed.error.issues.map((issue) => issue.message).join(' ');
 		}

@@ -94,29 +94,43 @@ describe('NewsletterDetailPanels', () => {
 		expect(screen.getByText('Editing')).toBeTruthy();
 	});
 
-	it('allows optional Copy values to be cleared', async () => {
-		vi.mocked(usePermissions).mockReturnValue({
-			editEverything: true,
-			useJsonEditor: false,
-		});
-		const original = newsletter({
-			signUpHeadline: 'Remove this',
-			signUpDescription: 'Description',
-			signUpEmbedDescription: 'Embed',
-		});
-		vi.mocked(requestNewsletterEdit).mockResolvedValue({
-			ok: true,
-			data: { ...original, signUpHeadline: '' },
-		});
-		render(<NewsletterDetailPanels newsletter={original} />);
-		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
-		fireEvent.change(screen.getByRole('textbox', { name: 'Headline' }), {
-			target: { value: '' },
-		});
-		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
-		await screen.findByRole('button', { name: 'Edit' });
-		expect(valueFor('Headline')).toBe('Not set');
-	});
+	it.each([
+		['signUpHeadline', 'Headline'],
+		['mailSuccessDescription', 'Success message'],
+		['highlightCardTitle', 'Highlight card message'],
+	] as const)(
+		'unsets the optional Copy field %s when cleared',
+		async (key, label) => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+			const original = newsletter({
+				[key]: 'Remove this',
+				signUpDescription: 'Description',
+				signUpEmbedDescription: 'Embed',
+			});
+			vi.mocked(requestNewsletterEdit).mockResolvedValue({
+				ok: true,
+				data: { ...original, [key]: undefined },
+			});
+			render(<NewsletterDetailPanels newsletter={original} />);
+			fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+			fireEvent.change(screen.getByRole('textbox', { name: label }), {
+				target: { value: '' },
+			});
+			fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+			await screen.findByRole('button', { name: 'Edit' });
+			expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
+				signUpHeadline: undefined,
+				signUpDescription: 'Description',
+				signUpEmbedDescription: 'Embed',
+				mailSuccessDescription: undefined,
+				highlightCardTitle: undefined,
+			});
+			expect(valueFor(label)).toBe('Not set');
+		},
+	);
 
 	it('saves only Copy fields and shows the persisted response', async () => {
 		vi.mocked(usePermissions).mockReturnValue({
@@ -143,8 +157,8 @@ describe('NewsletterDetailPanels', () => {
 			signUpHeadline: 'Updated headline',
 			signUpDescription: 'Description',
 			signUpEmbedDescription: 'Embed',
-			mailSuccessDescription: '',
-			highlightCardTitle: '',
+			mailSuccessDescription: undefined,
+			highlightCardTitle: undefined,
 		});
 		expect(valueFor('Headline')).toBe('Updated headline');
 	});
