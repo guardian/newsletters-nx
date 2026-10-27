@@ -151,7 +151,7 @@ jobs:
 
   # Deploy job - waits for E2E tests (which build the bundles), unit tests, and CDK (which synths the templates)
   deploy:
-    name: Build, test and deploy to riff-raff
+    name: Deploy to riff-raff
     runs-on: ubuntu-latest
     needs: [e2e-tests, build-and-test, cdk] # Wait for all jobs
     permissions:
