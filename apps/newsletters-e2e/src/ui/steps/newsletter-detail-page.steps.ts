@@ -357,6 +357,111 @@ Then(
 );
 
 Then(
+	'the read-only Copy fields align with the Attributes fields',
+	async ({ page }) => {
+		const attributes = panelByName(page, 'Attributes');
+		const copy = panelByName(page, 'Copy');
+		const attributeTerm = await attributes.locator('dt').first().boundingBox();
+		const attributeValue = await attributes.locator('dd').first().boundingBox();
+		if (!attributeTerm || !attributeValue) {
+			throw new Error('Expected Attributes fields to be rendered');
+		}
+		for (const row of await copy.locator('dl > div').all()) {
+			const term = await row.locator('dt').boundingBox();
+			const value = await row.locator('dd').boundingBox();
+			if (!term || !value) {
+				throw new Error('Expected Copy label and value to be rendered');
+			}
+			expect(term.x).toBeCloseTo(attributeTerm.x, 0);
+			expect(value.x).toBeCloseTo(attributeValue.x, 0);
+			expect(value.y).toBeCloseTo(term.y, 0);
+		}
+	},
+);
+
+When('the editor edits the Copy panel', async ({ page }) => {
+	await panelByName(page, 'Copy')
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When('the editor fills in Copy:', async ({ page }, table: DataTable) => {
+	for (const { label, value } of table.hashes()) {
+		if (label === undefined || value === undefined) {
+			throw new Error('Copy table must have "label" and "value" columns');
+		}
+		await panelByName(page, 'Copy')
+			.getByRole('textbox', { name: label, exact: true })
+			.fill(value);
+	}
+});
+
+When('the editor submits Copy', async ({ page }) => {
+	await panelByName(page, 'Copy')
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+});
+
+When('the editor saves Copy', async ({ page }) => {
+	const panel = panelByName(page, 'Copy');
+	await panel
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+When('the editor saves Copy using Enter', async ({ page }) => {
+	const panel = panelByName(page, 'Copy');
+	await panel
+		.getByRole('textbox', { name: 'Headline', exact: true })
+		.press('Enter');
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+When('the editor cancels Copy editing', async ({ page }) => {
+	await panelByName(page, 'Copy')
+		.getByRole('button', { name: 'Cancel', exact: true })
+		.click();
+});
+
+When('the editor reloads the newsletter detail page', async ({ page }) => {
+	await page.reload();
+});
+
+When('the next Copy save fails', async ({ page }) => {
+	await page.route(
+		'**/api/newsletters/*',
+		async (route) => {
+			if (route.request().method() !== 'PATCH') {
+				await route.fallback();
+				return;
+			}
+			await route.fulfill({
+				status: 500,
+				json: { ok: false, message: 'Unable to save Copy' },
+			});
+		},
+		{ times: 1 },
+	);
+});
+
+Then(
+	'Copy remains editable with headline {string} and a save error',
+	async ({ page }, headline: string) => {
+		const panel = panelByName(page, 'Copy');
+		await expect(panel.getByRole('alert')).toHaveText('Unable to save Copy');
+		await expect(
+			panel.getByRole('textbox', { name: 'Headline', exact: true }),
+		).toHaveValue(headline);
+		await expect(panel.getByText('Editing', { exact: true })).toBeVisible();
+	},
+);
+
+Then(
 	'the {string} panel shows a thumbnail for {string}',
 	async ({ page }, panelName: string, label: string) => {
 		const panel = panelByName(page, panelName);
