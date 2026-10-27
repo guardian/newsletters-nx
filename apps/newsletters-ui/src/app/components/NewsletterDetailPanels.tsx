@@ -8,8 +8,9 @@ import {
 	brazeUnsubscribeEventName,
 	type NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import type { ReactNode } from 'react';
 import { humanize } from '../lib/format';
+import { CopyPanel } from './CopyPanel';
+import { Field, listStyles } from './NewsletterDetailFields';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
 import { WorkflowStatusBadge } from './WorkflowStatusBadge';
@@ -29,33 +30,12 @@ const panelsStyles = css`
 	}
 `;
 
-const listStyles = css`
-	display: grid;
-	grid-column: 1 / -1;
-	grid-template-columns: subgrid;
-	margin: 0;
-
-	${until.md} {
-		row-gap: ${baseSpacing['20Rem']};
-	}
-
-	row-gap: ${semanticSpacing.stackSm};
-`;
-
 const listGroupStyles = css`
 	display: grid;
 	grid-column: 1 / -1;
 	grid-template-columns: subgrid;
 	row-gap: ${semanticSpacing.stackSm};
 	margin: 0;
-`;
-
-const rowStyles = css`
-	display: grid;
-	grid-column: 1 / -1;
-	grid-template-columns: subgrid;
-	align-items: start;
-	row-gap: ${semanticSpacing.stackXxs};
 `;
 
 const sectionStyles = css`
@@ -74,16 +54,6 @@ const sectionStyles = css`
 const subheadingStyles = css`
 	grid-column: 1 / -1;
 	margin: 0;
-`;
-
-const weakTextStyles = css`
-	color: ${semanticColors.text.weak};
-`;
-
-const valueStyles = css`
-	margin: 0;
-	color: ${semanticColors.text.strong};
-	overflow-wrap: anywhere;
 `;
 
 const imageRowStyles = css`
@@ -123,36 +93,6 @@ const fieldListStyles = css`
 	list-style: none;
 `;
 
-const isEmpty = (value: ReactNode) =>
-	value === undefined || value === null || value === '';
-
-const Field = ({
-	label,
-	children,
-}: {
-	label: string;
-	children?: ReactNode;
-}) => (
-	<div role="group" aria-label={label} css={rowStyles}>
-		<Typography element="dt" variant="bodySm" cssOverrides={weakTextStyles}>
-			{label}
-		</Typography>
-		<Typography element="dd" variant="bodySm" cssOverrides={valueStyles}>
-			{isEmpty(children) ? (
-				<Typography
-					element="span"
-					variant="bodyXs"
-					cssOverrides={weakTextStyles}
-				>
-					Not set
-				</Typography>
-			) : (
-				children
-			)}
-		</Typography>
-	</div>
-);
-
 const ImageField = ({ label, url }: { label: string; url?: string }) => (
 	<Field label={label}>
 		{url ? (
@@ -165,6 +105,7 @@ const ImageField = ({ label, url }: { label: string; url?: string }) => (
 		) : undefined}
 	</Field>
 );
+
 export const NewsletterDetailPanels = ({
 	newsletter,
 }: {
@@ -207,23 +148,7 @@ export const NewsletterDetailPanels = ({
 			</dl>
 		</StandPanel>
 
-		<StandPanel name="Copy" id="copy" subgrid>
-			<dl css={listStyles}>
-				<Field label="Headline">{newsletter.signUpHeadline}</Field>
-				<Field label="Sign-up description">
-					{newsletter.signUpDescription}
-				</Field>
-				<Field label="Embed description">
-					{newsletter.signUpEmbedDescription}
-				</Field>
-				<Field label="Success message">
-					{newsletter.mailSuccessDescription}
-				</Field>
-				<Field label="Highlight card message">
-					{newsletter.highlightCardTitle}
-				</Field>
-			</dl>
-		</StandPanel>
+		<CopyPanel key={newsletter.listId} newsletter={newsletter} />
 		<StandPanel name="Sign-up page and tags" id="sign-up-page-and-tags" subgrid>
 			<div css={sectionStyles}>
 				<Typography
