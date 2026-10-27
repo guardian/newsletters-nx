@@ -76,12 +76,11 @@ export default defineConfig({
 		},
 	],
 
-	// CI: Playwright starts the API, which also serves the built UI
+	// CI: Playwright starts the built API, which also serves the built UI
 	// Local: npm run dev starts both API and UI
 	webServer: isCI
 		? {
-				command:
-					'pnpm --filter=@newsletters-nx/newsletters-api exec tsx src/main.ts',
+				command: 'node ../../dist/apps/newsletters-api/index.cjs',
 				url: 'http://localhost:3000/healthcheck',
 				reuseExistingServer: true,
 				timeout: 300000,

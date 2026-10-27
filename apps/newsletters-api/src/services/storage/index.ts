@@ -1,5 +1,3 @@
-import { existsSync, readFileSync } from 'fs';
-import { resolve } from 'path';
 import type { SESClient } from '@aws-sdk/client-ses';
 import type {
 	DraftStorage,
@@ -17,6 +15,7 @@ import {
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client/server';
 import layoutsData from '../../../static/layouts.local.json';
+import newslettersLocalData from '../../../static/newsletters.local.json';
 import newslettersSeedData from '../../../static/newsletters.seed.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
 import { makeEmailEnvInfo } from '../notifications/email-env';
@@ -28,20 +27,9 @@ import {
 	makeS3DraftStorageInstance,
 } from './s3StorageInstance';
 
-const localNewslettersPath = resolve(
-	__dirname,
-	'../../../static/newsletters.local.json',
-);
-
-const localNewslettersData = existsSync(localNewslettersPath)
-	? (JSON.parse(
-			readFileSync(localNewslettersPath, 'utf-8'),
-		) as NewsletterData[])
-	: [];
-
 const newslettersData = [
 	...(newslettersSeedData as unknown as NewsletterData[]),
-	...localNewslettersData,
+	...(newslettersLocalData as unknown as NewsletterData[]),
 ];
 
 const isUsingInMemoryStore = isUsingInMemoryStorage();

@@ -37,8 +37,10 @@ jobs:
       - name: Install dependencies
         run: pnpm ci
 
-      - name: Build UI for E2e tests
-        run: pnpm --filter=@newsletters-nx/newsletters-ui build
+      - name: Build UI and API
+        run: |
+          pnpm run bundle:ui
+          pnpm run bundle:api
 
       - name: Run Playwright E2E tests
         run: pnpm run test:e2e
