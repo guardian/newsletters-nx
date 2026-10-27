@@ -117,10 +117,27 @@ jobs:
           pnpm run lint
           pnpm run test
 
-      - name: Build and synth CDK
+  # CDK lint, test and synth - runs in parallel with the other jobs
+  cdk:
+    name: CDK lint, test and synth
+    runs-on: ubuntu-latest
+    defaults:
+      run:
         working-directory: ./cdk
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: cdk/package-lock.json
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Lint, test and synth
         run: |
-          npm ci
           npm run lint
           npm run test
           npm run synth
@@ -132,11 +149,11 @@ jobs:
           path: cdk/cdk.out
           retention-days: 1
 
-  # Deploy job - waits for E2E tests (which build the bundles) and build/test (which synths CDK)
+  # Deploy job - waits for E2E tests (which build the bundles), unit tests, and CDK (which synths the templates)
   deploy:
     name: Deploy to riff-raff
     runs-on: ubuntu-latest
-    needs: [e2e-tests, build-and-test] # Wait for both jobs
+    needs: [e2e-tests, build-and-test, cdk] # Wait for all jobs
     permissions:
       id-token: write
       pull-requests: write
