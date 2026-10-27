@@ -23,6 +23,7 @@ export const getUserEditSchema = (
 			signupPageCreationStatus: true,
 			signupPage: true,
 			signUpDescription: true,
+			signUpHeadline: true,
 			signUpEmbedDescription: true,
 			mailSuccessDescription: true,
 			highlightCardTitle: true,
