@@ -10,6 +10,11 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { humanize } from '../lib/format';
 import { CopyPanel } from './CopyPanel';
+import {
+	ImagePlaceholder,
+	ImagePreview,
+	type ImageShape,
+} from './ImagePreview';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
@@ -60,13 +65,10 @@ const imageRowStyles = css`
 	display: flex;
 	align-items: center;
 	gap: ${semanticSpacing.stackSm};
+	min-width: 0;
 `;
-const thumbnailStyles = css`
-	width: 96px;
-	height: auto;
-	max-height: 96px;
-	object-fit: contain;
-	flex: none;
+const notSetStyles = css`
+	color: ${semanticColors.text.weak};
 `;
 const hrStyles = css`
 	height: 1px;
@@ -93,16 +95,38 @@ const fieldListStyles = css`
 	list-style: none;
 `;
 
-const ImageField = ({ label, url }: { label: string; url?: string }) => (
+/** The image at its design size and a link to it, or a "No image" box */
+const ImageField = ({
+	label,
+	url,
+	shape,
+}: {
+	label: string;
+	url?: string;
+	shape: ImageShape;
+}) => (
 	<Field label={label}>
-		{url ? (
-			<span css={imageRowStyles}>
-				<img src={url} alt={`${label} thumbnail`} css={thumbnailStyles} />
-				<a href={url} target="_blank" rel="noreferrer">
-					{url}
-				</a>
-			</span>
-		) : undefined}
+		<span css={imageRowStyles}>
+			{url ? (
+				<>
+					<ImagePreview src={url} alt={`${label} thumbnail`} shape={shape} />
+					<a href={url} target="_blank" rel="noreferrer">
+						{url}
+					</a>
+				</>
+			) : (
+				<>
+					<ImagePlaceholder shape={shape} />
+					<Typography
+						element="span"
+						variant="bodyXs"
+						cssOverrides={notSetStyles}
+					>
+						Not set
+					</Typography>
+				</>
+			)}
+		</span>
 	</Field>
 );
 
@@ -132,18 +156,22 @@ export const NewsletterDetailPanels = ({
 				<ImageField
 					label="Main banner graphic"
 					url={newsletter.renderingOptions?.mainBannerUrl}
+					shape="banner"
 				/>
 				<ImageField
 					label="Main banner graphic (mobile)"
 					url={newsletter.renderingOptions?.mainBannerMobileUrl}
+					shape="mobileBanner"
 				/>
 				<ImageField
 					label="Newsletter graphic (5:3)"
 					url={newsletter.illustrationCard}
+					shape="card"
 				/>
 				<ImageField
 					label="Newsletter square (1:1)"
 					url={newsletter.illustrationSquare}
+					shape="square"
 				/>
 			</dl>
 		</StandPanel>
