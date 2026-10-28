@@ -351,7 +351,7 @@ Then(
 			if (label === undefined || value === undefined) {
 				throw new Error('Panel table must have "label" and "value" columns');
 			}
-			await expect(definitionForLabel(panel, label)).toHaveText(value);
+			await expect(definitionForLabel(panel, label)).toContainText(value);
 		}
 	},
 );

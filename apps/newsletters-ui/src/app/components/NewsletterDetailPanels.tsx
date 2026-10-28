@@ -5,6 +5,7 @@ import {
 	semanticRadius,
 	semanticSpacing,
 } from '@guardian/stand';
+import { Icon } from '@guardian/stand/Icon';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
@@ -86,9 +87,6 @@ const noImageStyles = css`
 	background: ${semanticColors.fill.neutralWeak};
 	color: ${semanticColors.text.weak};
 	font-size: 10px;
-	&::after {
-		content: 'No image';
-	}
 `;
 const hrStyles = css`
 	height: 1px;
@@ -141,14 +139,12 @@ const ImageField = ({
 				</>
 			) : (
 				<>
-					{/* "No image" comes from CSS so it isn't read out or counted as text */}
 					<span
 						aria-hidden
 						css={[imageBoxStyles(width, height), noImageStyles]}
 					>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-							<path d="M5 21q-.825 0-1.413-.587T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21H5Zm1-4h12l-3.75-5l-3 4L9 13l-3 4Z" />
-						</svg>
+						<Icon symbol="image" size="xs" />
+						No image
 					</span>
 					<Typography
 						element="span"

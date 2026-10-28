@@ -45,9 +45,14 @@ const newsletter = (overrides: Partial<NewsletterData> = {}) =>
 	}) as NewsletterData;
 
 // The text of the <dd> paired with the <dt> labelled `label`.
-const valueFor = (label: string) =>
-	screen.getByText(label, { exact: true, selector: 'dt' }).nextElementSibling
-		?.textContent;
+/** The text of a field's value, ignoring decorative (aria-hidden) content such as icons */
+const valueFor = (label: string) => {
+	const value = screen
+		.getByText(label, { exact: true, selector: 'dt' })
+		.nextElementSibling?.cloneNode(true) as Element | undefined;
+	value?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
+	return value?.textContent;
+};
 
 describe('NewsletterDetailPanels', () => {
 	it('uses single-line inputs for Headline and Success message and textareas for other Copy fields', () => {
