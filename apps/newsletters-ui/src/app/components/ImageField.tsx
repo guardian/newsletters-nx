@@ -159,11 +159,6 @@ export const useImageDraft = () => {
 			setInitial(initialUrl ?? '');
 			setResult(undefined);
 		},
-		reset: () => {
-			setAddress('');
-			setInitial('');
-			setResult(undefined);
-		},
 		change: setAddress,
 		reportLoad: (loadState: LoadState) => {
 			setResult({ url, state: loadState });

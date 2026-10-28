@@ -153,8 +153,8 @@ Feature: Launched newsletter: open it and find my way around
 			When the editor opens the detail page for "Afternoon update"
 			And the editor edits the Images panel
 			And the editor sets "Newsletter square (1:1)" to "not a url"
-			And the editor tries to save Images
-			Then the Images panel shows the error "Image URL can't be loaded"
+			Then the Images panel shows the error "Couldn't load an image from that URL. Check the link and try again."
+			And the editor cannot save Images
 
 	Rule: Editors can edit and save Copy
 

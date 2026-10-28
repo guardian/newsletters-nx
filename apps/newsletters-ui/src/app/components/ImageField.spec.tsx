@@ -33,7 +33,8 @@ const Harness = ({
 	);
 };
 
-const input = () => screen.getByRole('textbox', { name: label });
+const input = () =>
+	screen.getByRole<HTMLInputElement>('textbox', { name: label });
 const typeUrl = (value: string) => {
 	fireEvent.change(input(), { target: { value } });
 };
@@ -54,7 +55,7 @@ describe('ImageInput', () => {
 
 		expect(screen.getByText(label)).toBeTruthy();
 		expect(input().getAttribute('placeholder')).toBe('Paste image URL');
-		expect((input() as HTMLInputElement).value).toBe('');
+		expect(input().value).toBe('');
 		expect(screen.getByText('No image')).toBeTruthy();
 		expect(preview()).toBeNull();
 		expect(checking()).toBeNull();
@@ -66,7 +67,7 @@ describe('ImageInput', () => {
 	it('shows "Loading" and "Checking image…" while the current image loads', () => {
 		render(<Harness initial={savedUrl} />);
 
-		expect((input() as HTMLInputElement).value).toBe(savedUrl);
+		expect(input().value).toBe(savedUrl);
 		expect(screen.getByText('Loading')).toBeTruthy();
 		expect(checking()).toBeTruthy();
 		expect(preview()?.getAttribute('src')).toBe(savedUrl);

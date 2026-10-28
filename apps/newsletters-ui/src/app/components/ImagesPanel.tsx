@@ -6,6 +6,7 @@ import { Typography } from '@guardian/stand/Typography';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import type { ImageDraft, ImageShape } from './ImageField';
 import { ImageInput, ImageValue, useImageDraft } from './ImageField';
 import { listStyles } from './NewsletterDetailFields';
 import { StandPanel } from './StandPanel';
@@ -71,38 +72,50 @@ const ImageSizeGuidance = () => (
 		</Typography>
 	</div>
 );
-const getImages = (newsletter: NewsletterData) => ({
-	mainBanner: newsletter.renderingOptions?.mainBannerUrl,
-	mainBannerMobile: newsletter.renderingOptions?.mainBannerMobileUrl,
+
+const images: Array<{ shape: ImageShape; label: string }> = [
+	{ shape: 'banner', label: 'Main banner graphic' },
+	{ shape: 'mobileBanner', label: 'Main banner graphic (mobile)' },
+	{ shape: 'card', label: 'Newsletter graphic (5:3)' },
+	{ shape: 'square', label: 'Newsletter square (1:1)' },
+];
+
+const getUrls = (
+	newsletter: NewsletterData,
+): Record<ImageShape, string | undefined> => ({
+	banner: newsletter.renderingOptions?.mainBannerUrl,
+	mobileBanner: newsletter.renderingOptions?.mainBannerMobileUrl,
 	card: newsletter.illustrationCard,
 	square: newsletter.illustrationSquare,
 });
+
 export const ImagesPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 	const [saved, setSaved] = useState<NewsletterData>();
-	const current = getImages(saved ?? newsletter);
-	const mainBanner = useImageDraft();
-	const mainBannerMobile = useImageDraft();
-	const card = useImageDraft();
-	const square = useImageDraft();
-	const drafts = [mainBanner, mainBannerMobile, card, square];
+	const latest = saved ?? newsletter;
+	const urls = getUrls(latest);
+	const drafts: Record<ImageShape, ImageDraft> = {
+		banner: useImageDraft(),
+		mobileBanner: useImageDraft(),
+		card: useImageDraft(),
+		square: useImageDraft(),
+	};
+
 	const save = async (): Promise<boolean | string> => {
-		if (!drafts.every((draft) => draft.canSave)) {
-			return "Image URL can't be loaded";
-		}
-		const renderingOptions = {
-			...newsletter.renderingOptions,
-		} as NonNullable<NewsletterData['renderingOptions']>;
+		// Cleared banners are removed rather than sent as null
+		const renderingOptions = { ...latest.renderingOptions } as NonNullable<
+			NewsletterData['renderingOptions']
+		>;
 		delete renderingOptions.mainBannerUrl;
 		delete renderingOptions.mainBannerMobileUrl;
-		if (mainBanner.url) {
-			renderingOptions.mainBannerUrl = mainBanner.url;
+		if (drafts.banner.url) {
+			renderingOptions.mainBannerUrl = drafts.banner.url;
 		}
-		if (mainBannerMobile.url) {
-			renderingOptions.mainBannerMobileUrl = mainBannerMobile.url;
+		if (drafts.mobileBanner.url) {
+			renderingOptions.mainBannerMobileUrl = drafts.mobileBanner.url;
 		}
 		const response = await requestNewsletterEdit(newsletter.listId, {
-			illustrationCard: card.url,
-			illustrationSquare: square.url,
+			illustrationCard: drafts.card.url,
+			illustrationSquare: drafts.square.url,
 			renderingOptions,
 		});
 		if (!response.ok) {
@@ -111,71 +124,43 @@ export const ImagesPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 		setSaved(response.data);
 		return true;
 	};
+
 	return (
 		<StandPanel
 			name="Images"
 			id="images"
 			subgrid
 			onSave={save}
+			canSave={images.every(({ shape }) => drafts[shape].canSave)}
 			onEdit={() => {
-				mainBanner.start(current.mainBanner);
-				mainBannerMobile.start(current.mainBannerMobile);
-				card.start(current.card);
-				square.start(current.square);
-			}}
-			onCancel={() => {
-				drafts.forEach((draft) => {
-					draft.reset();
-				});
+				for (const { shape } of images) {
+					drafts[shape].start(urls[shape]);
+				}
 			}}
 		>
 			{(isEditing) =>
 				isEditing ? (
 					<div css={editFormStyles}>
-						<ImageInput
-							label="Main banner graphic"
-							shape="banner"
-							draft={mainBanner}
-						/>
-						<ImageInput
-							label="Main banner graphic (mobile)"
-							shape="mobileBanner"
-							draft={mainBannerMobile}
-						/>
-						<ImageInput
-							label="Newsletter graphic (5:3)"
-							shape="card"
-							draft={card}
-						/>
-						<ImageInput
-							label="Newsletter square (1:1)"
-							shape="square"
-							draft={square}
-						/>
+						{images.map(({ shape, label }) => (
+							<ImageInput
+								key={shape}
+								label={label}
+								shape={shape}
+								draft={drafts[shape]}
+							/>
+						))}
 						<ImageSizeGuidance />
 					</div>
 				) : (
 					<dl css={listStyles}>
-						<ImageValue
-							label="Main banner graphic"
-							url={current.mainBanner}
-							shape="banner"
-						/>
-						<ImageValue
-							label="Main banner graphic (mobile)"
-							url={current.mainBannerMobile}
-							shape="mobileBanner"
-						/>
-						<ImageValue
-							label="Newsletter graphic (5:3)"
-							url={current.card}
-							shape="card"
-						/>
-						<ImageValue
-							label="Newsletter square (1:1)"
-							url={current.square}
-							shape="square"
-						/>
+						{images.map(({ shape, label }) => (
+							<ImageValue
+								key={shape}
+								label={label}
+								shape={shape}
+								url={urls[shape]}
+							/>
+						))}
 					</dl>
 				)
 			}
