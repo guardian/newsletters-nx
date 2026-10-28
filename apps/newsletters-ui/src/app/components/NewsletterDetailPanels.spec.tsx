@@ -54,6 +54,207 @@ const valueFor = (label: string) => {
 	return value?.textContent;
 };
 
+// Queries scoped to the panel whose heading is `name`.
+const panel = (name: string) => {
+	const section = screen
+		.getByRole('heading', { name, level: 3 })
+		.closest('section');
+	if (!section) {
+		throw new Error(`Expected the ${name} panel to exist`);
+	}
+	return within(section);
+};
+
+const imageLabels = [
+	'Main banner graphic',
+	'Main banner graphic (mobile)',
+	'Newsletter graphic (5:3)',
+	'Newsletter square (1:1)',
+];
+
+const imageUrls = {
+	mainBanner: 'https://uploads.guim.co.uk/2025/06/30/Business.jpg',
+	mainBannerMobile: 'https://uploads.guim.co.uk/2025/06/30/Business_mobile.jpg',
+	card: 'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
+	square: 'https://uploads.guim.co.uk/2025/06/30/Business_1-1.jpg',
+};
+
+const withImages = () =>
+	newsletter({
+		illustrationCard: imageUrls.card,
+		illustrationSquare: imageUrls.square,
+		renderingOptions: {
+			mainBannerUrl: imageUrls.mainBanner,
+			mainBannerMobileUrl: imageUrls.mainBannerMobile,
+			displayDate: true,
+		} as NewsletterData['renderingOptions'],
+	});
+
+const imageInput = (name: string) =>
+	panel('Images').getByRole('textbox', { name });
+
+// jsdom never loads images, so tell the edit form the preview loaded or failed.
+// Previews are hidden until loaded, so find them by alt text rather than role.
+const reportImage = (label: string, outcome: 'load' | 'error') => {
+	const img = panel('Images').getByAltText(`${label} thumbnail`);
+	if (outcome === 'load') {
+		fireEvent.load(img);
+	} else {
+		fireEvent.error(img);
+	}
+};
+
+describe('ImagesPanel editing', () => {
+	beforeEach(() => {
+		vi.mocked(usePermissions).mockReturnValue({
+			editEverything: true,
+			useJsonEditor: false,
+		});
+	});
+
+	const startEditing = () => {
+		fireEvent.click(panel('Images').getByRole('button', { name: 'Edit' }));
+	};
+
+	it('shows an input for each image, in order, prefilled with the current URLs', () => {
+		render(<NewsletterDetailPanels newsletter={withImages()} />);
+		startEditing();
+
+		const inputs = panel('Images').getAllByRole('textbox');
+		expect(inputs.map((input) => input.getAttribute('aria-label'))).toEqual(
+			imageLabels,
+		);
+		expect(inputs.map((input) => (input as HTMLInputElement).value)).toEqual([
+			imageUrls.mainBanner,
+			imageUrls.mainBannerMobile,
+			imageUrls.card,
+			imageUrls.square,
+		]);
+		for (const input of inputs) {
+			expect(input.getAttribute('placeholder')).toBe('Paste image URL');
+		}
+	});
+
+	it('shows the image size guidance with a link to the image service docs', () => {
+		render(<NewsletterDetailPanels newsletter={withImages()} />);
+		startEditing();
+
+		const note = panel('Images').getByRole('note');
+		expect(note.querySelectorAll('p')).toHaveLength(3);
+		expect(
+			within(note)
+				.getByRole('link', {
+					name: 'this documentation from our image service',
+				})
+				.getAttribute('href'),
+		).toBe(
+			'https://www.fastly.com/documentation/reference/io/#limitations-and-constraints',
+		);
+	});
+
+	it('does not save when an image fails to load', async () => {
+		render(<NewsletterDetailPanels newsletter={withImages()} />);
+		startEditing();
+		reportImage('Main banner graphic', 'load');
+		reportImage('Main banner graphic (mobile)', 'load');
+		reportImage('Newsletter graphic (5:3)', 'load');
+		reportImage('Newsletter square (1:1)', 'error');
+
+		fireEvent.click(
+			panel('Images').getByRole('button', { name: 'Save changes' }),
+		);
+
+		const alert = await panel('Images').findByRole('alert');
+		expect(alert.textContent).toBe("Image URL can't be loaded");
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+		expect(panel('Images').getByText('Editing')).toBeTruthy();
+	});
+
+	it('does not save while an image is still being checked', async () => {
+		render(<NewsletterDetailPanels newsletter={withImages()} />);
+		startEditing();
+
+		fireEvent.click(
+			panel('Images').getByRole('button', { name: 'Save changes' }),
+		);
+
+		await panel('Images').findByRole('alert');
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+	});
+
+	it('saves the image URLs, keeps other rendering options and shows the response', async () => {
+		const original = withImages();
+		const newSquare = 'https://uploads.guim.co.uk/2025/07/01/New_1-1.jpg';
+		vi.mocked(requestNewsletterEdit).mockResolvedValue({
+			ok: true,
+			data: { ...original, illustrationSquare: newSquare },
+		});
+		render(<NewsletterDetailPanels newsletter={original} />);
+		startEditing();
+		fireEvent.change(imageInput('Newsletter square (1:1)'), {
+			target: { value: newSquare },
+		});
+		for (const label of imageLabels) {
+			reportImage(label, 'load');
+		}
+
+		fireEvent.click(
+			panel('Images').getByRole('button', { name: 'Save changes' }),
+		);
+		await panel('Images').findByRole('button', { name: 'Edit' });
+
+		expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
+			illustrationCard: imageUrls.card,
+			illustrationSquare: newSquare,
+			renderingOptions: {
+				mainBannerUrl: imageUrls.mainBanner,
+				mainBannerMobileUrl: imageUrls.mainBannerMobile,
+				displayDate: true,
+			},
+		});
+		expect(valueFor('Newsletter square (1:1)')).toBe(newSquare);
+	});
+
+	it('unsets cleared images and removes cleared banners from the rendering options', async () => {
+		const original = withImages();
+		vi.mocked(requestNewsletterEdit).mockResolvedValue({
+			ok: true,
+			data: original,
+		});
+		render(<NewsletterDetailPanels newsletter={original} />);
+		startEditing();
+		for (const label of imageLabels) {
+			fireEvent.change(imageInput(label), { target: { value: '' } });
+		}
+
+		fireEvent.click(
+			panel('Images').getByRole('button', { name: 'Save changes' }),
+		);
+		await panel('Images').findByRole('button', { name: 'Edit' });
+
+		expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
+			illustrationCard: undefined,
+			illustrationSquare: undefined,
+			renderingOptions: { displayDate: true },
+		});
+	});
+
+	it('discards cancelled changes and starts the next edit from the saved values', () => {
+		render(<NewsletterDetailPanels newsletter={withImages()} />);
+		startEditing();
+		fireEvent.change(imageInput('Main banner graphic'), {
+			target: { value: 'https://example.com/discard-me.jpg' },
+		});
+
+		fireEvent.click(panel('Images').getByRole('button', { name: 'Cancel' }));
+		expect(valueFor('Main banner graphic')).toBe(imageUrls.mainBanner);
+
+		startEditing();
+		expect(imageInput('Main banner graphic').value).toBe(imageUrls.mainBanner);
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+	});
+});
+
 describe('NewsletterDetailPanels', () => {
 	it('uses single-line inputs for Headline and Success message and textareas for other Copy fields', () => {
 		vi.mocked(usePermissions).mockReturnValue({
@@ -61,7 +262,7 @@ describe('NewsletterDetailPanels', () => {
 			useJsonEditor: false,
 		});
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
-		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.click(panel('Copy').getByRole('button', { name: 'Edit' }));
 		for (const name of ['Headline', 'Success message']) {
 			expect(screen.getByRole('textbox', { name }).tagName).toBe('INPUT');
 		}
@@ -87,7 +288,7 @@ describe('NewsletterDetailPanels', () => {
 				})}
 			/>,
 		);
-		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.click(panel('Copy').getByRole('button', { name: 'Edit' }));
 		fireEvent.change(
 			screen.getByRole('textbox', { name: 'Sign-up description' }),
 			{
@@ -120,12 +321,12 @@ describe('NewsletterDetailPanels', () => {
 				data: { ...original, [key]: undefined },
 			});
 			render(<NewsletterDetailPanels newsletter={original} />);
-			fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+			fireEvent.click(panel('Copy').getByRole('button', { name: 'Edit' }));
 			fireEvent.change(screen.getByRole('textbox', { name: label }), {
 				target: { value: '' },
 			});
 			fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
-			await screen.findByRole('button', { name: 'Edit' });
+			await panel('Copy').findByRole('button', { name: 'Edit' });
 			expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
 				signUpHeadline: undefined,
 				signUpDescription: 'Description',
@@ -152,12 +353,12 @@ describe('NewsletterDetailPanels', () => {
 			data: { ...original, signUpHeadline: 'Updated headline' },
 		});
 		render(<NewsletterDetailPanels newsletter={original} />);
-		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.click(panel('Copy').getByRole('button', { name: 'Edit' }));
 		fireEvent.change(screen.getByRole('textbox', { name: 'Headline' }), {
 			target: { value: 'Updated headline' },
 		});
 		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
-		await screen.findByRole('button', { name: 'Edit' });
+		await panel('Copy').findByRole('button', { name: 'Edit' });
 		expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
 			signUpHeadline: 'Updated headline',
 			signUpDescription: 'Description',
@@ -178,13 +379,13 @@ describe('NewsletterDetailPanels', () => {
 				newsletter={newsletter({ signUpHeadline: 'Original' })}
 			/>,
 		);
-		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.click(panel('Copy').getByRole('button', { name: 'Edit' }));
 		fireEvent.change(screen.getByRole('textbox', { name: 'Headline' }), {
 			target: { value: 'Discard me' },
 		});
 		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 		expect(valueFor('Headline')).toBe('Original');
-		fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+		fireEvent.click(panel('Copy').getByRole('button', { name: 'Edit' }));
 		expect(screen.getByRole('textbox', { name: 'Headline' }).value).toBe(
 			'Original',
 		);
@@ -216,7 +417,7 @@ describe('NewsletterDetailPanels', () => {
 					})}
 				/>,
 			);
-			fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+			fireEvent.click(panel('Copy').getByRole('button', { name: 'Edit' }));
 			fireEvent.change(screen.getByRole('textbox', { name: 'Headline' }), {
 				target: { value: 'Keep this' },
 			});

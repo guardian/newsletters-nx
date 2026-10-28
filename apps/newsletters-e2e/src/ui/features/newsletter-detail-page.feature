@@ -135,6 +135,27 @@ Feature: Launched newsletter: open it and find my way around
 				| Success message        | Not set |
 				| Highlight card message | Not set |
 
+	Rule: Editors can edit and save Images
+
+		Scenario: A saved image survives a reload
+			Given a launched newsletter "Afternoon update" with all four images
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Images panel
+			And the editor sets "Newsletter square (1:1)" to "https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg"
+			And the editor saves Images
+			And the editor reloads the newsletter detail page
+			Then the "Images" panel shows:
+				| label                   | value                                                  |
+				| Newsletter square (1:1) | https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg |
+
+		Scenario: An address that isn't an image can't be saved
+			Given a launched newsletter "Afternoon update" with all four images
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Images panel
+			And the editor sets "Newsletter square (1:1)" to "not a url"
+			And the editor tries to save Images
+			Then the Images panel shows the error "Image URL can't be loaded"
+
 	Rule: Editors can edit and save Copy
 
 		Scenario: Saved Copy survives a reload

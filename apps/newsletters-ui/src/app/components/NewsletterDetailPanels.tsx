@@ -1,11 +1,5 @@
 import { css } from '@emotion/react';
-import {
-	baseSpacing,
-	semanticColors,
-	semanticRadius,
-	semanticSpacing,
-} from '@guardian/stand';
-import { Icon } from '@guardian/stand/Icon';
+import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
@@ -16,6 +10,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { humanize } from '../lib/format';
 import { CopyPanel } from './CopyPanel';
+import { ImagesPanel } from './ImagesPanel';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
@@ -62,32 +57,6 @@ const subheadingStyles = css`
 	margin: 0;
 `;
 
-const imageRowStyles = css`
-	display: flex;
-	align-items: center;
-	gap: ${semanticSpacing.stackSm};
-`;
-/** Images and their empty boxes are shown at the size from the design */
-const imageBoxStyles = (width: number, height: number) => css`
-	flex: none;
-	width: ${width}px;
-	height: ${height}px;
-	border-radius: ${semanticRadius.cornerSm};
-	object-fit: contain;
-	object-position: left;
-`;
-const notSetStyles = css`
-	color: ${semanticColors.text.weak};
-`;
-const noImageStyles = css`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	background: ${semanticColors.fill.neutralWeak};
-	color: ${semanticColors.text.weak};
-	font-size: 10px;
-`;
 const hrStyles = css`
 	height: 1px;
 	border: 1px solid ${semanticColors.border.weak};
@@ -113,52 +82,6 @@ const fieldListStyles = css`
 	list-style: none;
 `;
 
-const ImageField = ({
-	label,
-	url,
-	width,
-	height,
-}: {
-	label: string;
-	url?: string;
-	width: number;
-	height: number;
-}) => (
-	<Field label={label}>
-		<span css={imageRowStyles}>
-			{url ? (
-				<>
-					<img
-						src={url}
-						alt={`${label} thumbnail`}
-						css={imageBoxStyles(width, height)}
-					/>
-					<a href={url} target="_blank" rel="noreferrer">
-						{url}
-					</a>
-				</>
-			) : (
-				<>
-					<span
-						aria-hidden
-						css={[imageBoxStyles(width, height), noImageStyles]}
-					>
-						<Icon symbol="image" size="xs" />
-						No image
-					</span>
-					<Typography
-						element="span"
-						variant="bodyXs"
-						cssOverrides={notSetStyles}
-					>
-						Not set
-					</Typography>
-				</>
-			)}
-		</span>
-	</Field>
-);
-
 export const NewsletterDetailPanels = ({
 	newsletter,
 }: {
@@ -180,35 +103,7 @@ export const NewsletterDetailPanels = ({
 				<Field label="MMA group">{newsletter.group}</Field>
 			</dl>
 		</StandPanel>
-		<StandPanel name="Images" id="images" subgrid>
-			<dl css={listStyles}>
-				<ImageField
-					label="Main banner graphic"
-					url={newsletter.renderingOptions?.mainBannerUrl}
-					width={285}
-					height={50}
-				/>
-				<ImageField
-					label="Main banner graphic (mobile)"
-					url={newsletter.renderingOptions?.mainBannerMobileUrl}
-					width={167}
-					height={50}
-				/>
-				<ImageField
-					label="Newsletter graphic (5:3)"
-					url={newsletter.illustrationCard}
-					width={80}
-					height={55}
-				/>
-				<ImageField
-					label="Newsletter square (1:1)"
-					url={newsletter.illustrationSquare}
-					width={55}
-					height={55}
-				/>
-			</dl>
-		</StandPanel>
-
+		<ImagesPanel key={newsletter.listId} newsletter={newsletter} />
 		<CopyPanel key={newsletter.listId} newsletter={newsletter} />
 		<StandPanel name="Sign-up page and tags" id="sign-up-page-and-tags" subgrid>
 			<div css={sectionStyles}>

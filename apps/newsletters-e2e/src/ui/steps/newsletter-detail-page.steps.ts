@@ -521,3 +521,45 @@ Then(
 		}
 	},
 );
+
+When('the editor edits the Images panel', async ({ page }) => {
+	await panelByName(page, 'Images')
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When(
+	'the editor sets {string} to {string}',
+	async ({ page }, label: string, url: string) => {
+		await panelByName(page, 'Images')
+			.getByRole('textbox', { name: label, exact: true })
+			.fill(url);
+	},
+);
+
+When('the editor saves Images', async ({ page }) => {
+	const panel = panelByName(page, 'Images');
+	// Saving waits until every image has been checked
+	await expect(panel.getByText('Checking image…')).toHaveCount(0);
+	await panel
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+When('the editor tries to save Images', async ({ page }) => {
+	await panelByName(page, 'Images')
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+});
+
+Then(
+	'the Images panel shows the error {string}',
+	async ({ page }, message: string) => {
+		await expect(panelByName(page, 'Images').getByRole('alert')).toHaveText(
+			message,
+		);
+	},
+);
