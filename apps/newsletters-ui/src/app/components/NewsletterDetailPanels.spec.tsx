@@ -382,35 +382,6 @@ describe('NewsletterDetailPanels', () => {
 		expect(valueFor('Newsletter square (1:1)')).toBe('Not set');
 	});
 
-	it('shows each image, or an empty box, at its size from the design', () => {
-		render(
-			<NewsletterDetailPanels
-				newsletter={newsletter({
-					illustrationCard:
-						'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
-					renderingOptions: {
-						mainBannerUrl: 'https://uploads.guim.co.uk/2025/06/30/Business.jpg',
-					},
-				})}
-			/>,
-		);
-		const shapeIn = (label: string) =>
-			screen
-				.getByRole('group', { name: label })
-				.querySelector('[data-shape]')
-				?.getAttribute('data-shape');
-
-		expect(shapeIn('Main banner graphic')).toBe('banner');
-		expect(shapeIn('Main banner graphic (mobile)')).toBe('mobileBanner');
-		expect(shapeIn('Newsletter graphic (5:3)')).toBe('card');
-		expect(shapeIn('Newsletter square (1:1)')).toBe('square');
-		expect(
-			screen
-				.getAllByTestId('image-placeholder')
-				.map((box) => box.getAttribute('data-shape')),
-		).toEqual(['mobileBanner', 'square']);
-	});
-
 	it('shows the sign-up page and tags from the newsletter', () => {
 		render(
 			<NewsletterDetailPanels

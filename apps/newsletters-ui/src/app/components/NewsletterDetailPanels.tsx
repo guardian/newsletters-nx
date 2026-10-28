@@ -1,5 +1,10 @@
 import { css } from '@emotion/react';
-import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
+import {
+	baseSpacing,
+	semanticColors,
+	semanticRadius,
+	semanticSpacing,
+} from '@guardian/stand';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
@@ -10,11 +15,6 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { humanize } from '../lib/format';
 import { CopyPanel } from './CopyPanel';
-import {
-	ImagePlaceholder,
-	ImagePreview,
-	type ImageShape,
-} from './ImagePreview';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
@@ -65,10 +65,30 @@ const imageRowStyles = css`
 	display: flex;
 	align-items: center;
 	gap: ${semanticSpacing.stackSm};
-	min-width: 0;
+`;
+/** Images and their empty boxes are shown at the size from the design */
+const imageBoxStyles = (width: number, height: number) => css`
+	flex: none;
+	width: ${width}px;
+	height: ${height}px;
+	border-radius: ${semanticRadius.cornerSm};
+	object-fit: contain;
+	object-position: left;
 `;
 const notSetStyles = css`
 	color: ${semanticColors.text.weak};
+`;
+const noImageStyles = css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: ${semanticColors.fill.neutralWeak};
+	color: ${semanticColors.text.weak};
+	font-size: 10px;
+	&::after {
+		content: 'No image';
+	}
 `;
 const hrStyles = css`
 	height: 1px;
@@ -95,28 +115,41 @@ const fieldListStyles = css`
 	list-style: none;
 `;
 
-/** The image at its design size and a link to it, or a "No image" box */
 const ImageField = ({
 	label,
 	url,
-	shape,
+	width,
+	height,
 }: {
 	label: string;
 	url?: string;
-	shape: ImageShape;
+	width: number;
+	height: number;
 }) => (
 	<Field label={label}>
 		<span css={imageRowStyles}>
 			{url ? (
 				<>
-					<ImagePreview src={url} alt={`${label} thumbnail`} shape={shape} />
+					<img
+						src={url}
+						alt={`${label} thumbnail`}
+						css={imageBoxStyles(width, height)}
+					/>
 					<a href={url} target="_blank" rel="noreferrer">
 						{url}
 					</a>
 				</>
 			) : (
 				<>
-					<ImagePlaceholder shape={shape} />
+					{/* "No image" comes from CSS so it isn't read out or counted as text */}
+					<span
+						aria-hidden
+						css={[imageBoxStyles(width, height), noImageStyles]}
+					>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+							<path d="M5 21q-.825 0-1.413-.587T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21H5Zm1-4h12l-3.75-5l-3 4L9 13l-3 4Z" />
+						</svg>
+					</span>
 					<Typography
 						element="span"
 						variant="bodyXs"
@@ -156,22 +189,26 @@ export const NewsletterDetailPanels = ({
 				<ImageField
 					label="Main banner graphic"
 					url={newsletter.renderingOptions?.mainBannerUrl}
-					shape="banner"
+					width={285}
+					height={50}
 				/>
 				<ImageField
 					label="Main banner graphic (mobile)"
 					url={newsletter.renderingOptions?.mainBannerMobileUrl}
-					shape="mobileBanner"
+					width={167}
+					height={50}
 				/>
 				<ImageField
 					label="Newsletter graphic (5:3)"
 					url={newsletter.illustrationCard}
-					shape="card"
+					width={80}
+					height={55}
 				/>
 				<ImageField
 					label="Newsletter square (1:1)"
 					url={newsletter.illustrationSquare}
-					shape="square"
+					width={55}
+					height={55}
 				/>
 			</dl>
 		</StandPanel>
