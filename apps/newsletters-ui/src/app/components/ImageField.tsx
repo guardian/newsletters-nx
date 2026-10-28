@@ -9,6 +9,7 @@ import { Icon } from '@guardian/stand/Icon';
 import { InlineMessage } from '@guardian/stand/InlineMessage';
 import { TextInput } from '@guardian/stand/TextInput';
 import { Typography } from '@guardian/stand/Typography';
+import { until } from '@guardian/stand/utils';
 import { useState } from 'react';
 import { z } from 'zod';
 import { Field } from './NewsletterDetailFields';
@@ -37,7 +38,18 @@ const spinnerStyles = css`
 const imageRowStyles = css`
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: ${semanticSpacing.stackSm};
+`;
+
+/** The link or "Not set" beside a read-only image, which wraps below it on small screens */
+const imageTextStyles = css`
+	flex: 1 1 6rem;
+	min-width: 0;
+
+	${until.md} {
+		flex-basis: 100%;
+	}
 `;
 
 /** Image sizes from the design */
@@ -61,6 +73,7 @@ const imageBoxStyles = (shape: ImageShape) => css`
 `;
 
 const notSetStyles = css`
+	${imageTextStyles};
 	color: ${semanticColors.text.weak};
 `;
 
@@ -182,12 +195,9 @@ export const ImageValue = ({
 		<span css={imageRowStyles}>
 			{url ? (
 				<>
-					<img
-						src={url}
-						alt={`${label} thumbnail`}
-						css={imageBoxStyles(shape)}
-					/>
-					<a href={url} target="_blank" rel="noreferrer">
+					{/* Decorative: the link beside it gives the address */}
+					<img src={url} alt="" css={imageBoxStyles(shape)} />
+					<a href={url} target="_blank" rel="noreferrer" css={imageTextStyles}>
 						{url}
 					</a>
 				</>

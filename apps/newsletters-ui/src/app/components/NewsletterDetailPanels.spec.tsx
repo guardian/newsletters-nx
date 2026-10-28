@@ -46,6 +46,7 @@ const newsletter = (overrides: Partial<NewsletterData> = {}) =>
 
 /** The text of a field's value, ignoring decorative (aria-hidden) content such as icons */
 const valueFor = (label: string) => {
+	// Strip the aria-hidden content from a copy, not from the page itself
 	const value = screen
 		.getByText(label, { exact: true, selector: 'dt' })
 		.nextElementSibling?.cloneNode(true) as Element | undefined;
@@ -562,8 +563,9 @@ describe('NewsletterDetailPanels', () => {
 		);
 		expect(
 			screen
-				.getByRole('img', { name: 'Main banner graphic thumbnail' })
-				.getAttribute('src'),
+				.getByRole('group', { name: 'Main banner graphic' })
+				.querySelector('img')
+				?.getAttribute('src'),
 		).toBe('https://uploads.guim.co.uk/2025/06/30/Business.jpg');
 		expect(valueFor('Main banner graphic (mobile)')).toBe('Not set');
 		expect(valueFor('Newsletter graphic (5:3)')).toBe(
