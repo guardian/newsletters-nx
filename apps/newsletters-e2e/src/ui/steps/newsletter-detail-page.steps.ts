@@ -351,7 +351,7 @@ Then(
 			if (label === undefined || value === undefined) {
 				throw new Error('Panel table must have "label" and "value" columns');
 			}
-			await expect(definitionForLabel(panel, label)).toHaveText(value);
+			await expect(definitionForLabel(panel, label)).toContainText(value);
 		}
 	},
 );
@@ -465,9 +465,8 @@ Then(
 	'the {string} panel shows a thumbnail for {string}',
 	async ({ page }, panelName: string, label: string) => {
 		const panel = panelByName(page, panelName);
-		await expect(
-			definitionForLabel(panel, label).getByRole('img'),
-		).toBeVisible();
+		// The image is decorative (alt=""), so it has no 'img' role
+		await expect(definitionForLabel(panel, label).locator('img')).toBeVisible();
 	},
 );
 

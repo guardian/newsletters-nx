@@ -1,5 +1,11 @@
 import { css } from '@emotion/react';
-import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
+import {
+	baseSpacing,
+	semanticColors,
+	semanticRadius,
+	semanticSpacing,
+} from '@guardian/stand';
+import { Icon } from '@guardian/stand/Icon';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
@@ -59,14 +65,39 @@ const subheadingStyles = css`
 const imageRowStyles = css`
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: ${semanticSpacing.stackSm};
 `;
-const thumbnailStyles = css`
-	width: 96px;
-	height: auto;
-	max-height: 96px;
-	object-fit: contain;
+const imageTextStyles = css`
+	flex: 1 1 6rem;
+	min-width: 0;
+
+	${until.md} {
+		flex-basis: 100%;
+	}
+`;
+/** Images and their empty boxes are shown at the size from the design */
+const imageBoxStyles = (width: number, height: number) => css`
 	flex: none;
+	width: ${width}px;
+	max-width: 100%;
+	height: ${height}px;
+	border-radius: ${semanticRadius.cornerSm};
+	object-fit: contain;
+	object-position: left;
+`;
+const notSetStyles = css`
+	${imageTextStyles};
+	color: ${semanticColors.text.weak};
+`;
+const noImageStyles = css`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: ${semanticColors.fill.neutralWeak};
+	color: ${semanticColors.text.weak};
+	font-size: 10px;
 `;
 const hrStyles = css`
 	height: 1px;
@@ -93,16 +124,45 @@ const fieldListStyles = css`
 	list-style: none;
 `;
 
-const ImageField = ({ label, url }: { label: string; url?: string }) => (
+const ImageField = ({
+	label,
+	url,
+	width,
+	height,
+}: {
+	label: string;
+	url?: string;
+	width: number;
+	height: number;
+}) => (
 	<Field label={label}>
-		{url ? (
-			<span css={imageRowStyles}>
-				<img src={url} alt={`${label} thumbnail`} css={thumbnailStyles} />
-				<a href={url} target="_blank" rel="noreferrer">
-					{url}
-				</a>
-			</span>
-		) : undefined}
+		<span css={imageRowStyles}>
+			{url ? (
+				<>
+					<img src={url} alt="" css={imageBoxStyles(width, height)} />
+					<a href={url} target="_blank" rel="noreferrer" css={imageTextStyles}>
+						{url}
+					</a>
+				</>
+			) : (
+				<>
+					<span
+						aria-hidden
+						css={[imageBoxStyles(width, height), noImageStyles]}
+					>
+						<Icon symbol="image" size="xs" />
+						No image
+					</span>
+					<Typography
+						element="span"
+						variant="bodyXs"
+						cssOverrides={notSetStyles}
+					>
+						Not set
+					</Typography>
+				</>
+			)}
+		</span>
 	</Field>
 );
 
@@ -132,18 +192,26 @@ export const NewsletterDetailPanels = ({
 				<ImageField
 					label="Main banner graphic"
 					url={newsletter.renderingOptions?.mainBannerUrl}
+					width={285}
+					height={50}
 				/>
 				<ImageField
 					label="Main banner graphic (mobile)"
 					url={newsletter.renderingOptions?.mainBannerMobileUrl}
+					width={167}
+					height={50}
 				/>
 				<ImageField
 					label="Newsletter graphic (5:3)"
 					url={newsletter.illustrationCard}
+					width={80}
+					height={55}
 				/>
 				<ImageField
 					label="Newsletter square (1:1)"
 					url={newsletter.illustrationSquare}
+					width={55}
+					height={55}
 				/>
 			</dl>
 		</StandPanel>

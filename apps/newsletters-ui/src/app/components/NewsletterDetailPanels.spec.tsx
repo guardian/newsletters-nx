@@ -44,10 +44,15 @@ const newsletter = (overrides: Partial<NewsletterData> = {}) =>
 		...overrides,
 	}) as NewsletterData;
 
-// The text of the <dd> paired with the <dt> labelled `label`.
-const valueFor = (label: string) =>
-	screen.getByText(label, { exact: true, selector: 'dt' }).nextElementSibling
-		?.textContent;
+/** The text of a field's value, ignoring decorative (aria-hidden) content such as icons */
+const valueFor = (label: string) => {
+	// Strip the aria-hidden content from a copy, not from the page itself
+	const value = screen
+		.getByText(label, { exact: true, selector: 'dt' })
+		.nextElementSibling?.cloneNode(true) as Element | undefined;
+	value?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
+	return value?.textContent;
+};
 
 describe('NewsletterDetailPanels', () => {
 	it('uses single-line inputs for Headline and Success message and textareas for other Copy fields', () => {
@@ -372,8 +377,9 @@ describe('NewsletterDetailPanels', () => {
 		);
 		expect(
 			screen
-				.getByRole('img', { name: 'Main banner graphic thumbnail' })
-				.getAttribute('src'),
+				.getByRole('group', { name: 'Main banner graphic' })
+				.querySelector('img')
+				?.getAttribute('src'),
 		).toBe('https://uploads.guim.co.uk/2025/06/30/Business.jpg');
 		expect(valueFor('Main banner graphic (mobile)')).toBe('Not set');
 		expect(valueFor('Newsletter graphic (5:3)')).toBe(
