@@ -19,6 +19,7 @@ export const getUserEditSchema = (
 				renderingOptions: true,
 			tagCreationStatus: true,
 			seriesTag: true,
+			seriesTagDescription: true,
 			composerTag: true,
 			composerCampaignTag: true,
 			signupPageCreationStatus: true,

@@ -385,6 +385,60 @@ When('the editor edits the Copy panel', async ({ page }) => {
 		.click();
 });
 
+When('the editor edits the {string} panel', async ({ page }, name: string) => {
+	await panelByName(page, name)
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When(
+	'the editor fills in the {string} panel:',
+	async ({ page }, name: string, table: DataTable) => {
+		for (const { label, value } of table.hashes()) {
+			if (label === undefined || value === undefined) {
+				throw new Error('Panel table must have "label" and "value" columns');
+			}
+			await panelByName(page, name)
+				.getByRole('textbox', { name: label, exact: true })
+				.fill(value);
+		}
+	},
+);
+
+When(
+	'the editor selects {string} for {string} in the {string} panel',
+	async ({ page }, option: string, label: string, name: string) => {
+		await panelByName(page, name)
+			.getByRole('radiogroup', { name: label, exact: true })
+			.getByText(option, { exact: true })
+			.click();
+		await expect(
+			panelByName(page, name)
+				.getByRole('radiogroup', { name: label, exact: true })
+				.getByRole('radio', { name: option, exact: true }),
+		).toBeChecked();
+	},
+);
+
+When('the editor saves the {string} panel', async ({ page }, name: string) => {
+	const panel = panelByName(page, name);
+	await panel
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+When(
+	'the editor cancels editing the {string} panel',
+	async ({ page }, name: string) => {
+		await panelByName(page, name)
+			.getByRole('button', { name: 'Cancel', exact: true })
+			.click();
+	},
+);
+
 When('the editor fills in Copy:', async ({ page }, table: DataTable) => {
 	for (const { label, value } of table.hashes()) {
 		if (label === undefined || value === undefined) {
