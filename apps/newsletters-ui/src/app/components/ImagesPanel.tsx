@@ -4,6 +4,7 @@ import { Icon } from '@guardian/stand/Icon';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { defaultRenderingOptionsValues } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import type { ImageDraft, ImageShape } from './ImageField';
@@ -102,21 +103,24 @@ export const ImagesPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 
 	const save = async (): Promise<boolean | string> => {
 		// Cleared banners are removed rather than sent as null
-		const renderingOptions = { ...latest.renderingOptions } as NonNullable<
-			NewsletterData['renderingOptions']
-		>;
-		delete renderingOptions.mainBannerUrl;
-		delete renderingOptions.mainBannerMobileUrl;
-		if (drafts.banner.url) {
-			renderingOptions.mainBannerUrl = drafts.banner.url;
-		}
-		if (drafts.mobileBanner.url) {
-			renderingOptions.mainBannerMobileUrl = drafts.mobileBanner.url;
+		const renderingOptions =
+			latest.renderingOptions || drafts.banner.url || drafts.mobileBanner.url
+				? { ...(latest.renderingOptions ?? defaultRenderingOptionsValues) }
+				: undefined;
+		if (renderingOptions) {
+			delete renderingOptions.mainBannerUrl;
+			delete renderingOptions.mainBannerMobileUrl;
+			if (drafts.banner.url) {
+				renderingOptions.mainBannerUrl = drafts.banner.url;
+			}
+			if (drafts.mobileBanner.url) {
+				renderingOptions.mainBannerMobileUrl = drafts.mobileBanner.url;
+			}
 		}
 		const response = await requestNewsletterEdit(newsletter.listId, {
 			illustrationCard: drafts.card.url,
 			illustrationSquare: drafts.square.url,
-			renderingOptions,
+			...(renderingOptions ? { renderingOptions } : {}),
 		});
 		if (!response.ok) {
 			return response.message ?? false;

@@ -1,5 +1,9 @@
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
+	defaultRenderingOptionsValues,
+	isPartialNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
+import {
 	cleanup,
 	fireEvent,
 	render,
@@ -222,6 +226,112 @@ describe('ImagesPanel editing', () => {
 		expect(valueFor('Newsletter square (1:1)')).toBe(newSquare);
 	});
 
+	it.each([
+		['illustrationCard', 'Newsletter graphic (5:3)', imageUrls.card],
+		['illustrationSquare', 'Newsletter square (1:1)', imageUrls.square],
+	] as const)(
+		'saves %s without creating rendering options',
+		async (key, label, url) => {
+			const original = newsletter({ category: 'fronts-based' });
+			vi.mocked(requestNewsletterEdit).mockResolvedValue({
+				ok: true,
+				total: 1,
+				data: { ...original, [key]: url },
+			});
+			render(<NewsletterDetailPanels newsletter={original} />);
+			startEditing('Images');
+			fireEvent.change(imageInput(label), { target: { value: url } });
+			reportImage(label, 'load');
+			fireEvent.click(saveButton());
+			await panel('Images').findByRole('button', { name: 'Edit' });
+			expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
+				illustrationCard: undefined,
+				illustrationSquare: undefined,
+				[key]: url,
+			});
+			const update = vi.mocked(requestNewsletterEdit).mock.calls[0]?.[1];
+			expect(update).not.toHaveProperty('renderingOptions');
+			expect(isPartialNewsletterData(update)).toBe(true);
+			expect(valueFor(label)).toBe(url);
+		},
+	);
+	it.each([
+		['mainBannerUrl', 'Main banner graphic', imageUrls.mainBanner],
+		[
+			'mainBannerMobileUrl',
+			'Main banner graphic (mobile)',
+			imageUrls.mainBannerMobile,
+		],
+	] as const)(
+		'initializes valid rendering options when adding %s',
+		async (key, label, url) => {
+			const original = newsletter({ category: 'fronts-based' });
+			const renderingOptions = { ...defaultRenderingOptionsValues, [key]: url };
+			vi.mocked(requestNewsletterEdit).mockResolvedValue({
+				ok: true,
+				total: 1,
+				data: { ...original, renderingOptions },
+			});
+			render(<NewsletterDetailPanels newsletter={original} />);
+			startEditing('Images');
+			fireEvent.change(imageInput(label), { target: { value: url } });
+			reportImage(label, 'load');
+			fireEvent.click(saveButton());
+			await panel('Images').findByRole('button', { name: 'Edit' });
+			expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
+				illustrationCard: undefined,
+				illustrationSquare: undefined,
+				renderingOptions,
+			});
+			expect(
+				isPartialNewsletterData(
+					vi.mocked(requestNewsletterEdit).mock.calls[0]?.[1],
+				),
+			).toBe(true);
+			expect(valueFor(label)).toBe(url);
+		},
+	);
+	it('replaces both panels and resets their drafts when the newsletter changes', () => {
+		const original = withImages();
+		const next = newsletter({
+			listId: 456,
+			illustrationSquare: 'https://example.com/next-square.jpg',
+			signUpHeadline: 'Next newsletter headline',
+		});
+		const { rerender } = render(
+			<NewsletterDetailPanels newsletter={original} />,
+		);
+		startEditing('Images');
+		fireEvent.change(imageInput('Main banner graphic'), {
+			target: { value: 'https://example.com/discard.jpg' },
+		});
+		startEditing('Copy');
+		fireEvent.change(panel('Copy').getByRole('textbox', { name: 'Headline' }), {
+			target: { value: 'Discard this headline' },
+		});
+		rerender(<NewsletterDetailPanels newsletter={next} />);
+		for (const name of ['Images', 'Copy']) {
+			expect(screen.getAllByRole('heading', { name, level: 3 })).toHaveLength(
+				1,
+			);
+			expect(panel(name).queryAllByRole('textbox')).toHaveLength(0);
+			expect(panel(name).getByRole('button', { name: 'Edit' })).toBeTruthy();
+		}
+		expect(valueFor('Main banner graphic')).toBe('Not set');
+		expect(valueFor('Newsletter square (1:1)')).toBe(next.illustrationSquare);
+		expect(valueFor('Headline')).toBe(next.signUpHeadline);
+		startEditing('Images');
+		expect(imageInput('Main banner graphic').value).toBe('');
+		expect(imageInput('Newsletter square (1:1)').value).toBe(
+			next.illustrationSquare,
+		);
+		startEditing('Copy');
+		expect(
+			panel('Copy').getByRole<HTMLInputElement>('textbox', { name: 'Headline' })
+				.value,
+		).toBe(next.signUpHeadline);
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+	});
 	it('unsets cleared images and removes cleared banners from the rendering options', async () => {
 		const original = withImages();
 		vi.mocked(requestNewsletterEdit).mockResolvedValue({
