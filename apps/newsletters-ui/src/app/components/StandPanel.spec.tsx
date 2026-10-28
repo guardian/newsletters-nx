@@ -256,4 +256,37 @@ describe('StandPanel editing', () => {
 			expect(screen.getByRole('button', { name: 'Edit' })).toBeVisible(),
 		);
 	});
+
+	it('asks the browser to confirm leaving only while editing', async () => {
+		const unload = () => {
+			const event = new Event('beforeunload', { cancelable: true });
+			window.dispatchEvent(event);
+			return event.defaultPrevented;
+		};
+		render(<Editor save={() => true} />);
+		expect(unload()).toBe(false);
+
+		startEditing();
+		expect(unload()).toBe(true);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+		expect(unload()).toBe(false);
+
+		startEditing();
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		await waitFor(() =>
+			expect(screen.getByRole('button', { name: 'Edit' })).toBeVisible(),
+		);
+		expect(unload()).toBe(false);
+	});
+
+	it('stops asking to confirm leaving when an editing panel unmounts', () => {
+		const { unmount } = render(<Editor save={() => true} />);
+		startEditing();
+		unmount();
+
+		const event = new Event('beforeunload', { cancelable: true });
+		window.dispatchEvent(event);
+		expect(event.defaultPrevented).toBe(false);
+	});
 });

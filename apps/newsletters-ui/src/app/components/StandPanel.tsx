@@ -8,7 +8,7 @@ import {
 import { Button } from '@guardian/stand/Button';
 import { Typography } from '@guardian/stand/Typography';
 import type React from 'react';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { usePermissions } from '../hooks/user-hooks';
 import { shouldShowEditOptions } from '../services/authorisation';
 
@@ -151,6 +151,22 @@ const EditableStandPanel = ({
 			scrollToPanel();
 		}
 		wasEditing.current = isEditing;
+	}, [isEditing]);
+
+	// Browsers show their own confirmation; pages cannot customise its contents.
+	useEffect(() => {
+		if (!isEditing) {
+			return;
+		}
+		const warnAboutUnsavedEdits = (event: BeforeUnloadEvent) => {
+			event.preventDefault();
+			// Older browsers require returnValue to show the confirmation.
+			event.returnValue = '';
+		};
+		window.addEventListener('beforeunload', warnAboutUnsavedEdits);
+		return () => {
+			window.removeEventListener('beforeunload', warnAboutUnsavedEdits);
+		};
 	}, [isEditing]);
 
 	const save = async () => {
