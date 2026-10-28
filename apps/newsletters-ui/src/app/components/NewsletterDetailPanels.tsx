@@ -65,18 +65,29 @@ const subheadingStyles = css`
 const imageRowStyles = css`
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: ${semanticSpacing.stackSm};
+`;
+const imageTextStyles = css`
+	flex: 1 1 6rem;
+	min-width: 0;
+
+	${until.md} {
+		flex-basis: 100%;
+	}
 `;
 /** Images and their empty boxes are shown at the size from the design */
 const imageBoxStyles = (width: number, height: number) => css`
 	flex: none;
 	width: ${width}px;
+	max-width: 100%;
 	height: ${height}px;
 	border-radius: ${semanticRadius.cornerSm};
 	object-fit: contain;
 	object-position: left;
 `;
 const notSetStyles = css`
+	${imageTextStyles};
 	color: ${semanticColors.text.weak};
 `;
 const noImageStyles = css`
@@ -128,12 +139,8 @@ const ImageField = ({
 		<span css={imageRowStyles}>
 			{url ? (
 				<>
-					<img
-						src={url}
-						alt={`${label} thumbnail`}
-						css={imageBoxStyles(width, height)}
-					/>
-					<a href={url} target="_blank" rel="noreferrer">
+					<img src={url} alt="" css={imageBoxStyles(width, height)} />
+					<a href={url} target="_blank" rel="noreferrer" css={imageTextStyles}>
 						{url}
 					</a>
 				</>
