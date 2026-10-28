@@ -527,14 +527,16 @@ When('the editor edits the Images panel', async ({ page }) => {
 		.click();
 });
 
-When(
-	'the editor sets {string} to {string}',
-	async ({ page }, label: string, url: string) => {
+When('the editor fills in Images:', async ({ page }, table: DataTable) => {
+	for (const { label, value } of table.hashes()) {
+		if (label === undefined || value === undefined) {
+			throw new Error('Images table must have "label" and "value" columns');
+		}
 		await panelByName(page, 'Images')
 			.getByRole('textbox', { name: label, exact: true })
-			.fill(url);
-	},
-);
+			.fill(value);
+	}
+});
 
 When('the editor saves Images', async ({ page }) => {
 	const panel = panelByName(page, 'Images');
