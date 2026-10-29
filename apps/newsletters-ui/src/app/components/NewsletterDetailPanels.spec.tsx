@@ -164,12 +164,12 @@ describe('ImagesPanel editing', () => {
 		);
 	});
 
-	it('disables Save and shows the field error when an image fails to load', () => {
+	it('disables Save and shows the field error when a new image fails to load', () => {
 		render(<NewsletterDetailPanels newsletter={withImages()} />);
 		startEditing('Images');
-		reportImage('Main banner graphic', 'load');
-		reportImage('Main banner graphic (mobile)', 'load');
-		reportImage('Newsletter graphic (5:3)', 'load');
+		fireEvent.change(imageInput('Newsletter square (1:1)'), {
+			target: { value: 'https://example.com/broken.jpg' },
+		});
 		reportImage('Newsletter square (1:1)', 'error');
 
 		expect(
@@ -184,9 +184,12 @@ describe('ImagesPanel editing', () => {
 		expect(panel('Images').getByText('Editing')).toBeTruthy();
 	});
 
-	it('disables Save while an image is still being checked', () => {
+	it('disables Save while a new image is still being checked', () => {
 		render(<NewsletterDetailPanels newsletter={withImages()} />);
 		startEditing('Images');
+		fireEvent.change(imageInput('Newsletter square (1:1)'), {
+			target: { value: 'https://example.com/new.jpg' },
+		});
 
 		expect(panel('Images').getAllByText('Checking image…')).toHaveLength(
 			imageLabels.length,
