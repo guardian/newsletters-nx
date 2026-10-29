@@ -8,5 +8,8 @@
 		"serve": "vite serve",
 		"test": "vitest --watch=false --coverage.reportsDirectory=../../coverage/apps/newsletters-ui --passWithNoTests",
 		"lint": "eslint -c ./eslint.config.mjs ./src"
+	},
+	"devDependencies": {
+		"@testing-library/user-event": "^14.6.8"
 	}
 }
