@@ -14,7 +14,10 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { Field } from './NewsletterDetailFields';
 
-type LoadState = 'loading' | 'loaded' | 'error';
+/** What the browser reported when it tried to load an image */
+type LoadResult = 'loaded' | 'error';
+/** `empty` means there's no address, so nothing to check */
+type LoadState = 'empty' | 'loading' | LoadResult;
 
 /** Thumbnail sizes from the design */
 export type ImageShape = 'banner' | 'mobileBanner' | 'card' | 'square';
@@ -145,12 +148,12 @@ const statusStyles = css`
 export const useImageDraft = () => {
 	const [address, setAddress] = useState('');
 	const [initial, setInitial] = useState('');
-	const [result, setResult] = useState<{ url: string; state: LoadState }>();
+	const [result, setResult] = useState<{ url: string; state: LoadResult }>();
 
 	const url = address.trim();
 	const isValidUrl = urlSchema.safeParse(url).success;
 	const state: LoadState = !url
-		? 'loaded'
+		? 'empty'
 		: !isValidUrl
 			? 'error'
 			: result?.url === url
@@ -168,7 +171,7 @@ export const useImageDraft = () => {
 		 * unchanged address is already saved, so a broken one shouldn't stop
 		 * the editor saving fixes to other images.
 		 */
-		canSave: state === 'loaded' || !hasChanged,
+		canSave: state === 'empty' || state === 'loaded' || !hasChanged,
 		state,
 		isValidUrl,
 		/** Whether the address differs from the one editing started with */
@@ -179,7 +182,7 @@ export const useImageDraft = () => {
 			setResult(undefined);
 		},
 		change: setAddress,
-		reportLoad: (loadState: LoadState) => {
+		reportLoad: (loadState: LoadResult) => {
 			setResult({ url, state: loadState });
 		},
 	};
@@ -274,17 +277,16 @@ const Thumbnail = ({
 				/>
 			)}
 			{(!showImage || state !== 'loaded') && (
-				<Placeholder shape={shape} loading={!!url && state === 'loading'} />
+				<Placeholder shape={shape} loading={state === 'loading'} />
 			)}
 		</>
 	);
 };
 
 const ImageStatus = ({ draft }: { draft: ImageDraft }) => {
-	if (!draft.url) {
-		return null;
-	}
 	switch (draft.state) {
+		case 'empty':
+			return null;
 		case 'loading':
 			return (
 				<Typography element="span" variant="bodySm" cssOverrides={statusStyles}>
