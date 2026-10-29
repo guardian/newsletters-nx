@@ -210,6 +210,10 @@ export const IntegrationsPanel = ({
 	);
 };
 
+const LabelWithAsterisk = ({ label }: { label: string }) => {
+	return <span>{label} *</span>;
+};
+
 const EditIntegrations = ({
 	draft,
 	onChange,
@@ -243,6 +247,8 @@ const EditIntegrations = ({
 					<hr css={hrStyles} />
 				</header>
 				<RadioGroup
+					isRequired
+					renderLabel={(label) => <LabelWithAsterisk label={label} />}
 					css={fullWidthInputStyles}
 					orientation="horizontal"
 					label="Braze campaign creation status"
@@ -278,18 +284,24 @@ const EditIntegrations = ({
 					</Radio>
 				</RadioGroup>
 				<TextInput
+					isRequired
+					renderLabel={(label) => <LabelWithAsterisk label={label} />}
 					css={fullWidthInputStyles}
 					label="brazeNewsletterName"
 					value={draft.brazeNewsletterName ?? ''}
 					onChange={(value) => onChange({ brazeNewsletterName: value })}
 				/>
 				<TextInput
+					isRequired
+					renderLabel={(label) => <LabelWithAsterisk label={label} />}
 					css={fullWidthInputStyles}
 					label="brazeSubscribeAttributeName"
 					value={draft.brazeSubscribeAttributeName ?? ''}
 					onChange={(value) => onChange({ brazeSubscribeAttributeName: value })}
 				/>
 				<TextInput
+					isRequired
+					renderLabel={(label) => <LabelWithAsterisk label={label} />}
 					css={fullWidthInputStyles}
 					label="brazeSubscribeEventNamePrefix"
 					value={draft.brazeSubscribeEventNamePrefix ?? ''}
