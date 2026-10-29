@@ -10,11 +10,12 @@ import {
 	screen,
 	within,
 } from '@testing-library/react';
-import type { Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
 import { NewsletterDetailPanels } from './NewsletterDetailPanels';
+
+const scrollIntoView = vi.fn();
 
 afterEach(() => {
 	cleanup();
@@ -29,7 +30,7 @@ beforeEach(() => {
 	vi.resetAllMocks();
 	Object.defineProperty(Element.prototype, 'scrollIntoView', {
 		configurable: true,
-		value: vi.fn(),
+		value: scrollIntoView,
 	});
 });
 
@@ -337,13 +338,9 @@ describe('ImagesPanel editing', () => {
 	});
 });
 
-// The mock installed in beforeEach, read without referencing the method unbound
-const scrollIntoViewMock = () =>
-	(Element.prototype as { scrollIntoView: Mock }).scrollIntoView;
-
 describe('Jump to', () => {
 	afterEach(() => {
-		window.location.hash = '';
+		window.history.replaceState(null, '', '/');
 	});
 
 	it('links to every panel on the page', () => {
@@ -366,36 +363,36 @@ describe('Jump to', () => {
 	});
 
 	it('links stay on the current page rather than the base URL', () => {
-		window.history.pushState({}, '', '/newsletters/afternoon-update/details');
+		window.history.replaceState(
+			null,
+			'',
+			'/newsletters/afternoon-update/details',
+		);
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
 
 		expect(
 			screen.getByRole('link', { name: 'Attributes' }).getAttribute('href'),
 		).toBe('/newsletters/afternoon-update/details#attributes');
-		window.history.pushState({}, '', '/');
 	});
 
-	it('replaces the history entry and scrolls when a link is clicked', () => {
+	it('replaces the history entry, scrolls and moves focus when a link is clicked', () => {
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
 		const historyLength = window.history.length;
+		const integrations = document.getElementById('integrations');
 
 		fireEvent.click(screen.getByRole('link', { name: 'Integrations' }));
 
 		expect(window.location.hash).toBe('#integrations');
 		expect(window.history.length).toBe(historyLength);
-		expect(scrollIntoViewMock()).toHaveBeenCalledExactlyOnceWith({
-			block: 'start',
-		});
-		expect(scrollIntoViewMock().mock.contexts[0]).toBe(
-			document.getElementById('integrations'),
-		);
+		expect(scrollIntoView).toHaveBeenCalledExactlyOnceWith({ block: 'start' });
+		expect(scrollIntoView.mock.contexts[0]).toBe(integrations);
+		expect(document.activeElement).toBe(integrations);
 	});
 
 	it('scrolls to the panel named in the address when the page opens', () => {
-		window.location.hash = '#integrations';
+		window.history.replaceState(null, '', '/#integrations');
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
 
-		const scrollIntoView = scrollIntoViewMock();
 		expect(scrollIntoView).toHaveBeenCalledExactlyOnceWith({ block: 'start' });
 		expect(scrollIntoView.mock.contexts[0]).toBe(
 			document.getElementById('integrations'),
@@ -405,7 +402,7 @@ describe('Jump to', () => {
 	it('does not scroll when the address has no panel', () => {
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
 
-		expect(scrollIntoViewMock()).not.toHaveBeenCalled();
+		expect(scrollIntoView).not.toHaveBeenCalled();
 	});
 });
 
