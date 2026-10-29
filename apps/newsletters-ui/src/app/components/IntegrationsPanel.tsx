@@ -12,10 +12,8 @@ import {
 	brazeSubscribeEventName,
 	brazeUnsubscribeEventName,
 	newsletterDataSchema,
-	workflowStatusEnumSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
-import z from 'zod';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { StandPanel } from './StandPanel';
@@ -146,16 +144,11 @@ const validate = (draft: IntegrationsDraft): IntegrationsErrors => {
 
 	const result = validationSchema.safeParse(draft);
 
-	if (result.error) {
-		const errorTree = z.treeifyError(result.error);
-
-		for (const key in errorTree.properties) {
-			const prop =
-				errorTree.properties[key as keyof typeof errorTree.properties];
-
-			if (prop?.errors.length) {
-				errors[key as IntegrationKey] = prop.errors[0];
-			}
+	// Issues for list items (e.g. an alternate name) are keyed by their field
+	for (const issue of result.error?.issues ?? []) {
+		const key = issue.path[0] as IntegrationKey | undefined;
+		if (key !== undefined && errors[key] === undefined) {
+			errors[key] = issue.message;
 		}
 	}
 	return errors;
@@ -176,6 +169,7 @@ export const IntegrationsPanel = ({
 			draft.brazeSubscribeAttributeNameAlternate,
 		);
 		const parsed = integrationsSchema.safeParse({
+			brazeCampaignCreationStatus: draft.brazeCampaignCreationStatus,
 			brazeNewsletterName: draft.brazeNewsletterName?.trim() ?? '',
 			brazeSubscribeAttributeName:
 				draft.brazeSubscribeAttributeName?.trim() ?? '',

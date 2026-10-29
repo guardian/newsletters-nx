@@ -1,3 +1,4 @@
+import type { ApiResponse } from '@newsletters-nx/newsletters-data-client';
 import {
 	type NewsletterData,
 	type WorkflowStatus,
@@ -12,17 +13,28 @@ import {
 import '@testing-library/jest-dom/vitest';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
 import type { IntegrationKey } from './IntegrationsPanel';
 import { IntegrationsPanel } from './IntegrationsPanel';
 
 afterEach(() => {
 	cleanup();
+	// Scrolling is not supported by jsdom
+	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
 });
 
 vi.mock('../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
+vi.mock('../api-requests/request-newsletter-edit', () => ({
+	requestNewsletterEdit: vi.fn(),
+}));
 beforeEach(() => {
 	vi.resetAllMocks();
+	// Scrolling is not supported by jsdom
+	Object.defineProperty(Element.prototype, 'scrollIntoView', {
+		configurable: true,
+		value: vi.fn(),
+	});
 });
 
 /** The Integrations panel's section, found by its accessible name */
@@ -57,6 +69,19 @@ const valueFor = (label: string) => {
 	value?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
 	return value?.textContent;
 };
+
+/** A newsletter whose editable integration values all pass validation */
+const validIntegrations = {
+	brazeNewsletterName: 'Valid_Name',
+	brazeSubscribeAttributeName: 'Valid_Attribute',
+	brazeSubscribeEventNamePrefix: 'valid-prefix',
+	brazeSubscribeAttributeNameAlternate: ['Alternate_One'],
+} satisfies Partial<NewsletterData>;
+
+const underscoreCasedMessage =
+	'Must contain letters or numbers, connected by underscores';
+const kebabOrUnderscoreCasedMessage =
+	'Must contain numbers or lower-case letters only, separated by dashes or underscores';
 
 describe('IntegrationsPanel', () => {
 	describe('read-only', () => {
@@ -260,7 +285,80 @@ describe('IntegrationsPanel', () => {
 				useJsonEditor: false,
 			});
 		});
-		it('saves if all provided data is valid', () => {});
+		it('saves if all provided data is valid', async () => {
+			const user = userEvent.setup();
+			vi.mocked(requestNewsletterEdit).mockImplementation((_, changes) =>
+				Promise.resolve({
+					ok: true,
+					data: { ...newsletter(), ...changes },
+				} as ApiResponse<NewsletterData>),
+			);
+			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+
+			await user.click(await integrationsPanelEditButton());
+			await user.click(
+				await screen.findByRole('button', { name: 'Save changes' }),
+			);
+
+			expect(requestNewsletterEdit).toHaveBeenCalledWith(
+				123,
+				expect.objectContaining({
+					brazeNewsletterName: 'Valid_Name',
+					brazeSubscribeAttributeName: 'Valid_Attribute',
+					brazeSubscribeEventNamePrefix: 'valid-prefix',
+					brazeSubscribeAttributeNameAlternate: ['Alternate_One'],
+				}),
+			);
+			expect(
+				await within(await integrationsPanel()).findByRole('button', {
+					name: 'Edit',
+				}),
+			).toBeVisible();
+		});
+
+		it.each([
+			['brazeNewsletterName', 'not valid!', underscoreCasedMessage],
+			['brazeSubscribeAttributeName', 'not-valid', underscoreCasedMessage],
+			[
+				'brazeSubscribeEventNamePrefix',
+				'Not_Valid',
+				kebabOrUnderscoreCasedMessage,
+			],
+		] as Array<[IntegrationKey, string, string]>)(
+			"shows a validation error if %s does not match the required format ('%s')",
+			async (key, invalidValue, expectedMessage) => {
+				const user = userEvent.setup();
+				render(
+					<IntegrationsPanel newsletter={newsletter(validIntegrations)} />,
+				);
+
+				await user.click(await integrationsPanelEditButton());
+				const input = await screen.findByRole('textbox', {
+					name: new RegExp(`^${key}( \\*)?$`),
+				});
+				await user.clear(input);
+				await user.type(input, invalidValue);
+
+				expect(input).toBeInvalid();
+				expect(input).toHaveAccessibleDescription(expectedMessage);
+			},
+		);
+
+		it('shows a validation error if brazeSubscribeAttributeNameAlternate does not match the required format', async () => {
+			const user = userEvent.setup();
+			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+
+			await user.click(await integrationsPanelEditButton());
+			const [input] = await screen.findAllByRole('textbox', {
+				name: 'brazeSubscribeAttributeNameAlternate item',
+			});
+			await user.clear(input!);
+			await user.type(input!, 'not valid!');
+
+			expect(
+				within(await integrationsPanel()).getByText(underscoreCasedMessage),
+			).toBeVisible();
+		});
 
 		it.each([
 			['brazeNewsletterName', 'brazeNewsletterName'],
@@ -297,5 +395,5 @@ describe('IntegrationsPanel', () => {
 		);
 	});
 
-	it('returns input values if saving fails', () => {});
+	// it('returns input values if saving fails', () => {});
 });
