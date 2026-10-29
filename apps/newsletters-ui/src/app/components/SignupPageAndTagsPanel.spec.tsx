@@ -37,21 +37,31 @@ const fields = [
 	['composerCampaignTag', 'Campaign description'],
 ] as const;
 
+const scrollIntoView = vi.fn();
 beforeEach(() => {
 	vi.resetAllMocks();
+	vi.stubGlobal(
+		'fetch',
+		vi.fn().mockResolvedValue({
+			ok: true,
+			json: () => Promise.resolve({ ok: true, data: { valid: true } }),
+		}),
+	);
 	vi.mocked(usePermissions).mockReturnValue({
 		editEverything: true,
 		useJsonEditor: false,
 	});
+	scrollIntoView.mockClear();
 	Object.defineProperty(Element.prototype, 'scrollIntoView', {
 		configurable: true,
-		value: vi.fn(),
+		value: scrollIntoView,
 	});
 });
 afterEach(() => {
 	cleanup();
 	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
 	vi.restoreAllMocks();
+	vi.unstubAllGlobals();
 });
 
 const edit = () =>
@@ -104,6 +114,7 @@ describe('SignupPageAndTagsPanel', () => {
 				screen.getByRole('radiogroup', { name: 'Tag creation status' }),
 			).getByRole('radio', { name: 'Completed' }),
 		);
+		await screen.findByText('Valid path', {}, { timeout: 3000 });
 		save();
 		await screen.findByRole('button', { name: 'Edit' });
 		expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
@@ -172,6 +183,7 @@ describe('SignupPageAndTagsPanel', () => {
 		fireEvent.change(screen.getByRole('textbox', { name: 'Tag description' }), {
 			target: { value: 'Keep this' },
 		});
+		await screen.findByText('Valid path', {}, { timeout: 3000 });
 		save();
 		expect(await screen.findByRole('alert')).toHaveTextContent('Save rejected');
 		expect(screen.getAllByRole('alert')).toHaveLength(1);
@@ -180,6 +192,52 @@ describe('SignupPageAndTagsPanel', () => {
 		).toHaveValue('Keep this');
 		save();
 		await screen.findByRole('button', { name: 'Edit' });
+	});
+
+	it('blocks saving a non-empty path until validation passes', async () => {
+		render(<SignupPageAndTagsPanel newsletter={original} />);
+		edit();
+		save();
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+		expect(await screen.findByRole('alert')).toHaveTextContent(
+			'Unable to save changesPlease enter a valid path to sign-up page',
+		);
+		expect(scrollIntoView).not.toHaveBeenCalled();
+		expect(screen.getByText('Editing')).toBeVisible();
+		await screen.findByText('Valid path');
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+	});
+
+	it('hides the save error once the path passes and only shows it again on save', async () => {
+		const result = (valid: boolean) =>
+			({
+				ok: true,
+				json: () => Promise.resolve({ ok: true, data: { valid } }),
+			}) as Response;
+		vi.mocked(fetch).mockResolvedValue(result(false));
+		render(<SignupPageAndTagsPanel newsletter={original} />);
+		edit();
+		save();
+		await screen.findByText('Couldn’t find the path');
+		expect(screen.getByRole('alert')).toHaveTextContent(
+			'Please enter a valid path to sign-up page',
+		);
+		vi.mocked(fetch).mockResolvedValue(result(true));
+		const input = screen.getByRole('textbox', { name: 'Path to sign-up page' });
+		fireEvent.paste(input);
+		fireEvent.change(input, { target: { value: '/news/fixed' } });
+		await screen.findByText('Valid path');
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+		vi.mocked(fetch).mockResolvedValue(result(false));
+		fireEvent.paste(input);
+		fireEvent.change(input, { target: { value: '/news/broken' } });
+		await screen.findByText('Couldn’t find the path');
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+		save();
+		expect(await screen.findByRole('alert')).toBeVisible();
+		fireEvent.change(input, { target: { value: '' } });
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 	});
 
 	it('does not offer editing to view-only users', () => {
@@ -202,4 +260,121 @@ describe('SignupPageAndTagsPanel', () => {
 			schema.partial().parse({ seriesTagDescription: 'New description' }),
 		).toHaveProperty('seriesTagDescription', 'New description');
 	});
+});
+
+const panelData = (
+	overrides: Partial<NewsletterData> = {},
+): NewsletterData => ({
+	...original,
+	...overrides,
+});
+
+// The text of the <dd> paired with the <dt> labelled `label`.
+const valueFor = (label: string) =>
+	screen.getByText(label, { exact: true, selector: 'dt' }).nextElementSibling
+		?.textContent;
+
+describe('SignupPageAndTagsPanel read-only view', () => {
+	it.each([
+		['NOT_REQUESTED', 'Not requested'],
+		['REQUESTED', 'Requested'],
+		['COMPLETED', 'Completed'],
+	] as const)('shows creation status badges for %s', (status, label) => {
+		render(
+			<SignupPageAndTagsPanel
+				newsletter={panelData({
+					signupPageCreationStatus: status,
+					tagCreationStatus: status,
+				})}
+			/>,
+		);
+
+		expect(valueFor('Sign-up page creation status')).toBe(label);
+		expect(valueFor('Tag creation status')).toBe(label);
+	});
+
+	it('uses the independent creation statuses, not the newsletter status', () => {
+		render(
+			<SignupPageAndTagsPanel
+				newsletter={panelData({
+					status: 'live',
+					signupPageCreationStatus: 'COMPLETED',
+					tagCreationStatus: 'REQUESTED',
+				})}
+			/>,
+		);
+
+		expect(valueFor('Sign-up page creation status')).toBe('Completed');
+		expect(valueFor('Tag creation status')).toBe('Requested');
+	});
+
+	it('shows the sign-up page and tags from the newsletter', () => {
+		render(
+			<SignupPageAndTagsPanel
+				newsletter={panelData({
+					signupPage: '/global/sign-up-for-afternoon-update',
+					seriesTag: 'news/series/afternoon-update',
+					seriesTagDescription: 'The afternoon news briefing',
+					composerTag: 'Afternoon update (newsletter sign up)',
+					composerCampaignTag: 'Sign up for the afternoon briefing',
+				})}
+			/>,
+		);
+
+		const panel = screen
+			.getByRole('heading', { level: 3, name: 'Sign-up page and tags' })
+			.closest('section');
+		expect(panel).not.toBeNull();
+		expect(
+			within(panel!)
+				.getAllByRole('heading', { level: 4 })
+				.map((heading) => heading.textContent),
+		).toEqual(['Sign-up page', 'Tags']);
+		expect(valueFor('Path to sign-up page')).toBe(
+			'/global/sign-up-for-afternoon-update',
+		);
+		expect(
+			screen
+				.getByRole('link', {
+					name: '/global/sign-up-for-afternoon-update',
+				})
+				.getAttribute('href'),
+		).toBe('https://theguardian.com/global/sign-up-for-afternoon-update');
+		expect(valueFor('Series tag')).toBe('news/series/afternoon-update');
+		expect(valueFor('Tag description')).toBe('The afternoon news briefing');
+		expect(valueFor('Campaign tag')).toBe(
+			'Afternoon update (newsletter sign up)',
+		);
+		expect(valueFor('Campaign description')).toBe(
+			'Sign up for the afternoon briefing',
+		);
+	});
+
+	it.each([undefined, ''])(
+		'shows "Not set" for sign-up page and tag values that are %s',
+		(value) => {
+			render(
+				<SignupPageAndTagsPanel
+					newsletter={panelData({
+						signupPage: value,
+						seriesTag: value,
+						seriesTagDescription: value,
+						composerTag: value,
+						composerCampaignTag: value,
+					})}
+				/>,
+			);
+
+			for (const label of [
+				'Path to sign-up page',
+				'Series tag',
+				'Tag description',
+				'Campaign tag',
+				'Campaign description',
+			]) {
+				expect(valueFor(label)).toBe('Not set');
+			}
+			expect(screen.queryByRole('link')).toBeNull();
+		},
+	);
 });

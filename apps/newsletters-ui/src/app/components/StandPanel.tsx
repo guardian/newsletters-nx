@@ -5,6 +5,7 @@ import {
 	semanticColors,
 	semanticRadius,
 } from '@guardian/stand';
+import { AlertBanner } from '@guardian/stand/AlertBanner';
 import { Button } from '@guardian/stand/Button';
 import { Typography } from '@guardian/stand/Typography';
 import type React from 'react';
@@ -29,6 +30,11 @@ interface StandPanelProps {
 
 	/** Set to false to disable "Save changes", e.g. while a field is invalid. Defaults to true. */
 	canSave?: boolean;
+	/**
+	 * Runs before saving; return true to continue or an error message to stop without scrolling.
+	 * While a validation error is shown it also re-runs on each render so the error hides once fixed.
+	 */
+	onValidate?: () => true | string;
 
 	/** Discard the pending values when editing is cancelled. */
 	onCancel?: () => void;
@@ -102,12 +108,33 @@ const footerStyle = css`
 	padding: ${baseSpacing['16Px']} ${baseSpacing['16Rem']} 0;
 	border-top: 1px solid ${semanticColors.border.weak};
 	display: flex;
-	justify-content: flex-end;
+	flex-direction: column;
+	align-items: flex-end;
 	gap: ${baseSpacing['12Px']};
 `;
 
+const buttonsStyle = css`
+	display: flex;
+	gap: ${baseSpacing['12Px']};
+`;
+
+const errorWrapperStyle = css`
+	width: 100%;
+	max-width: 350px;
+`;
+
 const errorStyle = css`
-	grid-column: 1 / -1;
+	height: auto;
+	padding-block: ${baseSpacing['12Px']};
+`;
+
+const errorContentStyle = css`
+	flex: 1;
+`;
+
+const errorListStyle = css`
+	margin: 0;
+	padding-left: ${baseSpacing['20Px']};
 `;
 
 const defaultSaveError =
@@ -133,6 +160,7 @@ const EditableStandPanel = ({
 	actions,
 	onSave,
 	canSave = true,
+	onValidate,
 	onCancel,
 	onEdit,
 	...props
@@ -142,6 +170,12 @@ const EditableStandPanel = ({
 	const [isEditing, setIsEditing] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string>();
+	const [validationError, setValidationError] = useState<string>();
+	// Only Save shows a validation error; later field checks may clear it but never re-show it.
+	if (validationError !== undefined && (onValidate?.() ?? true) === true) {
+		setValidationError(undefined);
+	}
+	const visibleError = validationError ?? error;
 	const saving = useRef(false);
 	const form = useRef<HTMLFormElement>(null);
 	const wasEditing = useRef(false);
@@ -175,6 +209,12 @@ const EditableStandPanel = ({
 
 	const save = async () => {
 		if (saving.current || !canEdit) {
+			return;
+		}
+		setError(undefined);
+		const validation = onValidate?.() ?? true;
+		setValidationError(validation === true ? undefined : validation);
+		if (validation !== true) {
 			return;
 		}
 		scrollToPanel();
@@ -223,6 +263,7 @@ const EditableStandPanel = ({
 								onPress={() => {
 									onEdit?.();
 									setError(undefined);
+									setValidationError(undefined);
 									setIsEditing(true);
 								}}
 							>
@@ -247,33 +288,45 @@ const EditableStandPanel = ({
 				</fieldset>
 				{isEditing && (
 					<>
-						{error && (
-							<div role="alert" css={errorStyle}>
-								{error}
-							</div>
-						)}
 						<div css={footerStyle}>
-							<Button
-								type="button"
-								variant="tertiary"
-								size="sm"
-								isDisabled={isSaving}
-								onPress={() => {
-									onCancel?.();
-									setIsEditing(false);
-									setError(undefined);
-								}}
-							>
-								Cancel
-							</Button>
-							<Button
-								type="submit"
-								variant="primary"
-								size="sm"
-								isDisabled={isSaving || !canEdit || !canSave}
-							>
-								{isSaving ? 'Saving changes...' : 'Save changes'}
-							</Button>
+							{visibleError && (
+								<div role="alert" css={errorWrapperStyle}>
+									<AlertBanner level="error" showIcon cssOverrides={errorStyle}>
+										<div css={errorContentStyle}>
+											<Typography element="p" variant="bodyBoldSm">
+												Unable to save changes
+											</Typography>
+											<ul css={errorListStyle}>
+												<li>{visibleError}</li>
+											</ul>
+										</div>
+									</AlertBanner>
+								</div>
+							)}
+							<div css={buttonsStyle}>
+								<Button
+									type="button"
+									variant="tertiary"
+									size="sm"
+									isDisabled={isSaving}
+									onPress={() => {
+										onCancel?.();
+										setIsEditing(false);
+										setError(undefined);
+										setValidationError(undefined);
+									}}
+								>
+									Cancel
+								</Button>
+								<Button
+									type="submit"
+									variant="primary"
+									size="sm"
+									isDisabled={isSaving || !canEdit || !canSave}
+								>
+									{isSaving ? 'Saving changes...' : 'Save changes'}
+								</Button>
+							</div>
 						</div>
 					</>
 				)}
@@ -290,6 +343,7 @@ export const StandPanel = ({
 	subgrid = false,
 	onSave,
 	canSave,
+	onValidate,
 	onCancel,
 	onEdit,
 }: StandPanelProps) => {
@@ -302,6 +356,7 @@ export const StandPanel = ({
 				subgrid={subgrid}
 				onSave={onSave}
 				canSave={canSave}
+				onValidate={onValidate}
 				onCancel={onCancel}
 				onEdit={onEdit}
 			>

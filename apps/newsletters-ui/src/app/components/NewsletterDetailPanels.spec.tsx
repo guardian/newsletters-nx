@@ -488,7 +488,9 @@ describe('NewsletterDetailPanels', () => {
 			});
 			fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 			const alert = await screen.findByRole('alert');
-			expect(alert.textContent).toBe(expectedError);
+			expect(alert.textContent).toContain(
+				`Unable to save changes${expectedError}`,
+			);
 			expect(screen.getAllByRole('alert')).toHaveLength(1);
 			expect(
 				screen.getByRole<HTMLInputElement>('textbox', { name: 'Headline' })
@@ -558,40 +560,6 @@ describe('NewsletterDetailPanels', () => {
 		},
 	);
 
-	it.each([
-		['NOT_REQUESTED', 'Not requested'],
-		['REQUESTED', 'Requested'],
-		['COMPLETED', 'Completed'],
-	] as const)('shows creation status badges for %s', (status, label) => {
-		render(
-			<NewsletterDetailPanels
-				newsletter={newsletter({
-					signupPageCreationStatus: status,
-					tagCreationStatus: status,
-				})}
-			/>,
-		);
-
-		expect(valueFor('Sign-up page creation status')).toBe(label);
-		expect(valueFor('Tag creation status')).toBe(label);
-	});
-
-	it('uses the independent creation statuses, not the newsletter status', () => {
-		render(
-			<NewsletterDetailPanels
-				newsletter={newsletter({
-					status: 'live',
-					signupPageCreationStatus: 'COMPLETED',
-					tagCreationStatus: 'REQUESTED',
-				})}
-			/>,
-		);
-
-		expect(valueFor('Newsletter status')).toBe('Live');
-		expect(valueFor('Sign-up page creation status')).toBe('Completed');
-		expect(valueFor('Tag creation status')).toBe('Requested');
-	});
-
 	it('shows the attributes', () => {
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
 
@@ -648,72 +616,6 @@ describe('NewsletterDetailPanels', () => {
 		);
 		expect(valueFor('Newsletter square (1:1)')).toBe('Not set');
 	});
-
-	it('shows the sign-up page and tags from the newsletter', () => {
-		render(
-			<NewsletterDetailPanels
-				newsletter={newsletter({
-					signupPage: '/global/sign-up-for-afternoon-update',
-					seriesTag: 'news/series/afternoon-update',
-					seriesTagDescription: 'The afternoon news briefing',
-					composerTag: 'Afternoon update (newsletter sign up)',
-					composerCampaignTag: 'Sign up for the afternoon briefing',
-				})}
-			/>,
-		);
-
-		expect(
-			panel('Sign-up page and tags')
-				.getAllByRole('heading', { level: 4 })
-				.map((heading) => heading.textContent),
-		).toEqual(['Sign-up page', 'Tags']);
-		expect(valueFor('Path to sign-up page')).toBe(
-			'/global/sign-up-for-afternoon-update',
-		);
-		expect(
-			screen
-				.getByRole('link', {
-					name: '/global/sign-up-for-afternoon-update',
-				})
-				.getAttribute('href'),
-		).toBe('https://theguardian.com/global/sign-up-for-afternoon-update');
-		expect(valueFor('Series tag')).toBe('news/series/afternoon-update');
-		expect(valueFor('Tag description')).toBe('The afternoon news briefing');
-		expect(valueFor('Campaign tag')).toBe(
-			'Afternoon update (newsletter sign up)',
-		);
-		expect(valueFor('Campaign description')).toBe(
-			'Sign up for the afternoon briefing',
-		);
-	});
-
-	it.each([undefined, ''])(
-		'shows "Not set" for sign-up page and tag values that are %s',
-		(value) => {
-			render(
-				<NewsletterDetailPanels
-					newsletter={newsletter({
-						signupPage: value,
-						seriesTag: value,
-						seriesTagDescription: value,
-						composerTag: value,
-						composerCampaignTag: value,
-					})}
-				/>,
-			);
-
-			for (const label of [
-				'Path to sign-up page',
-				'Series tag',
-				'Tag description',
-				'Campaign tag',
-				'Campaign description',
-			]) {
-				expect(valueFor(label)).toBe('Not set');
-			}
-			expect(screen.queryByRole('link')).toBeNull();
-		},
-	);
 
 	it('shows braze values from the newsletter', () => {
 		render(

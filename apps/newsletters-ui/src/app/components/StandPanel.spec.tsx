@@ -39,14 +39,17 @@ afterEach(() => {
 
 const Editor = ({
 	save,
+	validate,
 }: {
 	save: (value: string) => boolean | string | Promise<boolean | string>;
+	validate?: (value: string) => true | string;
 }) => {
 	const [value, setValue] = useState('Original');
 	return (
 		<StandPanel
 			name="Copy"
 			onSave={() => save(value)}
+			onValidate={validate && (() => validate(value))}
 			onCancel={() => setValue('Original')}
 		>
 			{(isEditing) => (
@@ -182,6 +185,57 @@ describe('StandPanel editing', () => {
 		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 	});
 
+	it('does not show validation errors before the first save attempt', () => {
+		render(
+			<Editor save={() => true} validate={() => 'Please fix the field'} />,
+		);
+		startEditing();
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Typing' },
+		});
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+	});
+
+	it('does not scroll or save when validation fails, then scrolls once it passes', async () => {
+		const save = vi.fn(() => true);
+		render(
+			<Editor
+				save={save}
+				validate={(value) => value === 'Valid' || 'Please fix the field'}
+			/>,
+		);
+		startEditing();
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		expect(await screen.findByRole('alert')).toHaveTextContent(
+			'Please fix the field',
+		);
+		expect(save).not.toHaveBeenCalled();
+		expect(scrollIntoView).not.toHaveBeenCalled();
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Still wrong' },
+		});
+		expect(screen.getByRole('alert')).toHaveTextContent('Please fix the field');
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Valid' },
+		});
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Invalid again' },
+		});
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		expect(await screen.findByRole('alert')).toHaveTextContent(
+			'Please fix the field',
+		);
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Valid' },
+		});
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		await screen.findByRole('button', { name: 'Edit' });
+		expect(save).toHaveBeenCalledExactlyOnceWith('Valid');
+		expect(scrollIntoView).toHaveBeenCalledWith({ block: 'start' });
+	});
+
 	it('shows only the specific save error and clears it on cancel', async () => {
 		render(<Editor save={() => 'Unable to save Copy'} />);
 		startEditing();
@@ -189,9 +243,10 @@ describe('StandPanel editing', () => {
 			target: { value: 'Keep this' },
 		});
 		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
-		expect((await screen.findByRole('alert')).textContent).toBe(
-			'Unable to save Copy',
-		);
+		const alert = await screen.findByRole('alert');
+		expect(alert).toHaveTextContent('Unable to save changes');
+		expect(alert).toHaveTextContent('Unable to save Copy');
+		expect(alert.closest('form')?.lastElementChild).toContainElement(alert);
 		expect(screen.getAllByRole('alert')).toHaveLength(1);
 		expect(screen.getByRole('textbox')).toHaveValue('Keep this');
 		expect(screen.getByText('Editing')).toBeVisible();

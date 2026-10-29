@@ -4,17 +4,17 @@ import { Link } from '@guardian/stand/Link';
 import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
 import { TextInput } from '@guardian/stand/TextInput';
 import { Typography } from '@guardian/stand/Typography';
-import type {
-	NewsletterData,
-	WorkflowStatus,
-} from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	newsletterDataSchema,
 	workflowStatusEnumSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { workflowStatusLabels } from '../lib/workflow-status-labels';
 import { Field, listStyles } from './NewsletterDetailFields';
+import { SignupPathInput } from './SignupPathInput';
+import type { SignupPathValidation } from './SignupPathInput';
 import { StandPanel } from './StandPanel';
 import { WorkflowStatusBadge } from './WorkflowStatusBadge';
 
@@ -36,12 +36,6 @@ const panelSchema = newsletterDataSchema.pick({
 	composerCampaignTag: true,
 });
 type PanelData = Pick<NewsletterData, keyof typeof panelSchema.shape>;
-
-const statusLabels: Record<WorkflowStatus, string> = {
-	NOT_REQUESTED: 'Not requested',
-	REQUESTED: 'Requested',
-	COMPLETED: 'Completed',
-};
 
 const sectionStyles = css`
 	display: grid;
@@ -91,9 +85,10 @@ export const SignupPageAndTagsPanel = ({
 	const [savedValues, setSavedValues] = useState<PanelData>();
 	const current = savedValues ?? valuesFor(newsletter);
 	const [draft, setDraft] = useState<PanelData>(current);
+	const [pathValidation, setPathValidation] = useState<SignupPathValidation>();
 
-	const save = async (): Promise<boolean | string> => {
-		const parsed = panelSchema.safeParse({
+	const parseDraft = () =>
+		panelSchema.safeParse({
 			...draft,
 			...Object.fromEntries(
 				textFields.map(({ key }) => [
@@ -102,8 +97,27 @@ export const SignupPageAndTagsPanel = ({
 				]),
 			),
 		});
+	const validate = (): true | string => {
+		if (
+			draft.signupPage &&
+			(pathValidation?.path !== draft.signupPage || !pathValidation.valid)
+		) {
+			return 'Please enter a valid path to sign-up page';
+		}
+		const parsed = parseDraft();
+		return (
+			parsed.success ||
+			parsed.error.issues.map(({ message }) => message).join(' ')
+		);
+	};
+	const save = async (): Promise<boolean | string> => {
+		const validation = validate();
+		if (validation !== true) {
+			return validation;
+		}
+		const parsed = parseDraft();
 		if (!parsed.success) {
-			return parsed.error.issues.map(({ message }) => message).join(' ');
+			return false;
 		}
 		const response = await requestNewsletterEdit(
 			newsletter.listId,
@@ -134,7 +148,7 @@ export const SignupPageAndTagsPanel = ({
 		>
 			{workflowStatusEnumSchema.options.map((status) => (
 				<Radio key={status} value={status}>
-					{statusLabels[status]}
+					{workflowStatusLabels[status]}
 				</Radio>
 			))}
 		</RadioGroup>
@@ -146,7 +160,11 @@ export const SignupPageAndTagsPanel = ({
 			id="sign-up-page-and-tags"
 			subgrid
 			onSave={save}
-			onEdit={() => setDraft(current)}
+			onValidate={validate}
+			onEdit={() => {
+				setPathValidation(undefined);
+				setDraft(current);
+			}}
 			onCancel={() => setDraft(current)}
 		>
 			{(isEditing) => (
@@ -165,13 +183,16 @@ export const SignupPageAndTagsPanel = ({
 									'signupPageCreationStatus',
 									'Sign-up page creation status',
 								)}
-								<TextInput
-									label="Path to sign-up page"
-									fluid
+								<SignupPathInput
 									value={draft.signupPage ?? ''}
-									onChange={(value) =>
-										setDraft((previous) => ({ ...previous, signupPage: value }))
-									}
+									onValidation={setPathValidation}
+									onChange={(value) => {
+										setPathValidation(undefined);
+										setDraft((previous) => ({
+											...previous,
+											signupPage: value,
+										}));
+									}}
 								/>
 							</>
 						) : (
