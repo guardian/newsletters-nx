@@ -4,7 +4,6 @@ import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
 import { TextInput } from '@guardian/stand/TextInput';
 import { TextListInput } from '@guardian/stand/TextListInput';
 import { Typography } from '@guardian/stand/Typography';
-import { until } from '@guardian/stand/utils';
 import type {
 	NewsletterData,
 	WorkflowStatus,
