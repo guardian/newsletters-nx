@@ -10,6 +10,7 @@ import {
 	screen,
 	within,
 } from '@testing-library/react';
+import type { Mock } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
@@ -336,6 +337,10 @@ describe('ImagesPanel editing', () => {
 	});
 });
 
+// The mock installed in beforeEach, read without referencing the method unbound
+const scrollIntoViewMock = () =>
+	(Element.prototype as { scrollIntoView: Mock }).scrollIntoView;
+
 describe('Jump to', () => {
 	afterEach(() => {
 		window.location.hash = '';
@@ -364,7 +369,7 @@ describe('Jump to', () => {
 		window.location.hash = '#integrations';
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
 
-		const scrollIntoView = vi.mocked(Element.prototype.scrollIntoView);
+		const scrollIntoView = scrollIntoViewMock();
 		expect(scrollIntoView).toHaveBeenCalledExactlyOnceWith({ block: 'start' });
 		expect(scrollIntoView.mock.contexts[0]).toBe(
 			document.getElementById('integrations'),
@@ -374,7 +379,7 @@ describe('Jump to', () => {
 	it('does not scroll when the address has no panel', () => {
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
 
-		expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
+		expect(scrollIntoViewMock()).not.toHaveBeenCalled();
 	});
 });
 
