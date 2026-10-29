@@ -110,7 +110,9 @@ const jumpToPanels = [
 ];
 
 // The page has `<base href="/">`, so a bare `#id` would link to `/#id`. Include
-// the current path so the link stays on this page.
+// the current path so the link is valid on its own (e.g. when opened in a new tab).
+// Clicking replaces the history entry rather than adding one, so Back leaves the
+// page instead of stepping through every panel the editor jumped to.
 const JumpTo = () => {
 	const { pathname, search } = window.location;
 	return (
@@ -121,7 +123,30 @@ const JumpTo = () => {
 			<ul css={jumpToListStyles}>
 				{jumpToPanels.map(({ id, name }) => (
 					<li key={id}>
-						<Link href={`${pathname}${search}#${id}`}>{name}</Link>
+						<Link
+							href={`${pathname}${search}#${id}`}
+							onClick={(event: React.MouseEvent) => {
+								const panel = document.getElementById(id);
+								if (
+									!panel ||
+									event.metaKey ||
+									event.ctrlKey ||
+									event.shiftKey ||
+									event.button !== 0
+								) {
+									return;
+								}
+								event.preventDefault();
+								window.history.replaceState(
+									window.history.state,
+									'',
+									`${pathname}${search}#${id}`,
+								);
+								panel.scrollIntoView({ block: 'start' });
+							}}
+						>
+							{name}
+						</Link>
 					</li>
 				))}
 			</ul>

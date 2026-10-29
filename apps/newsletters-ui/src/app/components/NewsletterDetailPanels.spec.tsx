@@ -375,6 +375,22 @@ describe('Jump to', () => {
 		window.history.pushState({}, '', '/');
 	});
 
+	it('replaces the history entry and scrolls when a link is clicked', () => {
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		const historyLength = window.history.length;
+
+		fireEvent.click(screen.getByRole('link', { name: 'Integrations' }));
+
+		expect(window.location.hash).toBe('#integrations');
+		expect(window.history.length).toBe(historyLength);
+		expect(scrollIntoViewMock()).toHaveBeenCalledExactlyOnceWith({
+			block: 'start',
+		});
+		expect(scrollIntoViewMock().mock.contexts[0]).toBe(
+			document.getElementById('integrations'),
+		);
+	});
+
 	it('scrolls to the panel named in the address when the page opens', () => {
 		window.location.hash = '#integrations';
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
