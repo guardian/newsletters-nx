@@ -70,6 +70,30 @@ Feature: Launched newsletter: open it and find my way around
 			And the editor selects the "Layout" tab
 			Then the existing preview for "Afternoon update" is shown
 
+	Rule: Jump to takes the editor straight to a panel
+
+		Scenario: Jump to links to every panel
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			Then "Jump to" links to these panels:
+				| panel                 |
+				| Attributes            |
+				| Images                |
+				| Copy                  |
+				| Sign-up page and tags |
+				| Integrations          |
+
+		Scenario: Choosing a panel in Jump to scrolls to it
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor jumps to "Integrations"
+			Then the "Integrations" panel is in view
+
+		Scenario: A link to a panel opens the page at that panel
+			Given a launched newsletter "Afternoon update"
+			When the editor follows a link to the "Integrations" panel of "Afternoon update"
+			Then the "Integrations" panel is in view
+
 	Rule: The Details tab shows the newsletter's attributes
 
 		Scenario: The Attributes panel shows what kind of newsletter it is

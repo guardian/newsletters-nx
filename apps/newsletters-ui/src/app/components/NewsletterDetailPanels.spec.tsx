@@ -336,6 +336,48 @@ describe('ImagesPanel editing', () => {
 	});
 });
 
+describe('Jump to', () => {
+	afterEach(() => {
+		window.location.hash = '';
+	});
+
+	it('links to every panel on the page', () => {
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		const links = within(
+			screen.getByRole('navigation', { name: 'Jump to' }),
+		).getAllByRole('link');
+
+		expect(links.map((link) => link.textContent)).toEqual([
+			'Attributes',
+			'Images',
+			'Copy',
+			'Sign-up page and tags',
+			'Integrations',
+		]);
+		for (const link of links) {
+			const id = link.getAttribute('href')?.slice(1);
+			expect(document.getElementById(id ?? '')).toBeTruthy();
+		}
+	});
+
+	it('scrolls to the panel named in the address when the page opens', () => {
+		window.location.hash = '#integrations';
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+
+		const scrollIntoView = vi.mocked(Element.prototype.scrollIntoView);
+		expect(scrollIntoView).toHaveBeenCalledExactlyOnceWith({ block: 'start' });
+		expect(scrollIntoView.mock.contexts[0]).toBe(
+			document.getElementById('integrations'),
+		);
+	});
+
+	it('does not scroll when the address has no panel', () => {
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+
+		expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
+	});
+});
+
 describe('NewsletterDetailPanels', () => {
 	it('uses single-line inputs for Headline and Success message and textareas for other Copy fields', () => {
 		allowEditing();
@@ -711,7 +753,7 @@ describe('NewsletterDetailPanels', () => {
 			]) {
 				expect(valueFor(label)).toBe('Not set');
 			}
-			expect(screen.queryByRole('link')).toBeNull();
+			expect(panel('Sign-up page and tags').queryByRole('link')).toBeNull();
 		},
 	);
 

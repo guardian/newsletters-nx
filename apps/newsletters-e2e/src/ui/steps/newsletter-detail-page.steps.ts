@@ -33,6 +33,13 @@ const pageHeader = (page: Page): Locator =>
 		.locator('header')
 		.filter({ has: page.getByRole('heading', { level: 2 }) });
 
+const jumpToNav = (page: Page): Locator =>
+	page.getByRole('navigation', { name: 'Jump to' });
+
+// Panel ids are the lower-cased, hyphenated panel name
+const panelIdFor = (panelName: string): string =>
+	panelName.toLowerCase().replace(/\s+/g, '-');
+
 const panelByName = (page: Page, panelName: string): Locator =>
 	page.locator('section', {
 		has: page.getByRole('heading', {
@@ -258,6 +265,33 @@ When(
 		await page.goto(`/newsletters/${identityName}`);
 	},
 );
+
+When(
+	'the editor follows a link to the {string} panel of {string}',
+	async ({ page, namedNewsletters }, panelName: string, name: string) => {
+		await page.goto(
+			`/newsletters/${identityNameFor(namedNewsletters, name)}#${panelIdFor(panelName)}`,
+		);
+	},
+);
+
+When('the editor jumps to {string}', async ({ page }, panelName: string) => {
+	await jumpToNav(page).getByRole('link', { name: panelName }).click();
+});
+
+Then('"Jump to" links to these panels:', async ({ page }, table: DataTable) => {
+	const expected = table.hashes().map(({ panel }) => panel);
+	await expect(jumpToNav(page).getByRole('link')).toHaveText(expected);
+});
+
+Then('the {string} panel is in view', async ({ page }, panelName: string) => {
+	await expect(
+		panelByName(page, panelName).getByRole('heading', {
+			level: 3,
+			name: panelName,
+		}),
+	).toBeInViewport();
+});
 
 When('the editor selects "Back to all newsletters"', async ({ page }) => {
 	await page.getByRole('link', { name: 'Back to all newsletters' }).click();

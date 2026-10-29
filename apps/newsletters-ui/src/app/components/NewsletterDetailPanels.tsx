@@ -8,6 +8,7 @@ import {
 	brazeUnsubscribeEventName,
 	type NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import { useEffect } from 'react';
 import { humanize } from '../lib/format';
 import { CopyPanel } from './CopyPanel';
 import { ImagesPanel } from './ImagesPanel';
@@ -82,141 +83,202 @@ const fieldListStyles = css`
 	list-style: none;
 `;
 
+const jumpToStyles = css`
+	grid-column: 1 / -1;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	gap: ${semanticSpacing.stackXxs} ${semanticSpacing.stackSm};
+`;
+
+const jumpToListStyles = css`
+	display: flex;
+	flex-flow: row wrap;
+	gap: ${semanticSpacing.stackXxs} ${semanticSpacing.stackSm};
+	list-style: none;
+	margin: 0;
+	padding: 0;
+`;
+
+/** The panels on the page, in order. Ids match the `id` on each panel. */
+const jumpToPanels = [
+	{ id: 'attributes', name: 'Attributes' },
+	{ id: 'images', name: 'Images' },
+	{ id: 'copy', name: 'Copy' },
+	{ id: 'sign-up-page-and-tags', name: 'Sign-up page and tags' },
+	{ id: 'integrations', name: 'Integrations' },
+];
+
+const JumpTo = () => (
+	<nav css={jumpToStyles} aria-label="Jump to">
+		<Typography element="span" variant="bodyBoldSm">
+			Jump to:
+		</Typography>
+		<ul css={jumpToListStyles}>
+			{jumpToPanels.map(({ id, name }) => (
+				<li key={id}>
+					<Link href={`#${id}`}>{name}</Link>
+				</li>
+			))}
+		</ul>
+	</nav>
+);
+
+/** Scroll to the panel named in the address (e.g. `#integrations`) once the page has rendered */
+const useScrollToHashPanel = () => {
+	useEffect(() => {
+		const id = decodeURIComponent(window.location.hash.slice(1));
+		if (id) {
+			document.getElementById(id)?.scrollIntoView({ block: 'start' });
+		}
+	}, []);
+};
+
 export const NewsletterDetailPanels = ({
 	newsletter,
 }: {
 	newsletter: NewsletterData;
-}) => (
-	<div css={panelsStyles}>
-		<StandPanel name="Attributes" id="attributes" subgrid>
-			<dl css={listStyles}>
-				<Field label="Name">{newsletter.name}</Field>
-				<Field label="Newsletter status">
-					<NewsletterStatusBadge newsletter={newsletter} size="xs" />
-				</Field>
-				<Field label="Pillar">{humanize(newsletter.theme)}</Field>
-				<Field label="Region focus">{newsletter.regionFocus}</Field>
-				<Field label="Frequency">{newsletter.frequency}</Field>
-				<Field label="Type of newsletter">
-					{humanize(newsletter.category)}
-				</Field>
-				<Field label="MMA group">{newsletter.group}</Field>
-			</dl>
-		</StandPanel>
-		<ImagesPanel newsletter={newsletter} />
-		<CopyPanel newsletter={newsletter} />
-		<StandPanel name="Sign-up page and tags" id="sign-up-page-and-tags" subgrid>
-			<div css={sectionStyles}>
-				<Typography
-					element="h4"
-					variant="bodyBoldSm"
-					cssOverrides={subheadingStyles}
-				>
-					Sign-up page
-				</Typography>
+}) => {
+	useScrollToHashPanel();
+	return (
+		<div css={panelsStyles}>
+			<JumpTo />
+			<StandPanel name="Attributes" id="attributes" subgrid>
 				<dl css={listStyles}>
-					<Field label="Sign-up page creation status">
-						<WorkflowStatusBadge status={newsletter.signupPageCreationStatus} />
+					<Field label="Name">{newsletter.name}</Field>
+					<Field label="Newsletter status">
+						<NewsletterStatusBadge newsletter={newsletter} size="xs" />
 					</Field>
-					<Field label="Path to sign-up page">
-						{newsletter.signupPage ? (
-							<Link href={`https://theguardian.com${newsletter.signupPage}`}>
-								{newsletter.signupPage}
-							</Link>
-						) : undefined}
+					<Field label="Pillar">{humanize(newsletter.theme)}</Field>
+					<Field label="Region focus">{newsletter.regionFocus}</Field>
+					<Field label="Frequency">{newsletter.frequency}</Field>
+					<Field label="Type of newsletter">
+						{humanize(newsletter.category)}
 					</Field>
+					<Field label="MMA group">{newsletter.group}</Field>
 				</dl>
-			</div>
-			<div css={sectionStyles}>
-				<Typography
-					element="h4"
-					variant="bodyBoldSm"
-					cssOverrides={subheadingStyles}
-				>
-					Tags
-				</Typography>
-				<dl css={listStyles}>
-					<Field label="Tag creation status">
-						<WorkflowStatusBadge status={newsletter.tagCreationStatus} />
-					</Field>
-					<Field label="Series tag">{newsletter.seriesTag}</Field>
-					<Field label="Tag description">
-						{newsletter.seriesTagDescription}
-					</Field>
-					<Field label="Campaign tag">{newsletter.composerTag}</Field>
-					<Field label="Campaign description">
-						{newsletter.composerCampaignTag}
-					</Field>
-				</dl>
-			</div>
-		</StandPanel>
-		<StandPanel name="Integrations" id="integrations" subgrid>
-			<section
-				css={listGroupStyles}
-				aria-labelledby="integrations-braze-values"
+			</StandPanel>
+			<ImagesPanel newsletter={newsletter} />
+			<CopyPanel newsletter={newsletter} />
+			<StandPanel
+				name="Sign-up page and tags"
+				id="sign-up-page-and-tags"
+				subgrid
 			>
-				<Typography
-					id="integrations-braze-values"
-					element="h4"
-					variant="bodyBoldMd"
+				<div css={sectionStyles}>
+					<Typography
+						element="h4"
+						variant="bodyBoldSm"
+						cssOverrides={subheadingStyles}
+					>
+						Sign-up page
+					</Typography>
+					<dl css={listStyles}>
+						<Field label="Sign-up page creation status">
+							<WorkflowStatusBadge
+								status={newsletter.signupPageCreationStatus}
+							/>
+						</Field>
+						<Field label="Path to sign-up page">
+							{newsletter.signupPage ? (
+								<Link href={`https://theguardian.com${newsletter.signupPage}`}>
+									{newsletter.signupPage}
+								</Link>
+							) : undefined}
+						</Field>
+					</dl>
+				</div>
+				<div css={sectionStyles}>
+					<Typography
+						element="h4"
+						variant="bodyBoldSm"
+						cssOverrides={subheadingStyles}
+					>
+						Tags
+					</Typography>
+					<dl css={listStyles}>
+						<Field label="Tag creation status">
+							<WorkflowStatusBadge status={newsletter.tagCreationStatus} />
+						</Field>
+						<Field label="Series tag">{newsletter.seriesTag}</Field>
+						<Field label="Tag description">
+							{newsletter.seriesTagDescription}
+						</Field>
+						<Field label="Campaign tag">{newsletter.composerTag}</Field>
+						<Field label="Campaign description">
+							{newsletter.composerCampaignTag}
+						</Field>
+					</dl>
+				</div>
+			</StandPanel>
+			<StandPanel name="Integrations" id="integrations" subgrid>
+				<section
+					css={listGroupStyles}
+					aria-labelledby="integrations-braze-values"
 				>
-					Braze values
-				</Typography>
-				<dl css={listStyles}>
-					<Field label="Braze campaign creation status">
-						<WorkflowStatusBadge
-							status={newsletter.brazeCampaignCreationStatus}
-						/>
-					</Field>
-					<Field label="brazeNewsletterName">
-						{newsletter.brazeNewsletterName}
-					</Field>
-					<Field label="brazeSubscribeAttributeName">
-						{newsletter.brazeSubscribeAttributeName}
-					</Field>
-					<Field label="brazeSubscribeEventNamePrefix">
-						{newsletter.brazeSubscribeEventNamePrefix}
-					</Field>
-					<Field label="brazeSubscribeAttributeNameAlternate">
-						{newsletter.brazeSubscribeAttributeNameAlternate?.length ? (
-							<ul css={fieldListStyles}>
-								{newsletter.brazeSubscribeAttributeNameAlternate.map(
-									(item, idx) => (
-										<li key={idx}>{item}</li>
-									),
-								)}
-							</ul>
-						) : null}
-					</Field>
-					<Field label="braze subscribe event name">
-						{newsletter.brazeSubscribeEventNamePrefix
-							? brazeSubscribeEventName.generate(newsletter)
-							: undefined}
-					</Field>
-					<Field label="braze unsubscribe event name">
-						{newsletter.brazeSubscribeEventNamePrefix
-							? brazeUnsubscribeEventName.generate(newsletter)
-							: undefined}
-					</Field>
-				</dl>
-			</section>
-			<hr css={hrStyles} />
-			<section
-				css={listGroupStyles}
-				aria-labelledby="integrations-ophan-values"
-			>
-				<Typography
-					id="integrations-ophan-values"
-					element="h4"
-					variant="bodyBoldMd"
+					<Typography
+						id="integrations-braze-values"
+						element="h4"
+						variant="bodyBoldMd"
+					>
+						Braze values
+					</Typography>
+					<dl css={listStyles}>
+						<Field label="Braze campaign creation status">
+							<WorkflowStatusBadge
+								status={newsletter.brazeCampaignCreationStatus}
+							/>
+						</Field>
+						<Field label="brazeNewsletterName">
+							{newsletter.brazeNewsletterName}
+						</Field>
+						<Field label="brazeSubscribeAttributeName">
+							{newsletter.brazeSubscribeAttributeName}
+						</Field>
+						<Field label="brazeSubscribeEventNamePrefix">
+							{newsletter.brazeSubscribeEventNamePrefix}
+						</Field>
+						<Field label="brazeSubscribeAttributeNameAlternate">
+							{newsletter.brazeSubscribeAttributeNameAlternate?.length ? (
+								<ul css={fieldListStyles}>
+									{newsletter.brazeSubscribeAttributeNameAlternate.map(
+										(item, idx) => (
+											<li key={idx}>{item}</li>
+										),
+									)}
+								</ul>
+							) : null}
+						</Field>
+						<Field label="braze subscribe event name">
+							{newsletter.brazeSubscribeEventNamePrefix
+								? brazeSubscribeEventName.generate(newsletter)
+								: undefined}
+						</Field>
+						<Field label="braze unsubscribe event name">
+							{newsletter.brazeSubscribeEventNamePrefix
+								? brazeUnsubscribeEventName.generate(newsletter)
+								: undefined}
+						</Field>
+					</dl>
+				</section>
+				<hr css={hrStyles} />
+				<section
+					css={listGroupStyles}
+					aria-labelledby="integrations-ophan-values"
 				>
-					Ophan values
-				</Typography>
-				<dl css={listStyles}>
-					<Field label="Campaign name">{newsletter.campaignName}</Field>
-					<Field label="Campaign code">{newsletter.campaignCode}</Field>
-				</dl>
-			</section>
-		</StandPanel>
-	</div>
-);
+					<Typography
+						id="integrations-ophan-values"
+						element="h4"
+						variant="bodyBoldMd"
+					>
+						Ophan values
+					</Typography>
+					<dl css={listStyles}>
+						<Field label="Campaign name">{newsletter.campaignName}</Field>
+						<Field label="Campaign code">{newsletter.campaignCode}</Field>
+					</dl>
+				</section>
+			</StandPanel>
+		</div>
+	);
+};
