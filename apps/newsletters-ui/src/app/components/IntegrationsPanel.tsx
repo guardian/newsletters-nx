@@ -32,8 +32,11 @@ const brazeFields = [
 const ophanFields = ['campaignName', 'campaignCode'] as const;
 
 const integrationFields = [...brazeFields, ...ophanFields];
-type IntegrationKey = (typeof integrationFields)[number];
+export type IntegrationKey = (typeof integrationFields)[number];
+
 type IntegrationsDraft = Partial<Pick<NewsletterData, IntegrationKey>>;
+
+type IntegrationsErrors = Partial<Record<IntegrationKey, string>>;
 
 const integrationsSchema = newsletterDataSchema.pick({
 	brazeCampaignCreationStatus: true,
@@ -128,6 +131,36 @@ const toAlternateNames = (values?: string[]) => {
 	return names.length ? names : undefined;
 };
 
+const validate = (draft: IntegrationsDraft): IntegrationsErrors => {
+	const errors: IntegrationsErrors = {};
+
+	const validationSchema = newsletterDataSchema.pick({
+		brazeCampaignCreationStatus: true,
+		brazeNewsletterName: true,
+		brazeSubscribeAttributeName: true,
+		brazeSubscribeAttributeNameAlternate: true,
+		brazeSubscribeEventNamePrefix: true,
+		campaignCode: true,
+		campaignName: true,
+	});
+
+	const result = validationSchema.safeParse(draft);
+
+	if (result.error) {
+		const errorTree = z.treeifyError(result.error);
+
+		for (const key in errorTree.properties) {
+			const prop =
+				errorTree.properties[key as keyof typeof errorTree.properties];
+
+			if (prop?.errors.length) {
+				errors[key as IntegrationKey] = prop.errors[0];
+			}
+		}
+	}
+	return errors;
+};
+
 export const IntegrationsPanel = ({
 	newsletter,
 }: {
@@ -198,6 +231,7 @@ export const IntegrationsPanel = ({
 				isEditing ? (
 					<EditIntegrations
 						draft={draft}
+						errors={validate(draft)}
 						onChange={(changes) =>
 							setDraft((previous) => ({ ...previous, ...changes }))
 						}
@@ -217,9 +251,11 @@ const LabelWithAsterisk = ({ label }: { label: string }) => {
 const EditIntegrations = ({
 	draft,
 	onChange,
+	errors,
 }: {
 	draft: IntegrationsDraft;
 	onChange: (changes: IntegrationsDraft) => void;
+	errors: IntegrationsErrors;
 }) => {
 	return (
 		<div
@@ -252,23 +288,15 @@ const EditIntegrations = ({
 					css={fullWidthInputStyles}
 					orientation="horizontal"
 					label="Braze campaign creation status"
-					value={draft.brazeCampaignCreationStatus ?? 'NOT_REQUESTED'}
+					value={draft.brazeCampaignCreationStatus}
 					onChange={(value) => {
-						// TODO: Validation + error handling
-						console.log(value);
-
-						if (z.validate(workflowStatusEnumSchema, value)) {
-							console.log(`${value} is valid`);
-						}
-
-						const result = workflowStatusEnumSchema.safeParse(value);
-						console.log(result);
-
 						onChange({
-							brazeCampaignCreationStatus:
-								workflowStatusEnumSchema.parse(value),
+							// N.B: In reality, value always is a WorkflowStatus
+							brazeCampaignCreationStatus: value as WorkflowStatus,
 						});
 					}}
+					isInvalid={Boolean(errors.brazeCampaignCreationStatus)}
+					error={errors.brazeCampaignCreationStatus}
 				>
 					<Radio
 						key={'NOT_REQUESTED'}
@@ -290,6 +318,8 @@ const EditIntegrations = ({
 					label="brazeNewsletterName"
 					value={draft.brazeNewsletterName ?? ''}
 					onChange={(value) => onChange({ brazeNewsletterName: value })}
+					isInvalid={Boolean(errors.brazeNewsletterName)}
+					error={errors.brazeNewsletterName}
 				/>
 				<TextInput
 					isRequired
@@ -298,6 +328,8 @@ const EditIntegrations = ({
 					label="brazeSubscribeAttributeName"
 					value={draft.brazeSubscribeAttributeName ?? ''}
 					onChange={(value) => onChange({ brazeSubscribeAttributeName: value })}
+					isInvalid={Boolean(errors.brazeSubscribeAttributeName)}
+					error={errors.brazeSubscribeAttributeName}
 				/>
 				<TextInput
 					isRequired
@@ -308,6 +340,8 @@ const EditIntegrations = ({
 					onChange={(value) =>
 						onChange({ brazeSubscribeEventNamePrefix: value })
 					}
+					isInvalid={Boolean(errors.brazeSubscribeEventNamePrefix)}
+					error={errors.brazeSubscribeEventNamePrefix}
 				/>
 				<TextListInput
 					css={fullWidthInputStyles}
@@ -316,6 +350,7 @@ const EditIntegrations = ({
 					onChange={(values) =>
 						onChange({ brazeSubscribeAttributeNameAlternate: values })
 					}
+					errorMessage={errors.brazeSubscribeAttributeNameAlternate}
 				/>
 			</section>
 			<section

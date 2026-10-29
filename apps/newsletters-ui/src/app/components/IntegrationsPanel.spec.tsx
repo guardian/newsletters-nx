@@ -10,8 +10,10 @@ import {
 	within,
 } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
+import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePermissions } from '../hooks/user-hooks';
+import type { IntegrationKey } from './IntegrationsPanel';
 import { IntegrationsPanel } from './IntegrationsPanel';
 
 afterEach(() => {
@@ -170,6 +172,12 @@ describe('IntegrationsPanel', () => {
 	});
 
 	describe('edit mode', () => {
+		beforeEach(() => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+		});
 		it.each([
 			['NOT_REQUESTED', 'Not Requested'],
 			['REQUESTED', 'Requested'],
@@ -177,10 +185,6 @@ describe('IntegrationsPanel', () => {
 		] as Array<[WorkflowStatus, string]>)(
 			"shows the value from the newsletter in input 'Braze campaign creation status'",
 			async (value: WorkflowStatus, name: string) => {
-				vi.mocked(usePermissions).mockReturnValue({
-					editEverything: true,
-					useJsonEditor: false,
-				});
 				render(
 					<IntegrationsPanel
 						newsletter={newsletter({
@@ -193,7 +197,7 @@ describe('IntegrationsPanel', () => {
 				expect(
 					within(
 						await screen.findByRole('radiogroup', {
-							name: 'Braze campaign creation status',
+							name: 'Braze campaign creation status *',
 						}),
 					).getByRole('radio', { name: name }),
 				).toBeChecked();
@@ -215,25 +219,17 @@ describe('IntegrationsPanel', () => {
 		])(
 			"shows the value from the newsletter in input '%s'",
 			async (overrides: Partial<NewsletterData>, label, expectedValue) => {
-				vi.mocked(usePermissions).mockReturnValue({
-					editEverything: true,
-					useJsonEditor: false,
-				});
 				render(<IntegrationsPanel newsletter={newsletter(overrides)} />);
 
 				fireEvent.click(await integrationsPanelEditButton());
 
-				expect(screen.getByRole('textbox', { name: label })).toHaveValue(
-					expectedValue,
-				);
+				expect(
+					screen.getByRole('textbox', { name: new RegExp(label) }),
+				).toHaveValue(expectedValue);
 			},
 		);
 
 		it("shows the value from the newsletter in input 'brazeSubscribeAttributeNameAlternate'", async () => {
-			vi.mocked(usePermissions).mockReturnValue({
-				editEverything: true,
-				useJsonEditor: false,
-			});
 			render(
 				<IntegrationsPanel
 					newsletter={newsletter({
@@ -256,4 +252,50 @@ describe('IntegrationsPanel', () => {
 			});
 		});
 	});
+
+	describe('input validation', () => {
+		beforeEach(() => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+		});
+		it('saves if all provided data is valid', () => {});
+
+		it.each([
+			['brazeNewsletterName', 'brazeNewsletterName'],
+			['brazeSubscribeAttributeName', 'brazeSubscribeAttributeName'],
+			['brazeSubscribeEventNamePrefix', 'brazeSubscribeEventNamePrefix'],
+		] as Array<[IntegrationKey, string]>)(
+			"does not show validation error if mandatory field '%s' is empty",
+			async (key: IntegrationKey, label: string) => {
+				const user = userEvent.setup();
+				render(
+					<IntegrationsPanel
+						newsletter={newsletter({
+							[key]: 'example',
+						})}
+					/>,
+				);
+
+				await userEvent.click(await integrationsPanelEditButton());
+
+				const input = await screen.findByRole('textbox', {
+					name: new RegExp(label),
+				});
+
+				expect(input).toHaveValue('example');
+
+				await user.clear(input);
+
+				expect(input).toBeInvalid();
+
+				expect(await integrationsPanel()).not.toContainAnyByText(
+					'Must not be empty',
+				);
+			},
+		);
+	});
+
+	it('returns input values if saving fails', () => {});
 });
