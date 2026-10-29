@@ -1,18 +1,18 @@
 import { Badge } from '@guardian/stand/Badge';
 import type { WorkflowStatus } from '@newsletters-nx/newsletters-data-client';
+import { workflowStatusLabels } from '../lib/workflow-status-labels';
 import type { BadgeContent } from './NewsletterStatusBadge';
 
-const STATUS_CONTENT: Record<WorkflowStatus, BadgeContent> = {
-	NOT_REQUESTED: { label: 'Not requested', color: 'grey' },
-	REQUESTED: { label: 'Requested', color: 'orange' },
-	COMPLETED: { label: 'Completed', color: 'green' },
+const STATUS_COLORS: Record<WorkflowStatus, BadgeContent['color']> = {
+	NOT_REQUESTED: 'grey',
+	REQUESTED: 'orange',
+	COMPLETED: 'green',
 };
 
 export const WorkflowStatusBadge = ({ status }: { status: WorkflowStatus }) => {
-	const { label, color } = STATUS_CONTENT[status];
 	return (
-		<Badge color={color} weight="strong" size="xs">
-			{label}
+		<Badge color={STATUS_COLORS[status]} weight="strong" size="xs">
+			{workflowStatusLabels[status]}
 		</Badge>
 	);
 };

@@ -83,7 +83,7 @@ test.describe('Edit article-based newsletter', () => {
 			.fill('Updated Article Test highlight');
 
 		await page
-			.getByLabel('Add the series tag')
+			.getByLabel('Add the series tag', { exact: true })
 			.fill('tests/series/playwright-article-updated');
 
 		await page.getByLabel('Campaign tag').fill('tests/playwright-article-test');

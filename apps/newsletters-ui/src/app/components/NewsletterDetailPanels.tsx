@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
-import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
 import {
@@ -14,6 +13,7 @@ import { CopyPanel } from './CopyPanel';
 import { ImagesPanel } from './ImagesPanel';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
+import { SignupPageAndTagsPanel } from './SignupPageAndTagsPanel';
 import { StandPanel } from './StandPanel';
 import { WorkflowStatusBadge } from './WorkflowStatusBadge';
 
@@ -37,24 +37,6 @@ const listGroupStyles = css`
 	grid-column: 1 / -1;
 	grid-template-columns: subgrid;
 	row-gap: ${semanticSpacing.stackSm};
-	margin: 0;
-`;
-
-const sectionStyles = css`
-	display: grid;
-	grid-column: 1 / -1;
-	grid-template-columns: subgrid;
-	row-gap: ${semanticSpacing.stackSm};
-
-	& + & {
-		margin-top: ${baseSpacing['12Px']};
-		padding-top: ${baseSpacing['12Px']};
-		border-top: 1px solid ${semanticColors.border.weak};
-	}
-`;
-
-const subheadingStyles = css`
-	grid-column: 1 / -1;
 	margin: 0;
 `;
 
@@ -198,52 +180,11 @@ export const NewsletterDetailPanels = ({
 			</dl>
 		</StandPanel>
 		<ImagesPanel newsletter={newsletter} />
-		<CopyPanel newsletter={newsletter} />
-		<StandPanel name="Sign-up page and tags" id="sign-up-page-and-tags" subgrid>
-			<div css={sectionStyles}>
-				<Typography
-					element="h4"
-					variant="bodyBoldSm"
-					cssOverrides={subheadingStyles}
-				>
-					Sign-up page
-				</Typography>
-				<dl css={listStyles}>
-					<Field label="Sign-up page creation status">
-						<WorkflowStatusBadge status={newsletter.signupPageCreationStatus} />
-					</Field>
-					<Field label="Path to sign-up page">
-						{newsletter.signupPage ? (
-							<Link href={`https://theguardian.com${newsletter.signupPage}`}>
-								{newsletter.signupPage}
-							</Link>
-						) : undefined}
-					</Field>
-				</dl>
-			</div>
-			<div css={sectionStyles}>
-				<Typography
-					element="h4"
-					variant="bodyBoldSm"
-					cssOverrides={subheadingStyles}
-				>
-					Tags
-				</Typography>
-				<dl css={listStyles}>
-					<Field label="Tag creation status">
-						<WorkflowStatusBadge status={newsletter.tagCreationStatus} />
-					</Field>
-					<Field label="Series tag">{newsletter.seriesTag}</Field>
-					<Field label="Tag description">
-						{newsletter.seriesTagDescription}
-					</Field>
-					<Field label="Campaign tag">{newsletter.composerTag}</Field>
-					<Field label="Campaign description">
-						{newsletter.composerCampaignTag}
-					</Field>
-				</dl>
-			</div>
-		</StandPanel>
+		<CopyPanel key={newsletter.listId} newsletter={newsletter} />
+		<SignupPageAndTagsPanel
+			key={`signup-${newsletter.listId}`}
+			newsletter={newsletter}
+		/>
 		<StandPanel name="Integrations" id="integrations" subgrid>
 			<section
 				css={listGroupStyles}

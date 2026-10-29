@@ -558,7 +558,9 @@ describe('NewsletterDetailPanels', () => {
 			});
 			fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
 			const alert = await screen.findByRole('alert');
-			expect(alert.textContent).toBe(expectedError);
+			expect(alert.textContent).toContain(
+				`Unable to save changes${expectedError}`,
+			);
 			expect(screen.getAllByRole('alert')).toHaveLength(1);
 			expect(
 				screen.getByRole<HTMLInputElement>('textbox', { name: 'Headline' })
@@ -627,40 +629,6 @@ describe('NewsletterDetailPanels', () => {
 			}
 		},
 	);
-
-	it.each([
-		['NOT_REQUESTED', 'Not requested'],
-		['REQUESTED', 'Requested'],
-		['COMPLETED', 'Completed'],
-	] as const)('shows creation status badges for %s', (status, label) => {
-		render(
-			<NewsletterDetailPanels
-				newsletter={newsletter({
-					signupPageCreationStatus: status,
-					tagCreationStatus: status,
-				})}
-			/>,
-		);
-
-		expect(valueFor('Sign-up page creation status')).toBe(label);
-		expect(valueFor('Tag creation status')).toBe(label);
-	});
-
-	it('uses the independent creation statuses, not the newsletter status', () => {
-		render(
-			<NewsletterDetailPanels
-				newsletter={newsletter({
-					status: 'live',
-					signupPageCreationStatus: 'COMPLETED',
-					tagCreationStatus: 'REQUESTED',
-				})}
-			/>,
-		);
-
-		expect(valueFor('Newsletter status')).toBe('Live');
-		expect(valueFor('Sign-up page creation status')).toBe('Completed');
-		expect(valueFor('Tag creation status')).toBe('Requested');
-	});
 
 	it('shows the attributes', () => {
 		render(<NewsletterDetailPanels newsletter={newsletter()} />);
@@ -781,7 +749,7 @@ describe('NewsletterDetailPanels', () => {
 			]) {
 				expect(valueFor(label)).toBe('Not set');
 			}
-			expect(panel('Sign-up page and tags').queryByRole('link')).toBeNull();
+			expect(screen.queryByRole('link')).toBeNull();
 		},
 	);
 

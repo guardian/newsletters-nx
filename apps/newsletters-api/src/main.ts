@@ -20,6 +20,7 @@ import {
 } from './app/routes/newsletters';
 import { registerNotificationRoutes } from './app/routes/notifications';
 import { registerRenderingTemplatesRoutes } from './app/routes/rendering-templates';
+import { registerSignupPathValidationRoute } from './app/routes/signup-path-validation';
 import { registerTestFixtureRoutes } from './app/routes/test-fixtures';
 import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
@@ -34,6 +35,7 @@ registerHealthRoute(app);
 if (isServingReadWriteEndpoints()) {
 	registerCurrentStepRoute(app);
 	registerUserRoute(app);
+	registerSignupPathValidationRoute(app);
 	registerReadWriteNewsletterRoutes(app);
 	registerNotificationRoutes(app);
 	registerWriteLayoutRoutes(app);
