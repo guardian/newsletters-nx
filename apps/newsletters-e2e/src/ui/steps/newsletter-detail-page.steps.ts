@@ -66,6 +66,16 @@ const expectPanelRowsInOrder = async (
 	}
 };
 
+// Required inputs in the Integrations panel have an accessible name ending " *"
+const integrationsLabelPattern = (label: string): RegExp =>
+	new RegExp(`^${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( \\*)?$`);
+
+const WORKFLOW_STATUS_RADIO_LABELS = {
+	NOT_REQUESTED: 'Not Requested',
+	REQUESTED: 'Requested',
+	COMPLETED: 'Completed',
+} as const;
+
 const createLaunched = async (
 	request: APIRequestContext,
 	namedNewsletters: NamedNewsletters,
@@ -566,6 +576,71 @@ When('the editor saves Copy using Enter', async ({ page }) => {
 
 When('the editor cancels Copy editing', async ({ page }) => {
 	await panelByName(page, 'Copy')
+		.getByRole('button', { name: 'Cancel', exact: true })
+		.click();
+});
+
+When('the editor edits the Integrations panel', async ({ page }) => {
+	await panelByName(page, 'Integrations')
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When(
+	'the editor fills in Integrations:',
+	async ({ page }, table: DataTable) => {
+		const panel = panelByName(page, 'Integrations');
+		for (const { label, value } of table.hashes()) {
+			if (label === undefined || value === undefined) {
+				throw new Error(
+					'Integrations table must have "label" and "value" columns',
+				);
+			}
+			if (label === 'Braze campaign creation status') {
+				const status = workflowStatusEnumSchema.parse(value);
+				const radioLabel = WORKFLOW_STATUS_RADIO_LABELS[status];
+				const group = panel.getByRole('radiogroup', {
+					name: integrationsLabelPattern(label),
+				});
+				// The radio input is visually hidden beneath its <label>
+				await group.getByText(radioLabel, { exact: true }).click();
+				await expect(
+					group.getByRole('radio', { name: radioLabel, exact: true }),
+				).toBeChecked();
+			} else if (label === 'brazeSubscribeAttributeNameAlternate') {
+				const items = panel.getByRole('textbox', {
+					name: `${label} item`,
+					exact: true,
+				});
+				if ((await items.count()) === 0) {
+					await panel
+						.getByRole('button', { name: 'Add new item', exact: true })
+						.click();
+				}
+				await items.first().fill(value);
+			} else {
+				await panel
+					.getByRole('textbox', { name: integrationsLabelPattern(label) })
+					.fill(value);
+			}
+		}
+	},
+);
+
+When('the editor saves Integrations using Enter', async ({ page }) => {
+	const panel = panelByName(page, 'Integrations');
+	await panel
+		.getByRole('textbox', {
+			name: integrationsLabelPattern('brazeNewsletterName'),
+		})
+		.press('Enter');
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+When('the editor cancels Integrations editing', async ({ page }) => {
+	await panelByName(page, 'Integrations')
 		.getByRole('button', { name: 'Cancel', exact: true })
 		.click();
 });
