@@ -71,6 +71,25 @@ describe('ImageInput', () => {
 		expect(screen.getByText('Loading')).toBeTruthy();
 		expect(checking()).toBeTruthy();
 		expect(preview()?.getAttribute('src')).toBe(savedUrl);
+		// The saved image is unchanged, so checking it doesn't block saving.
+		expect(canSave()).toBe('true');
+	});
+
+	it('still allows saving when the unchanged saved image is broken', () => {
+		render(<Harness initial={savedUrl} />);
+		fireEvent.error(preview()!);
+
+		expect(failed()).toBeTruthy();
+		expect(canSave()).toBe('true');
+	});
+
+	it('blocks saving when a broken saved image is replaced with another broken one', () => {
+		render(<Harness initial={savedUrl} />);
+		fireEvent.error(preview()!);
+		typeUrl(newUrl);
+		fireEvent.error(preview()!);
+
+		expect(failed()).toBeTruthy();
 		expect(canSave()).toBe('false');
 	});
 

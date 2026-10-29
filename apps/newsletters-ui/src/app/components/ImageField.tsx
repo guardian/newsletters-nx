@@ -157,16 +157,22 @@ export const useImageDraft = () => {
 				? result.state
 				: 'loading';
 
+	const hasChanged = url !== initial.trim();
+
 	return {
 		address,
 		/** The trimmed address, or undefined if empty */
 		url: url || undefined,
-		/** Whether the address is empty or an image that loaded */
-		canSave: state === 'loaded',
+		/**
+		 * Whether the address is empty, an image that loaded, or unchanged. An
+		 * unchanged address is already saved, so a broken one shouldn't stop
+		 * the editor saving fixes to other images.
+		 */
+		canSave: state === 'loaded' || !hasChanged,
 		state,
 		isValidUrl,
 		/** Whether the address differs from the one editing started with */
-		hasChanged: url !== initial.trim(),
+		hasChanged,
 		start: (initialUrl: string | undefined) => {
 			setAddress(initialUrl ?? '');
 			setInitial(initialUrl ?? '');
