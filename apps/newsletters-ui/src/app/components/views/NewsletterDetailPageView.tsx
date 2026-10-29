@@ -78,7 +78,11 @@ export const NewsletterDetailPageView = () => {
 							selected="details"
 						/>
 					</NewsletterDetailHeader>
-					<NewsletterDetailPanels newsletter={matchedItem} />
+					{/* Keyed so panel edits and saved state don't carry over to another newsletter */}
+					<NewsletterDetailPanels
+						key={matchedItem.listId}
+						newsletter={matchedItem}
+					/>
 				</div>
 			</Container>
 		</StandLayout.Main>

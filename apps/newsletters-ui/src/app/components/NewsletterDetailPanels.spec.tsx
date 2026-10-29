@@ -108,9 +108,6 @@ const withImages = () =>
 const imageInput = (name: string) =>
 	panel('Images').getByRole<HTMLInputElement>('textbox', { name });
 
-// jsdom never loads images, so tell the edit form the preview loaded or failed.
-// Previews are decorative and hidden until loaded, so they have no role. Find
-// the one in the same field as the label.
 const reportImage = (label: string, outcome: 'load' | 'error') => {
 	const img = panel('Images')
 		.getByText(label)
@@ -297,47 +294,6 @@ describe('ImagesPanel editing', () => {
 			expect(valueFor(label)).toBe(url);
 		},
 	);
-	it('replaces both panels and resets their drafts when the newsletter changes', () => {
-		const original = withImages();
-		const next = newsletter({
-			listId: 456,
-			illustrationSquare: 'https://example.com/next-square.jpg',
-			signUpHeadline: 'Next newsletter headline',
-		});
-		const { rerender } = render(
-			<NewsletterDetailPanels newsletter={original} />,
-		);
-		startEditing('Images');
-		fireEvent.change(imageInput('Main banner graphic'), {
-			target: { value: 'https://example.com/discard.jpg' },
-		});
-		startEditing('Copy');
-		fireEvent.change(panel('Copy').getByRole('textbox', { name: 'Headline' }), {
-			target: { value: 'Discard this headline' },
-		});
-		rerender(<NewsletterDetailPanels newsletter={next} />);
-		for (const name of ['Images', 'Copy']) {
-			expect(screen.getAllByRole('heading', { name, level: 3 })).toHaveLength(
-				1,
-			);
-			expect(panel(name).queryAllByRole('textbox')).toHaveLength(0);
-			expect(panel(name).getByRole('button', { name: 'Edit' })).toBeTruthy();
-		}
-		expect(valueFor('Main banner graphic')).toBe('Not set');
-		expect(valueFor('Newsletter square (1:1)')).toBe(next.illustrationSquare);
-		expect(valueFor('Headline')).toBe(next.signUpHeadline);
-		startEditing('Images');
-		expect(imageInput('Main banner graphic').value).toBe('');
-		expect(imageInput('Newsletter square (1:1)').value).toBe(
-			next.illustrationSquare,
-		);
-		startEditing('Copy');
-		expect(
-			panel('Copy').getByRole<HTMLInputElement>('textbox', { name: 'Headline' })
-				.value,
-		).toBe(next.signUpHeadline);
-		expect(requestNewsletterEdit).not.toHaveBeenCalled();
-	});
 	it('unsets cleared images and removes cleared banners from the rendering options', async () => {
 		const original = withImages();
 		vi.mocked(requestNewsletterEdit).mockResolvedValue({

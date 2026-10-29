@@ -103,8 +103,8 @@ export const NewsletterDetailPanels = ({
 				<Field label="MMA group">{newsletter.group}</Field>
 			</dl>
 		</StandPanel>
-		<ImagesPanel key={`images-${newsletter.listId}`} newsletter={newsletter} />
-		<CopyPanel key={`copy-${newsletter.listId}`} newsletter={newsletter} />
+		<ImagesPanel newsletter={newsletter} />
+		<CopyPanel newsletter={newsletter} />
 		<StandPanel name="Sign-up page and tags" id="sign-up-page-and-tags" subgrid>
 			<div css={sectionStyles}>
 				<Typography
