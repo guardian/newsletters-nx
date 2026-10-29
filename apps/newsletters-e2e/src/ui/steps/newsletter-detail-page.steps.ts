@@ -385,6 +385,114 @@ When('the editor edits the Copy panel', async ({ page }) => {
 		.click();
 });
 
+// Opening edit mode also validates the newsletter's saved path. Only the path named in the test step
+// gets the step's result (found or not found); every other path is treated as found.
+const mockSignupPathValidation = (page: Page, path: string, valid: boolean) =>
+	page.route('**/api/signup-path-validation?*', async (route) => {
+		const requested = new URL(route.request().url()).searchParams.get('path');
+		await route.fulfill({
+			json: { ok: true, data: { valid: requested === path ? valid : true } },
+		});
+	});
+
+Given(
+	'the sign-up path {string} can be found',
+	async ({ page }, path: string) => {
+		await mockSignupPathValidation(page, path, true);
+	},
+);
+
+Given(
+	'the sign-up path {string} cannot be found',
+	async ({ page }, path: string) => {
+		await mockSignupPathValidation(page, path, false);
+	},
+);
+
+Then(
+	'the sign-up path feedback is {string}',
+	async ({ page }, message: string) => {
+		await expect(
+			panelByName(page, 'Sign-up page and tags').getByText(message, {
+				exact: true,
+			}),
+		).toBeVisible();
+	},
+);
+
+When('the editor tries to save Sign-up page and tags', async ({ page }) => {
+	await panelByName(page, 'Sign-up page and tags')
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+});
+
+Then(
+	'Sign-up page and tags remains editable with an invalid path',
+	async ({ page }) => {
+		const panel = panelByName(page, 'Sign-up page and tags');
+		await expect(panel.getByText('Editing', { exact: true })).toBeVisible();
+		const alert = panel.getByRole('alert');
+		await expect(alert).toContainText('Unable to save changes');
+		await expect(alert).toContainText(
+			'Please enter a valid path to sign-up page',
+		);
+	},
+);
+
+When('the editor edits the {string} panel', async ({ page }, name: string) => {
+	await panelByName(page, name)
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When(
+	'the editor fills in the {string} panel:',
+	async ({ page }, name: string, table: DataTable) => {
+		for (const { label, value } of table.hashes()) {
+			if (label === undefined || value === undefined) {
+				throw new Error('Panel table must have "label" and "value" columns');
+			}
+			await panelByName(page, name)
+				.getByRole('textbox', { name: label, exact: true })
+				.fill(value);
+		}
+	},
+);
+
+When(
+	'the editor selects {string} for {string} in the {string} panel',
+	async ({ page }, option: string, label: string, name: string) => {
+		await panelByName(page, name)
+			.getByRole('radiogroup', { name: label, exact: true })
+			.getByText(option, { exact: true })
+			.click();
+		await expect(
+			panelByName(page, name)
+				.getByRole('radiogroup', { name: label, exact: true })
+				.getByRole('radio', { name: option, exact: true }),
+		).toBeChecked();
+	},
+);
+
+When('the editor saves the {string} panel', async ({ page }, name: string) => {
+	const panel = panelByName(page, name);
+	await panel
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+When(
+	'the editor cancels editing the {string} panel',
+	async ({ page }, name: string) => {
+		await panelByName(page, name)
+			.getByRole('button', { name: 'Cancel', exact: true })
+			.click();
+	},
+);
+
 When('the editor fills in Copy:', async ({ page }, table: DataTable) => {
 	for (const { label, value } of table.hashes()) {
 		if (label === undefined || value === undefined) {
@@ -442,7 +550,7 @@ When('the next Copy save fails', async ({ page }) => {
 			}
 			await route.fulfill({
 				status: 500,
-				json: { ok: false, message: 'Unable to save Copy' },
+				json: { ok: false, message: 'Please enter a valid dobedo value' },
 			});
 		},
 		{ times: 1 },
@@ -453,7 +561,12 @@ Then(
 	'Copy remains editable with headline {string} and a save error',
 	async ({ page }, headline: string) => {
 		const panel = panelByName(page, 'Copy');
-		await expect(panel.getByRole('alert')).toHaveText('Unable to save Copy');
+		await expect(panel.getByRole('alert')).toContainText(
+			'Unable to save changes',
+		);
+		await expect(panel.getByRole('alert')).toContainText(
+			'Please enter a valid dobedo value',
+		);
 		await expect(
 			panel.getByRole('textbox', { name: 'Headline', exact: true }),
 		).toHaveValue(headline);

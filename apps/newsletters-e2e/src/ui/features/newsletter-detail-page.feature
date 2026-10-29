@@ -238,6 +238,71 @@ Feature: Launched newsletter: open it and find my way around
 				| Campaign tag                 | Not set                                                                                                       |
 				| Campaign description         | Not set                                                                                                       |
 
+	@edit
+	Rule: Editors can edit and save Sign-up page and tags
+
+		Scenario: Saved Sign-up page and tags survives a reload
+			Given a launched newsletter "Afternoon update"
+			And the sign-up path "/news/series/afternoon" can be found
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Sign-up page and tags" panel
+			And the editor fills in the "Sign-up page and tags" panel:
+				| label                | value                   |
+				| Path to sign-up page | /news/series/afternoon  |
+				| Series tag           | news/series/afternoon   |
+				| Tag description      | Your afternoon news     |
+				| Campaign tag         | afternoon_campaign      |
+				| Campaign description | Afternoon campaign copy |
+			And the editor selects "Completed" for "Sign-up page creation status" in the "Sign-up page and tags" panel
+			And the editor selects "Requested" for "Tag creation status" in the "Sign-up page and tags" panel
+			Then the sign-up path feedback is "Valid path"
+			When the editor saves the "Sign-up page and tags" panel
+			And the editor reloads the newsletter detail page
+			Then the "Sign-up page and tags" panel shows:
+				| label                        | value                   |
+				| Sign-up page creation status | Completed               |
+				| Path to sign-up page         | /news/series/afternoon  |
+				| Tag creation status          | Requested               |
+				| Series tag                   | news/series/afternoon   |
+				| Tag description              | Your afternoon news     |
+				| Campaign tag                 | afternoon_campaign      |
+				| Campaign description         | Afternoon campaign copy |
+
+		Scenario: An invalid sign-up path prevents saving until it is cleared
+			Given a launched newsletter "Afternoon update"
+			And the sign-up path "/news/missing" cannot be found
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Sign-up page and tags" panel
+			And the editor fills in the "Sign-up page and tags" panel:
+				| label                | value         |
+				| Path to sign-up page | /news/missing |
+			Then the sign-up path feedback is "Couldn’t find the path"
+			When the editor tries to save Sign-up page and tags
+			Then Sign-up page and tags remains editable with an invalid path
+			When the editor fills in the "Sign-up page and tags" panel:
+				| label                | value |
+				| Path to sign-up page |       |
+			And the editor saves the "Sign-up page and tags" panel
+			And the editor reloads the newsletter detail page
+			Then the "Sign-up page and tags" panel shows:
+				| label                | value   |
+				| Path to sign-up page | Not set |
+
+		Scenario: Cancelling discards Sign-up page and tags edits
+			Given a launched newsletter "Afternoon update" with these details:
+				| field             | value                 |
+				| sign-up page path | /news/series/original |
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Sign-up page and tags" panel
+			And the editor fills in the "Sign-up page and tags" panel:
+				| label                | value                |
+				| Path to sign-up page | /news/series/discard |
+			And the editor cancels editing the "Sign-up page and tags" panel
+			And the editor reloads the newsletter detail page
+			Then the "Sign-up page and tags" panel shows:
+				| label                | value                 |
+				| Path to sign-up page | /news/series/original |
+
 	Rule: Integrations shows the Braze and Ophan values
 
 		Scenario: Braze values are grouped under "Braze values"
