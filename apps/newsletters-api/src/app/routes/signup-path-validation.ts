@@ -20,8 +20,10 @@ export const signupPathRequestError = (path: string): string | undefined => {
 };
 
 export const checkSignupPath = async (path: string): Promise<boolean> => {
-	// prepend the guardian domain and make sure there is only one foward slash after the domain
-	let url = new URL(`${guardianOrigin}/${path.replace(/^\/+/, '')}`);
+	if (signupPathRequestError(path)) {
+		return false;
+	}
+	let url = new URL(`${guardianOrigin}${path}`);
 	// set a 10 second timeout
 	const signal = AbortSignal.timeout(10000);
 	// follow redirects a maximum of 5 times

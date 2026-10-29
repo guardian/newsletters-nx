@@ -47,7 +47,7 @@ describe('checkSignupPath', () => {
 		jest
 			.spyOn(globalThis, 'fetch')
 			.mockResolvedValue(new Response(null, { status }));
-		expect(await checkSignupPath('news/missing')).toBe(false);
+		expect(await checkSignupPath('/news/missing')).toBe(false);
 	});
 
 	it('follows same-origin redirects', async () => {
@@ -86,16 +86,14 @@ describe('checkSignupPath', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(6);
 	});
 
-	it('does not count a pasted hostname as the destination origin', async () => {
-		const fetchMock = jest
-			.spyOn(globalThis, 'fetch')
-			.mockResolvedValue(new Response(null, { status: 404 }));
-		await checkSignupPath('//example.com/test');
-		expect(fetchMock).toHaveBeenCalledWith(
-			new URL('https://www.theguardian.com/example.com/test'),
-			expect.anything(),
-		);
-	});
+	it.each(['news/missing', '//example.com/test', '@evil.com', ''])(
+		'rejects the invalid path "%s" without fetching it',
+		async (path) => {
+			const fetchMock = jest.spyOn(globalThis, 'fetch');
+			expect(await checkSignupPath(path)).toBe(false);
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('handles network errors as well as 404s', async () => {
 		jest.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Offline'));
