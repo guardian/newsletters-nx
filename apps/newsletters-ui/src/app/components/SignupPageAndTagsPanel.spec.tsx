@@ -208,6 +208,19 @@ describe('SignupPageAndTagsPanel', () => {
 		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 	});
 
+	it('shows a format error straight away, before the path is checked', async () => {
+		render(<SignupPageAndTagsPanel newsletter={original} />);
+		edit();
+		fireEvent.change(screen.getByLabelText('Path to sign-up page'), {
+			target: { value: 'not a path' },
+		});
+		save();
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+		const alert = await screen.findByRole('alert');
+		expect(alert).toHaveTextContent('Please add the path of the Guardian URL');
+		expect(alert).not.toHaveTextContent('still being checked');
+	});
+
 	it('hides the save error once the path passes and only shows it again on save', async () => {
 		const result = (valid: boolean) =>
 			({

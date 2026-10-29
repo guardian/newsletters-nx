@@ -98,6 +98,10 @@ export const SignupPageAndTagsPanel = ({
 			),
 		});
 	const validate = (): true | string => {
+		const parsed = parseDraft();
+		if (!parsed.success) {
+			return parsed.error.issues.map(({ message }) => message).join(' ');
+		}
 		if (draft.signupPage) {
 			const status =
 				pathValidation?.path === draft.signupPage
@@ -113,11 +117,7 @@ export const SignupPageAndTagsPanel = ({
 				return 'Please enter a valid path to sign-up page';
 			}
 		}
-		const parsed = parseDraft();
-		return (
-			parsed.success ||
-			parsed.error.issues.map(({ message }) => message).join(' ')
-		);
+		return true;
 	};
 	const save = async (): Promise<boolean | string> => {
 		const validation = validate();
