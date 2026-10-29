@@ -111,7 +111,7 @@ const jumpToPanels = [
 
 const JumpTo = () => (
 	<nav css={jumpToStyles} aria-label="Jump to">
-		<Typography element="span" variant="bodyBoldSm">
+		<Typography element="span" variant="bodySm">
 			Jump to:
 		</Typography>
 		<ul css={jumpToListStyles}>
