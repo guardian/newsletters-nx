@@ -16,6 +16,7 @@ export const getUserEditSchema = (
 			restricted: true,
 			illustrationCard: true,
 			illustrationSquare: true,
+				renderingOptions: true,
 			tagCreationStatus: true,
 			seriesTag: true,
 			composerTag: true,

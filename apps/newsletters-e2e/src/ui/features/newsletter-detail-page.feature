@@ -135,6 +135,37 @@ Feature: Launched newsletter: open it and find my way around
 				| Success message        | Not set |
 				| Highlight card message | Not set |
 
+	Rule: Editors can edit and save Images
+
+		Scenario: Saved images survive a reload
+			Given a launched newsletter "Afternoon update" with all four images
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Images panel
+			And the editor fills in Images:
+				| label                        | value                                                                              |
+				| Main banner graphic          | https://uploads.guim.co.uk/2024/08/14/BreakingNewsAustralia_Red_2_email-header.png |
+				| Main banner graphic (mobile) | https://uploads.guim.co.uk/2025/06/30/Business.jpg                                 |
+				| Newsletter graphic (5:3)     | https://uploads.guim.co.uk/2025/05/15/Matters_of_opinion_11.jpg                    |
+				| Newsletter square (1:1)      | https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg                             |
+			And the editor saves Images
+			And the editor reloads the newsletter detail page
+			Then the "Images" panel shows:
+				| label                        | value                                                                              |
+				| Main banner graphic          | https://uploads.guim.co.uk/2024/08/14/BreakingNewsAustralia_Red_2_email-header.png |
+				| Main banner graphic (mobile) | https://uploads.guim.co.uk/2025/06/30/Business.jpg                                 |
+				| Newsletter graphic (5:3)     | https://uploads.guim.co.uk/2025/05/15/Matters_of_opinion_11.jpg                    |
+				| Newsletter square (1:1)      | https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg                             |
+
+		Scenario: An address that isn't an image can't be saved
+			Given a launched newsletter "Afternoon update" with all four images
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Images panel
+			And the editor fills in Images:
+				| label                   | value     |
+				| Newsletter square (1:1) | not a url |
+			Then the Images panel shows the error "Couldn't load an image from that URL. Check the link and try again."
+			And the editor cannot save Images
+
 	Rule: Editors can edit and save Copy
 
 		Scenario: Saved Copy survives a reload

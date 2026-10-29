@@ -520,3 +520,49 @@ Then(
 		}
 	},
 );
+
+When('the editor edits the Images panel', async ({ page }) => {
+	await panelByName(page, 'Images')
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When('the editor fills in Images:', async ({ page }, table: DataTable) => {
+	for (const { label, value } of table.hashes()) {
+		if (label === undefined || value === undefined) {
+			throw new Error('Images table must have "label" and "value" columns');
+		}
+		await panelByName(page, 'Images')
+			.getByRole('textbox', { name: label, exact: true })
+			.fill(value);
+	}
+});
+
+When('the editor saves Images', async ({ page }) => {
+	const panel = panelByName(page, 'Images');
+	// "Save changes" is disabled until every image has been checked
+	await panel
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+Then(
+	'the Images panel shows the error {string}',
+	async ({ page }, message: string) => {
+		await expect(
+			panelByName(page, 'Images').getByText(message, { exact: true }),
+		).toBeVisible();
+	},
+);
+
+Then('the editor cannot save Images', async ({ page }) => {
+	await expect(
+		panelByName(page, 'Images').getByRole('button', {
+			name: 'Save changes',
+			exact: true,
+		}),
+	).toBeDisabled();
+});
