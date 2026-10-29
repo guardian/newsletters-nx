@@ -360,9 +360,19 @@ describe('Jump to', () => {
 			'Integrations',
 		]);
 		for (const link of links) {
-			const id = link.getAttribute('href')?.slice(1);
+			const id = link.getAttribute('href')?.split('#')[1];
 			expect(document.getElementById(id ?? '')).toBeTruthy();
 		}
+	});
+
+	it('links stay on the current page rather than the base URL', () => {
+		window.history.pushState({}, '', '/newsletters/afternoon-update/details');
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+
+		expect(
+			screen.getByRole('link', { name: 'Attributes' }).getAttribute('href'),
+		).toBe('/newsletters/afternoon-update/details#attributes');
+		window.history.pushState({}, '', '/');
 	});
 
 	it('scrolls to the panel named in the address when the page opens', () => {

@@ -109,20 +109,25 @@ const jumpToPanels = [
 	{ id: 'integrations', name: 'Integrations' },
 ];
 
-const JumpTo = () => (
-	<nav css={jumpToStyles} aria-label="Jump to">
-		<Typography element="span" variant="bodySm">
-			Jump to:
-		</Typography>
-		<ul css={jumpToListStyles}>
-			{jumpToPanels.map(({ id, name }) => (
-				<li key={id}>
-					<Link href={`#${id}`}>{name}</Link>
-				</li>
-			))}
-		</ul>
-	</nav>
-);
+// The page has `<base href="/">`, so a bare `#id` would link to `/#id`. Include
+// the current path so the link stays on this page.
+const JumpTo = () => {
+	const { pathname, search } = window.location;
+	return (
+		<nav css={jumpToStyles} aria-label="Jump to">
+			<Typography element="span" variant="bodySm">
+				Jump to:
+			</Typography>
+			<ul css={jumpToListStyles}>
+				{jumpToPanels.map(({ id, name }) => (
+					<li key={id}>
+						<Link href={`${pathname}${search}#${id}`}>{name}</Link>
+					</li>
+				))}
+			</ul>
+		</nav>
+	);
+};
 
 /** Scroll to the panel named in the address (e.g. `#integrations`) once the page has rendered */
 const useScrollToHashPanel = () => {
