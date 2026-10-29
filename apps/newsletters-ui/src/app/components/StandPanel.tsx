@@ -369,7 +369,11 @@ export const StandPanel = ({
 		);
 	}
 	return (
-		<section id={id} css={[wrapperStyle, subgrid && subgridStyle]}>
+		<section
+			id={id}
+			css={[wrapperStyle, subgrid && subgridStyle]}
+			aria-label={name}
+		>
 			<header css={[headStyle, subgrid && subgridHeadStyle]}>
 				<Typography element="h3" variant="bodyBoldMd">
 					{name}
