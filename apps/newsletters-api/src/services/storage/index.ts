@@ -15,8 +15,7 @@ import {
 	LaunchService,
 } from '@newsletters-nx/newsletters-data-client/server';
 import layoutsData from '../../../static/layouts.local.json';
-import newslettersLocalData from '../../../static/newsletters.local.json';
-import newslettersSeedData from '../../../static/newsletters.seed.json';
+import newslettersData from '../../../static/newsletters.local.json';
 import { isUsingInMemoryStorage } from '../../apiDeploymentSettings';
 import { makeEmailEnvInfo } from '../notifications/email-env';
 import { makeSesClient } from '../notifications/email-service';
@@ -27,19 +26,14 @@ import {
 	makeS3DraftStorageInstance,
 } from './s3StorageInstance';
 
-const newslettersData = [
-	...(newslettersSeedData as unknown as NewsletterData[]),
-	...(newslettersLocalData as unknown as NewsletterData[]),
-];
-
 const isUsingInMemoryStore = isUsingInMemoryStorage();
 
 const draftStore: DraftStorage = isUsingInMemoryStore
 	? makeInMemoryStorageInstance()
 	: makeS3DraftStorageInstance();
 
-const validNewsletters = newslettersData.filter((item) =>
-	isNewsletterData(item),
+const validNewsletters = (newslettersData as unknown as NewsletterData[]).filter(
+	(item) => isNewsletterData(item),
 );
 const newsletterStore: NewsletterStorage = isUsingInMemoryStore
 	? new InMemoryNewsletterStorage(validNewsletters)
