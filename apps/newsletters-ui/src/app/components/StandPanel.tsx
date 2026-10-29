@@ -171,9 +171,13 @@ const EditableStandPanel = ({
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string>();
 	const [validationError, setValidationError] = useState<string>();
-	// Only Save shows a validation error; later field checks may clear it but never re-show it.
-	if (validationError !== undefined && (onValidate?.() ?? true) === true) {
-		setValidationError(undefined);
+	// Only Save shows a validation error; later field checks may update or clear it but never re-show it.
+	if (validationError !== undefined) {
+		const validation = onValidate?.() ?? true;
+		const nextError = validation === true ? undefined : validation;
+		if (nextError !== validationError) {
+			setValidationError(nextError);
+		}
 	}
 	const visibleError = validationError ?? error;
 	const saving = useRef(false);

@@ -1,3 +1,4 @@
+import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import type { Express } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { hasEditAccess } from '../authorisation';
@@ -6,6 +7,17 @@ import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 const guardianOrigin = 'https://www.theguardian.com';
 const maxPathLength = 500;
+
+const pathLengthError = `A non-empty path less than ${maxPathLength} characters is required`;
+
+/** Returns why a path can't be checked, or undefined if it can. */
+export const signupPathRequestError = (path: string): string | undefined => {
+	if (!path.trim() || path.length > maxPathLength) {
+		return pathLengthError;
+	}
+	return newsletterDataSchema.shape.signupPage.safeParse(path).error?.issues[0]
+		?.message;
+};
 
 export const checkSignupPath = async (path: string): Promise<boolean> => {
 	// prepend the guardian domain and make sure there is only one foward slash after the domain
@@ -48,18 +60,12 @@ export function registerSignupPathValidationRoute(app: Express) {
 					.send(makeErrorResponse('You do not have edit access'));
 			}
 			const { path } = req.query;
-			if (
-				typeof path !== 'string' ||
-				!path.trim() ||
-				path.length > maxPathLength
-			) {
-				return res
-					.status(400)
-					.send(
-						makeErrorResponse(
-							`A non-empty path less than ${maxPathLength} characters is required`,
-						),
-					);
+			if (typeof path !== 'string') {
+				return res.status(400).send(makeErrorResponse(pathLengthError));
+			}
+			const requestError = signupPathRequestError(path);
+			if (requestError) {
+				return res.status(400).send(makeErrorResponse(requestError));
 			}
 			try {
 				return res.send(

@@ -1,4 +1,33 @@
-import { checkSignupPath } from './signup-path-validation';
+import {
+	checkSignupPath,
+	signupPathRequestError,
+} from './signup-path-validation';
+
+describe('signupPathRequestError', () => {
+	it('accepts a path in the signupPage schema format', () => {
+		expect(signupPathRequestError('/global/sign-up-for-news')).toBeUndefined();
+	});
+
+	it.each([
+		'global/no-leading-slash',
+		'/has spaces',
+		'/has?query=string',
+		'https://www.theguardian.com/global',
+	])('rejects %s with the signupPage schema message', (path) => {
+		expect(signupPathRequestError(path)).toMatch(
+			/^Please add the path of the Guardian URL from the slash/,
+		);
+	});
+
+	it.each(['', '   ', `/${'a'.repeat(500)}`])(
+		'rejects an empty or over-long path',
+		(path) => {
+			expect(signupPathRequestError(path)).toBe(
+				'A non-empty path less than 500 characters is required',
+			);
+		},
+	);
+});
 
 describe('checkSignupPath', () => {
 	afterEach(() => jest.restoreAllMocks());

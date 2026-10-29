@@ -63,7 +63,10 @@ describe('SignupPathInput validation', () => {
 			expect.anything(),
 		);
 		expect(screen.getByText('Valid path')).toBeVisible();
-		expect(onValidation).toHaveBeenCalledWith({ path: '/second', valid: true });
+		expect(onValidation).toHaveBeenCalledWith({
+			path: '/second',
+			status: 'valid',
+		});
 	});
 
 	it('checks the existing path immediately when edit mode opens, then 2 seconds after typing', async () => {
@@ -100,22 +103,112 @@ describe('SignupPathInput validation', () => {
 		expect(screen.queryByText('Valid path')).not.toBeInTheDocument();
 		expect(onValidation).toHaveBeenCalledWith({
 			path: '/missing',
-			valid: false,
+			status: 'not-found',
 		});
 	});
 
-	it('shows failure and logs network errors', async () => {
+	it('reports a failed check without marking the path invalid, and logs network errors', async () => {
 		const error = new Error('Offline');
 		fetchMock.mockRejectedValue(error);
 		const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 		render(<Editor />);
 		fireEvent.change(input(), { target: { value: '/news' } });
 		await advance(2000);
-		expect(screen.getByText('Couldn’t find the path')).toBeVisible();
+		expect(screen.getByRole('status')).toHaveTextContent(
+			'Couldn’t check the path. Try again',
+		);
+		expect(input()).not.toHaveAttribute('aria-invalid', 'true');
+		expect(
+			screen.queryByText('Couldn’t find the path'),
+		).not.toBeInTheDocument();
+		expect(onValidation).toHaveBeenCalledWith({
+			path: '/news',
+			status: 'failed',
+		});
 		expect(log).toHaveBeenCalledWith(
 			'Failed to validate sign-up page path',
 			error,
 		);
+	});
+
+	it.each([403, 429, 502])(
+		'reports a %s response as a failed check, not an invalid path',
+		async (status) => {
+			fetchMock.mockResolvedValue({ ok: false, status });
+			vi.spyOn(console, 'error').mockImplementation(() => undefined);
+			render(<Editor />);
+			fireEvent.change(input(), { target: { value: '/news' } });
+			await advance(2000);
+			expect(input()).not.toHaveAttribute('aria-invalid', 'true');
+			expect(onValidation).toHaveBeenCalledWith({
+				path: '/news',
+				status: 'failed',
+			});
+		},
+	);
+
+	it('shows nothing while a check is pending', async () => {
+		fetchMock.mockReturnValue(new Promise(() => undefined));
+		render(<Editor />);
+		fireEvent.change(input(), { target: { value: '/news' } });
+		await advance(2000);
+		expect(input()).not.toHaveAttribute('aria-invalid', 'true');
+		expect(screen.queryByRole('status')).not.toBeInTheDocument();
+		expect(onValidation).not.toHaveBeenCalled();
+	});
+
+	it('uses the signupPage schema to reject a badly formatted path without a lookup', async () => {
+		render(<Editor />);
+		fireEvent.change(input(), { target: { value: 'global/no-slash' } });
+		await advance(2000);
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(input()).toHaveAttribute('aria-invalid', 'true');
+		const origin = screen.getByText('https://www.theguardian.com');
+		expect(origin).toHaveStyle({ textDecoration: 'line-through' });
+		expect(origin.parentElement).toHaveTextContent(
+			'Please add the path of the Guardian URL from the slash e.g. https://www.theguardian.com/global/sign-up-for-newsletter',
+		);
+		expect(input()).toHaveAccessibleDescription(
+			/^Please add the path of the Guardian URL/,
+		);
+		expect(onValidation).toHaveBeenCalledWith({
+			path: 'global/no-slash',
+			status: 'invalid-format',
+		});
+	});
+
+	it('rejects a path over 500 characters without a lookup', async () => {
+		const path = `/${'a'.repeat(500)}`;
+		render(<Editor />);
+		fireEvent.change(input(), { target: { value: path } });
+		await advance(2000);
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(input()).toHaveAttribute('aria-invalid', 'true');
+		expect(
+			screen.getByText(
+				'Please check the length of the path provided. There is a 500 character limit',
+			),
+		).toBeVisible();
+		expect(onValidation).toHaveBeenCalledWith({ path, status: 'too-long' });
+	});
+
+	it('re-runs a failed check immediately from the Try again link', async () => {
+		fetchMock.mockResolvedValueOnce({ ok: false, status: 502 });
+		vi.spyOn(console, 'error').mockImplementation(() => undefined);
+		render(<Editor />);
+		fireEvent.change(input(), { target: { value: '/news' } });
+		await advance(2000);
+		onValidation.mockClear();
+		fireEvent.click(screen.getByRole('link', { name: 'Try again' }));
+		expect(onValidation).toHaveBeenCalledWith(undefined);
+		expect(screen.queryByRole('status')).not.toBeInTheDocument();
+		await advance(0);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		expect(screen.getByText('Valid path')).toBeVisible();
+		expect(onValidation).toHaveBeenLastCalledWith({
+			path: '/news',
+			status: 'valid',
+		});
 	});
 
 	it('ignores stale requests even when they resolve after the next value', async () => {
@@ -140,7 +233,7 @@ describe('SignupPathInput validation', () => {
 		expect(screen.getByText('Valid path')).toBeVisible();
 		expect(onValidation).toHaveBeenCalledExactlyOnceWith({
 			path: '/new',
-			valid: true,
+			status: 'valid',
 		});
 	});
 

@@ -98,11 +98,20 @@ export const SignupPageAndTagsPanel = ({
 			),
 		});
 	const validate = (): true | string => {
-		if (
-			draft.signupPage &&
-			(pathValidation?.path !== draft.signupPage || !pathValidation.valid)
-		) {
-			return 'Please enter a valid path to sign-up page';
+		if (draft.signupPage) {
+			const status =
+				pathValidation?.path === draft.signupPage
+					? pathValidation.status
+					: undefined;
+			if (status === undefined) {
+				return 'The path to sign-up page is still being checked. Please wait and try again.';
+			}
+			if (status === 'failed') {
+				return 'The path to sign-up page couldn’t be checked. Select ‘Try again’ below the path to check it again.';
+			}
+			if (status !== 'valid') {
+				return 'Please enter a valid path to sign-up page';
+			}
 		}
 		const parsed = parseDraft();
 		return (

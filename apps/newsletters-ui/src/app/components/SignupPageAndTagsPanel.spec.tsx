@@ -194,13 +194,13 @@ describe('SignupPageAndTagsPanel', () => {
 		await screen.findByRole('button', { name: 'Edit' });
 	});
 
-	it('blocks saving a non-empty path until validation passes', async () => {
+	it('blocks saving while the path is still being checked', async () => {
 		render(<SignupPageAndTagsPanel newsletter={original} />);
 		edit();
 		save();
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 		expect(await screen.findByRole('alert')).toHaveTextContent(
-			'Unable to save changesPlease enter a valid path to sign-up page',
+			'Unable to save changesThe path to sign-up page is still being checked. Please wait and try again.',
 		);
 		expect(scrollIntoView).not.toHaveBeenCalled();
 		expect(screen.getByText('Editing')).toBeVisible();
@@ -218,6 +218,7 @@ describe('SignupPageAndTagsPanel', () => {
 		render(<SignupPageAndTagsPanel newsletter={original} />);
 		edit();
 		save();
+		expect(screen.getByRole('alert')).toHaveTextContent('still being checked');
 		await screen.findByText('Couldn’t find the path');
 		expect(screen.getByRole('alert')).toHaveTextContent(
 			'Please enter a valid path to sign-up page',
@@ -238,6 +239,29 @@ describe('SignupPageAndTagsPanel', () => {
 		fireEvent.change(input, { target: { value: '' } });
 		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+	});
+
+	it('blocks saving when the path could not be checked, without calling it invalid', async () => {
+		vi.mocked(fetch).mockResolvedValue({ ok: false, status: 502 } as Response);
+		vi.spyOn(console, 'error').mockImplementation(() => undefined);
+		render(<SignupPageAndTagsPanel newsletter={original} />);
+		edit();
+		await screen.findByRole('link', { name: 'Try again' });
+		save();
+		expect(screen.getByRole('alert')).toHaveTextContent(
+			'The path to sign-up page couldn’t be checked. Select ‘Try again’ below the path to check it again.',
+		);
+		expect(
+			screen.queryByText('Couldn’t find the path'),
+		).not.toBeInTheDocument();
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+		vi.mocked(fetch).mockResolvedValue({
+			ok: true,
+			json: () => Promise.resolve({ ok: true, data: { valid: true } }),
+		} as Response);
+		fireEvent.click(screen.getByRole('link', { name: 'Try again' }));
+		await screen.findByText('Valid path');
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 	});
 
 	it('does not offer editing to view-only users', () => {
