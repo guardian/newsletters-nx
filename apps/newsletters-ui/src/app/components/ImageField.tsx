@@ -250,11 +250,9 @@ const Placeholder = ({
 );
 
 const Thumbnail = ({
-	label,
 	shape,
 	draft,
 }: {
-	label: string;
 	shape: ImageShape;
 	draft: ImageDraft;
 }) => {
@@ -266,7 +264,7 @@ const Thumbnail = ({
 				<img
 					key={url}
 					src={url}
-					alt={`${label} thumbnail`}
+					alt=""
 					css={[imageBoxStyles(shape), state !== 'loaded' && hiddenStyles]}
 					onLoad={() => {
 						draft.reportLoad('loaded');
@@ -325,7 +323,7 @@ export const ImageInput = ({
 		</Typography>
 		<div css={controlsStyles}>
 			<div css={previewAndInputStyles}>
-				<Thumbnail label={label} shape={shape} draft={draft} />
+				<Thumbnail shape={shape} draft={draft} />
 				<TextInput
 					fluid
 					aria-label={label}

@@ -38,8 +38,8 @@ const input = () =>
 const typeUrl = (value: string) => {
 	fireEvent.change(input(), { target: { value } });
 };
-// Previews are hidden until loaded, so find them by alt text rather than role.
-const preview = () => screen.queryByAltText(`${label} thumbnail`);
+// Previews are decorative and hidden until loaded, so they have no role.
+const preview = () => document.querySelector('img');
 const canSave = () => screen.getByTestId('can-save').textContent;
 
 const checking = () => screen.queryByText('Checking image…');

@@ -109,9 +109,15 @@ const imageInput = (name: string) =>
 	panel('Images').getByRole<HTMLInputElement>('textbox', { name });
 
 // jsdom never loads images, so tell the edit form the preview loaded or failed.
-// Previews are hidden until loaded, so find them by alt text rather than role.
+// Previews are decorative and hidden until loaded, so they have no role. Find
+// the one in the same field as the label.
 const reportImage = (label: string, outcome: 'load' | 'error') => {
-	const img = panel('Images').getByAltText(`${label} thumbnail`);
+	const img = panel('Images')
+		.getByText(label)
+		.parentElement?.querySelector('img');
+	if (!img) {
+		throw new Error(`No preview for ${label}`);
+	}
 	if (outcome === 'load') {
 		fireEvent.load(img);
 	} else {
