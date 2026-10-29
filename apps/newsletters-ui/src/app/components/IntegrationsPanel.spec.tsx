@@ -395,5 +395,93 @@ describe('IntegrationsPanel', () => {
 		);
 	});
 
-	// it('returns input values if saving fails', () => {});
+	describe('saving', () => {
+		beforeEach(() => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+		});
+
+		it('retains input values if saving fails', async () => {
+			const user = userEvent.setup();
+			vi.mocked(requestNewsletterEdit).mockResolvedValue({
+				ok: false,
+				message: 'Save rejected',
+			});
+			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+
+			await user.click(await integrationsPanelEditButton());
+			const nameInput = await screen.findByRole('textbox', {
+				name: /^brazeNewsletterName( \*)?$/,
+			});
+			const campaignInput = screen.getByRole('textbox', {
+				name: 'Campaign name',
+			});
+			await user.clear(nameInput);
+			await user.type(nameInput, 'Changed_Name');
+			await user.type(campaignInput, 'Typed campaign');
+			await user.click(
+				await screen.findByRole('button', { name: 'Save changes' }),
+			);
+
+			expect(await screen.findByRole('alert')).toHaveTextContent(
+				'Save rejected',
+			);
+			expect(requestNewsletterEdit).toHaveBeenCalledTimes(1);
+			expect(screen.getByText('Editing')).toBeVisible();
+			expect(nameInput).toHaveValue('Changed_Name');
+			expect(campaignInput).toHaveValue('Typed campaign');
+			expect(
+				screen.getByRole('textbox', {
+					name: 'brazeSubscribeAttributeNameAlternate item',
+				}),
+			).toHaveValue('Alternate_One');
+		});
+
+		it('ignores empty inputs in the brazeSubscribeAttributeNameAlternate when saving', async () => {
+			const user = userEvent.setup();
+			vi.mocked(requestNewsletterEdit).mockImplementation((_, changes) =>
+				Promise.resolve({
+					ok: true,
+					data: { ...newsletter(), ...changes },
+				} as ApiResponse<NewsletterData>),
+			);
+			render(
+				<IntegrationsPanel
+					newsletter={newsletter({
+						...validIntegrations,
+						brazeSubscribeAttributeNameAlternate: ['First_One'],
+					})}
+				/>,
+			);
+
+			await user.click(await integrationsPanelEditButton());
+			const addButton = await screen.findByRole('button', {
+				name: 'Add new item',
+			});
+			await user.click(addButton);
+			await user.click(addButton);
+			await user.click(addButton);
+
+			const inputs = await screen.findAllByRole('textbox', {
+				name: 'brazeSubscribeAttributeNameAlternate item',
+			});
+			expect(inputs).toHaveLength(4);
+			// inputs[2] is left blank; inputs[3] holds only whitespace
+			await user.type(inputs[1]!, 'Second_One');
+			await user.type(inputs[3]!, '   ');
+
+			await user.click(
+				await screen.findByRole('button', { name: 'Save changes' }),
+			);
+
+			expect(requestNewsletterEdit).toHaveBeenCalledWith(
+				123,
+				expect.objectContaining({
+					brazeSubscribeAttributeNameAlternate: ['First_One', 'Second_One'],
+				}),
+			);
+		});
+	});
 });
