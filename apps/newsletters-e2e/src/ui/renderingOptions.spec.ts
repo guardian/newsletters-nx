@@ -29,6 +29,12 @@ test.describe('Rendering options', () => {
 
 		await page.getByRole('link', { name: 'Edit Rendering Options' }).click();
 		await expect(page).toHaveURL(RENDERING_OPTIONS_URL_PATTERN);
+		// The URL changes before the route finishes rendering, and the Edit Newsletter
+		// page still on screen has its own "Add the series tag" field. Wait for a
+		// heading that only the rendering options page has before filling anything in.
+		await expect(
+			page.getByRole('heading', { name: 'Category and series tag' }),
+		).toBeVisible();
 	});
 
 	const LIST_ID = 9001;
