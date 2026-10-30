@@ -66,7 +66,9 @@ const reportImage = (label: string, outcome: 'load' | 'error') => {
 	}
 };
 
-describe('ImagesPanel editing', () => {
+// These tests render every panel and query by role, which takes 3–5s per test
+// on CI (well under 1s locally), so they need more than the default 5s.
+describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 	beforeEach(allowEditing);
 
 	const saveButton = () =>
