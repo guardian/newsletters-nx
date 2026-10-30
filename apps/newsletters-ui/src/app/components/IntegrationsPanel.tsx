@@ -147,7 +147,6 @@ const normaliseDraft = (draft: IntegrationsDraft): IntegrationsDraft => ({
 const parseDraft = (draft: IntegrationsDraft) =>
 	integrationsSchema.safeParse(normaliseDraft(draft));
 
-/** Describes each schema issue, naming the offending alternate name where relevant */
 const formatParseErrors = (
 	error: { issues: ReadonlyArray<{ path: PropertyKey[]; message: string }> },
 	draft: IntegrationsDraft,
@@ -156,6 +155,7 @@ const formatParseErrors = (
 		.map((issue) => {
 			const [key, index] = issue.path;
 			if (key === 'brazeSubscribeAttributeNameAlternate') {
+				// There could issues with several of the alternate names. So list them all
 				const value =
 					normaliseDraft(draft).brazeSubscribeAttributeNameAlternate?.[
 						Number(index)
