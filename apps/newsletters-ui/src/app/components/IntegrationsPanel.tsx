@@ -147,6 +147,27 @@ const normaliseDraft = (draft: IntegrationsDraft): IntegrationsDraft => ({
 const parseDraft = (draft: IntegrationsDraft) =>
 	integrationsSchema.safeParse(normaliseDraft(draft));
 
+/** Describes each schema issue, naming the offending alternate name where relevant */
+const formatParseErrors = (
+	error: { issues: ReadonlyArray<{ path: PropertyKey[]; message: string }> },
+	draft: IntegrationsDraft,
+): string =>
+	error.issues
+		.map((issue) => {
+			const [key, index] = issue.path;
+			if (key === 'brazeSubscribeAttributeNameAlternate') {
+				const value =
+					normaliseDraft(draft).brazeSubscribeAttributeNameAlternate?.[
+						Number(index)
+					];
+				return `${key} "${value}": ${issue.message}`;
+			}
+			return key === undefined
+				? issue.message
+				: `${String(key)}: ${issue.message}`;
+		})
+		.join(' ');
+
 const validate = (draft: IntegrationsDraft): IntegrationsErrors => {
 	const errors: IntegrationsErrors = {};
 
@@ -175,21 +196,7 @@ export const IntegrationsPanel = ({
 	const save = async (): Promise<boolean | string> => {
 		const parsed = parseDraft(draft);
 		if (!parsed.success) {
-			return parsed.error.issues
-				.map((issue) => {
-					const [key, index] = issue.path;
-					if (key === 'brazeSubscribeAttributeNameAlternate') {
-						const value =
-							normaliseDraft(draft).brazeSubscribeAttributeNameAlternate?.[
-								Number(index)
-							];
-						return `${key} "${value}": ${issue.message}`;
-					}
-					return key === undefined
-						? issue.message
-						: `${String(key)}: ${issue.message}`;
-				})
-				.join(' ');
+			return formatParseErrors(parsed.error, draft);
 		}
 		const response = await requestNewsletterEdit(
 			newsletter.listId,
