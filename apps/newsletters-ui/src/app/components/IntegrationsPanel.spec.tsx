@@ -3,26 +3,14 @@ import {
 	type NewsletterData,
 	type WorkflowStatus,
 } from '@newsletters-nx/newsletters-data-client';
-import {
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	within,
-} from '@testing-library/react';
-import '@testing-library/jest-dom/vitest';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { allowEditing, newsletterFixture } from '../../test-utils/newsletter';
+import { valueFor } from '../../test-utils/newsletter-detail-page';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
-import { usePermissions } from '../hooks/user-hooks';
 import type { IntegrationKey } from './IntegrationsPanel';
 import { IntegrationsPanel } from './IntegrationsPanel';
-
-afterEach(() => {
-	cleanup();
-	// Scrolling is not supported by jsdom
-	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
-});
 
 vi.mock('../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
 vi.mock('../api-requests/request-newsletter-edit', () => ({
@@ -30,11 +18,6 @@ vi.mock('../api-requests/request-newsletter-edit', () => ({
 }));
 beforeEach(() => {
 	vi.resetAllMocks();
-	// Scrolling is not supported by jsdom
-	Object.defineProperty(Element.prototype, 'scrollIntoView', {
-		configurable: true,
-		value: vi.fn(),
-	});
 });
 
 /** The Integrations panel's section, found by its accessible name */
@@ -43,32 +26,6 @@ const integrationsPanel = () =>
 
 const integrationsPanelEditButton = async () =>
 	within(await integrationsPanel()).findByRole('button', { name: 'Edit' });
-
-const newsletter = (overrides: Partial<NewsletterData> = {}) =>
-	({
-		name: 'Afternoon update',
-		listId: 123,
-		status: 'live',
-		theme: 'news',
-		category: 'article-based',
-		regionFocus: 'AU',
-		frequency: 'Weekly',
-		group: 'News in depth',
-		signupPageCreationStatus: 'NOT_REQUESTED',
-		tagCreationStatus: 'NOT_REQUESTED',
-		brazeCampaignCreationStatus: 'NOT_REQUESTED',
-		...overrides,
-	}) as NewsletterData;
-
-/** The text of a field's value, ignoring decorative (aria-hidden) content such as icons */
-const valueFor = (label: string) => {
-	// Strip the aria-hidden content from a copy, not from the page itself
-	const value = screen
-		.getByText(label, { exact: true, selector: 'dt' })
-		.nextElementSibling?.cloneNode(true) as Element | undefined;
-	value?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
-	return value?.textContent;
-};
 
 /** A newsletter whose editable integration values all pass validation */
 const validIntegrations = {
@@ -88,7 +45,7 @@ describe('IntegrationsPanel', () => {
 		it('shows braze values from the newsletter', () => {
 			render(
 				<IntegrationsPanel
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						brazeCampaignCreationStatus: 'COMPLETED',
 						brazeNewsletterName: 'Editorial_AfternoonUpdate',
 						brazeSubscribeAttributeName: 'AfternoonUpdate_Subscribe_Email',
@@ -117,7 +74,7 @@ describe('IntegrationsPanel', () => {
 		it('shows multiple values for the brazeSubscribeAttributeNameAlternate if provided', () => {
 			render(
 				<IntegrationsPanel
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						brazeSubscribeAttributeNameAlternate: ['a', 'b', 'c'],
 					})}
 				/>,
@@ -129,7 +86,7 @@ describe('IntegrationsPanel', () => {
 		it("shows 'Not set' for an empty brazeSubscribeAttributeNameAlternate list", () => {
 			render(
 				<IntegrationsPanel
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						brazeSubscribeAttributeNameAlternate: [],
 					})}
 				/>,
@@ -143,7 +100,7 @@ describe('IntegrationsPanel', () => {
 			(value) => {
 				render(
 					<IntegrationsPanel
-						newsletter={newsletter({
+						newsletter={newsletterFixture({
 							brazeNewsletterName: value,
 							brazeSubscribeAttributeName: value,
 							brazeSubscribeEventNamePrefix: value,
@@ -166,7 +123,7 @@ describe('IntegrationsPanel', () => {
 		it('shows ophan values from the newsletter', () => {
 			render(
 				<IntegrationsPanel
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						campaignName: 'AfternoonUpdate',
 						campaignCode: 'AfternoonUpdate_Email',
 					})}
@@ -183,7 +140,7 @@ describe('IntegrationsPanel', () => {
 			(value) => {
 				render(
 					<IntegrationsPanel
-						newsletter={newsletter({
+						newsletter={newsletterFixture({
 							campaignName: value,
 							campaignCode: value,
 						})}
@@ -198,10 +155,7 @@ describe('IntegrationsPanel', () => {
 
 	describe('edit mode', () => {
 		beforeEach(() => {
-			vi.mocked(usePermissions).mockReturnValue({
-				editEverything: true,
-				useJsonEditor: false,
-			});
+			allowEditing();
 		});
 		it.each([
 			['NOT_REQUESTED', 'Not Requested'],
@@ -212,7 +166,7 @@ describe('IntegrationsPanel', () => {
 			async (value: WorkflowStatus, name: string) => {
 				render(
 					<IntegrationsPanel
-						newsletter={newsletter({
+						newsletter={newsletterFixture({
 							brazeCampaignCreationStatus: value,
 						})}
 					/>,
@@ -244,7 +198,7 @@ describe('IntegrationsPanel', () => {
 		])(
 			"shows the value from the newsletter in input '%s'",
 			async (overrides: Partial<NewsletterData>, label, expectedValue) => {
-				render(<IntegrationsPanel newsletter={newsletter(overrides)} />);
+				render(<IntegrationsPanel newsletter={newsletterFixture(overrides)} />);
 
 				fireEvent.click(await integrationsPanelEditButton());
 
@@ -257,7 +211,7 @@ describe('IntegrationsPanel', () => {
 		it("shows the value from the newsletter in input 'brazeSubscribeAttributeNameAlternate'", async () => {
 			render(
 				<IntegrationsPanel
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						brazeSubscribeAttributeNameAlternate: ['a', 'b'],
 					})}
 				/>,
@@ -280,20 +234,19 @@ describe('IntegrationsPanel', () => {
 
 	describe('input validation', () => {
 		beforeEach(() => {
-			vi.mocked(usePermissions).mockReturnValue({
-				editEverything: true,
-				useJsonEditor: false,
-			});
+			allowEditing();
 		});
 		it('saves if all provided data is valid', async () => {
 			const user = userEvent.setup();
 			vi.mocked(requestNewsletterEdit).mockImplementation((_, changes) =>
 				Promise.resolve({
 					ok: true,
-					data: { ...newsletter(), ...changes },
+					data: { ...newsletterFixture(), ...changes },
 				} as ApiResponse<NewsletterData>),
 			);
-			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+			render(
+				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
+			);
 
 			await user.click(await integrationsPanelEditButton());
 			await user.click(
@@ -329,7 +282,9 @@ describe('IntegrationsPanel', () => {
 			async (key, invalidValue, expectedMessage) => {
 				const user = userEvent.setup();
 				render(
-					<IntegrationsPanel newsletter={newsletter(validIntegrations)} />,
+					<IntegrationsPanel
+						newsletter={newsletterFixture(validIntegrations)}
+					/>,
 				);
 
 				await user.click(await integrationsPanelEditButton());
@@ -346,7 +301,9 @@ describe('IntegrationsPanel', () => {
 
 		it('shows a validation error if brazeSubscribeAttributeNameAlternate does not match the required format', async () => {
 			const user = userEvent.setup();
-			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+			render(
+				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
+			);
 
 			await user.click(await integrationsPanelEditButton());
 			const [input] = await screen.findAllByRole('textbox', {
@@ -362,7 +319,9 @@ describe('IntegrationsPanel', () => {
 
 		it('disables the save button while a field is invalid and re-enables it once fixed', async () => {
 			const user = userEvent.setup();
-			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+			render(
+				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
+			);
 
 			await user.click(await integrationsPanelEditButton());
 			const saveButton = await screen.findByRole('button', {
@@ -383,7 +342,9 @@ describe('IntegrationsPanel', () => {
 
 		it('does not submit invalid data when Enter is pressed', async () => {
 			const user = userEvent.setup();
-			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+			render(
+				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
+			);
 
 			await user.click(await integrationsPanelEditButton());
 			const input = await screen.findByRole('textbox', {
@@ -406,7 +367,7 @@ describe('IntegrationsPanel', () => {
 				const user = userEvent.setup();
 				render(
 					<IntegrationsPanel
-						newsletter={newsletter({
+						newsletter={newsletterFixture({
 							[key]: 'example',
 						})}
 					/>,
@@ -433,10 +394,7 @@ describe('IntegrationsPanel', () => {
 
 	describe('saving', () => {
 		beforeEach(() => {
-			vi.mocked(usePermissions).mockReturnValue({
-				editEverything: true,
-				useJsonEditor: false,
-			});
+			allowEditing();
 		});
 
 		it('retains input values if saving fails', async () => {
@@ -445,7 +403,9 @@ describe('IntegrationsPanel', () => {
 				ok: false,
 				message: 'Save rejected',
 			});
-			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+			render(
+				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
+			);
 
 			await user.click(await integrationsPanelEditButton());
 			const nameInput = await screen.findByRole('textbox', {
@@ -480,12 +440,12 @@ describe('IntegrationsPanel', () => {
 			vi.mocked(requestNewsletterEdit).mockImplementation((_, changes) =>
 				Promise.resolve({
 					ok: true,
-					data: { ...newsletter(), ...changes },
+					data: { ...newsletterFixture(), ...changes },
 				} as ApiResponse<NewsletterData>),
 			);
 			render(
 				<IntegrationsPanel
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						...validIntegrations,
 						brazeSubscribeAttributeNameAlternate: ['First_One'],
 					})}
@@ -525,10 +485,12 @@ describe('IntegrationsPanel', () => {
 			vi.mocked(requestNewsletterEdit).mockImplementation((_, changes) =>
 				Promise.resolve({
 					ok: true,
-					data: { ...newsletter(), ...changes },
+					data: { ...newsletterFixture(), ...changes },
 				} as ApiResponse<NewsletterData>),
 			);
-			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+			render(
+				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
+			);
 
 			await user.click(await integrationsPanelEditButton());
 			const nameInput = await screen.findByRole('textbox', {
@@ -567,12 +529,12 @@ describe('IntegrationsPanel', () => {
 			vi.mocked(requestNewsletterEdit).mockImplementation((_id, changes) =>
 				Promise.resolve({
 					ok: true,
-					data: { ...newsletter(), ...changes },
+					data: { ...newsletterFixture(), ...changes },
 				} as ApiResponse<NewsletterData>),
 			);
 			render(
 				<IntegrationsPanel
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						...validIntegrations,
 						campaignName: 'Existing name',
 						campaignCode: 'existing_code',
@@ -606,10 +568,7 @@ describe('IntegrationsPanel', () => {
 
 	describe('input validation of untrimmed values', () => {
 		beforeEach(() => {
-			vi.mocked(usePermissions).mockReturnValue({
-				editEverything: true,
-				useJsonEditor: false,
-			});
+			allowEditing();
 		});
 
 		it.each([
@@ -621,7 +580,9 @@ describe('IntegrationsPanel', () => {
 			async (key) => {
 				const user = userEvent.setup();
 				render(
-					<IntegrationsPanel newsletter={newsletter(validIntegrations)} />,
+					<IntegrationsPanel
+						newsletter={newsletterFixture(validIntegrations)}
+					/>,
 				);
 
 				await user.click(await integrationsPanelEditButton());
@@ -636,7 +597,9 @@ describe('IntegrationsPanel', () => {
 
 		it('does not show a validation error for a whitespace-only brazeSubscribeAttributeNameAlternate item', async () => {
 			const user = userEvent.setup();
-			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+			render(
+				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
+			);
 
 			await user.click(await integrationsPanelEditButton());
 			await user.click(
