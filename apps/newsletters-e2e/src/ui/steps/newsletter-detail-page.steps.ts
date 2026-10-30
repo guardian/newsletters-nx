@@ -67,8 +67,9 @@ const expectPanelRowsInOrder = async (
 };
 
 // Required inputs in the Integrations panel have an accessible name ending " *"
+// This regex matches 'name' or 'name *'
 const integrationsLabelPattern = (label: string): RegExp =>
-	new RegExp(`^${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( \\*)?$`);
+	new RegExp(`^${label}( \\*)?$`);
 
 const WORKFLOW_STATUS_RADIO_LABELS = {
 	NOT_REQUESTED: 'Not Requested',
