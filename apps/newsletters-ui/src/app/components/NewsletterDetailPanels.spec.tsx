@@ -3,80 +3,22 @@ import {
 	defaultRenderingOptionsValues,
 	isPartialNewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import {
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	within,
-} from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { scrollIntoView } from '../../test-utils/dom';
+import { allowEditing, newsletterFixture } from '../../test-utils/newsletter';
+import { panel, valueFor } from '../../test-utils/newsletter-detail-page';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
-import { usePermissions } from '../hooks/user-hooks';
 import { NewsletterDetailPanels } from './NewsletterDetailPanels';
-
-const scrollIntoView = vi.fn();
-
-afterEach(() => {
-	cleanup();
-	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
-});
 
 vi.mock('../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
 vi.mock('../api-requests/request-newsletter-edit', () => ({
 	requestNewsletterEdit: vi.fn(),
 }));
+
 beforeEach(() => {
 	vi.resetAllMocks();
-	Object.defineProperty(Element.prototype, 'scrollIntoView', {
-		configurable: true,
-		value: scrollIntoView,
-	});
 });
-
-const newsletter = (overrides: Partial<NewsletterData> = {}) =>
-	({
-		name: 'Afternoon update',
-		listId: 123,
-		status: 'live',
-		theme: 'news',
-		category: 'article-based',
-		regionFocus: 'AU',
-		frequency: 'Weekly',
-		group: 'News in depth',
-		signupPageCreationStatus: 'NOT_REQUESTED',
-		tagCreationStatus: 'NOT_REQUESTED',
-		brazeCampaignCreationStatus: 'NOT_REQUESTED',
-		...overrides,
-	}) as NewsletterData;
-
-/** The text of a field's value, ignoring decorative (aria-hidden) content such as icons */
-const valueFor = (label: string) => {
-	// Strip the aria-hidden content from a copy, not from the page itself
-	const value = screen
-		.getByText(label, { exact: true, selector: 'dt' })
-		.nextElementSibling?.cloneNode(true) as Element | undefined;
-	value?.querySelectorAll('[aria-hidden="true"]').forEach((el) => el.remove());
-	return value?.textContent;
-};
-
-// Queries scoped to the panel whose heading is `name`.
-const panel = (name: string) => {
-	const section = screen
-		.getByRole('heading', { name, level: 3 })
-		.closest('section');
-	if (!section) {
-		throw new Error(`Expected the ${name} panel to exist`);
-	}
-	return within(section);
-};
-
-const allowEditing = () => {
-	vi.mocked(usePermissions).mockReturnValue({
-		editEverything: true,
-		useJsonEditor: false,
-	});
-};
 
 const startEditing = (panelName: string) => {
 	fireEvent.click(panel(panelName).getByRole('button', { name: 'Edit' }));
@@ -97,7 +39,7 @@ const imageUrls = {
 };
 
 const withImages = () =>
-	newsletter({
+	newsletterFixture({
 		illustrationCard: imageUrls.card,
 		illustrationSquare: imageUrls.square,
 		renderingOptions: {
@@ -124,7 +66,9 @@ const reportImage = (label: string, outcome: 'load' | 'error') => {
 	}
 };
 
-describe('ImagesPanel editing', () => {
+// These tests render every panel and query by role, which takes 3–5s per test
+// on CI (well under 1s locally), so they need more than the default 5s.
+describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 	beforeEach(allowEditing);
 
 	const saveButton = () =>
@@ -240,7 +184,7 @@ describe('ImagesPanel editing', () => {
 	] as const)(
 		'saves %s without creating rendering options',
 		async (key, label, url) => {
-			const original = newsletter({ category: 'fronts-based' });
+			const original = newsletterFixture({ category: 'fronts-based' });
 			vi.mocked(requestNewsletterEdit).mockResolvedValue({
 				ok: true,
 				total: 1,
@@ -273,7 +217,7 @@ describe('ImagesPanel editing', () => {
 	] as const)(
 		'initializes valid rendering options when adding %s',
 		async (key, label, url) => {
-			const original = newsletter({ category: 'fronts-based' });
+			const original = newsletterFixture({ category: 'fronts-based' });
 			const renderingOptions = { ...defaultRenderingOptionsValues, [key]: url };
 			vi.mocked(requestNewsletterEdit).mockResolvedValue({
 				ok: true,
@@ -344,7 +288,7 @@ describe('Jump to', () => {
 	});
 
 	it('links to every panel on the page', () => {
-		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
 		const links = within(
 			screen.getByRole('navigation', { name: 'Jump to' }),
 		).getAllByRole('link');
@@ -368,7 +312,7 @@ describe('Jump to', () => {
 			'',
 			'/newsletters/afternoon-update/details',
 		);
-		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
 
 		expect(
 			screen.getByRole('link', { name: 'Attributes' }).getAttribute('href'),
@@ -376,7 +320,7 @@ describe('Jump to', () => {
 	});
 
 	it('replaces the history entry, scrolls and moves focus when a link is clicked', () => {
-		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
 		const historyLength = window.history.length;
 		const integrations = document.getElementById('integrations');
 
@@ -391,7 +335,7 @@ describe('Jump to', () => {
 
 	it('scrolls to the panel named in the address when the page opens', () => {
 		window.history.replaceState(null, '', '/#integrations');
-		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
 
 		expect(scrollIntoView).toHaveBeenCalledExactlyOnceWith({ block: 'start' });
 		expect(scrollIntoView.mock.contexts[0]).toBe(
@@ -400,7 +344,7 @@ describe('Jump to', () => {
 	});
 
 	it('does not scroll when the address has no panel', () => {
-		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
 
 		expect(scrollIntoView).not.toHaveBeenCalled();
 	});
@@ -409,7 +353,7 @@ describe('Jump to', () => {
 describe('NewsletterDetailPanels', () => {
 	it('uses single-line inputs for Headline and Success message and textareas for other Copy fields', () => {
 		allowEditing();
-		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
 		startEditing('Copy');
 		for (const name of ['Headline', 'Success message']) {
 			expect(screen.getByRole('textbox', { name }).tagName).toBe('INPUT');
@@ -427,7 +371,7 @@ describe('NewsletterDetailPanels', () => {
 		allowEditing();
 		render(
 			<NewsletterDetailPanels
-				newsletter={newsletter({
+				newsletter={newsletterFixture({
 					signUpDescription: 'Required description',
 					signUpEmbedDescription: 'Required embed',
 				})}
@@ -453,7 +397,7 @@ describe('NewsletterDetailPanels', () => {
 		'unsets the optional Copy field %s when cleared',
 		async (key, label) => {
 			allowEditing();
-			const original = newsletter({
+			const original = newsletterFixture({
 				[key]: 'Remove this',
 				signUpDescription: 'Description',
 				signUpEmbedDescription: 'Embed',
@@ -483,7 +427,7 @@ describe('NewsletterDetailPanels', () => {
 
 	it('saves only Copy fields and shows the persisted response', async () => {
 		allowEditing();
-		const original = newsletter({
+		const original = newsletterFixture({
 			signUpHeadline: 'Original',
 			signUpDescription: 'Description',
 			signUpEmbedDescription: 'Embed',
@@ -514,7 +458,7 @@ describe('NewsletterDetailPanels', () => {
 		allowEditing();
 		render(
 			<NewsletterDetailPanels
-				newsletter={newsletter({ signUpHeadline: 'Original' })}
+				newsletter={newsletterFixture({ signUpHeadline: 'Original' })}
 			/>,
 		);
 		startEditing('Copy');
@@ -546,7 +490,7 @@ describe('NewsletterDetailPanels', () => {
 			});
 			render(
 				<NewsletterDetailPanels
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						signUpDescription: 'Description',
 						signUpEmbedDescription: 'Embed',
 					})}
@@ -573,7 +517,7 @@ describe('NewsletterDetailPanels', () => {
 	it('shows the Copy panel above Sign-up page and tags with plain text values', () => {
 		render(
 			<NewsletterDetailPanels
-				newsletter={newsletter({
+				newsletter={newsletterFixture({
 					signUpHeadline: 'Your afternoon briefing',
 					signUpDescription: 'Sign up for the daily news',
 					signUpEmbedDescription: 'A short news briefing',
@@ -608,7 +552,7 @@ describe('NewsletterDetailPanels', () => {
 		(value) => {
 			render(
 				<NewsletterDetailPanels
-					newsletter={newsletter({
+					newsletter={newsletterFixture({
 						signUpHeadline: value,
 						signUpDescription: value,
 						signUpEmbedDescription: value,
@@ -631,7 +575,7 @@ describe('NewsletterDetailPanels', () => {
 	);
 
 	it('shows the attributes', () => {
-		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
 
 		expect(valueFor('Name')).toBe('Afternoon update');
 		expect(valueFor('Newsletter status')).toBe('Live');
@@ -645,7 +589,7 @@ describe('NewsletterDetailPanels', () => {
 	it('shows "Not set" for details that are missing', () => {
 		render(
 			<NewsletterDetailPanels
-				newsletter={newsletter({
+				newsletter={newsletterFixture({
 					regionFocus: undefined,
 					frequency: '',
 					// The schema says group is required, but guard against bad API data.
@@ -662,7 +606,7 @@ describe('NewsletterDetailPanels', () => {
 	it('shows the images, or "Not set" when empty', () => {
 		render(
 			<NewsletterDetailPanels
-				newsletter={newsletter({
+				newsletter={newsletterFixture({
 					illustrationCard:
 						'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
 					renderingOptions: {

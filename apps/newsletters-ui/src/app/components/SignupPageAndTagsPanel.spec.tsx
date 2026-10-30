@@ -1,16 +1,23 @@
-import '@testing-library/jest-dom/vitest';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { scrollIntoView } from '../../test-utils/dom';
 import {
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	within,
-} from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+	allowEditing,
+	editorPermissions,
+	mockPermissions,
+	newsletterFixture,
+	viewerPermissions,
+} from '../../test-utils/newsletter';
+import {
+	failedSignupPathCheckResponse,
+	mockSignupPathCheck,
+	panel,
+	signupPathCheckResponse,
+	valueFor,
+} from '../../test-utils/newsletter-detail-page';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
-import { usePermissions } from '../hooks/user-hooks';
 import { SignupPageAndTagsPanel } from './SignupPageAndTagsPanel';
 
 vi.mock('../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
@@ -18,8 +25,7 @@ vi.mock('../api-requests/request-newsletter-edit', () => ({
 	requestNewsletterEdit: vi.fn(),
 }));
 
-const original = {
-	listId: 123,
+const original = newsletterFixture({
 	signupPageCreationStatus: 'REQUESTED',
 	tagCreationStatus: 'NOT_REQUESTED',
 	signupPage: '/news/series/example',
@@ -27,7 +33,7 @@ const original = {
 	seriesTagDescription: 'Series description',
 	composerTag: 'campaign',
 	composerCampaignTag: 'Campaign description',
-} as NewsletterData;
+});
 
 const fields = [
 	['signupPage', 'Path to sign-up page'],
@@ -37,31 +43,10 @@ const fields = [
 	['composerCampaignTag', 'Campaign description'],
 ] as const;
 
-const scrollIntoView = vi.fn();
 beforeEach(() => {
 	vi.resetAllMocks();
-	vi.stubGlobal(
-		'fetch',
-		vi.fn().mockResolvedValue({
-			ok: true,
-			json: () => Promise.resolve({ ok: true, data: { valid: true } }),
-		}),
-	);
-	vi.mocked(usePermissions).mockReturnValue({
-		editEverything: true,
-		useJsonEditor: false,
-	});
-	scrollIntoView.mockClear();
-	Object.defineProperty(Element.prototype, 'scrollIntoView', {
-		configurable: true,
-		value: scrollIntoView,
-	});
-});
-afterEach(() => {
-	cleanup();
-	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
-	vi.restoreAllMocks();
-	vi.unstubAllGlobals();
+	mockSignupPathCheck();
+	allowEditing();
 });
 
 const edit = () =>
@@ -98,6 +83,7 @@ describe('SignupPageAndTagsPanel', () => {
 	it('saves only panel fields and uses the persisted response on the next edit', async () => {
 		vi.mocked(requestNewsletterEdit).mockResolvedValue({
 			ok: true,
+			total: 1,
 			data: {
 				...original,
 				seriesTagDescription: 'Persisted description',
@@ -156,6 +142,7 @@ describe('SignupPageAndTagsPanel', () => {
 	it('unsets all optional text fields when cleared', async () => {
 		vi.mocked(requestNewsletterEdit).mockResolvedValue({
 			ok: true,
+			total: 1,
 			data: original,
 		});
 		render(<SignupPageAndTagsPanel newsletter={original} />);
@@ -177,7 +164,7 @@ describe('SignupPageAndTagsPanel', () => {
 	it('retains the editor and shows one API error, then allows retry', async () => {
 		vi.mocked(requestNewsletterEdit)
 			.mockResolvedValueOnce({ ok: false, message: 'Save rejected' })
-			.mockResolvedValueOnce({ ok: true, data: original });
+			.mockResolvedValueOnce({ ok: true, total: 1, data: original });
 		render(<SignupPageAndTagsPanel newsletter={original} />);
 		edit();
 		fireEvent.change(screen.getByRole('textbox', { name: 'Tag description' }), {
@@ -222,12 +209,7 @@ describe('SignupPageAndTagsPanel', () => {
 	});
 
 	it('hides the save error once the path passes and only shows it again on save', async () => {
-		const result = (valid: boolean) =>
-			({
-				ok: true,
-				json: () => Promise.resolve({ ok: true, data: { valid } }),
-			}) as Response;
-		vi.mocked(fetch).mockResolvedValue(result(false));
+		vi.mocked(fetch).mockResolvedValue(signupPathCheckResponse(false));
 		render(<SignupPageAndTagsPanel newsletter={original} />);
 		edit();
 		save();
@@ -236,13 +218,13 @@ describe('SignupPageAndTagsPanel', () => {
 		expect(screen.getByRole('alert')).toHaveTextContent(
 			'Please enter a valid path to sign-up page',
 		);
-		vi.mocked(fetch).mockResolvedValue(result(true));
+		vi.mocked(fetch).mockResolvedValue(signupPathCheckResponse(true));
 		const input = screen.getByRole('textbox', { name: 'Path to sign-up page' });
 		fireEvent.paste(input);
 		fireEvent.change(input, { target: { value: '/news/fixed' } });
 		await screen.findByText('Valid path');
 		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-		vi.mocked(fetch).mockResolvedValue(result(false));
+		vi.mocked(fetch).mockResolvedValue(signupPathCheckResponse(false));
 		fireEvent.paste(input);
 		fireEvent.change(input, { target: { value: '/news/broken' } });
 		await screen.findByText('Couldn’t find the path');
@@ -255,7 +237,7 @@ describe('SignupPageAndTagsPanel', () => {
 	});
 
 	it('blocks saving when the path could not be checked, without calling it invalid', async () => {
-		vi.mocked(fetch).mockResolvedValue({ ok: false, status: 502 } as Response);
+		vi.mocked(fetch).mockResolvedValue(failedSignupPathCheckResponse(502));
 		vi.spyOn(console, 'error').mockImplementation(() => undefined);
 		render(<SignupPageAndTagsPanel newsletter={original} />);
 		edit();
@@ -268,20 +250,14 @@ describe('SignupPageAndTagsPanel', () => {
 			screen.queryByText('Couldn’t find the path'),
 		).not.toBeInTheDocument();
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
-		vi.mocked(fetch).mockResolvedValue({
-			ok: true,
-			json: () => Promise.resolve({ ok: true, data: { valid: true } }),
-		} as Response);
+		vi.mocked(fetch).mockResolvedValue(signupPathCheckResponse(true));
 		fireEvent.click(screen.getByRole('link', { name: 'Try again' }));
 		await screen.findByText('Valid path');
 		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 	});
 
 	it('does not offer editing to view-only users', () => {
-		vi.mocked(usePermissions).mockReturnValue({
-			editEverything: false,
-			useJsonEditor: false,
-		});
+		mockPermissions(viewerPermissions);
 		render(<SignupPageAndTagsPanel newsletter={original} />);
 		expect(
 			screen.queryByRole('button', { name: 'Edit' }),
@@ -289,10 +265,7 @@ describe('SignupPageAndTagsPanel', () => {
 	});
 
 	it('allows Editors to persist Tag description through the API edit schema', () => {
-		const schema = getUserEditSchema({
-			editEverything: true,
-			useJsonEditor: false,
-		});
+		const schema = getUserEditSchema(editorPermissions);
 		expect(
 			schema.partial().parse({ seriesTagDescription: 'New description' }),
 		).toHaveProperty('seriesTagDescription', 'New description');
@@ -305,11 +278,6 @@ const panelData = (
 	...original,
 	...overrides,
 });
-
-// The text of the <dd> paired with the <dt> labelled `label`.
-const valueFor = (label: string) =>
-	screen.getByText(label, { exact: true, selector: 'dt' }).nextElementSibling
-		?.textContent;
 
 describe('SignupPageAndTagsPanel read-only view', () => {
 	it.each([
@@ -358,12 +326,8 @@ describe('SignupPageAndTagsPanel read-only view', () => {
 			/>,
 		);
 
-		const panel = screen
-			.getByRole('heading', { level: 3, name: 'Sign-up page and tags' })
-			.closest('section');
-		expect(panel).not.toBeNull();
 		expect(
-			within(panel!)
+			panel('Sign-up page and tags')
 				.getAllByRole('heading', { level: 4 })
 				.map((heading) => heading.textContent),
 		).toEqual(['Sign-up page', 'Tags']);
