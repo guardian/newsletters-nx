@@ -1,40 +1,20 @@
-import '@testing-library/jest-dom/vitest';
 import {
 	levelToPermissions,
 	UserAccessLevel,
 } from '@newsletters-nx/newsletters-data-client';
-import {
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { scrollIntoView } from '../../test-utils/dom';
+import { allowEditing, mockPermissions } from '../../test-utils/newsletter';
 import { usePermissions } from '../hooks/user-hooks';
 import { StandPanel } from './StandPanel';
 
 vi.mock('../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
 
-const scrollIntoView = vi.fn();
-
 beforeEach(() => {
-	vi.clearAllMocks();
-	Object.defineProperty(Element.prototype, 'scrollIntoView', {
-		configurable: true,
-		value: scrollIntoView,
-	});
-	vi.mocked(usePermissions).mockReturnValue({
-		editEverything: true,
-		useJsonEditor: false,
-	});
-});
-
-afterEach(() => {
-	cleanup();
-	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
-	vi.restoreAllMocks();
+	vi.resetAllMocks();
+	allowEditing();
 });
 
 const Editor = ({
@@ -72,7 +52,7 @@ describe('StandPanel editing', () => {
 		['Developer', UserAccessLevel.Developer],
 		['Editor', UserAccessLevel.Editor],
 	] as const)('offers editing to %s users', (_, accessLevel) => {
-		vi.mocked(usePermissions).mockReturnValue(levelToPermissions(accessLevel));
+		mockPermissions(levelToPermissions(accessLevel));
 		render(<Editor save={() => true} />);
 		expect(screen.getByRole('button', { name: 'Edit' })).toBeVisible();
 		startEditing();
@@ -80,9 +60,7 @@ describe('StandPanel editing', () => {
 	});
 
 	it('does not offer editing to Viewer users', () => {
-		vi.mocked(usePermissions).mockReturnValue(
-			levelToPermissions(UserAccessLevel.Viewer),
-		);
+		mockPermissions(levelToPermissions(UserAccessLevel.Viewer));
 		render(<Editor save={() => true} />);
 		expect(
 			screen.queryByRole('button', { name: 'Edit' }),
@@ -107,7 +85,7 @@ describe('StandPanel editing', () => {
 	it.each([false, undefined])(
 		'does not offer editing without edit access (%s)',
 		(access) => {
-			vi.mocked(usePermissions).mockReturnValue(
+			mockPermissions(
 				access === undefined
 					? undefined
 					: { editEverything: access, useJsonEditor: false },

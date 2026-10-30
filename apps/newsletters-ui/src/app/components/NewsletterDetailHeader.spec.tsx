@@ -1,20 +1,12 @@
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { cleanup, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { newsletterFixture } from '../../test-utils/newsletter';
 import { NewsletterDetailHeader } from './NewsletterDetailHeader';
 
-afterEach(cleanup);
-
 const newsletter = (overrides: Partial<NewsletterData> = {}) =>
-	({
-		name: 'Afternoon update',
-		theme: 'news',
-		category: 'article-based',
-		regionFocus: 'AU',
-		status: 'pending',
-		...overrides,
-	}) as NewsletterData;
+	newsletterFixture({ status: 'pending', ...overrides });
 
 const renderHeader = (data: NewsletterData) =>
 	render(
