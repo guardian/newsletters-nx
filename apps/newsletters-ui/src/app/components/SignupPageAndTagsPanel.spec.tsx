@@ -2,17 +2,21 @@ import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getUserEditSchema } from '@newsletters-nx/newsletters-data-client';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { panel, scrollIntoView, valueFor } from '../../test-utils/dom';
+import { scrollIntoView } from '../../test-utils/dom';
 import {
 	allowEditing,
 	editorPermissions,
-	failedSignupPathCheckResponse,
 	mockPermissions,
-	mockSignupPathCheck,
 	newsletterFixture,
-	signupPathCheckResponse,
 	viewerPermissions,
 } from '../../test-utils/newsletter';
+import {
+	failedSignupPathCheckResponse,
+	mockSignupPathCheck,
+	panel,
+	signupPathCheckResponse,
+	valueFor,
+} from '../../test-utils/newsletter-detail-page';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { SignupPageAndTagsPanel } from './SignupPageAndTagsPanel';
 

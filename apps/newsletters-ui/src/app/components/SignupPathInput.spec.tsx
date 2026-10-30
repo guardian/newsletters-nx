@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
 	failedSignupPathCheckResponse,
 	signupPathCheckResponse,
-} from '../../test-utils/newsletter';
+} from '../../test-utils/newsletter-detail-page';
 import { SignupPathInput } from './SignupPathInput';
 
 const fetchMock = vi.fn();

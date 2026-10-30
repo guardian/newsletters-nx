@@ -5,8 +5,9 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { panel, scrollIntoView, valueFor } from '../../test-utils/dom';
+import { scrollIntoView } from '../../test-utils/dom';
 import { allowEditing, newsletterFixture } from '../../test-utils/newsletter';
+import { panel, valueFor } from '../../test-utils/newsletter-detail-page';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { NewsletterDetailPanels } from './NewsletterDetailPanels';
 
