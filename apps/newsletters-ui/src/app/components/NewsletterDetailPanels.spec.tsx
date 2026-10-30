@@ -337,8 +337,6 @@ describe('ImagesPanel editing', () => {
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 	});
 });
-/** The Copy panel's section, found by its accessible name */
-const copyPanel = () => within(screen.getByRole('region', { name: 'Copy' }));
 
 describe('Jump to', () => {
 	afterEach(() => {
