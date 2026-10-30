@@ -483,5 +483,140 @@ describe('IntegrationsPanel', () => {
 				}),
 			);
 		});
+
+		it('trims whitespace from the values when saving', async () => {
+			const user = userEvent.setup();
+			vi.mocked(requestNewsletterEdit).mockImplementation((_, changes) =>
+				Promise.resolve({
+					ok: true,
+					data: { ...newsletter(), ...changes },
+				} as ApiResponse<NewsletterData>),
+			);
+			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+
+			await user.click(await integrationsPanelEditButton());
+			const nameInput = await screen.findByRole('textbox', {
+				name: /^brazeNewsletterName( \*)?$/,
+			});
+			await user.clear(nameInput);
+			await user.type(nameInput, '  Padded_Name  ');
+			const [alternateInput] = await screen.findAllByRole('textbox', {
+				name: 'brazeSubscribeAttributeNameAlternate item',
+			});
+			await user.clear(alternateInput!);
+			await user.type(alternateInput!, ' Padded_Alternate ');
+			await user.type(
+				screen.getByRole('textbox', { name: 'Campaign name' }),
+				'  Padded campaign  ',
+			);
+			await user.click(
+				await screen.findByRole('button', { name: 'Save changes' }),
+			);
+
+			expect(requestNewsletterEdit).toHaveBeenCalledWith(
+				123,
+				expect.objectContaining({
+					brazeNewsletterName: 'Padded_Name',
+					brazeSubscribeAttributeNameAlternate: ['Padded_Alternate'],
+					campaignName: 'Padded campaign',
+				}),
+			);
+		});
+
+		it.each([
+			['empty', ''],
+			['whitespace-only', '   '],
+		])(
+			'saves %s optional ophan values as undefined',
+			async (_, blankValue) => {
+				const user = userEvent.setup();
+				vi.mocked(requestNewsletterEdit).mockImplementation((_id, changes) =>
+					Promise.resolve({
+						ok: true,
+						data: { ...newsletter(), ...changes },
+					} as ApiResponse<NewsletterData>),
+				);
+				render(
+					<IntegrationsPanel
+						newsletter={newsletter({
+							...validIntegrations,
+							campaignName: 'Existing name',
+							campaignCode: 'existing_code',
+						})}
+					/>,
+				);
+
+				await user.click(await integrationsPanelEditButton());
+				const campaignName = await screen.findByRole('textbox', {
+					name: 'Campaign name',
+				});
+				const campaignCode = screen.getByRole('textbox', {
+					name: 'Campaign code',
+				});
+				await user.clear(campaignName);
+				await user.clear(campaignCode);
+				if (blankValue) {
+					await user.type(campaignName, blankValue);
+					await user.type(campaignCode, blankValue);
+				}
+				await user.click(
+					await screen.findByRole('button', { name: 'Save changes' }),
+				);
+
+				expect(requestNewsletterEdit).toHaveBeenCalledTimes(1);
+				const [, changes] = vi.mocked(requestNewsletterEdit).mock.calls[0]!;
+				expect(changes.campaignName).toBeUndefined();
+				expect(changes.campaignCode).toBeUndefined();
+			},
+		);
+	});
+
+	describe('input validation of untrimmed values', () => {
+		beforeEach(() => {
+			vi.mocked(usePermissions).mockReturnValue({
+				editEverything: true,
+				useJsonEditor: false,
+			});
+		});
+
+		it.each([
+			'brazeNewsletterName',
+			'brazeSubscribeAttributeName',
+			'brazeSubscribeEventNamePrefix',
+		] as IntegrationKey[])(
+			'does not show a validation error if %s has only surrounding whitespace',
+			async (key) => {
+				const user = userEvent.setup();
+				render(
+					<IntegrationsPanel newsletter={newsletter(validIntegrations)} />,
+				);
+
+				await user.click(await integrationsPanelEditButton());
+				const input = await screen.findByRole('textbox', {
+					name: new RegExp(`^${key}( \\*)?$`),
+				});
+				await user.type(input, '   ');
+
+				expect(input).toBeValid();
+			},
+		);
+
+		it('does not show a validation error for a whitespace-only brazeSubscribeAttributeNameAlternate item', async () => {
+			const user = userEvent.setup();
+			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+
+			await user.click(await integrationsPanelEditButton());
+			await user.click(
+				await screen.findByRole('button', { name: 'Add new item' }),
+			);
+			const inputs = await screen.findAllByRole('textbox', {
+				name: 'brazeSubscribeAttributeNameAlternate item',
+			});
+			await user.type(inputs[1]!, '   ');
+
+			expect(
+				within(await integrationsPanel()).queryByText(underscoreCasedMessage),
+			).not.toBeInTheDocument();
+		});
 	});
 });

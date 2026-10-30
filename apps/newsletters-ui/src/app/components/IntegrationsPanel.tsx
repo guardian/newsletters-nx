@@ -129,20 +129,28 @@ const toAlternateNames = (values?: string[]) => {
 	return names.length ? names : undefined;
 };
 
+/** Normalises the draft: trims values and maps blank optional values to undefined */
+const normaliseDraft = (draft: IntegrationsDraft): IntegrationsDraft => ({
+	brazeCampaignCreationStatus: draft.brazeCampaignCreationStatus,
+	brazeNewsletterName: draft.brazeNewsletterName?.trim() ?? '',
+	brazeSubscribeAttributeName: draft.brazeSubscribeAttributeName?.trim() ?? '',
+	brazeSubscribeEventNamePrefix:
+		draft.brazeSubscribeEventNamePrefix?.trim() ?? '',
+	brazeSubscribeAttributeNameAlternate: toAlternateNames(
+		draft.brazeSubscribeAttributeNameAlternate,
+	),
+	campaignName: optionalValue(draft.campaignName),
+	campaignCode: optionalValue(draft.campaignCode),
+});
+
+/** Normalises the draft, then validates it against the schema */
+const parseDraft = (draft: IntegrationsDraft) =>
+	integrationsSchema.safeParse(normaliseDraft(draft));
+
 const validate = (draft: IntegrationsDraft): IntegrationsErrors => {
 	const errors: IntegrationsErrors = {};
 
-	const validationSchema = newsletterDataSchema.pick({
-		brazeCampaignCreationStatus: true,
-		brazeNewsletterName: true,
-		brazeSubscribeAttributeName: true,
-		brazeSubscribeAttributeNameAlternate: true,
-		brazeSubscribeEventNamePrefix: true,
-		campaignCode: true,
-		campaignName: true,
-	});
-
-	const result = validationSchema.safeParse(draft);
+	const result = parseDraft(draft);
 
 	// Issues for list items (e.g. an alternate name) are keyed by their field
 	for (const issue of result.error?.issues ?? []) {
@@ -165,26 +173,16 @@ export const IntegrationsPanel = ({
 	const [draft, setDraft] = useState<IntegrationsDraft>({});
 
 	const save = async (): Promise<boolean | string> => {
-		const alternateNames = toAlternateNames(
-			draft.brazeSubscribeAttributeNameAlternate,
-		);
-		const parsed = integrationsSchema.safeParse({
-			brazeCampaignCreationStatus: draft.brazeCampaignCreationStatus,
-			brazeNewsletterName: draft.brazeNewsletterName?.trim() ?? '',
-			brazeSubscribeAttributeName:
-				draft.brazeSubscribeAttributeName?.trim() ?? '',
-			brazeSubscribeEventNamePrefix:
-				draft.brazeSubscribeEventNamePrefix?.trim() ?? '',
-			brazeSubscribeAttributeNameAlternate: alternateNames,
-			campaignName: optionalValue(draft.campaignName),
-			campaignCode: optionalValue(draft.campaignCode),
-		});
+		const parsed = parseDraft(draft);
 		if (!parsed.success) {
 			return parsed.error.issues
 				.map((issue) => {
 					const [key, index] = issue.path;
 					if (key === 'brazeSubscribeAttributeNameAlternate') {
-						const value = alternateNames?.[Number(index)];
+						const value =
+							normaliseDraft(draft).brazeSubscribeAttributeNameAlternate?.[
+								Number(index)
+							];
 						return `${key} "${value}": ${issue.message}`;
 					}
 					return key === undefined
