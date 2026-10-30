@@ -360,6 +360,42 @@ describe('IntegrationsPanel', () => {
 			).toBeVisible();
 		});
 
+		it('disables the save button while a field is invalid and re-enables it once fixed', async () => {
+			const user = userEvent.setup();
+			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+
+			await user.click(await integrationsPanelEditButton());
+			const saveButton = await screen.findByRole('button', {
+				name: 'Save changes',
+			});
+			expect(saveButton).toBeEnabled();
+
+			const input = await screen.findByRole('textbox', {
+				name: /^brazeNewsletterName( \*)?$/,
+			});
+			await user.type(input, ' not valid!');
+			expect(saveButton).toBeDisabled();
+
+			await user.clear(input);
+			await user.type(input, 'Valid_Again');
+			expect(saveButton).toBeEnabled();
+		});
+
+		it('does not submit invalid data when Enter is pressed', async () => {
+			const user = userEvent.setup();
+			render(<IntegrationsPanel newsletter={newsletter(validIntegrations)} />);
+
+			await user.click(await integrationsPanelEditButton());
+			const input = await screen.findByRole('textbox', {
+				name: /^brazeNewsletterName( \*)?$/,
+			});
+			await user.clear(input);
+			await user.type(input, 'not valid!{Enter}');
+
+			expect(requestNewsletterEdit).not.toHaveBeenCalled();
+			expect(screen.getByText('Editing')).toBeVisible();
+		});
+
 		it.each([
 			['brazeNewsletterName', 'brazeNewsletterName'],
 			['brazeSubscribeAttributeName', 'brazeSubscribeAttributeName'],
@@ -526,49 +562,46 @@ describe('IntegrationsPanel', () => {
 		it.each([
 			['empty', ''],
 			['whitespace-only', '   '],
-		])(
-			'saves %s optional ophan values as undefined',
-			async (_, blankValue) => {
-				const user = userEvent.setup();
-				vi.mocked(requestNewsletterEdit).mockImplementation((_id, changes) =>
-					Promise.resolve({
-						ok: true,
-						data: { ...newsletter(), ...changes },
-					} as ApiResponse<NewsletterData>),
-				);
-				render(
-					<IntegrationsPanel
-						newsletter={newsletter({
-							...validIntegrations,
-							campaignName: 'Existing name',
-							campaignCode: 'existing_code',
-						})}
-					/>,
-				);
+		])('saves %s optional ophan values as undefined', async (_, blankValue) => {
+			const user = userEvent.setup();
+			vi.mocked(requestNewsletterEdit).mockImplementation((_id, changes) =>
+				Promise.resolve({
+					ok: true,
+					data: { ...newsletter(), ...changes },
+				} as ApiResponse<NewsletterData>),
+			);
+			render(
+				<IntegrationsPanel
+					newsletter={newsletter({
+						...validIntegrations,
+						campaignName: 'Existing name',
+						campaignCode: 'existing_code',
+					})}
+				/>,
+			);
 
-				await user.click(await integrationsPanelEditButton());
-				const campaignName = await screen.findByRole('textbox', {
-					name: 'Campaign name',
-				});
-				const campaignCode = screen.getByRole('textbox', {
-					name: 'Campaign code',
-				});
-				await user.clear(campaignName);
-				await user.clear(campaignCode);
-				if (blankValue) {
-					await user.type(campaignName, blankValue);
-					await user.type(campaignCode, blankValue);
-				}
-				await user.click(
-					await screen.findByRole('button', { name: 'Save changes' }),
-				);
+			await user.click(await integrationsPanelEditButton());
+			const campaignName = await screen.findByRole('textbox', {
+				name: 'Campaign name',
+			});
+			const campaignCode = screen.getByRole('textbox', {
+				name: 'Campaign code',
+			});
+			await user.clear(campaignName);
+			await user.clear(campaignCode);
+			if (blankValue) {
+				await user.type(campaignName, blankValue);
+				await user.type(campaignCode, blankValue);
+			}
+			await user.click(
+				await screen.findByRole('button', { name: 'Save changes' }),
+			);
 
-				expect(requestNewsletterEdit).toHaveBeenCalledTimes(1);
-				const [, changes] = vi.mocked(requestNewsletterEdit).mock.calls[0]!;
-				expect(changes.campaignName).toBeUndefined();
-				expect(changes.campaignCode).toBeUndefined();
-			},
-		);
+			expect(requestNewsletterEdit).toHaveBeenCalledTimes(1);
+			const [, changes] = vi.mocked(requestNewsletterEdit).mock.calls[0]!;
+			expect(changes.campaignName).toBeUndefined();
+			expect(changes.campaignCode).toBeUndefined();
+		});
 	});
 
 	describe('input validation of untrimmed values', () => {

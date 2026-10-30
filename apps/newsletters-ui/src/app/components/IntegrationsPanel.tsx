@@ -192,6 +192,7 @@ export const IntegrationsPanel = ({
 		useState<Partial<NewsletterData>>();
 	const current = { ...newsletter, ...savedIntegrations };
 	const [draft, setDraft] = useState<IntegrationsDraft>({});
+	const errors = validate(draft);
 
 	const save = async (): Promise<boolean | string> => {
 		const parsed = parseDraft(draft);
@@ -219,6 +220,7 @@ export const IntegrationsPanel = ({
 			id="integrations"
 			subgrid
 			onSave={save}
+			canSave={Object.keys(errors).length === 0}
 			onEdit={() => {
 				setDraft(toDraft(current));
 			}}
@@ -230,7 +232,7 @@ export const IntegrationsPanel = ({
 				isEditing ? (
 					<EditIntegrations
 						draft={draft}
-						errors={validate(draft)}
+						errors={errors}
 						onChange={(changes) =>
 							setDraft((previous) => ({ ...previous, ...changes }))
 						}
