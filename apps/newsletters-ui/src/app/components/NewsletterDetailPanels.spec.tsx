@@ -15,6 +15,8 @@ import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
 import { NewsletterDetailPanels } from './NewsletterDetailPanels';
 
+const scrollIntoView = vi.fn();
+
 afterEach(() => {
 	cleanup();
 	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
@@ -28,7 +30,7 @@ beforeEach(() => {
 	vi.resetAllMocks();
 	Object.defineProperty(Element.prototype, 'scrollIntoView', {
 		configurable: true,
-		value: vi.fn(),
+		value: scrollIntoView,
 	});
 });
 
@@ -336,6 +338,74 @@ describe('ImagesPanel editing', () => {
 	});
 });
 
+describe('Jump to', () => {
+	afterEach(() => {
+		window.history.replaceState(null, '', '/');
+	});
+
+	it('links to every panel on the page', () => {
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		const links = within(
+			screen.getByRole('navigation', { name: 'Jump to' }),
+		).getAllByRole('link');
+
+		expect(links.map((link) => link.textContent)).toEqual([
+			'Attributes',
+			'Images',
+			'Copy',
+			'Sign-up page and tags',
+			'Integrations',
+		]);
+		for (const link of links) {
+			const id = link.getAttribute('href')?.split('#')[1];
+			expect(document.getElementById(id ?? '')).toBeTruthy();
+		}
+	});
+
+	it('links stay on the current page rather than the base URL', () => {
+		window.history.replaceState(
+			null,
+			'',
+			'/newsletters/afternoon-update/details',
+		);
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+
+		expect(
+			screen.getByRole('link', { name: 'Attributes' }).getAttribute('href'),
+		).toBe('/newsletters/afternoon-update/details#attributes');
+	});
+
+	it('replaces the history entry, scrolls and moves focus when a link is clicked', () => {
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+		const historyLength = window.history.length;
+		const integrations = document.getElementById('integrations');
+
+		fireEvent.click(screen.getByRole('link', { name: 'Integrations' }));
+
+		expect(window.location.hash).toBe('#integrations');
+		expect(window.history.length).toBe(historyLength);
+		expect(scrollIntoView).toHaveBeenCalledExactlyOnceWith({ block: 'start' });
+		expect(scrollIntoView.mock.contexts[0]).toBe(integrations);
+		expect(document.activeElement).toBe(integrations);
+	});
+
+	it('scrolls to the panel named in the address when the page opens', () => {
+		window.history.replaceState(null, '', '/#integrations');
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+
+		expect(scrollIntoView).toHaveBeenCalledExactlyOnceWith({ block: 'start' });
+		expect(scrollIntoView.mock.contexts[0]).toBe(
+			document.getElementById('integrations'),
+		);
+	});
+
+	it('does not scroll when the address has no panel', () => {
+		render(<NewsletterDetailPanels newsletter={newsletter()} />);
+
+		expect(scrollIntoView).not.toHaveBeenCalled();
+	});
+});
+
 describe('NewsletterDetailPanels', () => {
 	it('uses single-line inputs for Headline and Success message and textareas for other Copy fields', () => {
 		allowEditing();
@@ -616,6 +686,72 @@ describe('NewsletterDetailPanels', () => {
 		);
 		expect(valueFor('Newsletter square (1:1)')).toBe('Not set');
 	});
+
+	it('shows the sign-up page and tags from the newsletter', () => {
+		render(
+			<NewsletterDetailPanels
+				newsletter={newsletter({
+					signupPage: '/global/sign-up-for-afternoon-update',
+					seriesTag: 'news/series/afternoon-update',
+					seriesTagDescription: 'The afternoon news briefing',
+					composerTag: 'Afternoon update (newsletter sign up)',
+					composerCampaignTag: 'Sign up for the afternoon briefing',
+				})}
+			/>,
+		);
+
+		expect(
+			panel('Sign-up page and tags')
+				.getAllByRole('heading', { level: 4 })
+				.map((heading) => heading.textContent),
+		).toEqual(['Sign-up page', 'Tags']);
+		expect(valueFor('Path to sign-up page')).toBe(
+			'/global/sign-up-for-afternoon-update',
+		);
+		expect(
+			screen
+				.getByRole('link', {
+					name: '/global/sign-up-for-afternoon-update',
+				})
+				.getAttribute('href'),
+		).toBe('https://theguardian.com/global/sign-up-for-afternoon-update');
+		expect(valueFor('Series tag')).toBe('news/series/afternoon-update');
+		expect(valueFor('Tag description')).toBe('The afternoon news briefing');
+		expect(valueFor('Campaign tag')).toBe(
+			'Afternoon update (newsletter sign up)',
+		);
+		expect(valueFor('Campaign description')).toBe(
+			'Sign up for the afternoon briefing',
+		);
+	});
+
+	it.each([undefined, ''])(
+		'shows "Not set" for sign-up page and tag values that are %s',
+		(value) => {
+			render(
+				<NewsletterDetailPanels
+					newsletter={newsletter({
+						signupPage: value,
+						seriesTag: value,
+						seriesTagDescription: value,
+						composerTag: value,
+						composerCampaignTag: value,
+					})}
+				/>,
+			);
+
+			for (const label of [
+				'Path to sign-up page',
+				'Series tag',
+				'Tag description',
+				'Campaign tag',
+				'Campaign description',
+			]) {
+				expect(valueFor(label)).toBe('Not set');
+			}
+			expect(panel('Sign-up page and tags').queryByRole('link')).toBeNull();
+		},
+	);
 
 	it('shows braze values from the newsletter', () => {
 		render(
