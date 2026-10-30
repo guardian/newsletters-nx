@@ -359,6 +359,46 @@ Feature: Launched newsletter: open it and find my way around
 				| Campaign name | AfternoonUpdateAUS      |
 				| Campaign code | afternoonupdateau_email |
 
+	Rule: Editors can edit and save Braze and Ophan values
+
+		Scenario: Saved braze and ophan values survive a reload
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Integrations panel
+			And the editor fills in Integrations:
+				| label                                | value                       |
+				| Braze campaign creation status       | REQUESTED                   |
+				| brazeNewsletterName                  | Editorial_Altered           |
+				| brazeSubscribeAttributeName          | Altered_Subscribe_Email     |
+				| brazeSubscribeEventNamePrefix        | altered_uk                  |
+				| brazeSubscribeAttributeNameAlternate | another_altered_email       |
+				| Campaign name                        | altered_name                |
+				| Campaign code                        | altered_code                |
+			And the editor saves Integrations using Enter
+			And the editor reloads the newsletter detail page
+			Then the "Integrations" panel shows:
+				| label                                | value                       |
+				| Braze campaign creation status       | Requested                   |
+				| brazeNewsletterName                  | Editorial_Altered           |
+				| brazeSubscribeAttributeName          | Altered_Subscribe_Email     |
+				| brazeSubscribeEventNamePrefix        | altered_uk                  |
+				| brazeSubscribeAttributeNameAlternate | another_altered_email       |
+				| Campaign name                        | altered_name                |
+				| Campaign code                        | altered_code                |
+
+		Scenario: Cancelling discards Integration edits
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Integrations panel
+			And the editor fills in Integrations:
+				| label               | value             |
+				| brazeNewsletterName | discard_this_name |
+			And the editor cancels Integrations editing
+			And the editor reloads the newsletter detail page
+			Then the "Integrations" panel shows:
+				| label               | value             |
+				| brazeNewsletterName | Editorial_Fixture |
+
 	Rule: The header adapts to the screen size
 
 		Scenario: The header stacks on a small screen
