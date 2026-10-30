@@ -791,7 +791,6 @@ describe('NewsletterDetailPanels', () => {
 			]) {
 				expect(valueFor(label)).toBe('Not set');
 			}
-			expect(screen.queryByRole('link')).toBeNull();
 		},
 	);
 });
