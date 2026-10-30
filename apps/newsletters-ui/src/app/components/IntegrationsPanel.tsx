@@ -15,6 +15,7 @@ import {
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
+import { useIsMobile } from '../hooks/useIsMobile';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { StandPanel } from './StandPanel';
 import { WorkflowStatusBadge } from './WorkflowStatusBadge';
@@ -258,6 +259,8 @@ const EditIntegrations = ({
 	onChange: (changes: IntegrationsDraft) => void;
 	errors: IntegrationsErrors;
 }) => {
+	const isMobile = useIsMobile();
+
 	return (
 		<div
 			css={css`
@@ -287,7 +290,7 @@ const EditIntegrations = ({
 					isRequired
 					renderLabel={(label) => <LabelWithAsterisk label={label} />}
 					css={fullWidthInputStyles}
-					orientation="horizontal"
+					orientation={isMobile ? 'vertical' : 'horizontal'}
 					label="Braze campaign creation status"
 					value={draft.brazeCampaignCreationStatus}
 					onChange={(value) => {
@@ -346,6 +349,14 @@ const EditIntegrations = ({
 				/>
 				<TextListInput
 					css={fullWidthInputStyles}
+					cssOverrides={
+						/** On mobile, wrap the row to avoid blowing out of the container. */
+						css`
+							> legend {
+								flex-flow: row wrap;
+							}
+						`
+					}
 					label="brazeSubscribeAttributeNameAlternate"
 					initialData={draft.brazeSubscribeAttributeNameAlternate}
 					onChange={(values) =>
