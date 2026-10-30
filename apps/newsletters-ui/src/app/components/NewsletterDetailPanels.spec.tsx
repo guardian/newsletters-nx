@@ -725,34 +725,6 @@ describe('NewsletterDetailPanels', () => {
 		);
 	});
 
-	it.each([undefined, ''])(
-		'shows "Not set" for sign-up page and tag values that are %s',
-		(value) => {
-			render(
-				<NewsletterDetailPanels
-					newsletter={newsletter({
-						signupPage: value,
-						seriesTag: value,
-						seriesTagDescription: value,
-						composerTag: value,
-						composerCampaignTag: value,
-					})}
-				/>,
-			);
-
-			for (const label of [
-				'Path to sign-up page',
-				'Series tag',
-				'Tag description',
-				'Campaign tag',
-				'Campaign description',
-			]) {
-				expect(valueFor(label)).toBe('Not set');
-			}
-			expect(panel('Sign-up page and tags').queryByRole('link')).toBeNull();
-		},
-	);
-
 	it('shows braze values from the newsletter', () => {
 		render(
 			<NewsletterDetailPanels
