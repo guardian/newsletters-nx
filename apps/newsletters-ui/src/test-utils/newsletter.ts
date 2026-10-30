@@ -45,5 +45,5 @@ export const mockPermissions = (permissions: UserPermissions | undefined) => {
 	vi.mocked(usePermissions).mockReturnValue(permissions);
 };
 
-/** Lets the current user edit panels. See `mockPermissions`. */
+/** Lets the current user edit everything, as an Editor can. See `mockPermissions`. */
 export const allowEditing = () => mockPermissions(editorPermissions);
