@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
+import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
 import {
@@ -7,7 +8,7 @@ import {
 	brazeUnsubscribeEventName,
 	type NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { useEffect, useId } from 'react';
+import { type MouseEvent, useEffect, useId } from 'react';
 import { humanize } from '../lib/format';
 import { CopyPanel } from './CopyPanel';
 import { ImagesPanel } from './ImagesPanel';
@@ -91,7 +92,13 @@ const jumpToPanels = [
 	{ id: 'integrations', name: 'Integrations' },
 ];
 
-/** Scroll to the panel and move focus into it, so Tab continues from there */
+/**
+ * Scroll to the panel and move keyboard focus to it, so the next Tab press
+ * continues from the panel rather than from the Jump to link.
+ *
+ * Panels are <section>s, which can't receive focus by default. tabindex=-1
+ * lets us focus them from script without adding them to the Tab order.
+ */
 const goToPanel = (panel: HTMLElement) => {
 	panel.scrollIntoView({ block: 'start' });
 	if (!panel.hasAttribute('tabindex')) {
@@ -99,6 +106,13 @@ const goToPanel = (panel: HTMLElement) => {
 	}
 	panel.focus({ preventScroll: true });
 };
+
+/**
+ * Cmd/Ctrl-click opens a new tab and Shift-click a new window. Leave those to
+ * the browser (the href is a full link) and only handle a plain click.
+ */
+const opensElsewhere = (event: MouseEvent) =>
+	event.metaKey || event.ctrlKey || event.shiftKey;
 
 // The page has `<base href="/">`, so a bare `#id` would link to `/#id`. Include
 // the current path so the link is valid on its own (e.g. when opened in a new tab).
@@ -126,17 +140,9 @@ const JumpTo = () => {
 					<li key={id}>
 						<Link
 							href={`${pathname}${search}#${id}`}
-							onClick={(event: React.MouseEvent) => {
+							onClick={(event: MouseEvent) => {
 								const panel = document.getElementById(id);
-								if (
-									!panel ||
-									event.defaultPrevented ||
-									event.metaKey ||
-									event.ctrlKey ||
-									event.shiftKey ||
-									event.altKey ||
-									event.button !== 0
-								) {
+								if (!panel || opensElsewhere(event)) {
 									return;
 								}
 								event.preventDefault();

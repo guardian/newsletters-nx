@@ -749,7 +749,7 @@ describe('NewsletterDetailPanels', () => {
 			]) {
 				expect(valueFor(label)).toBe('Not set');
 			}
-			expect(screen.queryByRole('link')).toBeNull();
+			expect(panel('Sign-up page and tags').queryByRole('link')).toBeNull();
 		},
 	);
 
