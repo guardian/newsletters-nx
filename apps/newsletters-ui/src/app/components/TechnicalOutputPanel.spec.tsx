@@ -35,7 +35,7 @@ describe('TechnicalOutputPanel', () => {
 	it('shows the identifiers', () => {
 		renderPanel({ restricted: true });
 
-		expect(valueFor('id Number')).toBe('123');
+		expect(valueFor('id number')).toBe('123');
 		expect(valueFor('Identity name')).toBe('afternoon-update');
 		expect(valueFor('Restricted')).toBe('true');
 	});
@@ -51,6 +51,14 @@ describe('TechnicalOutputPanel', () => {
 
 		expect(
 			technicalOutput().queryByRole('button', { name: 'Edit' }),
+		).not.toBeInTheDocument();
+	});
+
+	it('has no Raw data action, even for editors', () => {
+		renderPanel();
+
+		expect(
+			technicalOutput().queryByRole('button', { name: 'show raw data' }),
 		).not.toBeInTheDocument();
 	});
 

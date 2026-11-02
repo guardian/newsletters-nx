@@ -97,7 +97,7 @@ export const TechnicalOutputPanel = ({
 	return (
 		<StandPanel name="Technical output" id="technical-output" subgrid>
 			<dl css={listStyles}>
-				<Field label="id Number">{newsletter.listId}</Field>
+				<Field label="id number">{newsletter.listId}</Field>
 				<Field label="Identity name">{newsletter.identityName}</Field>
 				<Field label="Restricted">{String(newsletter.restricted)}</Field>
 				<Field

@@ -457,6 +457,7 @@ Feature: Launched newsletter: open it and find my way around
 			Given a launched newsletter "Afternoon update"
 			When the editor opens the detail page for "Afternoon update"
 			Then the "Technical output" panel has no "Edit" action
+			And the "Technical output" panel has no "show raw data" action
 
 	Rule: The header adapts to the screen size
 

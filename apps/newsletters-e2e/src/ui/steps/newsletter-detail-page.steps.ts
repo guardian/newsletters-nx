@@ -828,7 +828,7 @@ Then(
 	'the {string} panel shows the id number of {string}',
 	async ({ page, namedNewsletters }, panelName: string, name: string) => {
 		await expect(
-			definitionForLabel(panelByName(page, panelName), 'id Number'),
+			definitionForLabel(panelByName(page, panelName), 'id number'),
 		).toHaveText(String(listIdFor(namedNewsletters, name)));
 	},
 );
