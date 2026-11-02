@@ -145,7 +145,9 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public async setFrequencyField(selection: string) {
-		await this.locateFrequencyField().getByText(selection).check();
+		await this.locateFrequencyField()
+			.getByText(selection, { exact: true })
+			.check();
 	}
 
 	public locateTypeField() {
