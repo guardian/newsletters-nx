@@ -29,6 +29,12 @@ test.describe('Rendering options', () => {
 
 		await page.getByRole('link', { name: 'Edit Rendering Options' }).click();
 		await expect(page).toHaveURL(RENDERING_OPTIONS_URL_PATTERN);
+		// The URL changes before the route finishes rendering, and the Edit Newsletter
+		// page still on screen has its own "Add the series tag" field. Wait for a
+		// heading that only the rendering options page has before filling anything in.
+		await expect(
+			page.getByRole('heading', { name: 'Category and series tag' }),
+		).toBeVisible();
 	});
 
 	const LIST_ID = 9001;
@@ -46,7 +52,7 @@ test.describe('Rendering options', () => {
 
 	test('can edit rendering options fields and save', async ({ page }) => {
 		await page
-			.getByLabel('Add the series tag')
+			.getByLabel('Add the series tag', { exact: true })
 			.fill('tests/series/playwright-article-rendering');
 
 		await page.getByRole('checkbox', { name: 'Display date?' }).check();
@@ -129,9 +135,9 @@ test.describe('Rendering options', () => {
 		await page.reload();
 		await expect(page).toHaveURL(RENDERING_OPTIONS_URL_PATTERN);
 
-		await expect(page.getByLabel('Add the series tag')).toHaveValue(
-			'tests/series/playwright-article-rendering',
-		);
+		await expect(
+			page.getByLabel('Add the series tag', { exact: true }),
+		).toHaveValue('tests/series/playwright-article-rendering');
 		await expect(
 			page.getByRole('checkbox', { name: 'Display date?' }),
 		).toBeChecked();

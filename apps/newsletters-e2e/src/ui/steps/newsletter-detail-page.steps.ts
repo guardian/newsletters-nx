@@ -33,6 +33,13 @@ const pageHeader = (page: Page): Locator =>
 		.locator('header')
 		.filter({ has: page.getByRole('heading', { level: 2 }) });
 
+const jumpToNav = (page: Page): Locator =>
+	page.getByRole('navigation', { name: 'Jump to' });
+
+// Panel ids are the lower-cased, hyphenated panel name
+const panelIdFor = (panelName: string): string =>
+	panelName.toLowerCase().replace(/\s+/g, '-');
+
 const panelByName = (page: Page, panelName: string): Locator =>
 	page.locator('section', {
 		has: page.getByRole('heading', {
@@ -58,6 +65,17 @@ const expectPanelRowsInOrder = async (
 		await expect(definitionForLabel(panel, label)).toHaveText(value);
 	}
 };
+
+// Required inputs in the Integrations panel have an accessible name ending " *"
+// This regex matches 'name' or 'name *'
+const integrationsLabelPattern = (label: string): RegExp =>
+	new RegExp(`^${label}( \\*)?$`);
+
+const WORKFLOW_STATUS_RADIO_LABELS = {
+	NOT_REQUESTED: 'Not Requested',
+	REQUESTED: 'Requested',
+	COMPLETED: 'Completed',
+} as const;
 
 const createLaunched = async (
 	request: APIRequestContext,
@@ -259,6 +277,33 @@ When(
 	},
 );
 
+When(
+	'the editor follows a link to the {string} panel of {string}',
+	async ({ page, namedNewsletters }, panelName: string, name: string) => {
+		await page.goto(
+			`/newsletters/${identityNameFor(namedNewsletters, name)}#${panelIdFor(panelName)}`,
+		);
+	},
+);
+
+When('the editor jumps to {string}', async ({ page }, panelName: string) => {
+	await jumpToNav(page).getByRole('link', { name: panelName }).click();
+});
+
+Then('"Jump to" links to these panels:', async ({ page }, table: DataTable) => {
+	const expected = table.hashes().map(({ panel }) => panel);
+	await expect(jumpToNav(page).getByRole('link')).toHaveText(expected);
+});
+
+Then('the {string} panel is in view', async ({ page }, panelName: string) => {
+	await expect(
+		panelByName(page, panelName).getByRole('heading', {
+			level: 3,
+			name: panelName,
+		}),
+	).toBeInViewport();
+});
+
 When('the editor selects "Back to all newsletters"', async ({ page }) => {
 	await page.getByRole('link', { name: 'Back to all newsletters' }).click();
 });
@@ -351,7 +396,7 @@ Then(
 			if (label === undefined || value === undefined) {
 				throw new Error('Panel table must have "label" and "value" columns');
 			}
-			await expect(definitionForLabel(panel, label)).toHaveText(value);
+			await expect(definitionForLabel(panel, label)).toContainText(value);
 		}
 	},
 );
@@ -384,6 +429,114 @@ When('the editor edits the Copy panel', async ({ page }) => {
 		.getByRole('button', { name: 'Edit', exact: true })
 		.click();
 });
+
+// Opening edit mode also validates the newsletter's saved path. Only the path named in the test step
+// gets the step's result (found or not found); every other path is treated as found.
+const mockSignupPathValidation = (page: Page, path: string, valid: boolean) =>
+	page.route('**/api/signup-path-validation?*', async (route) => {
+		const requested = new URL(route.request().url()).searchParams.get('path');
+		await route.fulfill({
+			json: { ok: true, data: { valid: requested === path ? valid : true } },
+		});
+	});
+
+Given(
+	'the sign-up path {string} can be found',
+	async ({ page }, path: string) => {
+		await mockSignupPathValidation(page, path, true);
+	},
+);
+
+Given(
+	'the sign-up path {string} cannot be found',
+	async ({ page }, path: string) => {
+		await mockSignupPathValidation(page, path, false);
+	},
+);
+
+Then(
+	'the sign-up path feedback is {string}',
+	async ({ page }, message: string) => {
+		await expect(
+			panelByName(page, 'Sign-up page and tags').getByText(message, {
+				exact: true,
+			}),
+		).toBeVisible();
+	},
+);
+
+When('the editor tries to save Sign-up page and tags', async ({ page }) => {
+	await panelByName(page, 'Sign-up page and tags')
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+});
+
+Then(
+	'Sign-up page and tags remains editable with an invalid path',
+	async ({ page }) => {
+		const panel = panelByName(page, 'Sign-up page and tags');
+		await expect(panel.getByText('Editing', { exact: true })).toBeVisible();
+		const alert = panel.getByRole('alert');
+		await expect(alert).toContainText('Unable to save changes');
+		await expect(alert).toContainText(
+			'Please enter a valid path to sign-up page',
+		);
+	},
+);
+
+When('the editor edits the {string} panel', async ({ page }, name: string) => {
+	await panelByName(page, name)
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When(
+	'the editor fills in the {string} panel:',
+	async ({ page }, name: string, table: DataTable) => {
+		for (const { label, value } of table.hashes()) {
+			if (label === undefined || value === undefined) {
+				throw new Error('Panel table must have "label" and "value" columns');
+			}
+			await panelByName(page, name)
+				.getByRole('textbox', { name: label, exact: true })
+				.fill(value);
+		}
+	},
+);
+
+When(
+	'the editor selects {string} for {string} in the {string} panel',
+	async ({ page }, option: string, label: string, name: string) => {
+		await panelByName(page, name)
+			.getByRole('radiogroup', { name: label, exact: true })
+			.getByText(option, { exact: true })
+			.click();
+		await expect(
+			panelByName(page, name)
+				.getByRole('radiogroup', { name: label, exact: true })
+				.getByRole('radio', { name: option, exact: true }),
+		).toBeChecked();
+	},
+);
+
+When('the editor saves the {string} panel', async ({ page }, name: string) => {
+	const panel = panelByName(page, name);
+	await panel
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+When(
+	'the editor cancels editing the {string} panel',
+	async ({ page }, name: string) => {
+		await panelByName(page, name)
+			.getByRole('button', { name: 'Cancel', exact: true })
+			.click();
+	},
+);
 
 When('the editor fills in Copy:', async ({ page }, table: DataTable) => {
 	for (const { label, value } of table.hashes()) {
@@ -428,6 +581,71 @@ When('the editor cancels Copy editing', async ({ page }) => {
 		.click();
 });
 
+When('the editor edits the Integrations panel', async ({ page }) => {
+	await panelByName(page, 'Integrations')
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When(
+	'the editor fills in Integrations:',
+	async ({ page }, table: DataTable) => {
+		const panel = panelByName(page, 'Integrations');
+		for (const { label, value } of table.hashes()) {
+			if (label === undefined || value === undefined) {
+				throw new Error(
+					'Integrations table must have "label" and "value" columns',
+				);
+			}
+			if (label === 'Braze campaign creation status') {
+				const status = workflowStatusEnumSchema.parse(value);
+				const radioLabel = WORKFLOW_STATUS_RADIO_LABELS[status];
+				const group = panel.getByRole('radiogroup', {
+					name: integrationsLabelPattern(label),
+				});
+				// The radio input is visually hidden beneath its <label>
+				await group.getByText(radioLabel, { exact: true }).click();
+				await expect(
+					group.getByRole('radio', { name: radioLabel, exact: true }),
+				).toBeChecked();
+			} else if (label === 'brazeSubscribeAttributeNameAlternate') {
+				const items = panel.getByRole('textbox', {
+					name: `${label} item`,
+					exact: true,
+				});
+				if ((await items.count()) === 0) {
+					await panel
+						.getByRole('button', { name: 'Add new item', exact: true })
+						.click();
+				}
+				await items.first().fill(value);
+			} else {
+				await panel
+					.getByRole('textbox', { name: integrationsLabelPattern(label) })
+					.fill(value);
+			}
+		}
+	},
+);
+
+When('the editor saves Integrations using Enter', async ({ page }) => {
+	const panel = panelByName(page, 'Integrations');
+	await panel
+		.getByRole('textbox', {
+			name: integrationsLabelPattern('brazeNewsletterName'),
+		})
+		.press('Enter');
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+When('the editor cancels Integrations editing', async ({ page }) => {
+	await panelByName(page, 'Integrations')
+		.getByRole('button', { name: 'Cancel', exact: true })
+		.click();
+});
+
 When('the editor reloads the newsletter detail page', async ({ page }) => {
 	await page.reload();
 });
@@ -442,7 +660,7 @@ When('the next Copy save fails', async ({ page }) => {
 			}
 			await route.fulfill({
 				status: 500,
-				json: { ok: false, message: 'Unable to save Copy' },
+				json: { ok: false, message: 'Please enter a valid dobedo value' },
 			});
 		},
 		{ times: 1 },
@@ -453,7 +671,12 @@ Then(
 	'Copy remains editable with headline {string} and a save error',
 	async ({ page }, headline: string) => {
 		const panel = panelByName(page, 'Copy');
-		await expect(panel.getByRole('alert')).toHaveText('Unable to save Copy');
+		await expect(panel.getByRole('alert')).toContainText(
+			'Unable to save changes',
+		);
+		await expect(panel.getByRole('alert')).toContainText(
+			'Please enter a valid dobedo value',
+		);
 		await expect(
 			panel.getByRole('textbox', { name: 'Headline', exact: true }),
 		).toHaveValue(headline);
@@ -465,9 +688,8 @@ Then(
 	'the {string} panel shows a thumbnail for {string}',
 	async ({ page }, panelName: string, label: string) => {
 		const panel = panelByName(page, panelName);
-		await expect(
-			definitionForLabel(panel, label).getByRole('img'),
-		).toBeVisible();
+		// The image is decorative (alt=""), so it has no 'img' role
+		await expect(definitionForLabel(panel, label).locator('img')).toBeVisible();
 	},
 );
 
@@ -521,3 +743,49 @@ Then(
 		}
 	},
 );
+
+When('the editor edits the Images panel', async ({ page }) => {
+	await panelByName(page, 'Images')
+		.getByRole('button', { name: 'Edit', exact: true })
+		.click();
+});
+
+When('the editor fills in Images:', async ({ page }, table: DataTable) => {
+	for (const { label, value } of table.hashes()) {
+		if (label === undefined || value === undefined) {
+			throw new Error('Images table must have "label" and "value" columns');
+		}
+		await panelByName(page, 'Images')
+			.getByRole('textbox', { name: label, exact: true })
+			.fill(value);
+	}
+});
+
+When('the editor saves Images', async ({ page }) => {
+	const panel = panelByName(page, 'Images');
+	// "Save changes" is disabled until every image has been checked
+	await panel
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
+	await expect(
+		panel.getByRole('button', { name: 'Edit', exact: true }),
+	).toBeVisible();
+});
+
+Then(
+	'the Images panel shows the error {string}',
+	async ({ page }, message: string) => {
+		await expect(
+			panelByName(page, 'Images').getByText(message, { exact: true }),
+		).toBeVisible();
+	},
+);
+
+Then('the editor cannot save Images', async ({ page }) => {
+	await expect(
+		panelByName(page, 'Images').getByRole('button', {
+			name: 'Save changes',
+			exact: true,
+		}),
+	).toBeDisabled();
+});

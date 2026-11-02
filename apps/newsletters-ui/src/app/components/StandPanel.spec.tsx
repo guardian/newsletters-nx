@@ -1,52 +1,35 @@
-import '@testing-library/jest-dom/vitest';
 import {
 	levelToPermissions,
 	UserAccessLevel,
 } from '@newsletters-nx/newsletters-data-client';
-import {
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { scrollIntoView } from '../../test-utils/dom';
+import { allowEditing, mockPermissions } from '../../test-utils/newsletter';
 import { usePermissions } from '../hooks/user-hooks';
 import { StandPanel } from './StandPanel';
 
 vi.mock('../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
 
-const scrollIntoView = vi.fn();
-
 beforeEach(() => {
-	vi.clearAllMocks();
-	Object.defineProperty(Element.prototype, 'scrollIntoView', {
-		configurable: true,
-		value: scrollIntoView,
-	});
-	vi.mocked(usePermissions).mockReturnValue({
-		editEverything: true,
-		useJsonEditor: false,
-	});
-});
-
-afterEach(() => {
-	cleanup();
-	Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
-	vi.restoreAllMocks();
+	vi.resetAllMocks();
+	allowEditing();
 });
 
 const Editor = ({
 	save,
+	validate,
 }: {
 	save: (value: string) => boolean | string | Promise<boolean | string>;
+	validate?: (value: string) => true | string;
 }) => {
 	const [value, setValue] = useState('Original');
 	return (
 		<StandPanel
 			name="Copy"
 			onSave={() => save(value)}
+			onValidate={validate && (() => validate(value))}
 			onCancel={() => setValue('Original')}
 		>
 			{(isEditing) => (
@@ -69,7 +52,7 @@ describe('StandPanel editing', () => {
 		['Developer', UserAccessLevel.Developer],
 		['Editor', UserAccessLevel.Editor],
 	] as const)('offers editing to %s users', (_, accessLevel) => {
-		vi.mocked(usePermissions).mockReturnValue(levelToPermissions(accessLevel));
+		mockPermissions(levelToPermissions(accessLevel));
 		render(<Editor save={() => true} />);
 		expect(screen.getByRole('button', { name: 'Edit' })).toBeVisible();
 		startEditing();
@@ -77,9 +60,7 @@ describe('StandPanel editing', () => {
 	});
 
 	it('does not offer editing to Viewer users', () => {
-		vi.mocked(usePermissions).mockReturnValue(
-			levelToPermissions(UserAccessLevel.Viewer),
-		);
+		mockPermissions(levelToPermissions(UserAccessLevel.Viewer));
 		render(<Editor save={() => true} />);
 		expect(
 			screen.queryByRole('button', { name: 'Edit' }),
@@ -104,7 +85,7 @@ describe('StandPanel editing', () => {
 	it.each([false, undefined])(
 		'does not offer editing without edit access (%s)',
 		(access) => {
-			vi.mocked(usePermissions).mockReturnValue(
+			mockPermissions(
 				access === undefined
 					? undefined
 					: { editEverything: access, useJsonEditor: false },
@@ -182,6 +163,57 @@ describe('StandPanel editing', () => {
 		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 	});
 
+	it('does not show validation errors before the first save attempt', () => {
+		render(
+			<Editor save={() => true} validate={() => 'Please fix the field'} />,
+		);
+		startEditing();
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Typing' },
+		});
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+	});
+
+	it('does not scroll or save when validation fails, then scrolls once it passes', async () => {
+		const save = vi.fn(() => true);
+		render(
+			<Editor
+				save={save}
+				validate={(value) => value === 'Valid' || 'Please fix the field'}
+			/>,
+		);
+		startEditing();
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		expect(await screen.findByRole('alert')).toHaveTextContent(
+			'Please fix the field',
+		);
+		expect(save).not.toHaveBeenCalled();
+		expect(scrollIntoView).not.toHaveBeenCalled();
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Still wrong' },
+		});
+		expect(screen.getByRole('alert')).toHaveTextContent('Please fix the field');
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Valid' },
+		});
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Invalid again' },
+		});
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		expect(await screen.findByRole('alert')).toHaveTextContent(
+			'Please fix the field',
+		);
+		fireEvent.change(screen.getByRole('textbox'), {
+			target: { value: 'Valid' },
+		});
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		await screen.findByRole('button', { name: 'Edit' });
+		expect(save).toHaveBeenCalledExactlyOnceWith('Valid');
+		expect(scrollIntoView).toHaveBeenCalledWith({ block: 'start' });
+	});
+
 	it('shows only the specific save error and clears it on cancel', async () => {
 		render(<Editor save={() => 'Unable to save Copy'} />);
 		startEditing();
@@ -189,9 +221,10 @@ describe('StandPanel editing', () => {
 			target: { value: 'Keep this' },
 		});
 		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
-		expect((await screen.findByRole('alert')).textContent).toBe(
-			'Unable to save Copy',
-		);
+		const alert = await screen.findByRole('alert');
+		expect(alert).toHaveTextContent('Unable to save changes');
+		expect(alert).toHaveTextContent('Unable to save Copy');
+		expect(alert.closest('form')?.lastElementChild).toContainElement(alert);
 		expect(screen.getAllByRole('alert')).toHaveLength(1);
 		expect(screen.getByRole('textbox')).toHaveValue('Keep this');
 		expect(screen.getByText('Editing')).toBeVisible();
@@ -255,5 +288,38 @@ describe('StandPanel editing', () => {
 		await waitFor(() =>
 			expect(screen.getByRole('button', { name: 'Edit' })).toBeVisible(),
 		);
+	});
+
+	it('asks the browser to confirm leaving only while editing', async () => {
+		const unload = () => {
+			const event = new Event('beforeunload', { cancelable: true });
+			window.dispatchEvent(event);
+			return event.defaultPrevented;
+		};
+		render(<Editor save={() => true} />);
+		expect(unload()).toBe(false);
+
+		startEditing();
+		expect(unload()).toBe(true);
+
+		fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+		expect(unload()).toBe(false);
+
+		startEditing();
+		fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+		await waitFor(() =>
+			expect(screen.getByRole('button', { name: 'Edit' })).toBeVisible(),
+		);
+		expect(unload()).toBe(false);
+	});
+
+	it('stops asking to confirm leaving when an editing panel unmounts', () => {
+		const { unmount } = render(<Editor save={() => true} />);
+		startEditing();
+		unmount();
+
+		const event = new Event('beforeunload', { cancelable: true });
+		window.dispatchEvent(event);
+		expect(event.defaultPrevented).toBe(false);
 	});
 });

@@ -70,6 +70,30 @@ Feature: Launched newsletter: open it and find my way around
 			And the editor selects the "Layout" tab
 			Then the existing preview for "Afternoon update" is shown
 
+	Rule: Jump to takes the editor straight to a panel
+
+		Scenario: Jump to links to every panel
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			Then "Jump to" links to these panels:
+				| panel                 |
+				| Attributes            |
+				| Images                |
+				| Copy                  |
+				| Sign-up page and tags |
+				| Integrations          |
+
+		Scenario: Choosing a panel in Jump to scrolls to it
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor jumps to "Integrations"
+			Then the "Integrations" panel is in view
+
+		Scenario: A link to a panel opens the page at that panel
+			Given a launched newsletter "Afternoon update"
+			When the editor follows a link to the "Integrations" panel of "Afternoon update"
+			Then the "Integrations" panel is in view
+
 	Rule: The Details tab shows the newsletter's attributes
 
 		Scenario: The Attributes panel shows what kind of newsletter it is
@@ -134,6 +158,37 @@ Feature: Launched newsletter: open it and find my way around
 				| Headline               | Not set |
 				| Success message        | Not set |
 				| Highlight card message | Not set |
+
+	Rule: Editors can edit and save Images
+
+		Scenario: Saved images survive a reload
+			Given a launched newsletter "Afternoon update" with all four images
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Images panel
+			And the editor fills in Images:
+				| label                        | value                                                                              |
+				| Main banner graphic          | https://uploads.guim.co.uk/2024/08/14/BreakingNewsAustralia_Red_2_email-header.png |
+				| Main banner graphic (mobile) | https://uploads.guim.co.uk/2025/06/30/Business.jpg                                 |
+				| Newsletter graphic (5:3)     | https://uploads.guim.co.uk/2025/05/15/Matters_of_opinion_11.jpg                    |
+				| Newsletter square (1:1)      | https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg                             |
+			And the editor saves Images
+			And the editor reloads the newsletter detail page
+			Then the "Images" panel shows:
+				| label                        | value                                                                              |
+				| Main banner graphic          | https://uploads.guim.co.uk/2024/08/14/BreakingNewsAustralia_Red_2_email-header.png |
+				| Main banner graphic (mobile) | https://uploads.guim.co.uk/2025/06/30/Business.jpg                                 |
+				| Newsletter graphic (5:3)     | https://uploads.guim.co.uk/2025/05/15/Matters_of_opinion_11.jpg                    |
+				| Newsletter square (1:1)      | https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg                             |
+
+		Scenario: An address that isn't an image can't be saved
+			Given a launched newsletter "Afternoon update" with all four images
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Images panel
+			And the editor fills in Images:
+				| label                   | value     |
+				| Newsletter square (1:1) | not a url |
+			Then the Images panel shows the error "Couldn't load an image from that URL. Check the link and try again."
+			And the editor cannot save Images
 
 	Rule: Editors can edit and save Copy
 
@@ -207,6 +262,71 @@ Feature: Launched newsletter: open it and find my way around
 				| Campaign tag                 | Not set                                                                                                       |
 				| Campaign description         | Not set                                                                                                       |
 
+	@edit
+	Rule: Editors can edit and save Sign-up page and tags
+
+		Scenario: Saved Sign-up page and tags survives a reload
+			Given a launched newsletter "Afternoon update"
+			And the sign-up path "/news/series/afternoon" can be found
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Sign-up page and tags" panel
+			And the editor fills in the "Sign-up page and tags" panel:
+				| label                | value                   |
+				| Path to sign-up page | /news/series/afternoon  |
+				| Series tag           | news/series/afternoon   |
+				| Tag description      | Your afternoon news     |
+				| Campaign tag         | afternoon_campaign      |
+				| Campaign description | Afternoon campaign copy |
+			And the editor selects "Completed" for "Sign-up page creation status" in the "Sign-up page and tags" panel
+			And the editor selects "Requested" for "Tag creation status" in the "Sign-up page and tags" panel
+			Then the sign-up path feedback is "Valid path"
+			When the editor saves the "Sign-up page and tags" panel
+			And the editor reloads the newsletter detail page
+			Then the "Sign-up page and tags" panel shows:
+				| label                        | value                   |
+				| Sign-up page creation status | Completed               |
+				| Path to sign-up page         | /news/series/afternoon  |
+				| Tag creation status          | Requested               |
+				| Series tag                   | news/series/afternoon   |
+				| Tag description              | Your afternoon news     |
+				| Campaign tag                 | afternoon_campaign      |
+				| Campaign description         | Afternoon campaign copy |
+
+		Scenario: An invalid sign-up path prevents saving until it is cleared
+			Given a launched newsletter "Afternoon update"
+			And the sign-up path "/news/missing" cannot be found
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Sign-up page and tags" panel
+			And the editor fills in the "Sign-up page and tags" panel:
+				| label                | value         |
+				| Path to sign-up page | /news/missing |
+			Then the sign-up path feedback is "Couldn’t find the path"
+			When the editor tries to save Sign-up page and tags
+			Then Sign-up page and tags remains editable with an invalid path
+			When the editor fills in the "Sign-up page and tags" panel:
+				| label                | value |
+				| Path to sign-up page |       |
+			And the editor saves the "Sign-up page and tags" panel
+			And the editor reloads the newsletter detail page
+			Then the "Sign-up page and tags" panel shows:
+				| label                | value   |
+				| Path to sign-up page | Not set |
+
+		Scenario: Cancelling discards Sign-up page and tags edits
+			Given a launched newsletter "Afternoon update" with these details:
+				| field             | value                 |
+				| sign-up page path | /news/series/original |
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Sign-up page and tags" panel
+			And the editor fills in the "Sign-up page and tags" panel:
+				| label                | value                |
+				| Path to sign-up page | /news/series/discard |
+			And the editor cancels editing the "Sign-up page and tags" panel
+			And the editor reloads the newsletter detail page
+			Then the "Sign-up page and tags" panel shows:
+				| label                | value                 |
+				| Path to sign-up page | /news/series/original |
+
 	Rule: Integrations shows the Braze and Ophan values
 
 		Scenario: Braze values are grouped under "Braze values"
@@ -238,6 +358,46 @@ Feature: Launched newsletter: open it and find my way around
 				| label         | value                   |
 				| Campaign name | AfternoonUpdateAUS      |
 				| Campaign code | afternoonupdateau_email |
+
+	Rule: Editors can edit and save Braze and Ophan values
+
+		Scenario: Saved braze and ophan values survive a reload
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Integrations panel
+			And the editor fills in Integrations:
+				| label                                | value                       |
+				| Braze campaign creation status       | REQUESTED                   |
+				| brazeNewsletterName                  | Editorial_Altered           |
+				| brazeSubscribeAttributeName          | Altered_Subscribe_Email     |
+				| brazeSubscribeEventNamePrefix        | altered_uk                  |
+				| brazeSubscribeAttributeNameAlternate | another_altered_email       |
+				| Campaign name                        | altered_name                |
+				| Campaign code                        | altered_code                |
+			And the editor saves Integrations using Enter
+			And the editor reloads the newsletter detail page
+			Then the "Integrations" panel shows:
+				| label                                | value                       |
+				| Braze campaign creation status       | Requested                   |
+				| brazeNewsletterName                  | Editorial_Altered           |
+				| brazeSubscribeAttributeName          | Altered_Subscribe_Email     |
+				| brazeSubscribeEventNamePrefix        | altered_uk                  |
+				| brazeSubscribeAttributeNameAlternate | another_altered_email       |
+				| Campaign name                        | altered_name                |
+				| Campaign code                        | altered_code                |
+
+		Scenario: Cancelling discards Integration edits
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the Integrations panel
+			And the editor fills in Integrations:
+				| label               | value             |
+				| brazeNewsletterName | discard_this_name |
+			And the editor cancels Integrations editing
+			And the editor reloads the newsletter detail page
+			Then the "Integrations" panel shows:
+				| label               | value             |
+				| brazeNewsletterName | Editorial_Fixture |
 
 	Rule: The header adapts to the screen size
 

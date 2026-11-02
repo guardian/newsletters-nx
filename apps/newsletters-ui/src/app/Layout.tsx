@@ -83,12 +83,15 @@ export function Layout(props: IRootRoute) {
 	const isAllNewslettersRoute = location.pathname === '/all';
 	const isHomeRoute = location.pathname === '/';
 	const isNewslettersHubLandingRoute = location.pathname === '/layouts';
+	const isNewslettersDetailPageStand =
+		location.pathname.startsWith('/newsletters/');
 	// /all and the home page use the same Stand top bar / alert banner shell as the wizard.
 	const usesStandShell =
 		isWizardRoute ||
 		isAllNewslettersRoute ||
 		isHomeRoute ||
-		isNewslettersHubLandingRoute;
+		isNewslettersHubLandingRoute ||
+		isNewslettersDetailPageStand;
 	const isUsingStand = !isFeatureSwitchEnabled('switch-legacy');
 
 	useEffect(() => {

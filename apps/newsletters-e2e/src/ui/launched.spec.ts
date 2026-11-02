@@ -84,6 +84,7 @@ test.describe('Top nav - launched', () => {
 
 		const seriesTagPath = page.getByRole('textbox', {
 			name: 'Add the series tag',
+			exact: true,
 		});
 		await expect(seriesTagPath).toBeEditable();
 

@@ -52,8 +52,8 @@ export const CopyPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 	const [savedCopy, setSavedCopy] = useState<Partial<NewsletterData>>();
 	const current = { ...newsletter, ...savedCopy };
 	const [draft, setDraft] = useState<Partial<NewsletterData>>({});
-	const save = async (): Promise<boolean | string> => {
-		const parsed = copySchema.safeParse({
+	const parseDraft = () =>
+		copySchema.safeParse({
 			...draft,
 			signUpHeadline:
 				draft.signUpHeadline === '' ? undefined : draft.signUpHeadline,
@@ -64,8 +64,17 @@ export const CopyPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 			highlightCardTitle:
 				draft.highlightCardTitle === '' ? undefined : draft.highlightCardTitle,
 		});
+	const validate = (): true | string => {
+		const parsed = parseDraft();
+		return (
+			parsed.success ||
+			parsed.error.issues.map((issue) => issue.message).join(' ')
+		);
+	};
+	const save = async (): Promise<boolean | string> => {
+		const parsed = parseDraft();
 		if (!parsed.success) {
-			return parsed.error.issues.map((issue) => issue.message).join(' ');
+			return validate();
 		}
 		const response = await requestNewsletterEdit(
 			newsletter.listId,
@@ -88,6 +97,7 @@ export const CopyPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 			id="copy"
 			subgrid
 			onSave={save}
+			onValidate={validate}
 			onEdit={() => {
 				setDraft(
 					Object.fromEntries(
