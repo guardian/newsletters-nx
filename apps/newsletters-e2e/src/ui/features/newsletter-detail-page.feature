@@ -107,6 +107,48 @@ Feature: Launched newsletter: open it and find my way around
 				| Region focus       | AU               |
 				| Type of newsletter | Article based    |
 
+	@edit
+	Rule: Editors can edit and save Attributes
+
+		Scenario: Saved attributes survive a reload and update the header
+			Given a launched newsletter "Afternoon update" with status "live" and region focus "AU"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Attributes" panel
+			Then "Type of newsletter" can't be changed in the "Attributes" panel
+			When the editor fills in the "Attributes" panel:
+				| label | value          |
+				| Name  | Evening update |
+			And the editor selects "Paused" for "Newsletter status" in the "Attributes" panel
+			And the editor chooses "Sport" for "Pillar" in the "Attributes" panel
+			And the editor chooses "UK" for "Region focus" in the "Attributes" panel
+			And the editor chooses "Monthly" for "Frequency" in the "Attributes" panel
+			And the editor chooses "Sport" for "MMA group" in the "Attributes" panel
+			And the editor saves the "Attributes" panel
+			Then the header shows a "Paused" status badge
+			When the editor reloads the newsletter detail page
+			Then the header shows the title "Evening update"
+			And the header shows a "Paused" status badge
+			And the "Attributes" panel shows:
+				| label              | value          |
+				| Name               | Evening update |
+				| Newsletter status  | Paused         |
+				| Pillar             | Sport          |
+				| Region focus       | UK             |
+				| Frequency          | Monthly        |
+				| Type of newsletter | Article based  |
+				| MMA group          | Sport          |
+
+		Scenario: Cancelling discards Attributes edits
+			Given a launched newsletter "Afternoon update" with status "live" and region focus "AU"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Attributes" panel
+			And the editor selects "Cancelled" for "Newsletter status" in the "Attributes" panel
+			And the editor cancels editing the "Attributes" panel
+			Then the header shows a "Live" status badge
+			And the "Attributes" panel shows:
+				| label             | value |
+				| Newsletter status | Live  |
+
 	Rule: The Details tab shows the newsletter's images
 
 		Scenario: The Images panel lists the images in order

@@ -519,6 +519,27 @@ When(
 	},
 );
 
+/** Stand selects are buttons named "<selected option> <label>". */
+const selectFor = (panel: Locator, label: string): Locator =>
+	panel.getByRole('button', { name: new RegExp(`${label}$`) });
+
+When(
+	'the editor chooses {string} for {string} in the {string} panel',
+	async ({ page }, option: string, label: string, name: string) => {
+		const select = selectFor(panelByName(page, name), label);
+		await select.click();
+		await page.getByRole('option', { name: option, exact: true }).click();
+		await expect(select).toHaveText(new RegExp(`^${option}`));
+	},
+);
+
+Then(
+	"{string} can't be changed in the {string} panel",
+	async ({ page }, label: string, name: string) => {
+		await expect(selectFor(panelByName(page, name), label)).toBeDisabled();
+	},
+);
+
 When('the editor saves the {string} panel', async ({ page }, name: string) => {
 	const panel = panelByName(page, name);
 	await panel
