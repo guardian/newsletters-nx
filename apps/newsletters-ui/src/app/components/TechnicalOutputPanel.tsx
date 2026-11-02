@@ -2,13 +2,11 @@ import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
 import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
 import type {
-	DrrSlotSetId,
+	DrrSlotKey,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import {
 	brazeTemplateCode,
-	drrSlotKeyForSet,
-	drrSlotSets,
 	embedIframeCode,
 } from '@newsletters-nx/newsletters-data-client';
 import hljs from 'highlight.js/lib/core';
@@ -23,6 +21,18 @@ import { StandPanel } from './StandPanel';
 
 hljs.registerLanguage('django', django);
 hljs.registerLanguage('xml', xml);
+
+/** `Default` lets the template choose from the newsletter's region focus. */
+const drrSlotSets: ReadonlyArray<{
+	id: string;
+	label: string;
+	slotKey?: DrrSlotKey;
+}> = [
+	{ id: 'default', label: 'Default' },
+	{ id: 'AUS', label: 'Australia', slotKey: 'AUS' },
+	{ id: 'US', label: 'US', slotKey: 'US' },
+	{ id: 'Global', label: 'Global', slotKey: 'Newsletters' },
+];
 
 const fieldContentStyles = css`
 	display: flex;
@@ -59,8 +69,8 @@ const Code = ({ code, language }: { code: string; language: string }) => (
 
 const BrazeTemplate = ({ newsletter }: { newsletter: NewsletterData }) => {
 	const isMobile = useIsMobile();
-	const [slotSetId, setSlotSetId] = useState<DrrSlotSetId>('default');
-	const slotKey = drrSlotKeyForSet(slotSetId);
+	const [slotSetId, setSlotSetId] = useState('default');
+	const slotKey = drrSlotSets.find(({ id }) => id === slotSetId)?.slotKey;
 	const template = brazeTemplateCode.generate(newsletter, slotKey);
 
 	return (
@@ -69,10 +79,7 @@ const BrazeTemplate = ({ newsletter }: { newsletter: NewsletterData }) => {
 				label="DRR Slot Set"
 				orientation={isMobile ? 'vertical' : 'horizontal'}
 				value={slotSetId}
-				onChange={(value) => {
-					const selected = drrSlotSets.find(({ id }) => id === value)?.id;
-					if (selected) setSlotSetId(selected);
-				}}
+				onChange={setSlotSetId}
 			>
 				{drrSlotSets.map(({ id, label }) => (
 					<Radio key={id} value={id}>

@@ -1,33 +1,12 @@
 import type { NewsletterData } from './schemas/newsletter-data-type';
 
 export type DrrSlotKey = 'AUS' | 'US' | 'Newsletters';
-export type DrrSlotSetId = 'default' | 'AUS' | 'US' | 'Global';
-
-/**
- * The DRR (dynamic rendering) content block sets the Braze template can use.
- * `default` lets the template choose from the newsletter's region focus.
- */
-export const drrSlotSets: ReadonlyArray<{
-	id: DrrSlotSetId;
-	label: string;
-	slotKey?: DrrSlotKey;
-}> = [
-	{ id: 'default', label: 'Default' },
-	{ id: 'AUS', label: 'Australia', slotKey: 'AUS' },
-	{ id: 'US', label: 'US', slotKey: 'US' },
-	{ id: 'Global', label: 'Global', slotKey: 'Newsletters' },
-];
 
 const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 	header: `Logic_Header_${slotKey}`,
 	footer: `Logic_Footer_${slotKey}`,
 	middle: `Logic_Middle_${slotKey}`,
 });
-
-export const drrSlotKeyForSet = (
-	slotSetId: DrrSlotSetId,
-): DrrSlotKey | undefined =>
-	drrSlotSets.find(({ id }) => id === slotSetId)?.slotKey;
 
 const drrSlotKeyMapping = {
 	AU: 'AUS',
