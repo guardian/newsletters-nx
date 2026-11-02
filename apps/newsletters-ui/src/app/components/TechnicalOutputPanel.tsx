@@ -19,6 +19,7 @@ import { CopyToClipboardButton } from './CopyToClipboardButton';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { StandPanel } from './StandPanel';
 
+// highlight.js has no Liquid grammar, so the Braze (Liquid) template uses Django's similar syntax.
 hljs.registerLanguage('django', django);
 hljs.registerLanguage('xml', xml);
 
