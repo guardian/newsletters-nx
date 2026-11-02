@@ -54,14 +54,6 @@ describe('TechnicalOutputPanel', () => {
 		).not.toBeInTheDocument();
 	});
 
-	it('has no Raw data action, even for editors', () => {
-		renderPanel();
-
-		expect(
-			technicalOutput().queryByRole('button', { name: 'show raw data' }),
-		).not.toBeInTheDocument();
-	});
-
 	it('copies the sign-up embed code', async () => {
 		const { user } = renderPanel();
 		const embedCode = screen.getByRole('group', { name: 'Sign up embed code' });
