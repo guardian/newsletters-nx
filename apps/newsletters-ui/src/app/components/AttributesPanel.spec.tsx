@@ -30,6 +30,13 @@ const statusRadio = (name: string) =>
 	within(
 		screen.getByRole('radiogroup', { name: 'Newsletter status' }),
 	).getByRole('radio', { name });
+const frequencyRadio = (name: string) =>
+	within(screen.getByRole('radiogroup', { name: 'Frequency' })).getByRole(
+		'radio',
+		{ name },
+	);
+const customFrequency = () =>
+	screen.getByRole('textbox', { name: 'Custom (please specify)' });
 /** Stand selects render a button named "<selected option> <label>". */
 const selectButton = (label: string) =>
 	screen.getByRole('button', { name: new RegExp(`${label}$`) });
@@ -53,7 +60,7 @@ describe('AttributesPanel', () => {
 		expect(statusRadio('Live')).toBeChecked();
 		expect(selectButton('Pillar')).toHaveTextContent('News');
 		expect(selectButton('Region focus')).toHaveTextContent('AU');
-		expect(selectButton('Frequency')).toHaveTextContent('Weekly');
+		expect(frequencyRadio('Weekly')).toBeChecked();
 		expect(selectButton('MMA group')).toHaveTextContent('News in depth');
 	});
 
@@ -85,14 +92,15 @@ describe('AttributesPanel', () => {
 			target: { value: '  Renamed ' },
 		});
 		fireEvent.click(statusRadio('Paused'));
-		await choose('Frequency', 'Monthly');
+		await choose('Pillar', 'Sport');
+		fireEvent.click(frequencyRadio('Monthly'));
 		fireEvent.click(saveButton());
 		await screen.findByRole('button', { name: 'Edit' });
 
 		expect(requestNewsletterEdit).toHaveBeenCalledWith(123, {
 			name: 'Renamed',
 			status: 'paused',
-			theme: original.theme,
+			theme: 'sport',
 			regionFocus: original.regionFocus,
 			frequency: 'Monthly',
 			group: original.group,
@@ -103,17 +111,47 @@ describe('AttributesPanel', () => {
 		expect(valueFor('Frequency')).toBe('Monthly');
 	});
 
-	it('keeps an existing frequency or group that is not in the options', () => {
+	it('shows an existing frequency that is not an option as custom', () => {
 		render(
 			<AttributesPanel
-				newsletter={newsletterFixture({
-					frequency: 'Tuesdays and Fridays',
-					group: 'cancelled',
-				})}
+				newsletter={newsletterFixture({ frequency: 'Tuesdays and Fridays' })}
 			/>,
 		);
 		edit();
-		expect(selectButton('Frequency')).toHaveTextContent('Tuesdays and Fridays');
+		expect(frequencyRadio('Custom (please specify)')).toBeChecked();
+		expect(customFrequency()).toHaveValue('Tuesdays and Fridays');
+	});
+
+	it('saves a custom frequency, and needs one to save', async () => {
+		vi.mocked(requestNewsletterEdit).mockResolvedValue({
+			ok: true,
+			total: 1,
+			data: original,
+		});
+		render(<AttributesPanel newsletter={original} />);
+		edit();
+		fireEvent.click(frequencyRadio('Custom (please specify)'));
+		expect(customFrequency()).toHaveValue('');
+		expect(screen.getAllByText('Enter a frequency')[0]).toBeVisible();
+		expect(saveButton()).toBeDisabled();
+		fireEvent.input(customFrequency(), {
+			target: { value: ' Tuesdays and Fridays ' },
+		});
+		fireEvent.click(saveButton());
+		await screen.findByRole('button', { name: 'Edit' });
+		expect(requestNewsletterEdit).toHaveBeenCalledWith(
+			123,
+			expect.objectContaining({ frequency: 'Tuesdays and Fridays' }),
+		);
+	});
+
+	it('keeps an existing group that is not in the options', () => {
+		render(
+			<AttributesPanel
+				newsletter={newsletterFixture({ group: 'cancelled' })}
+			/>,
+		);
+		edit();
 		expect(selectButton('MMA group')).toHaveTextContent('cancelled');
 	});
 

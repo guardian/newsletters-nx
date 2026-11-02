@@ -121,7 +121,10 @@ Feature: Launched newsletter: open it and find my way around
 			And the editor selects "Paused" for "Newsletter status" in the "Attributes" panel
 			And the editor chooses "Sport" for "Pillar" in the "Attributes" panel
 			And the editor chooses "UK" for "Region focus" in the "Attributes" panel
-			And the editor chooses "Monthly" for "Frequency" in the "Attributes" panel
+			And the editor selects "Custom (please specify)" for "Frequency" in the "Attributes" panel
+			And the editor fills in the "Attributes" panel:
+				| label                   | value                |
+				| Custom (please specify) | Tuesdays and Fridays |
 			And the editor chooses "Sport" for "MMA group" in the "Attributes" panel
 			And the editor saves the "Attributes" panel
 			Then the header shows a "Paused" status badge
@@ -129,14 +132,14 @@ Feature: Launched newsletter: open it and find my way around
 			Then the header shows the title "Evening update"
 			And the header shows a "Paused" status badge
 			And the "Attributes" panel shows:
-				| label              | value          |
-				| Name               | Evening update |
-				| Newsletter status  | Paused         |
-				| Pillar             | Sport          |
-				| Region focus       | UK             |
-				| Frequency          | Monthly        |
-				| Type of newsletter | Article based  |
-				| MMA group          | Sport          |
+				| label              | value                |
+				| Name               | Evening update       |
+				| Newsletter status  | Paused               |
+				| Pillar             | Sport                |
+				| Region focus       | UK                   |
+				| Frequency          | Tuesdays and Fridays |
+				| Type of newsletter | Article based        |
+				| MMA group          | Sport                |
 
 		Scenario: Cancelling discards Attributes edits
 			Given a launched newsletter "Afternoon update" with status "live" and region focus "AU"

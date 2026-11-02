@@ -21,6 +21,7 @@ import {
 	NewsletterStatusBadge,
 } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
+import { StandRadioSelectInput } from './StandRedesignSchemaForm/RadioSelectInput';
 
 const panelSchema = newsletterDataSchema.pick({
 	name: true,
@@ -56,7 +57,7 @@ const attributesOf = (newsletter: NewsletterData): Attributes => ({
 	group: newsletter.group,
 });
 
-/** Keep a value that isn't one of the options, so saving doesn't change it. */
+/** Keep a group that isn't one of the options, so saving doesn't change it. */
 const withCurrent = (options: readonly string[], current?: string) =>
 	current && !options.includes(current) ? [...options, current] : options;
 
@@ -73,7 +74,11 @@ export const AttributesPanel = ({
 	const [draft, setDraft] = useState<Attributes>(current);
 	const update = (changes: Partial<Attributes>) =>
 		setDraft((previous) => ({ ...previous, ...changes }));
-	const parsed = panelSchema.safeParse({ ...draft, name: draft.name.trim() });
+	const parsed = panelSchema.safeParse({
+		...draft,
+		name: draft.name.trim(),
+		frequency: draft.frequency.trim(),
+	});
 
 	const save = async (): Promise<boolean | string> => {
 		if (!parsed.success) {
@@ -170,12 +175,18 @@ export const AttributesPanel = ({
 									regionFocus: regionFocusEnumSchema.parse(regionFocus),
 								}),
 						)}
-						{select(
-							'Frequency',
-							draft.frequency,
-							plainOptions(withCurrent(frequencyOptions, current.frequency)),
-							(frequency) => update({ frequency }),
-						)}
+						<StandRadioSelectInput
+							label="Frequency"
+							value={draft.frequency}
+							options={frequencyOptions}
+							otherInputLabel="Custom (please specify)"
+							error={draft.frequency.trim() ? undefined : 'Enter a frequency'}
+							inputHandler={(frequency) => {
+								if (typeof frequency === 'string') {
+									update({ frequency });
+								}
+							}}
+						/>
 						{select('Type of newsletter', newsletter.category, [
 							{ id: newsletter.category, label: humanize(newsletter.category) },
 						])}
