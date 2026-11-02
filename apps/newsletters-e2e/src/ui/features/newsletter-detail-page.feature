@@ -300,6 +300,31 @@ Feature: Launched newsletter: open it and find my way around
 			Then the "Integrations" panel doesn't offer "Braze campaign creation status"
 
 	@edit
+	Rule: Editors can mark set-up work as done while Pending
+
+		Scenario Outline: The <thing> is marked as created
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                   | value                  |
+				| status                  | pending                |
+				| <thing> creation status | REQUESTED              |
+				| sign-up page path       | /news/series/afternoon |
+			And the sign-up path "/news/series/afternoon" can be found
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "<panel>" panel
+			And the editor selects "Completed" for "<label>" in the "<panel>" panel
+			And the editor saves the "<panel>" panel
+			And the editor reloads the newsletter detail page
+			Then the "<panel>" panel shows:
+				| label   | value     |
+				| <label> | Completed |
+
+			Examples:
+				| thing          | panel                 | label                          |
+				| tag            | Sign-up page and tags | Tag creation status            |
+				| sign-up page   | Sign-up page and tags | Sign-up page creation status   |
+				| braze campaign | Integrations          | Braze campaign creation status |
+
+	@edit
 	Rule: Editors can edit and save Sign-up page and tags
 
 		Scenario: Saved Sign-up page and tags survives a reload
@@ -411,25 +436,25 @@ Feature: Launched newsletter: open it and find my way around
 			When the editor opens the detail page for "Afternoon update"
 			And the editor edits the Integrations panel
 			And the editor fills in Integrations:
-				| label                                | value                       |
-				| Braze campaign creation status       | COMPLETED                   |
-				| brazeNewsletterName                  | Editorial_Altered           |
-				| brazeSubscribeAttributeName          | Altered_Subscribe_Email     |
-				| brazeSubscribeEventNamePrefix        | altered_uk                  |
-				| brazeSubscribeAttributeNameAlternate | another_altered_email       |
-				| Campaign name                        | altered_name                |
-				| Campaign code                        | altered_code                |
+				| label                                | value                   |
+				| Braze campaign creation status       | COMPLETED               |
+				| brazeNewsletterName                  | Editorial_Altered       |
+				| brazeSubscribeAttributeName          | Altered_Subscribe_Email |
+				| brazeSubscribeEventNamePrefix        | altered_uk              |
+				| brazeSubscribeAttributeNameAlternate | another_altered_email   |
+				| Campaign name                        | altered_name            |
+				| Campaign code                        | altered_code            |
 			And the editor saves Integrations using Enter
 			And the editor reloads the newsletter detail page
 			Then the "Integrations" panel shows:
-				| label                                | value                       |
-				| Braze campaign creation status       | Completed                   |
-				| brazeNewsletterName                  | Editorial_Altered           |
-				| brazeSubscribeAttributeName          | Altered_Subscribe_Email     |
-				| brazeSubscribeEventNamePrefix        | altered_uk                  |
-				| brazeSubscribeAttributeNameAlternate | another_altered_email       |
-				| Campaign name                        | altered_name                |
-				| Campaign code                        | altered_code                |
+				| label                                | value                   |
+				| Braze campaign creation status       | Completed               |
+				| brazeNewsletterName                  | Editorial_Altered       |
+				| brazeSubscribeAttributeName          | Altered_Subscribe_Email |
+				| brazeSubscribeEventNamePrefix        | altered_uk              |
+				| brazeSubscribeAttributeNameAlternate | another_altered_email   |
+				| Campaign name                        | altered_name            |
+				| Campaign code                        | altered_code            |
 
 		Scenario: Cancelling discards Integration edits
 			Given a launched newsletter "Afternoon update"

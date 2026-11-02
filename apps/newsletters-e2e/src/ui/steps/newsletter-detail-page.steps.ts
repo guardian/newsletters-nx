@@ -526,14 +526,12 @@ When(
 When(
 	'the editor selects {string} for {string} in the {string} panel',
 	async ({ page }, option: string, label: string, name: string) => {
-		await panelByName(page, name)
-			.getByRole('radiogroup', { name: label, exact: true })
-			.getByText(option, { exact: true })
-			.click();
+		const group = panelByName(page, name).getByRole('radiogroup', {
+			name: integrationsLabelPattern(label),
+		});
+		await group.getByText(option, { exact: true }).click();
 		await expect(
-			panelByName(page, name)
-				.getByRole('radiogroup', { name: label, exact: true })
-				.getByRole('radio', { name: option, exact: true }),
+			group.getByRole('radio', { name: option, exact: true }),
 		).toBeChecked();
 	},
 );
