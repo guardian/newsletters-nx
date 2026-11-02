@@ -1,7 +1,8 @@
 import type { NewsletterData } from '..';
 import { generateBrazeTemplateString } from './generate-braze-template';
 
-export type { DrrSlotKey } from './generate-braze-template';
+export type { DrrSlotKey, DrrSlotSetId } from './generate-braze-template';
+export { drrSlotKeyForSet, drrSlotSets } from './generate-braze-template';
 
 export type NewsletterValueGenerator = {
 	generate: { (newsletter: NewsletterData, override?: string): string };

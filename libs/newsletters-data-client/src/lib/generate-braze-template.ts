@@ -1,6 +1,22 @@
 import type { NewsletterData } from './schemas/newsletter-data-type';
 
 export type DrrSlotKey = 'AUS' | 'US' | 'Newsletters';
+export type DrrSlotSetId = 'default' | 'AUS' | 'US' | 'Global';
+
+/**
+ * The DRR (dynamic rendering) content block sets the Braze template can use.
+ * `default` lets the template choose from the newsletter's region focus.
+ */
+export const drrSlotSets: ReadonlyArray<{
+	id: DrrSlotSetId;
+	label: string;
+	slotKey?: DrrSlotKey;
+}> = [
+	{ id: 'default', label: 'Default' },
+	{ id: 'AUS', label: 'Australia', slotKey: 'AUS' },
+	{ id: 'US', label: 'US', slotKey: 'US' },
+	{ id: 'Global', label: 'Global', slotKey: 'Newsletters' },
+];
 
 const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 	header: `Logic_Header_${slotKey}`,
@@ -8,9 +24,27 @@ const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 	middle: `Logic_Middle_${slotKey}`,
 });
 
-const drrSlotKeyMapping = {
+const drrSlotKeyByRegionFocus = {
 	AU: 'AUS',
 };
+
+const isDrrSlotSetId = (value: string): value is DrrSlotSetId =>
+	drrSlotSets.some(({ id }) => id === value);
+
+const isDrrSlotKey = (value: string): value is DrrSlotKey =>
+	drrSlotSets.some(({ slotKey }) => slotKey === value);
+
+export const drrSlotKeyForSet = (
+	slotSetId: DrrSlotSetId,
+): DrrSlotKey | undefined =>
+	drrSlotSets.find(({ id }) => id === slotSetId)?.slotKey;
+
+const drrSlotKeyForOverride = (override: string): DrrSlotKey | undefined => {
+	if (isDrrSlotSetId(override)) return drrSlotKeyForSet(override);
+	if (isDrrSlotKey(override)) return override;
+	return undefined;
+};
+
 const getMerchandisingContent = (
 	newsletterData: NewsletterData,
 	override?: string,
@@ -18,12 +52,15 @@ const getMerchandisingContent = (
 	const { regionFocus } = newsletterData;
 
 	if (override) {
-		return getDrrSlotSet(override as DrrSlotKey);
+		const slotKey = drrSlotKeyForOverride(override);
+		if (slotKey) return getDrrSlotSet(slotKey);
 	}
 
 	if (regionFocus && ['US', 'AU'].includes(regionFocus)) {
 		return getDrrSlotSet(
-			(drrSlotKeyMapping[regionFocus as keyof typeof drrSlotKeyMapping] ||
+			(drrSlotKeyByRegionFocus[
+				regionFocus as keyof typeof drrSlotKeyByRegionFocus
+			] ||
 				regionFocus) as DrrSlotKey,
 		);
 	}

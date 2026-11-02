@@ -291,7 +291,13 @@ When('the editor jumps to {string}', async ({ page }, panelName: string) => {
 });
 
 Then('"Jump to" links to these panels:', async ({ page }, table: DataTable) => {
-	const expected = table.hashes().map(({ panel }) => panel);
+	const expected: string[] = [];
+	for (const { panel } of table.hashes()) {
+		if (panel === undefined) {
+			throw new Error('Jump to table must have a "panel" column');
+		}
+		expected.push(panel);
+	}
 	await expect(jumpToNav(page).getByRole('link')).toHaveText(expected);
 });
 
@@ -302,6 +308,15 @@ Then('the {string} panel is in view', async ({ page }, panelName: string) => {
 			name: panelName,
 		}),
 	).toBeInViewport();
+});
+
+Then('the {string} panel is shown', async ({ page }, panelName: string) => {
+	await expect(
+		panelByName(page, panelName).getByRole('heading', {
+			level: 3,
+			name: panelName,
+		}),
+	).toBeVisible();
 });
 
 When('the editor selects "Back to all newsletters"', async ({ page }) => {
@@ -808,12 +823,6 @@ const listIdFor = (namedNewsletters: NamedNewsletters, name: string) => {
 	}
 	return ref.listId;
 };
-
-Then('the last panel is {string}', async ({ page }, panelName: string) => {
-	await expect(
-		page.locator('section').last().getByRole('heading', { level: 3 }),
-	).toHaveAccessibleName(panelName);
-});
 
 Then(
 	'the {string} panel shows the id number of {string}',
