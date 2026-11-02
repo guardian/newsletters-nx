@@ -69,6 +69,10 @@ export default defineConfig({
 		},
 		globals: true,
 		environment: 'jsdom',
+		setupFiles: ['src/test-setup.ts'],
+		// Undo `vi.spyOn` and `vi.stubGlobal` after each test
+		restoreMocks: true,
+		unstubGlobals: true,
 		include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 		includeSource: ['src/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 	},

@@ -1,13 +1,10 @@
-import '@testing-library/jest-dom/vitest';
-import {
-	act,
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-} from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	failedSignupPathCheckResponse,
+	signupPathCheckResponse,
+} from '../../test-utils/newsletter-detail-page';
 import { SignupPathInput } from './SignupPathInput';
 
 const fetchMock = vi.fn();
@@ -29,22 +26,15 @@ const advance = async (ms: number) => {
 		await vi.advanceTimersByTimeAsync(ms);
 	});
 };
-const response = (valid: boolean) => ({
-	ok: true,
-	json: () => Promise.resolve({ ok: true, data: { valid } }),
-});
 
 beforeEach(() => {
 	vi.useFakeTimers();
-	vi.clearAllMocks();
+	vi.resetAllMocks();
 	vi.stubGlobal('fetch', fetchMock);
-	fetchMock.mockResolvedValue(response(true));
+	fetchMock.mockResolvedValue(signupPathCheckResponse(true));
 });
 afterEach(() => {
-	cleanup();
 	vi.useRealTimers();
-	vi.unstubAllGlobals();
-	vi.restoreAllMocks();
 });
 
 describe('SignupPathInput validation', () => {
@@ -94,7 +84,7 @@ describe('SignupPathInput validation', () => {
 	});
 
 	it('uses the Stand field error below an invalid path', async () => {
-		fetchMock.mockResolvedValue(response(false));
+		fetchMock.mockResolvedValue(signupPathCheckResponse(false));
 		render(<Editor />);
 		fireEvent.change(input(), { target: { value: '/missing' } });
 		await advance(2000);
@@ -134,7 +124,7 @@ describe('SignupPathInput validation', () => {
 	it.each([403, 429, 502])(
 		'reports a %s response as a failed check, not an invalid path',
 		async (status) => {
-			fetchMock.mockResolvedValue({ ok: false, status });
+			fetchMock.mockResolvedValue(failedSignupPathCheckResponse(status));
 			vi.spyOn(console, 'error').mockImplementation(() => undefined);
 			render(<Editor />);
 			fireEvent.change(input(), { target: { value: '/news' } });
@@ -193,7 +183,7 @@ describe('SignupPathInput validation', () => {
 	});
 
 	it('re-runs a failed check immediately from the Try again link', async () => {
-		fetchMock.mockResolvedValueOnce({ ok: false, status: 502 });
+		fetchMock.mockResolvedValueOnce(failedSignupPathCheckResponse());
 		vi.spyOn(console, 'error').mockImplementation(() => undefined);
 		render(<Editor />);
 		fireEvent.change(input(), { target: { value: '/news' } });
@@ -212,12 +202,12 @@ describe('SignupPathInput validation', () => {
 	});
 
 	it('ignores stale requests even when they resolve after the next value', async () => {
-		let resolveOld: (result: ReturnType<typeof response>) => void = () => {
+		let resolveOld: (result: Response) => void = () => {
 			throw new Error('Request not started');
 		};
 		fetchMock.mockImplementationOnce(
 			() =>
-				new Promise<ReturnType<typeof response>>((resolve) => {
+				new Promise<Response>((resolve) => {
 					resolveOld = resolve;
 				}),
 		);
@@ -227,7 +217,7 @@ describe('SignupPathInput validation', () => {
 		fireEvent.change(input(), { target: { value: '/new' } });
 		await advance(2000);
 		await act(async () => {
-			resolveOld(response(false));
+			resolveOld(signupPathCheckResponse(false));
 			await Promise.resolve();
 		});
 		expect(screen.getByText('Valid path')).toBeVisible();

@@ -1,9 +1,7 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { NewsletterDetailTabs } from './NewsletterDetailTabs';
-
-afterEach(cleanup);
 
 const Location = () => <p data-testid="location">{useLocation().pathname}</p>;
 
