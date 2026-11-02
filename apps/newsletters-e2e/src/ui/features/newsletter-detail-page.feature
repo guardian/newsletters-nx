@@ -82,6 +82,7 @@ Feature: Launched newsletter: open it and find my way around
 				| Copy                  |
 				| Sign-up page and tags |
 				| Integrations          |
+				| Technical output      |
 
 		Scenario: Choosing a panel in Jump to scrolls to it
 			Given a launched newsletter "Afternoon update"
@@ -398,6 +399,64 @@ Feature: Launched newsletter: open it and find my way around
 			Then the "Integrations" panel shows:
 				| label               | value             |
 				| brazeNewsletterName | Editorial_Fixture |
+
+	Rule: Technical output gives the values and code for setting the newsletter up elsewhere
+
+		Scenario: Technical output is the last panel
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			Then the last panel is "Technical output"
+
+		Scenario: Technical output shows the newsletter's identifiers
+			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Technical output" panel shows the id number of "Afternoon update"
+			And the "Technical output" panel shows:
+				| label         | value            |
+				| Identity name | afternoon-update |
+				| Restricted    | false            |
+
+		Scenario: The editor can copy the sign-up embed code
+			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor copies the "Sign up embed code"
+			Then the clipboard has the sign-up embed code for "afternoon-update"
+
+		Scenario: Help explains what the embed code is for
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor asks for help with "Sign up embed code"
+			Then the help says "The HTML code to paste into a composer embed block to add a sign-up form to the article content."
+
+		Scenario Outline: The default slot set follows the region focus
+			Given a launched newsletter "Afternoon update" with status "live" and region focus "<region>"
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Default" DRR slot set is chosen
+			And the Braze template uses the "<blocks>" content blocks
+
+			Examples:
+				| region | blocks      |
+				| AU     | AUS         |
+				| US     | US          |
+				| UK     | Newsletters |
+
+		Scenario: Choosing a slot set changes the Braze template
+			Given a launched newsletter "Afternoon update" with status "live" and region focus "UK"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor chooses the "US" DRR slot set
+			Then the Braze template uses the "US" content blocks
+
+		Scenario: The editor can copy the Braze template for the chosen slot set
+			Given a launched newsletter "Afternoon update" with status "live" and region focus "UK"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor chooses the "Australia" DRR slot set
+			And the editor copies the "Braze campaign template code"
+			Then the clipboard has a Braze template with the "AUS" content blocks
+
+		Scenario: Technical output can't be edited
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Technical output" panel has no "Edit" action
 
 	Rule: The header adapts to the screen size
 

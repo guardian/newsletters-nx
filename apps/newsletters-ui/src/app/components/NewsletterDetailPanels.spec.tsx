@@ -299,6 +299,7 @@ describe('Jump to', () => {
 			'Copy',
 			'Sign-up page and tags',
 			'Integrations',
+			'Technical output',
 		]);
 		for (const link of links) {
 			const id = link.getAttribute('href')?.split('#')[1];
@@ -537,6 +538,7 @@ describe('NewsletterDetailPanels', () => {
 			'Copy',
 			'Sign-up page and tags',
 			'Integrations',
+			'Technical output',
 		]);
 		expect(valueFor('Headline')).toBe('Your afternoon briefing');
 		expect(valueFor('Sign-up description')).toBe('Sign up for the daily news');

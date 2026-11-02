@@ -13,6 +13,7 @@ import { Field, listStyles } from './NewsletterDetailFields';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { SignupPageAndTagsPanel } from './SignupPageAndTagsPanel';
 import { StandPanel } from './StandPanel';
+import { TechnicalOutputPanel } from './TechnicalOutputPanel';
 
 // One grid across all the panels, so the label column is as wide as the
 // widest label in any panel. Panels and lists pass it down with subgrid.
@@ -53,6 +54,7 @@ const jumpToPanels = [
 	{ id: 'copy', name: 'Copy' },
 	{ id: 'sign-up-page-and-tags', name: 'Sign-up page and tags' },
 	{ id: 'integrations', name: 'Integrations' },
+	{ id: 'technical-output', name: 'Technical output' },
 ];
 
 /**
@@ -156,6 +158,10 @@ export const NewsletterDetailPanels = ({
 		/>
 		<IntegrationsPanel
 			key={`integrations-${newsletter.listId}`}
+			newsletter={newsletter}
+		/>
+		<TechnicalOutputPanel
+			key={`technical-${newsletter.listId}`}
 			newsletter={newsletter}
 		/>
 	</div>

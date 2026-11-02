@@ -789,3 +789,132 @@ Then('the editor cannot save Images', async ({ page }) => {
 		}),
 	).toBeDisabled();
 });
+
+const technicalOutput = (page: Page): Locator =>
+	panelByName(page, 'Technical output');
+
+const brazeTemplate = (page: Page): Locator =>
+	technicalOutput(page)
+		.getByRole('group', { name: 'Braze campaign template code', exact: true })
+		.locator('pre');
+
+const readClipboard = (page: Page): Promise<string> =>
+	page.evaluate(() => navigator.clipboard.readText());
+
+const listIdFor = (namedNewsletters: NamedNewsletters, name: string) => {
+	const ref = namedNewsletters.refsByName[name];
+	if (ref?.kind !== 'launched') {
+		throw new Error(`No launched newsletter named "${name}" in this scenario`);
+	}
+	return ref.listId;
+};
+
+Then('the last panel is {string}', async ({ page }, panelName: string) => {
+	await expect(
+		page.locator('section').last().getByRole('heading', { level: 3 }),
+	).toHaveAccessibleName(panelName);
+});
+
+Then(
+	'the {string} panel shows the id number of {string}',
+	async ({ page, namedNewsletters }, panelName: string, name: string) => {
+		await expect(
+			definitionForLabel(panelByName(page, panelName), 'id Number'),
+		).toHaveText(String(listIdFor(namedNewsletters, name)));
+	},
+);
+
+When(
+	'the editor copies the {string}',
+	async ({ page, context }, label: string) => {
+		await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+		const field = technicalOutput(page).getByRole('group', {
+			name: label,
+			exact: true,
+		});
+		await field.getByRole('button', { name: 'Copy', exact: true }).click();
+		await expect(field.getByRole('status')).toHaveText('Copied to clipboard');
+	},
+);
+
+Then(
+	'the clipboard has the sign-up embed code for {string}',
+	async ({ page }, identityName: string) => {
+		const copied = await readClipboard(page);
+		expect(copied).toMatch(/^<iframe .*><\/iframe>$/);
+		expect(copied).toContain(
+			`src="https://www.theguardian.com/email/form/plaintone/${identityName}"`,
+		);
+	},
+);
+
+When(
+	'the editor asks for help with {string}',
+	async ({ page }, label: string) => {
+		// react-aria only opens hover tooltips once a pointer has moved on the page
+		await page.mouse.move(0, 0);
+		await technicalOutput(page)
+			.getByRole('group', { name: label, exact: true })
+			.getByRole('button', { name: 'Information' })
+			.hover();
+	},
+);
+
+Then('the help says {string}', async ({ page }, help: string) => {
+	await expect(page.getByRole('tooltip')).toHaveText(help);
+});
+
+Then(
+	'the {string} DRR slot set is chosen',
+	async ({ page }, slotSet: string) => {
+		await expect(
+			technicalOutput(page)
+				.getByRole('radiogroup', { name: 'DRR Slot Set' })
+				.getByRole('radio', { name: slotSet, exact: true }),
+		).toBeChecked();
+	},
+);
+
+When(
+	'the editor chooses the {string} DRR slot set',
+	async ({ page }, slotSet: string) => {
+		await technicalOutput(page)
+			.getByRole('radiogroup', { name: 'DRR Slot Set' })
+			.getByText(slotSet, { exact: true })
+			.click();
+	},
+);
+
+Then(
+	'the Braze template uses the {string} content blocks',
+	async ({ page }, blocks: string) => {
+		for (const slot of ['Header', 'Middle', 'Footer']) {
+			await expect(brazeTemplate(page)).toContainText(
+				`Logic_${slot}_${blocks}`,
+			);
+		}
+	},
+);
+
+Then(
+	'the clipboard has a Braze template with the {string} content blocks',
+	async ({ page }, blocks: string) => {
+		const copied = await readClipboard(page);
+		for (const slot of ['Header', 'Middle', 'Footer']) {
+			expect(copied).toContain(`Logic_${slot}_${blocks}`);
+		}
+		expect(copied).toBe(await brazeTemplate(page).textContent());
+	},
+);
+
+Then(
+	'the {string} panel has no {string} action',
+	async ({ page }, panelName: string, action: string) => {
+		await expect(
+			panelByName(page, panelName).getByRole('button', {
+				name: action,
+				exact: true,
+			}),
+		).toHaveCount(0);
+	},
+);
