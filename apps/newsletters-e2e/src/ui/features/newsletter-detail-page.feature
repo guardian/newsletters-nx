@@ -121,10 +121,10 @@ Feature: Launched newsletter: open it and find my way around
 			And the editor selects "Paused" for "Newsletter status" in the "Attributes" panel
 			And the editor chooses "Sport" for "Pillar" in the "Attributes" panel
 			And the editor chooses "UK" for "Region focus" in the "Attributes" panel
-			And the editor selects "Custom (please specify)" for "Frequency" in the "Attributes" panel
+			And the editor chooses "Custom (please specify)" for "Frequency" in the "Attributes" panel
 			And the editor fills in the "Attributes" panel:
-				| label                   | value                |
-				| Custom (please specify) | Tuesdays and Fridays |
+				| label            | value                |
+				| Custom frequency | Tuesdays and Fridays |
 			And the editor chooses "Sport" for "MMA group" in the "Attributes" panel
 			And the editor saves the "Attributes" panel
 			Then the header shows a "Paused" status badge

@@ -30,13 +30,8 @@ const statusRadio = (name: string) =>
 	within(
 		screen.getByRole('radiogroup', { name: 'Newsletter status' }),
 	).getByRole('radio', { name });
-const frequencyRadio = (name: string) =>
-	within(screen.getByRole('radiogroup', { name: 'Frequency' })).getByRole(
-		'radio',
-		{ name },
-	);
 const customFrequency = () =>
-	screen.getByRole('textbox', { name: 'Custom (please specify)' });
+	screen.getByRole('textbox', { name: 'Custom frequency' });
 /** Stand selects render a button named "<selected option> <label>". */
 const selectButton = (label: string) =>
 	screen.getByRole('button', { name: new RegExp(`${label}$`) });
@@ -60,7 +55,10 @@ describe('AttributesPanel', () => {
 		expect(statusRadio('Live')).toBeChecked();
 		expect(selectButton('Pillar')).toHaveTextContent('News');
 		expect(selectButton('Region focus')).toHaveTextContent('AU');
-		expect(frequencyRadio('Weekly')).toBeChecked();
+		expect(selectButton('Frequency')).toHaveTextContent('Weekly');
+		expect(
+			screen.queryByRole('textbox', { name: 'Custom frequency' }),
+		).not.toBeInTheDocument();
 		expect(selectButton('MMA group')).toHaveTextContent('News in depth');
 	});
 
@@ -93,7 +91,7 @@ describe('AttributesPanel', () => {
 		});
 		fireEvent.click(statusRadio('Paused'));
 		await choose('Pillar', 'Sport');
-		fireEvent.click(frequencyRadio('Monthly'));
+		await choose('Frequency', 'Monthly');
 		fireEvent.click(saveButton());
 		await screen.findByRole('button', { name: 'Edit' });
 
@@ -118,7 +116,9 @@ describe('AttributesPanel', () => {
 			/>,
 		);
 		edit();
-		expect(frequencyRadio('Custom (please specify)')).toBeChecked();
+		expect(selectButton('Frequency')).toHaveTextContent(
+			'Custom (please specify)',
+		);
 		expect(customFrequency()).toHaveValue('Tuesdays and Fridays');
 	});
 
@@ -130,11 +130,11 @@ describe('AttributesPanel', () => {
 		});
 		render(<AttributesPanel newsletter={original} />);
 		edit();
-		fireEvent.click(frequencyRadio('Custom (please specify)'));
+		await choose('Frequency', 'Custom (please specify)');
 		expect(customFrequency()).toHaveValue('');
-		expect(screen.getAllByText('Enter a frequency')[0]).toBeVisible();
+		expect(screen.getByText('Enter a frequency')).toBeVisible();
 		expect(saveButton()).toBeDisabled();
-		fireEvent.input(customFrequency(), {
+		fireEvent.change(customFrequency(), {
 			target: { value: ' Tuesdays and Fridays ' },
 		});
 		fireEvent.click(saveButton());

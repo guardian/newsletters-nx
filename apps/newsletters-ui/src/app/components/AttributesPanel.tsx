@@ -21,7 +21,6 @@ import {
 	NewsletterStatusBadge,
 } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
-import { StandRadioSelectInput } from './StandRedesignSchemaForm/RadioSelectInput';
 
 const panelSchema = newsletterDataSchema.pick({
 	name: true,
@@ -40,6 +39,7 @@ const statuses: Array<NewsletterData['status']> = [
 	'cancelled',
 ];
 const groupOptions = dataCollectionSchema.shape.group.options;
+const CUSTOM_FREQUENCY = '__custom__';
 
 const formStyles = css`
 	grid-column: 1 / -1;
@@ -79,6 +79,8 @@ export const AttributesPanel = ({
 		name: draft.name.trim(),
 		frequency: draft.frequency.trim(),
 	});
+	/** Anything that isn't one of the options, including blank, is custom. */
+	const isCustomFrequency = !frequencyOptions.includes(draft.frequency);
 
 	const save = async (): Promise<boolean | string> => {
 		if (!parsed.success) {
@@ -175,18 +177,28 @@ export const AttributesPanel = ({
 									regionFocus: regionFocusEnumSchema.parse(regionFocus),
 								}),
 						)}
-						<StandRadioSelectInput
-							label="Frequency"
-							value={draft.frequency}
-							options={frequencyOptions}
-							otherInputLabel="Custom (please specify)"
-							error={draft.frequency.trim() ? undefined : 'Enter a frequency'}
-							inputHandler={(frequency) => {
-								if (typeof frequency === 'string') {
-									update({ frequency });
-								}
-							}}
-						/>
+						{select(
+							'Frequency',
+							isCustomFrequency ? CUSTOM_FREQUENCY : draft.frequency,
+							[
+								...plainOptions(frequencyOptions),
+								{ id: CUSTOM_FREQUENCY, label: 'Custom (please specify)' },
+							],
+							(frequency) =>
+								update({
+									frequency: frequency === CUSTOM_FREQUENCY ? '' : frequency,
+								}),
+						)}
+						{isCustomFrequency && (
+							<TextInput
+								label="Custom frequency"
+								fluid
+								value={draft.frequency}
+								onChange={(frequency) => update({ frequency })}
+								isInvalid={!draft.frequency.trim()}
+								error={draft.frequency.trim() ? undefined : 'Enter a frequency'}
+							/>
+						)}
 						{select('Type of newsletter', newsletter.category, [
 							{ id: newsletter.category, label: humanize(newsletter.category) },
 						])}

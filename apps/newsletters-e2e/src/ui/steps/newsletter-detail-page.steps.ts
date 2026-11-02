@@ -529,7 +529,7 @@ When(
 		const select = selectFor(panelByName(page, name), label);
 		await select.click();
 		await page.getByRole('option', { name: option, exact: true }).click();
-		await expect(select).toHaveText(new RegExp(`^${option}`));
+		await expect(select).toContainText(option);
 	},
 );
 
