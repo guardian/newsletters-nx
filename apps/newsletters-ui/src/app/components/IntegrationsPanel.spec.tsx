@@ -46,6 +46,7 @@ describe('IntegrationsPanel', () => {
 			render(
 				<IntegrationsPanel
 					newsletter={newsletterFixture({
+						status: 'pending',
 						brazeCampaignCreationStatus: 'COMPLETED',
 						brazeNewsletterName: 'Editorial_AfternoonUpdate',
 						brazeSubscribeAttributeName: 'AfternoonUpdate_Subscribe_Email',
@@ -70,6 +71,26 @@ describe('IntegrationsPanel', () => {
 				'afternoon_update_unsubscribe_email_date',
 			);
 		});
+
+		it.each(['live', 'paused', 'cancelled'] as const)(
+			'hides the Braze campaign creation status when the newsletter is %s',
+			async (status) => {
+				render(
+					<IntegrationsPanel
+						newsletter={newsletterFixture({
+							status,
+							brazeCampaignCreationStatus: 'REQUESTED',
+						})}
+					/>,
+				);
+
+				expect(
+					within(await integrationsPanel()).queryByText(
+						'Braze campaign creation status',
+					),
+				).not.toBeInTheDocument();
+			},
+		);
 
 		it('shows multiple values for the brazeSubscribeAttributeNameAlternate if provided', () => {
 			render(
@@ -158,7 +179,7 @@ describe('IntegrationsPanel', () => {
 			allowEditing();
 		});
 		it.each([
-			['NOT_REQUESTED', 'Not Requested'],
+			['NOT_REQUESTED', 'Not requested'],
 			['REQUESTED', 'Requested'],
 			['COMPLETED', 'Completed'],
 		] as Array<[WorkflowStatus, string]>)(
@@ -167,6 +188,7 @@ describe('IntegrationsPanel', () => {
 				render(
 					<IntegrationsPanel
 						newsletter={newsletterFixture({
+							status: 'pending',
 							brazeCampaignCreationStatus: value,
 						})}
 					/>,
@@ -180,6 +202,67 @@ describe('IntegrationsPanel', () => {
 						}),
 					).getByRole('radio', { name: name }),
 				).toBeChecked();
+			},
+		);
+		it('lets an editor mark the Braze campaign as Completed while Pending', async () => {
+			const user = userEvent.setup();
+			vi.mocked(requestNewsletterEdit).mockImplementation((_, changes) =>
+				Promise.resolve({
+					ok: true,
+					data: { ...newsletterFixture(), ...changes },
+				} as ApiResponse<NewsletterData>),
+			);
+			render(
+				<IntegrationsPanel
+					newsletter={newsletterFixture({
+						...validIntegrations,
+						status: 'pending',
+						brazeCampaignCreationStatus: 'REQUESTED',
+					})}
+				/>,
+			);
+
+			await user.click(await integrationsPanelEditButton());
+			await user.click(screen.getByRole('radio', { name: 'Completed' }));
+			await user.click(screen.getByRole('button', { name: 'Save changes' }));
+
+			expect(requestNewsletterEdit).toHaveBeenCalledWith(
+				123,
+				expect.objectContaining({ brazeCampaignCreationStatus: 'COMPLETED' }),
+			);
+			await within(await integrationsPanel()).findByRole('button', {
+				name: 'Edit',
+			});
+			expect(valueFor('Braze campaign creation status')).toBe('Completed');
+		});
+		it.each(['live', 'paused', 'cancelled'] as const)(
+			'hides the Braze campaign creation status radio group when the newsletter is %s, keeping the saved status',
+			async (status) => {
+				const user = userEvent.setup();
+				vi.mocked(requestNewsletterEdit).mockImplementation((_, changes) =>
+					Promise.resolve({
+						ok: true,
+						data: { ...newsletterFixture(), ...changes },
+					} as ApiResponse<NewsletterData>),
+				);
+				render(
+					<IntegrationsPanel
+						newsletter={newsletterFixture({
+							...validIntegrations,
+							status,
+							brazeCampaignCreationStatus: 'REQUESTED',
+						})}
+					/>,
+				);
+
+				await user.click(await integrationsPanelEditButton());
+				expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
+				await user.click(screen.getByRole('button', { name: 'Save changes' }));
+
+				expect(requestNewsletterEdit).toHaveBeenCalledWith(
+					123,
+					expect.objectContaining({ brazeCampaignCreationStatus: 'REQUESTED' }),
+				);
 			},
 		);
 		it.each([

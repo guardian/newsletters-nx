@@ -247,6 +247,7 @@ Feature: Launched newsletter: open it and find my way around
 		Scenario: The panel lists the sign-up page path and the tags
 			Given a launched newsletter "Afternoon update" with these details:
 				| field                        | value                                                                                                         |
+				| status                       | pending                                                                                                       |
 				| sign-up page creation status | COMPLETED                                                                                                     |
 				| tag creation status          | REQUESTED                                                                                                     |
 				| sign-up page path            | /australia-news/2022/oct/13/afternoon-update-newsletter-best-daily-news-email-guardian-australia-free-sign-up |
@@ -262,11 +263,51 @@ Feature: Launched newsletter: open it and find my way around
 				| Campaign tag                 | Not set                                                                                                       |
 				| Campaign description         | Not set                                                                                                       |
 
+	Rule: Creation statuses only show while the newsletter is Pending
+
+		Scenario Outline: Creation statuses are hidden once the newsletter is <status>
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                          | value     |
+				| status                         | <status>  |
+				| sign-up page creation status   | REQUESTED |
+				| tag creation status            | REQUESTED |
+				| braze campaign creation status | REQUESTED |
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Sign-up page and tags" panel doesn't show these fields:
+				| label                        |
+				| Sign-up page creation status |
+				| Tag creation status          |
+			And the "Integrations" panel doesn't show these fields:
+				| label                          |
+				| Braze campaign creation status |
+
+			Examples:
+				| status    |
+				| live      |
+				| paused    |
+				| cancelled |
+
+		@edit
+		Scenario: Creation statuses can't be edited once the newsletter is live
+			Given a launched newsletter "Afternoon update" with these details:
+				| field  | value |
+				| status | live  |
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Sign-up page and tags" panel
+			Then the "Sign-up page and tags" panel doesn't offer "Sign-up page creation status"
+			And the "Sign-up page and tags" panel doesn't offer "Tag creation status"
+			When the editor edits the Integrations panel
+			Then the "Integrations" panel doesn't offer "Braze campaign creation status"
+
 	@edit
 	Rule: Editors can edit and save Sign-up page and tags
 
 		Scenario: Saved Sign-up page and tags survives a reload
-			Given a launched newsletter "Afternoon update"
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                        | value         |
+				| status                       | pending       |
+				| sign-up page creation status | REQUESTED     |
+				| tag creation status          | NOT_REQUESTED |
 			And the sign-up path "/news/series/afternoon" can be found
 			When the editor opens the detail page for "Afternoon update"
 			And the editor edits the "Sign-up page and tags" panel
@@ -332,6 +373,7 @@ Feature: Launched newsletter: open it and find my way around
 		Scenario: Braze values are grouped under "Braze values"
 			Given a launched newsletter "Afternoon update" with these details:
 				| field                                | value                                |
+				| status                               | pending                              |
 				| braze campaign creation status       | REQUESTED                            |
 				| brazeNewsletterName                  | Editorial_AfternoonUpdateAUS         |
 				| brazeSubscribeAttributeName          | AfternoonUpdateAus_Subscribe_Email   |
@@ -362,12 +404,15 @@ Feature: Launched newsletter: open it and find my way around
 	Rule: Editors can edit and save Braze and Ophan values
 
 		Scenario: Saved braze and ophan values survive a reload
-			Given a launched newsletter "Afternoon update"
+			Given a launched newsletter "Afternoon update" with these details:
+				| field                          | value     |
+				| status                         | pending   |
+				| braze campaign creation status | REQUESTED |
 			When the editor opens the detail page for "Afternoon update"
 			And the editor edits the Integrations panel
 			And the editor fills in Integrations:
 				| label                                | value                       |
-				| Braze campaign creation status       | REQUESTED                   |
+				| Braze campaign creation status       | COMPLETED                   |
 				| brazeNewsletterName                  | Editorial_Altered           |
 				| brazeSubscribeAttributeName          | Altered_Subscribe_Email     |
 				| brazeSubscribeEventNamePrefix        | altered_uk                  |
@@ -378,7 +423,7 @@ Feature: Launched newsletter: open it and find my way around
 			And the editor reloads the newsletter detail page
 			Then the "Integrations" panel shows:
 				| label                                | value                       |
-				| Braze campaign creation status       | Requested                   |
+				| Braze campaign creation status       | Completed                   |
 				| brazeNewsletterName                  | Editorial_Altered           |
 				| brazeSubscribeAttributeName          | Altered_Subscribe_Email     |
 				| brazeSubscribeEventNamePrefix        | altered_uk                  |

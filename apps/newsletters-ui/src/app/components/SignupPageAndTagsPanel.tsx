@@ -86,6 +86,7 @@ export const SignupPageAndTagsPanel = ({
 	const current = savedValues ?? valuesFor(newsletter);
 	const [draft, setDraft] = useState<PanelData>(current);
 	const [pathValidation, setPathValidation] = useState<SignupPathValidation>();
+	const showCreationStatus = newsletter.status === 'pending';
 
 	const parseDraft = () =>
 		panelSchema.safeParse({
@@ -188,10 +189,11 @@ export const SignupPageAndTagsPanel = ({
 						</Typography>
 						{isEditing ? (
 							<>
-								{statusInput(
-									'signupPageCreationStatus',
-									'Sign-up page creation status',
-								)}
+								{showCreationStatus &&
+									statusInput(
+										'signupPageCreationStatus',
+										'Sign-up page creation status',
+									)}
 								<SignupPathInput
 									value={draft.signupPage ?? ''}
 									onValidation={setPathValidation}
@@ -206,11 +208,13 @@ export const SignupPageAndTagsPanel = ({
 							</>
 						) : (
 							<dl css={listStyles}>
-								<Field label="Sign-up page creation status">
-									<WorkflowStatusBadge
-										status={current.signupPageCreationStatus}
-									/>
-								</Field>
+								{showCreationStatus && (
+									<Field label="Sign-up page creation status">
+										<WorkflowStatusBadge
+											status={current.signupPageCreationStatus}
+										/>
+									</Field>
+								)}
 								<Field label="Path to sign-up page">
 									{current.signupPage ? (
 										<Link href={`https://theguardian.com${current.signupPage}`}>
@@ -231,7 +235,8 @@ export const SignupPageAndTagsPanel = ({
 						</Typography>
 						{isEditing ? (
 							<>
-								{statusInput('tagCreationStatus', 'Tag creation status')}
+								{showCreationStatus &&
+									statusInput('tagCreationStatus', 'Tag creation status')}
 								{textFields.slice(1).map(({ key, label }) => (
 									<TextInput
 										key={key}
@@ -246,9 +251,11 @@ export const SignupPageAndTagsPanel = ({
 							</>
 						) : (
 							<dl css={listStyles}>
-								<Field label="Tag creation status">
-									<WorkflowStatusBadge status={current.tagCreationStatus} />
-								</Field>
+								{showCreationStatus && (
+									<Field label="Tag creation status">
+										<WorkflowStatusBadge status={current.tagCreationStatus} />
+									</Field>
+								)}
 								{textFields.slice(1).map(({ key, label }) => (
 									<Field key={key} label={label}>
 										{current[key]}

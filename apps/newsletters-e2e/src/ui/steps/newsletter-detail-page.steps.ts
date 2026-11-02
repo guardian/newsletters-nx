@@ -72,7 +72,7 @@ const integrationsLabelPattern = (label: string): RegExp =>
 	new RegExp(`^${label}( \\*)?$`);
 
 const WORKFLOW_STATUS_RADIO_LABELS = {
-	NOT_REQUESTED: 'Not Requested',
+	NOT_REQUESTED: 'Not requested',
 	REQUESTED: 'Requested',
 	COMPLETED: 'Completed',
 } as const;
@@ -117,6 +117,9 @@ Given(
 				);
 			}
 			switch (field) {
+				case 'status':
+					overrides.status = value as Status;
+					break;
 				case 'headline':
 					overrides.signUpHeadline = value;
 					break;
@@ -402,6 +405,22 @@ Then(
 );
 
 Then(
+	"the {string} panel doesn't show these fields:",
+	async ({ page }, panelName: string, table: DataTable) => {
+		const panel = panelByName(page, panelName);
+		await expect(panel.getByRole('term').first()).toBeVisible();
+		for (const { label } of table.hashes()) {
+			if (label === undefined) {
+				throw new Error('Fields table must have a "label" column');
+			}
+			await expect(
+				panel.getByRole('term').getByText(label, { exact: true }),
+			).toHaveCount(0);
+		}
+	},
+);
+
+Then(
 	'the read-only Copy fields align with the Attributes fields',
 	async ({ page }) => {
 		const attributes = panelByName(page, 'Attributes');
@@ -535,6 +554,19 @@ When(
 		await panelByName(page, name)
 			.getByRole('button', { name: 'Cancel', exact: true })
 			.click();
+	},
+);
+
+Then(
+	"the {string} panel doesn't offer {string}",
+	async ({ page }, panelName: string, label: string) => {
+		const panel = panelByName(page, panelName);
+		await expect(
+			panel.getByRole('button', { name: 'Save changes', exact: true }),
+		).toBeVisible();
+		await expect(
+			panel.getByRole('radiogroup', { name: integrationsLabelPattern(label) }),
+		).toHaveCount(0);
 	},
 );
 

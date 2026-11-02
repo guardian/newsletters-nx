@@ -4,18 +4,17 @@ import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
 import { TextInput } from '@guardian/stand/TextInput';
 import { TextListInput } from '@guardian/stand/TextListInput';
 import { Typography } from '@guardian/stand/Typography';
-import type {
-	NewsletterData,
-	WorkflowStatus,
-} from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	brazeSubscribeEventName,
 	brazeUnsubscribeEventName,
 	newsletterDataSchema,
+	workflowStatusEnumSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { workflowStatusLabels } from '../lib/workflow-status-labels';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { StandPanel } from './StandPanel';
 import { WorkflowStatusBadge } from './WorkflowStatusBadge';
@@ -234,6 +233,7 @@ export const IntegrationsPanel = ({
 					<EditIntegrations
 						draft={draft}
 						errors={errors}
+						showCreationStatus={current.status === 'pending'}
 						onChange={(changes) =>
 							setDraft((previous) => ({ ...previous, ...changes }))
 						}
@@ -254,10 +254,12 @@ const EditIntegrations = ({
 	draft,
 	onChange,
 	errors,
+	showCreationStatus,
 }: {
 	draft: IntegrationsDraft;
 	onChange: (changes: IntegrationsDraft) => void;
 	errors: IntegrationsErrors;
+	showCreationStatus: boolean;
 }) => {
 	const isMobile = useIsMobile();
 
@@ -286,35 +288,30 @@ const EditIntegrations = ({
 					</Typography>
 					<hr css={hrStyles} />
 				</header>
-				<RadioGroup
-					isRequired
-					renderLabel={(label) => <LabelWithAsterisk label={label} />}
-					css={fullWidthInputStyles}
-					orientation={isMobile ? 'vertical' : 'horizontal'}
-					label="Braze campaign creation status"
-					value={draft.brazeCampaignCreationStatus}
-					onChange={(value) => {
-						onChange({
-							// N.B: In reality, value always is a WorkflowStatus
-							brazeCampaignCreationStatus: value as WorkflowStatus,
-						});
-					}}
-					isInvalid={Boolean(errors.brazeCampaignCreationStatus)}
-					error={errors.brazeCampaignCreationStatus}
-				>
-					<Radio
-						key={'NOT_REQUESTED'}
-						value={'NOT_REQUESTED' satisfies WorkflowStatus}
+				{showCreationStatus && (
+					<RadioGroup
+						isRequired
+						renderLabel={(label) => <LabelWithAsterisk label={label} />}
+						css={fullWidthInputStyles}
+						orientation={isMobile ? 'vertical' : 'horizontal'}
+						label="Braze campaign creation status"
+						value={draft.brazeCampaignCreationStatus}
+						onChange={(value) => {
+							onChange({
+								brazeCampaignCreationStatus:
+									workflowStatusEnumSchema.parse(value),
+							});
+						}}
+						isInvalid={Boolean(errors.brazeCampaignCreationStatus)}
+						error={errors.brazeCampaignCreationStatus}
 					>
-						Not Requested
-					</Radio>
-					<Radio key={'REQUESTED'} value={'REQUESTED' satisfies WorkflowStatus}>
-						Requested
-					</Radio>
-					<Radio key={'COMPLETED'} value={'COMPLETED' satisfies WorkflowStatus}>
-						Completed
-					</Radio>
-				</RadioGroup>
+						{workflowStatusEnumSchema.options.map((status) => (
+							<Radio key={status} value={status}>
+								{workflowStatusLabels[status]}
+							</Radio>
+						))}
+					</RadioGroup>
+				)}
 				<TextInput
 					isRequired
 					renderLabel={(label) => <LabelWithAsterisk label={label} />}
@@ -418,11 +415,13 @@ const ViewIntegrations = ({ newsletter }: { newsletter: NewsletterData }) => (
 				Braze values
 			</Typography>
 			<dl css={listStyles}>
-				<Field label="Braze campaign creation status">
-					<WorkflowStatusBadge
-						status={newsletter.brazeCampaignCreationStatus}
-					/>
-				</Field>
+				{newsletter.status === 'pending' && (
+					<Field label="Braze campaign creation status">
+						<WorkflowStatusBadge
+							status={newsletter.brazeCampaignCreationStatus}
+						/>
+					</Field>
+				)}
 				<Field label="brazeNewsletterName">
 					{newsletter.brazeNewsletterName}
 				</Field>

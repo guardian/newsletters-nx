@@ -26,6 +26,7 @@ vi.mock('../api-requests/request-newsletter-edit', () => ({
 }));
 
 const original = newsletterFixture({
+	status: 'pending',
 	signupPageCreationStatus: 'REQUESTED',
 	tagCreationStatus: 'NOT_REQUESTED',
 	signupPage: '/news/series/example',
@@ -79,6 +80,31 @@ describe('SignupPageAndTagsPanel', () => {
 		).toBeChecked();
 		expect(screen.getAllByRole('radio')).toHaveLength(6);
 	});
+
+	it.each(['live', 'paused', 'cancelled'] as const)(
+		'hides the status radio groups when the newsletter is %s, keeping the saved statuses',
+		async (status) => {
+			const newsletter = { ...original, status };
+			vi.mocked(requestNewsletterEdit).mockResolvedValue({
+				ok: true,
+				total: 1,
+				data: newsletter,
+			});
+			render(<SignupPageAndTagsPanel newsletter={newsletter} />);
+			edit();
+			expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
+			await screen.findByText('Valid path', {}, { timeout: 3000 });
+			save();
+			await screen.findByRole('button', { name: 'Edit' });
+			expect(requestNewsletterEdit).toHaveBeenCalledWith(
+				123,
+				expect.objectContaining({
+					signupPageCreationStatus: 'REQUESTED',
+					tagCreationStatus: 'NOT_REQUESTED',
+				}),
+			);
+		},
+	);
 
 	it('saves only panel fields and uses the persisted response on the next edit', async () => {
 		vi.mocked(requestNewsletterEdit).mockResolvedValue({
@@ -298,20 +324,28 @@ describe('SignupPageAndTagsPanel read-only view', () => {
 		expect(valueFor('Tag creation status')).toBe(label);
 	});
 
-	it('uses the independent creation statuses, not the newsletter status', () => {
-		render(
-			<SignupPageAndTagsPanel
-				newsletter={panelData({
-					status: 'live',
-					signupPageCreationStatus: 'COMPLETED',
-					tagCreationStatus: 'REQUESTED',
-				})}
-			/>,
-		);
+	it.each(['live', 'paused', 'cancelled'] as const)(
+		'hides the creation statuses when the newsletter is %s',
+		(status) => {
+			render(
+				<SignupPageAndTagsPanel
+					newsletter={panelData({
+						status,
+						signupPageCreationStatus: 'COMPLETED',
+						tagCreationStatus: 'REQUESTED',
+					})}
+				/>,
+			);
 
-		expect(valueFor('Sign-up page creation status')).toBe('Completed');
-		expect(valueFor('Tag creation status')).toBe('Requested');
-	});
+			const sectionPanel = panel('Sign-up page and tags');
+			expect(
+				sectionPanel.queryByText('Sign-up page creation status'),
+			).not.toBeInTheDocument();
+			expect(
+				sectionPanel.queryByText('Tag creation status'),
+			).not.toBeInTheDocument();
+		},
+	);
 
 	it('shows the sign-up page and tags from the newsletter', () => {
 		render(
