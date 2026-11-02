@@ -23,7 +23,11 @@ import { StandPanel } from './StandPanel';
 hljs.registerLanguage('django', django);
 hljs.registerLanguage('xml', xml);
 
-/** `Default` lets the template choose from the newsletter's region focus. */
+/**
+ * `Default` lets the template choose from the newsletter's region focus.
+ * As on the old details page, labels don't always match the content block
+ * names: Global uses the `Newsletters` blocks.
+ */
 const drrSlotSets: ReadonlyArray<{
 	id: string;
 	label: string;
