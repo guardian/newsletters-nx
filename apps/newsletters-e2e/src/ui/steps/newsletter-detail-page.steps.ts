@@ -291,13 +291,7 @@ When('the editor jumps to {string}', async ({ page }, panelName: string) => {
 });
 
 Then('"Jump to" links to these panels:', async ({ page }, table: DataTable) => {
-	const expected: string[] = [];
-	for (const { panel } of table.hashes()) {
-		if (panel === undefined) {
-			throw new Error('Jump to table must have a "panel" column');
-		}
-		expected.push(panel);
-	}
+	const expected = table.hashes().map(({ panel }) => panel);
 	await expect(jumpToNav(page).getByRole('link')).toHaveText(expected);
 });
 
