@@ -122,6 +122,19 @@ describe('AttributesPanel', () => {
 		expect(customFrequency()).toHaveValue('Tuesdays and Fridays');
 	});
 
+	it('offers the frequencies used by existing newsletters', () => {
+		render(
+			<AttributesPanel
+				newsletter={newsletterFixture({ frequency: 'Fortnightly' })}
+			/>,
+		);
+		edit();
+		expect(selectButton('Frequency')).toHaveTextContent('Fortnightly');
+		expect(
+			screen.queryByRole('textbox', { name: 'Custom frequency' }),
+		).not.toBeInTheDocument();
+	});
+
 	it('saves a custom frequency, and needs one to save', async () => {
 		vi.mocked(requestNewsletterEdit).mockResolvedValue({
 			ok: true,

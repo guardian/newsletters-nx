@@ -1,11 +1,12 @@
 /**
- * The frequencies editors pick from. Frequency is free text, so anything else
- * is entered as a custom value.
+ * The frequencies editors pick from when editing a newsletter. Frequency is
+ * free text, so anything else is entered as a custom value.
  */
 export const frequencyOptions = [
+	'Daily',
+	'Weekdays',
+	'Twice weekly',
 	'Weekly',
-	'Every fortnight',
-	'Every weekday',
+	'Fortnightly',
 	'Monthly',
-	'Every day',
 ];
