@@ -24,27 +24,14 @@ const getDrrSlotSet = (slotKey: DrrSlotKey) => ({
 	middle: `Logic_Middle_${slotKey}`,
 });
 
-const drrSlotKeyByRegionFocus = {
-	AU: 'AUS',
-};
-
-const isDrrSlotSetId = (value: string): value is DrrSlotSetId =>
-	drrSlotSets.some(({ id }) => id === value);
-
-const isDrrSlotKey = (value: string): value is DrrSlotKey =>
-	drrSlotSets.some(({ slotKey }) => slotKey === value);
-
 export const drrSlotKeyForSet = (
 	slotSetId: DrrSlotSetId,
 ): DrrSlotKey | undefined =>
 	drrSlotSets.find(({ id }) => id === slotSetId)?.slotKey;
 
-const drrSlotKeyForOverride = (override: string): DrrSlotKey | undefined => {
-	if (isDrrSlotSetId(override)) return drrSlotKeyForSet(override);
-	if (isDrrSlotKey(override)) return override;
-	return undefined;
+const drrSlotKeyMapping = {
+	AU: 'AUS',
 };
-
 const getMerchandisingContent = (
 	newsletterData: NewsletterData,
 	override?: string,
@@ -52,15 +39,12 @@ const getMerchandisingContent = (
 	const { regionFocus } = newsletterData;
 
 	if (override) {
-		const slotKey = drrSlotKeyForOverride(override);
-		if (slotKey) return getDrrSlotSet(slotKey);
+		return getDrrSlotSet(override as DrrSlotKey);
 	}
 
 	if (regionFocus && ['US', 'AU'].includes(regionFocus)) {
 		return getDrrSlotSet(
-			(drrSlotKeyByRegionFocus[
-				regionFocus as keyof typeof drrSlotKeyByRegionFocus
-			] ||
+			(drrSlotKeyMapping[regionFocus as keyof typeof drrSlotKeyMapping] ||
 				regionFocus) as DrrSlotKey,
 		);
 	}

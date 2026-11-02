@@ -120,21 +120,21 @@ describe('TechnicalOutputPanel', () => {
 		},
 	);
 
-	it.each([
-		{ slotSet: 'Australia', slotKey: 'AUS' },
-		{ slotSet: 'US', slotKey: 'US' },
-		{ slotSet: 'Global', slotKey: 'Newsletters' },
-	])(
-		'uses the $slotKey slot set when $slotSet is chosen',
-		async ({ slotSet, slotKey }) => {
-			const { user } = renderPanel({ regionFocus: 'AU' });
+	it('uses the chosen slot set', async () => {
+		const { user } = renderPanel({ regionFocus: 'UK' });
 
+		for (const [slotSet, slotKey] of [
+			['Australia', 'AUS'],
+			['US', 'US'],
+			['Global', 'Newsletters'],
+		]) {
 			await user.click(screen.getByRole('radio', { name: slotSet }));
 
 			expect(brazeTemplate()).toContain(`Logic_Header_${slotKey}`);
+			expect(brazeTemplate()).toContain(`Logic_Middle_${slotKey}`);
 			expect(brazeTemplate()).toContain(`Logic_Footer_${slotKey}`);
-		},
-	);
+		}
+	});
 
 	it('copies the Braze template for the chosen slot set', async () => {
 		const { user } = renderPanel({ regionFocus: 'UK' });
