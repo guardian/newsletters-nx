@@ -6,6 +6,7 @@ import { makeSesClient } from '../../services/notifications/email-service';
 import { newsletterStore } from '../../services/storage';
 import { hasPermission } from '../authorisation';
 import { getUserProfile } from '../get-user-profile';
+import { errorContext, log } from '../logger';
 import {
 	makeErrorResponse,
 	mapStorageFailureReasonToStatusCode,
@@ -74,7 +75,7 @@ export function registerNotificationRoutes(app: Express) {
 				messageId: emailResult.output.MessageId,
 			});
 		} catch (e) {
-			console.log(e);
+			log('error', 'Error sending email', errorContext(e));
 			return res.status(500).send({ message: 'Error sending email' });
 		}
 	});
@@ -134,7 +135,7 @@ export function registerNotificationRoutes(app: Express) {
 				messageId: emailResult.output.MessageId,
 			});
 		} catch (e) {
-			console.log(e);
+			log('error', 'Error sending email', errorContext(e));
 			return res.status(500).send(makeErrorResponse('Error sending email'));
 		}
 	});

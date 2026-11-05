@@ -14,6 +14,7 @@
  */
 
 import { UserAccessLevel } from '@newsletters-nx/newsletters-data-client';
+import { errorContext, log } from './app/logger';
 
 export function isUndefinedAndNotProduction(
 	envVar: string | undefined,
@@ -90,11 +91,10 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 	try {
 		const data = JSON.parse(json) as Record<string, unknown> | unknown[];
 		if (Array.isArray(data)) {
-			console.warn(
-				'USER PROFILE PARSE FAILED - data was array',
-				data as unknown,
+			log(
+				'warn',
+				'User permissions configuration must be an object, not an array',
 			);
-			console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
 			return {};
 		}
 
@@ -112,8 +112,11 @@ export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
 		}
 		return output;
 	} catch (err) {
-		console.warn('USER PROFILE PARSE FAILED - JSON error', err);
-		console.warn(`USER_PERMISSIONS=${process.env.USER_PERMISSIONS ?? ''}`);
+		log(
+			'warn',
+			'Failed to parse user permissions configuration',
+			errorContext(err),
+		);
 		return {};
 	}
 };
