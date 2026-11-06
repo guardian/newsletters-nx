@@ -3,12 +3,7 @@ import {
 	Box,
 	Button,
 	Chip,
-	FormControl,
-	FormControlLabel,
-	FormLabel,
 	Grid,
-	Radio,
-	RadioGroup,
 	Stack,
 	Tooltip,
 	Typography,
@@ -22,7 +17,6 @@ import 'highlight.js/styles/github.css';
 import django from 'highlight.js/lib/languages/django';
 import javascript from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
-import { useState } from 'react';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('django', django);
@@ -32,41 +26,17 @@ interface Props {
 	newsletter: NewsletterData;
 	valueGenerator: NewsletterValueGenerator;
 	includeCopyButton?: boolean;
-	showOverride?: boolean;
 	language: string;
 }
-
-export type MerchandisingOverride = 'default' | 'AUS' | 'Global' | 'US';
 
 export const GeneratedCodeDataPoint = ({
 	newsletter,
 	valueGenerator,
 	includeCopyButton,
-	showOverride,
 	language,
 }: Props) => {
-	const [override, setOverride] = useState<MerchandisingOverride>(
-		'default' as MerchandisingOverride,
-	);
+	const generatedValue = valueGenerator.generate(newsletter);
 
-	const overrideMapping: Record<string, string> = {
-		Global: 'Newsletters',
-	};
-
-	const getOverride = (override: string): string =>
-		overrideMapping[override] ?? override;
-
-	const codeOverride =
-		getOverride(override) === 'default' ? undefined : getOverride(override);
-
-	const generatedValue = valueGenerator.generate(newsletter, codeOverride);
-
-	const valueKeyMapping = {
-		AUS: 'Australia',
-		Global: 'Global',
-		US: 'US',
-		default: 'Default',
-	};
 	const copyToClipBoard = async () =>
 		await navigator.clipboard.writeText(generatedValue);
 
@@ -81,37 +51,6 @@ export const GeneratedCodeDataPoint = ({
 				</Tooltip>
 			</Grid>
 			<Grid sx={{ flexShrink: 1 }} size={9}>
-				{showOverride && (
-					<Stack direction={'row'}>
-						<Box sx={{ p: 1, flex: 1, display: 'flex' }}>
-							<FormControl fullWidth>
-								<FormLabel id="drr-override-group-label">
-									DRR Slot Set
-								</FormLabel>
-								<RadioGroup
-									row
-									aria-labelledby="drr-override-group-label"
-									name="drr-row-radio-buttons-group"
-									value={override}
-									onChange={(override) =>
-										setOverride(override.target.value as MerchandisingOverride)
-									}
-								>
-									{['default', 'AUS', 'US', 'Global'].map((item) => (
-										<FormControlLabel
-											key={item}
-											value={item}
-											control={<Radio />}
-											label={
-												valueKeyMapping[item as keyof typeof valueKeyMapping]
-											}
-										/>
-									))}
-								</RadioGroup>
-							</FormControl>
-						</Box>
-					</Stack>
-				)}
 				<Stack direction={'row'}>
 					{
 						<>

@@ -96,50 +96,33 @@ describe('TechnicalOutputPanel', () => {
 		);
 	});
 
-	it.each([
-		{ regionFocus: 'AU', slotKey: 'AUS' },
-		{ regionFocus: 'US', slotKey: 'US' },
-		{ regionFocus: 'UK', slotKey: 'Newsletters' },
-	] as const)(
-		'uses the $slotKey slot set by default for region focus $regionFocus',
-		({ regionFocus, slotKey }) => {
-			renderPanel({ regionFocus });
+	it('shows the Braze template with empty slots and no slot set choice', () => {
+		renderPanel();
 
-			expect(screen.getByRole('radio', { name: 'Default' })).toBeChecked();
-			expect(brazeTemplate()).toContain(`Logic_Header_${slotKey}`);
-			expect(brazeTemplate()).toContain(`Logic_Middle_${slotKey}`);
-			expect(brazeTemplate()).toContain(`Logic_Footer_${slotKey}`);
-		},
-	);
-
-	it('uses the chosen slot set', async () => {
-		const { user } = renderPanel({ regionFocus: 'UK' });
-
-		for (const [slotSet, slotKey] of [
-			['Australia', 'AUS'],
-			['US', 'US'],
-			['Global', 'Newsletters'],
-		]) {
-			await user.click(screen.getByRole('radio', { name: slotSet }));
-
-			expect(brazeTemplate()).toContain(`Logic_Header_${slotKey}`);
-			expect(brazeTemplate()).toContain(`Logic_Middle_${slotKey}`);
-			expect(brazeTemplate()).toContain(`Logic_Footer_${slotKey}`);
+		expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
+		expect(brazeTemplate()).toContain(
+			'identity_newsletter_id = "afternoon-update"',
+		);
+		expect(brazeTemplate()).toContain(
+			'{% capture email_content %}{% endcapture %}',
+		);
+		for (const slot of ['header', 'middle', 'footer']) {
+			expect(brazeTemplate()).toContain(
+				`{% capture merchandising_content_${slot} %}{% endcapture %}`,
+			);
 		}
+		expect(brazeTemplate()).not.toContain('content_blocks.');
 	});
 
-	it('copies the Braze template for the chosen slot set', async () => {
-		const { user } = renderPanel({ regionFocus: 'UK' });
+	it('copies the Braze template', async () => {
+		const { user } = renderPanel();
 		const template = screen.getByRole('group', {
 			name: 'Braze campaign template code',
 		});
 
-		await user.click(screen.getByRole('radio', { name: 'Australia' }));
 		await user.click(within(template).getByRole('button', { name: 'Copy' }));
 
 		const copied = await navigator.clipboard.readText();
-		expect(copied).toContain('Logic_Header_AUS');
-		expect(copied).not.toContain('Logic_Header_Newsletters');
 		expect(copied).toBe(brazeTemplate());
 	});
 });

@@ -428,30 +428,11 @@ Feature: Launched newsletter: open it and find my way around
 			And the editor asks for help with "Sign up embed code"
 			Then the help says "The HTML code to paste into a composer embed block to add a sign-up form to the article content."
 
-		Scenario Outline: The default slot set follows the region focus
-			Given a launched newsletter "Afternoon update" with status "live" and region focus "<region>"
+		Scenario: The editor can copy the Braze template
+			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
 			When the editor opens the detail page for "Afternoon update"
-			Then the "Default" DRR slot set is chosen
-			And the Braze template uses the "<blocks>" content blocks
-
-			Examples:
-				| region | blocks      |
-				| AU     | AUS         |
-				| US     | US          |
-				| UK     | Newsletters |
-
-		Scenario: Choosing a slot set changes the Braze template
-			Given a launched newsletter "Afternoon update" with status "live" and region focus "UK"
-			When the editor opens the detail page for "Afternoon update"
-			And the editor chooses the "US" DRR slot set
-			Then the Braze template uses the "US" content blocks
-
-		Scenario: The editor can copy the Braze template for the chosen slot set
-			Given a launched newsletter "Afternoon update" with status "live" and region focus "UK"
-			When the editor opens the detail page for "Afternoon update"
-			And the editor chooses the "Australia" DRR slot set
 			And the editor copies the "Braze campaign template code"
-			Then the clipboard has a Braze template with the "AUS" content blocks
+			Then the clipboard has the Braze template for "afternoon-update"
 
 		Scenario: Technical output can't be edited
 			Given a launched newsletter "Afternoon update"

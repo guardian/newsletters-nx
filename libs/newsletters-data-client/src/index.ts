@@ -3,7 +3,6 @@ export * from './lib/derive-newsletter-fields';
 export * from './lib/draft-to-newsletter';
 export * from './lib/json-undefined-null-conversions';
 export * from './lib/newsletter-value-generators';
-export type { DrrSlotKey } from './lib/generate-braze-template';
 export * from './lib/schemas/data-collection-schema';
 export * from './lib/schemas/draft-newsletter-data-type';
 export * from './lib/schemas/email-embed-data-type';

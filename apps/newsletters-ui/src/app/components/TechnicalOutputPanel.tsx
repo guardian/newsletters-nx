@@ -1,10 +1,6 @@
 import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
-import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
-import type {
-	DrrSlotKey,
-	NewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import {
 	brazeTemplateCode,
 	embedIframeCode,
@@ -13,8 +9,6 @@ import hljs from 'highlight.js/lib/core';
 import django from 'highlight.js/lib/languages/django';
 import xml from 'highlight.js/lib/languages/xml';
 import 'highlight.js/styles/github.css';
-import { useState } from 'react';
-import { useIsMobile } from '../hooks/useIsMobile';
 import { CopyToClipboardButton } from './CopyToClipboardButton';
 import { Field, listStyles } from './NewsletterDetailFields';
 import { StandPanel } from './StandPanel';
@@ -22,22 +16,6 @@ import { StandPanel } from './StandPanel';
 // highlight.js has no Liquid grammar, so the Braze (Liquid) template uses Django's similar syntax.
 hljs.registerLanguage('django', django);
 hljs.registerLanguage('xml', xml);
-
-/**
- * `Default` lets the template choose from the newsletter's region focus.
- * As on the old details page, labels don't always match the content block
- * names: Global uses the `Newsletters` blocks.
- */
-const drrSlotSets: ReadonlyArray<{
-	id: string;
-	label: string;
-	slotKey?: DrrSlotKey;
-}> = [
-	{ id: 'default', label: 'Default' },
-	{ id: 'AUS', label: 'Australia', slotKey: 'AUS' },
-	{ id: 'US', label: 'US', slotKey: 'US' },
-	{ id: 'Global', label: 'Global', slotKey: 'Newsletters' },
-];
 
 const fieldContentStyles = css`
 	display: flex;
@@ -73,25 +51,10 @@ const Code = ({ code, language }: { code: string; language: string }) => (
 );
 
 const BrazeTemplate = ({ newsletter }: { newsletter: NewsletterData }) => {
-	const isMobile = useIsMobile();
-	const [slotSetId, setSlotSetId] = useState('default');
-	const slotKey = drrSlotSets.find(({ id }) => id === slotSetId)?.slotKey;
-	const template = brazeTemplateCode.generate(newsletter, slotKey);
+	const template = brazeTemplateCode.generate(newsletter);
 
 	return (
 		<div css={fieldContentStyles}>
-			<RadioGroup
-				label="DRR Slot Set"
-				orientation={isMobile ? 'vertical' : 'horizontal'}
-				value={slotSetId}
-				onChange={setSlotSetId}
-			>
-				{drrSlotSets.map(({ id, label }) => (
-					<Radio key={id} value={id}>
-						{label}
-					</Radio>
-				))}
-			</RadioGroup>
 			<Code code={template} language="django" />
 			<CopyToClipboardButton text={template} />
 		</div>

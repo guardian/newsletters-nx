@@ -868,44 +868,10 @@ Then('the help says {string}', async ({ page }, help: string) => {
 });
 
 Then(
-	'the {string} DRR slot set is chosen',
-	async ({ page }, slotSet: string) => {
-		await expect(
-			technicalOutput(page)
-				.getByRole('radiogroup', { name: 'DRR Slot Set' })
-				.getByRole('radio', { name: slotSet, exact: true }),
-		).toBeChecked();
-	},
-);
-
-When(
-	'the editor chooses the {string} DRR slot set',
-	async ({ page }, slotSet: string) => {
-		await technicalOutput(page)
-			.getByRole('radiogroup', { name: 'DRR Slot Set' })
-			.getByText(slotSet, { exact: true })
-			.click();
-	},
-);
-
-Then(
-	'the Braze template uses the {string} content blocks',
-	async ({ page }, blocks: string) => {
-		for (const slot of ['Header', 'Middle', 'Footer']) {
-			await expect(brazeTemplate(page)).toContainText(
-				`Logic_${slot}_${blocks}`,
-			);
-		}
-	},
-);
-
-Then(
-	'the clipboard has a Braze template with the {string} content blocks',
-	async ({ page }, blocks: string) => {
+	'the clipboard has the Braze template for {string}',
+	async ({ page }, identityName: string) => {
 		const copied = await readClipboard(page);
-		for (const slot of ['Header', 'Middle', 'Footer']) {
-			expect(copied).toContain(`Logic_${slot}_${blocks}`);
-		}
+		expect(copied).toContain(`identity_newsletter_id = "${identityName}"`);
 		expect(copied).toBe(await brazeTemplate(page).textContent());
 	},
 );
