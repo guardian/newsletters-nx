@@ -24,11 +24,9 @@ const createVerifier = () => {
 		albArn: ALB_ARN,
 		clientId: GOOGLE_CLIENT_ID,
 		// We expect a google login
-		issuer: 'https//accounts.google.com',
+		issuer: 'https://accounts.google.com',
 	});
 };
-
-let verifier: ReturnType<typeof createVerifier> | undefined;
 
 export const getUserProfile = async (
 	req: Pick<Request, 'headers'>,
@@ -61,7 +59,7 @@ export const getUserProfileFromJWT = async (
 > => {
 	try {
 		const payload = isJwtVerificationEnabled()
-			? await (verifier ??= createVerifier()).verify(jwtProfile)
+			? await createVerifier().verify(jwtProfile)
 			: decomposeUnverifiedJwt(jwtProfile).payload;
 		return { profile: jwtProfileSchema.parse(payload) };
 	} catch (error) {
