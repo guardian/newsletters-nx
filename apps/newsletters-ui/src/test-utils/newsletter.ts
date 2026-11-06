@@ -15,6 +15,7 @@ export const newsletterFixture = (
 	({
 		name: 'Afternoon update',
 		listId: 123,
+		restricted: false,
 		status: 'live',
 		theme: 'news',
 		category: 'article-based',

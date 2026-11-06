@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { baseSpacing, semanticColors, semanticSpacing } from '@guardian/stand';
+import { Tooltip } from '@guardian/stand/Tooltip';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
 import type { ReactNode } from 'react';
@@ -38,16 +39,32 @@ const valueStyles = css`
 const isEmpty = (value: ReactNode) =>
 	value === undefined || value === null || value === '';
 
+const labelWithHelpStyles = css`
+	display: flex;
+	align-items: center;
+	gap: ${baseSpacing['8Px']};
+`;
+
 export const Field = ({
 	label,
+	help,
 	children,
 }: {
 	label: string;
+	/** Shown in a "?" tooltip next to the label */
+	help?: string;
 	children?: ReactNode;
 }) => (
 	<div role="group" aria-label={label} css={rowStyles}>
-		<Typography element="dt" variant="bodySm" cssOverrides={weakTextStyles}>
+		<Typography
+			element="dt"
+			variant="bodySm"
+			cssOverrides={
+				help ? [weakTextStyles, labelWithHelpStyles] : weakTextStyles
+			}
+		>
 			{label}
+			{help && <Tooltip>{help}</Tooltip>}
 		</Typography>
 		<Typography element="dd" variant="bodySm" cssOverrides={valueStyles}>
 			{isEmpty(children) ? (
