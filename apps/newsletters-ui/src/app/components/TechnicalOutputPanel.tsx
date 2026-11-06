@@ -1,6 +1,9 @@
 import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	NewsletterData,
+	NewsletterValueGenerator,
+} from '@newsletters-nx/newsletters-data-client';
 import {
 	brazeTemplateCode,
 	embedIframeCode,
@@ -38,26 +41,32 @@ const codeStyles = css`
 	}
 `;
 
-const Code = ({ code, language }: { code: string; language: string }) => (
-	<pre css={codeStyles}>
-		<code
-			className="hljs"
-			// highlight.js escapes the code, so this only adds its own markup
-			dangerouslySetInnerHTML={{
-				__html: hljs.highlight(code, { language }).value,
-			}}
-		/>
-	</pre>
-);
-
-const BrazeTemplate = ({ newsletter }: { newsletter: NewsletterData }) => {
-	const template = brazeTemplateCode.generate(newsletter);
+const CodeField = ({
+	newsletter,
+	generator,
+	language,
+}: {
+	newsletter: NewsletterData;
+	generator: NewsletterValueGenerator;
+	language: 'django' | 'xml';
+}) => {
+	const code = generator.generate(newsletter);
 
 	return (
-		<div css={fieldContentStyles}>
-			<Code code={template} language="django" />
-			<CopyToClipboardButton text={template} />
-		</div>
+		<Field label={generator.displayName} help={generator.description}>
+			<div css={fieldContentStyles}>
+				<pre css={codeStyles}>
+					<code
+						className="hljs"
+						// highlight.js escapes the code, so this only adds its own markup
+						dangerouslySetInnerHTML={{
+							__html: hljs.highlight(code, { language }).value,
+						}}
+					/>
+				</pre>
+				<CopyToClipboardButton text={code} />
+			</div>
+		</Field>
 	);
 };
 
@@ -66,31 +75,22 @@ export const TechnicalOutputPanel = ({
 	newsletter,
 }: {
 	newsletter: NewsletterData;
-}) => {
-	const embedCode = embedIframeCode.generate(newsletter);
-
-	return (
-		<StandPanel name="Technical output" id="technical-output" subgrid>
-			<dl css={listStyles}>
-				<Field label="id number">{newsletter.listId}</Field>
-				<Field label="Identity name">{newsletter.identityName}</Field>
-				<Field label="Restricted">{String(newsletter.restricted)}</Field>
-				<Field
-					label={embedIframeCode.displayName}
-					help={embedIframeCode.description}
-				>
-					<div css={fieldContentStyles}>
-						<Code code={embedCode} language="xml" />
-						<CopyToClipboardButton text={embedCode} />
-					</div>
-				</Field>
-				<Field
-					label={brazeTemplateCode.displayName}
-					help={brazeTemplateCode.description}
-				>
-					<BrazeTemplate newsletter={newsletter} />
-				</Field>
-			</dl>
-		</StandPanel>
-	);
-};
+}) => (
+	<StandPanel name="Technical output" id="technical-output" subgrid>
+		<dl css={listStyles}>
+			<Field label="ID number">{newsletter.listId}</Field>
+			<Field label="Identity name">{newsletter.identityName}</Field>
+			<Field label="Restricted">{String(newsletter.restricted)}</Field>
+			<CodeField
+				newsletter={newsletter}
+				generator={embedIframeCode}
+				language="xml"
+			/>
+			<CodeField
+				newsletter={newsletter}
+				generator={brazeTemplateCode}
+				language="django"
+			/>
+		</dl>
+	</StandPanel>
+);

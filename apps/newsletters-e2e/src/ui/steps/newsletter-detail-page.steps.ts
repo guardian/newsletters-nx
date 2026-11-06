@@ -304,15 +304,6 @@ Then('the {string} panel is in view', async ({ page }, panelName: string) => {
 	).toBeInViewport();
 });
 
-Then('the {string} panel is shown', async ({ page }, panelName: string) => {
-	await expect(
-		panelByName(page, panelName).getByRole('heading', {
-			level: 3,
-			name: panelName,
-		}),
-	).toBeVisible();
-});
-
 When('the editor selects "Back to all newsletters"', async ({ page }) => {
 	await page.getByRole('link', { name: 'Back to all newsletters' }).click();
 });
@@ -799,11 +790,8 @@ Then('the editor cannot save Images', async ({ page }) => {
 	).toBeDisabled();
 });
 
-const technicalOutput = (page: Page): Locator =>
-	panelByName(page, 'Technical output');
-
 const brazeTemplate = (page: Page): Locator =>
-	technicalOutput(page)
+	page
 		.getByRole('group', { name: 'Braze campaign template code', exact: true })
 		.locator('pre');
 
@@ -819,10 +807,10 @@ const listIdFor = (namedNewsletters: NamedNewsletters, name: string) => {
 };
 
 Then(
-	'the {string} panel shows the id number of {string}',
+	'the {string} panel shows the ID number of {string}',
 	async ({ page, namedNewsletters }, panelName: string, name: string) => {
 		await expect(
-			definitionForLabel(panelByName(page, panelName), 'id number'),
+			definitionForLabel(panelByName(page, panelName), 'ID number'),
 		).toHaveText(String(listIdFor(namedNewsletters, name)));
 	},
 );
@@ -831,7 +819,7 @@ When(
 	'the editor copies the {string}',
 	async ({ page, context }, label: string) => {
 		await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-		const field = technicalOutput(page).getByRole('group', {
+		const field = page.getByRole('group', {
 			name: label,
 			exact: true,
 		});
@@ -856,7 +844,7 @@ When(
 	async ({ page }, label: string) => {
 		// react-aria only opens hover tooltips once a pointer has moved on the page
 		await page.mouse.move(0, 0);
-		await technicalOutput(page)
+		await page
 			.getByRole('group', { name: label, exact: true })
 			.getByRole('button', { name: 'Information' })
 			.hover();

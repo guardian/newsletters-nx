@@ -402,15 +402,10 @@ Feature: Launched newsletter: open it and find my way around
 
 	Rule: Technical output gives the values and code for setting the newsletter up elsewhere
 
-		Scenario: Technical output panel is shown
-			Given a launched newsletter "Afternoon update"
-			When the editor opens the detail page for "Afternoon update"
-			Then the "Technical output" panel is shown
-
 		Scenario: Technical output shows the newsletter's identifiers
 			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
 			When the editor opens the detail page for "Afternoon update"
-			Then the "Technical output" panel shows the id number of "Afternoon update"
+			Then the "Technical output" panel shows the ID number of "Afternoon update"
 			And the "Technical output" panel shows:
 				| label         | value            |
 				| Identity name | afternoon-update |

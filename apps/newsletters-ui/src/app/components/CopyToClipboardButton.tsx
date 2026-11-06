@@ -24,19 +24,19 @@ export const CopyToClipboardButton = ({ text }: { text: string }) => {
 	useEffect(() => () => clearTimeout(timer.current), []);
 
 	const copy = async () => {
+		clearTimeout(timer.current);
 		try {
 			await navigator.clipboard.writeText(text);
 			setMessage('Copied to clipboard');
+			timer.current = setTimeout(
+				() => setMessage(undefined),
+				MESSAGE_DURATION_MS,
+			);
 		} catch (error) {
 			// e.g. the browser blocked access to the clipboard
 			console.error('Failed to copy to the clipboard', error);
 			setMessage("Couldn't copy. Select the text and copy it instead.");
 		}
-		clearTimeout(timer.current);
-		timer.current = setTimeout(
-			() => setMessage(undefined),
-			MESSAGE_DURATION_MS,
-		);
 	};
 
 	return (

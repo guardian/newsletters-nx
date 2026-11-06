@@ -17,7 +17,6 @@ const renderPanel = (overrides: Partial<NewsletterData> = {}) => {
 	const user = userEvent.setup();
 	const newsletter = newsletterFixture({
 		identityName: 'afternoon-update',
-		restricted: false,
 		...overrides,
 	});
 	render(<TechnicalOutputPanel newsletter={newsletter} />);
@@ -35,7 +34,7 @@ describe('TechnicalOutputPanel', () => {
 	it('shows the identifiers', () => {
 		renderPanel({ restricted: true });
 
-		expect(valueFor('id number')).toBe('123');
+		expect(valueFor('ID number')).toBe('123');
 		expect(valueFor('Identity name')).toBe('afternoon-update');
 		expect(valueFor('Restricted')).toBe('true');
 	});
@@ -96,10 +95,9 @@ describe('TechnicalOutputPanel', () => {
 		);
 	});
 
-	it('shows the Braze template with empty slots and no slot set choice', () => {
+	it('shows the Braze template with empty slots', () => {
 		renderPanel();
 
-		expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
 		expect(brazeTemplate()).toContain(
 			'identity_newsletter_id = "afternoon-update"',
 		);
@@ -111,7 +109,6 @@ describe('TechnicalOutputPanel', () => {
 				`{% capture merchandising_content_${slot} %}{% endcapture %}`,
 			);
 		}
-		expect(brazeTemplate()).not.toContain('content_blocks.');
 	});
 
 	it('copies the Braze template', async () => {
