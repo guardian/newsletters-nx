@@ -51,6 +51,14 @@ export const getUserProfile = async (
 		return { errorMessage: 'No user profile.', profile: undefined };
 	}
 
+	return getUserProfileFromJWT(jwtProfile);
+};
+
+export const getUserProfileFromJWT = async (
+	jwtProfile: string,
+): Promise<
+	{ profile: UserProfile } | { errorMessage: string; profile: undefined }
+> => {
 	try {
 		const payload = isJwtVerificationEnabled()
 			? await (verifier ??= createVerifier()).verify(jwtProfile)
