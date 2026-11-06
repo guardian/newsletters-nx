@@ -74,6 +74,9 @@ export const getTestJwtProfileDataIfUsing = () => {
 	return process.env.USE_FAKE_JWT === 'true' ? process.env.FAKE_JWT : undefined;
 };
 
+export const isJwtVerificationEnabled = () =>
+	process.env.ENABLE_JWT_VERIFICATION === 'true';
+
 export const isUsingLocalUserPermissions = () => {
 	return process.env.USE_LOCAL_USER_PERMISSIONS === 'true';
 };

@@ -16,7 +16,7 @@ export function registerNotificationRoutes(app: Express) {
 		request: Request,
 		reply: Response,
 	) => {
-		const user = getUserProfile(request);
+		const user = await getUserProfile(request);
 		const hasLaunchAccess = await hasPermission(user.profile, 'editEverything');
 
 		if (!hasLaunchAccess) {
@@ -55,7 +55,7 @@ export function registerNotificationRoutes(app: Express) {
 				},
 				makeSesClient(),
 				makeEmailEnvInfo(),
-				getUserProfile(req).profile,
+				(await getUserProfile(req)).profile,
 			);
 			if (!emailResult.success) {
 				return res.status(500).send({
@@ -117,7 +117,7 @@ export function registerNotificationRoutes(app: Express) {
 				},
 				makeSesClient(),
 				makeEmailEnvInfo(),
-				getUserProfile(req).profile,
+				(await getUserProfile(req)).profile,
 			);
 			if (!emailResult.success) {
 				return res.status(500).send(makeErrorResponse('Email service failed'));

@@ -59,8 +59,7 @@ const getAccessDeniedError = async (
 		case 'RENDERING_OPTIONS':
 			if (!permissions.editEverything) {
 				return {
-					errorMessage:
-						'You do not have permissions to create or edit drafts.',
+					errorMessage: 'You do not have permissions to create or edit drafts.',
 					currentStepId: stepId,
 					hasPersistentError: true,
 				};
@@ -78,7 +77,7 @@ const getAccessDeniedError = async (
  */
 export function registerCurrentStepRoute(app: Express) {
 	app.post('/api/currentstep', async (req, res) => {
-		const user = getUserProfile(req);
+		const user = await getUserProfile(req);
 		const parsedBodyResult = currentStepRouteRequestSchema.safeParse(
 			replaceNullWithUndefinedForUnknown(req.body),
 		);
