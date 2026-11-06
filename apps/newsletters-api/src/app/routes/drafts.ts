@@ -39,9 +39,7 @@ export function registerDraftsRoutes(app: Express) {
 			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 			.send(makeErrorResponse(storageResponse.message));
 	});
-}
 
-export function registerDraftsWriteRoutes(app: Express) {
 	app.delete('/api/drafts/:listId', async (req, res) => {
 		const user = getUserProfile(req);
 		const permissions = await permissionService.get(user.profile);
