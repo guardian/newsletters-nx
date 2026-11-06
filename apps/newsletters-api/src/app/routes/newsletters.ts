@@ -102,7 +102,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 		legacyHeaders: false,
 	});
 	const doesNotHaveAccess = async (request: Request, reply: Response) => {
-		const user = getUserProfile(request);
+		const user = await getUserProfile(request);
 		const isAuthorised = await hasEditAccess(user.profile);
 		const body = request.body as unknown;
 		const update = replaceNullWithUndefinedForUnknown(body);
@@ -132,7 +132,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 				return;
 			}
 
-			const user = getUserProfile(req);
+			const user = await getUserProfile(req);
 
 			const { newsletterId } = req.params;
 			const modifications = req.body as unknown;
@@ -183,7 +183,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 				return;
 			}
 
-			const user = getUserProfile(req);
+			const user = await getUserProfile(req);
 			const accessDeniedError = await makeAccessDeniedApiResponse(
 				user.profile,
 				'editEverything',

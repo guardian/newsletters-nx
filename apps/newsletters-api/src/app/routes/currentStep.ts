@@ -78,7 +78,7 @@ const getAccessDeniedError = async (
  */
 export function registerCurrentStepRoute(app: Express) {
 	app.post('/api/currentstep', async (req, res) => {
-		const user = getUserProfile(req);
+		const user = await getUserProfile(req);
 		const parsedBodyResult = currentStepRouteRequestSchema.safeParse(
 			replaceNullWithUndefinedForUnknown(req.body),
 		);

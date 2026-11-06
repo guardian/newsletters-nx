@@ -43,7 +43,7 @@ export function registerDraftsReadRoutes(app: Express) {
 
 export function registerDraftsWriteRoutes(app: Express) {
 	app.delete('/api/drafts/:listId', async (req, res) => {
-		const user = getUserProfile(req);
+		const user = await getUserProfile(req);
 		const permissions = await permissionService.get(user.profile);
 
 		if (!permissions.editEverything) {

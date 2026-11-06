@@ -9,7 +9,14 @@ import {
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
 import { GuDeveloperPolicyExperimental } from '@guardian/cdk/lib/experimental/constructs/iam/policies';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
-import { type App, aws_ses, Duration, SecretValue, Tags } from 'aws-cdk-lib';
+import {
+	type App,
+	aws_ses,
+	Duration,
+	Lazy,
+	SecretValue,
+	Tags,
+} from 'aws-cdk-lib';
 import {
 	InstanceClass,
 	InstanceSize,
@@ -50,6 +57,7 @@ export class NewslettersTool extends GuStack {
 		bucketName: string,
 		readOnly: boolean,
 		enableEmailService: string,
+		authentication: { albArn: string; clientId: string },
 	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
@@ -87,8 +95,11 @@ Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USE_GUARDIAN_PERMISSIONS=true
+Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 Environment=ENABLE_EMAIL_SERVICE=${enableEmailService}
+Environment=ALB_ARN=${authentication.albArn}
+Environment=GOOGLE_CLIENT_ID=${authentication.clientId}
 [Install]
 WantedBy=multi-user.target
 EOL`,
@@ -201,6 +212,12 @@ EOL`,
 			fromSSM: true,
 		});
 
+		const clientId = new GuStringParameter(this, 'Google Client ID', {
+			description: 'Google OAuth client ID',
+			default: `/${this.stage}/${this.stack}/${toolAppName}/googleClientId`,
+			fromSSM: true,
+		});
+
 		const alarmsTopicName = 'newsletters-alerts';
 		/** Sets up Node app to be run in EC2 */
 		const ec2AppTool = new GuNodeApp(this, {
@@ -221,6 +238,12 @@ EOL`,
 				bucketName,
 				false,
 				enableEmailService,
+				{
+					albArn: Lazy.string({
+						produce: (): string => ec2AppTool.loadBalancer.loadBalancerArn,
+					}),
+					clientId: clientId.valueAsString,
+				},
 			),
 			roleConfiguration: {
 				additionalPolicies: [
@@ -292,13 +315,6 @@ EOL`,
 
 		/** Add security group to EC2 load balancer */
 		ec2AppTool.loadBalancer.addSecurityGroup(lbEgressSecurityGroup);
-
-		/** Fetch params from SSM */
-		const clientId = new GuStringParameter(this, 'Google Client ID', {
-			description: 'Google OAuth client ID',
-			default: `/${this.stage}/${this.stack}/${toolAppName}/googleClientId`,
-			fromSSM: true,
-		});
 
 		/** Add Google authentication layer to the EC2 load balancer */
 		ec2AppTool.listener.addAction('Google Auth', {
