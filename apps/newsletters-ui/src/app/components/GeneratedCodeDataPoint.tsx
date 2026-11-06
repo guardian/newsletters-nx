@@ -1,13 +1,4 @@
-import CopyAllIcon from '@mui/icons-material/CopyAll';
-import {
-	Box,
-	Button,
-	Chip,
-	Grid,
-	Stack,
-	Tooltip,
-	Typography,
-} from '@mui/material';
+import { Box, Chip, Grid, Stack, Tooltip, Typography } from '@mui/material';
 import type {
 	NewsletterData,
 	NewsletterValueGenerator,
@@ -17,6 +8,7 @@ import 'highlight.js/styles/github.css';
 import django from 'highlight.js/lib/languages/django';
 import javascript from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
+import { CopyToClipboardButton } from './CopyToClipboardButton';
 
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('django', django);
@@ -37,9 +29,6 @@ export const GeneratedCodeDataPoint = ({
 }: Props) => {
 	const generatedValue = valueGenerator.generate(newsletter);
 
-	const copyToClipBoard = async () =>
-		await navigator.clipboard.writeText(generatedValue);
-
 	const code = hljs.highlight(generatedValue, { language });
 
 	return (
@@ -58,12 +47,7 @@ export const GeneratedCodeDataPoint = ({
 								<div dangerouslySetInnerHTML={{ __html: code.value }} />
 							</Box>
 							{includeCopyButton && (
-								<Button
-									onClick={() => void copyToClipBoard()}
-									startIcon={<CopyAllIcon />}
-								>
-									copy
-								</Button>
+								<CopyToClipboardButton text={generatedValue} />
 							)}
 						</>
 					}
