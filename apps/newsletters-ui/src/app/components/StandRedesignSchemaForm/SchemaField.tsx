@@ -12,6 +12,7 @@ import {
 	ZodString,
 	ZodURL,
 } from 'zod';
+import { frequencyOptions } from '../../lib/frequency-options';
 import {
 	isPrimitiveRecord,
 	isPrimitiveRecordArray,
@@ -165,13 +166,7 @@ export function SchemaField<T extends z.ZodRawShape>({
 					isNoted={isNoted}
 					{...standardProps}
 					value={value}
-					options={[
-						'Weekly',
-						'Every fortnight',
-						'Every weekday',
-						'Monthly',
-						'Every day',
-					]}
+					options={frequencyOptions}
 					otherInputLabel="Custom (please specify)"
 				/>
 			);

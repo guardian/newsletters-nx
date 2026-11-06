@@ -24,7 +24,7 @@ async function completeNameFrequencyStep(
 
 	const frequencyRadioGroup = page.getByLabel('Set the frequency');
 	await expect(frequencyRadioGroup).toBeVisible();
-	await frequencyRadioGroup.getByText(frequency).click();
+	await frequencyRadioGroup.getByText(frequency, { exact: true }).click();
 
 	await page.getByRole('button', { name: 'Save and continue' }).click();
 }
