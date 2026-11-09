@@ -5,7 +5,6 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchApiData } from '../api-requests/fetch-api-data';
-import { newsletterDetailPath } from '../lib/newsletter-detail-path';
 import { NavigateButton } from './NavigateButton';
 import { TemplatePreview } from './TemplatePreview';
 
@@ -37,7 +36,7 @@ export const RenderingPreviewPage = ({ newsletter }: Props) => {
 			<TemplatePreview html={content} isLoading={!content} />
 
 			<ButtonGroup>
-				<NavigateButton href={newsletterDetailPath(newsletter.identityName)}>
+				<NavigateButton href={`/launched/${newsletter.identityName}`}>
 					back to details
 				</NavigateButton>
 			</ButtonGroup>

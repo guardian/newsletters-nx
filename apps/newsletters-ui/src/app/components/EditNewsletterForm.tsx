@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { usePermissions } from '../hooks/user-hooks';
-import { newsletterDetailPath } from '../lib/newsletter-detail-path';
 import { FrequencySelectInput } from './SchemaForm/FrequencySelectInput';
 import { SimpleForm } from './SimpleForm';
 
@@ -47,7 +46,7 @@ export const EditNewsletterForm = ({ originalItem }: Props) => {
 		if (response.ok) {
 			setItem(response.data);
 			setWaitingForResponse(false);
-			void navigate(newsletterDetailPath(response.data.identityName));
+			void navigate(`/launched/${response.data.identityName}`);
 		} else {
 			setWaitingForResponse(false);
 			setErrorMessage(response.message);

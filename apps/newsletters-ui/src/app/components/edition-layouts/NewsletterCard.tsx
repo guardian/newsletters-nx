@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { Link } from 'react-router-dom';
-import { newsletterDetailPath } from '../../lib/newsletter-detail-path';
 import { Illustration } from '../Illustration';
 
 type CardSize = 'medium' | 'small';
@@ -89,7 +88,7 @@ export const NewsletterCard = ({
 		>
 			{newsletter ? (
 				<>
-					<Link to={newsletterDetailPath(newsletter.identityName)}>
+					<Link to={`/launched/${newsletter.identityName}`}>
 						{numberSpan}
 						{newsletter.name}
 					</Link>

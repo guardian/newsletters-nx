@@ -15,7 +15,6 @@ import {
 	getDraftStatusBadgeContent,
 	getLaunchedStatusBadgeContent,
 } from '../components/NewsletterStatusBadge';
-import { newsletterDetailPath } from './newsletter-detail-path';
 
 export type NewsletterRowKind = 'launched' | 'draft';
 
@@ -66,7 +65,7 @@ export const launchedNewsletterToRow = (
 	// against multiple newsletters with the same identityName
 	id: `launched-${newsletter.identityName}-${newsletter.listId}`,
 	kind: 'launched',
-	href: newsletterDetailPath(newsletter.identityName),
+	href: `/newsletters/${newsletter.identityName}/details`,
 	name: newsletter.name,
 	theme: newsletter.theme,
 	category: newsletter.category,
