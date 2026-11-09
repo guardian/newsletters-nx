@@ -80,6 +80,7 @@ Environment=STAGE=${this.stage}
 Environment=STACK=${this.stack}
 Environment=APP=${app}
 Environment=NODE_ENV=production
+Environment=TRUST_ALB_PROXY=true
 Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
 Environment=NEWSLETTERS_API_READ_WRITE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}

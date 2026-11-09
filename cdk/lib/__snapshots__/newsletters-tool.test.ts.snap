@@ -2393,6 +2393,7 @@ Environment=STAGE=TEST
 Environment=STACK=newsletters
 Environment=APP=newsletters-api
 Environment=NODE_ENV=production
+Environment=TRUST_ALB_PROXY=true
 Environment=NEWSLETTERS_API_READ=true
 Environment=NEWSLETTERS_API_READ_WRITE=false
 Environment=NEWSLETTERS_UI_SERVE=false
@@ -2585,6 +2586,7 @@ Environment=STAGE=TEST
 Environment=STACK=newsletters
 Environment=APP=newsletters-tool
 Environment=NODE_ENV=production
+Environment=TRUST_ALB_PROXY=true
 Environment=NEWSLETTERS_API_READ=false
 Environment=NEWSLETTERS_API_READ_WRITE=true
 Environment=NEWSLETTERS_UI_SERVE=true

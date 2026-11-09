@@ -20,7 +20,7 @@ jest.mock<typeof import('@guardian/permissions-client')>(
 describe('GuardianPermissionsService', () => {
 	beforeEach(() => {
 		// Avoid muddying the test output
-		jest.spyOn(console, 'warn').mockImplementation(() => {});
+		jest.spyOn(console, 'log').mockImplementation(() => {});
 	});
 
 	afterEach(() => {
@@ -93,13 +93,14 @@ describe('GuardianPermissionsService', () => {
 			email: 'ada.lovelace@guardian.co.uk',
 		});
 
-		expect(console.warn).toHaveBeenNthCalledWith(
-			1,
-			'getPermissionsData("ada.lovelace@guardian.co.uk") failed',
+		expect(console.log).toHaveBeenCalledWith(
+			expect.stringContaining('"message":"Failed to get Guardian permissions"'),
 		);
-		expect(console.warn).toHaveBeenNthCalledWith(
-			2,
-			new Error('Not Implemented'),
+		expect(console.log).toHaveBeenCalledWith(
+			expect.stringContaining('"error":{"type":"Error"}'),
+		);
+		expect(console.log).not.toHaveBeenCalledWith(
+			expect.stringContaining('ada.lovelace@guardian.co.uk'),
 		);
 	});
 
