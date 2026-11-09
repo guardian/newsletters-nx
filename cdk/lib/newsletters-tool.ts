@@ -100,10 +100,8 @@ Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 Environment=ENABLE_EMAIL_SERVICE=${enableEmailService}
 ${
 authentication ?
-`
-Environment=ALB_ARN=${authentication.albArn}
-Environment=GOOGLE_CLIENT_ID=${authentication.clientId}
-`
+`Environment=ALB_ARN=${authentication.albArn}
+Environment=GOOGLE_CLIENT_ID=${authentication.clientId}`
 :
  ''
 }
