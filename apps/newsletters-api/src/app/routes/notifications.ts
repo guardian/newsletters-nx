@@ -17,8 +17,11 @@ export function registerNotificationRoutes(app: Express) {
 		request: Request,
 		reply: Response,
 	) => {
-		const user = await getUserProfile(request);
-		const hasLaunchAccess = await hasPermission(user.profile, 'editEverything');
+		const maybeUser = await getUserProfile(request);
+		const hasLaunchAccess = await hasPermission(
+			maybeUser.profile,
+			'editEverything',
+		);
 
 		if (!hasLaunchAccess) {
 			void reply
@@ -36,7 +39,7 @@ export function registerNotificationRoutes(app: Express) {
 
 	app.get('/email/:newsletterId', async (req, res) => {
 		try {
-			const user = await getUserProfile(req);
+			const maybeUser = await getUserProfile(req);
 			const failedValidation = await cannotTriggerNotification(req, res);
 			if (failedValidation) {
 				return;
@@ -57,7 +60,7 @@ export function registerNotificationRoutes(app: Express) {
 				},
 				makeSesClient(),
 				makeEmailEnvInfo(),
-				user.profile,
+				maybeUser.profile,
 			);
 			if (!emailResult.success) {
 				return res.status(500).send({
@@ -90,7 +93,7 @@ export function registerNotificationRoutes(app: Express) {
 		};
 
 		try {
-			const user = await getUserProfile(req);
+			const maybeUser = await getUserProfile(req);
 			const failedValidation = await cannotTriggerNotification(req, res);
 			if (failedValidation) {
 				return;
@@ -120,7 +123,7 @@ export function registerNotificationRoutes(app: Express) {
 				},
 				makeSesClient(),
 				makeEmailEnvInfo(),
-				user.profile,
+				maybeUser.profile,
 			);
 			if (!emailResult.success) {
 				return res.status(500).send(makeErrorResponse('Email service failed'));
