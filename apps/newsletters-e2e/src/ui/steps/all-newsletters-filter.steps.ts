@@ -138,7 +138,7 @@ const rowFor = (page: Page, ref: NamedNewsletterRef): Locator =>
 		`tr[data-href="${
 			ref.kind === 'draft'
 				? `/drafts/${ref.listId}`
-				: `/launched/${ref.identityName}`
+				: `/newsletters/${ref.identityName}/details`
 		}"]`,
 	);
 
