@@ -10,7 +10,7 @@ import { errorContext, log } from './app/logger';
 import { requestLoggingMiddleware } from './app/request-logging';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
 import {
-	registerDraftsRoutes,
+	registerDraftsReadRoutes,
 	registerDraftsWriteRoutes,
 } from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
@@ -55,7 +55,7 @@ if (isServingReadWriteEndpoints()) {
 }
 if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(app);
-	registerDraftsRoutes(app);
+	registerDraftsReadRoutes(app);
 	registerRenderingTemplatesRoutes(app);
 	registerReadLayoutRoutes(app);
 }

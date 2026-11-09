@@ -158,6 +158,16 @@ EOL`,
 			],
 		});
 
+		// The read-only API must not be able to modify or delete newsletter data.
+		const s3ReadOnlyAccessPolicy = new GuPolicy(this, `s3-read-only-policy`, {
+			policyName: 'readOnlyAccessToDataBucket',
+			statements: [
+				NewslettersTool.readOnlyDataStorageBucketPolicy(
+					dataStorageBucket.bucketArn,
+				),
+			],
+		});
+
 		const permissionsCacheAccessPolicy = new GuPolicy(
 			this,
 			`permissions-cache-access-policy`,
@@ -239,7 +249,7 @@ EOL`,
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			userData: this.getUserData(apiAppName, bucketName, true, 'false'),
 			roleConfiguration: {
-				additionalPolicies: [s3AccessPolicy],
+				additionalPolicies: [s3ReadOnlyAccessPolicy],
 			},
 			app: apiAppName,
 			applicationLogging: {
@@ -402,6 +412,15 @@ EOL`,
 		});
 	}
 
+	static readOnlyDataStorageBucketPolicy(bucketArn: string) {
+		return new PolicyStatement({
+			sid: 'readDataStorageBucketPolicy',
+			effect: Effect.ALLOW,
+			actions: ['s3:GetObject', 's3:GetObjectVersion', 's3:ListBucket'],
+			resources: [`${bucketArn}/*`, `${bucketArn}`],
+		});
+	}
+
 	static readWriteDataStorageBucketPolicy(bucketArn: string) {
 		return new PolicyStatement({
 			sid: 'writeToDataStorageBucketPolicy',
@@ -412,7 +431,6 @@ EOL`,
 				's3:GetObjectVersion',
 				's3:DeleteObject',
 				's3:ListBucket',
-				's3:DeleteObjectVersion',
 			],
 			resources: [`${bucketArn}/*`, `${bucketArn}`],
 		});
