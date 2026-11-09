@@ -12,6 +12,10 @@ import { errorContext, log } from './logger';
 const createVerifier = () => {
 	const { ALB_ARN, GOOGLE_CLIENT_ID } = process.env;
 	if (!ALB_ARN || !GOOGLE_CLIENT_ID) {
+		log(
+			'error',
+			'process.env.ALB_ARN and process.env.GOOGLE_CLIENT_ID must both be configured.',
+		);
 		throw new Error('ALB_ARN and GOOGLE_CLIENT_ID must be configured.');
 	}
 	return AlbJwtVerifier.create({
