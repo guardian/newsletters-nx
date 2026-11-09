@@ -18,8 +18,8 @@ const RedirectToDetails = () => {
 	return <Navigate to={{ pathname: 'details', search, hash }} replace />;
 };
 
-// Nothing links here until switch-over. The route is only registered when
-// `switch-legacy` is off, so other users never reach it.
+// Only registered when `switch-legacy` is off. `/launched/:id` redirects here
+// for those users.
 export const newslettersRoute: RouteObject = {
 	path: '/newsletters',
 	element: <Layout compactTopPadding />,

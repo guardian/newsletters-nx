@@ -17,7 +17,7 @@ export async function buildBrazeUpdateRequestMessage(
 		'BRAZE_UPDATE_REQUEST',
 	);
 
-	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
+	const pageLink = `${messageConfig.toolHost}/newsletters/${newsletter.identityName}/details`;
 
 	const content = renderBrazeUpdateRequestMessage({
 		pageLink,

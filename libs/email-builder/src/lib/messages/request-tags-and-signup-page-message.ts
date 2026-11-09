@@ -22,7 +22,7 @@ export async function buildSignupPageAndTagCreationRequestMessage(
 		user?.email ? [user.email] : [],
 	);
 
-	const pageLink = `${messageConfig.toolHost}/launched/edit/${newsletter.identityName}`;
+	const pageLink = `${messageConfig.toolHost}/newsletters/${newsletter.identityName}/details`;
 
 	const content = renderRequestTagAndSignUpPageCreationMessage({
 		pageLink,

@@ -21,6 +21,17 @@ Feature: Launched newsletter: open it and find my way around
 			When the editor goes to "/newsletters/no-such-newsletter"
 			Then the editor sees the not found page
 
+		Scenario: The original address opens the new page
+			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor goes to "/launched/afternoon-update"
+			Then the detail page for "Afternoon update" is shown
+
+		Scenario: The original address keeps the current page for the Legacy design
+			Given an editor's workspace uses the Legacy design
+			And a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor goes to "/launched/afternoon-update"
+			Then the current page for "Afternoon update" is shown
+
 	Rule: The header identifies the newsletter
 
 		Scenario: A launched newsletter shows its name, label and status

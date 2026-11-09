@@ -316,6 +316,16 @@ Then(
 	},
 );
 
+Then(
+	'the current page for {string} is shown',
+	async ({ page, namedNewsletters }, name: string) => {
+		await expect(page).toHaveURL(
+			new RegExp(`/launched/${identityNameFor(namedNewsletters, name)}$`),
+		);
+		await expect(page.getByText(name).first()).toBeVisible();
+	},
+);
+
 Then('the editor sees the not found page', async ({ page }) => {
 	await expect(page.getByText('NOT FOUND!')).toBeVisible();
 });
