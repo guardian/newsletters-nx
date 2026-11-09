@@ -30,11 +30,11 @@ describe('user routes', () => {
 	it('returns an error when JWT verification fails', async () => {
 		jest.mocked(getUserProfile).mockResolvedValue({
 			profile: undefined,
-			errorMessage: 'Failed to verify user profile.',
+			errorMessage: 'Failed to load user profile.',
 		});
 
 		expect(await invokeGetRoute(registerUserRoute, '/api/user/whoami')).toEqual(
-			makeErrorResponse('Failed to verify user profile.'),
+			makeErrorResponse('Failed to load user profile.'),
 		);
 	});
 
@@ -54,7 +54,7 @@ describe('user routes', () => {
 		const permissions = { editEverything: false, useJsonEditor: false };
 		jest.mocked(getUserProfile).mockResolvedValue({
 			profile: undefined,
-			errorMessage: 'Failed to verify user profile.',
+			errorMessage: 'Failed to load user profile.',
 		});
 		permissionGetMock.mockResolvedValue(permissions);
 
