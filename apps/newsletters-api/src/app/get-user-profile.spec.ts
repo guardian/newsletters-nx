@@ -164,6 +164,19 @@ describe('getUserProfileFromJWT', () => {
 		},
 	);
 
+	it('downloads JWKs only once when verifying the same JWT repeatedly', async () => {
+		const token = makeJwt();
+
+		for (let attempt = 0; attempt < 3; attempt++) {
+			expect(await getUserProfileFromJWT(token)).toEqual({ profile });
+		}
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(fetchMock).toHaveBeenCalledWith(
+			`https://public-keys.auth.elb.eu-west-1.amazonaws.com/${kid}`,
+		);
+	});
+
 	it.each(['{', '', 'undefined', '{"sub":'])(
 		'rejects signed payloads containing invalid JSON: %j',
 		async (payloadJson) => {
