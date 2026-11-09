@@ -31,7 +31,7 @@ const hrefForName = (
 	}
 	return ref.kind === 'draft'
 		? `/drafts/${ref.listId}`
-		: `/launched/${ref.identityName}`;
+		: `/newsletters/${ref.identityName}/details`;
 };
 
 const expectOrder = async (

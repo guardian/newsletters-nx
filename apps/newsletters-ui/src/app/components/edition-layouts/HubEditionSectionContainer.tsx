@@ -13,6 +13,7 @@ import type {
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { Link } from 'react-router-dom';
+import { newsletterDetailPath } from '../../lib/newsletter-detail-path';
 import { getLaunchedStatusBadgeContent } from '../NewsletterStatusBadge';
 import { NewsletterThumbnail } from '../NewsletterThumbnail';
 
@@ -117,7 +118,7 @@ const NewsletterListItem = ({ newsletter }: NewsletterListItemProps) => {
 				<NewsletterThumbnail src={thumbnailUrl} />
 				<div css={newsletterDetailsStyles}>
 					<Link
-						to={`/launched/${newsletter.identityName}`}
+						to={newsletterDetailPath(newsletter.identityName)}
 						css={newsletterLinkStyles}
 					>
 						<Typography

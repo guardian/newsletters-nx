@@ -77,8 +77,8 @@ describe('allNewslettersLoader', () => {
 			'launched-at-test-6070',
 		]);
 		expect(rows.map((row) => row.href)).toEqual([
-			'/launched/at-test',
-			'/launched/at-test',
+			'/newsletters/at-test/details',
+			'/newsletters/at-test/details',
 		]);
 	});
 
