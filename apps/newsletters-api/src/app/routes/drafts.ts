@@ -9,7 +9,7 @@ import {
 	redactMetaForPublicApi,
 } from '../responses';
 
-export function registerDraftsRoutes(app: Express) {
+export function registerDraftsReadRoutes(app: Express) {
 	app.get('/api/drafts', async (req, res) => {
 		const storageResponse = await draftStore.readAll();
 		if (storageResponse.ok) {
