@@ -20,6 +20,7 @@ import {
 	makelaunchServiceForUser,
 } from '../../services/storage';
 import { getUserProfile } from '../get-user-profile';
+import { log } from '../logger';
 
 const getHttpCode = (error: StateMachineError): number => {
 	switch (error.code) {
@@ -59,8 +60,7 @@ const getAccessDeniedError = async (
 		case 'RENDERING_OPTIONS':
 			if (!permissions.editEverything) {
 				return {
-					errorMessage:
-						'You do not have permissions to create or edit drafts.',
+					errorMessage: 'You do not have permissions to create or edit drafts.',
 					currentStepId: stepId,
 					hasPersistentError: true,
 				};
@@ -83,11 +83,10 @@ export function registerCurrentStepRoute(app: Express) {
 			replaceNullWithUndefinedForUnknown(req.body),
 		);
 		if (!parsedBodyResult.success) {
-			console.error(
-				'invalid currentStepRouteRequest on ${req.path}',
-				req.path,
-				parsedBodyResult.error.issues,
-			);
+			log('error', 'Invalid current step request', {
+				http: { request: { method: req.method } },
+				url: { path: req.path },
+			});
 			const badDataError: CurrentStepRouteResponse = {
 				currentStepId: '',
 				errorMessage:
