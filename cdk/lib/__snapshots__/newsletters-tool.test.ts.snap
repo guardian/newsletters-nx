@@ -2407,6 +2407,7 @@ Environment=USE_GUARDIAN_PERMISSIONS=true
 Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 Environment=ENABLE_EMAIL_SERVICE=false
+
 [Install]
 WantedBy=multi-user.target
 EOL
