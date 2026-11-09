@@ -1,4 +1,5 @@
 import type { RequestHandler } from 'express';
+import { log } from './logger';
 
 export const requestLoggingMiddleware: RequestHandler = (req, res, next) => {
 	if (!req.path.startsWith('/api/')) {
@@ -6,20 +7,27 @@ export const requestLoggingMiddleware: RequestHandler = (req, res, next) => {
 		return;
 	}
 
-	const startedAt = Date.now();
+	// hrtime gets the time from the OS and is not affected by changes to the system clock
+	const startedAt = process.hrtime.bigint();
 
 	res.on('finish', () => {
-		console.log(
-			JSON.stringify({
-				event: 'newsletters_api_request',
-				method: req.method,
-				path: req.path,
-				status: res.statusCode,
-				durationMs: Date.now() - startedAt,
-				referer: req.headers.referer,
-				userAgent: req.headers['user-agent'],
-			}),
-		);
+		const level =
+			res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info';
+		log(level, `${req.method} ${req.path} returned ${res.statusCode}`, {
+			event: {
+				action: 'newsletters_api_request',
+				duration: Number(process.hrtime.bigint() - startedAt),
+				category: ['web'],
+				type: ['access'],
+				outcome: res.statusCode >= 500 ? 'failure' : 'success',
+			},
+			http: {
+				request: { method: req.method },
+				response: { status_code: res.statusCode },
+			},
+			url: { path: req.path },
+			client: { ip: req.ip },
+		});
 	});
 
 	next();
