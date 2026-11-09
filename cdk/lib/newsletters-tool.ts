@@ -57,7 +57,7 @@ export class NewslettersTool extends GuStack {
 		bucketName: string,
 		readOnly: boolean,
 		enableEmailService: string,
-		authentication: { albArn: string; clientId: string },
+		authentication?: { albArn: string; clientId: string },
 	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
@@ -98,8 +98,15 @@ Environment=USE_GUARDIAN_PERMISSIONS=true
 Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 Environment=ENABLE_EMAIL_SERVICE=${enableEmailService}
+${
+authentication ?
+`
 Environment=ALB_ARN=${authentication.albArn}
 Environment=GOOGLE_CLIENT_ID=${authentication.clientId}
+`
+:
+ ''
+}
 [Install]
 WantedBy=multi-user.target
 EOL`,
