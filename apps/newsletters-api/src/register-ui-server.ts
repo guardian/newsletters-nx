@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { Express, Request, Response } from 'express';
 import { static as serveStatic } from 'express';
+import { log } from './app/logger';
 
 const routeMap = {
 	'/': [''],
@@ -68,7 +69,8 @@ export async function registerUIServer(app: Express) {
 	);
 
 	if (!indexHtml) {
-		console.warn(
+		log(
+			'warn',
 			'registerUIServer: index.html not found — UI routes not registered. In production, run `npm run build` first.',
 		);
 		return;

@@ -51,7 +51,9 @@ It stores newsletter data and sends notification emails to people/teams who comp
 
 `readonly-newsletters` is **not a separate application**. It is the same
 `newsletters-api` code deployed a second time with the UI and write routes
-switched off (`NEWSLETTERS_API_READ=true`, `NEWSLETTERS_UI_SERVE=false`), gated
+switched off (`NEWSLETTERS_API_READ=true`, `NEWSLETTERS_API_READ_WRITE=false`,
+`NEWSLETTERS_UI_SERVE=false`; all deployed instances also set
+`NODE_ENV=production`, without which these flags default to on), gated
 by an `X-Gu-API-Key` header instead of Google auth so trusted Guardian services
 can read launched newsletter data without needing Google user credentials.
 

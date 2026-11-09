@@ -6,9 +6,13 @@ import {
 	isServingUI,
 } from './apiDeploymentSettings';
 import { setCacheControlHeaderMiddleware } from './app/headers';
+import { errorContext, log } from './app/logger';
 import { requestLoggingMiddleware } from './app/request-logging';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
-import { registerDraftsRoutes } from './app/routes/drafts';
+import {
+	registerDraftsReadRoutes,
+	registerDraftsWriteRoutes,
+} from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import {
 	registerReadLayoutRoutes,
@@ -26,9 +30,17 @@ import { registerUserRoute } from './app/routes/user';
 import { registerUIServer } from './register-ui-server';
 
 const app = ExpressApp();
+// Deployed instances accept application traffic through a single ALB hop.
+// Express trust proxy settings accept both boolean and number values with
+// different meanings:
+// true - Trust the entire forwarded chain; use the leftmost forwarded IP.
+// false - Don’t trust forwarded headers; use the socket IP.
+// 1 - Trust one proxy hop; use the address immediately beyond that proxy.
+// 0 - Trust zero proxy hops—effectively the same as false
+app.set('trust proxy', process.env.TRUST_ALB_PROXY === 'true' ? 1 : false);
 app.use(setCacheControlHeaderMiddleware);
-app.use(json());
 app.use(requestLoggingMiddleware);
+app.use(json());
 
 registerHealthRoute(app);
 
@@ -39,15 +51,17 @@ if (isServingReadWriteEndpoints()) {
 	registerReadWriteNewsletterRoutes(app);
 	registerNotificationRoutes(app);
 	registerWriteLayoutRoutes(app);
+	registerDraftsWriteRoutes(app);
 }
 if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(app);
-	registerDraftsRoutes(app);
+	registerDraftsReadRoutes(app);
 	registerRenderingTemplatesRoutes(app);
 	registerReadLayoutRoutes(app);
 }
 if (areTestFixturesEnabled()) {
-	console.warn(
+	log(
+		'warn',
 		'Test fixture routes are enabled. These allow newsletters to be written directly to storage and must never be served in production.',
 	);
 	registerTestFixtureRoutes(app);
@@ -71,7 +85,8 @@ const start = async () => {
 			host: '0.0.0.0',
 		};
 
-		console.log(
+		log(
+			'info',
 			`Starting newsletters-api server on http://${options.host}:${options.port}`,
 		);
 
@@ -83,7 +98,7 @@ const start = async () => {
 		});
 	} catch (err) {
 		// Errors are logged here
-		console.error(err);
+		log('error', 'Failed to start newsletters-api server', errorContext(err));
 		process.exit(1);
 	}
 };
