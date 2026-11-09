@@ -12,6 +12,7 @@ export const getUserEditSchema = (
 			frequency: true,
 			regionFocus: true,
 			theme: true,
+			group: true,
 			status: true,
 			restricted: true,
 			illustrationCard: true,

@@ -7,8 +7,10 @@ import {
 import { Item, Grid as StandGrid } from '@guardian/stand/Grid';
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { from } from '@guardian/stand/utils';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import type React from 'react';
+import { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { NewsletterDetailPanels } from '../NewsletterDetailPanels';
@@ -71,20 +73,25 @@ export const NewsletterDetailPageView = () => {
 	return (
 		<StandLayout.Main css={mainStyle}>
 			<Container>
-				<div css={spacerStyles}>
-					<NewsletterDetailHeader newsletter={matchedItem}>
-						<NewsletterDetailTabs
-							identityName={matchedItem.identityName}
-							selected="details"
-						/>
-					</NewsletterDetailHeader>
-					{/* Keyed so panel edits and saved state don't carry over to another newsletter */}
-					<NewsletterDetailPanels
-						key={matchedItem.listId}
-						newsletter={matchedItem}
-					/>
-				</div>
+				{/* Keyed so panel edits and saved state don't carry over to another newsletter */}
+				<NewsletterDetail key={matchedItem.listId} loaded={matchedItem} />
 			</Container>
 		</StandLayout.Main>
+	);
+};
+
+const NewsletterDetail = ({ loaded }: { loaded: NewsletterData }) => {
+	const [newsletter, setNewsletter] = useState(loaded);
+
+	return (
+		<div css={spacerStyles}>
+			<NewsletterDetailHeader newsletter={newsletter}>
+				<NewsletterDetailTabs
+					identityName={newsletter.identityName}
+					selected="details"
+				/>
+			</NewsletterDetailHeader>
+			<NewsletterDetailPanels newsletter={newsletter} onSaved={setNewsletter} />
+		</div>
 	);
 };
