@@ -57,7 +57,9 @@ export function registerSignupPathValidationRoute(app: Express) {
 			legacyHeaders: false,
 		}),
 		async (req, res) => {
-			if (!(await hasEditAccess((await getUserProfile(req)).profile))) {
+			const user = await getUserProfile(req);
+
+			if (!(await hasEditAccess(user.profile))) {
 				return res
 					.status(403)
 					.send(makeErrorResponse('You do not have edit access'));
