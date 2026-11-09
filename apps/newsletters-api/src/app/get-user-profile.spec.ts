@@ -9,7 +9,7 @@ const albArn =
 const clientId = 'newsletters-test-client';
 const issuer = 'https://accounts.google.com';
 const profile = {
-	// Model ALB's undocumented duplication of header.iss into the payload, observed with Cognito:
+	// The iss field is copied from the JWT header to the payload by the ALB for us, see
 	// https://github.com/awslabs/aws-jwt-verify/issues/303#issuecomment-6176237542
 	iss: issuer,
 	sub: 'google-user-id',
