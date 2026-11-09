@@ -82,9 +82,22 @@ export const AttributesPanel = ({
 	/** Anything that isn't one of the options, including blank, is custom. */
 	const isCustomFrequency = !frequencyOptions.includes(draft.frequency);
 
+	const validate = (): true | string => {
+		if (parsed.success) {
+			return true;
+		}
+		const problems = [
+			...(draft.name.trim() ? [] : ['Enter a name.']),
+			...(draft.frequency.trim() ? [] : ['Enter a frequency.']),
+		];
+		return problems.length > 0
+			? problems.join(' ')
+			: parsed.error.issues.map((issue) => issue.message).join(' ');
+	};
+
 	const save = async (): Promise<boolean | string> => {
 		if (!parsed.success) {
-			return false;
+			return validate();
 		}
 		const response = await requestNewsletterEdit(
 			newsletter.listId,
@@ -131,7 +144,7 @@ export const AttributesPanel = ({
 			id="attributes"
 			subgrid
 			onSave={save}
-			canSave={parsed.success}
+			onValidate={validate}
 			onEdit={() => setDraft(current)}
 		>
 			{(isEditing) =>
@@ -143,6 +156,7 @@ export const AttributesPanel = ({
 							value={draft.name}
 							onChange={(name) => update({ name })}
 							isInvalid={!draft.name.trim()}
+							validationBehavior="aria"
 							error={draft.name.trim() ? undefined : 'Enter a name'}
 						/>
 						<RadioGroup
@@ -196,6 +210,7 @@ export const AttributesPanel = ({
 								value={draft.frequency}
 								onChange={(frequency) => update({ frequency })}
 								isInvalid={!draft.frequency.trim()}
+								validationBehavior="aria"
 								error={draft.frequency.trim() ? undefined : 'Enter a frequency'}
 							/>
 						)}

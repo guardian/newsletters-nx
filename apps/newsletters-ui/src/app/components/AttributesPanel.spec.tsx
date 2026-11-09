@@ -146,10 +146,15 @@ describe('AttributesPanel', () => {
 		await choose('Frequency', 'Custom (please specify)');
 		expect(customFrequency()).toHaveValue('');
 		expect(screen.getByText('Enter a frequency')).toBeVisible();
-		expect(saveButton()).toBeDisabled();
+		fireEvent.click(saveButton());
+		expect(await screen.findByRole('alert')).toHaveTextContent(
+			'Unable to save changesEnter a frequency.',
+		);
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 		fireEvent.change(customFrequency(), {
 			target: { value: ' Tuesdays and Fridays ' },
 		});
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 		fireEvent.click(saveButton());
 		await screen.findByRole('button', { name: 'Edit' });
 		expect(requestNewsletterEdit).toHaveBeenCalledWith(
@@ -168,14 +173,18 @@ describe('AttributesPanel', () => {
 		expect(selectButton('MMA group')).toHaveTextContent('cancelled');
 	});
 
-	it('does not allow saving without a name', () => {
+	it('does not save without a name, and says why', async () => {
 		render(<AttributesPanel newsletter={original} />);
 		edit();
 		fireEvent.change(screen.getByRole('textbox', { name: 'Name' }), {
 			target: { value: '  ' },
 		});
 		expect(screen.getByText('Enter a name')).toBeVisible();
-		expect(saveButton()).toBeDisabled();
+		fireEvent.click(saveButton());
+		expect(await screen.findByRole('alert')).toHaveTextContent(
+			'Unable to save changesEnter a name.',
+		);
+		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 	});
 
 	it('discards cancelled changes', () => {
