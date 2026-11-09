@@ -4,6 +4,7 @@ import type {
 	UserProfile,
 } from '@newsletters-nx/newsletters-data-client';
 import { denyAll } from '@newsletters-nx/newsletters-data-client';
+import { errorContext, log } from '../../app/logger';
 import type { PermissionsService } from './abstract-class';
 import { toUserPermissions } from './guardian-permissions-utils';
 
@@ -24,8 +25,7 @@ export class GuardianPermissionService implements PermissionsService {
 			const guardianPermissions = await this.client.listUserPermissions(email);
 			return guardianPermissions;
 		} catch (error) {
-			console.warn(`getPermissionsData("${email}") failed`);
-			console.warn(error);
+			log('warn', 'Failed to get Guardian permissions', errorContext(error));
 			return [];
 		}
 	};

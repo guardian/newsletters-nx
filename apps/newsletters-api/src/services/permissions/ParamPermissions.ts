@@ -5,6 +5,7 @@ import {
 	UserAccessLevel,
 } from '@newsletters-nx/newsletters-data-client';
 import { getConfigValue } from '@newsletters-nx/util';
+import { errorContext, log } from '../../app/logger';
 import type { PermissionsService } from './abstract-class';
 
 /** 15 minutes*/
@@ -19,8 +20,7 @@ const getPermissionsData = async (): Promise<
 		});
 		return permissionsDataSchema.parse(JSON.parse(value));
 	} catch (error) {
-		console.warn('getPermissionsData failed');
-		console.warn(error);
+		log('warn', 'Failed to get permissions configuration', errorContext(error));
 		return {};
 	}
 };

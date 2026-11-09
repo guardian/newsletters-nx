@@ -309,10 +309,23 @@ When('the editor selects "Back to all newsletters"', async ({ page }) => {
 });
 
 Then(
-	'the detail page for {string} is shown',
+	'the detail page for {string} is shown in the Stand design',
 	async ({ page }, name: string) => {
 		await expect(page).toHaveURL(/\/newsletters\/[^/]+\/details$/);
 		await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
+	},
+);
+
+Then(
+	'the detail page for {string} is shown in the Legacy design',
+	async ({ page, namedNewsletters }, name: string) => {
+		await expect(page).toHaveURL(
+			new RegExp(`/launched/${identityNameFor(namedNewsletters, name)}$`),
+		);
+		await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
+		await expect(
+			page.getByRole('link', { name: 'View rendering preview' }),
+		).toBeVisible();
 	},
 );
 
@@ -516,6 +529,27 @@ When(
 				.getByRole('radiogroup', { name: label, exact: true })
 				.getByRole('radio', { name: option, exact: true }),
 		).toBeChecked();
+	},
+);
+
+/** Stand selects are buttons named "<selected option> <label>". */
+const selectFor = (panel: Locator, label: string): Locator =>
+	panel.getByRole('button', { name: new RegExp(`${label}$`) });
+
+When(
+	'the editor chooses {string} for {string} in the {string} panel',
+	async ({ page }, option: string, label: string, name: string) => {
+		const select = selectFor(panelByName(page, name), label);
+		await select.click();
+		await page.getByRole('option', { name: option, exact: true }).click();
+		await expect(select).toContainText(option);
+	},
+);
+
+Then(
+	"{string} can't be changed in the {string} panel",
+	async ({ page }, label: string, name: string) => {
+		await expect(selectFor(panelByName(page, name), label)).toBeDisabled();
 	},
 );
 

@@ -56,7 +56,7 @@ Feature: View and edit an edition hub layout
 		When the edition layout loads
 		Then "Morning Briefing" is listed in the "Get started" section
 		And its newsletter thumbnail is visible
-		And its title links to "/launched/morning-briefing"
+		And its title links to "/newsletters/morning-briefing/details"
 
 	Scenario Outline: A newsletter displays its status
 		Given the "Get started" section contains the newsletter "Morning Briefing" with status "<status>"

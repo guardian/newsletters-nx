@@ -9,7 +9,7 @@ import {
 	redactMetaForPublicApi,
 } from '../responses';
 
-export function registerDraftsRoutes(app: Express) {
+export function registerDraftsReadRoutes(app: Express) {
 	app.get('/api/drafts', async (req, res) => {
 		const storageResponse = await draftStore.readAll();
 		if (storageResponse.ok) {
@@ -39,7 +39,9 @@ export function registerDraftsRoutes(app: Express) {
 			.status(mapStorageFailureReasonToStatusCode(storageResponse.reason))
 			.send(makeErrorResponse(storageResponse.message));
 	});
+}
 
+export function registerDraftsWriteRoutes(app: Express) {
 	app.delete('/api/drafts/:listId', async (req, res) => {
 		const user = getUserProfile(req);
 		const permissions = await permissionService.get(user.profile);
