@@ -309,7 +309,7 @@ When('the editor selects "Back to all newsletters"', async ({ page }) => {
 });
 
 Then(
-	'the detail page for {string} is shown',
+	'the detail page for {string} is shown in the Stand design',
 	async ({ page }, name: string) => {
 		await expect(page).toHaveURL(/\/newsletters\/[^/]+\/details$/);
 		await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
@@ -317,7 +317,7 @@ Then(
 );
 
 Then(
-	'the current page for {string} is shown',
+	'the detail page for {string} is shown in the Legacy design',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(page).toHaveURL(
 			new RegExp(`/launched/${identityNameFor(namedNewsletters, name)}$`),

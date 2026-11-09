@@ -14,23 +14,23 @@ Feature: Launched newsletter: open it and find my way around
 		Scenario: A newsletter's page can be opened from its address
 			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
 			When the editor goes to "/newsletters/afternoon-update"
-			Then the detail page for "Afternoon update" is shown
+			Then the detail page for "Afternoon update" is shown in the Stand design
 			And the "Details" tab is selected
 
 		Scenario: An address for a newsletter that doesn't exist shows an error
 			When the editor goes to "/newsletters/no-such-newsletter"
 			Then the editor sees the not found page
 
-		Scenario: The original address opens the new page
+		Scenario: The original address opens the detail page in the Stand design
 			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
 			When the editor goes to "/launched/afternoon-update"
-			Then the detail page for "Afternoon update" is shown
+			Then the detail page for "Afternoon update" is shown in the Stand design
 
-		Scenario: The original address keeps the current page for the Legacy design
+		Scenario: The original address opens the detail page in the Legacy design
 			Given an editor's workspace uses the Legacy design
 			And a launched newsletter "Afternoon update" with identity name "afternoon-update"
 			When the editor goes to "/launched/afternoon-update"
-			Then the current page for "Afternoon update" is shown
+			Then the detail page for "Afternoon update" is shown in the Legacy design
 
 	Rule: The header identifies the newsletter
 
