@@ -79,7 +79,10 @@ Restart=on-failure
 Environment=STAGE=${this.stage}
 Environment=STACK=${this.stack}
 Environment=APP=${app}
+Environment=NODE_ENV=production
+Environment=TRUST_ALB_PROXY=true
 Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
+Environment=NEWSLETTERS_API_READ_WRITE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
@@ -150,6 +153,16 @@ EOL`,
 			policyName: 'readWriteAccessToDataBucket',
 			statements: [
 				NewslettersTool.readWriteDataStorageBucketPolicy(
+					dataStorageBucket.bucketArn,
+				),
+			],
+		});
+
+		// The read-only API must not be able to modify or delete newsletter data.
+		const s3ReadOnlyAccessPolicy = new GuPolicy(this, `s3-read-only-policy`, {
+			policyName: 'readOnlyAccessToDataBucket',
+			statements: [
+				NewslettersTool.readOnlyDataStorageBucketPolicy(
 					dataStorageBucket.bucketArn,
 				),
 			],
@@ -236,7 +249,7 @@ EOL`,
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			userData: this.getUserData(apiAppName, bucketName, true, 'false'),
 			roleConfiguration: {
-				additionalPolicies: [s3AccessPolicy],
+				additionalPolicies: [s3ReadOnlyAccessPolicy],
 			},
 			app: apiAppName,
 			applicationLogging: {
@@ -399,6 +412,15 @@ EOL`,
 		});
 	}
 
+	static readOnlyDataStorageBucketPolicy(bucketArn: string) {
+		return new PolicyStatement({
+			sid: 'readDataStorageBucketPolicy',
+			effect: Effect.ALLOW,
+			actions: ['s3:GetObject', 's3:GetObjectVersion', 's3:ListBucket'],
+			resources: [`${bucketArn}/*`, `${bucketArn}`],
+		});
+	}
+
 	static readWriteDataStorageBucketPolicy(bucketArn: string) {
 		return new PolicyStatement({
 			sid: 'writeToDataStorageBucketPolicy',
@@ -409,7 +431,6 @@ EOL`,
 				's3:GetObjectVersion',
 				's3:DeleteObject',
 				's3:ListBucket',
-				's3:DeleteObjectVersion',
 			],
 			resources: [`${bucketArn}/*`, `${bucketArn}`],
 		});
