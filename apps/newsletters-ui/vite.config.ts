@@ -21,6 +21,9 @@ export default defineConfig({
 		},
 	},
 	server: {
+		headers: {
+			'x-frame-options': 'DENY',
+		},
 		port: 4200,
 		host: getViteHost(),
 		proxy: {

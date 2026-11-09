@@ -77,6 +77,7 @@ export async function registerUIServer(app: Express) {
 	}
 
 	const serveIndexHtml = (_: Request, res: Response) => {
+		res.set('X-Frame-Options', 'DENY');
 		res.type('text/html').send(indexHtml);
 	};
 
