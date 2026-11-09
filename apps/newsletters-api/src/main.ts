@@ -9,7 +9,10 @@ import { setCacheControlHeaderMiddleware } from './app/headers';
 import { errorContext, log } from './app/logger';
 import { requestLoggingMiddleware } from './app/request-logging';
 import { registerCurrentStepRoute } from './app/routes/currentStep';
-import { registerDraftsRoutes } from './app/routes/drafts';
+import {
+	registerDraftsRoutes,
+	registerDraftsWriteRoutes,
+} from './app/routes/drafts';
 import { registerHealthRoute } from './app/routes/health';
 import {
 	registerReadLayoutRoutes,
@@ -48,6 +51,7 @@ if (isServingReadWriteEndpoints()) {
 	registerReadWriteNewsletterRoutes(app);
 	registerNotificationRoutes(app);
 	registerWriteLayoutRoutes(app);
+	registerDraftsWriteRoutes(app);
 }
 if (isServingReadEndpoints()) {
 	registerReadNewsletterRoutes(app);
