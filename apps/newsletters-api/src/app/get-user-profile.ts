@@ -50,6 +50,19 @@ export const getUserProfile = async (
 	return getUserProfileFromJWT(jwtProfile);
 };
 
+/**
+ * Returns a singleton verifier instance.
+ * This enables use to reuse a long-lived verifier that can cache JWKs
+ */
+const getVerifier = (() => {
+	let verifier: ReturnType<typeof createVerifier> | null = null;
+
+	return () => {
+		verifier ??= createVerifier();
+		return verifier;
+	};
+})();
+
 export const getUserProfileFromJWT = async (
 	jwtProfile: string,
 ): Promise<
@@ -58,7 +71,7 @@ export const getUserProfileFromJWT = async (
 	try {
 		const payload = isJwtVerificationEnabled()
 			? // This is async because the aws-jwt-verify may need to download the public key for the sign JWTs, if not yet cached.
-				await createVerifier().verify(jwtProfile)
+				await getVerifier().verify(jwtProfile)
 			: decomposeUnverifiedJwt(jwtProfile).payload;
 
 		return { profile: payload };
