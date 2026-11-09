@@ -11,6 +11,7 @@ import {
 	themeEnumSchema,
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
+import { z } from 'zod';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { humanize } from '../lib/format';
@@ -22,14 +23,19 @@ import {
 } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
 
-const panelSchema = newsletterDataSchema.pick({
-	name: true,
-	status: true,
-	theme: true,
-	regionFocus: true,
-	frequency: true,
-	group: true,
-});
+const panelSchema = newsletterDataSchema
+	.pick({
+		name: true,
+		status: true,
+		theme: true,
+		regionFocus: true,
+		frequency: true,
+		group: true,
+	})
+	.extend({
+		name: z.string().trim().min(1, 'Enter a name'),
+		frequency: z.string().trim().min(1, 'Enter a frequency'),
+	});
 type Attributes = Pick<NewsletterData, keyof typeof panelSchema.shape>;
 
 const statuses: Array<NewsletterData['status']> = [
@@ -74,28 +80,22 @@ export const AttributesPanel = ({
 	const [draft, setDraft] = useState<Attributes>(current);
 	const update = (changes: Partial<Attributes>) =>
 		setDraft((previous) => ({ ...previous, ...changes }));
-	const parsed = panelSchema.safeParse({
-		...draft,
-		name: draft.name.trim(),
-		frequency: draft.frequency.trim(),
-	});
+	const parseDraft = () => panelSchema.safeParse(draft);
+	const fieldError = (field: 'name' | 'frequency') =>
+		panelSchema.shape[field].safeParse(draft[field]).error?.issues[0]?.message;
 	/** Anything that isn't one of the options, including blank, is custom. */
 	const isCustomFrequency = !frequencyOptions.includes(draft.frequency);
 
 	const validate = (): true | string => {
-		if (parsed.success) {
-			return true;
-		}
-		const problems = [
-			...(draft.name.trim() ? [] : ['Enter a name.']),
-			...(draft.frequency.trim() ? [] : ['Enter a frequency.']),
-		];
-		return problems.length > 0
-			? problems.join(' ')
-			: parsed.error.issues.map((issue) => issue.message).join(' ');
+		const parsed = parseDraft();
+		return (
+			parsed.success ||
+			parsed.error.issues.map((issue) => issue.message).join(' ')
+		);
 	};
 
 	const save = async (): Promise<boolean | string> => {
+		const parsed = parseDraft();
 		if (!parsed.success) {
 			return validate();
 		}
@@ -155,9 +155,9 @@ export const AttributesPanel = ({
 							fluid
 							value={draft.name}
 							onChange={(name) => update({ name })}
-							isInvalid={!draft.name.trim()}
+							isInvalid={Boolean(fieldError('name'))}
 							validationBehavior="aria"
-							error={draft.name.trim() ? undefined : 'Enter a name'}
+							error={fieldError('name')}
 						/>
 						<RadioGroup
 							label="Newsletter status"
@@ -209,9 +209,9 @@ export const AttributesPanel = ({
 								fluid
 								value={draft.frequency}
 								onChange={(frequency) => update({ frequency })}
-								isInvalid={!draft.frequency.trim()}
+								isInvalid={Boolean(fieldError('frequency'))}
 								validationBehavior="aria"
-								error={draft.frequency.trim() ? undefined : 'Enter a frequency'}
+								error={fieldError('frequency')}
 							/>
 						)}
 						{select('Type of newsletter', newsletter.category, [

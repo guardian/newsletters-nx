@@ -148,7 +148,7 @@ describe('AttributesPanel', () => {
 		expect(screen.getByText('Enter a frequency')).toBeVisible();
 		fireEvent.click(saveButton());
 		expect(await screen.findByRole('alert')).toHaveTextContent(
-			'Unable to save changesEnter a frequency.',
+			'Unable to save changesEnter a frequency',
 		);
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 		fireEvent.change(customFrequency(), {
@@ -182,7 +182,7 @@ describe('AttributesPanel', () => {
 		expect(screen.getByText('Enter a name')).toBeVisible();
 		fireEvent.click(saveButton());
 		expect(await screen.findByRole('alert')).toHaveTextContent(
-			'Unable to save changesEnter a name.',
+			'Unable to save changesEnter a name',
 		);
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 	});
