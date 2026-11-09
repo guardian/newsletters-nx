@@ -263,7 +263,12 @@ describe('getUserProfileFromJWT', () => {
 		'rejects JWTs when trusted configuration %s is missing',
 		async (variable) => {
 			delete process.env[variable];
-			expect(await getUserProfileFromJWT(makeJwt())).toEqual(loadFailure);
+			await jest.isolateModulesAsync(async () => {
+				const userProfileModule = await import('./get-user-profile');
+				expect(
+					await userProfileModule.getUserProfileFromJWT(makeJwt()),
+				).toEqual(loadFailure);
+			});
 			expect(console.log).toHaveBeenCalledWith(
 				expect.stringContaining(
 					'"message":"Failed to load user profile from JWT"',
