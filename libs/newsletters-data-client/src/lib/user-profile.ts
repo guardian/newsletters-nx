@@ -6,28 +6,25 @@ import { z } from 'zod';
  * based on the scopes requested in ''Google Auth' action
  * defined the cdk config.
  */
-export const UserProfileSchema = z
-	.object({
-		/** the unique user id used by the auth provider (in our case, google) */
-		sub: z.string(),
-		name: z.string(),
-		given_name: z.string(),
-		family_name: z.string(),
-		/** the url to the profile picture for the user.
-		 * Google provides the url to a generic icon if no profile pic is set */
-		picture: z.string(),
-		/** the user's email address */
-		email: z.string(),
-		email_verified: z.boolean(),
-		locale: z.string(),
-		hd: z.string(),
-		/** the expiry timestamp of the token used to obtain the profile data */
-		exp: z.number(),
-		/** the issuer of the profile data - should be https://accounts.google.com */
-		iss: z.string(),
-	})
-	.partial();
-export type UserProfile = z.infer<typeof UserProfileSchema>;
+export type UserProfile = Partial<{
+	/** the unique user id used by the auth provider (in our case, google) */
+	sub: string;
+	name: string;
+	given_name: string;
+	family_name: string;
+	/** the url to the profile picture for the user.
+	 * Google provides the url to a generic icon if no profile pic is set */
+	picture: string;
+	/** the user's email address */
+	email: string;
+	email_verified: boolean;
+	locale: string;
+	hd: string;
+	/** the expiry timestamp of the token used to obtain the profile data */
+	exp: number;
+	/** the issuer of the profile data - should be https://accounts.google.com */
+	iss: string;
+}>;
 
 export enum UserAccessLevel {
 	Developer = 0, // Can do everything
