@@ -322,7 +322,10 @@ Then(
 		await expect(page).toHaveURL(
 			new RegExp(`/launched/${identityNameFor(namedNewsletters, name)}$`),
 		);
-		await expect(page.getByText(name).first()).toBeVisible();
+		await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
+		await expect(
+			page.getByRole('link', { name: 'View rendering preview' }),
+		).toBeVisible();
 	},
 );
 

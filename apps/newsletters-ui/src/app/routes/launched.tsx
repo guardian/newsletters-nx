@@ -12,7 +12,6 @@ import {
 	isFeatureSwitchEnabled,
 } from '../featureSwitches';
 import { Layout } from '../Layout';
-import { newsletterDetailPath } from '../lib/newsletter-detail-path';
 import { detailLoader, listLoader } from '../loaders/newsletters';
 
 checkFeatureSwitchURLParams();
@@ -25,7 +24,7 @@ const RedirectToNewDetails = () => {
 	const { search, hash } = useLocation();
 	return (
 		<Navigate
-			to={{ pathname: newsletterDetailPath(id), search, hash }}
+			to={{ pathname: `/newsletters/${id}/details`, search, hash }}
 			replace
 		/>
 	);

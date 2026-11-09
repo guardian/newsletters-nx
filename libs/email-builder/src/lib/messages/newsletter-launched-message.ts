@@ -16,7 +16,7 @@ export async function buildNewsLetterLaunchMessage(
 		emailEnvInfo,
 		'NEWSLETTER_LAUNCH',
 	);
-	const pageLink = `${messageConfig.toolHost}/newsletters/${newsletter.identityName}/details`;
+	const pageLink = `${messageConfig.toolHost}/launched/${newsletter.identityName}`;
 
 	const content = renderNewLaunchMessage({
 		pageLink,

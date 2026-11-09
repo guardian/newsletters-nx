@@ -9,7 +9,7 @@ You have requested the launch of **{{name}}**
 
 It has id {{listId}}.
 
-You can see its details on the [details page](/newsletters/{{identityName}}/details)
+You can see its details on the [details page](/launched/{{identityName}})
 
 Once the teams responsible for creating tags, sign-up pages, the Braze campaign and tracking the newsletter have completed their tasks, the newsletter will be ready to mark as live.
 
