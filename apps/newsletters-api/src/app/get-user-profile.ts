@@ -59,7 +59,8 @@ export const getUserProfileFromJWT = async (
 > => {
 	try {
 		const payload = isJwtVerificationEnabled()
-			? await createVerifier().verify(jwtProfile)
+			? // This is async because the aws-jwt-verify may need to download the public key for the sign JWTs, if not yet cached.
+				await createVerifier().verify(jwtProfile)
 			: decomposeUnverifiedJwt(jwtProfile).payload;
 		return { profile: jwtProfileSchema.parse(payload) };
 	} catch (error) {
