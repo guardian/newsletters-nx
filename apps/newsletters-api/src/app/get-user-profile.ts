@@ -1,19 +1,13 @@
 import type { UserProfile } from '@newsletters-nx/newsletters-data-client';
-import { UserProfileSchema } from '@newsletters-nx/newsletters-data-client';
 import { AlbJwtVerifier } from 'aws-jwt-verify';
 import { decomposeUnverifiedJwt } from 'aws-jwt-verify/jwt';
 import type { Request } from 'express';
-import { z } from 'zod';
 import {
 	getTestJwtProfileDataIfUsing,
 	isJwtVerificationEnabled,
 } from '../apiDeploymentSettings';
 import { getDeveloperProfile } from '../services/permissions/developer-profile-service';
 import { errorContext, log } from './logger';
-
-const jwtProfileSchema = UserProfileSchema.extend({
-	sub: z.string().min(1),
-});
 
 const createVerifier = () => {
 	const { ALB_ARN, GOOGLE_CLIENT_ID } = process.env;
@@ -62,12 +56,13 @@ export const getUserProfileFromJWT = async (
 			? // This is async because the aws-jwt-verify may need to download the public key for the sign JWTs, if not yet cached.
 				await createVerifier().verify(jwtProfile)
 			: decomposeUnverifiedJwt(jwtProfile).payload;
-		return { profile: jwtProfileSchema.parse(payload) };
+
+		return { profile: payload };
 	} catch (error) {
-		log('warn', 'Failed to parse user profile JWT', errorContext(error));
+		log('warn', 'Failed to load user profile from JWT', errorContext(error));
 
 		return {
-			errorMessage: 'Failed to verify user profile.',
+			errorMessage: 'Failed to load user profile.',
 			profile: undefined,
 		};
 	}

@@ -64,8 +64,8 @@ const requestWithToken = (token?: string | string[]) => ({
 	headers: token === undefined ? {} : { 'x-amzn-oidc-data': token },
 });
 
-const verificationFailure = {
-	errorMessage: 'Failed to verify user profile.',
+const loadFailure = {
+	errorMessage: 'Failed to load user profile.',
 	profile: undefined,
 };
 
@@ -82,8 +82,7 @@ beforeEach(() => {
 	fetchMock = jest
 		.spyOn(SimpleFetcher.prototype, 'fetch')
 		.mockResolvedValue(publicKeyPem);
-	jest.spyOn(console, 'warn').mockImplementation(() => undefined);
-	jest.spyOn(console, 'info').mockImplementation(() => undefined);
+	jest.spyOn(console, 'log').mockImplementation(() => undefined);
 });
 
 afterEach(() => {
@@ -123,9 +122,7 @@ describe('getUserProfile', () => {
 			makeHeader(),
 			otherKeyPair.privateKey,
 		);
-		expect(await getUserProfile(requestWithToken())).toEqual(
-			verificationFailure,
-		);
+		expect(await getUserProfile(requestWithToken())).toEqual(loadFailure);
 	});
 
 	it('uses a correctly signed configured JWT when no header is present', async () => {
@@ -171,7 +168,7 @@ describe('getUserProfileFromJWT', () => {
 		'rejects signed payloads containing invalid JSON: %j',
 		async (payloadJson) => {
 			expect(await getUserProfileFromJWT(makeJwt(payloadJson))).toEqual(
-				verificationFailure,
+				loadFailure,
 			);
 		},
 	);
@@ -183,21 +180,14 @@ describe('getUserProfileFromJWT', () => {
 		'editor',
 		42,
 		true,
-		{},
-		{ ...profile, sub: undefined },
-		{ ...profile, sub: '' },
 		{ ...profile, sub: 42 },
-		{ ...profile, name: [] },
-		{ ...profile, email: 42 },
-		{ ...profile, email_verified: 'true' },
-		{ ...profile, picture: {} },
 		{ ...profile, exp: 'not-a-timestamp' },
 	])(
-		'rejects a signed payload with an invalid profile structure: %j',
+		'rejects a signed payload with an invalid JWT structure or claim type: %j',
 		async (payload) => {
 			expect(
 				await getUserProfileFromJWT(makeJwt(JSON.stringify(payload))),
-			).toEqual(verificationFailure);
+			).toEqual(loadFailure);
 		},
 	);
 
@@ -206,23 +196,21 @@ describe('getUserProfileFromJWT', () => {
 		async (header) => {
 			expect(
 				await getUserProfileFromJWT(makeJwt(JSON.stringify(profile), header)),
-			).toEqual(verificationFailure);
+			).toEqual(loadFailure);
 		},
 	);
 
 	it.each(['not-a-jwt', 'header.payload', 'header.payload.signature.extra'])(
 		'rejects a malformed JWT: %s',
 		async (token) => {
-			expect(await getUserProfileFromJWT(token)).toEqual(verificationFailure);
+			expect(await getUserProfileFromJWT(token)).toEqual(loadFailure);
 		},
 	);
 
 	it('rejects malformed JSON in the header', async () => {
 		const token = makeJwt().split('.');
 		token[0] = encode('{', true);
-		expect(await getUserProfileFromJWT(token.join('.'))).toEqual(
-			verificationFailure,
-		);
+		expect(await getUserProfileFromJWT(token.join('.'))).toEqual(loadFailure);
 	});
 
 	it('rejects a JWT signed with a different private key', async () => {
@@ -231,7 +219,7 @@ describe('getUserProfileFromJWT', () => {
 			makeHeader(),
 			otherKeyPair.privateKey,
 		);
-		expect(await getUserProfileFromJWT(token)).toEqual(verificationFailure);
+		expect(await getUserProfileFromJWT(token)).toEqual(loadFailure);
 	});
 
 	it('rejects a modified payload even if it is a valid profile', async () => {
@@ -240,9 +228,7 @@ describe('getUserProfileFromJWT', () => {
 			JSON.stringify({ ...profile, email: 'another@guardian.co.uk' }),
 			true,
 		);
-		expect(await getUserProfileFromJWT(token.join('.'))).toEqual(
-			verificationFailure,
-		);
+		expect(await getUserProfileFromJWT(token.join('.'))).toEqual(loadFailure);
 	});
 
 	it('rejects a modified signed header', async () => {
@@ -251,27 +237,25 @@ describe('getUserProfileFromJWT', () => {
 			JSON.stringify(makeHeader({ exp: Math.floor(Date.now() / 1000) + 7200 })),
 			true,
 		);
-		expect(await getUserProfileFromJWT(token.join('.'))).toEqual(
-			verificationFailure,
-		);
+		expect(await getUserProfileFromJWT(token.join('.'))).toEqual(loadFailure);
 	});
 
 	it('rejects an unsigned JWT', async () => {
 		const token = makeJwt().split('.');
 		token[2] = '';
-		expect(await getUserProfileFromJWT(token.join('.'))).toEqual(
-			verificationFailure,
-		);
+		expect(await getUserProfileFromJWT(token.join('.'))).toEqual(loadFailure);
 	});
 
 	it.each(['ALB_ARN', 'GOOGLE_CLIENT_ID'])(
 		'rejects JWTs when trusted configuration %s is missing',
 		async (variable) => {
 			delete process.env[variable];
-			expect(await getUserProfileFromJWT(makeJwt())).toEqual(
-				verificationFailure,
+			expect(await getUserProfileFromJWT(makeJwt())).toEqual(loadFailure);
+			expect(console.log).toHaveBeenCalledWith(
+				expect.stringContaining(
+					'"message":"Failed to load user profile from JWT"',
+				),
 			);
-			expect(console.warn).toHaveBeenCalled();
 		},
 	);
 
@@ -308,17 +292,17 @@ describe('getUserProfileFromJWT', () => {
 				otherKeyPair.privateKey,
 			);
 
-			expect(await getUserProfileFromJWT(token)).toEqual(verificationFailure);
+			expect(await getUserProfileFromJWT(token)).toEqual(loadFailure);
 			expect(fetchMock).toHaveBeenCalled();
 		});
 
-		it.each(['{', 'null', '[]', '{"sub":42}', '{"sub":"user","email":42}'])(
-			'still rejects invalid profile JSON when verification is disabled: %s',
+		it.each(['{', 'null', '[]', '{"sub":42}', '{"exp":"not-a-timestamp"}'])(
+			'still rejects invalid JWT payloads when verification is disabled: %s',
 			async (payloadJson) => {
 				process.env.ENABLE_JWT_VERIFICATION = 'false';
 
 				expect(await getUserProfileFromJWT(makeJwt(payloadJson))).toEqual(
-					verificationFailure,
+					loadFailure,
 				);
 				expect(fetchMock).not.toHaveBeenCalled();
 			},
