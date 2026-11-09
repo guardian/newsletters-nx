@@ -11,7 +11,7 @@ The application verifies the JWT is correctly signed (using [aws-jwt-verify](htt
 
 Verification can be disabled by setting `ENABLE_JWT_VERIFICATION=false`. Don't do this unless you have a very good reason.
 
-Note that the verification requires requires loading public keys. These keys are automatically cached by the application, and new keys automatically loaded on key rotation, but this may occasionally cause a delay in response from the application.
+Note that the verification requires loading public keys. These keys are automatically cached by the application, and new keys automatically loaded on key rotation, but this may occasionally cause a delay in response from the application.
 
 The read-only API is a second deployment of the same code with the UI and write routes disabled. It has no user auth — instead, it's gated by an `X-Gu-API-Key` header matching the `readOnlyEndpointApiKey` SSM parameter (see [Infrastructure](./infrastructure.md#the-two-apps) and [Architecture](./architecture.md)).
 
