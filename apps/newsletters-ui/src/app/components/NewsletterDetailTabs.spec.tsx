@@ -41,7 +41,7 @@ describe('NewsletterDetailTabs', () => {
 		renderTabs();
 		fireEvent.click(screen.getByRole('tab', { name: 'Layout' }));
 		expect(screen.getByTestId('location').textContent).toBe(
-			'/launched/preview/afternoon-update',
+			'/launched/rendering-options/afternoon-update',
 		);
 	});
 });
