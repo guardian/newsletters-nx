@@ -872,10 +872,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             ],
           },
         ],
-        "AlarmDescription": "newsletters-api exceeded 5% error rate",
+        "AlarmDescription": "newsletters-api exceeded 20% error rate",
         "AlarmName": "High 5XX error percentage from newsletters-api in TEST",
         "ComparisonOperator": "GreaterThanThreshold",
-        "EvaluationPeriods": 1,
+        "EvaluationPeriods": 25,
         "Metrics": [
           {
             "Expression": "100*(m1+m2)/m3",
@@ -975,7 +975,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             "Value": "TEST",
           },
         ],
-        "Threshold": 5,
+        "Threshold": 20,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -997,10 +997,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             ],
           },
         ],
-        "AlarmDescription": "newsletters-tool exceeded 5% error rate",
+        "AlarmDescription": "newsletters-tool exceeded 20% error rate",
         "AlarmName": "High 5XX error percentage from newsletters-tool in TEST",
         "ComparisonOperator": "GreaterThanThreshold",
-        "EvaluationPeriods": 1,
+        "EvaluationPeriods": 25,
         "Metrics": [
           {
             "Expression": "100*(m1+m2)/m3",
@@ -1100,7 +1100,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             "Value": "TEST",
           },
         ],
-        "Threshold": 5,
+        "Threshold": 20,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",

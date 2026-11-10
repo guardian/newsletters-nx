@@ -229,7 +229,10 @@ EOL`,
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName: domainNameTool },
 			monitoringConfiguration: {
-				http5xxAlarm: { tolerated5xxPercentage: 5 },
+				http5xxAlarm: { 
+					tolerated5xxPercentage: 20,                          // Scale threshold to 20%
+					numberOfMinutesAboveThresholdBeforeAlarm: 25,                         // Evaluates a 25-minute window
+				},
 				snsTopicName: alarmsTopicName,
 				unhealthyInstancesAlarm: true,
 			},
@@ -268,7 +271,10 @@ EOL`,
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName: domainNameApi },
 			monitoringConfiguration: {
-				http5xxAlarm: { tolerated5xxPercentage: 5 },
+				http5xxAlarm: { 
+					tolerated5xxPercentage: 20,                          // Scale threshold to 20%
+					numberOfMinutesAboveThresholdBeforeAlarm: 25,                         // Evaluates a 25-minute window
+				},
 				snsTopicName: alarmsTopicName,
 				unhealthyInstancesAlarm: true,
 			},
