@@ -54,3 +54,9 @@ export const mockSignupPathCheck = (valid = true) => {
 	vi.stubGlobal('fetch', fetchMock);
 	return fetchMock;
 };
+/** The address of the image shown for a read-only image field. */
+export const imageSrcFor = (label: string): string | null | undefined =>
+	screen
+		.getByRole('group', { name: label })
+		.querySelector(':scope > dd img')
+		?.getAttribute('src');

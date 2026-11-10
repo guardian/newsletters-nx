@@ -12,6 +12,7 @@ import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
 import { useState } from 'react';
 import { z } from 'zod';
+import { CopyToClipboardButton } from './CopyToClipboardButton';
 import { Field } from './NewsletterDetailFields';
 
 /** What the browser reported when it tried to load an image */
@@ -190,7 +191,7 @@ export const useImageDraft = () => {
 
 export type ImageDraft = ReturnType<typeof useImageDraft>;
 
-/** Read-only: the image and a link to it, or an empty box and "Not set" */
+/** Read-only: the image and a button to copy its URL, or an empty box and "Not set" */
 export const ImageValue = ({
 	label,
 	url,
@@ -204,11 +205,15 @@ export const ImageValue = ({
 		<span css={imageRowStyles}>
 			{url ? (
 				<>
-					{/* Decorative: the link beside it gives the address */}
+					{/* Decorative: the button beside it copies the address */}
 					<img src={url} alt="" css={imageBoxStyles(shape)} />
-					<a href={url} target="_blank" rel="noreferrer" css={imageTextStyles}>
-						{url}
-					</a>
+					<span css={imageTextStyles}>
+						<CopyToClipboardButton
+							text={url}
+							label="Copy image URL"
+							ariaLabel={`Copy image URL for ${label}`}
+						/>
+					</span>
 				</>
 			) : (
 				<>
