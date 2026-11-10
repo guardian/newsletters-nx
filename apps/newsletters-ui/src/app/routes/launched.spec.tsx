@@ -10,6 +10,26 @@ vi.mock('../Layout', async () => {
 vi.mock('../components/views/NewsletterDetailView', () => ({
 	NewsletterDetailView: () => <p>Legacy details page</p>,
 }));
+// Mock unrelated route imports in ./launched to speed up dynamic import of ./launched.
+vi.mock('../components/views/NewsletterEditView', () => ({
+	NewsletterEditView: () => null,
+}));
+vi.mock('../components/views/NewsletterJsonEditView', () => ({
+	NewsletterJsonEditView: () => null,
+}));
+vi.mock('../components/views/NewslettersListView', () => ({
+	NewslettersListView: () => null,
+}));
+vi.mock('../components/views/PreviewView', () => ({
+	PreviewView: () => null,
+}));
+vi.mock('../components/views/RenderingOptionsView', () => ({
+	RenderingOptionsView: () => null,
+}));
+vi.mock('../ErrorPage', () => ({
+	ErrorPage: () => <p>Route error</p>,
+}));
+// End of mocks
 vi.mock('../loaders/newsletters', () => ({
 	detailLoader: () => null,
 	listLoader: () => null,

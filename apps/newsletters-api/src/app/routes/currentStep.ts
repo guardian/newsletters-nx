@@ -78,7 +78,7 @@ const getAccessDeniedError = async (
  */
 export function registerCurrentStepRoute(app: Express) {
 	app.post('/api/currentstep', async (req, res) => {
-		const user = getUserProfile(req);
+		const maybeUser = await getUserProfile(req);
 		const parsedBodyResult = currentStepRouteRequestSchema.safeParse(
 			replaceNullWithUndefinedForUnknown(req.body),
 		);
@@ -102,7 +102,7 @@ export function registerCurrentStepRoute(app: Express) {
 
 		const currentStepRouteRequest = parsedBodyResult.data;
 		const accessDeniedError = await getAccessDeniedError(
-			user,
+			maybeUser,
 			currentStepRouteRequest,
 		);
 		if (accessDeniedError) {
@@ -121,11 +121,11 @@ export function registerCurrentStepRoute(app: Express) {
 			return res.status(400).send(errorResponse);
 		}
 
-		const serviceInterface = user.profile
+		const serviceInterface = maybeUser.profile
 			? currentStepRouteRequest.wizardId === 'LAUNCH_NEWSLETTER'
-				? makelaunchServiceForUser(user.profile)
+				? makelaunchServiceForUser(maybeUser.profile)
 				: makeDraftServiceForUser(
-						user.profile,
+						maybeUser.profile,
 						makeSesClient(),
 						makeEmailEnvInfo(),
 					)
