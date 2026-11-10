@@ -9,20 +9,12 @@ import {
 } from '@mui/material';
 import type { FormEventHandler, FunctionComponent } from 'react';
 import { useEffect, useState } from 'react';
+import { frequencyOptions } from '../../lib/frequency-options';
 import type { FieldProps } from './util';
-
-const FREQUENCY_OPTIONS = [
-	'Daily',
-	'Weekdays',
-	'Twice weekly',
-	'Weekly',
-	'Fortnightly',
-	'Monthly',
-] as const;
 
 const CUSTOM_KEY = 'custom';
 
-const frequencyOptionSet = new Set<string>(FREQUENCY_OPTIONS);
+const frequencyOptionSet = new Set<string>(frequencyOptions);
 
 const isExistingCustomValue = (value: string | undefined): value is string =>
 	value !== undefined && value !== '' && !frequencyOptionSet.has(value);
@@ -97,7 +89,7 @@ export const FrequencySelectInput: FunctionComponent<
 					<em>Please select a frequency</em>
 				</MenuItem>
 				{optional && <MenuItem value={''}>[none]</MenuItem>}
-				{FREQUENCY_OPTIONS.map((option) => (
+				{frequencyOptions.map((option) => (
 					<MenuItem key={option} value={option}>
 						{option}
 					</MenuItem>

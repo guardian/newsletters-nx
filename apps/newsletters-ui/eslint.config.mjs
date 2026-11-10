@@ -24,7 +24,12 @@ export default defineConfig([
 		},
 	},
 	{
-		files: ['src/**/*.spec.ts', 'src/**/*.spec.tsx'],
+		files: [
+			'src/**/*.spec.ts',
+			'src/**/*.spec.tsx',
+			'src/test-setup.ts',
+			'src/test-utils/**/*.ts',
+		],
 		extends: [guardian.configs.recommended, guardian.configs.react],
 		languageOptions: {
 			parserOptions: {

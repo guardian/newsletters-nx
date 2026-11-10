@@ -57,7 +57,7 @@ describe('launchedNewsletterToRow', () => {
 			launched({ identityName: 'at-test', listId: 6070 }),
 		);
 		expect(first.id).not.toBe(second.id);
-		expect(first.href).toBe('/launched/at-test');
+		expect(first.href).toBe('/newsletters/at-test/details');
 		expect(second.href).toBe(first.href);
 	});
 
@@ -65,7 +65,7 @@ describe('launchedNewsletterToRow', () => {
 		expect(launchedNewsletterToRow(launched())).toEqual({
 			id: 'launched-politics-weekly-6069',
 			kind: 'launched',
-			href: '/launched/politics-weekly',
+			href: '/newsletters/politics-weekly/details',
 			name: 'Politics Weekly',
 			theme: 'news',
 			category: 'article-based',

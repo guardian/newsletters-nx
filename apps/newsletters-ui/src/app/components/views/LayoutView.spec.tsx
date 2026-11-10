@@ -187,7 +187,7 @@ describe('LayoutView sections', () => {
 		const titleLink = await screen.findByRole('link', {
 			name: 'Morning Briefing',
 		});
-		expect(titleLink.getAttribute('href')).toBe('/launched/morning-briefing');
+		expect(titleLink.getAttribute('href')).toBe('/newsletters/morning-briefing/details');
 		expect(screen.getByText('Live')).toBeTruthy();
 		expect(
 			titleLink.closest('li')?.querySelector('img')?.getAttribute('src'),

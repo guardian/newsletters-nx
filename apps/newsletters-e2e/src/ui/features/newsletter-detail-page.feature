@@ -14,12 +14,23 @@ Feature: Launched newsletter: open it and find my way around
 		Scenario: A newsletter's page can be opened from its address
 			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
 			When the editor goes to "/newsletters/afternoon-update"
-			Then the detail page for "Afternoon update" is shown
+			Then the detail page for "Afternoon update" is shown in the Stand design
 			And the "Details" tab is selected
 
 		Scenario: An address for a newsletter that doesn't exist shows an error
 			When the editor goes to "/newsletters/no-such-newsletter"
 			Then the editor sees the not found page
+
+		Scenario: The original address opens the detail page in the Stand design
+			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor goes to "/launched/afternoon-update"
+			Then the detail page for "Afternoon update" is shown in the Stand design
+
+		Scenario: The original address opens the detail page in the Legacy design
+			Given an editor's workspace uses the Legacy design
+			And a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor goes to "/launched/afternoon-update"
+			Then the detail page for "Afternoon update" is shown in the Legacy design
 
 	Rule: The header identifies the newsletter
 
@@ -82,6 +93,7 @@ Feature: Launched newsletter: open it and find my way around
 				| Copy                  |
 				| Sign-up page and tags |
 				| Integrations          |
+				| Technical output      |
 
 		Scenario: Choosing a panel in Jump to scrolls to it
 			Given a launched newsletter "Afternoon update"
@@ -106,6 +118,51 @@ Feature: Launched newsletter: open it and find my way around
 				| Pillar             | News             |
 				| Region focus       | AU               |
 				| Type of newsletter | Article based    |
+
+	@edit
+	Rule: Editors can edit and save Attributes
+
+		Scenario: Saved attributes survive a reload and update the header
+			Given a launched newsletter "Afternoon update" with status "live" and region focus "AU"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Attributes" panel
+			Then "Type of newsletter" can't be changed in the "Attributes" panel
+			When the editor fills in the "Attributes" panel:
+				| label | value          |
+				| Name  | Evening update |
+			And the editor selects "Paused" for "Newsletter status" in the "Attributes" panel
+			And the editor chooses "Sport" for "Pillar" in the "Attributes" panel
+			And the editor chooses "UK" for "Region focus" in the "Attributes" panel
+			And the editor chooses "Custom (please specify)" for "Frequency" in the "Attributes" panel
+			And the editor fills in the "Attributes" panel:
+				| label            | value                |
+				| Custom frequency | Tuesdays and Fridays |
+			And the editor chooses "Sport" for "MMA group" in the "Attributes" panel
+			And the editor saves the "Attributes" panel
+			Then the header shows a "Paused" status badge
+			When the editor reloads the newsletter detail page
+			Then the header shows the title "Evening update"
+			And the header shows a "Paused" status badge
+			And the "Attributes" panel shows:
+				| label              | value                |
+				| Name               | Evening update       |
+				| Newsletter status  | Paused               |
+				| Pillar             | Sport                |
+				| Region focus       | UK                   |
+				| Frequency          | Tuesdays and Fridays |
+				| Type of newsletter | Article based        |
+				| MMA group          | Sport                |
+
+		Scenario: Cancelling discards Attributes edits
+			Given a launched newsletter "Afternoon update" with status "live" and region focus "AU"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor edits the "Attributes" panel
+			And the editor selects "Cancelled" for "Newsletter status" in the "Attributes" panel
+			And the editor cancels editing the "Attributes" panel
+			Then the header shows a "Live" status badge
+			And the "Attributes" panel shows:
+				| label             | value |
+				| Newsletter status | Live  |
 
 	Rule: The Details tab shows the newsletter's images
 
@@ -398,6 +455,40 @@ Feature: Launched newsletter: open it and find my way around
 			Then the "Integrations" panel shows:
 				| label               | value             |
 				| brazeNewsletterName | Editorial_Fixture |
+
+	Rule: Technical output gives the values and code for setting the newsletter up elsewhere
+
+		Scenario: Technical output shows the newsletter's identifiers
+			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Technical output" panel shows the ID number of "Afternoon update"
+			And the "Technical output" panel shows:
+				| label         | value            |
+				| Identity name | afternoon-update |
+				| Restricted    | false            |
+
+		Scenario: The editor can copy the sign-up embed code
+			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor copies the "Sign up embed code"
+			Then the clipboard has the sign-up embed code for "afternoon-update"
+
+		Scenario: Help explains what the embed code is for
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor asks for help with "Sign up embed code"
+			Then the help says "The HTML code to paste into a composer embed block to add a sign-up form to the article content."
+
+		Scenario: The editor can copy the Braze template
+			Given a launched newsletter "Afternoon update" with identity name "afternoon-update"
+			When the editor opens the detail page for "Afternoon update"
+			And the editor copies the "Braze campaign template code"
+			Then the clipboard has the Braze template for "afternoon-update"
+
+		Scenario: Technical output can't be edited
+			Given a launched newsletter "Afternoon update"
+			When the editor opens the detail page for "Afternoon update"
+			Then the "Technical output" panel has no "Edit" action
 
 	Rule: The header adapts to the screen size
 

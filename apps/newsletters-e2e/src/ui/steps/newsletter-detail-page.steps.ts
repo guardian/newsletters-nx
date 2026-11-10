@@ -309,10 +309,23 @@ When('the editor selects "Back to all newsletters"', async ({ page }) => {
 });
 
 Then(
-	'the detail page for {string} is shown',
+	'the detail page for {string} is shown in the Stand design',
 	async ({ page }, name: string) => {
 		await expect(page).toHaveURL(/\/newsletters\/[^/]+\/details$/);
 		await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
+	},
+);
+
+Then(
+	'the detail page for {string} is shown in the Legacy design',
+	async ({ page, namedNewsletters }, name: string) => {
+		await expect(page).toHaveURL(
+			new RegExp(`/launched/${identityNameFor(namedNewsletters, name)}$`),
+		);
+		await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
+		await expect(
+			page.getByRole('link', { name: 'View rendering preview' }),
+		).toBeVisible();
 	},
 );
 
@@ -516,6 +529,27 @@ When(
 				.getByRole('radiogroup', { name: label, exact: true })
 				.getByRole('radio', { name: option, exact: true }),
 		).toBeChecked();
+	},
+);
+
+/** Stand selects are buttons named "<selected option> <label>". */
+const selectFor = (panel: Locator, label: string): Locator =>
+	panel.getByRole('button', { name: new RegExp(`${label}$`) });
+
+When(
+	'the editor chooses {string} for {string} in the {string} panel',
+	async ({ page }, option: string, label: string, name: string) => {
+		const select = selectFor(panelByName(page, name), label);
+		await select.click();
+		await page.getByRole('option', { name: option, exact: true }).click();
+		await expect(select).toContainText(option);
+	},
+);
+
+Then(
+	"{string} can't be changed in the {string} panel",
+	async ({ page }, label: string, name: string) => {
+		await expect(selectFor(panelByName(page, name), label)).toBeDisabled();
 	},
 );
 
@@ -789,3 +823,89 @@ Then('the editor cannot save Images', async ({ page }) => {
 		}),
 	).toBeDisabled();
 });
+
+const brazeTemplate = (page: Page): Locator =>
+	page
+		.getByRole('group', { name: 'Braze campaign template code', exact: true })
+		.locator('pre');
+
+const readClipboard = (page: Page): Promise<string> =>
+	page.evaluate(() => navigator.clipboard.readText());
+
+const listIdFor = (namedNewsletters: NamedNewsletters, name: string) => {
+	const ref = namedNewsletters.refsByName[name];
+	if (ref?.kind !== 'launched') {
+		throw new Error(`No launched newsletter named "${name}" in this scenario`);
+	}
+	return ref.listId;
+};
+
+Then(
+	'the {string} panel shows the ID number of {string}',
+	async ({ page, namedNewsletters }, panelName: string, name: string) => {
+		await expect(
+			definitionForLabel(panelByName(page, panelName), 'ID number'),
+		).toHaveText(String(listIdFor(namedNewsletters, name)));
+	},
+);
+
+When(
+	'the editor copies the {string}',
+	async ({ page, context }, label: string) => {
+		await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+		const field = page.getByRole('group', {
+			name: label,
+			exact: true,
+		});
+		await field.getByRole('button', { name: 'Copy', exact: true }).click();
+		await expect(field.getByRole('status')).toHaveText('Copied to clipboard');
+	},
+);
+
+Then(
+	'the clipboard has the sign-up embed code for {string}',
+	async ({ page }, identityName: string) => {
+		const copied = await readClipboard(page);
+		expect(copied).toMatch(/^<iframe .*><\/iframe>$/);
+		expect(copied).toContain(
+			`src="https://www.theguardian.com/email/form/plaintone/${identityName}"`,
+		);
+	},
+);
+
+When(
+	'the editor asks for help with {string}',
+	async ({ page }, label: string) => {
+		// react-aria only opens hover tooltips once a pointer has moved on the page
+		await page.mouse.move(0, 0);
+		await page
+			.getByRole('group', { name: label, exact: true })
+			.getByRole('button', { name: 'Information' })
+			.hover();
+	},
+);
+
+Then('the help says {string}', async ({ page }, help: string) => {
+	await expect(page.getByRole('tooltip')).toHaveText(help);
+});
+
+Then(
+	'the clipboard has the Braze template for {string}',
+	async ({ page }, identityName: string) => {
+		const copied = await readClipboard(page);
+		expect(copied).toContain(`identity_newsletter_id = "${identityName}"`);
+		expect(copied).toBe(await brazeTemplate(page).textContent());
+	},
+);
+
+Then(
+	'the {string} panel has no {string} action',
+	async ({ page }, panelName: string, action: string) => {
+		await expect(
+			panelByName(page, panelName).getByRole('button', {
+				name: action,
+				exact: true,
+			}),
+		).toHaveCount(0);
+	},
+);

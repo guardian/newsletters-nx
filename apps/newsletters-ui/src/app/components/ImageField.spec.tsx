@@ -1,12 +1,8 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { ImageShape } from './ImageField';
 import { ImageInput, useImageDraft } from './ImageField';
-
-afterEach(() => {
-	cleanup();
-});
 
 const label = 'Newsletter square (1:1)';
 const savedUrl = 'https://uploads.guim.co.uk/2025/06/30/Business_1-1.jpg';

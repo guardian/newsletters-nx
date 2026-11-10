@@ -9,7 +9,14 @@ import {
 import { GuCname } from '@guardian/cdk/lib/constructs/dns';
 import { GuDeveloperPolicyExperimental } from '@guardian/cdk/lib/experimental/constructs/iam/policies';
 import { GuHttpsEgressSecurityGroup } from '@guardian/cdk/lib/constructs/ec2';
-import { type App, aws_ses, Duration, SecretValue, Tags } from 'aws-cdk-lib';
+import {
+	type App,
+	aws_ses,
+	Duration,
+	Lazy,
+	SecretValue,
+	Tags,
+} from 'aws-cdk-lib';
 import {
 	InstanceClass,
 	InstanceSize,
@@ -50,6 +57,7 @@ export class NewslettersTool extends GuStack {
 		bucketName: string,
 		readOnly: boolean,
 		enableEmailService: string,
+		authentication?: { albArn: string; clientId: string },
 	) => {
 		// Fetches distribution S3 bucket name from account
 		const distributionBucketParameter =
@@ -79,13 +87,24 @@ Restart=on-failure
 Environment=STAGE=${this.stage}
 Environment=STACK=${this.stack}
 Environment=APP=${app}
+Environment=NODE_ENV=production
+Environment=TRUST_ALB_PROXY=true
 Environment=NEWSLETTERS_API_READ=${readOnly ? 'true' : 'false'}
+Environment=NEWSLETTERS_API_READ_WRITE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USE_GUARDIAN_PERMISSIONS=true
+Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 Environment=ENABLE_EMAIL_SERVICE=${enableEmailService}
+${
+authentication ?
+`Environment=ALB_ARN=${authentication.albArn}
+Environment=GOOGLE_CLIENT_ID=${authentication.clientId}`
+:
+ ''
+}
 [Install]
 WantedBy=multi-user.target
 EOL`,
@@ -155,6 +174,16 @@ EOL`,
 			],
 		});
 
+		// The read-only API must not be able to modify or delete newsletter data.
+		const s3ReadOnlyAccessPolicy = new GuPolicy(this, `s3-read-only-policy`, {
+			policyName: 'readOnlyAccessToDataBucket',
+			statements: [
+				NewslettersTool.readOnlyDataStorageBucketPolicy(
+					dataStorageBucket.bucketArn,
+				),
+			],
+		});
+
 		const permissionsCacheAccessPolicy = new GuPolicy(
 			this,
 			`permissions-cache-access-policy`,
@@ -188,6 +217,12 @@ EOL`,
 			fromSSM: true,
 		});
 
+		const clientId = new GuStringParameter(this, 'Google Client ID', {
+			description: 'Google OAuth client ID',
+			default: `/${this.stage}/${this.stack}/${toolAppName}/googleClientId`,
+			fromSSM: true,
+		});
+
 		const alarmsTopicName = 'newsletters-alerts';
 		/** Sets up Node app to be run in EC2 */
 		const ec2AppTool = new GuNodeApp(this, {
@@ -208,6 +243,12 @@ EOL`,
 				bucketName,
 				false,
 				enableEmailService,
+				{
+					albArn: Lazy.string({
+						produce: (): string => ec2AppTool.loadBalancer.loadBalancerArn,
+					}),
+					clientId: clientId.valueAsString,
+				},
 			),
 			roleConfiguration: {
 				additionalPolicies: [
@@ -236,7 +277,7 @@ EOL`,
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			userData: this.getUserData(apiAppName, bucketName, true, 'false'),
 			roleConfiguration: {
-				additionalPolicies: [s3AccessPolicy],
+				additionalPolicies: [s3ReadOnlyAccessPolicy],
 			},
 			app: apiAppName,
 			applicationLogging: {
@@ -279,13 +320,6 @@ EOL`,
 
 		/** Add security group to EC2 load balancer */
 		ec2AppTool.loadBalancer.addSecurityGroup(lbEgressSecurityGroup);
-
-		/** Fetch params from SSM */
-		const clientId = new GuStringParameter(this, 'Google Client ID', {
-			description: 'Google OAuth client ID',
-			default: `/${this.stage}/${this.stack}/${toolAppName}/googleClientId`,
-			fromSSM: true,
-		});
 
 		/** Add Google authentication layer to the EC2 load balancer */
 		ec2AppTool.listener.addAction('Google Auth', {
@@ -399,6 +433,15 @@ EOL`,
 		});
 	}
 
+	static readOnlyDataStorageBucketPolicy(bucketArn: string) {
+		return new PolicyStatement({
+			sid: 'readDataStorageBucketPolicy',
+			effect: Effect.ALLOW,
+			actions: ['s3:GetObject', 's3:GetObjectVersion', 's3:ListBucket'],
+			resources: [`${bucketArn}/*`, `${bucketArn}`],
+		});
+	}
+
 	static readWriteDataStorageBucketPolicy(bucketArn: string) {
 		return new PolicyStatement({
 			sid: 'writeToDataStorageBucketPolicy',
@@ -409,7 +452,6 @@ EOL`,
 				's3:GetObjectVersion',
 				's3:DeleteObject',
 				's3:ListBucket',
-				's3:DeleteObjectVersion',
 			],
 			resources: [`${bucketArn}/*`, `${bucketArn}`],
 		});

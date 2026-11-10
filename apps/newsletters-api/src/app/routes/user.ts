@@ -4,8 +4,8 @@ import { getUserProfile } from '../get-user-profile';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 export function registerUserRoute(app: Express) {
-	app.get('/api/user/whoami', (req, res) => {
-		const maybeUser = getUserProfile(req);
+	app.get('/api/user/whoami', async (req, res) => {
+		const maybeUser = await getUserProfile(req);
 		if (!maybeUser.profile) {
 			return res.status(500).send(makeErrorResponse(maybeUser.errorMessage));
 		}
@@ -13,7 +13,7 @@ export function registerUserRoute(app: Express) {
 	});
 
 	app.get('/api/user/permissions', async (req, res) => {
-		const maybeUser = getUserProfile(req);
+		const maybeUser = await getUserProfile(req);
 		const permissions = await permissionService.get(maybeUser.profile);
 		return res.send(makeSuccessResponse(permissions));
 	});

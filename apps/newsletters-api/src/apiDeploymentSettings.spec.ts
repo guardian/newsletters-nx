@@ -1,5 +1,6 @@
 import {
 	areTestFixturesEnabled,
+	isJwtVerificationEnabled,
 	isServingReadEndpoints,
 	isServingReadWriteEndpoints,
 	isServingUI,
@@ -184,6 +185,25 @@ describe('isUsingGuardianPermissions', () => {
 		process.env.USE_GUARDIAN_PERMISSIONS = 'foo';
 		expect(isUsingGuardianPermissions()).toBe(false);
 	});
+});
+
+describe('isJwtVerificationEnabled', () => {
+	it('enables verification only when explicitly set to true', () => {
+		process.env.ENABLE_JWT_VERIFICATION = 'true';
+		expect(isJwtVerificationEnabled()).toBe(true);
+	});
+
+	it.each([undefined, 'false', '', 'TRUE', '1', 'foo'])(
+		'disables verification when the flag is %j',
+		(value) => {
+			if (value === undefined) {
+				delete process.env.ENABLE_JWT_VERIFICATION;
+			} else {
+				process.env.ENABLE_JWT_VERIFICATION = value;
+			}
+			expect(isJwtVerificationEnabled()).toBe(false);
+		},
+	);
 });
 
 describe('areTestFixturesEnabled', () => {
