@@ -13,6 +13,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuPolicy",
       "GuPolicy",
       "GuStringParameter",
+      "GuStringParameter",
       "GuDistributionBucketParameter",
       "GuVpcParameter",
       "GuSubnetListParameter",
@@ -51,7 +52,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuAlb5xxPercentageAlarm",
       "GuUnhealthyInstancesAlarm",
       "GuHttpsEgressSecurityGroup",
-      "GuStringParameter",
       "GuCname",
       "GuCname",
       "GuDeveloperPolicyExperimental",
@@ -2404,8 +2404,10 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USE_GUARDIAN_PERMISSIONS=true
+Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 Environment=ENABLE_EMAIL_SERVICE=false
+
 [Install]
 WantedBy=multi-user.target
 EOL
@@ -2597,10 +2599,21 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USE_GUARDIAN_PERMISSIONS=true
+Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
 Environment=ENABLE_EMAIL_SERVICE=",
                   {
                     "Ref": "SsmParameterValueTESTnewslettersnewsletterstoolenableEmailServiceC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                  "
+Environment=ALB_ARN=",
+                  {
+                    "Ref": "LoadBalancerNewsletterstoolE9AB350F",
+                  },
+                  "
+Environment=GOOGLE_CLIENT_ID=",
+                  {
+                    "Ref": "GoogleClientID",
                   },
                   "
 [Install]

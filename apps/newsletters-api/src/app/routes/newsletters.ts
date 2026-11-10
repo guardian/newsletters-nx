@@ -102,8 +102,8 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 		legacyHeaders: false,
 	});
 	const doesNotHaveAccess = async (request: Request, reply: Response) => {
-		const user = getUserProfile(request);
-		const isAuthorised = await hasEditAccess(user.profile);
+		const maybeUser = await getUserProfile(request);
+		const isAuthorised = await hasEditAccess(maybeUser.profile);
 		const body = request.body as unknown;
 		const update = replaceNullWithUndefinedForUnknown(body);
 
@@ -113,7 +113,10 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 		}
 
 		const isAuthorisedForUpdate =
-			await isAuthorisedToMakeRequestedNewsletterUpdate(user.profile, update);
+			await isAuthorisedToMakeRequestedNewsletterUpdate(
+				maybeUser.profile,
+				update,
+			);
 		if (!isAuthorised || !isAuthorisedForUpdate) {
 			void reply
 				.status(403)
@@ -132,7 +135,7 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 				return;
 			}
 
-			const user = getUserProfile(req);
+			const maybeUser = await getUserProfile(req);
 
 			const { newsletterId } = req.params;
 			const modifications = req.body as unknown;
@@ -155,13 +158,13 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 			// This test would never fail on the current implementation since
 			// user.profile must be defined or there would be an accessDeniedError.
 			// Kept in to preserve type-safety.
-			if (!user.profile) {
+			if (!maybeUser.profile) {
 				return res.status(403).send(makeErrorResponse('No user profile.'));
 			}
 			const storageResponse = await newsletterStore.update(
 				newsletterIdAsNumber,
 				modifications,
-				user.profile,
+				maybeUser.profile,
 			);
 
 			if (!storageResponse.ok) {
@@ -183,9 +186,9 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 				return;
 			}
 
-			const user = getUserProfile(req);
+			const maybeUser = await getUserProfile(req);
 			const accessDeniedError = await makeAccessDeniedApiResponse(
-				user.profile,
+				maybeUser.profile,
 				'editEverything',
 			);
 			if (accessDeniedError) {
@@ -210,14 +213,14 @@ export function registerReadWriteNewsletterRoutes(app: Express) {
 					.send(makeErrorResponse(`Not a valid newsletter`));
 			}
 
-			if (!user.profile) {
+			if (!maybeUser.profile) {
 				return res.status(403).send(makeErrorResponse('No user profile'));
 			}
 
 			const storageResponse = await newsletterStore.replace(
 				newsletterIdAsNumber,
 				newsletter,
-				user.profile,
+				maybeUser.profile,
 			);
 
 			if (!storageResponse.ok) {
