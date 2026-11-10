@@ -317,7 +317,7 @@ describe('IntegrationsPanel', () => {
 			).toBeVisible();
 		});
 
-		it('disables the save button while a field is invalid and re-enables it once fixed', async () => {
+		it('keeps Save enabled while a field is invalid and explains why it cannot save', async () => {
 			const user = userEvent.setup();
 			render(
 				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
@@ -327,17 +327,22 @@ describe('IntegrationsPanel', () => {
 			const saveButton = await screen.findByRole('button', {
 				name: 'Save changes',
 			});
-			expect(saveButton).toBeEnabled();
-
 			const input = await screen.findByRole('textbox', {
 				name: /^brazeNewsletterName( \*)?$/,
 			});
 			await user.type(input, ' not valid!');
-			expect(saveButton).toBeDisabled();
+			expect(saveButton).toBeEnabled();
+
+			await user.click(saveButton);
+			expect(requestNewsletterEdit).not.toHaveBeenCalled();
+			expect(screen.getByRole('alert')).toHaveTextContent(
+				`Unable to save changesbrazeNewsletterName: ${underscoreCasedMessage}`,
+			);
+			expect(screen.getByText('Editing')).toBeVisible();
 
 			await user.clear(input);
 			await user.type(input, 'Valid_Again');
-			expect(saveButton).toBeEnabled();
+			expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 		});
 
 		it('does not submit invalid data when Enter is pressed', async () => {
@@ -354,6 +359,9 @@ describe('IntegrationsPanel', () => {
 			await user.type(input, 'not valid!{Enter}');
 
 			expect(requestNewsletterEdit).not.toHaveBeenCalled();
+			expect(screen.getByRole('alert')).toHaveTextContent(
+				`Unable to save changesbrazeNewsletterName: ${underscoreCasedMessage}`,
+			);
 			expect(screen.getByText('Editing')).toBeVisible();
 		});
 

@@ -114,7 +114,7 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 		);
 	});
 
-	it('disables Save and shows the field error when a new image fails to load', () => {
+	it('explains why it cannot save when a new image fails to load', () => {
 		render(<NewsletterDetailPanels newsletter={withImages()} />);
 		startEditing('Images');
 		fireEvent.change(imageInput('Newsletter square (1:1)'), {
@@ -127,14 +127,22 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 				"Couldn't load an image from that URL. Check the link and try again.",
 			),
 		).toBeTruthy();
-		expect(saveButton()).toHaveProperty('disabled', true);
+		expect(saveButton()).toHaveProperty('disabled', false);
 		fireEvent.click(saveButton());
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
-		expect(panel('Images').queryByRole('alert')).toBeNull();
+		expect(panel('Images').getByRole('alert').textContent).toContain(
+			'Unable to save changesNewsletter square (1:1) couldn’t be loaded. Check the URL and try again.',
+		);
 		expect(panel('Images').getByText('Editing')).toBeTruthy();
+
+		fireEvent.change(imageInput('Newsletter square (1:1)'), {
+			target: { value: 'https://example.com/fixed.jpg' },
+		});
+		reportImage('Newsletter square (1:1)', 'load');
+		expect(panel('Images').queryByRole('alert')).toBeNull();
 	});
 
-	it('disables Save while a new image is still being checked', () => {
+	it('explains why it cannot save while a new image is still being checked', () => {
 		render(<NewsletterDetailPanels newsletter={withImages()} />);
 		startEditing('Images');
 		fireEvent.change(imageInput('Newsletter square (1:1)'), {
@@ -144,9 +152,14 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 		expect(panel('Images').getAllByText('Checking image…')).toHaveLength(
 			imageLabels.length,
 		);
-		expect(saveButton()).toHaveProperty('disabled', true);
+		expect(saveButton()).toHaveProperty('disabled', false);
 		fireEvent.click(saveButton());
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
+		expect(panel('Images').getByRole('alert').textContent).toContain(
+			'Unable to save changesNewsletter square (1:1) is still being checked. Please wait and try again.',
+		);
+
+		reportImage('Newsletter square (1:1)', 'load');
 		expect(panel('Images').queryByRole('alert')).toBeNull();
 	});
 

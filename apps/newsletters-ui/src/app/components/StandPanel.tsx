@@ -28,8 +28,6 @@ interface StandPanelProps {
 	/** Return true on success, an error message on failure, or false for the generic error. */
 	onSave?: () => SaveResult | Promise<SaveResult>;
 
-	/** Set to false to disable "Save changes", e.g. while a field is invalid. Defaults to true. */
-	canSave?: boolean;
 	/**
 	 * Runs before saving; return true to continue or an error message to stop without scrolling.
 	 * While a validation error is shown it also re-runs on each render so the error hides once fixed.
@@ -159,7 +157,6 @@ const EditableStandPanel = ({
 	children,
 	actions,
 	onSave,
-	canSave = true,
 	onValidate,
 	onCancel,
 	onEdit,
@@ -282,7 +279,7 @@ const EditableStandPanel = ({
 				css={formStyle}
 				onSubmit={(event) => {
 					event.preventDefault();
-					if (isEditing && canSave) {
+					if (isEditing) {
 						void save();
 					}
 				}}
@@ -326,7 +323,7 @@ const EditableStandPanel = ({
 									type="submit"
 									variant="primary"
 									size="sm"
-									isDisabled={isSaving || !canEdit || !canSave}
+									isDisabled={isSaving || !canEdit}
 								>
 									{isSaving ? 'Saving changes...' : 'Save changes'}
 								</Button>
@@ -346,7 +343,6 @@ export const StandPanel = ({
 	actions,
 	subgrid = false,
 	onSave,
-	canSave,
 	onValidate,
 	onCancel,
 	onEdit,
@@ -359,7 +355,6 @@ export const StandPanel = ({
 				actions={actions}
 				subgrid={subgrid}
 				onSave={onSave}
-				canSave={canSave}
 				onValidate={onValidate}
 				onCancel={onCancel}
 				onEdit={onEdit}
