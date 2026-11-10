@@ -24,7 +24,7 @@ const firstTabStyles = css`
 `;
 
 // Driven by the route: selecting a tab navigates, so the URL changes and Back
-// works. Layout links to the existing preview until the Layout tab is built.
+// works. Layout links to the rendering options (which include the preview) until the Layout tab is built.
 export const NewsletterDetailTabs = ({ identityName, selected }: Props) => {
 	const navigate = useNavigate();
 	const id = encodeURIComponent(identityName);
@@ -39,7 +39,7 @@ export const NewsletterDetailTabs = ({ identityName, selected }: Props) => {
 					}
 					void navigate(
 						key === 'layout'
-							? `/launched/preview/${id}`
+							? `/launched/rendering-options/${id}`
 							: `/newsletters/${id}/details`,
 					);
 				}}
