@@ -1,8 +1,9 @@
 // Log fields follow Elastic Common Schema (ECS): https://www.elastic.co/docs/reference/ecs
+// The shared ELK index requires client and url to be strings, not ECS objects.
 type LogLevel = 'info' | 'warn' | 'error';
 
 type LogContext = {
-	client?: { ip: string | undefined };
+	client?: string;
 	event?: {
 		action: string;
 		duration?: number;
@@ -14,7 +15,7 @@ type LogContext = {
 		request: { method: string };
 		response?: { status_code: number };
 	};
-	url?: { path: string };
+	url?: string;
 	error?: { type: string };
 };
 
