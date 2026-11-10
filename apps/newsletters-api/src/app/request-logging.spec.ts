@@ -116,7 +116,8 @@ describe('requestLoggingMiddleware', () => {
 					request: { method: 'GET' },
 					response: { status_code: 200 },
 				},
-				url: { path: '/api/status/200' },
+				url: '/api/status/200',
+				client: '127.0.0.1',
 			});
 			expect(log).toMatch(/"@timestamp":"\d{4}-\d{2}-\d{2}T[^"]+Z"/);
 			expect(log).toMatch(/"duration":\d+/);
@@ -147,7 +148,7 @@ describe('requestLoggingMiddleware', () => {
 			});
 			await response.text();
 			expect(console.log).toHaveBeenCalledWith(
-				expect.stringContaining(`"client":{"ip":"${ip}"}`),
+				expect.stringContaining(`"client":"${ip}"`),
 			);
 			expect(console.log).not.toHaveBeenCalledWith(
 				expect.stringContaining('198.51.100.99'),
@@ -159,7 +160,7 @@ describe('requestLoggingMiddleware', () => {
 		const response = await fetch(`${origin}/api/status/200`);
 		await response.text();
 		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining('"client":{"ip":"127.0.0.1"}'),
+			expect.stringContaining('"client":"127.0.0.1"'),
 		);
 	});
 
@@ -170,7 +171,7 @@ describe('requestLoggingMiddleware', () => {
 		});
 		await response.text();
 		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining('"client":{"ip":"127.0.0.1"}'),
+			expect.stringContaining('"client":"127.0.0.1"'),
 		);
 	});
 	it('does not log health checks or other non-API requests', async () => {

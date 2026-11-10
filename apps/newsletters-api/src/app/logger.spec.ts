@@ -39,4 +39,22 @@ describe('ECS logger', () => {
 			error: { type: 'UnknownError' },
 		});
 	});
+
+	it('keeps client and url as strings for the shared ELK mappings', () => {
+		const output = jest
+			.spyOn(console, 'log')
+			.mockImplementation(() => undefined);
+		log('info', 'Request completed', {
+			client: '203.0.113.42',
+			url: '/api/newsletters',
+		});
+		const line: unknown = output.mock.calls[0]?.[0];
+		if (typeof line !== 'string') {
+			throw new Error('Expected a JSON string');
+		}
+		expect(JSON.parse(line)).toMatchObject({
+			client: '203.0.113.42',
+			url: '/api/newsletters',
+		});
+	});
 });

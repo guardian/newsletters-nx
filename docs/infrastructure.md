@@ -77,13 +77,13 @@ installs instance-tag discovery and
 [devx-logs](https://github.com/guardian/devx-logs/tree/main/ec2), which configures
 Fluent Bit to collect the selected systemd journal and send it to Kinesis.
 
-### ECS JSON output
+### ECS-based JSON output and shared-index compatibility
 
 The API's own diagnostic and request logs use the shared
 [`logger.ts`](../apps/newsletters-api/src/app/logger.ts), emitting one JSON line
 to **stdout**, including errors and warnings. The systemd unit directs stdout
 to the journal. Records use [Elastic Common Schema](https://www.elastic.co/docs/reference/ecs)
-with nested JSON objects:
+with nested JSON objects, except for `client` and `url` as described below:
 
 - `@timestamp`, `ecs.version`, `log.level`, and `message`.
 - `service.name` (identifies `newsletters-tool` or `newsletters-api`),
@@ -92,14 +92,27 @@ with nested JSON objects:
 - Completed `/api/` requests include `event.action=newsletters_api_request`,
   `event.category=["web"]`, `event.type=["access"]`, `event.duration` (in
   **nanoseconds**), `http.request.method`, `http.response.status_code`, and
-  `url.path`. `event.outcome` uses the server perspective: 5xx is failure,
+  `url` (the request path only). `event.outcome` uses the server perspective: 5xx is failure,
   other HTTP responses are success; 4xx still receives `log.level=warn`.
-- Request logs also include `client.ip`, obtained from Express's `req.ip`.
+- Request logs also include `client` as an IP address string, obtained from Express's `req.ip`.
   Deployed apps trust one ALB proxy hop and use the address in
   `X-Forwarded-For` header from the load balancer.
   Locally, proxy trust is disabled and the socket address is used.
 - Errors include `error.type`; raw exception messages, stacks, and arbitrary
   thrown objects are deliberately omitted because they can contain secrets.
+
+The shared `logstash-*` indices have legacy mappings: `client` is mapped as
+`text` in the PROD index inspected during diagnosis, and `url` is mapped as
+`text` in other indices. Sending ECS objects (`client.ip` or `url.path`) to
+those text fields can cause Elasticsearch to reject the whole record.
+Both fields therefore deliberately use strings rather than standard ECS
+objects. All application logs containing these fields use the same shape.
+Client IPs remain personal data; do not copy raw request logs into tickets or chats.
+Query strings, headers and request bodies are not logged.
+
+Some shared indices also map `http.response.status_code` as text, so numeric
+range queries on that field are not reliable across indices. Use
+`event.outcome` or `log.level` to find failures.
 
 ### Verify on CODE
 
@@ -113,13 +126,16 @@ with nested JSON objects:
     sudo systemctl status td-agent-bit --no-pager
     ```
 
-4. Confirm the records reach central ELK for both app/stage.
+4. Confirm **request records**, not just startup or cloud-init records, reach
+   central ELK for both app/stage. A running collector alone does not establish
+   that Elasticsearch accepted the records. After deploying this compatibility
+   change, generate fresh requests: previously rejected records may not be replayed.
 
 An example Kibana search (using ECS fields) is:
 
 ```text
 service.name : "newsletters-tool" and service.environment : "CODE"
-and http.response.status_code >= 500
+and event.action : "newsletters_api_request" and event.outcome : "failure"
 ```
 
 ## Change infrastructure

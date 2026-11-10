@@ -25,8 +25,8 @@ export const requestLoggingMiddleware: RequestHandler = (req, res, next) => {
 				request: { method: req.method },
 				response: { status_code: res.statusCode },
 			},
-			url: { path: req.path },
-			client: { ip: req.ip },
+			url: req.path,
+			client: req.ip,
 		});
 	});
 
