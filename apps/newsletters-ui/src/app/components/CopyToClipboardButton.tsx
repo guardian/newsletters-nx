@@ -17,7 +17,17 @@ const messageStyles = css`
 	color: ${semanticColors.text.weak};
 `;
 
-export const CopyToClipboardButton = ({ text }: { text: string }) => {
+export const CopyToClipboardButton = ({
+	text,
+	label = 'Copy',
+	ariaLabel,
+}: {
+	text: string;
+	/** The visible button text */
+	label?: string;
+	/** Distinguishes the button when several share the same label */
+	ariaLabel?: string;
+}) => {
 	const [message, setMessage] = useState<string>();
 	const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -46,9 +56,10 @@ export const CopyToClipboardButton = ({ text }: { text: string }) => {
 				variant="tertiary"
 				size="xs"
 				icon="content_copy"
+				aria-label={ariaLabel}
 				onPress={() => void copy()}
 			>
-				Copy
+				{label}
 			</Button>
 			<span role="status">
 				{message && (

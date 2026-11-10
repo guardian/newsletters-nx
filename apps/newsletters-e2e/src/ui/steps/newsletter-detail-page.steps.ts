@@ -728,24 +728,38 @@ Then(
 );
 
 Then(
+	'the {string} panel shows these thumbnails:',
+	async ({ page }, panelName: string, table: DataTable) => {
+		const panel = panelByName(page, panelName);
+		for (const { label, value } of table.hashes()) {
+			if (label === undefined || value === undefined) {
+				throw new Error('Table must have "label" and "value" columns');
+			}
+			await expect(
+				definitionForLabel(panel, label).locator('img'),
+			).toHaveAttribute('src', value);
+		}
+	},
+);
+Then(
 	'the {string} panel lists these images in order:',
 	async ({ page }, panelName: string, table: DataTable) => {
 		const panel = panelByName(page, panelName);
-		const urlsByLabel: Record<string, string> = {
-			'Main banner graphic': BANNER_URL,
-			'Main banner graphic (mobile)': BANNER_MOBILE_URL,
-			'Newsletter graphic (5:3)': GRAPHIC_URL,
-			'Newsletter square (1:1)': SQUARE_URL,
-		};
-		const expectedRows: PanelRow[] = table.hashes().map(({ label }) => {
-			const value = label && urlsByLabel[label];
-			if (!value) {
-				throw new Error(`Unknown image label: ${label}`);
+		const labels = table.hashes().map(({ label }) => {
+			if (!label) {
+				throw new Error('Images table must have a "label" column');
 			}
-			return { label: label, value };
+			return label;
 		});
-
-		await expectPanelRowsInOrder(panel, expectedRows);
+		await expect(panel.getByRole('term')).toHaveText(labels);
+		// The URL is copied with a button rather than shown as text
+		for (const label of labels) {
+			await expect(
+				definitionForLabel(panel, label).getByRole('button', {
+					name: `Copy image URL for ${label}`,
+				}),
+			).toBeVisible();
+		}
 	},
 );
 
