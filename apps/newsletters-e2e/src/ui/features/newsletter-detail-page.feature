@@ -230,7 +230,7 @@ Feature: Launched newsletter: open it and find my way around
 				| Newsletter square (1:1)      | https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg                             |
 			And the editor saves Images
 			And the editor reloads the newsletter detail page
-			Then the "Images" panel shows:
+			Then the "Images" panel shows these thumbnails:
 				| label                        | value                                                                              |
 				| Main banner graphic          | https://uploads.guim.co.uk/2024/08/14/BreakingNewsAustralia_Red_2_email-header.png |
 				| Main banner graphic (mobile) | https://uploads.guim.co.uk/2025/06/30/Business.jpg                                 |

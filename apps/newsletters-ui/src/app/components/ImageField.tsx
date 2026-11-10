@@ -5,6 +5,7 @@ import {
 	semanticRadius,
 	semanticSpacing,
 } from '@guardian/stand';
+import { Button } from '@guardian/stand/Button';
 import { Icon } from '@guardian/stand/Icon';
 import { InlineMessage } from '@guardian/stand/InlineMessage';
 import { TextInput } from '@guardian/stand/TextInput';
@@ -190,7 +191,27 @@ export const useImageDraft = () => {
 
 export type ImageDraft = ReturnType<typeof useImageDraft>;
 
-/** Read-only: the image and a link to it, or an empty box and "Not set" */
+const CopyUrlButton = ({ url, label }: { url: string; label: string }) => {
+	const [copied, setCopied] = useState(false);
+	return (
+		<span css={imageTextStyles}>
+			<Button
+				type="button"
+				variant="tertiary"
+				size="xs"
+				aria-label={`Copy image URL for ${label}`}
+				onPress={() => {
+					void navigator.clipboard.writeText(url).then(() => {
+						setCopied(true);
+					});
+				}}
+			>
+				{copied ? 'Copied' : 'Copy image URL'}
+			</Button>
+		</span>
+	);
+};
+/** Read-only: the image and a button to copy its URL, or an empty box and "Not set" */
 export const ImageValue = ({
 	label,
 	url,
@@ -204,11 +225,9 @@ export const ImageValue = ({
 		<span css={imageRowStyles}>
 			{url ? (
 				<>
-					{/* Decorative: the link beside it gives the address */}
+					{/* Decorative: the button beside it copies the address */}
 					<img src={url} alt="" css={imageBoxStyles(shape)} />
-					<a href={url} target="_blank" rel="noreferrer" css={imageTextStyles}>
-						{url}
-					</a>
+					<CopyUrlButton url={url} label={label} />
 				</>
 			) : (
 				<>

@@ -7,7 +7,11 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { scrollIntoView } from '../../test-utils/dom';
 import { allowEditing, newsletterFixture } from '../../test-utils/newsletter';
-import { panel, valueFor } from '../../test-utils/newsletter-detail-page';
+import {
+	imageSrcFor,
+	panel,
+	valueFor,
+} from '../../test-utils/newsletter-detail-page';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { NewsletterDetailPanels } from './NewsletterDetailPanels';
 
@@ -175,7 +179,7 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 				displayDate: true,
 			},
 		});
-		expect(valueFor('Newsletter square (1:1)')).toBe(newSquare);
+		expect(imageSrcFor('Newsletter square (1:1)')).toBe(newSquare);
 	});
 
 	it.each([
@@ -204,7 +208,7 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 			const update = vi.mocked(requestNewsletterEdit).mock.calls[0]?.[1];
 			expect(update).not.toHaveProperty('renderingOptions');
 			expect(isPartialNewsletterData(update)).toBe(true);
-			expect(valueFor(label)).toBe(url);
+			expect(imageSrcFor(label)).toBe(url);
 		},
 	);
 	it.each([
@@ -240,7 +244,7 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 					vi.mocked(requestNewsletterEdit).mock.calls[0]?.[1],
 				),
 			).toBe(true);
-			expect(valueFor(label)).toBe(url);
+			expect(imageSrcFor(label)).toBe(url);
 		},
 	);
 	it('unsets cleared images and removes cleared banners from the rendering options', async () => {
@@ -274,7 +278,7 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 		});
 
 		fireEvent.click(panel('Images').getByRole('button', { name: 'Cancel' }));
-		expect(valueFor('Main banner graphic')).toBe(imageUrls.mainBanner);
+		expect(imageSrcFor('Main banner graphic')).toBe(imageUrls.mainBanner);
 
 		startEditing('Images');
 		expect(imageInput('Main banner graphic').value).toBe(imageUrls.mainBanner);
@@ -282,6 +286,32 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 	});
 });
 
+describe('ImagesPanel view mode', () => {
+	it('shows a Copy image URL button instead of the URL, and copies the URL', async () => {
+		const writeText = vi.fn().mockResolvedValue(undefined);
+		Object.defineProperty(navigator, 'clipboard', {
+			value: { writeText },
+			configurable: true,
+		});
+		render(<NewsletterDetailPanels newsletter={withImages()} />);
+		expect(valueFor('Main banner graphic')).toBe('Copy image URL');
+		expect(panel('Images').queryByText(imageUrls.mainBanner)).toBeNull();
+		fireEvent.click(
+			panel('Images').getByRole('button', {
+				name: 'Copy image URL for Main banner graphic',
+			}),
+		);
+		expect(writeText).toHaveBeenCalledWith(imageUrls.mainBanner);
+		await panel('Images').findByText('Copied');
+	});
+	it('shows "Not set" without a copy button when there is no image', () => {
+		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
+		expect(valueFor('Main banner graphic')).toBe('Not set');
+		expect(
+			panel('Images').queryByRole('button', { name: /Copy image URL/ }),
+		).toBeNull();
+	});
+});
 describe('Jump to', () => {
 	afterEach(() => {
 		window.history.replaceState(null, '', '/');
@@ -617,7 +647,7 @@ describe('NewsletterDetailPanels', () => {
 				})}
 			/>,
 		);
-		expect(valueFor('Main banner graphic')).toBe(
+		expect(imageSrcFor('Main banner graphic')).toBe(
 			'https://uploads.guim.co.uk/2025/06/30/Business.jpg',
 		);
 		expect(
@@ -627,7 +657,7 @@ describe('NewsletterDetailPanels', () => {
 				?.getAttribute('src'),
 		).toBe('https://uploads.guim.co.uk/2025/06/30/Business.jpg');
 		expect(valueFor('Main banner graphic (mobile)')).toBe('Not set');
-		expect(valueFor('Newsletter graphic (5:3)')).toBe(
+		expect(imageSrcFor('Newsletter graphic (5:3)')).toBe(
 			'https://uploads.guim.co.uk/2025/06/30/Business_5-3.jpg',
 		);
 		expect(valueFor('Newsletter square (1:1)')).toBe('Not set');
