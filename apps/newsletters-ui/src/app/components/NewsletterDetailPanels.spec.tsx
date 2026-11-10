@@ -302,7 +302,7 @@ describe('ImagesPanel view mode', () => {
 			}),
 		);
 		expect(writeText).toHaveBeenCalledWith(imageUrls.mainBanner);
-		await panel('Images').findByText('Copied');
+		await panel('Images').findByText('Copied to clipboard');
 	});
 	it('shows "Not set" without a copy button when there is no image', () => {
 		render(<NewsletterDetailPanels newsletter={newsletterFixture()} />);
