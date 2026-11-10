@@ -378,11 +378,11 @@ Then('the {string} tab is selected', async ({ page }, tab: string) => {
 	);
 });
 Then(
-	'the existing preview for {string} is shown',
+	'the rendering options for {string} are shown',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(page).toHaveURL(
 			new RegExp(
-				`/launched/preview/${identityNameFor(namedNewsletters, name)}$`,
+				`/launched/rendering-options/${identityNameFor(namedNewsletters, name)}$`,
 			),
 		);
 	},
