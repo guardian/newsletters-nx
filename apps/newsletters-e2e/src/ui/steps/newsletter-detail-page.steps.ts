@@ -754,9 +754,11 @@ Then(
 		await expect(panel.getByRole('term')).toHaveText(labels);
 		// The URL is copied with a button rather than shown as text
 		for (const label of labels) {
-			await expect(definitionForLabel(panel, label)).toHaveText(
-				'Copy image URL',
-			);
+			await expect(
+				definitionForLabel(panel, label).getByRole('button', {
+					name: `Copy image URL for ${label}`,
+				}),
+			).toBeVisible();
 		}
 	},
 );
