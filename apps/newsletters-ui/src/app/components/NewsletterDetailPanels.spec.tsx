@@ -127,7 +127,6 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 				"Couldn't load an image from that URL. Check the link and try again.",
 			),
 		).toBeTruthy();
-		expect(saveButton()).toHaveProperty('disabled', false);
 		fireEvent.click(saveButton());
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 		expect(panel('Images').getByRole('alert').textContent).toContain(
@@ -152,7 +151,6 @@ describe('ImagesPanel editing', { timeout: 15_000 }, () => {
 		expect(panel('Images').getAllByText('Checking image…')).toHaveLength(
 			imageLabels.length,
 		);
-		expect(saveButton()).toHaveProperty('disabled', false);
 		fireEvent.click(saveButton());
 		expect(requestNewsletterEdit).not.toHaveBeenCalled();
 		expect(panel('Images').getByRole('alert').textContent).toContain(

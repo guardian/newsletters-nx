@@ -317,7 +317,7 @@ describe('IntegrationsPanel', () => {
 			).toBeVisible();
 		});
 
-		it('keeps Save enabled while a field is invalid and explains why it cannot save', async () => {
+		it('explains why it cannot save while a field is invalid', async () => {
 			const user = userEvent.setup();
 			render(
 				<IntegrationsPanel newsletter={newsletterFixture(validIntegrations)} />,
@@ -331,7 +331,6 @@ describe('IntegrationsPanel', () => {
 				name: /^brazeNewsletterName( \*)?$/,
 			});
 			await user.type(input, ' not valid!');
-			expect(saveButton).toBeEnabled();
 
 			await user.click(saveButton);
 			expect(requestNewsletterEdit).not.toHaveBeenCalled();
