@@ -62,13 +62,6 @@ function resolveStaticFilesPath(): string {
 export async function registerUIServer(app: Express) {
 	const pathToStaticFiles = resolveStaticFilesPath();
 
-	app.use(
-		serveStatic(pathToStaticFiles, {
-			// Don't serve index.html statically. Let it fall through to the route handlers below.
-			index: false,
-		}),
-	);
-
 	const indexHtml = await readIndexHtml(
 		path.join(pathToStaticFiles, 'index.html'),
 	);
@@ -92,4 +85,7 @@ export async function registerUIServer(app: Express) {
 			app.get(fullRoute, serveIndexHtml);
 		});
 	});
+
+	// Intentionally last. Assets are directly served only if not custom matching route exists.
+	app.use(serveStatic(pathToStaticFiles));
 }
