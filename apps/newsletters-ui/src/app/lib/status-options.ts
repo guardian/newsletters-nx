@@ -34,12 +34,12 @@ export const launchedStatusOptions = toOptions<LaunchedStatus>([
 	'cancelled',
 ]);
 
-/** The statuses the All Newsletters list can be filtered by, in the order offered. */
+/** The statuses the All Newsletters list can be filtered by, in lifecycle order. */
 export const statusFilterOptions = toOptions<NewsletterStatus>([
-	'live',
-	'pending',
-	'paused',
-	'cancelled',
 	'draft',
 	'ready-to-launch',
+	'pending',
+	'live',
+	'paused',
+	'cancelled',
 ]);
