@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import type { Column } from 'react-table';
 import { usePermissions } from '../hooks/user-hooks';
 import { useUrlSyncedTableState } from '../hooks/useUrlSyncedTableState';
+import { newsletterDetailPath } from '../lib/newsletter-detail-path';
 import { shouldShowEditOptions } from '../services/authorisation';
 import { formatCellDate, formatStatusCell } from './Cell';
 import { ExternalLinkButton } from './ExternalLinkButton';
@@ -29,7 +30,7 @@ export const NewslettersTable = ({ newsletters }: Props) => {
 				Header: 'Newsletter ID',
 				accessor: 'identityName',
 				Cell: ({ cell: { value } }) => (
-					<Link to={`/launched/${value}`} state={{ from: '/launched' }}>
+					<Link to={newsletterDetailPath(value)} state={{ from: '/launched' }}>
 						{value}
 					</Link>
 				),

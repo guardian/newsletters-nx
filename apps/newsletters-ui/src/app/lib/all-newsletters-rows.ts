@@ -6,15 +6,14 @@ import type {
 	Theme,
 } from '@newsletters-nx/newsletters-data-client';
 import { deriveUpdatedTimestamp } from '@newsletters-nx/newsletters-data-client';
-import type {
-	BadgeContent,
-	NewsletterStatus,
-} from '../components/NewsletterStatusBadge';
+import type { BadgeContent } from '../components/NewsletterStatusBadge';
 import {
 	getDraftStatus,
 	getDraftStatusBadgeContent,
 	getLaunchedStatusBadgeContent,
 } from '../components/NewsletterStatusBadge';
+import { newsletterDetailPath } from './newsletter-detail-path';
+import type { NewsletterStatus } from './status-options';
 
 export type NewsletterRowKind = 'launched' | 'draft';
 
@@ -65,7 +64,7 @@ export const launchedNewsletterToRow = (
 	// against multiple newsletters with the same identityName
 	id: `launched-${newsletter.identityName}-${newsletter.listId}`,
 	kind: 'launched',
-	href: `/launched/${newsletter.identityName}`,
+	href: newsletterDetailPath(newsletter.identityName),
 	name: newsletter.name,
 	theme: newsletter.theme,
 	category: newsletter.category,

@@ -3,6 +3,7 @@ import type { Express } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { hasEditAccess } from '../authorisation';
 import { getUserProfile } from '../get-user-profile';
+import { errorContext, log } from '../logger';
 import { makeErrorResponse, makeSuccessResponse } from '../responses';
 
 const guardianOrigin = 'https://www.theguardian.com';
@@ -56,7 +57,9 @@ export function registerSignupPathValidationRoute(app: Express) {
 			legacyHeaders: false,
 		}),
 		async (req, res) => {
-			if (!(await hasEditAccess(getUserProfile(req).profile))) {
+			const maybeUser = await getUserProfile(req);
+
+			if (!(await hasEditAccess(maybeUser.profile))) {
 				return res
 					.status(403)
 					.send(makeErrorResponse('You do not have edit access'));
@@ -74,7 +77,11 @@ export function registerSignupPathValidationRoute(app: Express) {
 					makeSuccessResponse({ valid: await checkSignupPath(path) }),
 				);
 			} catch (error) {
-				console.error('Failed to validate sign-up page path', error);
+				log(
+					'error',
+					'Failed to validate sign-up page path',
+					errorContext(error),
+				);
 				return res
 					.status(502)
 					.send(makeErrorResponse('Could not check the sign-up page path'));

@@ -49,8 +49,8 @@ export function registerWriteLayoutRoutes(app: Express) {
 	app.post('/api/layouts/:editionId', async (req, res) => {
 		const { editionId } = req.params;
 		const layout: unknown = req.body;
-		const user = getUserProfile(req);
-		const permissions = await permissionService.get(user.profile);
+		const maybeUser = await getUserProfile(req);
+		const permissions = await permissionService.get(maybeUser.profile);
 
 		if (!permissions.editEverything) {
 			return res

@@ -11,6 +11,8 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuPolicy",
       "GuPolicy",
       "GuPolicy",
+      "GuPolicy",
+      "GuStringParameter",
       "GuStringParameter",
       "GuDistributionBucketParameter",
       "GuVpcParameter",
@@ -50,7 +52,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuAlb5xxPercentageAlarm",
       "GuUnhealthyInstancesAlarm",
       "GuHttpsEgressSecurityGroup",
-      "GuStringParameter",
       "GuCname",
       "GuCname",
       "GuDeveloperPolicyExperimental",
@@ -871,10 +872,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             ],
           },
         ],
-        "AlarmDescription": "newsletters-api exceeded 5% error rate",
+        "AlarmDescription": "newsletters-api exceeded 20% error rate",
         "AlarmName": "High 5XX error percentage from newsletters-api in TEST",
         "ComparisonOperator": "GreaterThanThreshold",
-        "EvaluationPeriods": 1,
+        "EvaluationPeriods": 25,
         "Metrics": [
           {
             "Expression": "100*(m1+m2)/m3",
@@ -974,7 +975,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             "Value": "TEST",
           },
         ],
-        "Threshold": 5,
+        "Threshold": 20,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -996,10 +997,10 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             ],
           },
         ],
-        "AlarmDescription": "newsletters-tool exceeded 5% error rate",
+        "AlarmDescription": "newsletters-tool exceeded 20% error rate",
         "AlarmName": "High 5XX error percentage from newsletters-tool in TEST",
         "ComparisonOperator": "GreaterThanThreshold",
-        "EvaluationPeriods": 1,
+        "EvaluationPeriods": 25,
         "Metrics": [
           {
             "Expression": "100*(m1+m2)/m3",
@@ -1099,7 +1100,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
             "Value": "TEST",
           },
         ],
-        "Threshold": 5,
+        "Threshold": 20,
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
@@ -1696,7 +1697,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
                 "s3:GetObjectVersion",
                 "s3:DeleteObject",
                 "s3:ListBucket",
-                "s3:DeleteObjectVersion",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -2392,7 +2392,10 @@ Restart=on-failure
 Environment=STAGE=TEST
 Environment=STACK=newsletters
 Environment=APP=newsletters-api
+Environment=NODE_ENV=production
+Environment=TRUST_ALB_PROXY=true
 Environment=NEWSLETTERS_API_READ=true
+Environment=NEWSLETTERS_API_READ_WRITE=false
 Environment=NEWSLETTERS_UI_SERVE=false
 Environment=NEWSLETTER_BUCKET_NAME=",
                   {
@@ -2401,8 +2404,10 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USE_GUARDIAN_PERMISSIONS=true
+Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 Environment=ENABLE_EMAIL_SERVICE=false
+
 [Install]
 WantedBy=multi-user.target
 EOL
@@ -2582,7 +2587,10 @@ Restart=on-failure
 Environment=STAGE=TEST
 Environment=STACK=newsletters
 Environment=APP=newsletters-tool
+Environment=NODE_ENV=production
+Environment=TRUST_ALB_PROXY=true
 Environment=NEWSLETTERS_API_READ=false
+Environment=NEWSLETTERS_API_READ_WRITE=true
 Environment=NEWSLETTERS_UI_SERVE=true
 Environment=NEWSLETTER_BUCKET_NAME=",
                   {
@@ -2591,10 +2599,21 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
 Environment=USE_GUARDIAN_PERMISSIONS=true
+Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
 Environment=ENABLE_EMAIL_SERVICE=",
                   {
                     "Ref": "SsmParameterValueTESTnewslettersnewsletterstoolenableEmailServiceC96584B6F00A464EAD1953AFF4B05118Parameter",
+                  },
+                  "
+Environment=ALB_ARN=",
+                  {
+                    "Ref": "LoadBalancerNewsletterstoolE9AB350F",
+                  },
+                  "
+Environment=GOOGLE_CLIENT_ID=",
+                  {
+                    "Ref": "GoogleClientID",
                   },
                   "
 [Install]
@@ -2684,7 +2703,6 @@ systemctl start newsletters-api",
                 "s3:GetObjectVersion",
                 "s3:DeleteObject",
                 "s3:ListBucket",
-                "s3:DeleteObjectVersion",
               ],
               "Effect": "Allow",
               "Resource": [
@@ -2719,6 +2737,50 @@ systemctl start newsletters-api",
           {
             "Ref": "InstanceRoleNewsletterstoolDD0F3665",
           },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "s3readonlypolicy43A08D64": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:ListBucket",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DataBucketNewsletterstool43BC2D76",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::GetAtt": [
+                    "DataBucketNewsletterstool43BC2D76",
+                    "Arn",
+                  ],
+                },
+              ],
+              "Sid": "readDataStorageBucketPolicy",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "readOnlyAccessToDataBucket",
+        "Roles": [
           {
             "Ref": "InstanceRoleNewslettersapi01755604",
           },

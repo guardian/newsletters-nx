@@ -17,16 +17,16 @@ import {
 	stickyListHeaderOffsetVar,
 	stickyListLayerVar,
 } from '../../lib/stand-layout';
+import type { NewsletterStatus } from '../../lib/status-options';
+import { statusFilterOptions } from '../../lib/status-options';
 import type { AllNewslettersData } from '../../loaders/all-newsletters';
 import { AllNewslettersTable } from '../AllNewslettersTable';
 import { FailedSourcesMessages } from '../home/FailedSourcesMessages';
-import type { NewsletterStatus } from '../NewsletterStatusBadge';
 import {
 	categoryOptions,
 	pillarOptions,
 	SearchAndFilterMenu,
 	sortOptions,
-	statusOptions,
 } from '../SearchAndFilterMenu';
 import type { NewsletterSort } from '../SearchAndFilterMenu';
 
@@ -124,7 +124,7 @@ export const allNewslettersSortParam = 'sort';
 
 const categoryValues = new Set<string>(categoryOptions.map(({ id }) => id));
 const pillarValues = new Set<string>(pillarOptions.map(({ id }) => id));
-const statusValues = new Set<string>(statusOptions.map(({ id }) => id));
+const statusValues = new Set<string>(statusFilterOptions.map(({ id }) => id));
 const sortValues = new Set<string>(sortOptions.map(({ id }) => id));
 
 export const AllNewslettersView = () => {

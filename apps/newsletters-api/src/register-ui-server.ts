@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import type { Express, Request, Response } from 'express';
-import { static as serveStatic } from 'express';
+import { Router, static as serveStatic } from 'express';
+import { log } from './app/logger';
 
 const routeMap = {
 	'/': [''],
@@ -58,30 +59,47 @@ function resolveStaticFilesPath(): string {
 	return path.resolve(process.cwd(), 'dist/apps/newsletters-ui');
 }
 
-export async function registerUIServer(app: Express) {
+export async function createUIRouter() {
 	const pathToStaticFiles = resolveStaticFilesPath();
-
-	app.use(serveStatic(pathToStaticFiles));
 
 	const indexHtml = await readIndexHtml(
 		path.join(pathToStaticFiles, 'index.html'),
 	);
 
+	const router = Router();
+
 	if (!indexHtml) {
-		console.warn(
+		log(
+			'warn',
 			'registerUIServer: index.html not found — UI routes not registered. In production, run `npm run build` first.',
 		);
-		return;
+		return router;
 	}
 
 	const serveIndexHtml = (_: Request, res: Response) => {
 		res.type('text/html').send(indexHtml);
 	};
 
+	router.use((req, res, next) => {
+		// Prevent UI routes from being included in an iframe
+		res.set('X-Frame-Options', 'DENY');
+		next();
+	});
+
 	Object.entries(routeMap).forEach(([routeName, paths]) => {
 		paths.forEach((subPath) => {
 			const fullRoute = path.posix.join(routeName, subPath);
-			app.get(fullRoute, serveIndexHtml);
+			router.get(fullRoute, serveIndexHtml);
 		});
 	});
+
+	// Intentionally last. Assets are directly served only if not custom matching route exists.
+	router.use(serveStatic(pathToStaticFiles));
+
+	return router;
+}
+
+export async function registerUIServer(app: Express) {
+	const router = await createUIRouter();
+	app.use('', router);
 }

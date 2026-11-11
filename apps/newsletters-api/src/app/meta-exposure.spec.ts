@@ -1,7 +1,7 @@
 import { isPublicReadOnlyApi } from '../apiDeploymentSettings';
 import { draftStore, newsletterStore } from '../services/storage';
 import { redactMetaForPublicApi } from './responses';
-import { registerDraftsRoutes } from './routes/drafts';
+import { registerDraftsReadRoutes } from './routes/drafts';
 import { registerReadNewsletterRoutes } from './routes/newsletters';
 import { invokeGetRoute } from './routes/test-helpers';
 
@@ -134,7 +134,7 @@ describe('redactMetaForPublicApi', () => {
 	});
 });
 
-describe('registerDraftsRoutes meta visibility', () => {
+describe('registerDraftsReadRoutes meta visibility', () => {
 	it.each([
 		{
 			description:
@@ -153,7 +153,7 @@ describe('registerDraftsRoutes meta visibility', () => {
 		mockDraftReadAll.mockResolvedValue({ ok: true, data: [DRAFT_WITH_META] });
 
 		const body = await invokeGetRoute<{ data: Array<{ meta?: unknown }> }>(
-			registerDraftsRoutes,
+			registerDraftsReadRoutes,
 			'/api/drafts',
 		);
 
@@ -165,7 +165,7 @@ describe('registerDraftsRoutes meta visibility', () => {
 		mockDraftRead.mockResolvedValue({ ok: true, data: DRAFT_WITH_META });
 
 		const body = await invokeGetRoute<{ data: { meta?: unknown } }>(
-			registerDraftsRoutes,
+			registerDraftsReadRoutes,
 			'/api/drafts/:listId',
 			{ params: { listId: '1' } },
 		);

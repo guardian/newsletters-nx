@@ -5,32 +5,33 @@ import type {
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
+import type { DraftStatus, LaunchedStatus } from '../lib/status-options';
+import { statusLabels } from '../lib/status-options';
 
-type LaunchedStatus = NewsletterData['status'];
-
-export type NewsletterStatus = LaunchedStatus | 'draft' | 'ready-to-launch';
-
-export const getDraftStatus = (
-	draft: DraftNewsletterData,
-): Extract<NewsletterStatus, 'draft' | 'ready-to-launch'> =>
+export const getDraftStatus = (draft: DraftNewsletterData): DraftStatus =>
 	calculateProgress(draft) >= 100 ? 'ready-to-launch' : 'draft';
+
+type BadgeColor = NonNullable<BadgeProps['color']>;
 
 export interface BadgeContent {
 	label: string;
-	color: NonNullable<BadgeProps['color']>;
+	color: BadgeColor;
 }
 
 // `paused` is intentionally the same colour as `cancelled` - see #777.
-const LAUNCHED_STATUS_BADGE_CONTENT: Record<LaunchedStatus, BadgeContent> = {
-	live: { label: 'Live', color: 'green' },
-	pending: { label: 'Pending', color: 'orange' },
-	cancelled: { label: 'Cancelled', color: 'grey' },
-	paused: { label: 'Paused', color: 'grey' },
+const LAUNCHED_STATUS_COLORS: Record<LaunchedStatus, BadgeColor> = {
+	live: 'green',
+	pending: 'orange',
+	cancelled: 'grey',
+	paused: 'grey',
 };
 
 export const getLaunchedStatusBadgeContent = (
 	status: LaunchedStatus,
-): BadgeContent => LAUNCHED_STATUS_BADGE_CONTENT[status];
+): BadgeContent => ({
+	label: statusLabels[status],
+	color: LAUNCHED_STATUS_COLORS[status],
+});
 
 // Progress is approximate/display-only by design - fine for a badge,
 // not for anything that gates behaviour.
@@ -40,8 +41,8 @@ export const getDraftStatusBadgeContent = (
 	const progress = calculateProgress(draft);
 
 	return progress >= 100
-		? { label: 'Ready to launch', color: 'warmPurple' }
-		: { label: `Draft • ${progress}%`, color: 'yellow' };
+		? { label: statusLabels['ready-to-launch'], color: 'warmPurple' }
+		: { label: `${statusLabels.draft} • ${progress}%`, color: 'yellow' };
 };
 
 export type NewsletterStatusBadgeProps = (
