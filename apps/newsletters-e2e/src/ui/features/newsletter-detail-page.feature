@@ -245,7 +245,8 @@ Feature: Launched newsletter: open it and find my way around
 				| label                   | value     |
 				| Newsletter square (1:1) | not a url |
 			Then the Images panel shows the error "Couldn't load an image from that URL. Check the link and try again."
-			And the editor cannot save Images
+			When the editor tries to save Images
+			Then Images remains editable with the save error "Newsletter square (1:1) couldn’t be loaded. Check the URL and try again."
 
 	Rule: Editors can edit and save Copy
 

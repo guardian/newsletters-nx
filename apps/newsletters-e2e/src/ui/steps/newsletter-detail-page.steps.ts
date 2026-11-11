@@ -811,7 +811,11 @@ When('the editor fills in Images:', async ({ page }, table: DataTable) => {
 
 When('the editor saves Images', async ({ page }) => {
 	const panel = panelByName(page, 'Images');
-	// "Save changes" is disabled until every image has been checked
+	// Saving is blocked, with an explanation, until every changed image has been
+	// checked. Not an exact match: the spinner icon shares the status element.
+	await expect(panel.getByText('Checking image…')).toHaveCount(0, {
+		timeout: 10_000,
+	});
 	await panel
 		.getByRole('button', { name: 'Save changes', exact: true })
 		.click();
@@ -829,14 +833,22 @@ Then(
 	},
 );
 
-Then('the editor cannot save Images', async ({ page }) => {
-	await expect(
-		panelByName(page, 'Images').getByRole('button', {
-			name: 'Save changes',
-			exact: true,
-		}),
-	).toBeDisabled();
+When('the editor tries to save Images', async ({ page }) => {
+	await panelByName(page, 'Images')
+		.getByRole('button', { name: 'Save changes', exact: true })
+		.click();
 });
+
+Then(
+	'Images remains editable with the save error {string}',
+	async ({ page }, message: string) => {
+		const panel = panelByName(page, 'Images');
+		await expect(panel.getByText('Editing', { exact: true })).toBeVisible();
+		const alert = panel.getByRole('alert');
+		await expect(alert).toContainText('Unable to save changes');
+		await expect(alert).toContainText(message);
+	},
+);
 
 const brazeTemplate = (page: Page): Locator =>
 	page

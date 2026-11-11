@@ -101,6 +101,20 @@ export const ImagesPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 		square: useImageDraft(),
 	};
 
+	/** Explains which changed images are still being checked or failed to load */
+	const validate = (): true | string => {
+		const problems = images.flatMap(({ shape, label }) => {
+			const draft = drafts[shape];
+			if (draft.canSave) {
+				return [];
+			}
+			return draft.state === 'loading'
+				? [`${label} is still being checked. Please wait and try again.`]
+				: [`${label} couldn’t be loaded. Check the URL and try again.`];
+		});
+		return problems.length === 0 || problems.join(' ');
+	};
+
 	const save = async (): Promise<boolean | string> => {
 		// Cleared banners are removed rather than sent as null
 		const renderingOptions =
@@ -135,7 +149,7 @@ export const ImagesPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 			id="images"
 			subgrid
 			onSave={save}
-			canSave={images.every(({ shape }) => drafts[shape].canSave)}
+			onValidate={validate}
 			onEdit={() => {
 				for (const { shape } of images) {
 					drafts[shape].start(urls[shape]);
