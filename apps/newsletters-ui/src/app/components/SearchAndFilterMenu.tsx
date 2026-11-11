@@ -11,7 +11,8 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import type { Key } from 'react-aria-components';
-import type { NewsletterStatus } from './NewsletterStatusBadge';
+import type { NewsletterStatus } from '../lib/status-options';
+import { statusFilterOptions } from '../lib/status-options';
 
 const categoryLabels: Record<NewsletterCategory, string> = {
 	'article-based': 'Article based',
@@ -37,18 +38,6 @@ const toSortedOptions = <T extends string>(labels: Record<T, string>) =>
 
 export const categoryOptions = toSortedOptions(categoryLabels);
 export const pillarOptions = toSortedOptions(pillarLabels);
-
-export const statusOptions: Array<{
-	id: NewsletterStatus;
-	label: string;
-}> = [
-	{ id: 'live', label: 'Live' },
-	{ id: 'pending', label: 'Pending' },
-	{ id: 'paused', label: 'Paused' },
-	{ id: 'cancelled', label: 'Cancelled' },
-	{ id: 'draft', label: 'Draft' },
-	{ id: 'ready-to-launch', label: 'Ready to launch' },
-];
 
 export type NewsletterSort = 'most-recent' | 'newsletter-name';
 
@@ -254,7 +243,7 @@ export const SearchAndFilterMenu = ({
 					}
 					cssOverrides={multiSelectStyles}
 				>
-					{statusOptions.map(({ id, label }) => (
+					{statusFilterOptions.map(({ id, label }) => (
 						<Option key={id} id={id}>
 							{label}
 						</Option>

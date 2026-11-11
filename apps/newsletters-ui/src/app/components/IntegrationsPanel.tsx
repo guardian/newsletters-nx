@@ -195,6 +195,11 @@ export const IntegrationsPanel = ({
 	const [draft, setDraft] = useState<IntegrationsDraft>({});
 	const errors = validate(draft);
 
+	const validateDraft = (): true | string => {
+		const parsed = parseDraft(draft);
+		return parsed.success || formatParseErrors(parsed.error, draft);
+	};
+
 	const save = async (): Promise<boolean | string> => {
 		const parsed = parseDraft(draft);
 		if (!parsed.success) {
@@ -221,7 +226,7 @@ export const IntegrationsPanel = ({
 			id="integrations"
 			subgrid
 			onSave={save}
-			canSave={Object.keys(errors).length === 0}
+			onValidate={validateDraft}
 			onEdit={() => {
 				setDraft(toDraft(current));
 			}}
@@ -300,6 +305,7 @@ const EditIntegrations = ({
 						});
 					}}
 					isInvalid={Boolean(errors.brazeCampaignCreationStatus)}
+					validationBehavior="aria"
 					error={errors.brazeCampaignCreationStatus}
 				>
 					<Radio
@@ -323,6 +329,7 @@ const EditIntegrations = ({
 					value={draft.brazeNewsletterName ?? ''}
 					onChange={(value) => onChange({ brazeNewsletterName: value })}
 					isInvalid={Boolean(errors.brazeNewsletterName)}
+					validationBehavior="aria"
 					error={errors.brazeNewsletterName}
 				/>
 				<TextInput
@@ -333,6 +340,7 @@ const EditIntegrations = ({
 					value={draft.brazeSubscribeAttributeName ?? ''}
 					onChange={(value) => onChange({ brazeSubscribeAttributeName: value })}
 					isInvalid={Boolean(errors.brazeSubscribeAttributeName)}
+					validationBehavior="aria"
 					error={errors.brazeSubscribeAttributeName}
 				/>
 				<TextInput
@@ -345,6 +353,7 @@ const EditIntegrations = ({
 						onChange({ brazeSubscribeEventNamePrefix: value })
 					}
 					isInvalid={Boolean(errors.brazeSubscribeEventNamePrefix)}
+					validationBehavior="aria"
 					error={errors.brazeSubscribeEventNamePrefix}
 				/>
 				<TextListInput

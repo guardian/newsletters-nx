@@ -16,11 +16,9 @@ import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { humanize } from '../lib/format';
 import { frequencyOptions } from '../lib/frequency-options';
+import { launchedStatusOptions } from '../lib/status-options';
 import { Field, listStyles } from './NewsletterDetailFields';
-import {
-	getLaunchedStatusBadgeContent,
-	NewsletterStatusBadge,
-} from './NewsletterStatusBadge';
+import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
 
 const panelSchema = newsletterDataSchema
@@ -38,12 +36,6 @@ const panelSchema = newsletterDataSchema
 	});
 type Attributes = Pick<NewsletterData, keyof typeof panelSchema.shape>;
 
-const statuses: Array<NewsletterData['status']> = [
-	'pending',
-	'live',
-	'paused',
-	'cancelled',
-];
 const groupOptions = dataCollectionSchema.shape.group.options;
 const CUSTOM_FREQUENCY = '__custom__';
 
@@ -167,9 +159,9 @@ export const AttributesPanel = ({
 								update({ status: panelSchema.shape.status.parse(value) })
 							}
 						>
-							{statuses.map((status) => (
-								<Radio key={status} value={status}>
-									{getLaunchedStatusBadgeContent(status).label}
+							{launchedStatusOptions.map(({ id, label }) => (
+								<Radio key={id} value={id}>
+									{label}
 								</Radio>
 							))}
 						</RadioGroup>
