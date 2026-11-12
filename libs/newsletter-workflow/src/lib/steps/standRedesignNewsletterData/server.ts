@@ -2,6 +2,7 @@ import type { DraftService } from '@newsletters-nx/newsletters-data-client';
 import type {
 	AsyncExecution,
 	WizardLayout,
+	WizardStepData,
 } from '@newsletters-nx/state-machine';
 import { executeCreate } from '../../executeCreate';
 import { executeModify } from '../../executeModify';
@@ -17,116 +18,137 @@ import { reviewLayout } from './reviewLayout';
 import { tagsLayout } from './tagsLayout';
 import { targetingLayout } from './targetingLayout';
 
-const executeCreateOrModify: AsyncExecution<DraftService> = async (
+const hasListId = (stepData: WizardStepData): boolean =>
+	typeof stepData.formData?.listId === 'number' || !!stepData.id;
+
+/**
+ * The draft is not created until the editor first saves field data on
+ * a step, so the first save creates it and subsequent saves modify it.
+ */
+const saveDraft: AsyncExecution<DraftService> = async (
 	stepData,
 	stepLayout,
 	service,
 ) => {
-	const listId = stepData.formData?.listId;
-
-	if (typeof listId === 'number') {
+	if (hasListId(stepData)) {
 		return executeModify(stepData, stepLayout, service);
 	}
 
 	return executeCreate(stepData, stepLayout, service);
 };
 
+/**
+ * Moving between steps before the draft has been created must not create
+ * one, and there is nothing in storage to load, so start with blank data.
+ */
+const loadDraftIfSaved: AsyncExecution<DraftService> = async (
+	stepData,
+	stepLayout,
+	service,
+) => {
+	if (hasListId(stepData)) {
+		return executeSkip(stepData, stepLayout, service);
+	}
+
+	return { data: {} };
+};
+
 export const standRedesignLayout: WizardLayout<DraftService> = {
 	cancel: cancelLayout,
 	intro: {
-		executeSkip: executeCreateOrModify,
 		...createDraftIntro,
+		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...createDraftIntro.buttons,
 			next: {
 				...createDraftIntro.buttons['next']!,
-				executeStep: executeCreateOrModify,
+				executeStep: loadDraftIfSaved,
 			},
 		},
 	},
 	nameAndFrequencyLayout: {
 		...nameAndFrequencyLayout,
-		executeSkip: executeSkip,
+		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...nameAndFrequencyLayout.buttons,
 			next: {
 				...nameAndFrequencyLayout.buttons['next']!,
-				executeStep: executeModify,
+				executeStep: saveDraft,
 			},
 		},
 	},
 	productionDetails: {
 		...productionDetailsLayout,
-		executeSkip,
+		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...productionDetailsLayout.buttons,
 			back: {
 				...productionDetailsLayout.buttons['back']!,
-				executeStep: executeSkip,
+				executeStep: loadDraftIfSaved,
 			},
 			finish: {
 				...productionDetailsLayout.buttons['finish']!,
-				executeStep: executeModify,
+				executeStep: saveDraft,
 			},
 		},
 	},
 	dates: {
 		...dateLayout,
-		executeSkip,
+		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...dateLayout.buttons,
 			back: {
 				...dateLayout.buttons['back']!,
-				executeStep: executeSkip,
+				executeStep: loadDraftIfSaved,
 			},
 			finish: {
 				...dateLayout.buttons['finish']!,
-				executeStep: executeModify,
+				executeStep: saveDraft,
 			},
 		},
 	},
 	targeting: {
 		...targetingLayout,
-		executeSkip,
+		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...targetingLayout.buttons,
 			back: {
 				...targetingLayout.buttons['back']!,
-				executeStep: executeSkip,
+				executeStep: loadDraftIfSaved,
 			},
 			finish: {
 				...targetingLayout.buttons['finish']!,
-				executeStep: executeModify,
+				executeStep: saveDraft,
 			},
 		},
 	},
 	tags: {
 		...tagsLayout,
-		executeSkip,
+		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...tagsLayout.buttons,
 			back: {
 				...tagsLayout.buttons['back']!,
-				executeStep: executeSkip,
+				executeStep: loadDraftIfSaved,
 			},
 			finish: {
 				...tagsLayout.buttons['finish']!,
-				executeStep: executeModify,
+				executeStep: saveDraft,
 			},
 		},
 	},
 	signUpPage: {
 		...promotionContentLayout,
-		executeSkip,
+		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...promotionContentLayout.buttons,
 			back: {
 				...promotionContentLayout.buttons['back']!,
-				executeStep: executeSkip,
+				executeStep: loadDraftIfSaved,
 			},
 			next: {
 				...promotionContentLayout.buttons['next']!,
-				executeStep: executeModify,
+				executeStep: saveDraft,
 			},
 		},
 	},
