@@ -3,14 +3,24 @@ import { semanticSpacing } from '@guardian/stand';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
 import { until } from '@guardian/stand/utils';
-import { type NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { type MouseEvent, useEffect, useId } from 'react';
-import { AttributesPanel } from './AttributesPanel';
-import { CopyPanel } from './CopyPanel';
-import { ImagesPanel } from './ImagesPanel';
-import { IntegrationsPanel } from './IntegrationsPanel';
-import { SignupPageAndTagsPanel } from './SignupPageAndTagsPanel';
-import { TechnicalOutputPanel } from './TechnicalOutputPanel';
+import { AttributesPanel, AttributesValues } from './AttributesPanel';
+import { CopyPanel, CopyValues } from './CopyPanel';
+import { ImagesPanel, ImagesValues } from './ImagesPanel';
+import { IntegrationsPanel, IntegrationsValues } from './IntegrationsPanel';
+import {
+	SignupPageAndTagsPanel,
+	SignupPageAndTagsValues,
+} from './SignupPageAndTagsPanel';
+import { StandPanel } from './StandPanel';
+import {
+	TechnicalOutputPanel,
+	TechnicalOutputValues,
+} from './TechnicalOutputPanel';
 
 // One grid across all the panels, so the label column is as wide as the
 // widest label in any panel. Panels and lists pass it down with subgrid.
@@ -44,14 +54,25 @@ const jumpToListStyles = css`
 	padding: 0;
 `;
 
-/** The panels on the page, in order. Ids match the `id` on each panel. */
+/**
+ * The panels on the page, in order. Ids match the `id` on each panel.
+ * `Values` is the panel's read-only content, which drafts show on their own.
+ */
 const jumpToPanels = [
-	{ id: 'attributes', name: 'Attributes' },
-	{ id: 'images', name: 'Images' },
-	{ id: 'copy', name: 'Copy' },
-	{ id: 'sign-up-page-and-tags', name: 'Sign-up page and tags' },
-	{ id: 'integrations', name: 'Integrations' },
-	{ id: 'technical-output', name: 'Technical output' },
+	{ id: 'attributes', name: 'Attributes', Values: AttributesValues },
+	{ id: 'images', name: 'Images', Values: ImagesValues },
+	{ id: 'copy', name: 'Copy', Values: CopyValues },
+	{
+		id: 'sign-up-page-and-tags',
+		name: 'Sign-up page and tags',
+		Values: SignupPageAndTagsValues,
+	},
+	{ id: 'integrations', name: 'Integrations', Values: IntegrationsValues },
+	{
+		id: 'technical-output',
+		name: 'Technical output',
+		Values: TechnicalOutputValues,
+	},
 ];
 
 /**
@@ -150,5 +171,24 @@ export const NewsletterDetailPanels = ({
 			key={`technical-${newsletter.listId}`}
 			newsletter={newsletter}
 		/>
+	</div>
+);
+
+/**
+ * The same panels for a draft, read-only (no Edit buttons). Anything the draft
+ * is missing shows as not set.
+ */
+export const DraftDetailPanels = ({
+	draft,
+}: {
+	draft: DraftNewsletterData;
+}) => (
+	<div css={panelsStyles}>
+		<JumpTo />
+		{jumpToPanels.map(({ id, name, Values }) => (
+			<StandPanel key={id} name={name} id={id} subgrid>
+				<Values newsletter={draft} />
+			</StandPanel>
+		))}
 	</div>
 );

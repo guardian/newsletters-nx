@@ -5,6 +5,7 @@ import { TextInput } from '@guardian/stand/TextInput';
 import { TextListInput } from '@guardian/stand/TextListInput';
 import { Typography } from '@guardian/stand/Typography';
 import type {
+	DraftNewsletterData,
 	NewsletterData,
 	WorkflowStatus,
 } from '@newsletters-nx/newsletters-data-client';
@@ -244,7 +245,7 @@ export const IntegrationsPanel = ({
 						}
 					/>
 				) : (
-					<ViewIntegrations newsletter={current} />
+					<IntegrationsValues newsletter={current} />
 				)
 			}
 		</StandPanel>
@@ -405,88 +406,102 @@ const EditIntegrations = ({
 	);
 };
 
-const ViewIntegrations = ({ newsletter }: { newsletter: NewsletterData }) => (
-	<div
-		css={css`
-			display: grid;
-			grid-template-columns: subgrid;
-
-			grid-column: 1 / -1;
-			row-gap: ${baseSpacing['12Px']};
-		`}
-	>
-		<section
-			css={listGroupStyles}
-			aria-labelledby={'integrations-braze-values'}
-		>
-			<Typography
-				id={'integrations-braze-values'}
-				element="h4"
-				variant="bodyBoldMd"
-			>
-				Braze values
-			</Typography>
-			<dl css={listStyles}>
-				<Field label="Braze campaign creation status">
-					<WorkflowStatusBadge
-						status={newsletter.brazeCampaignCreationStatus}
-					/>
-				</Field>
-				<Field label="brazeNewsletterName">
-					{newsletter.brazeNewsletterName}
-				</Field>
-				<Field label="brazeSubscribeAttributeName">
-					{newsletter.brazeSubscribeAttributeName}
-				</Field>
-				<Field label="brazeSubscribeEventNamePrefix">
-					{newsletter.brazeSubscribeEventNamePrefix}
-				</Field>
-				<Field label="brazeSubscribeAttributeNameAlternate">
-					{newsletter.brazeSubscribeAttributeNameAlternate?.length ? (
-						<ul css={fieldListStyles}>
-							{newsletter.brazeSubscribeAttributeNameAlternate.map(
-								(item, idx) => (
-									<li key={idx}>{item}</li>
-								),
-							)}
-						</ul>
-					) : null}
-				</Field>
-				<Field label="braze subscribe event name">
-					{newsletter.brazeSubscribeEventNamePrefix
-						? brazeSubscribeEventName.generate(newsletter)
-						: undefined}
-				</Field>
-				<Field label="braze unsubscribe event name">
-					{newsletter.brazeSubscribeEventNamePrefix
-						? brazeUnsubscribeEventName.generate(newsletter)
-						: undefined}
-				</Field>
-			</dl>
-		</section>
-		<hr
+/** The integrations, read-only. Takes a draft too, which may be missing any of them. */
+export const IntegrationsValues = ({
+	newsletter,
+}: {
+	newsletter: DraftNewsletterData;
+}) => {
+	const { brazeSubscribeEventNamePrefix } = newsletter;
+	return (
+		<div
 			css={css`
-				${hrStyles};
-				/** Full width */
-				grid-column: 1/-1;
-				width: 100%;
+				display: grid;
+				grid-template-columns: subgrid;
+
+				grid-column: 1 / -1;
+				row-gap: ${baseSpacing['12Px']};
 			`}
-		/>
-		<section
-			css={listGroupStyles}
-			aria-labelledby={'integrations-ophan-values'}
 		>
-			<Typography
-				id={'integrations-ophan-values'}
-				element="h4"
-				variant="bodyBoldMd"
+			<section
+				css={listGroupStyles}
+				aria-labelledby={'integrations-braze-values'}
 			>
-				Ophan values
-			</Typography>
-			<dl css={listStyles}>
-				<Field label="Campaign name">{newsletter.campaignName}</Field>
-				<Field label="Campaign code">{newsletter.campaignCode}</Field>
-			</dl>
-		</section>
-	</div>
-);
+				<Typography
+					id={'integrations-braze-values'}
+					element="h4"
+					variant="bodyBoldMd"
+				>
+					Braze values
+				</Typography>
+				<dl css={listStyles}>
+					<Field label="Braze campaign creation status">
+						{newsletter.brazeCampaignCreationStatus && (
+							<WorkflowStatusBadge
+								status={newsletter.brazeCampaignCreationStatus}
+							/>
+						)}
+					</Field>
+					<Field label="brazeNewsletterName">
+						{newsletter.brazeNewsletterName}
+					</Field>
+					<Field label="brazeSubscribeAttributeName">
+						{newsletter.brazeSubscribeAttributeName}
+					</Field>
+					<Field label="brazeSubscribeEventNamePrefix">
+						{newsletter.brazeSubscribeEventNamePrefix}
+					</Field>
+					<Field label="brazeSubscribeAttributeNameAlternate">
+						{newsletter.brazeSubscribeAttributeNameAlternate?.length ? (
+							<ul css={fieldListStyles}>
+								{newsletter.brazeSubscribeAttributeNameAlternate.map(
+									(item, idx) => (
+										<li key={idx}>{item}</li>
+									),
+								)}
+							</ul>
+						) : null}
+					</Field>
+					<Field label="braze subscribe event name">
+						{brazeSubscribeEventNamePrefix
+							? brazeSubscribeEventName.generate({
+									brazeSubscribeEventNamePrefix,
+								})
+							: undefined}
+					</Field>
+					<Field label="braze unsubscribe event name">
+						{brazeSubscribeEventNamePrefix
+							? brazeUnsubscribeEventName.generate({
+									brazeSubscribeEventNamePrefix,
+								})
+							: undefined}
+					</Field>
+				</dl>
+			</section>
+			<hr
+				css={css`
+					${hrStyles};
+					/** Full width */
+					grid-column: 1/-1;
+					width: 100%;
+				`}
+			/>
+			<section
+				css={listGroupStyles}
+				aria-labelledby={'integrations-ophan-values'}
+			>
+				<Typography
+					id={'integrations-ophan-values'}
+					element="h4"
+					variant="bodyBoldMd"
+				>
+					Ophan values
+				</Typography>
+				<dl css={listStyles}>
+					<Field label="Campaign name">{newsletter.campaignName}</Field>
+					<Field label="Campaign code">{newsletter.campaignCode}</Field>
+				</dl>
+			</section>
+		</div>
+	);
+};

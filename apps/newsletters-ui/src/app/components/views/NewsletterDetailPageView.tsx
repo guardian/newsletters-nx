@@ -20,7 +20,7 @@ const gridStyle = css`
 	max-width: ${semanticBreakpoints.lg};
 `;
 
-const Container = ({ children }: { children?: React.ReactNode }) => {
+export const Container = ({ children }: { children?: React.ReactNode }) => {
 	return (
 		<StandGrid css={gridStyle}>
 			<Item size={12}>{children}</Item>
@@ -28,7 +28,7 @@ const Container = ({ children }: { children?: React.ReactNode }) => {
 	);
 };
 
-const mainStyle = css`
+export const mainStyle = css`
 	${from.sm} {
 		padding-top: ${baseSpacing['40Px']};
 		padding-bottom: ${baseSpacing['24Px']};
@@ -39,7 +39,7 @@ const mainStyle = css`
 	margin: 0 auto;
 `;
 
-const spacerStyles = css`
+export const spacerStyles = css`
 	display: flex;
 	flex-flow: column nowrap;
 	gap: ${semanticSpacing.stackMd};
