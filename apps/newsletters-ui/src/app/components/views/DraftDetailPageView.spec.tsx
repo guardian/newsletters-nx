@@ -1,9 +1,26 @@
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS } from '../../../../../../libs/newsletters-data-client/src/fixtures/newsletter-fixtures';
+import {
+	allowEditing,
+	mockPermissions,
+	viewerPermissions,
+} from '../../../test-utils/newsletter';
 import { panel, valueFor } from '../../../test-utils/newsletter-detail-page';
+import { requestDraftDeletion } from '../../api-requests/requestDraftDeletion';
 import { DraftDetailPageView } from './DraftDetailPageView';
+
+vi.mock('../../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
+vi.mock('../../api-requests/requestDraftDeletion', () => ({
+	requestDraftDeletion: vi.fn(),
+}));
+beforeEach(() => {
+	vi.resetAllMocks();
+	allowEditing();
+});
 
 const draftFixture = (
 	overrides: Partial<DraftNewsletterData> = {},
@@ -25,6 +42,7 @@ const renderPage = (draft: DraftNewsletterData | null) => {
 				element: <DraftDetailPageView />,
 				loader: () => draft,
 			},
+			{ path: '/all', element: <h1>All newsletters</h1> },
 		],
 		{ initialEntries: ['/drafts/7'] },
 	);
@@ -65,6 +83,7 @@ describe('DraftDetailPageView', () => {
 		);
 		for (const name of [
 			'Attributes',
+			'Launch',
 			'Images',
 			'Copy',
 			'Sign-up page and tags',
@@ -88,11 +107,93 @@ describe('DraftDetailPageView', () => {
 		renderPage(draftFixture());
 
 		await screen.findByRole('heading', { level: 2 });
+		expect(valueFor('Launch date')).toBe('Not set');
+		expect(valueFor('Promotion date')).toBe('Not set');
+		expect(valueFor('Private until launch')).toBe('Not set');
 		expect(valueFor('Headline')).toBe('Not set');
 		expect(valueFor('Newsletter status')).toBe('Not set');
 		expect(valueFor('Sign-up page creation status')).toBe('Not set');
 		expect(valueFor('Restricted')).toBe('Not set');
 		expect(valueFor('Sign up embed code')).toBe('Not set');
+	});
+
+	it('shows launch fields and allows a viewer to jump to the panel', async () => {
+		mockPermissions(viewerPermissions);
+		const draft = draftFixture({
+			launchDate: new Date('2027-01-15T12:00:00Z'),
+			signUpPageDate: new Date('2027-01-01T12:00:00Z'),
+			privateUntilLaunch: false,
+		});
+		renderPage(JSON.parse(JSON.stringify(draft)) as DraftNewsletterData);
+		await screen.findByRole('heading', { level: 2 });
+		expect(valueFor('Launch date')).toBe('15 January 2027');
+		expect(valueFor('Promotion date')).toBe('01 January 2027');
+		expect(valueFor('Private until launch')).toBe('No');
+		expect(panel('Launch').queryByRole('button', { name: /edit/i })).toBeNull();
+		await userEvent.click(
+			within(screen.getByRole('navigation', { name: 'Jump to' })).getByRole(
+				'link',
+				{ name: 'Launch' },
+			),
+		);
+		expect(document.activeElement?.id).toBe('launch');
+		expect(
+			screen.queryByRole('link', { name: 'Newsletter set-up' }),
+		).toBeNull();
+		expect(screen.queryByRole('button', { name: 'delete' })).toBeNull();
+	});
+	it('shows the private-until-launch choice', async () => {
+		renderPage(draftFixture({ privateUntilLaunch: true }));
+		await screen.findByRole('heading', { level: 2 });
+		expect(valueFor('Private until launch')).toBe('Yes');
+	});
+	it('preserves setup, rendering and launch controls for editors', async () => {
+		renderPage({
+			...TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS,
+			listId: 7,
+		});
+		await screen.findByRole('heading', { level: 2 });
+		expect(
+			screen
+				.getByRole('link', { name: 'Newsletter set-up' })
+				.getAttribute('href'),
+		).toBe('/drafts/newsletter-data/7');
+		expect(
+			screen
+				.getByRole('link', { name: 'Article Rendering' })
+				.getAttribute('href'),
+		).toBe('/drafts/newsletter-data-rendering/7');
+		expect(
+			screen
+				.getByRole('link', { name: 'Launch newsletter' })
+				.getAttribute('href'),
+		).toBe('/drafts/launch-newsletter/7');
+	});
+	it('preserves delete confirmation and returns to the list after deletion', async () => {
+		vi.mocked(requestDraftDeletion).mockResolvedValue({
+			ok: true,
+			deletedDraft: { ...draftFixture(), listId: 7 },
+		});
+		renderPage(draftFixture());
+		await userEvent.click(
+			await screen.findByRole('button', { name: 'delete' }),
+		);
+		await userEvent.click(
+			within(screen.getByRole('dialog')).getByRole('button', {
+				name: 'CANCEL',
+			}),
+		);
+		expect(requestDraftDeletion).not.toHaveBeenCalled();
+		await userEvent.click(
+			await screen.findByRole('button', { name: 'delete' }),
+		);
+		await userEvent.click(
+			within(screen.getByRole('dialog')).getByRole('button', {
+				name: 'CONFIRM DELETE',
+			}),
+		);
+		expect(requestDraftDeletion).toHaveBeenCalledWith(7);
+		expect(await screen.findByText('All newsletters')).toBeTruthy();
 	});
 
 	it('says when there is no draft', async () => {

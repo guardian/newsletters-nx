@@ -1,6 +1,7 @@
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { isDraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData } from 'react-router-dom';
+import { DraftInterimActions } from '../DraftInterimActions';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { DraftDetailPanels } from '../NewsletterDetailPanels';
 import { Container, mainStyle, spacerStyles } from './NewsletterDetailPageView';
@@ -36,6 +37,7 @@ export const DraftDetailPageView = () => {
 			<Container>
 				<div css={spacerStyles}>
 					<NewsletterDetailHeader draft={draft} />
+					<DraftInterimActions draft={draft} />
 					<DraftDetailPanels draft={draft} />
 				</div>
 			</Container>
