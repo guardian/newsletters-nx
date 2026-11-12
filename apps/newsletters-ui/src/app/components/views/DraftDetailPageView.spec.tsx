@@ -89,6 +89,7 @@ describe('DraftDetailPageView', () => {
 		);
 		for (const name of [
 			'Attributes',
+			'Launch',
 			'Images',
 			'Copy',
 			'Sign-up page and tags',
@@ -112,11 +113,44 @@ describe('DraftDetailPageView', () => {
 		renderPage(draftFixture());
 
 		await screen.findByRole('heading', { level: 2 });
+		expect(valueFor('Launch date')).toBe('Not set');
+		expect(valueFor('Promotion date')).toBe('Not set');
+		expect(valueFor('Private until launch')).toBe('Not set');
 		expect(valueFor('Headline')).toBe('Not set');
 		expect(valueFor('Newsletter status')).toBe('Not set');
 		expect(valueFor('Sign-up page creation status')).toBe('Not set');
 		expect(valueFor('Restricted')).toBe('Not set');
 		expect(valueFor('Sign up embed code')).toBe('Not set');
+	});
+
+	it('shows launch details read-only to viewers and jumps to the panel', async () => {
+		mockPermissions(viewerPermissions);
+		const draft = draftFixture({
+			launchDate: new Date('2027-01-15T12:00:00Z'),
+			signUpPageDate: new Date('2027-01-01T12:00:00Z'),
+			privateUntilLaunch: false,
+		});
+		const { user } = renderPage(
+			JSON.parse(JSON.stringify(draft)) as DraftNewsletterData,
+		);
+		await screen.findByRole('heading', { level: 2 });
+		expect(valueFor('Launch date')).toBe('15 January 2027');
+		expect(valueFor('Promotion date')).toBe('01 January 2027');
+		expect(valueFor('Private until launch')).toBe('No');
+		expect(panel('Launch').queryByRole('button', { name: /edit/i })).toBeNull();
+		await user.click(
+			within(screen.getByRole('navigation', { name: 'Jump to' })).getByRole(
+				'link',
+				{ name: 'Launch' },
+			),
+		);
+		expect(document.activeElement?.id).toBe('launch');
+	});
+
+	it('shows when a draft is private until launch', async () => {
+		renderPage(draftFixture({ privateUntilLaunch: true }));
+		await screen.findByRole('heading', { level: 2 });
+		expect(valueFor('Private until launch')).toBe('Yes');
 	});
 
 	it('says when there is no draft', async () => {

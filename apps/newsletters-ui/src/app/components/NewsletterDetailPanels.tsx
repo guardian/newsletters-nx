@@ -12,6 +12,7 @@ import { AttributesPanel, AttributesValues } from './AttributesPanel';
 import { CopyPanel, CopyValues } from './CopyPanel';
 import { ImagesPanel, ImagesValues } from './ImagesPanel';
 import { IntegrationsPanel, IntegrationsValues } from './IntegrationsPanel';
+import { Field, listStyles } from './NewsletterDetailFields';
 import {
 	SignupPageAndTagsPanel,
 	SignupPageAndTagsValues,
@@ -75,6 +76,43 @@ const jumpToPanels = [
 	},
 ];
 
+// The API serializes dates as ISO strings, although draft types use Date.
+const formatLaunchDate = (value: Date | string | undefined) => {
+	if (value === undefined) {
+		return undefined;
+	}
+	const date = value instanceof Date ? value : new Date(value);
+	return Number.isNaN(date.getTime())
+		? undefined
+		: date.toLocaleDateString('en-GB', {
+				day: '2-digit',
+				month: 'long',
+				year: 'numeric',
+			});
+};
+
+const LaunchValues = ({ newsletter }: { newsletter: DraftNewsletterData }) => (
+	<dl css={listStyles}>
+		<Field label="Launch date">{formatLaunchDate(newsletter.launchDate)}</Field>
+		<Field label="Promotion date">
+			{formatLaunchDate(newsletter.signUpPageDate)}
+		</Field>
+		<Field label="Private until launch">
+			{newsletter.privateUntilLaunch === undefined
+				? undefined
+				: newsletter.privateUntilLaunch
+					? 'Yes'
+					: 'No'}
+		</Field>
+	</dl>
+);
+
+const draftPanels = [
+	jumpToPanels[0]!,
+	{ id: 'launch', name: 'Launch', Values: LaunchValues },
+	...jumpToPanels.slice(1),
+];
+
 /**
  * Scroll to the panel and move keyboard focus to it, so the next Tab press
  * continues from the panel rather than from the Jump to link.
@@ -101,7 +139,11 @@ const opensElsewhere = (event: MouseEvent) =>
 // the current path so the link is valid on its own (e.g. when opened in a new tab).
 // Clicking replaces the history entry rather than adding one, so Back leaves the
 // page instead of stepping through every panel the editor jumped to.
-const JumpTo = () => {
+const JumpTo = ({
+	panels = jumpToPanels,
+}: {
+	panels?: typeof jumpToPanels;
+}) => {
 	const labelId = useId();
 	const { pathname, search } = window.location;
 
@@ -119,7 +161,7 @@ const JumpTo = () => {
 				Jump to
 			</Typography>
 			<ul css={jumpToListStyles}>
-				{jumpToPanels.map(({ id, name }) => (
+				{panels.map(({ id, name }) => (
 					<li key={id}>
 						<Link
 							href={`${pathname}${search}#${id}`}
@@ -184,8 +226,8 @@ export const DraftDetailPanels = ({
 	draft: DraftNewsletterData;
 }) => (
 	<div css={panelsStyles}>
-		<JumpTo />
-		{jumpToPanels.map(({ id, name, Values }) => (
+		<JumpTo panels={draftPanels} />
+		{draftPanels.map(({ id, name, Values }) => (
 			<StandPanel key={id} name={name} id={id} subgrid>
 				<Values newsletter={draft} />
 			</StandPanel>

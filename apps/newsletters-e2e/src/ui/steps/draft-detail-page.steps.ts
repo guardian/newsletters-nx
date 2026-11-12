@@ -78,6 +78,7 @@ Then(
 Then('the draft details are read-only', async ({ page }) => {
 	for (const name of [
 		'Attributes',
+		'Launch',
 		'Images',
 		'Copy',
 		'Sign-up page and tags',
