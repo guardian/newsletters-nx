@@ -155,6 +155,26 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
     },
   },
   "Resources": {
+    "ApiAlbSsmParamCB7070AC": {
+      "Properties": {
+        "DataType": "text",
+        "Description": "The ARN of the ALB for newsletters-api-TEST. This parameter is created via CDK.",
+        "Name": "/infosec/waf/services/TEST/newsletters-api-alb-arn",
+        "Tags": {
+          "App": "newsletters-tool",
+          "Stack": "newsletters",
+          "Stage": "TEST",
+          "gu:cdk:version": "TEST",
+          "gu:repo": "guardian/newsletters-nx",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "LoadBalancerNewslettersapi605B1E8A",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
     "AutoScalingGroupNewslettersapiASG06292ACA": {
       "Properties": {
         "HealthCheckGracePeriod": 120,
