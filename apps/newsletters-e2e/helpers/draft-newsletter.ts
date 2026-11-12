@@ -1,7 +1,33 @@
-import type { APIRequestContext } from '@playwright/test';
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
+import type {
+	ApiResponse,
+	DraftNewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
+import type { APIRequestContext } from '@playwright/test';
 
 const API_BASE = process.env['API_URL'] ?? 'http://localhost:3000';
+
+/** Raw response for assertions such as an expected 404 after deletion. */
+export const getDraftNewsletterResponse = (
+	request: APIRequestContext,
+	listId: number,
+) => request.get(`${API_BASE}/api/drafts/${listId}`);
+
+export async function getDraftNewsletter(
+	request: APIRequestContext,
+	listId: number,
+): Promise<DraftNewsletterData> {
+	const response = await getDraftNewsletterResponse(request, listId);
+	const payload = (await response.json()) as ApiResponse<
+		DraftNewsletterData | undefined
+	>;
+	if (!response.ok() || !payload.ok || payload.data === undefined) {
+		throw new Error(
+			`Unable to retrieve draft ${listId} (${response.status()}): ${JSON.stringify(payload)}`,
+		);
+	}
+	return payload.data;
+}
 
 type SupportedValue =
 	| string

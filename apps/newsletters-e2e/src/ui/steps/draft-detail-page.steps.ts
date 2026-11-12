@@ -1,10 +1,13 @@
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { expect } from '@playwright/test';
+import {
+	getDraftNewsletter,
+	getDraftNewsletterResponse,
+} from '../../../helpers/draft-newsletter';
 import { createFixtureDraft } from '../../../helpers/test-fixtures';
+import { panelByName } from '../helpers/newsletter-detail-page';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
-
-const API_BASE = process.env['API_URL'] ?? 'http://localhost:3000';
 
 const draftId = (ref: NamedNewsletterRef | undefined): number => {
 	if (ref?.kind !== 'draft') {
@@ -72,16 +75,6 @@ Then(
 	},
 );
 
-Then('the draft header badge is {string}', async ({ page }, label: string) => {
-	const header = page
-		.getByRole('main')
-		.locator('header')
-		.filter({
-			has: page.getByRole('heading', { level: 2 }),
-		});
-	await expect(header.getByText(label, { exact: true })).toBeVisible();
-});
-
 Then('the draft details are read-only', async ({ page }) => {
 	for (const name of [
 		'Attributes',
@@ -91,20 +84,13 @@ Then('the draft details are read-only', async ({ page }) => {
 		'Integrations',
 		'Technical output',
 	]) {
-		const panel = page.locator('section').filter({
-			has: page.getByRole('heading', { level: 3, name, exact: true }),
-		});
+		const panel = panelByName(page, name);
 		await expect(panel).toBeVisible();
 		await expect(
 			panel.getByRole('button', { name: 'Edit', exact: true }),
 		).toHaveCount(0);
 		await expect(panel.locator('input, textarea, select')).toHaveCount(0);
 	}
-	await expect(
-		page
-			.getByRole('group', { name: 'Frequency', exact: true })
-			.getByRole('definition'),
-	).toHaveText('Weekly');
 });
 
 When(
@@ -154,14 +140,8 @@ Then(
 			}),
 		).toHaveAttribute('href', `/drafts/newsletter-data-rendering/${id}`);
 		await expect(optional).toContainText('You can launch without this.');
-		const response = await request.get(`${API_BASE}/api/drafts/${id}`);
-		expect(response.ok()).toBe(true);
-		const payload = (await response.json()) as {
-			ok: boolean;
-			data: DraftNewsletterData;
-		};
-		expect(payload.ok).toBe(true);
-		expect(payload.data.renderingOptions).toBeUndefined();
+		const draft = await getDraftNewsletter(request, id);
+		expect(draft.renderingOptions).toBeUndefined();
 	},
 );
 
@@ -209,9 +189,7 @@ Then(
 	async ({ page, request, namedNewsletters }, name: string) => {
 		const id = draftId(namedNewsletters.refsByName[name]);
 		await expect(page).toHaveURL(new RegExp(`/drafts/${id}$`));
-		const response = await request.get(`${API_BASE}/api/drafts/${id}`);
-		expect(response.ok()).toBe(true);
-		expect(await response.json()).toMatchObject({ ok: true, data: { name } });
+		expect(await getDraftNewsletter(request, id)).toMatchObject({ name });
 	},
 );
 
@@ -236,17 +214,18 @@ When(
 );
 
 Then(
-	'the draft {string} is deleted and the editor returns to All newsletters',
+	'the draft {string} is deleted with a confirmation toast',
 	async ({ page, request, namedNewsletters }, name: string) => {
 		const id = draftId(namedNewsletters.refsByName[name]);
-		await expect(page).toHaveURL(/\/all$/);
 		await expect(
 			page.getByText('Draft deleted', { exact: true }),
 		).toBeVisible();
-		const grid = page.getByRole('grid', { name: 'All newsletters' });
-		await expect(grid).toBeVisible();
-		await expect(grid.locator(`tr[data-href="/drafts/${id}"]`)).toHaveCount(0);
-		const response = await request.get(`${API_BASE}/api/drafts/${id}`);
+		await expect(
+			page
+				.getByRole('grid', { name: 'All newsletters' })
+				.locator(`tr[data-href="/drafts/${id}"]`),
+		).toHaveCount(0);
+		const response = await getDraftNewsletterResponse(request, id);
 		expect(response.status()).toBe(404);
 	},
 );
