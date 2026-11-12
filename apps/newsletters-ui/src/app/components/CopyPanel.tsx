@@ -2,7 +2,10 @@ import { css } from '@emotion/react';
 import { baseSpacing, semanticSizing } from '@guardian/stand';
 import { TextArea } from '@guardian/stand/TextArea';
 import { TextInput } from '@guardian/stand/TextInput';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { newsletterDataSchema } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
@@ -47,6 +50,21 @@ const copyFormStyle = css`
 		);
 	}
 `;
+
+/** The copy, read-only. Takes a draft too, which may be missing any of it. */
+export const CopyValues = ({
+	newsletter,
+}: {
+	newsletter: DraftNewsletterData;
+}) => (
+	<dl css={listStyles}>
+		{copyFields.map(({ key, label }) => (
+			<Field key={key} label={label}>
+				{newsletter[key]}
+			</Field>
+		))}
+	</dl>
+);
 
 export const CopyPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 	const [savedCopy, setSavedCopy] = useState<Partial<NewsletterData>>();
@@ -134,13 +152,7 @@ export const CopyPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 						})}
 					</div>
 				) : (
-					<dl css={listStyles}>
-						{copyFields.map(({ key, label }) => (
-							<Field key={key} label={label}>
-								{current[key]}
-							</Field>
-						))}
-					</dl>
+					<CopyValues newsletter={current} />
 				)
 			}
 		</StandPanel>
