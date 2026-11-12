@@ -4,7 +4,7 @@ import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { from } from '@guardian/stand/utils';
 import { Box, css } from '@mui/material';
 import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { matchPath, Outlet, useLocation } from 'react-router-dom';
 import { MainNav } from './components/MainNav';
 import { StandMainNav } from './components/StandMainNav';
 import { isFeatureSwitchEnabled } from './featureSwitches';
@@ -85,13 +85,15 @@ export function Layout(props: IRootRoute) {
 	const isNewslettersHubLandingRoute = location.pathname === '/layouts';
 	const isNewslettersDetailPageStand =
 		location.pathname.startsWith('/newsletters/');
-	// /all and the home page use the same Stand top bar / alert banner shell as the wizard.
+	const isDraftDetailPage = !!matchPath('/drafts/:id', location.pathname);
+	// Stand detail pages own their main landmark, as do the wizard and landing pages.
 	const usesStandShell =
 		isWizardRoute ||
 		isAllNewslettersRoute ||
 		isHomeRoute ||
 		isNewslettersHubLandingRoute ||
-		isNewslettersDetailPageStand;
+		isNewslettersDetailPageStand ||
+		isDraftDetailPage;
 	const isUsingStand = !isFeatureSwitchEnabled('switch-legacy');
 
 	useEffect(() => {
