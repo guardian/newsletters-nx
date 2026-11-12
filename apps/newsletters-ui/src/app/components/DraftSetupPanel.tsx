@@ -81,7 +81,7 @@ export const DraftSetupPanel = ({ draft }: Props) => {
 								</LinkButton>
 							</div>
 						) : (
-							<LinkButton href={setUpHref} variant="secondary">
+							<LinkButton href={setUpHref} variant="primary">
 								Continue set up
 							</LinkButton>
 						))
