@@ -57,15 +57,21 @@ else.
 
 ## WAF onboarding
 
-Each deployed stack publishes the tool's ALB ARN as a CloudFormation-managed
-SSM String parameter:
+Each deployed stack publishes the ARNs of both ALBs as CloudFormation-managed
+SSM String parameters:
 
-- `/infosec/waf/services/CODE/newsletters-tool-alb-arn`
-- `/infosec/waf/services/PROD/newsletters-tool-alb-arn`
+| App                               | Parameter                                                |
+| --------------------------------- | -------------------------------------------------------- |
+| `newsletters-tool`                | `/infosec/waf/services/<STAGE>/newsletters-tool-alb-arn` |
+| `newsletters-api` (read-only API) | `/infosec/waf/services/<STAGE>/newsletters-api-alb-arn`  |
 
 These parameters are for [guardian/waf](https://github.com/guardian/waf) to
-use. Publishing them does **not** associate a WAF with the ALB or change
-traffic handling. The read-only API's separate ALB is not included.
+use. Publishing them does **not** associate a WAF with either ALB or change
+traffic handling. Each app is added to the WAF separately in `guardian/waf`.
+
+For the read-only API, check on CODE that requests with a valid `X-Gu-API-Key`
+header are still allowed after association, and that consumers of the API are
+unaffected.
 
 #### steps to check WAF implementation
 

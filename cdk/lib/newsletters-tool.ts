@@ -306,6 +306,16 @@ EOL`,
 			},
 		});
 
+		// This parameter is consumed by https://github.com/guardian/waf.
+		new StringParameter(this, 'ApiAlbSsmParam', {
+			parameterName: `/infosec/waf/services/${this.stage}/${apiAppName}-alb-arn`,
+			description: `The ARN of the ALB for ${apiAppName}-${this.stage}. This parameter is created via CDK.`,
+			simpleName: false,
+			stringValue: ec2AppApi.loadBalancer.loadBalancerArn,
+			tier: ParameterTier.STANDARD,
+			dataType: ParameterDataType.TEXT,
+		});
+
 		const readOnlyEndpointApiKeyParam = `/${this.stage}/${this.stack}/${apiAppName}/readOnlyEndpointApiKey`;
 		const readOnlyEndpointApiKey = StringParameter.valueForStringParameter(
 			this,
