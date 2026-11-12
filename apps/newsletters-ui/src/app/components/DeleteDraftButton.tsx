@@ -1,15 +1,6 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import {
-	Alert,
-	AlertTitle,
-	Button,
-	ButtonGroup,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-} from '@mui/material';
+import { AlertBanner } from '@guardian/stand/AlertBanner';
+import { Button } from '@guardian/stand/Button';
+import { Dialog, Modal } from '@guardian/stand/Modal';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
@@ -25,20 +16,27 @@ export const DeleteDraftButton = ({
 	hasBeenDeleted,
 	setHasBeenDeleted,
 }: Props) => {
-	const [showConfirmationButton, setShowConfirmationButton] = useState(false);
+	const [showConfirmation, setShowConfirmation] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 	const [deleteErrorMessage, setDeleteErrorMessage] = useState<
 		string | undefined
 	>(undefined);
 
+	const closeConfirmation = () => setShowConfirmation(false);
+
 	const sendDeleteRequest = async () => {
-		setShowConfirmationButton(false);
 		const { listId } = draft;
 		if (typeof listId !== 'number') {
-			setDeleteErrorMessage('NO LIST ID');
+			closeConfirmation();
+			setDeleteErrorMessage('This draft has no ID, so it cannot be deleted.');
 			return;
 		}
 
+		setIsDeleting(true);
 		const result = await requestDraftDeletion(listId);
+		setIsDeleting(false);
+		closeConfirmation();
+
 		if (result.ok) {
 			setHasBeenDeleted(true);
 		} else {
@@ -46,50 +44,54 @@ export const DeleteDraftButton = ({
 		}
 	};
 
+	if (hasBeenDeleted) {
+		return null;
+	}
+
 	return (
 		<>
-			{!hasBeenDeleted && (
-				<ButtonGroup>
-					<Button
-						color="error"
-						variant="outlined"
-						onClick={() => {
-							setDeleteErrorMessage(undefined);
-							setShowConfirmationButton(true);
-						}}
-						startIcon={<DeleteIcon />}
-					>
-						delete
-					</Button>
-				</ButtonGroup>
-			)}
+			<Button
+				variant="secondary"
+				size="sm"
+				icon="delete"
+				onPress={() => {
+					setDeleteErrorMessage(undefined);
+					setShowConfirmation(true);
+				}}
+			>
+				Delete draft
+			</Button>
 
-			<Dialog open={!hasBeenDeleted && showConfirmationButton}>
-				<DialogTitle>Are you sure you want to delete this draft?</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						Deleted drafts cannot be recovered.
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							setShowConfirmationButton(false);
-						}}
-					>
-						CANCEL
-					</Button>
-					<Button color="error" onClick={() => void sendDeleteRequest()}>
-						CONFIRM DELETE
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<Modal
+				isOpen={showConfirmation}
+				onOpenChange={(open) => !open && closeConfirmation()}
+			>
+				<Dialog>
+					<Dialog.Dismiss ariaLabel="Close" onPress={closeConfirmation} />
+					<Dialog.Header>
+						Are you sure you want to delete this draft?
+					</Dialog.Header>
+					<Dialog.Content>Deleted drafts cannot be recovered.</Dialog.Content>
+					<Dialog.Buttons>
+						<Button variant="tertiary" slot="close" onPress={closeConfirmation}>
+							Cancel
+						</Button>
+						<Button
+							isPending={isDeleting}
+							onPress={() => void sendDeleteRequest()}
+						>
+							Confirm delete
+						</Button>
+					</Dialog.Buttons>
+				</Dialog>
+			</Modal>
 
 			{!!deleteErrorMessage && (
-				<Alert severity="error">
-					<AlertTitle>Delete request failed</AlertTitle>
-					<span>{deleteErrorMessage}</span>
-				</Alert>
+				<div role="alert">
+					<AlertBanner level="error" showIcon>
+						Delete request failed: {deleteErrorMessage}
+					</AlertBanner>
+				</div>
 			)}
 		</>
 	);

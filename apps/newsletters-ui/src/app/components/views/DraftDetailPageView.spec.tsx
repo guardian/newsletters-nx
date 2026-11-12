@@ -1,9 +1,31 @@
+import { toastQueue } from '@guardian/stand/Toast';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import type { MockInstance } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+	allowEditing,
+	mockPermissions,
+	viewerPermissions,
+} from '../../../test-utils/newsletter';
 import { panel, valueFor } from '../../../test-utils/newsletter-detail-page';
+import { requestDraftDeletion } from '../../api-requests/requestDraftDeletion';
 import { DraftDetailPageView } from './DraftDetailPageView';
+
+vi.mock('../../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
+vi.mock('../../api-requests/requestDraftDeletion', () => ({
+	requestDraftDeletion: vi.fn(),
+}));
+
+let addToast: MockInstance<typeof toastQueue.add>;
+
+beforeEach(() => {
+	vi.resetAllMocks();
+	addToast = vi.spyOn(toastQueue, 'add');
+	allowEditing();
+});
 
 const draftFixture = (
 	overrides: Partial<DraftNewsletterData> = {},
@@ -25,10 +47,12 @@ const renderPage = (draft: DraftNewsletterData | null) => {
 				element: <DraftDetailPageView />,
 				loader: () => draft,
 			},
+			{ path: '/all', element: <h1>All newsletters</h1> },
 		],
 		{ initialEntries: ['/drafts/7'] },
 	);
 	render(<RouterProvider router={router} />);
+	return { router, user: userEvent.setup() };
 };
 
 describe('DraftDetailPageView', () => {
@@ -99,5 +123,79 @@ describe('DraftDetailPageView', () => {
 		renderPage(null);
 
 		expect(await screen.findByText('NOT FOUND!')).not.toBeNull();
+	});
+
+	it('shows how far through set-up the draft is', async () => {
+		renderPage(draftFixture());
+		const setUp = within(
+			await screen.findByRole('region', { name: 'Draft set-up' }),
+		);
+		expect(setUp.queryByText('Set-up in progress')).not.toBeNull();
+		expect(
+			setUp.getByRole('link', { name: 'Continue set up' }).getAttribute('href'),
+		).toBe('/drafts/newsletter-data/7');
+	});
+	it('lets editors delete the draft, then goes back to all newsletters', async () => {
+		vi.mocked(requestDraftDeletion).mockResolvedValue({
+			ok: true,
+			deletedDraft: { ...draftFixture(), listId: 7 },
+		});
+		const { router, user } = renderPage(draftFixture());
+		await user.click(
+			await screen.findByRole('button', { name: 'Delete draft' }),
+		);
+		const dialog = within(await screen.findByRole('dialog'));
+		expect(
+			dialog.queryByText('Are you sure you want to delete this draft?'),
+		).not.toBeNull();
+		await user.click(dialog.getByRole('button', { name: 'Confirm delete' }));
+		expect(requestDraftDeletion).toHaveBeenCalledWith(7);
+		expect(await screen.findByText('All newsletters')).not.toBeNull();
+		expect(router.state.location.pathname).toBe('/all');
+		expect(addToast).toHaveBeenCalledWith(
+			expect.objectContaining({
+				title: 'Draft deleted',
+				subject: 'Morning briefing',
+			}),
+			expect.anything(),
+		);
+	});
+	it('does not delete the draft if the user cancels', async () => {
+		const { user } = renderPage(draftFixture());
+		await user.click(
+			await screen.findByRole('button', { name: 'Delete draft' }),
+		);
+		await user.click(
+			within(await screen.findByRole('dialog')).getByRole('button', {
+				name: 'Cancel',
+			}),
+		);
+		expect(requestDraftDeletion).not.toHaveBeenCalled();
+		expect(screen.queryByRole('heading', { level: 2 })).not.toBeNull();
+	});
+	it('says when the draft could not be deleted', async () => {
+		vi.mocked(requestDraftDeletion).mockResolvedValue({
+			ok: false,
+			message: 'Server said no',
+		});
+		const { user } = renderPage(draftFixture());
+		await user.click(
+			await screen.findByRole('button', { name: 'Delete draft' }),
+		);
+		await user.click(
+			within(await screen.findByRole('dialog')).getByRole('button', {
+				name: 'Confirm delete',
+			}),
+		);
+		expect((await screen.findByRole('alert')).textContent).toContain(
+			'Server said no',
+		);
+		expect(screen.queryByRole('heading', { level: 2 })).not.toBeNull();
+	});
+	it('does not offer delete to users who cannot edit', async () => {
+		mockPermissions(viewerPermissions);
+		renderPage(draftFixture());
+		await screen.findByRole('heading', { level: 2 });
+		expect(screen.queryByRole('button', { name: 'Delete draft' })).toBeNull();
 	});
 });
