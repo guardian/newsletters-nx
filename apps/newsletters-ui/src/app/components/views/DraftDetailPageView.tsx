@@ -6,7 +6,6 @@ import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { DraftDetailPanels } from '../NewsletterDetailPanels';
 import { Container, mainStyle, spacerStyles } from './NewsletterDetailPageView';
 
-/** A draft on its own page, laid out like a launched newsletter's details page. */
 export const DraftDetailPageView = () => {
 	const draft = useLoaderData<unknown>();
 

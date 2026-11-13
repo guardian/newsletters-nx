@@ -80,7 +80,6 @@ const valuesFor = (newsletter: NewsletterData): PanelData => ({
 	...Object.fromEntries(textFields.map(({ key }) => [key, newsletter[key]])),
 });
 
-/** The sign-up page and tags, read-only. Takes a draft too, which may be missing any of them. */
 export const SignupPageAndTagsValues = ({
 	newsletter,
 }: {

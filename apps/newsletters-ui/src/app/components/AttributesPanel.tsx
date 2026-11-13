@@ -62,7 +62,6 @@ const attributesOf = (newsletter: NewsletterData): Attributes => ({
 const withCurrent = (options: readonly string[], current?: string) =>
 	current && !options.includes(current) ? [...options, current] : options;
 
-/** The attributes, read-only. Takes a draft too, which may be missing any of them. */
 export const AttributesValues = ({
 	newsletter,
 }: {

@@ -51,7 +51,6 @@ const copyFormStyle = css`
 	}
 `;
 
-/** The copy, read-only. Takes a draft too, which may be missing any of it. */
 export const CopyValues = ({
 	newsletter,
 }: {

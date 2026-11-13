@@ -93,7 +93,6 @@ const getUrls = (
 	square: newsletter.illustrationSquare,
 });
 
-/** The images, read-only. Takes a draft too, which may be missing any of them. */
 export const ImagesValues = ({
 	newsletter,
 }: {
