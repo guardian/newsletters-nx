@@ -4,6 +4,10 @@ import type { APIRequestContext, Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import { createFixtureNewsletter } from '../../../helpers/test-fixtures';
+import {
+	definitionForLabel,
+	panelByName,
+} from '../helpers/newsletter-detail-page';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
 
@@ -39,20 +43,6 @@ const jumpToNav = (page: Page): Locator =>
 // Panel ids are the lower-cased, hyphenated panel name
 const panelIdFor = (panelName: string): string =>
 	panelName.toLowerCase().replace(/\s+/g, '-');
-
-const panelByName = (page: Page, panelName: string): Locator =>
-	page.locator('section', {
-		has: page.getByRole('heading', {
-			level: 3,
-			name: panelName,
-			exact: true,
-		}),
-	});
-
-const definitionForLabel = (panel: Locator, label: string): Locator =>
-	panel
-		.getByRole('group', { name: label, exact: true })
-		.getByRole('definition');
 
 const expectPanelRowsInOrder = async (
 	panel: Locator,
@@ -766,13 +756,7 @@ Then(
 Then(
 	'the {string} panel shows under {string}:',
 	async ({ page }, panelName: string, groupName: string, table: DataTable) => {
-		const panel = page.locator('section', {
-			has: page.getByRole('heading', {
-				level: 3,
-				name: panelName,
-				exact: true,
-			}),
-		});
+		const panel = panelByName(page, panelName);
 
 		const group = panel.getByRole('region', {
 			name: groupName,

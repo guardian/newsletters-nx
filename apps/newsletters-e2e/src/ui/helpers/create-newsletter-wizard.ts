@@ -1,11 +1,8 @@
-import type {
-	DraftNewsletterData,
-	NewsletterData,
-} from '@newsletters-nx/newsletters-data-client';
-import type { ApiResponse } from '@newsletters-nx/newsletters-data-client';
+import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
 import day from 'dayjs';
+import { getDraftNewsletter } from '../../../helpers/draft-newsletter';
 
 /**
  * Describes data types needed to fill in each of the 'create newsletter' wizard
@@ -118,14 +115,10 @@ export default class CreateDraftNewsletterWizard {
 	}
 
 	public async getStoredNewsletterData() {
-		const response = await this.request.get(`/api/drafts/${this.listId}`);
-		const data = (await response.json()) as ApiResponse<DraftNewsletterData>;
-		if (!data.ok) {
-			throw new Error(
-				`Unable to retrieve stored data for newsletter list id ${this.listId}`,
-			);
+		if (this.listId === null) {
+			throw new Error('Newsletter list id was not captured in test run');
 		}
-		return data.data;
+		return getDraftNewsletter(this.request, this.listId);
 	}
 
 	private async fillDateSegment(group: Locator, name: string, value: string) {
