@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
 import type {
-	DraftNewsletterData,
 	NewsletterData,
 	NewsletterValueGenerator,
 } from '@newsletters-nx/newsletters-data-client';
@@ -47,12 +46,11 @@ const CodeField = ({
 	generator,
 	language,
 }: {
-	/** Code is only generated for a launched newsletter, which has every value it needs. */
-	newsletter?: NewsletterData;
+	newsletter: NewsletterData;
 	generator: NewsletterValueGenerator;
 	language: 'django' | 'xml';
 }) => {
-	const code = newsletter && generator.generate(newsletter);
+	const code = generator.generate(newsletter);
 
 	return (
 		<Field label={generator.displayName} help={generator.description}>
@@ -74,44 +72,26 @@ const CodeField = ({
 	);
 };
 
-/**
- * Identifiers and generated code for setting the newsletter up elsewhere.
- * A draft has no `launched` newsletter, so its code shows as not set.
- */
-export const TechnicalOutputValues = ({
-	newsletter,
-	launched,
-}: {
-	newsletter: DraftNewsletterData;
-	launched?: NewsletterData;
-}) => (
-	<dl css={listStyles}>
-		<Field label="ID number">{newsletter.listId}</Field>
-		<Field label="Identity name">{newsletter.identityName}</Field>
-		<Field label="Restricted">
-			{newsletter.restricted === undefined
-				? undefined
-				: String(newsletter.restricted)}
-		</Field>
-		<CodeField
-			newsletter={launched}
-			generator={embedIframeCode}
-			language="xml"
-		/>
-		<CodeField
-			newsletter={launched}
-			generator={brazeTemplateCode}
-			language="django"
-		/>
-	</dl>
-);
-
 export const TechnicalOutputPanel = ({
 	newsletter,
 }: {
 	newsletter: NewsletterData;
 }) => (
 	<StandPanel name="Technical output" id="technical-output" subgrid>
-		<TechnicalOutputValues newsletter={newsletter} launched={newsletter} />
+		<dl css={listStyles}>
+			<Field label="ID number">{newsletter.listId}</Field>
+			<Field label="Identity name">{newsletter.identityName}</Field>
+			<Field label="Restricted">{String(newsletter.restricted)}</Field>
+			<CodeField
+				newsletter={newsletter}
+				generator={embedIframeCode}
+				language="xml"
+			/>
+			<CodeField
+				newsletter={newsletter}
+				generator={brazeTemplateCode}
+				language="django"
+			/>
+		</dl>
 	</StandPanel>
 );
