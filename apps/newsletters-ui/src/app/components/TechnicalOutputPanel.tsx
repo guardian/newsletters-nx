@@ -106,7 +106,6 @@ export const TechnicalOutputValues = ({
 	</dl>
 );
 
-/** Read-only. */
 export const TechnicalOutputPanel = ({
 	newsletter,
 }: {

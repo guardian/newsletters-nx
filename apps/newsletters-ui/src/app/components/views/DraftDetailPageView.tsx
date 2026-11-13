@@ -12,7 +12,6 @@ import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { DraftDetailPanels } from '../NewsletterDetailPanels';
 import { Container, mainStyle, spacerStyles } from './NewsletterDetailPageView';
 
-/** Delete is only offered to users who can edit drafts. */
 const DraftPageActions = ({ draft }: { draft: DraftNewsletterData }) => {
 	const navigate = useNavigate();
 	const { editEverything } = usePermissions() ?? {};
@@ -41,7 +40,6 @@ const DraftPageActions = ({ draft }: { draft: DraftNewsletterData }) => {
 	);
 };
 
-/** A draft on its own page, laid out like a launched newsletter's details page. */
 export const DraftDetailPageView = () => {
 	const draft = useLoaderData<unknown>();
 

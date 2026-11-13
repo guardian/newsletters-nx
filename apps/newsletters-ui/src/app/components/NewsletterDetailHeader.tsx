@@ -114,7 +114,6 @@ export type NewsletterDetailHeaderProps = (
 	actions?: React.ReactNode;
 };
 
-/** The header for a launched newsletter or, given `draft`, a draft. */
 export const NewsletterDetailHeader = ({
 	newsletter,
 	draft,

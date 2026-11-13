@@ -406,7 +406,6 @@ const EditIntegrations = ({
 	);
 };
 
-/** The integrations, read-only. Takes a draft too, which may be missing any of them. */
 export const IntegrationsValues = ({
 	newsletter,
 }: {
