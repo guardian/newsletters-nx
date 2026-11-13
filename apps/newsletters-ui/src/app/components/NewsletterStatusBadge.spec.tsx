@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 
-// Satisfies every required field, so it's 100% complete as a draft.
+// Has every required set-up step done, so it's ready to launch.
 const READY_TO_LAUNCH_DRAFT: DraftNewsletterData = {
 	identityName: 'tech-scape',
 	name: 'TechScape',
@@ -39,8 +39,9 @@ const READY_TO_LAUNCH_DRAFT: DraftNewsletterData = {
 	tagCreationStatus: 'NOT_REQUESTED',
 };
 
-// 90% complete: missing its two sign-up description fields.
-const NINETY_PERCENT_COMPLETE_DRAFT: DraftNewsletterData = {
+// 4 of 5 set-up steps done: the promotion copy step is missing
+// its two sign-up description fields.
+const EIGHTY_PERCENT_COMPLETE_DRAFT: DraftNewsletterData = {
 	...READY_TO_LAUNCH_DRAFT,
 	signUpDescription: undefined,
 	signUpEmbedDescription: undefined,
@@ -72,10 +73,10 @@ describe('NewsletterStatusBadge', () => {
 		expect(screen.getByText('Draft • 0%')).toBeTruthy();
 	});
 
-	it('shows a partially complete draft as "Draft • 90%"', () => {
-		render(<NewsletterStatusBadge draft={NINETY_PERCENT_COMPLETE_DRAFT} />);
+	it('shows a draft with 4 of 5 set-up steps done as "Draft • 80%"', () => {
+		render(<NewsletterStatusBadge draft={EIGHTY_PERCENT_COMPLETE_DRAFT} />);
 
-		expect(screen.getByText('Draft • 90%')).toBeTruthy();
+		expect(screen.getByText('Draft • 80%')).toBeTruthy();
 	});
 
 	it('shows a fully complete draft as "Ready to launch"', () => {

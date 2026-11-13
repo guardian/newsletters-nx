@@ -4,12 +4,12 @@ import type {
 	DraftNewsletterData,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
-import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
+import { getDraftSetupProgress } from '@newsletters-nx/newsletters-data-client';
 import type { DraftStatus, LaunchedStatus } from '../lib/status-options';
 import { statusLabels } from '../lib/status-options';
 
 export const getDraftStatus = (draft: DraftNewsletterData): DraftStatus =>
-	calculateProgress(draft) >= 100 ? 'ready-to-launch' : 'draft';
+	getDraftSetupProgress(draft).isReadyToLaunch ? 'ready-to-launch' : 'draft';
 
 type BadgeColor = NonNullable<BadgeProps['color']>;
 
@@ -33,16 +33,16 @@ export const getLaunchedStatusBadgeContent = (
 	color: LAUNCHED_STATUS_COLORS[status],
 });
 
-// Progress is approximate/display-only by design - fine for a badge,
-// not for anything that gates behaviour.
+// Uses the same set-up steps as the progress bar on the draft page,
+// so the percentage here always matches the steps done there.
 export const getDraftStatusBadgeContent = (
 	draft: DraftNewsletterData,
 ): BadgeContent => {
-	const progress = calculateProgress(draft);
+	const { percentComplete, isReadyToLaunch } = getDraftSetupProgress(draft);
 
-	return progress >= 100
+	return isReadyToLaunch
 		? { label: statusLabels['ready-to-launch'], color: 'warmPurple' }
-		: { label: `${statusLabels.draft} • ${progress}%`, color: 'yellow' };
+		: { label: `${statusLabels.draft} • ${percentComplete}%`, color: 'yellow' };
 };
 
 export type NewsletterStatusBadgeProps = (
