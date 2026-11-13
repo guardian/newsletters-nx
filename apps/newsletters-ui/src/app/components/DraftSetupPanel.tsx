@@ -1,5 +1,10 @@
 import { css } from '@emotion/react';
-import { semanticColors, semanticSpacing } from '@guardian/stand';
+import {
+	baseSpacing,
+	semanticColors,
+	semanticRadius,
+	semanticSpacing,
+} from '@guardian/stand';
 import { Badge } from '@guardian/stand/Badge';
 import { Link } from '@guardian/stand/Link';
 import { LinkButton } from '@guardian/stand/LinkButton';
@@ -24,6 +29,12 @@ const optionalRowStyles = css`
 	flex-flow: row wrap;
 	align-items: center;
 	gap: ${semanticSpacing.stackXs};
+`;
+
+const optionalBadgeStyles = css`
+	background-color: ${semanticColors.fill.blueWeak};
+	border-radius: ${semanticRadius.cornerXs};
+	padding: 0 ${baseSpacing['6Px']} ${baseSpacing['2Px']};
 `;
 
 const actionsStyles = css`
@@ -94,7 +105,12 @@ export const DraftSetupPanel = ({ draft }: Props) => {
 					aria-label="Optional set-up"
 					css={[rowStyles, optionalRowStyles]}
 				>
-					<Badge color="grey" weight="strong" size="sm">
+					<Badge
+						color="grey"
+						weight="light"
+						size="xs"
+						cssOverrides={optionalBadgeStyles}
+					>
 						Optional
 					</Badge>
 					{canEdit ? (
