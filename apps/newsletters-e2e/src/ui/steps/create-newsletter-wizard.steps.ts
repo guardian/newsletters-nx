@@ -1,10 +1,7 @@
 import { expect } from '@playwright/test';
 import { createBdd, type DataTable } from 'playwright-bdd';
 import type { NewsletterFormData } from '../helpers/create-newsletter-wizard';
-import {
-	definitionForLabel,
-	panelByName,
-} from '../helpers/newsletter-detail-page';
+import { panelByName } from '../helpers/newsletter-detail-page';
 import { test } from './fixtures';
 
 const { Given, Then, When } = createBdd(test, {
@@ -184,9 +181,8 @@ Then(
 		await expect(page).toHaveURL(
 			new RegExp(`/drafts/${createDraftNewsletterWizard.listId}$`),
 		);
-		await expect(
-			definitionForLabel(panelByName(page, 'Technical output'), 'ID number'),
-		).toHaveText(createDraftNewsletterWizard.listId!.toString());
+		await expect(panelByName(page, 'Attributes')).toBeVisible();
+		await expect(panelByName(page, 'Technical output')).toHaveCount(0);
 	},
 );
 

@@ -83,7 +83,6 @@ Then('the draft details are read-only', async ({ page }) => {
 		'Copy',
 		'Sign-up page and tags',
 		'Integrations',
-		'Technical output',
 	]) {
 		const panel = panelByName(page, name);
 		await expect(panel).toBeVisible();
@@ -92,6 +91,7 @@ Then('the draft details are read-only', async ({ page }) => {
 		).toHaveCount(0);
 		await expect(panel.locator('input, textarea, select')).toHaveCount(0);
 	}
+	await expect(panelByName(page, 'Technical output')).toHaveCount(0);
 });
 
 When(
