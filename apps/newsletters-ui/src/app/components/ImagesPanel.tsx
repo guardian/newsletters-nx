@@ -3,7 +3,10 @@ import { baseSpacing, semanticColors } from '@guardian/stand';
 import { Icon } from '@guardian/stand/Icon';
 import { Link } from '@guardian/stand/Link';
 import { Typography } from '@guardian/stand/Typography';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { defaultRenderingOptionsValues } from '@newsletters-nx/newsletters-data-client';
 import { useState } from 'react';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
@@ -82,13 +85,28 @@ const images: Array<{ shape: ImageShape; label: string }> = [
 ];
 
 const getUrls = (
-	newsletter: NewsletterData,
+	newsletter: DraftNewsletterData,
 ): Record<ImageShape, string | undefined> => ({
 	banner: newsletter.renderingOptions?.mainBannerUrl,
 	mobileBanner: newsletter.renderingOptions?.mainBannerMobileUrl,
 	card: newsletter.illustrationCard,
 	square: newsletter.illustrationSquare,
 });
+
+export const ImagesValues = ({
+	newsletter,
+}: {
+	newsletter: DraftNewsletterData;
+}) => {
+	const urls = getUrls(newsletter);
+	return (
+		<dl css={listStyles}>
+			{images.map(({ shape, label }) => (
+				<ImageValue key={shape} label={label} shape={shape} url={urls[shape]} />
+			))}
+		</dl>
+	);
+};
 
 export const ImagesPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 	const [saved, setSaved] = useState<NewsletterData>();
@@ -170,16 +188,7 @@ export const ImagesPanel = ({ newsletter }: { newsletter: NewsletterData }) => {
 						<ImageSizeGuidance />
 					</div>
 				) : (
-					<dl css={listStyles}>
-						{images.map(({ shape, label }) => (
-							<ImageValue
-								key={shape}
-								label={label}
-								shape={shape}
-								url={urls[shape]}
-							/>
-						))}
-					</dl>
+					<ImagesValues newsletter={latest} />
 				)
 			}
 		</StandPanel>

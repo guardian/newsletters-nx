@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { baseSpacing } from '@guardian/stand';
 import type {
+	DraftNewsletterData,
 	NewsletterData,
 	NewsletterValueGenerator,
 } from '@newsletters-nx/newsletters-data-client';
@@ -46,51 +47,71 @@ const CodeField = ({
 	generator,
 	language,
 }: {
-	newsletter: NewsletterData;
+	/** Code is only generated for a launched newsletter, which has every value it needs. */
+	newsletter?: NewsletterData;
 	generator: NewsletterValueGenerator;
 	language: 'django' | 'xml';
 }) => {
-	const code = generator.generate(newsletter);
+	const code = newsletter && generator.generate(newsletter);
 
 	return (
 		<Field label={generator.displayName} help={generator.description}>
-			<div css={fieldContentStyles}>
-				<pre css={codeStyles}>
-					<code
-						className="hljs"
-						// highlight.js escapes the code, so this only adds its own markup
-						dangerouslySetInnerHTML={{
-							__html: hljs.highlight(code, { language }).value,
-						}}
-					/>
-				</pre>
-				<CopyToClipboardButton text={code} />
-			</div>
+			{code && (
+				<div css={fieldContentStyles}>
+					<pre css={codeStyles}>
+						<code
+							className="hljs"
+							// highlight.js escapes the code, so this only adds its own markup
+							dangerouslySetInnerHTML={{
+								__html: hljs.highlight(code, { language }).value,
+							}}
+						/>
+					</pre>
+					<CopyToClipboardButton text={code} />
+				</div>
+			)}
 		</Field>
 	);
 };
 
-/** Identifiers and generated code for setting the newsletter up elsewhere. Read-only. */
+/**
+ * Identifiers and generated code for setting the newsletter up elsewhere.
+ * A draft has no `launched` newsletter, so its code shows as not set.
+ */
+export const TechnicalOutputValues = ({
+	newsletter,
+	launched,
+}: {
+	newsletter: DraftNewsletterData;
+	launched?: NewsletterData;
+}) => (
+	<dl css={listStyles}>
+		<Field label="ID number">{newsletter.listId}</Field>
+		<Field label="Identity name">{newsletter.identityName}</Field>
+		<Field label="Restricted">
+			{newsletter.restricted === undefined
+				? undefined
+				: String(newsletter.restricted)}
+		</Field>
+		<CodeField
+			newsletter={launched}
+			generator={embedIframeCode}
+			language="xml"
+		/>
+		<CodeField
+			newsletter={launched}
+			generator={brazeTemplateCode}
+			language="django"
+		/>
+	</dl>
+);
+
 export const TechnicalOutputPanel = ({
 	newsletter,
 }: {
 	newsletter: NewsletterData;
 }) => (
 	<StandPanel name="Technical output" id="technical-output" subgrid>
-		<dl css={listStyles}>
-			<Field label="ID number">{newsletter.listId}</Field>
-			<Field label="Identity name">{newsletter.identityName}</Field>
-			<Field label="Restricted">{String(newsletter.restricted)}</Field>
-			<CodeField
-				newsletter={newsletter}
-				generator={embedIframeCode}
-				language="xml"
-			/>
-			<CodeField
-				newsletter={newsletter}
-				generator={brazeTemplateCode}
-				language="django"
-			/>
-		</dl>
+		<TechnicalOutputValues newsletter={newsletter} launched={newsletter} />
 	</StandPanel>
 );

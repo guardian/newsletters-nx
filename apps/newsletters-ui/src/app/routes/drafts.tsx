@@ -1,5 +1,6 @@
 import type { RouteObject } from 'react-router-dom';
 import { StandRedesignWizardContainer } from '../components/StandRedesignWizard';
+import { DraftDetailPageView } from '../components/views/DraftDetailPageView';
 import { DraftDetailView } from '../components/views/DraftDetailView';
 import { DraftListView } from '../components/views/DraftListView';
 import { WizardContainer } from '../components/WizardContainer';
@@ -25,7 +26,11 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: ':id',
-			element: <DraftDetailView />,
+			element: isFeatureSwitchEnabled('switch-legacy') ? (
+				<DraftDetailView />
+			) : (
+				<DraftDetailPageView />
+			),
 			loader: draftDetailLoader,
 		},
 		{

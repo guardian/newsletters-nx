@@ -177,9 +177,21 @@ Then(
 			createDraftNewsletterWizard.listId,
 			'Newsletter list id was not captured in test run',
 		).toBeDefined();
-		await expect(page.locator('p').filter({ hasText: `id:` })).toContainText(
-			createDraftNewsletterWizard.listId!.toString(),
+		await expect(page).toHaveURL(
+			new RegExp(`/drafts/${createDraftNewsletterWizard.listId}$`),
 		);
+		const technicalOutput = page.locator('section').filter({
+			has: page.getByRole('heading', {
+				name: 'Technical output',
+				level: 3,
+				exact: true,
+			}),
+		});
+		await expect(
+			technicalOutput
+				.getByRole('group', { name: 'ID number', exact: true })
+				.getByRole('definition'),
+		).toHaveText(createDraftNewsletterWizard.listId!.toString());
 	},
 );
 

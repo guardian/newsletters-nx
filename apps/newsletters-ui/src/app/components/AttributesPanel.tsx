@@ -3,7 +3,10 @@ import { baseSpacing } from '@guardian/stand';
 import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
 import { Option, Select } from '@guardian/stand/Select';
 import { TextInput } from '@guardian/stand/TextInput';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import {
 	dataCollectionSchema,
 	newsletterDataSchema,
@@ -18,7 +21,7 @@ import { humanize } from '../lib/format';
 import { frequencyOptions } from '../lib/frequency-options';
 import { launchedStatusOptions } from '../lib/status-options';
 import { Field, listStyles } from './NewsletterDetailFields';
-import { NewsletterStatusBadge } from './NewsletterStatusBadge';
+import { LaunchedStatusBadge } from './NewsletterStatusBadge';
 import { StandPanel } from './StandPanel';
 
 const panelSchema = newsletterDataSchema
@@ -58,6 +61,30 @@ const attributesOf = (newsletter: NewsletterData): Attributes => ({
 /** Keep a group that isn't one of the options, so saving doesn't change it. */
 const withCurrent = (options: readonly string[], current?: string) =>
 	current && !options.includes(current) ? [...options, current] : options;
+
+export const AttributesValues = ({
+	newsletter,
+}: {
+	newsletter: DraftNewsletterData;
+}) => (
+	<dl css={listStyles}>
+		<Field label="Name">{newsletter.name}</Field>
+		<Field label="Newsletter status">
+			{newsletter.status && (
+				<LaunchedStatusBadge status={newsletter.status} size="xs" />
+			)}
+		</Field>
+		<Field label="Pillar">
+			{newsletter.theme && humanize(newsletter.theme)}
+		</Field>
+		<Field label="Region focus">{newsletter.regionFocus}</Field>
+		<Field label="Frequency">{newsletter.frequency}</Field>
+		<Field label="Type of newsletter">
+			{newsletter.category && humanize(newsletter.category)}
+		</Field>
+		<Field label="MMA group">{newsletter.group}</Field>
+	</dl>
+);
 
 export const AttributesPanel = ({
 	newsletter,
@@ -217,22 +244,7 @@ export const AttributesPanel = ({
 						)}
 					</div>
 				) : (
-					<dl css={listStyles}>
-						<Field label="Name">{current.name}</Field>
-						<Field label="Newsletter status">
-							<NewsletterStatusBadge
-								newsletter={{ ...newsletter, status: current.status }}
-								size="xs"
-							/>
-						</Field>
-						<Field label="Pillar">{humanize(current.theme)}</Field>
-						<Field label="Region focus">{current.regionFocus}</Field>
-						<Field label="Frequency">{current.frequency}</Field>
-						<Field label="Type of newsletter">
-							{humanize(newsletter.category)}
-						</Field>
-						<Field label="MMA group">{current.group}</Field>
-					</dl>
+					<AttributesValues newsletter={{ ...newsletter, ...current }} />
 				)
 			}
 		</StandPanel>
