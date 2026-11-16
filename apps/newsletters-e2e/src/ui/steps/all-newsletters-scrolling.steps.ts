@@ -1,6 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import { createFixtureDraft } from '../../../helpers/test-fixtures';
+import { createFixtureDraft } from '@newsletters-internal/e2e/helpers/test-fixtures';
 import { Given, Then, When } from './fixtures';
 
 // Enough rows that the list is taller than the 1280x720 test viewport

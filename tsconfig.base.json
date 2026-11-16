@@ -15,6 +15,9 @@
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
 		"paths": {
+			"@newsletters-internal/api-static/*": ["./apps/newsletters-api/static/*"],
+			"@newsletters-internal/e2e/*": ["./apps/newsletters-e2e/*"],
+			"@newsletters-internal/ui/*": ["./apps/newsletters-ui/src/*"],
 			"@newsletters-nx/email-builder": ["./libs/email-builder/src/index.ts"],
 			"@newsletters-nx/email-builder/server": [
 				"./libs/email-builder/src/server.ts"
@@ -27,6 +30,9 @@
 			],
 			"@newsletters-nx/newsletters-data-client": [
 				"./libs/newsletters-data-client/src/index.ts"
+			],
+			"@newsletters-nx/newsletters-data-client/fixtures": [
+				"./libs/newsletters-data-client/src/fixtures/newsletter-fixtures.ts"
 			],
 			"@newsletters-nx/newsletters-data-client/server": [
 				"./libs/newsletters-data-client/src/server.ts"

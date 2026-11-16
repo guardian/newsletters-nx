@@ -10,8 +10,8 @@ import {
 	createFixtureLayout,
 	deleteFixtureLayout,
 	restoreFixtureLayouts,
-} from '../../../helpers/test-fixtures';
-import { chunk } from '../../../utils/chunk';
+} from '@newsletters-internal/e2e/helpers/test-fixtures';
+import { chunk } from '@newsletters-internal/e2e/utils/chunk';
 
 const editionIdsByName: Record<string, EditionId> = {
 	'United Kingdom': 'UK',

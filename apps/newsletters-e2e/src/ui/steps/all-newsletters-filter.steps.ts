@@ -8,7 +8,7 @@ import { expect } from '@playwright/test';
 import {
 	createFixtureDraft,
 	createFixtureNewsletter,
-} from '../../../helpers/test-fixtures';
+} from '@newsletters-internal/e2e/helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
 

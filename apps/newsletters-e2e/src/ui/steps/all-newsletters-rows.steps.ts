@@ -8,7 +8,7 @@ import type { DataTable } from 'playwright-bdd';
 import {
 	createFixtureDraft,
 	createFixtureNewsletter,
-} from '../../../helpers/test-fixtures';
+} from '@newsletters-internal/e2e/helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then } from './fixtures';
 

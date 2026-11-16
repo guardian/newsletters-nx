@@ -2,7 +2,7 @@ import type { EditionId } from '@newsletters-nx/newsletters-data-client';
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
-import { createFixtureNewsletter } from '../../../helpers/test-fixtures';
+import { createFixtureNewsletter } from '@newsletters-internal/e2e/helpers/test-fixtures';
 import { Given, Then, When } from './fixtures';
 
 const parseList = (list: string) => list.split(',').map((n) => n.trim());
