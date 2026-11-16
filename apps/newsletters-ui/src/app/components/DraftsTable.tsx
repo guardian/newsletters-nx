@@ -1,7 +1,7 @@
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Button } from '@mui/material';
-import { calculateProgress } from '@newsletters-nx/newsletters-data-client';
+import { getDraftSetupProgress } from '@newsletters-nx/newsletters-data-client';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -35,7 +35,7 @@ export const DraftsTable = ({ drafts }: Props) => {
 		drafts.map((draft) => ({
 			...draft,
 			wizardListId: draft['listId'],
-			progress: calculateProgress(draft),
+			progress: getDraftSetupProgress(draft).percentComplete,
 		})),
 	);
 

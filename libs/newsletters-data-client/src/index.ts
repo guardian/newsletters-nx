@@ -1,5 +1,6 @@
 export * from './lib/api-response-type';
 export * from './lib/derive-newsletter-fields';
+export * from './lib/draft-setup-progress';
 export * from './lib/draft-to-newsletter';
 export * from './lib/json-undefined-null-conversions';
 export * from './lib/newsletter-value-generators';
