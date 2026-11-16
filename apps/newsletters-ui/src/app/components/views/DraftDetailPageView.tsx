@@ -6,10 +6,10 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { DEFAULT_TOAST_TIMEOUT_MS } from '../../constants';
 import { usePermissions } from '../../hooks/user-hooks';
 import { formatDraftName } from '../../lib/format';
-import { DeleteDraftButton } from '../DeleteDraftButton';
 import { DraftInterimActions } from '../DraftInterimActions';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { DraftDetailPanels } from '../NewsletterDetailPanels';
+import { StandDeleteDraftButton } from '../StandDeleteDraftButton';
 import { Container, mainStyle, spacerStyles } from './NewsletterDetailPageView';
 
 const DraftPageActions = ({ draft }: { draft: DraftNewsletterData }) => {
@@ -21,7 +21,7 @@ const DraftPageActions = ({ draft }: { draft: DraftNewsletterData }) => {
 	}
 
 	return (
-		<DeleteDraftButton
+		<StandDeleteDraftButton
 			draft={draft}
 			hasBeenDeleted={false}
 			setHasBeenDeleted={() => {

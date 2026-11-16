@@ -1,8 +1,17 @@
-import { AlertBanner } from '@guardian/stand/AlertBanner';
-import { Button } from '@guardian/stand/Button';
-import { Dialog, Modal } from '@guardian/stand/Modal';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {
+	Alert,
+	AlertTitle,
+	Button,
+	ButtonGroup,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+} from '@mui/material';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
 
 interface Props {
@@ -16,107 +25,71 @@ export const DeleteDraftButton = ({
 	hasBeenDeleted,
 	setHasBeenDeleted,
 }: Props) => {
-	const [showConfirmation, setShowConfirmation] = useState(false);
-	const [isDeleting, setIsDeleting] = useState(false);
-	const deletionInFlight = useRef(false);
+	const [showConfirmationButton, setShowConfirmationButton] = useState(false);
 	const [deleteErrorMessage, setDeleteErrorMessage] = useState<
 		string | undefined
 	>(undefined);
 
-	const closeConfirmation = () => {
-		if (!deletionInFlight.current) {
-			setShowConfirmation(false);
-		}
-	};
-
 	const sendDeleteRequest = async () => {
-		if (deletionInFlight.current) {
-			return;
-		}
+		setShowConfirmationButton(false);
 		const { listId } = draft;
 		if (typeof listId !== 'number') {
-			closeConfirmation();
-			setDeleteErrorMessage('This draft has no ID, so it cannot be deleted.');
+			setDeleteErrorMessage('NO LIST ID');
 			return;
 		}
 
-		deletionInFlight.current = true;
-		setIsDeleting(true);
-		try {
-			const result = await requestDraftDeletion(listId);
-			if (result.ok) {
-				setHasBeenDeleted(true);
-			} else {
-				setDeleteErrorMessage(result.message);
-			}
-		} catch {
-			setDeleteErrorMessage('DELETE REQUEST FAILED');
-		} finally {
-			deletionInFlight.current = false;
-			setIsDeleting(false);
-			setShowConfirmation(false);
+		const result = await requestDraftDeletion(listId);
+		if (result.ok) {
+			setHasBeenDeleted(true);
+		} else {
+			setDeleteErrorMessage(result.message);
 		}
 	};
-
-	if (hasBeenDeleted) {
-		return null;
-	}
 
 	return (
 		<>
-			<Button
-				variant="tertiary"
-				size="sm"
-				icon="delete"
-				isDisabled={isDeleting}
-				onPress={() => {
-					setDeleteErrorMessage(undefined);
-					setShowConfirmation(true);
-				}}
-			>
-				Delete draft
-			</Button>
+			{!hasBeenDeleted && (
+				<ButtonGroup>
+					<Button
+						color="error"
+						variant="outlined"
+						onClick={() => {
+							setDeleteErrorMessage(undefined);
+							setShowConfirmationButton(true);
+						}}
+						startIcon={<DeleteIcon />}
+					>
+						delete
+					</Button>
+				</ButtonGroup>
+			)}
 
-			<Modal
-				isOpen={showConfirmation}
-				isKeyboardDismissDisabled={isDeleting}
-				onOpenChange={(open) => !open && closeConfirmation()}
-			>
-				<Dialog>
-					<Dialog.Dismiss
-						ariaLabel="Close"
-						isDisabled={isDeleting}
-						onPress={closeConfirmation}
-					/>
-					<Dialog.Header>
-						Are you sure you want to delete this draft?
-					</Dialog.Header>
-					<Dialog.Content>Deleted drafts cannot be recovered.</Dialog.Content>
-					<Dialog.Buttons>
-						<Button
-							variant="tertiary"
-							slot="close"
-							isDisabled={isDeleting}
-							onPress={closeConfirmation}
-						>
-							Cancel
-						</Button>
-						<Button
-							isPending={isDeleting}
-							onPress={() => void sendDeleteRequest()}
-						>
-							Confirm delete
-						</Button>
-					</Dialog.Buttons>
-				</Dialog>
-			</Modal>
+			<Dialog open={!hasBeenDeleted && showConfirmationButton}>
+				<DialogTitle>Are you sure you want to delete this draft?</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						Deleted drafts cannot be recovered.
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={() => {
+							setShowConfirmationButton(false);
+						}}
+					>
+						CANCEL
+					</Button>
+					<Button color="error" onClick={() => void sendDeleteRequest()}>
+						CONFIRM DELETE
+					</Button>
+				</DialogActions>
+			</Dialog>
 
 			{!!deleteErrorMessage && (
-				<div role="alert">
-					<AlertBanner level="error" showIcon>
-						Delete request failed: {deleteErrorMessage}
-					</AlertBanner>
-				</div>
+				<Alert severity="error">
+					<AlertTitle>Delete request failed</AlertTitle>
+					<span>{deleteErrorMessage}</span>
+				</Alert>
 			)}
 		</>
 	);
