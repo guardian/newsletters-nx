@@ -3,7 +3,7 @@ import { workflowStatusEnumSchema } from '@newsletters-nx/newsletters-data-clien
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
-import { createFixtureNewsletter } from '../../../helpers/test-fixtures';
+import { createFixtureNewsletter } from '@newsletters-internal/e2e/helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
 

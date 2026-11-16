@@ -1,15 +1,18 @@
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import { TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS } from '@newsletters-nx/newsletters-data-client/fixtures';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TECHSCAPE_IN_NEW_FORMAT_WITH_DATA_COLLECTION_FIELDS } from '../../../../../../libs/newsletters-data-client/src/fixtures/newsletter-fixtures';
 import {
 	allowEditing,
 	mockPermissions,
 	viewerPermissions,
-} from '../../../test-utils/newsletter';
-import { panel, valueFor } from '../../../test-utils/newsletter-detail-page';
+} from '@newsletters-internal/ui/test-utils/newsletter';
+import {
+	panel,
+	valueFor,
+} from '@newsletters-internal/ui/test-utils/newsletter-detail-page';
 import { requestDraftDeletion } from '../../api-requests/requestDraftDeletion';
 import { DraftDetailPageView } from './DraftDetailPageView';
 

@@ -3,7 +3,7 @@ import type {
 	Layout,
 } from '@newsletters-nx/newsletters-data-client';
 import { test as base, createBdd } from 'playwright-bdd';
-import { deleteDraftNewsletter } from '../../../helpers/draft-newsletter';
+import { deleteDraftNewsletter } from '@newsletters-internal/e2e/helpers/draft-newsletter';
 import {
 	backupFixtureLayouts,
 	createFixtureLayout,
@@ -11,7 +11,7 @@ import {
 	deleteFixtureLayout,
 	deleteFixtureNewsletter,
 	restoreFixtureLayouts,
-} from '../../../helpers/test-fixtures';
+} from '@newsletters-internal/e2e/helpers/test-fixtures';
 import CreateDraftNewsletterWizard from '../helpers/create-newsletter-wizard';
 import NewslettersHubLandingPage from '../helpers/newsletters-hub-landing-page';
 

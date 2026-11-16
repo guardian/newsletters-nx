@@ -44,3 +44,14 @@ The E2E job runs with `USE_IN_MEMORY_STORAGE=true`, `USE_DEVELOPER_PROFILE=true`
 and `USE_LOCAL_USER_PERMISSIONS=true`, so it never touches AWS. Reproduce it
 locally by running `pnpm run dev` (same storage mode) in one terminal and
 `pnpm test:e2e` in another.
+
+## Shared fixtures and import paths
+
+Import shared newsletter test data from
+`@newsletters-nx/newsletters-data-client/fixtures`. This alias targets the test
+fixture directly; it is not exported by the production data-client entry point.
+
+Internal aliases also shorten imports for E2E helpers (`@newsletters-internal/e2e/*`),
+UI test helpers (`@newsletters-internal/ui/*`), and API static data
+(`@newsletters-internal/api-static/*`). These paths are internal to the workspace,
+not public library entry points.
