@@ -137,7 +137,7 @@ describe('DraftDetailPageView', () => {
 		expect(
 			screen.queryByRole('link', { name: 'Newsletter set-up' }),
 		).toBeNull();
-		expect(screen.queryByRole('button', { name: 'delete' })).toBeNull();
+		expect(screen.queryByRole('button', { name: 'Delete draft' })).toBeNull();
 	});
 	it('shows the private-until-launch choice', async () => {
 		renderPage(draftFixture({ privateUntilLaunch: true }));
@@ -173,20 +173,20 @@ describe('DraftDetailPageView', () => {
 		});
 		renderPage(draftFixture());
 		await userEvent.click(
-			await screen.findByRole('button', { name: 'delete' }),
+			await screen.findByRole('button', { name: 'Delete draft' }),
 		);
 		await userEvent.click(
 			within(screen.getByRole('dialog')).getByRole('button', {
-				name: 'CANCEL',
+				name: 'Cancel',
 			}),
 		);
 		expect(requestDraftDeletion).not.toHaveBeenCalled();
 		await userEvent.click(
-			await screen.findByRole('button', { name: 'delete' }),
+			await screen.findByRole('button', { name: 'Delete draft' }),
 		);
 		await userEvent.click(
 			within(screen.getByRole('dialog')).getByRole('button', {
-				name: 'CONFIRM DELETE',
+				name: 'Confirm delete',
 			}),
 		);
 		expect(requestDraftDeletion).toHaveBeenCalledWith(7);
