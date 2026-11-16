@@ -36,6 +36,9 @@ export const mainStyle = css`
 
 	display: flex;
 	flex-flow: column nowrap;
+	width: 100%;
+	min-width: 0;
+	max-width: ${semanticBreakpoints.lg};
 	margin: 0 auto;
 `;
 
