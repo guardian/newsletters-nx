@@ -1,4 +1,5 @@
 import type {
+	DraftNewsletterData,
 	NewsletterCategory,
 	Theme,
 } from '@newsletters-nx/newsletters-data-client';
@@ -19,6 +20,10 @@ export const formatPillarCategoryLabel = (
 		.map(humanize);
 	return labels.length > 0 ? labels.join(' | ') : undefined;
 };
+
+// A draft can be saved before it has been named.
+export const formatDraftName = ({ name, listId }: DraftNewsletterData) =>
+	name ?? `Untitled draft ${listId}`;
 
 // `undefined` means no real edit date is known (see `deriveUpdatedTimestamp`),
 // not an invalid value.

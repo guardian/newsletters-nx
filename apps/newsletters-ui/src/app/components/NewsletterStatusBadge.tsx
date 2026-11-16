@@ -45,6 +45,25 @@ export const getDraftStatusBadgeContent = (
 		: { label: `${statusLabels.draft} • ${progress}%`, color: 'yellow' };
 };
 
+const StatusBadge = ({
+	label,
+	color,
+	size,
+}: BadgeContent & { size?: BadgeProps['size'] }) => (
+	<Badge color={color} weight="strong" size={size}>
+		{label}
+	</Badge>
+);
+
+/** Badge for a launched status on its own, e.g. a draft's `status` field. */
+export const LaunchedStatusBadge = ({
+	status,
+	size,
+}: {
+	status: LaunchedStatus;
+	size?: BadgeProps['size'];
+}) => <StatusBadge {...getLaunchedStatusBadgeContent(status)} size={size} />;
+
 export type NewsletterStatusBadgeProps = (
 	| { newsletter: NewsletterData; draft?: never }
 	| { draft: DraftNewsletterData; newsletter?: never }
@@ -54,14 +73,11 @@ export const NewsletterStatusBadge = ({
 	newsletter,
 	draft,
 	size,
-}: NewsletterStatusBadgeProps) => {
-	const { label, color } = newsletter
-		? getLaunchedStatusBadgeContent(newsletter.status)
-		: getDraftStatusBadgeContent(draft);
-
-	return (
-		<Badge color={color} weight="strong" size={size}>
-			{label}
-		</Badge>
-	);
-};
+}: NewsletterStatusBadgeProps) => (
+	<StatusBadge
+		{...(newsletter
+			? getLaunchedStatusBadgeContent(newsletter.status)
+			: getDraftStatusBadgeContent(draft))}
+		size={size}
+	/>
+);
