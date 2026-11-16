@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import { createFixtureDraft } from '../../../helpers/test-fixtures';
+import { createFixtureDraft } from '@newsletters-internal/e2e/helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
 import { Given, Then, When } from './fixtures';
 

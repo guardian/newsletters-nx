@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { createDraftNewsletter } from '../../../helpers/draft-newsletter';
+import { createDraftNewsletter } from '@newsletters-internal/e2e/helpers/draft-newsletter';
 import { Given, Then, When } from './fixtures';
 
 Given(
