@@ -138,7 +138,7 @@ describe('draftNewsletterToRow', () => {
 	it('maps a draft to the same row shape', () => {
 		const row = draftNewsletterToRow(draft());
 
-		// `statusBadge.label` depends on `calculateProgress`'s own field-count
+		// `statusBadge.label` depends on `getDraftSetupProgress`'s own step
 		// logic (covered by that function's own tests), so only its shape is
 		// asserted here, not a specific percentage.
 		expect(row).toMatchObject({
