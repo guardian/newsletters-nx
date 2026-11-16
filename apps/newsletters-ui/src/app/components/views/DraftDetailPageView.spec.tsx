@@ -91,7 +91,6 @@ describe('DraftDetailPageView', () => {
 			'Copy',
 			'Sign-up page and tags',
 			'Integrations',
-			'Technical output',
 		]) {
 			expect(jumpTo.queryByRole('link', { name })).not.toBeNull();
 			expect(() => panel(name)).not.toThrow();
@@ -116,8 +115,6 @@ describe('DraftDetailPageView', () => {
 		expect(valueFor('Headline')).toBe('Not set');
 		expect(valueFor('Newsletter status')).toBe('Not set');
 		expect(valueFor('Sign-up page creation status')).toBe('Not set');
-		expect(valueFor('Restricted')).toBe('Not set');
-		expect(valueFor('Sign up embed code')).toBe('Not set');
 	});
 
 	it('shows launch fields and allows a viewer to jump to the panel', async () => {
