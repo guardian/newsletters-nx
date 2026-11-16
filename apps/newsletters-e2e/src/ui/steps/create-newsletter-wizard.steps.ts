@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { createBdd, type DataTable } from 'playwright-bdd';
 import type { NewsletterFormData } from '../helpers/create-newsletter-wizard';
+import { panelByName } from '../helpers/newsletter-detail-page';
 import { test } from './fixtures';
 
 const { Given, Then, When } = createBdd(test, {
@@ -180,18 +181,8 @@ Then(
 		await expect(page).toHaveURL(
 			new RegExp(`/drafts/${createDraftNewsletterWizard.listId}$`),
 		);
-		const technicalOutput = page.locator('section').filter({
-			has: page.getByRole('heading', {
-				name: 'Technical output',
-				level: 3,
-				exact: true,
-			}),
-		});
-		await expect(
-			technicalOutput
-				.getByRole('group', { name: 'ID number', exact: true })
-				.getByRole('definition'),
-		).toHaveText(createDraftNewsletterWizard.listId!.toString());
+		await expect(panelByName(page, 'Attributes')).toBeVisible();
+		await expect(panelByName(page, 'Technical output')).toHaveCount(0);
 	},
 );
 
