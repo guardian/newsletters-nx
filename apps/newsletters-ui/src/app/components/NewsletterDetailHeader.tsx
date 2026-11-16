@@ -41,6 +41,15 @@ const backLinkStyles = css`
 	text-decoration: none;
 `;
 
+// The back link, with any page actions (e.g. delete) on the right.
+const topRowStyles = css`
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: ${semanticSpacing.stackXs};
+`;
+
 // Underline the text only, not the arrow icon.
 const backLinkTextStyles = css`
 	text-decoration: underline;
@@ -99,27 +108,35 @@ const graphicStyles = css`
 export type NewsletterDetailHeaderProps = (
 	| { newsletter: NewsletterData; draft?: never }
 	| { draft: DraftNewsletterData; newsletter?: never }
-) & { children?: React.ReactNode };
+) & {
+	children?: React.ReactNode;
+	/** Shown to the right of the back link. */
+	actions?: React.ReactNode;
+};
 
 export const NewsletterDetailHeader = ({
 	newsletter,
 	draft,
 	children,
+	actions,
 }: NewsletterDetailHeaderProps) => {
 	const details: DraftNewsletterData = newsletter ?? draft;
 
 	return (
 		<>
-			<Link to="/all" css={backLinkStyles}>
-				<Icon symbol="arrow_back" size="sm" />
-				<Typography
-					element="span"
-					variant="headingCompactSm"
-					cssOverrides={backLinkTextStyles}
-				>
-					Back to all newsletters
-				</Typography>
-			</Link>
+			<div css={topRowStyles}>
+				<Link to="/all" css={backLinkStyles}>
+					<Icon symbol="arrow_back" size="sm" />
+					<Typography
+						element="span"
+						variant="headingCompactSm"
+						cssOverrides={backLinkTextStyles}
+					>
+						Back to all newsletters
+					</Typography>
+				</Link>
+				{actions}
+			</div>
 			<div>
 				<header css={headerStyles}>
 					<div css={textStyles}>
