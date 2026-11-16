@@ -65,7 +65,7 @@ export const DeleteDraftButton = ({
 	return (
 		<>
 			<Button
-				variant="secondary"
+				variant="tertiary"
 				size="sm"
 				icon="delete"
 				isDisabled={isDeleting}
