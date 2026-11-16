@@ -4,7 +4,7 @@ import { scrollIntoView } from '../../test-utils/dom';
 import { allowEditing, newsletterFixture } from '../../test-utils/newsletter';
 import { panel, valueFor } from '../../test-utils/newsletter-detail-page';
 import { requestNewsletterEdit } from '../api-requests/request-newsletter-edit';
-import { NewsletterDetailPanels } from './NewsletterDetailPanels';
+import { DraftDetailPanels, NewsletterDetailPanels } from './NewsletterDetailPanels';
 
 vi.mock('../hooks/user-hooks', () => ({ usePermissions: vi.fn() }));
 vi.mock('../api-requests/request-newsletter-edit', () => ({
@@ -42,6 +42,33 @@ describe('Jump to', () => {
 			const id = link.getAttribute('href')?.split('#')[1];
 			expect(document.getElementById(id ?? '')).toBeTruthy();
 		}
+	});
+
+	it('omits technical output from draft panels and their navigation', () => {
+		render(<DraftDetailPanels draft={{ identityName: 'example' }} />);
+
+		const names = [
+			'Attributes',
+			'Launch',
+			'Images',
+			'Copy',
+			'Sign-up page and tags',
+			'Integrations',
+		];
+		expect(
+			screen
+				.getAllByRole('heading', { level: 3 })
+				.map((heading) => heading.textContent),
+		).toEqual(names);
+		const links = within(
+			screen.getByRole('navigation', { name: 'Jump to' }),
+		).getAllByRole('link');
+		expect(links.map((link) => link.textContent)).toEqual(names);
+		for (const link of links) {
+			const id = link.getAttribute('href')?.split('#')[1];
+			expect(document.getElementById(id ?? '')).toBeTruthy();
+		}
+		expect(document.getElementById('technical-output')).toBeNull();
 	});
 
 	it('links stay on the current page rather than the base URL', () => {

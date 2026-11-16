@@ -18,10 +18,7 @@ import {
 	SignupPageAndTagsValues,
 } from './SignupPageAndTagsPanel';
 import { StandPanel } from './StandPanel';
-import {
-	TechnicalOutputPanel,
-	TechnicalOutputValues,
-} from './TechnicalOutputPanel';
+import { TechnicalOutputPanel } from './TechnicalOutputPanel';
 
 // One grid across all the panels, so the label column is as wide as the
 // widest label in any panel. Panels and lists pass it down with subgrid.
@@ -59,7 +56,7 @@ const jumpToListStyles = css`
  * The panels on the page, in order. Ids match the `id` on each panel.
  * `Values` is the panel's read-only content, which drafts show on their own.
  */
-const jumpToPanels = [
+const sharedPanels = [
 	{ id: 'attributes', name: 'Attributes', Values: AttributesValues },
 	{ id: 'images', name: 'Images', Values: ImagesValues },
 	{ id: 'copy', name: 'Copy', Values: CopyValues },
@@ -69,11 +66,11 @@ const jumpToPanels = [
 		Values: SignupPageAndTagsValues,
 	},
 	{ id: 'integrations', name: 'Integrations', Values: IntegrationsValues },
-	{
-		id: 'technical-output',
-		name: 'Technical output',
-		Values: TechnicalOutputValues,
-	},
+];
+
+const jumpToPanels = [
+	...sharedPanels,
+	{ id: 'technical-output', name: 'Technical output' },
 ];
 
 // The API serializes dates as ISO strings, although draft types use Date.
@@ -108,9 +105,9 @@ const LaunchValues = ({ newsletter }: { newsletter: DraftNewsletterData }) => (
 );
 
 const draftPanels = [
-	jumpToPanels[0]!,
+	sharedPanels[0]!,
 	{ id: 'launch', name: 'Launch', Values: LaunchValues },
-	...jumpToPanels.slice(1),
+	...sharedPanels.slice(1),
 ];
 
 /**
