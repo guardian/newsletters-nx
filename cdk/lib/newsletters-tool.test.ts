@@ -21,6 +21,57 @@ describe('The Newsletters stack', () => {
 		expect(template.toJSON()).toMatchSnapshot();
 	});
 
+	describe.each(['CODE', 'PROD'])('WAF onboarding in %s', (stage) => {
+		let stageTemplate: Template;
+		beforeAll(() => {
+			const stack = new NewslettersTool(new App(), `NewslettersTool-${stage}`, {
+				...sharedProps,
+				stage,
+				domainNameTool: 'newsletters-tool.example.com',
+				domainNameApi: 'readonly-newsletters.example.com',
+			});
+			stageTemplate = Template.fromStack(stack);
+		});
+
+		it.each(['newsletters-tool', 'newsletters-api'])(
+			'publishes the %s ALB ARN',
+			(appName) => {
+				const albIds = Object.keys(
+					stageTemplate.findResources(
+						'AWS::ElasticLoadBalancingV2::LoadBalancer',
+						{
+							Properties: {
+								Tags: Match.arrayWith([{ Key: 'App', Value: appName }]),
+							},
+						},
+					),
+				);
+				expect(albIds).toHaveLength(1);
+				stageTemplate.hasResourceProperties('AWS::SSM::Parameter', {
+					Name: `/infosec/waf/services/${stage}/${appName}-alb-arn`,
+					Description: `The ARN of the ALB for ${appName}-${stage}. This parameter is created via CDK.`,
+					Type: 'String',
+					Tier: 'Standard',
+					DataType: 'text',
+					Value: { Ref: albIds[0] },
+				});
+			},
+		);
+
+		it('publishes only the two ALB parameters and no WAF associations', () => {
+			expect(
+				Object.keys(
+					stageTemplate.findResources('AWS::SSM::Parameter', {
+						Properties: {
+							Name: Match.stringLikeRegexp('^/infosec/waf/services/'),
+						},
+					}),
+				),
+			).toHaveLength(2);
+			stageTemplate.resourceCountIs('AWS::WAFv2::WebACLAssociation', 0);
+		});
+	});
+
 	it('resolves the shared logging stream from SSM', () => {
 		template.hasParameter('LoggingStreamName', {
 			Type: 'AWS::SSM::Parameter::Value<String>',

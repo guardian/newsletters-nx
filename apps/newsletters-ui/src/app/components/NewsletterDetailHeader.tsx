@@ -6,9 +6,12 @@ import {
 } from '@guardian/stand';
 import { Icon } from '@guardian/stand/Icon';
 import { Typography } from '@guardian/stand/Typography';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import { Link } from 'react-router-dom';
-import { formatPillarCategoryLabel } from '../lib/format';
+import { formatDraftName, formatPillarCategoryLabel } from '../lib/format';
 import { regionNames } from '../lib/region-names';
 import { NewsletterStatusBadge } from './NewsletterStatusBadge';
 import { NewsletterThumbnail } from './NewsletterThumbnail';
@@ -22,7 +25,7 @@ const untilStacked = `@media (max-width: ${STACKED_MAX_WIDTH})`;
 const untilMobile = `@media (max-width: ${MOBILE_MAX_WIDTH})`;
 
 // "News | Article based | Australia" - anything not set is left out.
-const formatLabel = ({ theme, category, regionFocus }: NewsletterData) =>
+const formatLabel = ({ theme, category, regionFocus }: DraftNewsletterData) =>
 	[
 		formatPillarCategoryLabel(theme, category),
 		regionFocus && regionNames[regionFocus],
@@ -93,51 +96,62 @@ const graphicStyles = css`
 	}
 `;
 
+export type NewsletterDetailHeaderProps = (
+	| { newsletter: NewsletterData; draft?: never }
+	| { draft: DraftNewsletterData; newsletter?: never }
+) & { children?: React.ReactNode };
+
 export const NewsletterDetailHeader = ({
 	newsletter,
+	draft,
 	children,
-}: {
-	newsletter: NewsletterData;
-	children?: React.ReactNode;
-}) => (
-	<>
-		<Link to="/all" css={backLinkStyles}>
-			<Icon symbol="arrow_back" size="sm" />
-			<Typography
-				element="span"
-				variant="headingCompactSm"
-				cssOverrides={backLinkTextStyles}
-			>
-				Back to all newsletters
-			</Typography>
-		</Link>
-		<div>
-			<header css={headerStyles}>
-				<div css={textStyles}>
-					<NewsletterStatusBadge newsletter={newsletter} />
-					<Typography
-						element="h2"
-						variant="headingCompact2Xl"
-						cssOverrides={titleStyles}
-					>
-						{newsletter.name}
-					</Typography>
-					<Typography
-						element="p"
-						variant="bodyCompactSm"
-						cssOverrides={labelStyles}
-					>
-						{formatLabel(newsletter)}
-					</Typography>
-				</div>
-				<div css={graphicStyles}>
-					<NewsletterThumbnail
-						src={newsletter.illustrationCard ?? undefined}
-						variant="large"
-					/>
-				</div>
-			</header>
-			{children}
-		</div>
-	</>
-);
+}: NewsletterDetailHeaderProps) => {
+	const details: DraftNewsletterData = newsletter ?? draft;
+
+	return (
+		<>
+			<Link to="/all" css={backLinkStyles}>
+				<Icon symbol="arrow_back" size="sm" />
+				<Typography
+					element="span"
+					variant="headingCompactSm"
+					cssOverrides={backLinkTextStyles}
+				>
+					Back to all newsletters
+				</Typography>
+			</Link>
+			<div>
+				<header css={headerStyles}>
+					<div css={textStyles}>
+						{newsletter ? (
+							<NewsletterStatusBadge newsletter={newsletter} />
+						) : (
+							<NewsletterStatusBadge draft={draft} />
+						)}
+						<Typography
+							element="h2"
+							variant="headingCompact2Xl"
+							cssOverrides={titleStyles}
+						>
+							{newsletter ? newsletter.name : formatDraftName(draft)}
+						</Typography>
+						<Typography
+							element="p"
+							variant="bodyCompactSm"
+							cssOverrides={labelStyles}
+						>
+							{formatLabel(details)}
+						</Typography>
+					</div>
+					<div css={graphicStyles}>
+						<NewsletterThumbnail
+							src={details.illustrationCard ?? undefined}
+							variant="large"
+						/>
+					</div>
+				</header>
+				{children}
+			</div>
+		</>
+	);
+};

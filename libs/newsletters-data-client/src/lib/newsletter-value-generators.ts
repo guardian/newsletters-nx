@@ -1,8 +1,11 @@
 import type { NewsletterData } from '..';
 import { generateBrazeTemplateString } from './generate-braze-template';
 
-export type NewsletterValueGenerator = {
-	generate: { (newsletter: NewsletterData): string };
+/** `Input` narrows what `generate` needs, so it can be used before a newsletter is complete. */
+export type NewsletterValueGenerator<
+	Input extends Partial<NewsletterData> = NewsletterData,
+> = {
+	generate: { (newsletter: Input): string };
 	displayName: string;
 	description: string;
 };
@@ -22,22 +25,25 @@ export const brazeTemplateCode: NewsletterValueGenerator = {
 	description: 'The template code to use in the Braze campaign.',
 };
 
+type BrazePrefix = Pick<NewsletterData, 'brazeSubscribeEventNamePrefix'>;
+
 // see https://github.com/guardian/identity/blob/main/identity-api/src/main/scala/com/gu/identity/api/mail/CmtModels.scala
-export const brazeSubscribeEventName: NewsletterValueGenerator = {
-	generate: ({ brazeSubscribeEventNamePrefix }: NewsletterData) =>
+export const brazeSubscribeEventName: NewsletterValueGenerator<BrazePrefix> = {
+	generate: ({ brazeSubscribeEventNamePrefix }: BrazePrefix) =>
 		`${brazeSubscribeEventNamePrefix}_subscribe_email_date`,
 	displayName: 'braze subscribe event name',
 	description:
 		'The name of the custom event the identity database adds to a Braze user record when a user subscribes to the newsletter',
 };
 
-export const brazeUnsubscribeEventName: NewsletterValueGenerator = {
-	generate: ({ brazeSubscribeEventNamePrefix }: NewsletterData) =>
-		`${brazeSubscribeEventNamePrefix}_unsubscribe_email_date`,
-	displayName: 'braze unsubscribe event name',
-	description:
-		'The name of the custom event the identity database adds to a Braze user record when a user unsubscribes to the newsletter',
-};
+export const brazeUnsubscribeEventName: NewsletterValueGenerator<BrazePrefix> =
+	{
+		generate: ({ brazeSubscribeEventNamePrefix }: BrazePrefix) =>
+			`${brazeSubscribeEventNamePrefix}_unsubscribe_email_date`,
+		displayName: 'braze unsubscribe event name',
+		description:
+			'The name of the custom event the identity database adds to a Braze user record when a user unsubscribes to the newsletter',
+	};
 
 export const temporarySignUpUrl: NewsletterValueGenerator = {
 	generate: ({ identityName }: NewsletterData) =>

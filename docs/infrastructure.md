@@ -55,6 +55,37 @@ allow requests carrying an `X-Gu-API-Key` header matching the
 `readOnlyEndpointApiKey` SSM parameter, and return a fixed 403 to everything
 else.
 
+## WAF onboarding
+
+Each deployed stack publishes the ARNs of both ALBs as CloudFormation-managed
+SSM String parameters:
+
+| App                               | Parameter                                                |
+| --------------------------------- | -------------------------------------------------------- |
+| `newsletters-tool`                | `/infosec/waf/services/<STAGE>/newsletters-tool-alb-arn` |
+| `newsletters-api` (read-only API) | `/infosec/waf/services/<STAGE>/newsletters-api-alb-arn`  |
+
+These parameters are for [guardian/waf](https://github.com/guardian/waf) to
+use. Publishing them does **not** associate a WAF with either ALB or change
+traffic handling. Each app is added to the WAF separately in `guardian/waf`.
+
+For the read-only API, check on CODE that requests with a valid `X-Gu-API-Key`
+header are still allowed after association, and that consumers of the API are
+unaffected.
+
+#### steps to check WAF implementation
+
+Deploy the ALB ARN SSM parameter changes to CODE and confirm the parameter exists
+(confirm the parameter store value matches the ARN of the load balancer in AWS console)
+before deploying a WAF configuration that references it. In `guardian/waf`, add
+`newsletters-tool` with `stages: ['CODE']` and `type: 'alb'` to the primary
+WAF for the account hosting newsletters in `eu-west-1`.
+After deploying the `guardian/waf` changes, verify login and its callback, newsletter
+loading, editing/saving and form submissions, and inspect WAF decisions (look for legitimate
+requests being blocked in the WAF settings in the AWS console).
+Before enabling PROD in the WAF configuration, deploy the PROD parameter
+and confirm it exists, then repeat the general e2e checks.
+
 ## Central application logging (ELK)
 
 Both apps already enable `applicationLogging` in `GuNodeApp` (which extends

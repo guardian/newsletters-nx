@@ -29,7 +29,11 @@ import {
 	ListenerCondition,
 	UnauthenticatedAction,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import {
+	ParameterDataType,
+	ParameterTier,
+	StringParameter,
+} from 'aws-cdk-lib/aws-ssm';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { GuPolicy } from '@guardian/cdk/lib/constructs/iam';
 import { GuS3Bucket } from '@guardian/cdk/lib/constructs/s3';
@@ -267,6 +271,16 @@ EOL`,
 			},
 		});
 
+		// This parameter is consumed by https://github.com/guardian/waf.
+		new StringParameter(this, 'ToolAlbSsmParam', {
+			parameterName: `/infosec/waf/services/${this.stage}/${toolAppName}-alb-arn`,
+			description: `The ARN of the ALB for ${toolAppName}-${this.stage}. This parameter is created via CDK.`,
+			simpleName: false,
+			stringValue: ec2AppTool.loadBalancer.loadBalancerArn,
+			tier: ParameterTier.STANDARD,
+			dataType: ParameterDataType.TEXT,
+		});
+
 		const ec2AppApi = new GuNodeApp(this, {
 			access: { scope: AccessScope.PUBLIC },
 			certificateProps: { domainName: domainNameApi },
@@ -290,6 +304,16 @@ EOL`,
 				enabled: true,
 				systemdUnitName: 'newsletters-api',
 			},
+		});
+
+		// This parameter is consumed by https://github.com/guardian/waf.
+		new StringParameter(this, 'ApiAlbSsmParam', {
+			parameterName: `/infosec/waf/services/${this.stage}/${apiAppName}-alb-arn`,
+			description: `The ARN of the ALB for ${apiAppName}-${this.stage}. This parameter is created via CDK.`,
+			simpleName: false,
+			stringValue: ec2AppApi.loadBalancer.loadBalancerArn,
+			tier: ParameterTier.STANDARD,
+			dataType: ParameterDataType.TEXT,
 		});
 
 		const readOnlyEndpointApiKeyParam = `/${this.stage}/${this.stack}/${apiAppName}/readOnlyEndpointApiKey`;

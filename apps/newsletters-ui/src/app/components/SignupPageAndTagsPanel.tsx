@@ -4,7 +4,10 @@ import { Link } from '@guardian/stand/Link';
 import { Radio, RadioGroup } from '@guardian/stand/RadioGroup';
 import { TextInput } from '@guardian/stand/TextInput';
 import { Typography } from '@guardian/stand/Typography';
-import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type {
+	DraftNewsletterData,
+	NewsletterData,
+} from '@newsletters-nx/newsletters-data-client';
 import {
 	newsletterDataSchema,
 	workflowStatusEnumSchema,
@@ -76,6 +79,59 @@ const valuesFor = (newsletter: NewsletterData): PanelData => ({
 	tagCreationStatus: newsletter.tagCreationStatus,
 	...Object.fromEntries(textFields.map(({ key }) => [key, newsletter[key]])),
 });
+
+export const SignupPageAndTagsValues = ({
+	newsletter,
+}: {
+	newsletter: DraftNewsletterData;
+}) => (
+	<>
+		<div css={sectionStyles}>
+			<Typography
+				element="h4"
+				variant="bodyBoldSm"
+				cssOverrides={subheadingStyles}
+			>
+				Sign-up page
+			</Typography>
+			<dl css={listStyles}>
+				<Field label="Sign-up page creation status">
+					{newsletter.signupPageCreationStatus && (
+						<WorkflowStatusBadge status={newsletter.signupPageCreationStatus} />
+					)}
+				</Field>
+				<Field label="Path to sign-up page">
+					{newsletter.signupPage ? (
+						<Link href={`https://theguardian.com${newsletter.signupPage}`}>
+							{newsletter.signupPage}
+						</Link>
+					) : undefined}
+				</Field>
+			</dl>
+		</div>
+		<div css={sectionStyles}>
+			<Typography
+				element="h4"
+				variant="bodyBoldSm"
+				cssOverrides={subheadingStyles}
+			>
+				Tags
+			</Typography>
+			<dl css={listStyles}>
+				<Field label="Tag creation status">
+					{newsletter.tagCreationStatus && (
+						<WorkflowStatusBadge status={newsletter.tagCreationStatus} />
+					)}
+				</Field>
+				{textFields.slice(1).map(({ key, label }) => (
+					<Field key={key} label={label}>
+						{newsletter[key]}
+					</Field>
+				))}
+			</dl>
+		</div>
+	</>
+);
 
 export const SignupPageAndTagsPanel = ({
 	newsletter,
@@ -176,89 +232,59 @@ export const SignupPageAndTagsPanel = ({
 			}}
 			onCancel={() => setDraft(current)}
 		>
-			{(isEditing) => (
-				<>
-					<div css={[sectionStyles, isEditing && formSectionStyles]}>
-						<Typography
-							element="h4"
-							variant={isEditing ? 'bodySm' : 'bodyBoldSm'}
-							cssOverrides={subheadingStyles}
-						>
-							Sign-up page
-						</Typography>
-						{isEditing ? (
-							<>
-								{statusInput(
-									'signupPageCreationStatus',
-									'Sign-up page creation status',
-								)}
-								<SignupPathInput
-									value={draft.signupPage ?? ''}
-									onValidation={setPathValidation}
-									onChange={(value) => {
-										setPathValidation(undefined);
-										setDraft((previous) => ({
-											...previous,
-											signupPage: value,
-										}));
-									}}
+			{(isEditing) =>
+				isEditing ? (
+					<>
+						<div css={[sectionStyles, formSectionStyles]}>
+							<Typography
+								element="h4"
+								variant="bodySm"
+								cssOverrides={subheadingStyles}
+							>
+								Sign-up page
+							</Typography>
+							{statusInput(
+								'signupPageCreationStatus',
+								'Sign-up page creation status',
+							)}
+							<SignupPathInput
+								value={draft.signupPage ?? ''}
+								onValidation={setPathValidation}
+								onChange={(value) => {
+									setPathValidation(undefined);
+									setDraft((previous) => ({
+										...previous,
+										signupPage: value,
+									}));
+								}}
+							/>
+						</div>
+						<div css={[sectionStyles, formSectionStyles]}>
+							<Typography
+								element="h4"
+								variant="bodySm"
+								cssOverrides={subheadingStyles}
+							>
+								Tags
+							</Typography>
+							{statusInput('tagCreationStatus', 'Tag creation status')}
+							{textFields.slice(1).map(({ key, label }) => (
+								<TextInput
+									key={key}
+									label={label}
+									fluid
+									value={draft[key] ?? ''}
+									onChange={(value) =>
+										setDraft((previous) => ({ ...previous, [key]: value }))
+									}
 								/>
-							</>
-						) : (
-							<dl css={listStyles}>
-								<Field label="Sign-up page creation status">
-									<WorkflowStatusBadge
-										status={current.signupPageCreationStatus}
-									/>
-								</Field>
-								<Field label="Path to sign-up page">
-									{current.signupPage ? (
-										<Link href={`https://theguardian.com${current.signupPage}`}>
-											{current.signupPage}
-										</Link>
-									) : undefined}
-								</Field>
-							</dl>
-						)}
-					</div>
-					<div css={[sectionStyles, isEditing && formSectionStyles]}>
-						<Typography
-							element="h4"
-							variant={isEditing ? 'bodySm' : 'bodyBoldSm'}
-							cssOverrides={subheadingStyles}
-						>
-							Tags
-						</Typography>
-						{isEditing ? (
-							<>
-								{statusInput('tagCreationStatus', 'Tag creation status')}
-								{textFields.slice(1).map(({ key, label }) => (
-									<TextInput
-										key={key}
-										label={label}
-										fluid
-										value={draft[key] ?? ''}
-										onChange={(value) =>
-											setDraft((previous) => ({ ...previous, [key]: value }))
-										}
-									/>
-								))}
-							</>
-						) : (
-							<dl css={listStyles}>
-								<Field label="Tag creation status">
-									<WorkflowStatusBadge status={current.tagCreationStatus} />
-								</Field>
-								{textFields.slice(1).map(({ key, label }) => (
-									<Field key={key} label={label}>
-										{current[key]}
-									</Field>
-								))}
-							</dl>
-						)}
-					</div>
-				</>
-			)}
+							))}
+						</div>
+					</>
+				) : (
+					<SignupPageAndTagsValues newsletter={current} />
+				)
+			}
 		</StandPanel>
 	);
 };

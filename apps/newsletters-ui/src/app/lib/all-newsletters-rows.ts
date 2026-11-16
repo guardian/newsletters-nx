@@ -12,6 +12,7 @@ import {
 	getDraftStatusBadgeContent,
 	getLaunchedStatusBadgeContent,
 } from '../components/NewsletterStatusBadge';
+import { formatDraftName } from './format';
 import { newsletterDetailPath } from './newsletter-detail-path';
 import type { NewsletterStatus } from './status-options';
 
@@ -82,8 +83,7 @@ export const draftNewsletterToRow = (
 	id: `draft-${draft.listId}`,
 	kind: 'draft',
 	href: `/drafts/${draft.listId}`,
-	// A draft can be saved before it has been named.
-	name: draft.name ?? `Untitled draft ${draft.listId}`,
+	name: formatDraftName(draft),
 	theme: draft.theme,
 	category: draft.category,
 	lastUpdated: deriveUpdatedTimestamp(draft.meta),
