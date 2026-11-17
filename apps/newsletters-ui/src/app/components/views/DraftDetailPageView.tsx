@@ -6,10 +6,10 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { DEFAULT_TOAST_TIMEOUT_MS } from '../../constants';
 import { usePermissions } from '../../hooks/user-hooks';
 import { formatDraftName } from '../../lib/format';
-import { StandDeleteDraftButton } from '../StandDeleteDraftButton';
 import { DraftSetupPanel } from '../DraftSetupPanel';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { DraftDetailPanels } from '../NewsletterDetailPanels';
+import { StandDeleteDraftButton } from '../StandDeleteDraftButton';
 import { Container, mainStyle, spacerStyles } from './NewsletterDetailPageView';
 
 const DraftPageActions = ({ draft }: { draft: DraftNewsletterData }) => {
