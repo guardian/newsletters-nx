@@ -1,13 +1,47 @@
 import { Layout as StandLayout } from '@guardian/stand/Layout';
+import { toastQueue } from '@guardian/stand/Toast';
+import type { DraftWithId } from '@newsletters-nx/newsletters-data-client';
 import { isDraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { DEFAULT_TOAST_TIMEOUT_MS } from '../../constants';
+import { usePermissions } from '../../hooks/user-hooks';
+import { formatDraftName } from '../../lib/format';
 import { DraftInterimActions } from '../DraftInterimActions';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { DraftDetailPanels } from '../NewsletterDetailPanels';
+import { StandDeleteDraftButton } from '../StandDeleteDraftButton';
 import { Container, mainStyle, spacerStyles } from './NewsletterDetailPageView';
 
+const DraftPageActions = ({ draft }: { draft: DraftWithId }) => {
+	const navigate = useNavigate();
+	const { editEverything } = usePermissions() ?? {};
+
+	if (!editEverything) {
+		return null;
+	}
+
+	return (
+		<StandDeleteDraftButton
+			draft={draft}
+			hasBeenDeleted={false}
+			setHasBeenDeleted={() => {
+				toastQueue.add(
+					{
+						level: 'information',
+						title: 'Draft deleted',
+						subject: formatDraftName(draft),
+						showIcon: true,
+					},
+					{ timeout: DEFAULT_TOAST_TIMEOUT_MS },
+				);
+				void navigate('/all');
+			}}
+		/>
+	);
+};
+
 export const DraftDetailPageView = () => {
-	const draft = useLoaderData<unknown>();
+	const draft = useLoaderData<DraftWithId | null>();
 
 	if (!draft) {
 		return (
@@ -35,7 +69,10 @@ export const DraftDetailPageView = () => {
 		<StandLayout.Main css={mainStyle}>
 			<Container>
 				<div css={spacerStyles}>
-					<NewsletterDetailHeader draft={draft} />
+					<NewsletterDetailHeader
+						draft={draft}
+						actions={<DraftPageActions draft={draft} />}
+					/>
 					<DraftInterimActions draft={draft} />
 					<DraftDetailPanels draft={draft} />
 				</div>
