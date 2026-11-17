@@ -57,7 +57,7 @@ describe('DraftSetupPanel', () => {
 			setUp()
 				.getByRole('link', { name: 'Continue set up' })
 				.getAttribute('href'),
-		).toBe('/drafts/newsletter-data/7');
+		).toBe('/drafts/newsletter-data/7?resume=true');
 	});
 	it('links to request launch once every required step is done', () => {
 		mockProgress(5);
