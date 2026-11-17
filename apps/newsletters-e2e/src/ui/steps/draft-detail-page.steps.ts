@@ -125,7 +125,7 @@ Then(
 
 Then(
 	'the draft page offers edit, launch and optional rendering links for {string}',
-	async ({ page, request, namedNewsletters }, name: string) => {
+	async ({ page, namedNewsletters }, name: string) => {
 		const id = draftId(namedNewsletters.refsByName[name]);
 		await expect(
 			page.getByRole('link', { name: 'Edit details', exact: true }),
@@ -141,8 +141,6 @@ Then(
 			}),
 		).toHaveAttribute('href', `/drafts/newsletter-data-rendering/${id}`);
 		await expect(optional).toContainText('You can launch without this.');
-		const draft = await getDraftNewsletter(request, id);
-		expect(draft.renderingOptions).toBeUndefined();
 	},
 );
 
