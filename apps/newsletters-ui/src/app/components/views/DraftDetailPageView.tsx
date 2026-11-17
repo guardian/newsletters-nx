@@ -1,6 +1,6 @@
 import { Layout as StandLayout } from '@guardian/stand/Layout';
 import { toastQueue } from '@guardian/stand/Toast';
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type { DraftWithId } from '@newsletters-nx/newsletters-data-client';
 import { isDraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { DEFAULT_TOAST_TIMEOUT_MS } from '../../constants';
@@ -12,7 +12,7 @@ import { DraftDetailPanels } from '../NewsletterDetailPanels';
 import { StandDeleteDraftButton } from '../StandDeleteDraftButton';
 import { Container, mainStyle, spacerStyles } from './NewsletterDetailPageView';
 
-const DraftPageActions = ({ draft }: { draft: DraftNewsletterData }) => {
+const DraftPageActions = ({ draft }: { draft: DraftWithId }) => {
 	const navigate = useNavigate();
 	const { editEverything } = usePermissions() ?? {};
 
@@ -41,7 +41,7 @@ const DraftPageActions = ({ draft }: { draft: DraftNewsletterData }) => {
 };
 
 export const DraftDetailPageView = () => {
-	const draft = useLoaderData<unknown>();
+	const draft = useLoaderData<DraftWithId | null>();
 
 	if (!draft) {
 		return (

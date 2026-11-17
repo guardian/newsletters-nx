@@ -1,12 +1,12 @@
 import { AlertBanner } from '@guardian/stand/AlertBanner';
 import { Button } from '@guardian/stand/Button';
 import { Dialog, Modal } from '@guardian/stand/Modal';
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type { DraftWithId } from '@newsletters-nx/newsletters-data-client';
 import { useRef, useState } from 'react';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
 
 interface Props {
-	draft: DraftNewsletterData;
+	draft: DraftWithId;
 	hasBeenDeleted: boolean;
 	setHasBeenDeleted: { (value: boolean): void };
 }
@@ -34,11 +34,6 @@ export const StandDeleteDraftButton = ({
 			return;
 		}
 		const { listId } = draft;
-		if (typeof listId !== 'number') {
-			closeConfirmation();
-			setDeleteErrorMessage('This draft has no ID, so it cannot be deleted.');
-			return;
-		}
 
 		deletionInFlight.current = true;
 		setIsDeleting(true);
