@@ -3,13 +3,13 @@ import type {
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
 
-export type NotificationType = 'launch' | 'brazeUpdate';
+export type NotificationType = 'brazeUpdate';
 export const requestNotification = async (
 	identityName: string,
 	notification: NotificationType,
 ): Promise<ApiResponse<NewsletterData>> => {
 	const response = await fetch(`/api/email/${identityName}/${notification}`, {
-		method: 'GET',
+		method: 'POST',
 		headers: {
 			accept: 'application/json',
 		},

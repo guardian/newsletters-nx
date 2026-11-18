@@ -53,5 +53,5 @@ sequenceDiagram
 ## Post-launch Braze update requests
 
 After launch, Braze-related fields can be updated and a separate Braze update
-notification can be requested via `GET /api/email/:newsletterId/brazeUpdate`.
+notification can be requested via `POST /api/email/:newsletterId/brazeUpdate`.
 This is a distinct path from the initial launch notification set.
