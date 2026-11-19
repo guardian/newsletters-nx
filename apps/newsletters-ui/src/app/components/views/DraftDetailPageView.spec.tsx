@@ -8,11 +8,8 @@ import {
 	allowEditing,
 	mockPermissions,
 	viewerPermissions,
-} from '@newsletters-internal/ui/test-utils/newsletter';
-import {
-	panel,
-	valueFor,
-} from '@newsletters-internal/ui/test-utils/newsletter-detail-page';
+} from '../../../test-utils/newsletter';
+import { panel, valueFor } from '../../../test-utils/newsletter-detail-page';
 import { requestDraftDeletion } from '../../api-requests/requestDraftDeletion';
 import { DraftDetailPageView } from './DraftDetailPageView';
 
@@ -50,6 +47,7 @@ const renderPage = (draft: DraftNewsletterData | null) => {
 		{ initialEntries: ['/drafts/7'] },
 	);
 	render(<RouterProvider router={router} />);
+	return { user: userEvent.setup() };
 };
 
 describe('DraftDetailPageView', () => {
@@ -97,7 +95,7 @@ describe('DraftDetailPageView', () => {
 		}
 	});
 
-	it('shows the draft read-only, with no way to edit it', async () => {
+	it('shows the draft details read-only', async () => {
 		renderPage(draftFixture());
 
 		await screen.findByRole('heading', { level: 2 });
@@ -115,6 +113,8 @@ describe('DraftDetailPageView', () => {
 		expect(valueFor('Headline')).toBe('Not set');
 		expect(valueFor('Newsletter status')).toBe('Not set');
 		expect(valueFor('Sign-up page creation status')).toBe('Not set');
+		expect(valueFor('Braze campaign creation status')).toBe('Not set');
+		expect(valueFor('brazeNewsletterName')).toBe('Not set');
 	});
 
 	it('shows launch fields and allows a viewer to jump to the panel', async () => {
@@ -137,9 +137,7 @@ describe('DraftDetailPageView', () => {
 			),
 		);
 		expect(document.activeElement?.id).toBe('launch');
-		expect(
-			screen.queryByRole('link', { name: 'Newsletter set-up' }),
-		).toBeNull();
+		expect(screen.queryByRole('link', { name: 'Continue set up' })).toBeNull();
 		expect(screen.queryByRole('button', { name: 'Delete draft' })).toBeNull();
 	});
 	it('shows the private-until-launch choice', async () => {
@@ -154,18 +152,16 @@ describe('DraftDetailPageView', () => {
 		});
 		await screen.findByRole('heading', { level: 2 });
 		expect(
-			screen
-				.getByRole('link', { name: 'Newsletter set-up' })
-				.getAttribute('href'),
+			screen.getByRole('link', { name: 'Edit details' }).getAttribute('href'),
 		).toBe('/drafts/newsletter-data/7');
 		expect(
 			screen
-				.getByRole('link', { name: 'Article Rendering' })
+				.getByRole('link', { name: 'Edit article rendering' })
 				.getAttribute('href'),
 		).toBe('/drafts/newsletter-data-rendering/7');
 		expect(
 			screen
-				.getByRole('link', { name: 'Launch newsletter' })
+				.getByRole('link', { name: 'Request to launch' })
 				.getAttribute('href'),
 		).toBe('/drafts/launch-newsletter/7');
 	});
@@ -200,5 +196,25 @@ describe('DraftDetailPageView', () => {
 		renderPage(null);
 
 		expect(await screen.findByText('NOT FOUND!')).not.toBeNull();
+	});
+
+	it('says when the draft could not be deleted', async () => {
+		vi.mocked(requestDraftDeletion).mockResolvedValue({
+			ok: false,
+			message: "You don't have permission to delete drafts.",
+		});
+		const { user } = renderPage(draftFixture());
+		await user.click(
+			await screen.findByRole('button', { name: 'Delete draft' }),
+		);
+		await user.click(
+			within(await screen.findByRole('dialog')).getByRole('button', {
+				name: 'Confirm delete',
+			}),
+		);
+		expect((await screen.findByRole('alert')).textContent).toContain(
+			"Delete request failed: You don't have permission to delete drafts.",
+		);
+		expect(screen.queryByRole('heading', { level: 2 })).not.toBeNull();
 	});
 });

@@ -6,7 +6,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { DEFAULT_TOAST_TIMEOUT_MS } from '../../constants';
 import { usePermissions } from '../../hooks/user-hooks';
 import { formatDraftName } from '../../lib/format';
-import { DraftInterimActions } from '../DraftInterimActions';
+import { DraftSetupPanel } from '../DraftSetupPanel';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { DraftDetailPanels } from '../NewsletterDetailPanels';
 import { StandDeleteDraftButton } from '../StandDeleteDraftButton';
@@ -72,8 +72,9 @@ export const DraftDetailPageView = () => {
 					<NewsletterDetailHeader
 						draft={draft}
 						actions={<DraftPageActions draft={draft} />}
-					/>
-					<DraftInterimActions draft={draft} />
+					>
+						<DraftSetupPanel draft={draft} />
+					</NewsletterDetailHeader>
 					<DraftDetailPanels draft={draft} />
 				</div>
 			</Container>
