@@ -6,6 +6,7 @@ import {
 	screen,
 	waitFor,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
@@ -82,7 +83,11 @@ describe('Stand setup step paths', () => {
 		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
 			step('productionDetails'),
 		);
-		fireEvent.click(screen.getByRole('button', { name: 'Save and continue' }));
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole('button', { name: 'Save and continue' }),
+			);
+		});
 		await waitFor(() =>
 			expect(router.state.location.pathname).toBe(
 				`${base}/7/production-details`,
@@ -95,7 +100,11 @@ describe('Stand setup step paths', () => {
 		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
 			step('promotionDates'),
 		);
-		fireEvent.click(screen.getByRole('button', { name: 'Save and continue' }));
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole('button', { name: 'Save and continue' }),
+			);
+		});
 		await waitFor(() =>
 			expect(router.state.location.pathname).toBe(`${base}/7/promotion-dates`),
 		);
