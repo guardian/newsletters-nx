@@ -201,7 +201,7 @@ describe('DraftDetailPageView', () => {
 	it('says when the draft could not be deleted', async () => {
 		vi.mocked(requestDraftDeletion).mockResolvedValue({
 			ok: false,
-			message: 'Server said no',
+			message: "You don't have permission to delete drafts.",
 		});
 		const { user } = renderPage(draftFixture());
 		await user.click(
@@ -213,7 +213,7 @@ describe('DraftDetailPageView', () => {
 			}),
 		);
 		expect((await screen.findByRole('alert')).textContent).toContain(
-			'Server said no',
+			"Delete request failed: You don't have permission to delete drafts.",
 		);
 		expect(screen.queryByRole('heading', { level: 2 })).not.toBeNull();
 	});
