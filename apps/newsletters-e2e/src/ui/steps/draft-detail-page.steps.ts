@@ -1,4 +1,5 @@
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import {
 	getDraftNewsletter,
@@ -16,34 +17,93 @@ const draftId = (ref: NamedNewsletterRef | undefined): number => {
 	return ref.listId;
 };
 
+const draftActions = (page: Page) => ({
+	continueSetup: page.getByRole('link', {
+		name: 'Continue set up',
+		exact: true,
+	}),
+	editDetails: page.getByRole('link', { name: 'Edit details', exact: true }),
+	requestLaunch: page.getByRole('link', {
+		name: 'Request to launch',
+		exact: true,
+	}),
+	setupRendering: page.getByRole('link', {
+		name: 'Set up article rendering',
+		exact: true,
+	}),
+	editRendering: page.getByRole('link', {
+		name: 'Edit article rendering',
+		exact: true,
+	}),
+	deleteDraft: page.getByRole('button', { name: 'Delete draft', exact: true }),
+});
+
+const incompleteDraft = (name: string): DraftNewsletterData => ({
+	name,
+	frequency: 'Weekly',
+	category: 'article-based',
+});
+
 Given(
-	'an article-based draft {string} with {int} required setup steps complete and no rendering options',
-	async ({ request, namedNewsletters }, name: string, completed: number) => {
-		if (completed !== 1 && completed !== 5) {
-			throw new Error('This fixture supports one or five completed steps');
-		}
+	'an incomplete article-based draft {string} with no rendering options',
+	async ({ request, namedNewsletters }, name: string) => {
+		const listId = await createFixtureDraft(request, incompleteDraft(name));
+		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
+	},
+);
+
+Given(
+	'an article-based draft {string} with weekly frequency',
+	async ({ request, namedNewsletters }, name: string) => {
+		const listId = await createFixtureDraft(request, incompleteDraft(name));
+		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
+	},
+);
+
+Given(
+	'an article-based draft {string} with all required setup complete and no rendering options',
+	async ({ request, namedNewsletters }, name: string) => {
 		const draft: DraftNewsletterData = {
-			name,
-			frequency: 'Weekly',
-			category: 'article-based',
-			...(completed === 5
-				? ({
-						onlineArticle: 'Email only',
-						launchDate: new Date('2027-01-15'),
-						signUpPageDate: new Date('2027-01-01'),
-						privateUntilLaunch: false,
-						regionFocus: 'UK',
-						theme: 'news',
-						group: 'News in depth',
-						signUpHeadline: 'Your weekly briefing',
-						signUpDescription: 'The news that matters, every week.',
-						signUpEmbedDescription: 'Sign up for the weekly briefing.',
-						creationTimeStamp: Date.now(),
-						brazeCampaignCreationStatus: 'NOT_REQUESTED',
-						signupPageCreationStatus: 'NOT_REQUESTED',
-						tagCreationStatus: 'NOT_REQUESTED',
-					} as const)
-				: {}),
+			...incompleteDraft(name),
+			onlineArticle: 'Email only',
+			launchDate: new Date('2027-01-15'),
+			signUpPageDate: new Date('2027-01-01'),
+			privateUntilLaunch: false,
+			regionFocus: 'UK',
+			theme: 'news',
+			group: 'News in depth',
+			signUpHeadline: 'Your weekly briefing',
+			signUpDescription: 'The news that matters, every week.',
+			signUpEmbedDescription: 'Sign up for the weekly briefing.',
+			creationTimeStamp: Date.now(),
+			brazeCampaignCreationStatus: 'NOT_REQUESTED',
+			signupPageCreationStatus: 'NOT_REQUESTED',
+			tagCreationStatus: 'NOT_REQUESTED',
+		};
+		const listId = await createFixtureDraft(request, draft);
+		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
+	},
+);
+
+Given(
+	'an incomplete article-based draft {string} with rendering options',
+	async ({ request, namedNewsletters }, name: string) => {
+		const draft: DraftNewsletterData = {
+			...incompleteDraft(name),
+			renderingOptions: { displayDate: true },
+		};
+		const listId = await createFixtureDraft(request, draft);
+		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
+	},
+);
+
+Given(
+	'an incomplete fronts-based draft {string} with rendering options',
+	async ({ request, namedNewsletters }, name: string) => {
+		const draft: DraftNewsletterData = {
+			...incompleteDraft(name),
+			category: 'fronts-based',
+			renderingOptions: { displayDate: true },
 		};
 		const listId = await createFixtureDraft(request, draft);
 		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
@@ -97,10 +157,7 @@ Then('the draft details are read-only', async ({ page }) => {
 When(
 	'the editor continues setup for {string}',
 	async ({ page, namedNewsletters }, name: string) => {
-		const link = page.getByRole('link', {
-			name: 'Continue set up',
-			exact: true,
-		});
+		const link = draftActions(page).continueSetup;
 		await expect(link).toHaveAttribute(
 			'href',
 			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}`,
@@ -113,9 +170,7 @@ Then(
 	'the setup wizard for {string} is shown',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(page).toHaveURL(
-			new RegExp(
-				`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}$`,
-			),
+			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}`,
 		);
 		await expect(
 			page.getByRole('button', { name: 'Name & frequency' }),
@@ -127,33 +182,53 @@ Then(
 	'the draft page offers edit, launch and optional rendering links for {string}',
 	async ({ page, namedNewsletters }, name: string) => {
 		const id = draftId(namedNewsletters.refsByName[name]);
+		const actions = draftActions(page);
+		await expect(actions.editDetails).toHaveAttribute(
+			'href',
+			`/drafts/newsletter-data/${id}`,
+		);
+		await expect(actions.requestLaunch).toHaveAttribute(
+			'href',
+			`/drafts/launch-newsletter/${id}`,
+		);
+		await expect(actions.setupRendering).toHaveAttribute(
+			'href',
+			`/drafts/newsletter-data-rendering/${id}`,
+		);
 		await expect(
-			page.getByRole('link', { name: 'Edit details', exact: true }),
-		).toHaveAttribute('href', `/drafts/newsletter-data/${id}`);
-		await expect(
-			page.getByRole('link', { name: 'Request to launch', exact: true }),
-		).toHaveAttribute('href', `/drafts/launch-newsletter/${id}`);
-		const optional = page.getByRole('region', { name: 'Optional set-up' });
-		await expect(
-			optional.getByRole('link', {
-				name: 'Set up article rendering',
-				exact: true,
-			}),
-		).toHaveAttribute('href', `/drafts/newsletter-data-rendering/${id}`);
-		await expect(optional).toContainText('You can launch without this.');
+			page.getByRole('region', { name: 'Optional set-up' }),
+		).toContainText('You can launch without this.');
 	},
 );
+
+Then(
+	'the draft page offers to edit article rendering for {string}',
+	async ({ page, namedNewsletters }, name: string) => {
+		const id = draftId(namedNewsletters.refsByName[name]);
+		const actions = draftActions(page);
+		await expect(actions.editRendering).toHaveAttribute(
+			'href',
+			`/drafts/newsletter-data-rendering/${id}`,
+		);
+		await expect(actions.setupRendering).toHaveCount(0);
+	},
+);
+
+Then('the draft page has no article rendering options', async ({ page }) => {
+	await expect(
+		page.getByRole('region', { name: 'Optional set-up' }),
+	).toHaveCount(0);
+	const actions = draftActions(page);
+	await expect(actions.setupRendering).toHaveCount(0);
+	await expect(actions.editRendering).toHaveCount(0);
+});
 
 When(
 	'the editor requests launch for {string}',
 	async ({ page, namedNewsletters }, name: string) => {
-		await page
-			.getByRole('link', { name: 'Request to launch', exact: true })
-			.click();
+		await draftActions(page).requestLaunch.click();
 		await expect(page).toHaveURL(
-			new RegExp(
-				`/drafts/launch-newsletter/${draftId(namedNewsletters.refsByName[name])}$`,
-			),
+			`/drafts/launch-newsletter/${draftId(namedNewsletters.refsByName[name])}`,
 		);
 		await expect(
 			page.getByRole('heading', { name: `Launch ${name}`, exact: true }),
@@ -170,12 +245,11 @@ Then(
 				`Yes! The draft for ${name} has all the necessary information set and is ready to launch.`,
 			),
 		).toBeVisible();
-		// Stop before launch: no external services or live newsletters are changed.
 	},
 );
 
 When('the editor cancels deleting the draft', async ({ page }) => {
-	await page.getByRole('button', { name: 'Delete draft', exact: true }).click();
+	await draftActions(page).deleteDraft.click();
 	await page
 		.getByRole('dialog')
 		.getByRole('button', { name: 'Cancel', exact: true })
@@ -187,7 +261,7 @@ Then(
 	'the draft {string} still exists',
 	async ({ page, request, namedNewsletters }, name: string) => {
 		const id = draftId(namedNewsletters.refsByName[name]);
-		await expect(page).toHaveURL(new RegExp(`/drafts/${id}$`));
+		await expect(page).toHaveURL(`/drafts/${id}`);
 		expect(await getDraftNewsletter(request, id)).toMatchObject({ name });
 	},
 );
@@ -196,9 +270,7 @@ When(
 	'the editor confirms deletion of {string}',
 	async ({ page, namedNewsletters }, name: string) => {
 		const id = draftId(namedNewsletters.refsByName[name]);
-		await page
-			.getByRole('button', { name: 'Delete draft', exact: true })
-			.click();
+		await draftActions(page).deleteDraft.click();
 		const deleted = page.waitForResponse(
 			(response) =>
 				response.url().endsWith(`/api/drafts/${id}`) &&
@@ -232,14 +304,8 @@ Then(
 Then(
 	'the draft page has no setup, launch, rendering or delete actions',
 	async ({ page }) => {
-		await expect(
-			page.getByRole('region', { name: 'Draft set-up' }).getByRole('link'),
-		).toHaveCount(0);
-		await expect(
-			page.getByRole('region', { name: 'Optional set-up' }).getByRole('link'),
-		).toHaveCount(0);
-		await expect(
-			page.getByRole('button', { name: 'Delete draft', exact: true }),
-		).toHaveCount(0);
+		for (const action of Object.values(draftActions(page))) {
+			await expect(action).toHaveCount(0);
+		}
 	},
 );

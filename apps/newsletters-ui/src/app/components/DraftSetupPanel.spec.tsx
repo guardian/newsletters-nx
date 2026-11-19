@@ -46,6 +46,17 @@ const renderPanel = (draft: DraftNewsletterData) =>
 	);
 const setUp = () =>
 	within(screen.getByRole('region', { name: 'Draft set-up' }));
+const expectNoEditingLinks = () => {
+	for (const name of [
+		'Continue set up',
+		'Edit details',
+		'Request to launch',
+		'Set up article rendering',
+		'Edit article rendering',
+	]) {
+		expect(screen.queryByRole('link', { name, exact: true })).toBeNull();
+	}
+};
 describe('DraftSetupPanel', () => {
 	it('shows how many required steps are done, with a link to carry on', () => {
 		renderPanel({ listId: 7 });
@@ -94,26 +105,47 @@ describe('DraftSetupPanel', () => {
 		});
 
 		expect(
-			screen.queryByRole('link', { name: 'Edit article rendering' }),
-		).not.toBeNull();
-	});
-	it('leaves out article rendering for other drafts', () => {
-		renderPanel({ listId: 7, category: 'manual-send' });
+			screen
+				.getByRole('link', { name: 'Edit article rendering' })
+				.getAttribute('href'),
+		).toBe('/drafts/newsletter-data-rendering/7');
 		expect(
-			screen.queryByRole('region', { name: 'Optional set-up' }),
+			screen.queryByRole('link', { name: 'Set up article rendering' }),
 		).toBeNull();
 	});
-	it('shows progress, but no links, to users who cannot edit', () => {
-		mockPermissions(viewerPermissions);
-		renderPanel({ listId: 7, category: 'article-based' });
-		expect(
-			setUp().queryByText('1 of 5 required steps complete'),
-		).not.toBeNull();
-		expect(screen.queryAllByRole('link')).toEqual([]);
-		expect(screen.queryByText('Article rendering')).not.toBeNull();
-	});
-	it('has no links for a draft without a list ID', () => {
+	it.each(['manual-send', 'fronts-based'] as const)(
+		'leaves out article rendering for %s drafts even with rendering options',
+		(category) => {
+			renderPanel({
+				listId: 7,
+				category,
+				renderingOptions: { displayDate: true },
+			});
+			expect(
+				screen.queryByRole('region', { name: 'Optional set-up' }),
+			).toBeNull();
+		},
+	);
+	it.each([
+		{ completed: 1, renderingOptions: undefined },
+		{ completed: 1, renderingOptions: { displayDate: true } },
+		{ completed: 5, renderingOptions: undefined },
+		{ completed: 5, renderingOptions: { displayDate: true } },
+	])(
+		'shows progress but no editing links to viewers: %j',
+		({ completed, renderingOptions }) => {
+			mockPermissions(viewerPermissions);
+			mockProgress(completed);
+			renderPanel({ listId: 7, category: 'article-based', renderingOptions });
+			expect(
+				setUp().queryByText(`${completed} of 5 required steps complete`),
+			).not.toBeNull();
+			expectNoEditingLinks();
+			expect(screen.queryByText('Article rendering')).not.toBeNull();
+		},
+	);
+	it('has no editing links for a draft without a list ID', () => {
 		renderPanel({ category: 'article-based' });
-		expect(screen.queryAllByRole('link')).toEqual([]);
+		expectNoEditingLinks();
 	});
 });

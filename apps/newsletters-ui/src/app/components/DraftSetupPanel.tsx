@@ -64,7 +64,7 @@ export const DraftSetupPanel = ({ draft }: Props) => {
 	const { listId } = draft;
 	const canEdit = !!editEverything && typeof listId === 'number';
 	const setUpHref = `/drafts/newsletter-data/${listId}`;
-	const hasStartedRendering = draft.renderingOptions !== undefined;
+	const hasStartedRenderingOptions = draft.renderingOptions !== undefined;
 
 	return (
 		<AriaRouterProvider
@@ -115,7 +115,7 @@ export const DraftSetupPanel = ({ draft }: Props) => {
 					</Badge>
 					{canEdit ? (
 						<Link href={`/drafts/newsletter-data-rendering/${listId}`}>
-							{hasStartedRendering
+							{hasStartedRenderingOptions
 								? 'Edit article rendering'
 								: 'Set up article rendering'}
 						</Link>
