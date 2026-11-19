@@ -8,14 +8,6 @@ import type {
 } from '@newsletters-nx/state-machine';
 import { makeWizardStepRequest } from './make-wizard-step-request';
 
-const wizardStepIds: Record<string, string> = {
-	nameAndFrequency: 'nameAndFrequencyLayout',
-	productionDetails: 'productionDetails',
-	promotionDates: 'dates',
-	targeting: 'targeting',
-	promotionContent: 'signUpPage',
-};
-
 /** Resume only after initialization has loaded the saved draft and its list ID. */
 export const resumeDraftSetup = async (
 	request: CurrentStepRouteRequest,
@@ -34,10 +26,7 @@ export const resumeDraftSetup = async (
 	const { steps } = getDraftSetupProgress(
 		formDataToDraftNewsletterData(initialStep.formData),
 	);
-	const firstIncompleteStep = steps.find((step) => !step.isComplete);
-	const stepToSkipToId = firstIncompleteStep
-		? wizardStepIds[firstIncompleteStep.id]
-		: undefined;
+	const stepToSkipToId = steps.find((step) => !step.isComplete)?.id;
 
 	if (!stepToSkipToId || stepToSkipToId === initialStep.currentStepId) {
 		return initialStep;

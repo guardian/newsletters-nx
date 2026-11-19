@@ -20,10 +20,10 @@ export interface DraftSetupStep {
  * Rendering options are left out because they are optional, and only
  * apply to article-based newsletters.
  *
- * The fields must match the wizard step schemas in
+ * The IDs and fields must match the wizard steps in
  * libs/newsletter-workflow - a test there checks this.
  */
-export const draftSetupSteps: readonly DraftSetupStep[] = [
+export const draftSetupSteps = [
 	{
 		id: 'nameAndFrequency',
 		label: 'Name & frequency',
@@ -57,10 +57,12 @@ export const draftSetupSteps: readonly DraftSetupStep[] = [
 			'illustrationSquare',
 		],
 	},
-];
+] as const satisfies readonly DraftSetupStep[];
+
+export type DraftSetupStepId = (typeof draftSetupSteps)[number]['id'];
 
 export interface DraftSetupProgress {
-	steps: Array<Pick<DraftSetupStep, 'id' | 'label'> & { isComplete: boolean }>;
+	steps: Array<{ id: DraftSetupStepId; label: string; isComplete: boolean }>;
 	completed: number;
 	total: number;
 	/**

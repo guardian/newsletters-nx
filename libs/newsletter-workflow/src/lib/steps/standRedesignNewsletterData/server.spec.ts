@@ -44,7 +44,7 @@ describe('standRedesignLayout draft creation', () => {
 		});
 
 		expect(response.errorMessage).toBeUndefined();
-		expect(response.currentStepId).toBe('nameAndFrequencyLayout');
+		expect(response.currentStepId).toBe('nameAndFrequency');
 		expect(response.formData?.listId).toBeUndefined();
 		expect(await countDrafts()).toBe(0);
 	});
@@ -75,7 +75,7 @@ describe('standRedesignLayout draft creation', () => {
 			formData: {},
 		});
 		expect(back.errorMessage).toBeUndefined();
-		expect(back.currentStepId).toBe('nameAndFrequencyLayout');
+		expect(back.currentStepId).toBe('nameAndFrequency');
 
 		expect(await countDrafts()).toBe(0);
 	});
@@ -84,14 +84,14 @@ describe('standRedesignLayout draft creation', () => {
 		const { send, countDrafts } = setup();
 
 		const response = await send({
-			stepId: 'nameAndFrequencyLayout',
+			stepId: 'nameAndFrequency',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: {},
 		});
 
 		expect(response.errorMessage).toBeDefined();
-		expect(response.currentStepId).toBe('nameAndFrequencyLayout');
+		expect(response.currentStepId).toBe('nameAndFrequency');
 		expect(await countDrafts()).toBe(0);
 	});
 
@@ -99,7 +99,7 @@ describe('standRedesignLayout draft creation', () => {
 		const { send, countDrafts } = setup();
 
 		const nameStep = await send({
-			stepId: 'nameAndFrequencyLayout',
+			stepId: 'nameAndFrequency',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: { name: 'Down to Earth', frequency: 'Weekly' },
@@ -124,7 +124,7 @@ describe('standRedesignLayout draft creation', () => {
 		});
 
 		expect(productionStep.errorMessage).toBeUndefined();
-		expect(productionStep.currentStepId).toBe('dates');
+		expect(productionStep.currentStepId).toBe('promotionDates');
 		expect(productionStep.formData?.listId).toBe(listId);
 		expect(productionStep.formData?.name).toBe('Down to Earth');
 		expect(productionStep.formData?.category).toBe('article-based');
@@ -152,7 +152,7 @@ describe('standRedesignLayout draft creation', () => {
 		const { send, countDrafts } = setup();
 
 		const created = await send({
-			stepId: 'nameAndFrequencyLayout',
+			stepId: 'nameAndFrequency',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: { name: 'Down to Earth', frequency: 'Weekly' },

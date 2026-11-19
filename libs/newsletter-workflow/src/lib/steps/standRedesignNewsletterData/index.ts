@@ -11,15 +11,15 @@ import { reviewLayout } from './reviewLayout';
 import { tagsLayout } from './tagsLayout';
 import { targetingLayout } from './targetingLayout';
 
-export const standRedesignLayout: WizardLayout<DraftService> = {
+export const standRedesignLayout = {
 	cancel: cancelLayout,
 	intro: createDraftIntro,
-	nameAndFrequencyLayout: nameAndFrequencyLayout,
+	nameAndFrequency: nameAndFrequencyLayout,
 	productionDetails: productionDetailsLayout,
-	dates: dateLayout,
+	promotionDates: dateLayout,
 	targeting: targetingLayout,
 	tags: tagsLayout,
-	signUpPage: promotionContentLayout,
+	promotionContent: promotionContentLayout,
 	review: reviewLayout,
 	finish: finishLayout,
-};
+} satisfies WizardLayout<DraftService>;

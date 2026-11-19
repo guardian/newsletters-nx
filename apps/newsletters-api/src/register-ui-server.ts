@@ -19,6 +19,8 @@ const routeMap = {
 	'/drafts': [
 		'',
 		'/:id',
+		'/newsletter-data/new/:stepSlug',
+		'/newsletter-data/:listId/:stepSlug',
 		'/newsletter-data/:listId',
 		'/newsletter-data-rendering/:listId',
 		'/newsletter-data-rendering',
@@ -61,18 +63,11 @@ function resolveStaticFilesPath(): string {
 
 export async function createUIRouter() {
 	const pathToStaticFiles = resolveStaticFilesPath();
-
-	const indexHtml = await readIndexHtml(
-		path.join(pathToStaticFiles, 'index.html'),
-	);
-
+	const indexHtml = await readIndexHtml(path.join(pathToStaticFiles, 'index.html'));
 	const router = Router();
 
 	if (!indexHtml) {
-		log(
-			'warn',
-			'registerUIServer: index.html not found — UI routes not registered. In production, run `npm run build` first.',
-		);
+		log('warn', 'registerUIServer: index.html not found — UI routes not registered. In production, run `npm run build` first.');
 		return router;
 	}
 
@@ -95,7 +90,6 @@ export async function createUIRouter() {
 
 	// Intentionally last. Assets are directly served only if not custom matching route exists.
 	router.use(serveStatic(pathToStaticFiles));
-
 	return router;
 }
 

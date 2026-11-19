@@ -16,7 +16,7 @@ vi.mock('./make-wizard-step-request', () => ({
 const request: CurrentStepRouteRequest = {
 	wizardId: 'NEWSLETTER_DATA_STAND_REDESIGN',
 	id: '7',
-	stepId: 'nameAndFrequencyLayout',
+	stepId: 'nameAndFrequency',
 };
 const initialStep = (
 	overrides: DraftNewsletterData = {},
@@ -34,9 +34,9 @@ beforeEach(() => vi.resetAllMocks());
 describe('resumeDraftSetup', () => {
 	it.each([
 		['category', 'productionDetails'],
-		['launchDate', 'dates'],
+		['launchDate', 'promotionDates'],
 		['regionFocus', 'targeting'],
-		['signUpHeadline', 'signUpPage'],
+		['signUpHeadline', 'promotionContent'],
 	] as const)(
 		'resumes at %s with the saved form data',
 		async (field, target) => {
@@ -82,7 +82,7 @@ describe('resumeDraftSetup', () => {
 		});
 		await resumeDraftSetup(request, initial);
 		expect(makeWizardStepRequest).toHaveBeenCalledWith(
-			expect.objectContaining({ stepToSkipToId: 'signUpPage' }),
+			expect.objectContaining({ stepToSkipToId: 'promotionContent' }),
 		);
 	});
 

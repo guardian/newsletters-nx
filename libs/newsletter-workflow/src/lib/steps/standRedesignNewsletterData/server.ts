@@ -17,6 +17,7 @@ import { promotionContentLayout } from './promotionContentLayout';
 import { reviewLayout } from './reviewLayout';
 import { tagsLayout } from './tagsLayout';
 import { targetingLayout } from './targetingLayout';
+import type { standRedesignLayout as clientLayout } from './index';
 
 const hasListId = (stepData: WizardStepData): boolean =>
 	typeof stepData.formData?.listId === 'number' || !!stepData.id;
@@ -53,7 +54,7 @@ const loadDraftIfSaved: AsyncExecution<DraftService> = async (
 	return { data: {} };
 };
 
-export const standRedesignLayout: WizardLayout<DraftService> = {
+export const standRedesignLayout = {
 	cancel: cancelLayout,
 	intro: {
 		...createDraftIntro,
@@ -66,7 +67,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			},
 		},
 	},
-	nameAndFrequencyLayout: {
+	nameAndFrequency: {
 		...nameAndFrequencyLayout,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
@@ -92,7 +93,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			},
 		},
 	},
-	dates: {
+	promotionDates: {
 		...dateLayout,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
@@ -137,7 +138,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			},
 		},
 	},
-	signUpPage: {
+	promotionContent: {
 		...promotionContentLayout,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
@@ -171,4 +172,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 		...finishLayout,
 		executeSkip,
 	},
-};
+} satisfies Record<
+	keyof typeof clientLayout,
+	WizardLayout<DraftService>[string]
+>;

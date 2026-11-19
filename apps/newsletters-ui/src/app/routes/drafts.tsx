@@ -33,6 +33,14 @@ export const draftRoute: RouteObject = {
 			),
 			loader: draftDetailLoader,
 		},
+		...(!isFeatureSwitchEnabled('switch-legacy')
+			? ['newsletter-data/new/:stepSlug', 'newsletter-data/:listId/:stepSlug'].map(
+					(path) => ({
+						path,
+						element: <StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />,
+					}),
+				)
+			: []),
 		{
 			path: 'newsletter-data/:listId',
 			element: isFeatureSwitchEnabled('switch-legacy') ? (

@@ -10,7 +10,7 @@ vi.mock('../api-requests/make-wizard-step-request', () => ({
 }));
 
 const initialStep: CurrentStepRouteResponse = {
-	currentStepId: 'nameAndFrequencyLayout',
+	currentStepId: 'nameAndFrequency',
 	markdownToDisplay: '# Name and frequency',
 	formData: { listId: 7, name: 'Saved newsletter', frequency: 'Weekly' },
 };
@@ -50,12 +50,12 @@ describe('StandRedesignWizard resume', () => {
 		expect(makeWizardStepRequest).toHaveBeenNthCalledWith(1, {
 			wizardId: 'NEWSLETTER_DATA_STAND_REDESIGN',
 			id: '7',
-			stepId: 'nameAndFrequencyLayout',
+			stepId: 'nameAndFrequency',
 		});
 		expect(makeWizardStepRequest).toHaveBeenNthCalledWith(2, {
 			wizardId: 'NEWSLETTER_DATA_STAND_REDESIGN',
 			id: '7',
-			stepId: 'nameAndFrequencyLayout',
+			stepId: 'nameAndFrequency',
 			stepToSkipToId: 'productionDetails',
 			formData: initialStep.formData,
 		});
