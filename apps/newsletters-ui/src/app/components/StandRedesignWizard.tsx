@@ -26,8 +26,9 @@ import type {
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
+import { resumeDraftSetup } from '../api-requests/resume-draft-setup';
 import type { StringInputSettings } from './SchemaForm';
 import { StandRedesignMarkdownView } from './StandRedesignMarkdownView';
 import { StandRedesignReviewStep } from './StandRedesignReviewStep';
@@ -41,7 +42,14 @@ export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
 	wizardId,
 }: WizardProps) => {
 	const { listId } = useParams();
-	return <StandRedesignWizard wizardId={wizardId} id={listId} />;
+	const [searchParams] = useSearchParams();
+	return (
+		<StandRedesignWizard
+			wizardId={wizardId}
+			id={listId}
+			resume={searchParams.get('resume') === 'true'}
+		/>
+	);
 };
 
 export type NotedFields = string[];
@@ -51,6 +59,7 @@ export type NotedFields = string[];
 export interface WizardProps {
 	wizardId: WizardId;
 	id?: string;
+	resume?: boolean;
 }
 
 const FailureAlert = (props: {
@@ -101,6 +110,7 @@ const FailureAlert = (props: {
 export const StandRedesignWizard: React.FC<WizardProps> = ({
 	wizardId,
 	id,
+	resume = false,
 }: WizardProps) => {
 	const [serverData, setServerData] = useState<
 		CurrentStepRouteResponse | undefined
@@ -122,9 +132,12 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	>();
 
 	const fetchStep = useCallback(
-		async (body: CurrentStepRouteRequest) => {
+		async (body: CurrentStepRouteRequest, shouldResume = false) => {
 			try {
-				const data = await makeWizardStepRequest(body);
+				const initialStep = await makeWizardStepRequest(body);
+				const data = shouldResume
+					? await resumeDraftSetup(body, initialStep)
+					: initialStep;
 				const listIdOnData = data.formData?.listId;
 				if (typeof listIdOnData === 'number') {
 					setListId(listIdOnData);
@@ -159,14 +172,17 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				stepId: getStartStepId(wizardId, false) ?? '',
 			});
 		} else {
-			void fetchStep({
-				wizardId: wizardId,
-				id: id,
-				stepId: getStartStepId(wizardId, true) ?? '',
-			});
+			void fetchStep(
+				{
+					wizardId: wizardId,
+					id: id,
+					stepId: getStartStepId(wizardId, true) ?? '',
+				},
+				resume,
+			);
 		}
 		setListId(undefined);
-	}, [wizardId, id, fetchStep]);
+	}, [wizardId, id, fetchStep, resume]);
 
 	const navigate = useNavigate();
 
