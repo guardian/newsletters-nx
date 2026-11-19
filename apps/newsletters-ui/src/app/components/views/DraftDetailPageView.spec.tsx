@@ -113,8 +113,8 @@ describe('DraftDetailPageView', () => {
 		expect(valueFor('Headline')).toBe('Not set');
 		expect(valueFor('Newsletter status')).toBe('Not set');
 		expect(valueFor('Sign-up page creation status')).toBe('Not set');
-		expect(valueFor('Restricted')).toBe('Not set');
-		expect(valueFor('Sign up embed code')).toBe('Not set');
+		expect(valueFor('Braze campaign creation status')).toBe('Not set');
+		expect(valueFor('brazeNewsletterName')).toBe('Not set');
 	});
 
 	it('shows launch fields and allows a viewer to jump to the panel', async () => {

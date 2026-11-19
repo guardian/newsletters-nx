@@ -37,58 +37,10 @@ export function registerNotificationRoutes(app: Express) {
 		return false;
 	};
 
-	app.get('/email/:newsletterId', async (req, res) => {
-		try {
-			const maybeUser = await getUserProfile(req);
-			const failedValidation = await cannotTriggerNotification(req, res);
-			if (failedValidation) {
-				return;
-			}
-
-			const { newsletterId } = req.params;
-
-			const newsletterResponse = await newsletterStore.readByName(newsletterId);
-
-			if (!newsletterResponse.ok) {
-				return res.status(404).send(newsletterResponse);
-			}
-
-			const emailResult = await sendEmailNotifications(
-				{
-					messageTemplateId: 'NEWSLETTER_LAUNCH',
-					newsletter: newsletterResponse.data,
-				},
-				makeSesClient(),
-				makeEmailEnvInfo(),
-				maybeUser.profile,
-			);
-			if (!emailResult.success) {
-				return res.status(500).send({
-					message: 'Email service failed',
-				});
-			}
-
-			if (!emailResult.output) {
-				return res.status(200).send({
-					message: 'Email service is not enabled',
-				});
-			}
-
-			return res.status(200).send({
-				message: 'Email sent from service',
-				messageId: emailResult.output.MessageId,
-			});
-		} catch (e) {
-			log('error', 'Error sending email', errorContext(e));
-			return res.status(500).send({ message: 'Error sending email' });
-		}
-	});
-
-	app.get('/api/email/:newsletterId/:action', async (req, res) => {
+	app.post('/api/email/:newsletterId/:action', async (req, res) => {
 		const { newsletterId, action } = req.params;
 
 		const actionMapping: Record<string, NewsletterMessageId> = {
-			launch: 'NEWSLETTER_LAUNCH',
 			brazeUpdate: 'BRAZE_UPDATE_REQUEST',
 		};
 

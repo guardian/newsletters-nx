@@ -1,12 +1,12 @@
 import { AlertBanner } from '@guardian/stand/AlertBanner';
 import { Button } from '@guardian/stand/Button';
 import { Dialog, Modal } from '@guardian/stand/Modal';
-import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
-import { useRef, useState } from 'react';
+import type { DraftWithId } from '@newsletters-nx/newsletters-data-client';
+import { useState } from 'react';
 import { requestDraftDeletion } from '../api-requests/requestDraftDeletion';
 
 interface Props {
-	draft: DraftNewsletterData;
+	draft: DraftWithId;
 	hasBeenDeleted: boolean;
 	setHasBeenDeleted: { (value: boolean): void };
 }
@@ -18,29 +18,22 @@ export const StandDeleteDraftButton = ({
 }: Props) => {
 	const [showConfirmation, setShowConfirmation] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
-	const deletionInFlight = useRef(false);
 	const [deleteErrorMessage, setDeleteErrorMessage] = useState<
 		string | undefined
 	>(undefined);
 
 	const closeConfirmation = () => {
-		if (!deletionInFlight.current) {
+		if (!isDeleting) {
 			setShowConfirmation(false);
 		}
 	};
 
 	const sendDeleteRequest = async () => {
-		if (deletionInFlight.current) {
+		if (isDeleting) {
 			return;
 		}
 		const { listId } = draft;
-		if (typeof listId !== 'number') {
-			closeConfirmation();
-			setDeleteErrorMessage('This draft has no ID, so it cannot be deleted.');
-			return;
-		}
 
-		deletionInFlight.current = true;
 		setIsDeleting(true);
 		try {
 			const result = await requestDraftDeletion(listId);
@@ -52,7 +45,6 @@ export const StandDeleteDraftButton = ({
 		} catch {
 			setDeleteErrorMessage('DELETE REQUEST FAILED');
 		} finally {
-			deletionInFlight.current = false;
 			setIsDeleting(false);
 			setShowConfirmation(false);
 		}
@@ -102,6 +94,7 @@ export const StandDeleteDraftButton = ({
 							Cancel
 						</Button>
 						<Button
+							isDisabled={isDeleting}
 							isPending={isDeleting}
 							onPress={() => void sendDeleteRequest()}
 						>
