@@ -7,6 +7,7 @@ import type {
 import { executeCreate } from '../../executeCreate';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
+import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { cancelLayout } from './cancelLayout';
 import { dateLayout } from './dateLayout';
 import { finishLayout } from './finishLayout';
@@ -55,9 +56,10 @@ const loadDraftIfSaved: AsyncExecution<DraftService> = async (
 };
 
 export const standRedesignLayout = {
-	cancel: cancelLayout,
+	cancel: { ...cancelLayout, getInitialFormData: getDraftFromStorage },
 	intro: {
 		...createDraftIntro,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...createDraftIntro.buttons,
@@ -80,6 +82,7 @@ export const standRedesignLayout = {
 	},
 	productionDetails: {
 		...productionDetailsLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...productionDetailsLayout.buttons,
@@ -95,6 +98,7 @@ export const standRedesignLayout = {
 	},
 	promotionDates: {
 		...dateLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...dateLayout.buttons,
@@ -110,6 +114,7 @@ export const standRedesignLayout = {
 	},
 	targeting: {
 		...targetingLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...targetingLayout.buttons,
@@ -125,6 +130,7 @@ export const standRedesignLayout = {
 	},
 	tags: {
 		...tagsLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...tagsLayout.buttons,
@@ -140,6 +146,7 @@ export const standRedesignLayout = {
 	},
 	promotionContent: {
 		...promotionContentLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...promotionContentLayout.buttons,
@@ -155,6 +162,7 @@ export const standRedesignLayout = {
 	},
 	review: {
 		...reviewLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip,
 		buttons: {
 			...reviewLayout.buttons,
@@ -170,6 +178,7 @@ export const standRedesignLayout = {
 	},
 	finish: {
 		...finishLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip,
 	},
 } satisfies Record<

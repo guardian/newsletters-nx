@@ -1,10 +1,8 @@
-import type { DraftSetupProgress } from '@newsletters-nx/newsletters-data-client';
 import { standRedesignLayout } from './steps/standRedesignNewsletterData';
 
 export type StandSetupStepId = keyof typeof standRedesignLayout;
 
 const stepIds = Object.keys(standRedesignLayout) as StandSetupStepId[];
-
 const toStepSlug = (stepId: StandSetupStepId): string =>
 	stepId.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
@@ -24,8 +22,3 @@ export const getStandSetupStepPath = (
 	}
 	return `/drafts/newsletter-data/${listId ?? 'new'}/${toStepSlug(knownStepId)}`;
 };
-
-export const getFirstIncompleteSetupStep = (
-	progress: DraftSetupProgress,
-): StandSetupStepId =>
-	progress.steps.find((step) => !step.isComplete)?.id ?? 'nameAndFrequency';

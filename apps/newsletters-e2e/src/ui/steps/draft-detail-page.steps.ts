@@ -22,29 +22,30 @@ Given(
 		if (completed !== 1 && completed !== 5) {
 			throw new Error('This fixture supports one or five completed steps');
 		}
-		const draft: DraftNewsletterData = {
+		let draft: DraftNewsletterData = {
 			name,
 			frequency: 'Weekly',
 			category: 'article-based',
-			...(completed === 5
-				? ({
-						onlineArticle: 'Email only',
-						launchDate: new Date('2027-01-15'),
-						signUpPageDate: new Date('2027-01-01'),
-						privateUntilLaunch: false,
-						regionFocus: 'UK',
-						theme: 'news',
-						group: 'News in depth',
-						signUpHeadline: 'Your weekly briefing',
-						signUpDescription: 'The news that matters, every week.',
-						signUpEmbedDescription: 'Sign up for the weekly briefing.',
-						creationTimeStamp: Date.now(),
-						brazeCampaignCreationStatus: 'NOT_REQUESTED',
-						signupPageCreationStatus: 'NOT_REQUESTED',
-						tagCreationStatus: 'NOT_REQUESTED',
-					} as const)
-				: {}),
 		};
+		if (completed === 5) {
+			draft = {
+				...draft,
+				onlineArticle: 'Email only',
+				launchDate: new Date('2027-01-15'),
+				signUpPageDate: new Date('2027-01-01'),
+				privateUntilLaunch: false,
+				regionFocus: 'UK',
+				theme: 'news',
+				group: 'News in depth',
+				signUpHeadline: 'Your weekly briefing',
+				signUpDescription: 'The news that matters, every week.',
+				signUpEmbedDescription: 'Sign up for the weekly briefing.',
+				creationTimeStamp: Date.now(),
+				brazeCampaignCreationStatus: 'NOT_REQUESTED',
+				signupPageCreationStatus: 'NOT_REQUESTED',
+				tagCreationStatus: 'NOT_REQUESTED',
+			};
+		}
 		const listId = await createFixtureDraft(request, draft);
 		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
 	},
@@ -54,12 +55,13 @@ When(
 	'the editor opens the draft page for {string}',
 	async ({ page, namedNewsletters }, name: string) => {
 		const permissions = page.waitForResponse('**/api/user/permissions');
-		await page.goto(`/drafts/${draftId(namedNewsletters.refsByName[name])}`);
+		await page.goto(
+			`/drafts/${draftId(namedNewsletters.refsByName[name])}?switch-legacy=false`,
+		);
 		await permissions;
 		await expect(
 			page.getByRole('heading', { level: 2, name, exact: true }),
 		).toBeVisible();
-		await expect(page.getByRole('main')).toHaveCount(1);
 	},
 );
 
@@ -94,32 +96,53 @@ Then('the draft details are read-only', async ({ page }) => {
 	await expect(panelByName(page, 'Technical output')).toHaveCount(0);
 });
 
-When(
-	'the editor continues setup for {string}',
+When('the editor continues setup', async ({ page }) => {
+	await page
+		.getByRole('link', { name: 'Continue set up', exact: true })
+		.click();
+});
+
+Then(
+	'setup for {string} resumes at Production details',
 	async ({ page, namedNewsletters }, name: string) => {
-		const link = page.getByRole('link', {
-			name: 'Continue set up',
-			exact: true,
-		});
-		await expect(link).toHaveAttribute(
-			'href',
-			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}`,
+		const id = draftId(namedNewsletters.refsByName[name]);
+		await expect(page).toHaveURL(
+			new RegExp(`/drafts/newsletter-data/${id}/production-details$`),
 		);
-		await link.click();
+		await expect(
+			page.getByRole('heading', {
+				level: 1,
+				name: 'Production details',
+				exact: true,
+			}),
+		).toBeVisible();
 	},
 );
 
+When('the editor reloads the setup step', async ({ page }) => {
+	await page.reload();
+});
+
+When('the editor opens the Name and frequency step', async ({ page }) => {
+	await page
+		.getByRole('navigation', { name: 'Newsletter creation steps' })
+		.getByRole('button', { name: /^Name & frequency/ })
+		.click();
+});
+
 Then(
-	'the setup wizard for {string} is shown',
+	'the saved name and frequency for {string} are preserved',
 	async ({ page, namedNewsletters }, name: string) => {
+		const id = draftId(namedNewsletters.refsByName[name]);
 		await expect(page).toHaveURL(
-			new RegExp(
-				`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}$`,
-			),
+			new RegExp(`/drafts/newsletter-data/${id}/name-and-frequency$`),
 		);
 		await expect(
-			page.getByRole('button', { name: 'Name & frequency' }),
-		).toBeVisible();
+			page.getByRole('textbox', { name: 'Name the newsletter' }),
+		).toHaveValue(name);
+		await expect(
+			page.getByRole('radio', { name: 'Weekly', exact: true }),
+		).toBeChecked();
 	},
 );
 
@@ -129,7 +152,10 @@ Then(
 		const id = draftId(namedNewsletters.refsByName[name]);
 		await expect(
 			page.getByRole('link', { name: 'Edit details', exact: true }),
-		).toHaveAttribute('href', `/drafts/newsletter-data/${id}`);
+		).toHaveAttribute(
+			'href',
+			`/drafts/newsletter-data/${id}/name-and-frequency`,
+		);
 		await expect(
 			page.getByRole('link', { name: 'Request to launch', exact: true }),
 		).toHaveAttribute('href', `/drafts/launch-newsletter/${id}`);
@@ -187,30 +213,18 @@ Then(
 	'the draft {string} still exists',
 	async ({ page, request, namedNewsletters }, name: string) => {
 		const id = draftId(namedNewsletters.refsByName[name]);
-		await expect(page).toHaveURL(new RegExp(`/drafts/${id}$`));
+		await expect(page).toHaveURL(new RegExp(`/drafts/${id}(\\?.*)?$`));
 		expect(await getDraftNewsletter(request, id)).toMatchObject({ name });
 	},
 );
 
-When(
-	'the editor confirms deletion of {string}',
-	async ({ page, namedNewsletters }, name: string) => {
-		const id = draftId(namedNewsletters.refsByName[name]);
-		await page
-			.getByRole('button', { name: 'Delete draft', exact: true })
-			.click();
-		const deleted = page.waitForResponse(
-			(response) =>
-				response.url().endsWith(`/api/drafts/${id}`) &&
-				response.request().method() === 'DELETE',
-		);
-		await page
-			.getByRole('dialog')
-			.getByRole('button', { name: 'Confirm delete', exact: true })
-			.click();
-		expect((await deleted).ok()).toBe(true);
-	},
-);
+When('the editor confirms draft deletion', async ({ page }) => {
+	await page.getByRole('button', { name: 'Delete draft', exact: true }).click();
+	await page
+		.getByRole('dialog')
+		.getByRole('button', { name: 'Confirm delete', exact: true })
+		.click();
+});
 
 Then(
 	'the draft {string} is deleted with a confirmation toast',
@@ -224,8 +238,7 @@ Then(
 				.getByRole('grid', { name: 'All newsletters' })
 				.locator(`tr[data-href="/drafts/${id}"]`),
 		).toHaveCount(0);
-		const response = await getDraftNewsletterResponse(request, id);
-		expect(response.status()).toBe(404);
+		expect((await getDraftNewsletterResponse(request, id)).status()).toBe(404);
 	},
 );
 

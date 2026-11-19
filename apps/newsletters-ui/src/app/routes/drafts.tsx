@@ -13,37 +13,24 @@ import { Layout } from '../Layout';
 import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
 
 checkFeatureSwitchURLParams();
+const legacy = isFeatureSwitchEnabled('switch-legacy');
 
 export const draftRoute: RouteObject = {
 	path: '/drafts',
 	element: <Layout />,
 	errorElement: <ErrorPage />,
 	children: [
-		{
-			path: '',
-			element: <DraftListView />,
-			loader: draftListLoader,
-		},
+		{ path: '', element: <DraftListView />, loader: draftListLoader },
 		{
 			path: ':id',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
-				<DraftDetailView />
-			) : (
-				<DraftDetailPageView />
-			),
+			element: legacy ? <DraftDetailView /> : <DraftDetailPageView />,
 			loader: draftDetailLoader,
 		},
-		...(!isFeatureSwitchEnabled('switch-legacy')
-			? ['newsletter-data/new/:stepSlug', 'newsletter-data/:listId/:stepSlug'].map(
-					(path) => ({
-						path,
-						element: <StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />,
-					}),
-				)
-			: []),
 		{
-			path: 'newsletter-data/:listId',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
+			path: legacy
+				? 'newsletter-data/:listId'
+				: 'newsletter-data/:listId/:stepSlug?',
+			element: legacy ? (
 				<WizardContainer wizardId="NEWSLETTER_DATA" />
 			) : (
 				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
@@ -51,7 +38,7 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'newsletter-data-rendering/:listId',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
+			element: legacy ? (
 				<WizardContainer wizardId="RENDERING_OPTIONS" />
 			) : (
 				<StandRedesignWizardContainer wizardId="RENDERING_OPTIONS" />
@@ -59,7 +46,7 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'newsletter-data',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
+			element: legacy ? (
 				<WizardContainer wizardId="NEWSLETTER_DATA" />
 			) : (
 				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
@@ -67,7 +54,7 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'launch-newsletter/:listId',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
+			element: legacy ? (
 				<WizardContainer wizardId="LAUNCH_NEWSLETTER" />
 			) : (
 				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
@@ -75,7 +62,7 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: 'launch-newsletter',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
+			element: legacy ? (
 				<WizardContainer wizardId="LAUNCH_NEWSLETTER" />
 			) : (
 				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />

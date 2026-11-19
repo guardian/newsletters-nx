@@ -9,6 +9,7 @@ import { Badge } from '@guardian/stand/Badge';
 import { Link } from '@guardian/stand/Link';
 import { LinkButton } from '@guardian/stand/LinkButton';
 import { Typography } from '@guardian/stand/Typography';
+import { getStandSetupStepPath } from '@newsletters-nx/newsletter-workflow';
 import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { getDraftSetupProgress } from '@newsletters-nx/newsletters-data-client';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
@@ -59,11 +60,14 @@ interface Props {
 export const DraftSetupPanel = ({ draft }: Props) => {
 	const navigate = useNavigate();
 	const { editEverything } = usePermissions() ?? {};
-	const { completed, total, isReadyToLaunch } = getDraftSetupProgress(draft);
+	const { steps, completed, total, isReadyToLaunch } =
+		getDraftSetupProgress(draft);
 
 	const { listId } = draft;
 	const canEdit = !!editEverything && typeof listId === 'number';
-	const setUpHref = `/drafts/newsletter-data/${listId}`;
+	const nextStep =
+		steps.find((step) => !step.isComplete)?.id ?? 'nameAndFrequency';
+	const setUpHref = getStandSetupStepPath(listId, nextStep);
 	const hasStartedRendering = draft.renderingOptions !== undefined;
 
 	return (
@@ -92,7 +96,7 @@ export const DraftSetupPanel = ({ draft }: Props) => {
 								</LinkButton>
 							</div>
 						) : (
-							<LinkButton href={`${setUpHref}?resume=true`} variant="primary">
+							<LinkButton href={setUpHref} variant="primary">
 								Continue set up
 							</LinkButton>
 						))

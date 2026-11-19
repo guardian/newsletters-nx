@@ -113,8 +113,7 @@ describe('DraftDetailPageView', () => {
 		expect(valueFor('Headline')).toBe('Not set');
 		expect(valueFor('Newsletter status')).toBe('Not set');
 		expect(valueFor('Sign-up page creation status')).toBe('Not set');
-		expect(valueFor('Restricted')).toBe('Not set');
-		expect(valueFor('Sign up embed code')).toBe('Not set');
+		expect(screen.queryByRole('region', { name: 'Technical output' })).toBeNull();
 	});
 
 	it('shows launch fields and allows a viewer to jump to the panel', async () => {
@@ -153,7 +152,7 @@ describe('DraftDetailPageView', () => {
 		await screen.findByRole('heading', { level: 2 });
 		expect(
 			screen.getByRole('link', { name: 'Edit details' }).getAttribute('href'),
-		).toBe('/drafts/newsletter-data/7');
+		).toBe('/drafts/newsletter-data/7/name-and-frequency');
 		expect(
 			screen
 				.getByRole('link', { name: 'Edit article rendering' })

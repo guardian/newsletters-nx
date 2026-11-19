@@ -29,20 +29,18 @@ const setup = () => {
 		const response = await draftStorage.readAll();
 		return response.data.length;
 	};
-	return { send, countDrafts };
+	return { send, countDrafts, draftStorage };
 };
 
 describe('standRedesignLayout draft creation', () => {
 	it('does not create a draft when continuing from the intro step', async () => {
 		const { send, countDrafts } = setup();
-
 		const response = await send({
 			stepId: 'intro',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: {},
 		});
-
 		expect(response.errorMessage).toBeUndefined();
 		expect(response.currentStepId).toBe('nameAndFrequency');
 		expect(response.formData?.listId).toBeUndefined();
@@ -51,7 +49,6 @@ describe('standRedesignLayout draft creation', () => {
 
 	it('does not create a draft when skipping between steps before any data is saved', async () => {
 		const { send, countDrafts } = setup();
-
 		const fromIntro = await send({
 			stepId: 'intro',
 			stepToSkipToId: 'targeting',
@@ -76,20 +73,17 @@ describe('standRedesignLayout draft creation', () => {
 		});
 		expect(back.errorMessage).toBeUndefined();
 		expect(back.currentStepId).toBe('nameAndFrequency');
-
 		expect(await countDrafts()).toBe(0);
 	});
 
 	it('does not create a draft when the first saved step fails validation', async () => {
 		const { send, countDrafts } = setup();
-
 		const response = await send({
 			stepId: 'nameAndFrequency',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: {},
 		});
-
 		expect(response.errorMessage).toBeDefined();
 		expect(response.currentStepId).toBe('nameAndFrequency');
 		expect(await countDrafts()).toBe(0);
@@ -97,14 +91,12 @@ describe('standRedesignLayout draft creation', () => {
 
 	it('creates the draft when the editor first saves a step, then modifies it on later saves', async () => {
 		const { send, countDrafts } = setup();
-
 		const nameStep = await send({
 			stepId: 'nameAndFrequency',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: { name: 'Down to Earth', frequency: 'Weekly' },
 		});
-
 		expect(nameStep.errorMessage).toBeUndefined();
 		expect(nameStep.currentStepId).toBe('productionDetails');
 		const listId = nameStep.formData?.listId;
@@ -122,7 +114,6 @@ describe('standRedesignLayout draft creation', () => {
 				onlineArticle: 'Email only',
 			},
 		});
-
 		expect(productionStep.errorMessage).toBeUndefined();
 		expect(productionStep.currentStepId).toBe('promotionDates');
 		expect(productionStep.formData?.listId).toBe(listId);
@@ -133,14 +124,12 @@ describe('standRedesignLayout draft creation', () => {
 
 	it('creates the draft from whichever step is saved first', async () => {
 		const { send, countDrafts } = setup();
-
 		const response = await send({
 			stepId: 'targeting',
 			buttonId: 'finish',
 			buttonType: 'NEXT',
 			formData: { regionFocus: 'UK', theme: 'sport', group: 'Opinion' },
 		});
-
 		expect(response.errorMessage).toBeUndefined();
 		expect(response.currentStepId).toBe('tags');
 		expect(typeof response.formData?.listId).toBe('number');
@@ -148,9 +137,8 @@ describe('standRedesignLayout draft creation', () => {
 		expect(await countDrafts()).toBe(1);
 	});
 
-	it('loads the stored draft when skipping once the draft exists', async () => {
-		const { send, countDrafts } = setup();
-
+	it('loads stored data on direct entry and skip without writing the draft', async () => {
+		const { send, countDrafts, draftStorage } = setup();
 		const created = await send({
 			stepId: 'nameAndFrequency',
 			buttonId: 'next',
@@ -158,6 +146,17 @@ describe('standRedesignLayout draft creation', () => {
 			formData: { name: 'Down to Earth', frequency: 'Weekly' },
 		});
 		const listId = created.formData?.listId;
+		if (typeof listId !== 'number') {
+			throw new Error('Expected the saved draft to have a numeric ID');
+		}
+		const create = jest.spyOn(draftStorage, 'create');
+		const update = jest.spyOn(draftStorage, 'update');
+		for (const stepId of Object.keys(standRedesignLayout)) {
+			const loaded = await send({ stepId, id: String(listId) });
+			expect(loaded.errorMessage).toBeUndefined();
+			expect(loaded.currentStepId).toBe(stepId);
+			expect(loaded.formData).toMatchObject({ listId, name: 'Down to Earth' });
+		}
 
 		const skipped = await send({
 			stepId: 'productionDetails',
@@ -166,7 +165,6 @@ describe('standRedesignLayout draft creation', () => {
 		});
 		expect(skipped.errorMessage).toBeUndefined();
 		expect(skipped.formData?.name).toBe('Down to Earth');
-
 		const continued = await send({
 			stepId: 'intro',
 			buttonId: 'next',
@@ -177,5 +175,7 @@ describe('standRedesignLayout draft creation', () => {
 		expect(continued.formData?.listId).toBe(listId);
 		expect(continued.formData?.name).toBe('Down to Earth');
 		expect(await countDrafts()).toBe(1);
+		expect(create).not.toHaveBeenCalled();
+		expect(update).not.toHaveBeenCalled();
 	});
 });

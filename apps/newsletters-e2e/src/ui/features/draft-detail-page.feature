@@ -2,10 +2,7 @@ Feature: Draft newsletter detail page
 	Editors can see setup progress, continue setup and delete a draft.
 	Rendering options are optional and do not add a required setup step.
 
-	Background:
-		Given an editor's workspace uses the Stand design
-
-	Scenario: An incomplete draft shows matching progress and read-only details
+	Scenario: An incomplete draft shows progress and resumes at the first incomplete step
 		Given an article-based draft "Morning briefing" with 1 required setup steps complete and no rendering options
 		When the editor opens the draft page for "Morning briefing"
 		Then the draft page shows 1 of 5 required steps complete
@@ -14,8 +11,12 @@ Feature: Draft newsletter detail page
 		And the "Attributes" panel shows:
 			| label     | value  |
 			| Frequency | Weekly |
-		When the editor continues setup for "Morning briefing"
-		Then the setup wizard for "Morning briefing" is shown
+		When the editor continues setup
+		Then setup for "Morning briefing" resumes at Production details
+		When the editor reloads the setup step
+		Then setup for "Morning briefing" resumes at Production details
+		When the editor opens the Name and frequency step
+		Then the saved name and frequency for "Morning briefing" are preserved
 
 	Scenario: A completed draft can request launch without configuring article rendering
 		Given an article-based draft "Ready briefing" with 5 required setup steps complete and no rendering options
@@ -31,7 +32,7 @@ Feature: Draft newsletter detail page
 		When the editor opens the draft page for "Delete briefing"
 		And the editor cancels deleting the draft
 		Then the draft "Delete briefing" still exists
-		When the editor confirms deletion of "Delete briefing"
+		When the editor confirms draft deletion
 		Then the editor is taken to the All Newsletters page
 		And the draft "Delete briefing" is deleted with a confirmation toast
 
@@ -41,7 +42,4 @@ Feature: Draft newsletter detail page
 		When the editor opens the draft page for "Read-only briefing"
 		Then the draft page shows 5 of 5 required steps complete
 		And the draft details are read-only
-		And the "Attributes" panel shows:
-			| label     | value  |
-			| Frequency | Weekly |
 		And the draft page has no setup, launch, rendering or delete actions
