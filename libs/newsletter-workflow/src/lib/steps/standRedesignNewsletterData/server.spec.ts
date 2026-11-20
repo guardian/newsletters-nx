@@ -190,7 +190,7 @@ describe('standRedesignLayout draft creation', () => {
 
 		const opened = await send({
 			stepId: 'productionDetails',
-			id: String(created.formData?.listId),
+			id: `${created.formData?.listId as number}`,
 		});
 
 		expect(opened.errorMessage).toBeUndefined();
