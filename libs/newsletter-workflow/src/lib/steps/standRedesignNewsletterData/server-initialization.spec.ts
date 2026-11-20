@@ -6,6 +6,7 @@ import {
 import type { CurrentStepRouteRequest } from '@newsletters-nx/state-machine';
 import { handleWizardRequestAndReturnWizardResponse } from '@newsletters-nx/state-machine';
 import { standRedesignLayout } from './server';
+import { standRedesignLayout as clientLayout } from './index';
 
 jest.mock('@newsletters-nx/email-builder/server', () => ({
 	sendEmailNotifications: jest.fn(),
@@ -42,6 +43,14 @@ const setup = () => {
 	};
 	return { send, read, expectNoWrites };
 };
+
+describe('step IDs', () => {
+	it('are the same in the client and server layouts', () => {
+		expect(Object.keys(standRedesignLayout)).toEqual(
+			Object.keys(clientLayout),
+		);
+	});
+});
 
 describe.each(Object.keys(standRedesignLayout))('initializing %s', (stepId) => {
 	it('loads the saved draft with one read and no writes', async () => {
