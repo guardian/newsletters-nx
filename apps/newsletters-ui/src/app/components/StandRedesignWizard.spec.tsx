@@ -74,7 +74,7 @@ describe('Stand setup wizard step URLs', () => {
 		expect(router.state.location.pathname).toBe(`${base}/7/production-details`);
 	});
 
-	it('updates the path after successful transitions without another request', async () => {
+	it('reuses a transition response once and fetches fresh data on Forward', async () => {
 		const router = renderWizard(`${base}/7/name-and-frequency?example=1`);
 		await screen.findByDisplayValue('Saved newsletter');
 		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
@@ -89,10 +89,23 @@ describe('Stand setup wizard step URLs', () => {
 			),
 		);
 		expect(router.state.location.search).toBe('?example=1');
+		expect(router.state.location.state).toBeNull();
 		expect(
 			await screen.findByRole('heading', { name: 'productionDetails' }),
 		).toBeInTheDocument();
 		expect(makeWizardStepRequest).toHaveBeenCalledTimes(2);
+
+		await act(() => router.navigate(-1));
+		await screen.findByDisplayValue('Saved newsletter');
+		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce({
+			...step('productionDetails'),
+			markdownToDisplay: '# Fresh production details',
+		});
+		await act(() => router.navigate(1));
+		expect(
+			await screen.findByRole('heading', { name: 'Fresh production details' }),
+		).toBeInTheDocument();
+		expect(makeWizardStepRequest).toHaveBeenCalledTimes(4);
 	});
 
 	it('keeps the current URL and edits after a failed save', async () => {
@@ -192,6 +205,7 @@ describe('Stand setup wizard step URLs', () => {
 		});
 		expect(router.state.location.pathname).toBe(`${base}/7/production-details`);
 		expect(router.state.historyAction).toBe('REPLACE');
+		expect(router.state.location.state).toEqual({ creating: true });
 
 		request.mockResolvedValueOnce(step('dates'));
 		await userEvent.click(

@@ -119,15 +119,17 @@ const FailureAlert = (props: {
 	);
 };
 
-// Navigating to a step can carry the response that produced it, so the
-// wizard does not request the same step again just because the URL changed.
-interface StepLocationState {
-	step?: CurrentStepRouteResponse;
-	creating?: boolean;
+interface StepHandoff {
+	pathname: string;
+	search: string;
+	response: CurrentStepRouteResponse;
 }
 
-const readStepLocationState = (state: unknown): StepLocationState =>
-	typeof state === 'object' && state !== null ? state : {};
+const isCreateLocation = (state: unknown): boolean =>
+	typeof state === 'object' &&
+	state !== null &&
+	'creating' in state &&
+	state.creating === true;
 
 interface PendingLeave {
 	targetStepId?: string;
@@ -156,14 +158,14 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	const dirty = useRef(false);
 	const stepRequestInFlight = useRef(false);
 	const activeLocationKey = useRef<string>();
+	const stepHandoff = useRef<StepHandoff>();
 	const location = useLocation();
 	const navigationType = useNavigationType();
 	const navigate = useNavigate();
 	const usesStepPaths = wizardId === 'NEWSLETTER_DATA_STAND_REDESIGN';
-	const locationState = readStepLocationState(location.state);
 	// A new draft stays on the create track after its first save gives it an ID.
 	const createTrack =
-		usesStepPaths && (id === undefined || locationState.creating === true);
+		usesStepPaths && (id === undefined || isCreateLocation(location.state));
 	const requestId = createTrack ? undefined : id;
 	const blocker = useBlocker(
 		({ currentLocation, nextLocation }) =>
@@ -199,24 +201,28 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 			showStep(data);
 			return;
 		}
-		const state: StepLocationState = { step: data, creating: createTrack };
-		void navigate(
-			{ pathname: path, search: location.search },
-			{
-				replace: replace || (id === undefined && savedId !== undefined),
-				state,
-			},
-		);
+		const destination = { pathname: path, search: location.search };
+		stepHandoff.current = { ...destination, response: data };
+		void navigate(destination, {
+			replace: replace || (id === undefined && savedId !== undefined),
+			state: createTrack ? { creating: true } : undefined,
+		});
 	};
 
-	// Runs once per history entry. Steps reached through the wizard use the
-	// response they were given; direct loads, reloads and Back/Forward fetch.
+	// Consume a transition response once; direct loads, reloads and Back/Forward
+	// always fetch saved data instead of replaying a previous response.
 	useEffect(() => {
 		activeLocationKey.current = location.key;
 		dirty.current = false;
 		setRequestError(undefined);
-		if (navigationType !== NavigationType.Pop && locationState.step) {
-			showStep(locationState.step);
+		const handoff = stepHandoff.current;
+		stepHandoff.current = undefined;
+		if (
+			navigationType !== NavigationType.Pop &&
+			handoff?.pathname === location.pathname &&
+			handoff.search === location.search
+		) {
+			showStep(handoff.response);
 			return;
 		}
 		let ignore = false;
