@@ -25,7 +25,7 @@ export interface DraftSetupStep {
  */
 export const draftSetupSteps: readonly DraftSetupStep[] = [
 	{
-		id: 'nameAndFrequencyLayout',
+		id: 'nameAndFrequency',
 		label: 'Name & frequency',
 		fields: ['name', 'frequency'],
 	},
@@ -45,7 +45,7 @@ export const draftSetupSteps: readonly DraftSetupStep[] = [
 		fields: ['regionFocus', 'theme', 'group'],
 	},
 	{
-		id: 'signUpPage',
+		id: 'promotionContent',
 		label: 'Promotion copy and images',
 		fields: [
 			'signUpHeadline',
