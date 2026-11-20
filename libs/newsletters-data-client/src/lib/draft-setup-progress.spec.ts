@@ -15,7 +15,7 @@ describe('getDraftSetupProgress', () => {
 		expect(progress.steps.map((step) => step.id)).toEqual([
 			'nameAndFrequency',
 			'productionDetails',
-			'promotionDates',
+			'dates',
 			'targeting',
 			'promotionContent',
 		]);
@@ -58,7 +58,7 @@ describe('getDraftSetupProgress', () => {
 				launchDate: new Date('2026-12-01'),
 				signUpPageDate: new Date('2026-11-20'),
 			}),
-		).toEqual(['promotionDates']);
+		).toEqual(['dates']);
 	});
 
 	it.each([

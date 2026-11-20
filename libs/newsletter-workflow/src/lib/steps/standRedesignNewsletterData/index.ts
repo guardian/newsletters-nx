@@ -14,12 +14,12 @@ import { targetingLayout } from './targetingLayout';
 export const standRedesignLayout: WizardLayout<DraftService> = {
 	cancel: cancelLayout,
 	intro: createDraftIntro,
-	nameAndFrequencyLayout: nameAndFrequencyLayout,
+	nameAndFrequency: nameAndFrequencyLayout,
 	productionDetails: productionDetailsLayout,
 	dates: dateLayout,
 	targeting: targetingLayout,
 	tags: tagsLayout,
-	signUpPage: promotionContentLayout,
+	promotionContent: promotionContentLayout,
 	review: reviewLayout,
 	finish: finishLayout,
 };

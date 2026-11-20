@@ -44,7 +44,7 @@ describe('standRedesignLayout draft creation', () => {
 		});
 
 		expect(response.errorMessage).toBeUndefined();
-		expect(response.currentStepId).toBe('nameAndFrequencyLayout');
+		expect(response.currentStepId).toBe('nameAndFrequency');
 		expect(response.formData?.listId).toBeUndefined();
 		expect(await countDrafts()).toBe(0);
 	});
@@ -75,7 +75,7 @@ describe('standRedesignLayout draft creation', () => {
 			formData: {},
 		});
 		expect(back.errorMessage).toBeUndefined();
-		expect(back.currentStepId).toBe('nameAndFrequencyLayout');
+		expect(back.currentStepId).toBe('nameAndFrequency');
 
 		expect(await countDrafts()).toBe(0);
 	});
@@ -84,14 +84,14 @@ describe('standRedesignLayout draft creation', () => {
 		const { send, countDrafts } = setup();
 
 		const response = await send({
-			stepId: 'nameAndFrequencyLayout',
+			stepId: 'nameAndFrequency',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: {},
 		});
 
 		expect(response.errorMessage).toBeDefined();
-		expect(response.currentStepId).toBe('nameAndFrequencyLayout');
+		expect(response.currentStepId).toBe('nameAndFrequency');
 		expect(await countDrafts()).toBe(0);
 	});
 
@@ -99,7 +99,7 @@ describe('standRedesignLayout draft creation', () => {
 		const { send, countDrafts } = setup();
 
 		const nameStep = await send({
-			stepId: 'nameAndFrequencyLayout',
+			stepId: 'nameAndFrequency',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: { name: 'Down to Earth', frequency: 'Weekly' },
@@ -152,7 +152,7 @@ describe('standRedesignLayout draft creation', () => {
 		const { send, countDrafts } = setup();
 
 		const created = await send({
-			stepId: 'nameAndFrequencyLayout',
+			stepId: 'nameAndFrequency',
 			buttonId: 'next',
 			buttonType: 'NEXT',
 			formData: { name: 'Down to Earth', frequency: 'Weekly' },
@@ -176,6 +176,26 @@ describe('standRedesignLayout draft creation', () => {
 		expect(continued.errorMessage).toBeUndefined();
 		expect(continued.formData?.listId).toBe(listId);
 		expect(continued.formData?.name).toBe('Down to Earth');
+		expect(await countDrafts()).toBe(1);
+	});
+
+	it('loads a saved draft when a later step is opened directly', async () => {
+		const { send, countDrafts } = setup();
+		const created = await send({
+			stepId: 'nameAndFrequency',
+			buttonId: 'next',
+			buttonType: 'NEXT',
+			formData: { name: 'Down to Earth', frequency: 'Weekly' },
+		});
+
+		const opened = await send({
+			stepId: 'productionDetails',
+			id: `${created.formData?.listId as number}`,
+		});
+
+		expect(opened.errorMessage).toBeUndefined();
+		expect(opened.currentStepId).toBe('productionDetails');
+		expect(opened.formData?.name).toBe('Down to Earth');
 		expect(await countDrafts()).toBe(1);
 	});
 });

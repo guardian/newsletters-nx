@@ -27,11 +27,16 @@ const countedSteps = draftSetupSteps.map(({ fields }) =>
 );
 
 describe('draftSetupSteps', () => {
-	it('each match a step in the Stand set-up wizard', () => {
-		const wizardStepFields = wizardStepSchemas.map(fieldsOf);
+	it('matches the IDs and fields of the required wizard steps in order', () => {
+		const requiredSteps = Object.entries(standRedesignLayout)
+			.filter(([, step]) => step.schema && hasRequiredField(step.schema))
+			.map(([id]) => id);
 
-		for (const fields of countedSteps) {
-			expect(wizardStepFields).toContain(fields);
+		expect(draftSetupSteps.map(({ id }) => id)).toEqual(requiredSteps);
+		for (const { id, fields } of draftSetupSteps) {
+			const schema = standRedesignLayout[id]?.schema;
+			if (!schema) {throw new Error(`No wizard schema for step "${id}"`);}
+			expect(fieldsOf(schema)).toBe([...fields].sort().join());
 		}
 	});
 
