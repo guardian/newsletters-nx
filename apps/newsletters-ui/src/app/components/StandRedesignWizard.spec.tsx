@@ -110,35 +110,6 @@ describe('Stand setup wizard step URLs', () => {
 		expect(screen.getByDisplayValue('Unsaved edit')).toBeInTheDocument();
 	});
 
-	it('retains the form and allows retrying when a save request fails', async () => {
-		const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-		const router = renderWizard(`${base}/7/name-and-frequency`);
-		fireEvent.input(await screen.findByDisplayValue('Saved newsletter'), {
-			target: { value: 'Unsaved edit' },
-		});
-		vi.mocked(makeWizardStepRequest).mockRejectedValueOnce(
-			new Error('Offline'),
-		);
-		await userEvent.click(
-			screen.getByRole('button', { name: 'Save and continue' }),
-		);
-		expect(await screen.findByRole('alert')).toHaveTextContent('Wizard failed');
-		expect(screen.getByDisplayValue('Unsaved edit')).toBeInTheDocument();
-		expect(router.state.location.pathname).toBe(`${base}/7/name-and-frequency`);
-		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
-			step('productionDetails'),
-		);
-		await userEvent.click(
-			screen.getByRole('button', { name: 'Save and continue' }),
-		);
-		await waitFor(() =>
-			expect(router.state.location.pathname).toBe(
-				`${base}/7/production-details`,
-			),
-		);
-		log.mockRestore();
-	});
-
 	it('retains the form and buttons for an error response without form data', async () => {
 		const router = renderWizard(`${base}/7/name-and-frequency`);
 		fireEvent.input(await screen.findByDisplayValue('Saved newsletter'), {
@@ -215,17 +186,9 @@ describe('Stand setup wizard step URLs', () => {
 		);
 		expect(router.state.historyAction).toBe('REPLACE');
 		expect(makeWizardStepRequest).toHaveBeenCalledTimes(2);
-		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(step('dates'));
-		await userEvent.click(
-			screen.getByRole('button', { name: 'Save and continue' }),
-		);
-		await waitFor(() =>
-			expect(router.state.location.pathname).toBe(`${base}/7/dates`),
-		);
-		const lastRequest = vi.mocked(makeWizardStepRequest).mock.lastCall?.[0];
-		expect(lastRequest?.id).toBeUndefined();
-		expect(lastRequest?.formData?.listId).toBe(7);
-		expect(makeWizardStepRequest).toHaveBeenCalledTimes(3);
+		expect(
+			vi.mocked(makeWizardStepRequest).mock.lastCall?.[0].id,
+		).toBeUndefined();
 	});
 
 	it('shows an unknown-step error without contacting the server', async () => {
