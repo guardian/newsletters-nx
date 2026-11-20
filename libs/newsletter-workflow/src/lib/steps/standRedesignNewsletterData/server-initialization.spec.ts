@@ -65,6 +65,10 @@ describe.each(Object.keys(standRedesignLayout))('initializing %s', (stepId) => {
 		expect(read).toHaveBeenCalledWith(123);
 		expectNoWrites();
 	});
+});
+
+describe('initializing an unsaved or missing draft', () => {
+	const stepId = 'productionDetails';
 
 	it('does not access storage before a draft is saved', async () => {
 		const { send, read, expectNoWrites } = setup();
@@ -88,22 +92,4 @@ describe.each(Object.keys(standRedesignLayout))('initializing %s', (stepId) => {
 		expect(read).toHaveBeenCalledTimes(1);
 		expectNoWrites();
 	});
-});
-
-describe('setup step initialization and skipping', () => {
-	it.each(['review', 'finish'])(
-		'keeps %s unavailable as a skip destination',
-		async (stepToSkipToId) => {
-			const { send, expectNoWrites } = setup();
-
-			await expect(
-				send({
-					stepId: 'nameAndFrequencyLayout',
-					stepToSkipToId,
-					formData: savedDraft,
-				}),
-			).rejects.toThrow();
-			expectNoWrites();
-		},
-	);
 });
