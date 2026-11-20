@@ -178,4 +178,24 @@ describe('standRedesignLayout draft creation', () => {
 		expect(continued.formData?.name).toBe('Down to Earth');
 		expect(await countDrafts()).toBe(1);
 	});
+
+	it('loads a saved draft when a later step is opened directly', async () => {
+		const { send, countDrafts } = setup();
+		const created = await send({
+			stepId: 'nameAndFrequency',
+			buttonId: 'next',
+			buttonType: 'NEXT',
+			formData: { name: 'Down to Earth', frequency: 'Weekly' },
+		});
+
+		const opened = await send({
+			stepId: 'productionDetails',
+			id: String(created.formData?.listId),
+		});
+
+		expect(opened.errorMessage).toBeUndefined();
+		expect(opened.currentStepId).toBe('productionDetails');
+		expect(opened.formData?.name).toBe('Down to Earth');
+		expect(await countDrafts()).toBe(1);
+	});
 });
