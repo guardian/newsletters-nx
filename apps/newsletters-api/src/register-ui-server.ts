@@ -20,6 +20,7 @@ const routeMap = {
 		'',
 		'/:id',
 		'/newsletter-data/:listId',
+		'/newsletter-data/:listId/:stepSlug',
 		'/newsletter-data-rendering/:listId',
 		'/newsletter-data-rendering',
 		'/newsletter-data',

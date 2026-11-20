@@ -25,9 +25,18 @@ import type {
 	CurrentStepRouteResponse,
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+	useBlocker,
+	useLocation,
+	useNavigate,
+	useParams,
+} from 'react-router-dom';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
+import {
+	getStandSetupStepId,
+	getStandSetupStepPath,
+} from '../stand-setup-step-path';
 import type { StringInputSettings } from './SchemaForm';
 import { StandRedesignMarkdownView } from './StandRedesignMarkdownView';
 import { StandRedesignReviewStep } from './StandRedesignReviewStep';
@@ -40,8 +49,20 @@ import { StandZodIssuesReport } from './StandZodIssuesReport';
 export const StandRedesignWizardContainer: React.FC<WizardProps> = ({
 	wizardId,
 }: WizardProps) => {
-	const { listId } = useParams();
-	return <StandRedesignWizard wizardId={wizardId} id={listId} />;
+	const { listId, stepSlug } = useParams();
+	const usesStepPaths = wizardId === 'NEWSLETTER_DATA_STAND_REDESIGN';
+	const stepId =
+		usesStepPaths && stepSlug ? getStandSetupStepId(stepSlug) : undefined;
+	if (usesStepPaths && stepSlug && !stepId) {
+		return <FailureAlert errorMessage="Unknown setup step" />;
+	}
+	return (
+		<StandRedesignWizard
+			wizardId={wizardId}
+			id={usesStepPaths && listId === 'new' ? undefined : listId}
+			stepId={stepId}
+		/>
+	);
 };
 
 export type NotedFields = string[];
@@ -51,6 +72,7 @@ export type NotedFields = string[];
 export interface WizardProps {
 	wizardId: WizardId;
 	id?: string;
+	stepId?: string;
 }
 
 const FailureAlert = (props: {
@@ -101,89 +123,155 @@ const FailureAlert = (props: {
 export const StandRedesignWizard: React.FC<WizardProps> = ({
 	wizardId,
 	id,
+	stepId,
 }: WizardProps) => {
-	const [serverData, setServerData] = useState<
-		CurrentStepRouteResponse | undefined
-	>(undefined);
-	const [formData, setFormData] = useState<WizardFormData | undefined>(
-		undefined,
-	);
+	const [serverData, setServerData] = useState<CurrentStepRouteResponse>();
+	const [formData, setFormData] = useState<WizardFormData>();
 	const [notedFields, setNotedFields] = useState<string[]>([]);
-	const [currentStepHasBeenChanged, setCurrentStepHasBeenChanged] =
-		useState(false);
 	const [hasServerErrorMessages, setHasServerErrorMessages] = useState(false);
 	const [showAllErrors, setShowAllErrors] = useState(false);
-	const [showSkipModalFor, setShowSkipModalFor] = useState<string | undefined>(
-		undefined,
+	const [showSkipModalFor, setShowSkipModalFor] = useState<string>();
+	const [pendingButton, setPendingButton] = useState<CurrentStepRouteRequest>();
+	const [listId, setListId] = useState<number>();
+	const [serverErrorMessage, setServerErrorMessage] = useState<string>();
+	const dirty = useRef(false);
+	const requests = useRef({ version: 0, inFlight: false });
+	// A transition response already contains its destination; its URL must not fetch it again.
+	const appliedPath = useRef<string>();
+	const location = useLocation();
+	const locationState: unknown = location.state;
+	const navigate = useNavigate();
+	const usesStepPaths = wizardId === 'NEWSLETTER_DATA_STAND_REDESIGN';
+	const createTrack =
+		usesStepPaths &&
+		(id === undefined ||
+			(typeof locationState === 'object' &&
+				locationState !== null &&
+				'standSetupCreate' in locationState &&
+				locationState.standSetupCreate === true));
+	const blocker = useBlocker(
+		({ currentLocation, nextLocation }) =>
+			usesStepPaths &&
+			dirty.current &&
+			currentLocation.pathname !== nextLocation.pathname,
 	);
-	const [listId, setListId] = useState<number | undefined>(undefined);
-	const [serverErrorMessage, setServerErrorMessage] = useState<
-		string | undefined
-	>();
 
 	const fetchStep = useCallback(
-		async (body: CurrentStepRouteRequest) => {
+		async (body: CurrentStepRouteRequest, initializing = false) => {
+			const activeRequests = requests.current;
+			const version = ++activeRequests.version;
+			activeRequests.inFlight = true;
+			setServerErrorMessage(undefined);
 			try {
 				const data = await makeWizardStepRequest(body);
-				const listIdOnData = data.formData?.listId;
-				if (typeof listIdOnData === 'number') {
-					setListId(listIdOnData);
+				if (version !== activeRequests.version) {
+					return;
 				}
-
-				setServerData(data);
+				const savedId =
+					typeof data.formData?.listId === 'number'
+						? data.formData.listId
+						: undefined;
+				if (savedId !== undefined) {
+					setListId(savedId);
+				}
+				setServerData((previous) =>
+					!initializing && data.errorMessage && previous
+						? { ...previous, ...data }
+						: data,
+				);
 				const schema = getFormSchema(wizardId, data.currentStepId);
-				const noted = getNotedFields(wizardId, data.currentStepId);
 				const blank = schema ? getEmptySchemaData(schema) : undefined;
-
-				setFormData({
-					...blank,
-					...data.formData,
-				});
+				if (data.formData || !data.errorMessage || initializing) {
+					setFormData({ ...blank, ...data.formData });
+				}
+				setNotedFields(getNotedFields(wizardId, data.currentStepId) ?? []);
 				setHasServerErrorMessages(!!data.errorMessage);
-				setCurrentStepHasBeenChanged(false);
 				setShowAllErrors(false);
 				setShowSkipModalFor(undefined);
-				setNotedFields(noted ?? []);
-			} catch (error: unknown /* FIXME! */) {
+				setPendingButton(undefined);
+
+				if (!data.errorMessage && !data.hasPersistentError) {
+					dirty.current = false;
+					if (usesStepPaths) {
+						const path = getStandSetupStepPath(
+							savedId ?? id,
+							data.currentStepId,
+						);
+						if (path) {
+							appliedPath.current = path;
+							if (path !== location.pathname) {
+								void navigate(
+									{ pathname: path, search: location.search },
+									{
+										replace:
+											initializing ||
+											(id === undefined && savedId !== undefined),
+										state: {
+											...(typeof locationState === 'object' &&
+											locationState !== null
+												? locationState
+												: {}),
+											standSetupCreate: createTrack,
+										},
+									},
+								);
+							}
+						}
+					}
+				}
+			} catch (error: unknown) {
+				if (version !== activeRequests.version) {
+					return;
+				}
 				setServerErrorMessage('Wizard failed');
 				console.error('Error invoking next step of wizard:', error);
+			} finally {
+				if (version === activeRequests.version) {
+					activeRequests.inFlight = false;
+				}
 			}
 		},
-		[wizardId],
+		[
+			wizardId,
+			usesStepPaths,
+			id,
+			location.pathname,
+			location.search,
+			locationState,
+			navigate,
+			createTrack,
+		],
 	);
 
 	useEffect(() => {
-		if (id === undefined) {
-			void fetchStep({
-				wizardId: wizardId,
-				stepId: getStartStepId(wizardId, false) ?? '',
-			});
-		} else {
-			void fetchStep({
-				wizardId: wizardId,
-				id: id,
-				stepId: getStartStepId(wizardId, true) ?? '',
-			});
+		const activeRequests = requests.current;
+		if (!usesStepPaths || appliedPath.current !== location.pathname) {
+			appliedPath.current = undefined;
+			dirty.current = false;
+			setServerData(undefined);
+			setListId(undefined);
+			void fetchStep(
+				{
+					wizardId,
+					id,
+					stepId: stepId ?? getStartStepId(wizardId, id !== undefined) ?? '',
+				},
+				true,
+			);
 		}
-		setListId(undefined);
-	}, [wizardId, id, fetchStep]);
-
-	const navigate = useNavigate();
+		return () => {
+			activeRequests.version++;
+			activeRequests.inFlight = false;
+		};
+	}, [wizardId, id, stepId, fetchStep, usesStepPaths, location.pathname]);
 
 	if (serverData === undefined) {
-		return <p>&apos;loading&apos;</p>;
-	}
-
-	if (serverErrorMessage) {
-		return (
-			<FailureAlert
-				errorMessage={serverErrorMessage}
-				errorDetails={serverData.errorDetails}
-				isPersistent={serverData.hasPersistentError}
-			/>
+		return serverErrorMessage ? (
+			<FailureAlert errorMessage={serverErrorMessage} />
+		) : (
+			<p>Loading…</p>
 		);
 	}
-
 	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
 	const stepperConfig = getStepperConfig(wizardId);
 	const currentStepListing = stepperConfig.steps.find(
@@ -206,17 +294,21 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 		return config;
 	}, {});
 
+	const confirmingNavigation = blocker.state === 'blocked' || !!pendingButton;
+	const navigationPending = !!showSkipModalFor || confirmingNavigation;
+	const requestId = usesStepPaths && createTrack ? undefined : id;
+
 	const handleFormChange = (updatedLocalState: WizardFormData): void => {
-		if (showSkipModalFor) {
+		if (navigationPending || requests.current.inFlight) {
 			return;
 		}
-		setCurrentStepHasBeenChanged(true);
-		return setFormData(updatedLocalState);
+		dirty.current = true;
+		setFormData(updatedLocalState);
 	};
 
 	const handleButtonClick =
 		(buttonId: string, buttonType: WizardButtonType) => () => {
-			if (showSkipModalFor) {
+			if (navigationPending || requests.current.inFlight) {
 				return;
 			}
 			const navigateTo = serverData.buttons?.[buttonId]?.navigateTo;
@@ -224,53 +316,66 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				void navigate(navigateTo);
 				return;
 			}
-			setShowAllErrors(true);
-			void fetchStep({
-				wizardId: wizardId,
-				id: id,
-				buttonId: buttonId,
+			const request = {
+				wizardId,
+				id: requestId,
+				buttonId,
 				buttonType,
-				stepId: serverData.currentStepId || '',
-				formData: { ...formData, listId }, // will work for the create and modify workflow, but might break other workflows
-			});
+				stepId: serverData.currentStepId,
+				formData: { ...formData, listId },
+			};
+			if (
+				usesStepPaths &&
+				dirty.current &&
+				(buttonType === 'PREVIOUS' || buttonType === 'CANCEL')
+			) {
+				setPendingButton(request);
+				return;
+			}
+			setShowAllErrors(true);
+			void fetchStep(request);
 		};
 
 	const handleStepClick = (stepToSkipToId: string) => {
-		if (showSkipModalFor) {
+		if (navigationPending || requests.current.inFlight) {
 			return;
 		}
-
-		// If the user has changed the local data on the current step
-		// and skipping will cause those changes to be discarded,
-		// show the confirmation modal before fetching the new step.
-		if (
-			currentStepHasBeenChanged &&
-			!currentStepListing?.skippingWillPersistLocalChanges
-		) {
+		if (dirty.current && !currentStepListing?.skippingWillPersistLocalChanges) {
 			setShowSkipModalFor(stepToSkipToId);
 			return;
 		}
-		return void fetchStep({
-			wizardId: wizardId,
-			id: id,
+		void fetchStep({
+			wizardId,
+			id: requestId,
 			stepId: serverData.currentStepId,
-			stepToSkipToId: stepToSkipToId,
+			stepToSkipToId,
 			formData: { ...formData, listId },
 		});
 	};
 
 	const handleCancelSkip = () => {
+		if (blocker.state === 'blocked') {
+			blocker.reset();
+		}
 		setShowSkipModalFor(undefined);
+		setPendingButton(undefined);
 	};
 
 	const handleConfirmSkip = () => {
-		void fetchStep({
-			wizardId: wizardId,
-			id: id,
-			stepId: serverData.currentStepId,
-			stepToSkipToId: showSkipModalFor,
-			formData: { ...formData, listId },
-		});
+		if (blocker.state === 'blocked') {
+			dirty.current = false;
+			blocker.proceed();
+		} else if (pendingButton) {
+			void fetchStep(pendingButton);
+		} else {
+			void fetchStep({
+				wizardId,
+				id: requestId,
+				stepId: serverData.currentStepId,
+				stepToSkipToId: showSkipModalFor,
+				formData: { ...formData, listId },
+			});
+		}
 	};
 
 	return (
@@ -279,7 +384,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				<StandRedesignStepNav
 					currentStepId={serverData.currentStepId}
 					stepperConfig={stepperConfig}
-					onEditTrack={typeof id !== 'undefined'}
+					onEditTrack={typeof id !== 'undefined' && !createTrack}
 					handleStepClick={handleStepClick}
 					formData={formData}
 				/>
@@ -325,14 +430,16 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 							/>
 						)}
 
-						{serverData.errorMessage && (
+						{(serverErrorMessage ?? serverData.errorMessage) && (
 							<div
 								css={css`
 									margin-top: ${semanticSpacing.stackMd};
 								`}
 							>
 								<FailureAlert
-									errorMessage={serverData.errorMessage}
+									errorMessage={
+										serverErrorMessage ?? serverData.errorMessage ?? ''
+									}
 									errorDetails={serverData.errorDetails}
 									isPersistent={serverData.hasPersistentError}
 								/>
@@ -427,6 +534,7 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 			<SkipConfirmationDialog
 				currentStepId={serverData.currentStepId}
 				targetStepId={showSkipModalFor}
+				isLeavingStep={confirmingNavigation}
 				handleCancelSkip={handleCancelSkip}
 				handleConfirmSkip={handleConfirmSkip}
 				stepperConfig={stepperConfig}

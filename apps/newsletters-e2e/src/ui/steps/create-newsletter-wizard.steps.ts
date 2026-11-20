@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { createBdd, type DataTable } from 'playwright-bdd';
 import type { NewsletterFormData } from '../helpers/create-newsletter-wizard';
 import { panelByName } from '../helpers/newsletter-detail-page';
@@ -7,6 +7,12 @@ import { test } from './fixtures';
 const { Given, Then, When } = createBdd(test, {
 	tags: '@feature-create-newsletter-wizard',
 });
+
+const setupStepSlugs: Record<string, string> = {
+	'Name & frequency': 'name-and-frequency',
+	Targeting: 'targeting',
+};
+const setupRequests = new WeakMap<Page, string[]>();
 
 Given('the editor is creating a new newsletter', async ({ page }) => {
 	await page.goto('/drafts/newsletter-data');
@@ -363,3 +369,69 @@ Then(
 		await expect(navButton).toContainText('Complete');
 	},
 );
+
+Given(
+	'the editor opens the saved draft setup at the {string} step',
+	async (
+		{ page, existingDraftNewsletter, createDraftNewsletterWizard },
+		step: string,
+	) => {
+		const slug = setupStepSlugs[step];
+		if (!slug || !existingDraftNewsletter.listId)
+			throw new Error(`Unknown step or missing draft: ${step}`);
+		await page.goto(
+			`/drafts/newsletter-data/${existingDraftNewsletter.listId}/${slug}`,
+		);
+		await expect(
+			createDraftNewsletterWizard.getNavigationStepButton(step),
+		).toHaveAttribute('aria-current', 'step');
+		await page.waitForLoadState('networkidle');
+		const requests: string[] = [];
+		setupRequests.set(page, requests);
+		page.on('request', (request) => {
+			if (
+				request.url().includes('/api/currentstep') &&
+				request.method() === 'POST'
+			)
+				requests.push(request.postData() ?? '');
+		});
+	},
+);
+
+Then(
+	'the wizard URL identifies the {string} step',
+	async ({ page, existingDraftNewsletter }, step: string) => {
+		const slug = setupStepSlugs[step];
+		if (!slug) throw new Error(`Unknown setup step: ${step}`);
+		await expect(page).toHaveURL(
+			new RegExp(
+				`/drafts/newsletter-data/${existingDraftNewsletter.listId}/${slug}$`,
+			),
+		);
+	},
+);
+
+Then('the selected step has not been fetched again', async ({ page }) => {
+	await page.waitForLoadState('networkidle');
+	expect(setupRequests.get(page)).toHaveLength(1);
+});
+
+Then(
+	'the saved draft name is displayed',
+	async ({ page, existingDraftNewsletter }) => {
+		expect(existingDraftNewsletter.name).toBeDefined();
+		await expect(page.getByLabel('Name the newsletter')).toHaveValue(
+			existingDraftNewsletter.name!,
+		);
+	},
+);
+
+When('the editor reloads the setup wizard', async ({ page }) => {
+	await page.reload();
+});
+When('the editor goes Back in the setup wizard', async ({ page }) => {
+	await page.goBack();
+});
+When('the editor goes Forward in the setup wizard', async ({ page }) => {
+	await page.goForward();
+});
