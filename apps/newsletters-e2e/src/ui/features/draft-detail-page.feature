@@ -12,6 +12,8 @@ Feature: Draft newsletter detail page
 		And the header shows a "Draft • 20%" status badge
 		When the editor continues setup for "Morning briefing"
 		Then the setup wizard for "Morning briefing" opens at the first incomplete step
+		When the editor reloads the page
+		Then the setup wizard for "Morning briefing" opens at the first incomplete step
 
 	Scenario: Draft details are read-only
 		Given an article-based draft "Weekly briefing" with weekly frequency

@@ -166,6 +166,10 @@ When(
 	},
 );
 
+When('the editor reloads the page', async ({ page }) => {
+	await page.reload();
+});
+
 Then(
 	'the setup wizard for {string} opens at the first incomplete step',
 	async ({ page, namedNewsletters }, name: string) => {
