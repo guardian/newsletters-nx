@@ -68,7 +68,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			},
 		},
 	},
-	nameAndFrequencyLayout: {
+	nameAndFrequency: {
 		...nameAndFrequencyLayout,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
@@ -143,7 +143,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			},
 		},
 	},
-	signUpPage: {
+	promotionContent: {
 		...promotionContentLayout,
 		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
