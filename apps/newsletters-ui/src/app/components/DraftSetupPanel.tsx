@@ -14,6 +14,7 @@ import { getDraftSetupProgress } from '@newsletters-nx/newsletters-data-client';
 import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import { useHref, useNavigate } from 'react-router-dom';
 import { usePermissions } from '../hooks/user-hooks';
+import { getStandSetupStepPath } from '../stand-setup-step-path';
 import { SegmentedProgressBar } from './SegmentedProgressBar';
 
 // Sits inside the draft header card, under the name and graphic,
@@ -59,11 +60,16 @@ interface Props {
 export const DraftSetupPanel = ({ draft }: Props) => {
 	const navigate = useNavigate();
 	const { editEverything } = usePermissions() ?? {};
-	const { completed, total, isReadyToLaunch } = getDraftSetupProgress(draft);
+	const { steps, completed, total, isReadyToLaunch } =
+		getDraftSetupProgress(draft);
 
 	const { listId } = draft;
 	const canEdit = !!editEverything && typeof listId === 'number';
 	const setUpHref = `/drafts/newsletter-data/${listId}`;
+	const nextStep = steps.find((step) => !step.isComplete);
+	const continueHref = nextStep
+		? (getStandSetupStepPath(listId, nextStep.id) ?? setUpHref)
+		: setUpHref;
 	const hasStartedRenderingOptions = draft.renderingOptions !== undefined;
 
 	return (
@@ -92,7 +98,7 @@ export const DraftSetupPanel = ({ draft }: Props) => {
 								</LinkButton>
 							</div>
 						) : (
-							<LinkButton href={setUpHref} variant="primary">
+							<LinkButton href={continueHref} variant="primary">
 								Continue set up
 							</LinkButton>
 						))

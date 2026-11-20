@@ -2,7 +2,10 @@ import type {
 	DraftNewsletterData,
 	DraftSetupProgress,
 } from '@newsletters-nx/newsletters-data-client';
-import { getDraftSetupProgress } from '@newsletters-nx/newsletters-data-client';
+import {
+	draftSetupSteps,
+	getDraftSetupProgress,
+} from '@newsletters-nx/newsletters-data-client';
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -21,11 +24,20 @@ vi.mock(
 		getDraftSetupProgress: vi.fn(),
 	}),
 );
-// Which steps count as done is tested in newsletters-data-client;
-// here the panel is just given a number of them.
-const mockProgress = (completed: number, total = 5) => {
+// Completion rules are tested in newsletters-data-client; here the panel receives the result.
+const mockProgress = (
+	completed: number,
+	total = 5,
+	completedIndices?: number[],
+) => {
 	const progress: DraftSetupProgress = {
-		steps: [],
+		steps: draftSetupSteps.map(({ id, label }, index) => ({
+			id,
+			label,
+			isComplete: completedIndices
+				? completedIndices.includes(index)
+				: index < completed,
+		})),
 		completed,
 		total,
 		percentComplete: Math.floor((completed / total) * 100),
@@ -54,7 +66,7 @@ const expectNoEditingLinks = () => {
 		'Set up article rendering',
 		'Edit article rendering',
 	]) {
-		expect(screen.queryByRole('link', { name, exact: true })).toBeNull();
+		expect(screen.queryByRole('link', { name })).toBeNull();
 	}
 };
 describe('DraftSetupPanel', () => {
@@ -68,8 +80,21 @@ describe('DraftSetupPanel', () => {
 			setUp()
 				.getByRole('link', { name: 'Continue set up' })
 				.getAttribute('href'),
-		).toBe('/drafts/newsletter-data/7');
+		).toBe('/drafts/newsletter-data/7/production-details');
 	});
+	it.each([
+		[[], 'name-and-frequency'],
+		[[0, 2, 3, 4], 'production-details'],
+	])(
+		'links to the first incomplete required step with completed indices %j',
+		(completedIndices, slug) => {
+			mockProgress(completedIndices.length, 5, completedIndices);
+			renderPanel({ listId: 7 });
+			expect(
+				setUp().getByRole('link', { name: 'Continue set up' }),
+			).toHaveAttribute('href', `/drafts/newsletter-data/7/${slug}`);
+		},
+	);
 	it('links to request launch once every required step is done', () => {
 		mockProgress(5);
 		renderPanel({ listId: 7 });

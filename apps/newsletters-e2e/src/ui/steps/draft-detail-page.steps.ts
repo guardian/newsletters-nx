@@ -160,21 +160,25 @@ When(
 		const link = draftActions(page).continueSetup;
 		await expect(link).toHaveAttribute(
 			'href',
-			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}`,
+			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/production-details`,
 		);
 		await link.click();
 	},
 );
 
+When('the editor reloads the page', async ({ page }) => {
+	await page.reload();
+});
+
 Then(
-	'the setup wizard for {string} is shown',
+	'the setup wizard for {string} opens at the first incomplete step',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(page).toHaveURL(
-			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}`,
+			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/production-details`,
 		);
 		await expect(
-			page.getByRole('button', { name: 'Name & frequency' }),
-		).toBeVisible();
+			page.getByRole('button', { name: 'Production Details' }),
+		).toHaveAttribute('aria-current', 'step');
 	},
 );
 

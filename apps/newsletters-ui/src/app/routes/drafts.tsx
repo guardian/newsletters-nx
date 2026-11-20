@@ -34,7 +34,9 @@ export const draftRoute: RouteObject = {
 			loader: draftDetailLoader,
 		},
 		{
-			path: 'newsletter-data/:listId',
+			path: isFeatureSwitchEnabled('switch-legacy')
+				? 'newsletter-data/:listId?'
+				: 'newsletter-data/:listId?/:stepSlug?',
 			element: isFeatureSwitchEnabled('switch-legacy') ? (
 				<WizardContainer wizardId="NEWSLETTER_DATA" />
 			) : (
@@ -47,14 +49,6 @@ export const draftRoute: RouteObject = {
 				<WizardContainer wizardId="RENDERING_OPTIONS" />
 			) : (
 				<StandRedesignWizardContainer wizardId="RENDERING_OPTIONS" />
-			),
-		},
-		{
-			path: 'newsletter-data',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
-				<WizardContainer wizardId="NEWSLETTER_DATA" />
-			) : (
-				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
 			),
 		},
 		{
