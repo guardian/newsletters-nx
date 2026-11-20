@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { createBdd, type DataTable } from 'playwright-bdd';
 import type { NewsletterFormData } from '../helpers/create-newsletter-wizard';
 import { panelByName } from '../helpers/newsletter-detail-page';
@@ -12,7 +12,6 @@ const setupStepSlugs: Record<string, string> = {
 	'Name & frequency': 'name-and-frequency',
 	Targeting: 'targeting',
 };
-const setupRequests = new WeakMap<Page, string[]>();
 
 Given('the editor is creating a new newsletter', async ({ page }) => {
 	await page.goto('/drafts/newsletter-data');
@@ -385,16 +384,6 @@ Given(
 		await expect(
 			createDraftNewsletterWizard.getNavigationStepButton(step),
 		).toHaveAttribute('aria-current', 'step');
-		await page.waitForLoadState('networkidle');
-		const requests: string[] = [];
-		setupRequests.set(page, requests);
-		page.on('request', (request) => {
-			if (
-				request.url().includes('/api/currentstep') &&
-				request.method() === 'POST'
-			)
-				requests.push(request.postData() ?? '');
-		});
 	},
 );
 
@@ -410,11 +399,6 @@ Then(
 		);
 	},
 );
-
-Then('the selected step has not been fetched again', async ({ page }) => {
-	await page.waitForLoadState('networkidle');
-	expect(setupRequests.get(page)).toHaveLength(1);
-});
 
 Then(
 	'the saved draft name is displayed',

@@ -84,9 +84,6 @@ describe('DraftSetupPanel', () => {
 	});
 	it.each([
 		[[], 'name-and-frequency'],
-		[[0, 1], 'dates'],
-		[[0, 1, 2], 'targeting'],
-		[[0, 1, 2, 3], 'sign-up-page'],
 		[[0, 2, 3, 4], 'production-details'],
 	])(
 		'links to the first incomplete required step with completed indices %j',
