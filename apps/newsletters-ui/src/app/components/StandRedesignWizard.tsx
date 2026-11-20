@@ -134,6 +134,11 @@ interface PendingLeave {
 	proceed: () => void;
 }
 
+type StepRequestError = Pick<
+	CurrentStepRouteResponse,
+	'errorMessage' | 'errorDetails' | 'hasPersistentError'
+>;
+
 /**
  * Component that displays a single step in a wizard, including markdown content and buttons.
  */
@@ -144,13 +149,12 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 }: WizardProps) => {
 	const [serverData, setServerData] = useState<CurrentStepRouteResponse>();
 	const [formData, setFormData] = useState<WizardFormData>();
-	const [notedFields, setNotedFields] = useState<string[]>([]);
-	const [hasServerErrorMessages, setHasServerErrorMessages] = useState(false);
 	const [showAllErrors, setShowAllErrors] = useState(false);
 	const [pendingLeave, setPendingLeave] = useState<PendingLeave>();
 	const [listId, setListId] = useState<number>();
-	const [serverErrorMessage, setServerErrorMessage] = useState<string>();
+	const [requestError, setRequestError] = useState<StepRequestError>();
 	const dirty = useRef(false);
+	const stepRequestInFlight = useRef(false);
 	const activeLocationKey = useRef<string>();
 	const location = useLocation();
 	const navigationType = useNavigationType();
@@ -169,21 +173,14 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	);
 
 	const showStep = useCallback(
-		(data: CurrentStepRouteResponse, keepCurrentStep = false) => {
+		(data: CurrentStepRouteResponse) => {
 			if (typeof data.formData?.listId === 'number') {
 				setListId(data.formData.listId);
 			}
-			// A failed save keeps the current step's content and the user's edits.
-			setServerData((previous) =>
-				keepCurrentStep && previous ? { ...previous, ...data } : data,
-			);
-			if (!keepCurrentStep || data.formData) {
-				const schema = getFormSchema(wizardId, data.currentStepId);
-				const blank = schema ? getEmptySchemaData(schema) : undefined;
-				setFormData({ ...blank, ...data.formData });
-			}
-			setNotedFields(getNotedFields(wizardId, data.currentStepId) ?? []);
-			setHasServerErrorMessages(!!data.errorMessage);
+			const schema = getFormSchema(wizardId, data.currentStepId);
+			const blank = schema ? getEmptySchemaData(schema) : undefined;
+			setServerData(data);
+			setFormData({ ...blank, ...data.formData });
 			setShowAllErrors(false);
 		},
 		[wizardId],
@@ -217,13 +214,9 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	useEffect(() => {
 		activeLocationKey.current = location.key;
 		dirty.current = false;
-		setServerErrorMessage(undefined);
-		const carried =
-			navigationType !== NavigationType.Pop
-				? readStepLocationState(location.state).step
-				: undefined;
-		if (carried) {
-			showStep(carried);
+		setRequestError(undefined);
+		if (navigationType !== NavigationType.Pop && locationState.step) {
+			showStep(locationState.step);
 			return;
 		}
 		let ignore = false;
@@ -238,16 +231,17 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 				if (ignore) {
 					return;
 				}
-				showStep(data);
 				if (!data.errorMessage && !data.hasPersistentError && !stepId) {
 					goToStep(data, true);
+				} else {
+					showStep(data);
 				}
 			})
 			.catch((error: unknown) => {
 				if (ignore) {
 					return;
 				}
-				setServerErrorMessage('Wizard failed');
+				setRequestError({ errorMessage: 'Wizard failed' });
 				console.error('Error loading wizard step:', error);
 			});
 		return () => {
@@ -257,15 +251,20 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 	}, [location.key]);
 
 	const sendStepRequest = async (request: CurrentStepRouteRequest) => {
+		if (stepRequestInFlight.current) {
+			return;
+		}
+		stepRequestInFlight.current = true;
 		const requestLocationKey = location.key;
-		setServerErrorMessage(undefined);
+		setRequestError(undefined);
 		try {
 			const data = await makeWizardStepRequest(request);
 			if (activeLocationKey.current !== requestLocationKey) {
 				return;
 			}
 			if (data.errorMessage || data.hasPersistentError) {
-				showStep(data, true);
+				// A failed transition must not replace the current step or its form.
+				setRequestError(data);
 				return;
 			}
 			goToStep(data);
@@ -273,19 +272,24 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 			if (activeLocationKey.current !== requestLocationKey) {
 				return;
 			}
-			setServerErrorMessage('Wizard failed');
+			setRequestError({ errorMessage: 'Wizard failed' });
 			console.error('Error invoking next step of wizard:', error);
+		} finally {
+			stepRequestInFlight.current = false;
 		}
 	};
 
+	const { errorMessage, errorDetails, hasPersistentError } =
+		requestError ?? serverData ?? {};
 	if (serverData === undefined) {
-		return serverErrorMessage ? (
-			<FailureAlert errorMessage={serverErrorMessage} />
+		return errorMessage ? (
+			<FailureAlert errorMessage={errorMessage} />
 		) : (
 			<p>Loading…</p>
 		);
 	}
 	const formSchema = getFormSchema(wizardId, serverData.currentStepId);
+	const notedFields = getNotedFields(wizardId, serverData.currentStepId) ?? [];
 	const stepperConfig = getStepperConfig(wizardId);
 	const currentStepListing = stepperConfig.steps.find(
 		(step) => step.id === serverData.currentStepId,
@@ -430,24 +434,22 @@ export const StandRedesignWizard: React.FC<WizardProps> = ({
 								notedFields={notedFields}
 								formData={formData}
 								setFormData={handleFormChange}
-								showErrors={showAllErrors || hasServerErrorMessages}
+								showErrors={showAllErrors || !!errorMessage}
 								maxOptionsForRadioButtons={5}
 								stringConfig={stringConfig}
 							/>
 						)}
 
-						{(serverErrorMessage ?? serverData.errorMessage) && (
+						{errorMessage && (
 							<div
 								css={css`
 									margin-top: ${semanticSpacing.stackMd};
 								`}
 							>
 								<FailureAlert
-									errorMessage={
-										serverErrorMessage ?? serverData.errorMessage ?? ''
-									}
-									errorDetails={serverData.errorDetails}
-									isPersistent={serverData.hasPersistentError}
+									errorMessage={errorMessage}
+									errorDetails={errorDetails}
+									isPersistent={hasPersistentError}
 								/>
 							</div>
 						)}

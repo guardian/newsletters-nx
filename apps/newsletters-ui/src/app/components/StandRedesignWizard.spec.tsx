@@ -110,13 +110,13 @@ describe('Stand setup wizard step URLs', () => {
 		expect(screen.getByDisplayValue('Unsaved edit')).toBeInTheDocument();
 	});
 
-	it('retains the form and buttons for an error response without form data', async () => {
+	it('retains the form and buttons when a save error has no step or form data', async () => {
 		const router = renderWizard(`${base}/7/name-and-frequency`);
 		fireEvent.input(await screen.findByDisplayValue('Saved newsletter'), {
 			target: { value: 'Unsaved edit' },
 		});
 		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce({
-			currentStepId: 'nameAndFrequency',
+			currentStepId: '',
 			errorMessage: 'Save failed',
 			hasPersistentError: true,
 		});
@@ -166,29 +166,42 @@ describe('Stand setup wizard step URLs', () => {
 		expect(makeWizardStepRequest).toHaveBeenCalledTimes(1);
 	});
 
-	it('retains the create track after the first save', async () => {
-		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce({
+	it('creates the draft once and keeps subsequent saves on the create track', async () => {
+		const request = vi.mocked(makeWizardStepRequest);
+		request.mockResolvedValueOnce({
 			...step('nameAndFrequency'),
 			formData: {},
 		});
 		const router = renderWizard(`${base}/new/name-and-frequency`);
-		await screen.findByRole('heading', { name: 'nameAndFrequency' });
-		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
-			step('productionDetails'),
-		);
+		const save = await screen.findByRole('button', {
+			name: 'Save and continue',
+		});
+		request.mockClear();
+
+		let finishFirstSave!: (response: CurrentStepRouteResponse) => void;
+		const firstSave = new Promise<CurrentStepRouteResponse>((resolve) => {
+			finishFirstSave = resolve;
+		});
+		request.mockReturnValueOnce(firstSave);
+		await userEvent.dblClick(save);
+		expect(request).toHaveBeenCalledTimes(1);
+
+		await act(async () => {
+			finishFirstSave(step('productionDetails'));
+			await firstSave;
+		});
+		expect(router.state.location.pathname).toBe(`${base}/7/production-details`);
+		expect(router.state.historyAction).toBe('REPLACE');
+
+		request.mockResolvedValueOnce(step('dates'));
 		await userEvent.click(
 			screen.getByRole('button', { name: 'Save and continue' }),
 		);
-		await waitFor(() =>
-			expect(router.state.location.pathname).toBe(
-				`${base}/7/production-details`,
-			),
-		);
-		expect(router.state.historyAction).toBe('REPLACE');
-		expect(makeWizardStepRequest).toHaveBeenCalledTimes(2);
-		expect(
-			vi.mocked(makeWizardStepRequest).mock.lastCall?.[0].id,
-		).toBeUndefined();
+		const nextSave = request.mock.lastCall?.[0];
+		expect(nextSave?.stepId).toBe('productionDetails');
+		expect(nextSave?.id).toBeUndefined();
+		expect(nextSave?.formData?.listId).toBe(7);
+		expect(router.state.location.pathname).toBe(`${base}/7/dates`);
 	});
 
 	it('shows an unknown-step error without contacting the server', async () => {

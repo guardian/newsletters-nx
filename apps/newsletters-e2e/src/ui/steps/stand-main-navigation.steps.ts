@@ -40,8 +40,9 @@ When(/^they go to the (.+) page$/, async ({ page }, label: string) => {
 
 Then(/^they should be on the (.+) page$/, async ({ page }, label: string) => {
 	const path = await navLink(page, label).getAttribute('href');
-	// The create wizard replaces its base URL with the first step's URL.
-	await expect(page).toHaveURL(new RegExp(`${path ?? ''}(/new/intro)?$`));
+	const destination =
+		path === '/drafts/newsletter-data' ? `${path}/new/intro` : path;
+	await expect(page).toHaveURL((url) => url.pathname === destination);
 });
 
 When("they use the 'Newsletter' button in the top bar", async ({ page }) => {
