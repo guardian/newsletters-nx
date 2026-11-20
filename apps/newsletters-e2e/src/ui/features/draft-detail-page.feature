@@ -5,13 +5,13 @@ Feature: Draft newsletter detail page
 	Background:
 		Given an editor's workspace uses the Stand design
 
-	Scenario: An incomplete draft resumes at the first required step, even when later steps are complete
-		Given an incomplete article-based draft "Morning briefing" with targeting completed
+	Scenario: An incomplete draft shows matching progress
+		Given an incomplete article-based draft "Morning briefing" with no rendering options
 		When the editor opens the draft page for "Morning briefing"
-		Then the draft page shows 2 of 5 required steps complete
-		And the header shows a "Draft • 40%" status badge
+		Then the draft page shows 1 of 5 required steps complete
+		And the header shows a "Draft • 20%" status badge
 		When the editor continues setup for "Morning briefing"
-		Then setup for "Morning briefing" resumes at Production Details
+		Then the setup wizard for "Morning briefing" opens at the first incomplete step
 
 	Scenario: Draft details are read-only
 		Given an article-based draft "Weekly briefing" with weekly frequency

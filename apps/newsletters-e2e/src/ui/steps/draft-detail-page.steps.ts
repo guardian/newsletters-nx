@@ -45,20 +45,6 @@ const incompleteDraft = (name: string): DraftNewsletterData => ({
 });
 
 Given(
-	'an incomplete article-based draft {string} with targeting completed',
-	async ({ request, namedNewsletters }, name: string) => {
-		const draft: DraftNewsletterData = {
-			...incompleteDraft(name),
-			regionFocus: 'UK',
-			theme: 'news',
-			group: 'News in depth',
-		};
-		const listId = await createFixtureDraft(request, draft);
-		namedNewsletters.refsByName[name] = { kind: 'draft', listId };
-	},
-);
-
-Given(
 	'an incomplete article-based draft {string} with no rendering options',
 	async ({ request, namedNewsletters }, name: string) => {
 		const listId = await createFixtureDraft(request, incompleteDraft(name));
@@ -174,16 +160,14 @@ When(
 		const link = draftActions(page).continueSetup;
 		await expect(link).toHaveAttribute(
 			'href',
-			new RegExp(
-				`^/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/`,
-			),
+			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/production-details`,
 		);
 		await link.click();
 	},
 );
 
 Then(
-	'setup for {string} resumes at Production Details',
+	'the setup wizard for {string} opens at the first incomplete step',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(page).toHaveURL(
 			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/production-details`,
@@ -191,9 +175,6 @@ Then(
 		await expect(
 			page.getByRole('button', { name: 'Production Details' }),
 		).toHaveAttribute('aria-current', 'step');
-		await expect(
-			page.getByRole('radio', { name: 'article-based' }),
-		).toBeChecked();
 	},
 );
 

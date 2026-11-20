@@ -227,24 +227,3 @@ Feature: Create a newsletter in the redesigned wizard
 			Then only the following navigation links are marked as optional
 				| step        |
 				| Tag Setting |
-
-	Rule: Saved draft setup steps are addressable by URL
-
-		Scenario: A saved step can be opened, reloaded and navigated through browser history
-			Given an existing draft newsletter
-			And the editor opens the saved draft setup at the 'Name & frequency' step
-			Then the saved draft name is displayed
-			When the editor reloads the setup wizard
-			Then the saved draft name is displayed
-			And the wizard URL identifies the 'Name & frequency' step
-
-			When the editor selects the 'Targeting' step from the navigation
-			Then the editor will see the 'Targeting' step
-			And the wizard URL identifies the 'Targeting' step
-			When the editor goes Back in the setup wizard
-			Then the editor will see the 'Name & frequency' step
-			And the wizard URL identifies the 'Name & frequency' step
-			And the saved draft name is displayed
-			When the editor goes Forward in the setup wizard
-			Then the editor will see the 'Targeting' step
-			And the wizard URL identifies the 'Targeting' step

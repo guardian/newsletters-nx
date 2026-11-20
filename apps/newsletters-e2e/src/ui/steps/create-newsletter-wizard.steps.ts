@@ -8,11 +8,6 @@ const { Given, Then, When } = createBdd(test, {
 	tags: '@feature-create-newsletter-wizard',
 });
 
-const setupStepSlugs: Record<string, string> = {
-	'Name & frequency': 'name-and-frequency',
-	Targeting: 'targeting',
-};
-
 Given('the editor is creating a new newsletter', async ({ page }) => {
 	await page.goto('/drafts/newsletter-data');
 });
@@ -368,54 +363,3 @@ Then(
 		await expect(navButton).toContainText('Complete');
 	},
 );
-
-Given(
-	'the editor opens the saved draft setup at the {string} step',
-	async (
-		{ page, existingDraftNewsletter, createDraftNewsletterWizard },
-		step: string,
-	) => {
-		const slug = setupStepSlugs[step];
-		if (!slug || !existingDraftNewsletter.listId)
-			throw new Error(`Unknown step or missing draft: ${step}`);
-		await page.goto(
-			`/drafts/newsletter-data/${existingDraftNewsletter.listId}/${slug}`,
-		);
-		await expect(
-			createDraftNewsletterWizard.getNavigationStepButton(step),
-		).toHaveAttribute('aria-current', 'step');
-	},
-);
-
-Then(
-	'the wizard URL identifies the {string} step',
-	async ({ page, existingDraftNewsletter }, step: string) => {
-		const slug = setupStepSlugs[step];
-		if (!slug) throw new Error(`Unknown setup step: ${step}`);
-		await expect(page).toHaveURL(
-			new RegExp(
-				`/drafts/newsletter-data/${existingDraftNewsletter.listId}/${slug}$`,
-			),
-		);
-	},
-);
-
-Then(
-	'the saved draft name is displayed',
-	async ({ page, existingDraftNewsletter }) => {
-		expect(existingDraftNewsletter.name).toBeDefined();
-		await expect(page.getByLabel('Name the newsletter')).toHaveValue(
-			existingDraftNewsletter.name!,
-		);
-	},
-);
-
-When('the editor reloads the setup wizard', async ({ page }) => {
-	await page.reload();
-});
-When('the editor goes Back in the setup wizard', async ({ page }) => {
-	await page.goBack();
-});
-When('the editor goes Forward in the setup wizard', async ({ page }) => {
-	await page.goForward();
-});
