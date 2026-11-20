@@ -20,12 +20,12 @@ export interface DraftSetupStep {
  * Rendering options are left out because they are optional, and only
  * apply to article-based newsletters.
  *
- * The fields must match the wizard step schemas in
+ * The IDs and fields must match the wizard step schemas in
  * libs/newsletter-workflow - a test there checks this.
  */
 export const draftSetupSteps: readonly DraftSetupStep[] = [
 	{
-		id: 'nameAndFrequency',
+		id: 'nameAndFrequencyLayout',
 		label: 'Name & frequency',
 		fields: ['name', 'frequency'],
 	},
@@ -35,7 +35,7 @@ export const draftSetupSteps: readonly DraftSetupStep[] = [
 		fields: ['category', 'onlineArticle'],
 	},
 	{
-		id: 'promotionDates',
+		id: 'dates',
 		label: 'Launch/Promotion dates',
 		fields: ['launchDate', 'signUpPageDate', 'privateUntilLaunch'],
 	},
@@ -45,7 +45,7 @@ export const draftSetupSteps: readonly DraftSetupStep[] = [
 		fields: ['regionFocus', 'theme', 'group'],
 	},
 	{
-		id: 'promotionContent',
+		id: 'signUpPage',
 		label: 'Promotion copy and images',
 		fields: [
 			'signUpHeadline',

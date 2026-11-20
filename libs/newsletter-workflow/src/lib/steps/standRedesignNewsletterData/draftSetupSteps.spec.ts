@@ -1,7 +1,12 @@
 import { draftSetupSteps } from '@newsletters-nx/newsletters-data-client';
 import { z } from 'zod';
 import { formSchemas } from './formSchemas';
+import { standRedesignLayout as serverLayout } from './server';
 import { standRedesignLayout } from './index';
+
+jest.mock('@newsletters-nx/email-builder/server', () => ({
+	sendEmailNotifications: jest.fn(),
+}));
 
 // The draft page counts set-up progress with `draftSetupSteps` from
 // newsletters-data-client. These tests fail if the wizard changes
@@ -27,12 +32,21 @@ const countedSteps = draftSetupSteps.map(({ fields }) =>
 );
 
 describe('draftSetupSteps', () => {
-	it('each match a step in the Stand set-up wizard', () => {
-		const wizardStepFields = wizardStepSchemas.map(fieldsOf);
+	it('matches the IDs and fields of the required wizard steps in order', () => {
+		const requiredSteps = Object.entries(standRedesignLayout)
+			.filter(([, step]) => step.schema && hasRequiredField(step.schema))
+			.map(([id]) => id);
 
-		for (const fields of countedSteps) {
-			expect(wizardStepFields).toContain(fields);
+		expect(draftSetupSteps.map(({ id }) => id)).toEqual(requiredSteps);
+		for (const { id, fields } of draftSetupSteps) {
+			const schema = standRedesignLayout[id]?.schema;
+			expect(schema).toBeDefined();
+			expect(fieldsOf(schema!)).toBe([...fields].sort().join());
 		}
+	});
+
+	it('uses the same step IDs in the client and server layouts', () => {
+		expect(Object.keys(serverLayout)).toEqual(Object.keys(standRedesignLayout));
 	});
 
 	it('include every wizard step with a required field', () => {

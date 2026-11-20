@@ -13,11 +13,11 @@ describe('getDraftSetupProgress', () => {
 
 		expect(progress.total).toBe(draftSetupSteps.length);
 		expect(progress.steps.map((step) => step.id)).toEqual([
-			'nameAndFrequency',
+			'nameAndFrequencyLayout',
 			'productionDetails',
-			'promotionDates',
+			'dates',
 			'targeting',
-			'promotionContent',
+			'signUpPage',
 		]);
 	});
 
@@ -32,7 +32,7 @@ describe('getDraftSetupProgress', () => {
 		expect(completedStepIds({ name: 'The Day Today' })).toEqual([]);
 		expect(
 			completedStepIds({ name: 'The Day Today', frequency: 'Weekly' }),
-		).toEqual(['nameAndFrequency']);
+		).toEqual(['nameAndFrequencyLayout']);
 	});
 
 	it('does not count a step if one of its fields is invalid', () => {
@@ -58,7 +58,7 @@ describe('getDraftSetupProgress', () => {
 				launchDate: new Date('2026-12-01'),
 				signUpPageDate: new Date('2026-11-20'),
 			}),
-		).toEqual(['promotionDates']);
+		).toEqual(['dates']);
 	});
 
 	it.each([
