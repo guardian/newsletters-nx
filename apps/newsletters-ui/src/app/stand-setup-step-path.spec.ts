@@ -18,6 +18,13 @@ describe('Stand setup step paths', () => {
 		}
 	});
 
+	it('uses the promotion content step URL', () => {
+		expect(getStandSetupStepPath(42, 'promotionContent')).toBe(
+			'/drafts/newsletter-data/42/promotion-content',
+		);
+		expect(getStandSetupStepId('promotion-content')).toBe('promotionContent');
+	});
+
 	it('does not resolve unrecognised step IDs or slugs', () => {
 		expect(getStandSetupStepId('missing')).toBeUndefined();
 		expect(getStandSetupStepPath(42, 'missing')).toBeUndefined();

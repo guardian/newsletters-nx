@@ -2,12 +2,12 @@
 const stepSlugs = {
 	cancel: 'cancel',
 	intro: 'intro',
-	nameAndFrequencyLayout: 'name-and-frequency',
+	nameAndFrequency: 'name-and-frequency',
 	productionDetails: 'production-details',
 	dates: 'dates',
 	targeting: 'targeting',
 	tags: 'tags',
-	signUpPage: 'sign-up-page',
+	promotionContent: 'promotion-content',
 	review: 'review',
 	finish: 'finish',
 } as const;

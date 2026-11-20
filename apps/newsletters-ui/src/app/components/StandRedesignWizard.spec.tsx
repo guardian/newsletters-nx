@@ -100,7 +100,7 @@ describe('Stand setup wizard step URLs', () => {
 		const input = await screen.findByDisplayValue('Saved newsletter');
 		fireEvent.input(input, { target: { value: 'Unsaved edit' } });
 		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce({
-			...step('nameAndFrequencyLayout'),
+			...step('nameAndFrequency'),
 			formData: { listId: 7, name: 'Unsaved edit', frequency: 'Weekly' },
 			errorMessage: 'Cannot save',
 		});
@@ -145,7 +145,7 @@ describe('Stand setup wizard step URLs', () => {
 			target: { value: 'Unsaved edit' },
 		});
 		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce({
-			currentStepId: 'nameAndFrequencyLayout',
+			currentStepId: 'nameAndFrequency',
 			errorMessage: 'Save failed',
 			hasPersistentError: true,
 		});
@@ -197,11 +197,11 @@ describe('Stand setup wizard step URLs', () => {
 
 	it('retains the create track after the first save', async () => {
 		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce({
-			...step('nameAndFrequencyLayout'),
+			...step('nameAndFrequency'),
 			formData: {},
 		});
 		const router = renderWizard(`${base}/new/name-and-frequency`);
-		await screen.findByRole('heading', { name: 'nameAndFrequencyLayout' });
+		await screen.findByRole('heading', { name: 'nameAndFrequency' });
 		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
 			step('productionDetails'),
 		);
