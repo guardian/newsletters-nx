@@ -18,14 +18,6 @@ const hasRequiredField = (schema: StepSchema) =>
 		(field) => !z.safeParse(field, undefined).success,
 	);
 
-const wizardStepSchemas: StepSchema[] = Object.values(standRedesignLayout)
-	.map((step) => step.schema)
-	.filter((schema) => schema !== undefined);
-
-const countedSteps = draftSetupSteps.map(({ fields }) =>
-	[...fields].sort().join(),
-);
-
 describe('draftSetupSteps', () => {
 	it('matches the IDs and fields of the required wizard steps in order', () => {
 		const requiredSteps = Object.entries(standRedesignLayout)
@@ -38,14 +30,6 @@ describe('draftSetupSteps', () => {
 			if (!schema) {throw new Error(`No wizard schema for step "${id}"`);}
 			expect(fieldsOf(schema)).toBe([...fields].sort().join());
 		}
-	});
-
-	it('include every wizard step with a required field', () => {
-		const required = new Set(
-			wizardStepSchemas.filter(hasRequiredField).map(fieldsOf),
-		);
-
-		expect([...countedSteps].sort()).toEqual([...required].sort());
 	});
 
 	it('leave out the tags step, which has no required fields', () => {
