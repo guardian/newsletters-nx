@@ -7,6 +7,7 @@ import type {
 import { executeCreate } from '../../executeCreate';
 import { executeModify } from '../../executeModify';
 import { executeSkip } from '../../executeSkip';
+import { getDraftFromStorage } from '../../getDraftFromStorage';
 import { cancelLayout } from './cancelLayout';
 import { dateLayout } from './dateLayout';
 import { finishLayout } from './finishLayout';
@@ -54,9 +55,10 @@ const loadDraftIfSaved: AsyncExecution<DraftService> = async (
 };
 
 export const standRedesignLayout: WizardLayout<DraftService> = {
-	cancel: cancelLayout,
+	cancel: { ...cancelLayout, getInitialFormData: getDraftFromStorage },
 	intro: {
 		...createDraftIntro,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...createDraftIntro.buttons,
@@ -66,7 +68,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			},
 		},
 	},
-	nameAndFrequencyLayout: {
+	nameAndFrequency: {
 		...nameAndFrequencyLayout,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
@@ -79,6 +81,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 	},
 	productionDetails: {
 		...productionDetailsLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...productionDetailsLayout.buttons,
@@ -94,6 +97,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 	},
 	dates: {
 		...dateLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...dateLayout.buttons,
@@ -109,6 +113,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 	},
 	targeting: {
 		...targetingLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...targetingLayout.buttons,
@@ -124,6 +129,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 	},
 	tags: {
 		...tagsLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...tagsLayout.buttons,
@@ -137,8 +143,9 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 			},
 		},
 	},
-	signUpPage: {
+	promotionContent: {
 		...promotionContentLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip: loadDraftIfSaved,
 		buttons: {
 			...promotionContentLayout.buttons,
@@ -154,6 +161,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 	},
 	review: {
 		...reviewLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip,
 		buttons: {
 			...reviewLayout.buttons,
@@ -169,6 +177,7 @@ export const standRedesignLayout: WizardLayout<DraftService> = {
 	},
 	finish: {
 		...finishLayout,
+		getInitialFormData: getDraftFromStorage,
 		executeSkip,
 	},
 };
