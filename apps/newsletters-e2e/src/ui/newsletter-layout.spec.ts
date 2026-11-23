@@ -43,6 +43,59 @@ test.beforeEach(async ({ page }) => {
 	});
 });
 
+test('matches the responsive layout and keeps width selection usable on mobile', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 393, height: 850 });
+	await page.goto(layout);
+	await expect(
+		page.getByRole('heading', { name: 'Newsletter layout preview' }),
+	).toBeVisible();
+	await expect(page.getByRole('tab', { name: 'Layout' })).toHaveAttribute(
+		'aria-selected',
+		'true',
+	);
+	const previewRegion = page.getByRole('region', { name: 'Email preview' });
+	const frame = page.getByTitle(title);
+	await expect(
+		previewRegion.getByRole('button', { name: '650 px' }),
+	).toHaveAttribute('aria-pressed', 'true');
+	await expect
+		.poll(async () => (await frame.boundingBox())?.height)
+		.toBeGreaterThan(900);
+	await expect(frame).toHaveCSS('width', '650px');
+	await expect
+		.poll(async () => (await frame.boundingBox())?.width)
+		.toBeLessThan(350);
+	await previewRegion.getByRole('button', { name: '320 px' }).click();
+	await expect(frame).toHaveCSS('width', '320px');
+	await expect(
+		previewRegion.getByRole('button', { name: '320 px' }),
+	).toHaveAttribute('aria-pressed', 'true');
+
+	await page.getByRole('link', { name: 'Edit layout' }).click();
+	await expect(
+		page.getByRole('heading', { name: 'Edit newsletter layout' }),
+	).toBeVisible();
+	await expect(page.getByRole('tablist')).toHaveCount(0);
+	const theme = page.getByRole('region', { name: 'Overall theme' });
+	const footer = page.getByRole('region', { name: 'Footer options' });
+	await expect
+		.poll(
+			async () =>
+				(await previewRegion.boundingBox())!.y -
+				(await footer.boundingBox())!.y,
+		)
+		.toBeGreaterThan(0);
+	await page.setViewportSize({ width: 830, height: 850 });
+	await expect
+		.poll(
+			async () =>
+				(await previewRegion.boundingBox())!.x - (await theme.boundingBox())!.x,
+		)
+		.toBeGreaterThan(200);
+});
+
 test('crossfades from the previous headline to the updated headline', async ({
 	page,
 }) => {
@@ -50,7 +103,7 @@ test('crossfades from the previous headline to the updated headline', async ({
 	await page.goto(`${layout}/edit`);
 	const headline = page.frameLocator(`iframe[title="${title}"]`).locator('h1');
 	await expect(headline).toHaveText('Test edition');
-	await page.getByText('Display date', { exact: true }).click();
+	await page.getByText('Show date', { exact: true }).click();
 	await expect(headline).toHaveText('Dated edition');
 	const previous = page.locator(hiddenFrame);
 	await expect(page.frameLocator(hiddenFrame).locator('h1')).toHaveText(
@@ -69,7 +122,7 @@ test('switches to the updated preview without a fade in reduced motion mode', as
 	await page.goto(`${layout}/edit`);
 	const headline = page.frameLocator(`iframe[title="${title}"]`).locator('h1');
 	await expect(headline).toHaveText('Test edition');
-	await page.getByText('Display date', { exact: true }).click();
+	await page.getByRole('checkbox', { name: 'Show date' }).press('Space');
 	await expect(headline).toHaveText('Dated edition');
 	await expect(page.locator(hiddenFrame)).toHaveCount(0);
 });
@@ -100,7 +153,7 @@ test('jumps to the latest unsaved edit without moving the editor, and keeps its 
 	await expect(footer).toHaveText('Default contact');
 	await page.getByRole('button', { name: '375 px' }).click();
 	await expect(page.getByTitle(title)).toHaveCSS('width', '375px');
-	const email = page.getByRole('textbox', { name: 'Contact email' });
+	const email = page.getByRole('textbox', { name: 'Custom footer email' });
 	await email.scrollIntoViewIfNeeded();
 	const hostScroll = await page.evaluate(() => window.scrollY);
 	const started = page.waitForRequest(
@@ -126,7 +179,7 @@ test('jumps to the latest unsaved edit without moving the editor, and keeps its 
 		allowOlderReply();
 	}
 	await expect(footer).toHaveText('latest@example.com');
-	await page.getByText('Display image captions', { exact: true }).click();
+	await page.getByText('Show image captions', { exact: true }).click();
 	await expect(
 		page.getByRole('region', { name: 'Email preview' }).getByRole('status'),
 	).toHaveText('The affected section is not in this sample edition.');
@@ -164,7 +217,7 @@ test('jumps to a rendered email caption and to its image when hidden', async ({
 	const frame = page.frameLocator(`iframe[title="${title}"]`);
 	const articleImage = frame.getByRole('img', { name: 'Article image' });
 	const caption = frame.getByRole('cell', { name: 'camera Sample caption' });
-	const toggle = page.getByText('Display image captions', { exact: true });
+	const toggle = page.getByText('Show image captions', { exact: true });
 	const status = page
 		.getByRole('region', { name: 'Email preview' })
 		.getByRole('status');
@@ -253,7 +306,7 @@ test('saves only layout edits and protects unsaved navigation', async ({
 	const fixtureLayout = `/newsletters/${identityName}/layout`;
 	try {
 		await page.goto(`${fixtureLayout}/edit`);
-		const email = page.getByRole('textbox', { name: 'Contact email' });
+		const email = page.getByRole('textbox', { name: 'Custom footer email' });
 		await expect(email).toHaveValue('saved@example.com');
 		await email.clear();
 		await page.getByRole('button', { name: 'Cancel' }).click();
@@ -270,7 +323,7 @@ test('saves only layout edits and protects unsaved navigation', async ({
 				req.method() === 'PATCH' &&
 				req.url().endsWith(`/api/newsletters/${listId}`),
 		);
-		await page.getByRole('button', { name: 'Save changes' }).click();
+		await page.getByRole('button', { name: 'Save layout' }).click();
 		const patch: unknown = (await saved).postDataJSON();
 		expect(patch).toEqual({
 			renderingOptions: {
@@ -282,7 +335,7 @@ test('saves only layout edits and protects unsaved navigation', async ({
 		await expect(page).toHaveURL(new RegExp(`${fixtureLayout}$`));
 		await page.getByRole('link', { name: 'Edit layout' }).click();
 		await expect(email).toHaveValue('');
-		await page.getByText('Display date', { exact: true }).click();
+		await page.getByText('Show date', { exact: true }).click();
 		await page.getByRole('button', { name: 'Cancel' }).click();
 		await page.getByRole('button', { name: 'Discard changes' }).click();
 		await expect(page).toHaveURL(new RegExp(`${fixtureLayout}$`));

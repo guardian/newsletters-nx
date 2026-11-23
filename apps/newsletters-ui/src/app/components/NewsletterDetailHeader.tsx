@@ -105,6 +105,17 @@ const graphicStyles = css`
 	}
 `;
 
+const layoutHeaderStyles = css`
+	${untilStacked} {
+		flex-direction: row;
+	}
+`;
+
+const standaloneLayoutHeaderStyles = css`
+	border-radius: ${semanticRadius.cornerSm};
+	border-bottom: 0;
+`;
+
 export type NewsletterDetailHeaderProps = (
 	| { newsletter: NewsletterData; draft?: never }
 	| { draft: DraftNewsletterData; newsletter?: never }
@@ -112,6 +123,7 @@ export type NewsletterDetailHeaderProps = (
 	children?: React.ReactNode;
 	/** Shown to the right of the back link. */
 	actions?: React.ReactNode;
+	layoutPage?: boolean;
 };
 
 export const NewsletterDetailHeader = ({
@@ -119,6 +131,7 @@ export const NewsletterDetailHeader = ({
 	draft,
 	children,
 	actions,
+	layoutPage = false,
 }: NewsletterDetailHeaderProps) => {
 	const details: DraftNewsletterData = newsletter ?? draft;
 
@@ -129,7 +142,7 @@ export const NewsletterDetailHeader = ({
 					<Icon symbol="arrow_back" size="sm" />
 					<Typography
 						element="span"
-						variant="headingCompactSm"
+						variant={layoutPage ? 'interactiveXs' : 'headingCompactSm'}
 						cssOverrides={backLinkTextStyles}
 					>
 						Back to all newsletters
@@ -138,7 +151,13 @@ export const NewsletterDetailHeader = ({
 				{actions}
 			</div>
 			<div>
-				<header css={headerStyles}>
+				<header
+					css={[
+						headerStyles,
+						layoutPage && layoutHeaderStyles,
+						layoutPage && !children && standaloneLayoutHeaderStyles,
+					]}
+				>
 					<div css={textStyles}>
 						{newsletter ? (
 							<NewsletterStatusBadge newsletter={newsletter} />
@@ -147,7 +166,7 @@ export const NewsletterDetailHeader = ({
 						)}
 						<Typography
 							element="h2"
-							variant="headingCompact2Xl"
+							variant={layoutPage ? 'heading2Xl' : 'headingCompact2Xl'}
 							cssOverrides={titleStyles}
 						>
 							{newsletter ? newsletter.name : formatDraftName(draft)}

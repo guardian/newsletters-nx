@@ -1,12 +1,19 @@
 import { css, keyframes } from '@emotion/react';
-import { semanticColors, semanticSpacing } from '@guardian/stand';
+import {
+	baseSpacing,
+	semanticColors,
+	semanticRadius,
+	semanticSpacing,
+	semanticTypography,
+} from '@guardian/stand';
 import { Button } from '@guardian/stand/Button';
-import { Typography } from '@guardian/stand/Typography';
+import { ButtonGroup } from '@guardian/stand/ButtonGroup';
 import type {
 	ApiResponse,
 	EmailRenderingOutput,
 	NewsletterData,
 } from '@newsletters-nx/newsletters-data-client';
+import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { PreviewTarget } from '../lib/newsletter-preview-target';
 import {
@@ -21,33 +28,94 @@ export type LayoutPreviewRequest = {
 
 const toolbarStyles = css`
 	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: ${semanticSpacing.stackXs};
+	justify-content: flex-end;
+`;
+
+const previewStyles = css`
+	min-width: 0;
+	border-top: 1px solid ${semanticColors.border.weak};
+	padding-top: ${semanticSpacing.stackMd};
+`;
+
+const editorPreviewStyles = css`
+	max-width: 658px;
+	margin-inline: auto;
+`;
+
+const segmentGroupStyles = css`
+	gap: 0;
+	background: ${semanticColors.fill.neutralWeak};
+	border-radius: ${semanticRadius.cornerSm};
+	box-shadow: inset 0 0 0 1px ${semanticColors.border.weak};
+`;
+
+const segmentStyles = css`
+	position: relative;
+	min-width: 44px;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 0;
+	background: transparent;
+	color: ${semanticColors.text.weak};
+	font: ${semanticTypography.interactiveXs.font};
+	font-weight: 460;
+	&:first-child {
+		border-start-start-radius: ${semanticRadius.cornerSm};
+		border-end-start-radius: ${semanticRadius.cornerSm};
+	}
+	&:last-child {
+		border-start-end-radius: ${semanticRadius.cornerSm};
+		border-end-end-radius: ${semanticRadius.cornerSm};
+	}
+	&:not(:last-child, [aria-pressed='true'])::after {
+		content: '';
+		position: absolute;
+		inset-block: 3px;
+		inset-inline-end: -1px;
+		border-inline-end: 1px solid ${semanticColors.border.weak};
+	}
+	&[data-hovered] {
+		background: ${semanticColors.fill.unselectedHoverWeak};
+	}
+	&[aria-pressed='true'] {
+		z-index: 1;
+		background: ${semanticColors.fill.selectedWeak};
+		border-color: ${semanticColors.border.selected};
+		color: ${semanticColors.text.strong};
+		font-weight: 700;
+	}
+	&[data-focus-visible] {
+		z-index: 2;
+	}
 `;
 
 const viewportStyles = css`
-	display: flex;
-	overflow: auto;
-	background: ${semanticColors.bg.raisedLevel2};
-	padding: ${semanticSpacing.stackXs};
+	margin-top: ${semanticSpacing.stackMd};
+	min-width: 0;
+`;
+
+const editorViewportStyles = css`
+	margin-top: ${baseSpacing['32Px']};
 `;
 
 const frameStackStyles = css`
 	position: relative;
-	flex-shrink: 0;
 	margin-inline: auto;
+	overflow: clip;
 	height: clamp(320px, 67vh, 850px);
-	background: white;
+	background: ${semanticColors.bg.base};
 `;
 
 const frameStyles = css`
 	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
+	top: 0;
+	left: 0;
+	width: var(--preview-width);
+	height: calc(100% / var(--preview-scale));
+	transform: scale(var(--preview-scale));
+	transform-origin: top left;
 	border: 0;
-	background: white;
+	background: ${semanticColors.bg.base};
 `;
 
 const pendingFrameStyles = css`
@@ -71,7 +139,10 @@ const outgoingFrameStyles = css`
 `;
 
 const statusStyles = css`
-	min-height: 1.5em;
+	margin: 0;
+	&:not(:empty) {
+		margin-block: ${semanticSpacing.stackXs};
+	}
 `;
 
 type PreviewResult = {
@@ -98,20 +169,61 @@ const previewTargetTop = (element: Element, scrollTop: number) =>
 export const NewsletterLayoutPreview = ({
 	request,
 	invalid = false,
+	editing = false,
 }: {
 	request: LayoutPreviewRequest;
 	invalid?: boolean;
+	editing?: boolean;
 }) => {
 	const [width, setWidth] = useState(650);
+	const [availableWidth, setAvailableWidth] = useState(650);
+	const [documentHeight, setDocumentHeight] = useState<number>();
+	const viewport = useRef<HTMLDivElement>(null);
 	const [frames, setFrames] = useState<PreviewFrames>({});
 	const [failed, setFailed] = useState<LayoutPreviewRequest>();
 	const [retry, setRetry] = useState(0);
 	const currentFrame = useRef<HTMLIFrameElement | null>(null);
 	const revision = useRef(0);
 	const { current, pending } = frames;
+	const scale = Math.min(1, availableWidth / width);
 	const outgoing =
 		!invalid && current?.request === request ? frames.outgoing : undefined;
 	const next = !invalid && pending?.request === request ? pending : undefined;
+
+	useEffect(() => {
+		const element = viewport.current;
+		if (!element) {
+			return;
+		}
+		const measure = () => setAvailableWidth(element.clientWidth || 1);
+		const observer = new ResizeObserver(measure);
+		measure();
+		observer.observe(element);
+		return () => observer.disconnect();
+	}, []);
+
+	// Let the saved preview scroll with the page; the editor keeps an independent viewport.
+	useEffect(() => {
+		const body = currentFrame.current?.contentDocument?.body;
+		const frameWindow = body?.ownerDocument.defaultView;
+		if (editing || !current || !body || !frameWindow) {
+			return;
+		}
+		const measure = () => {
+			const { marginTop, marginBottom } = frameWindow.getComputedStyle(body);
+			const height = Math.max(body.scrollHeight, body.offsetHeight);
+			setDocumentHeight(
+				Math.max(
+					1,
+					Math.ceil(height + parseFloat(marginTop) + parseFloat(marginBottom)),
+				),
+			);
+		};
+		const observer = new ResizeObserver(measure);
+		measure();
+		observer.observe(body);
+		return () => observer.disconnect();
+	}, [current, editing]);
 
 	// Drop the extra iframe after its fade, even if motion is disabled mid-fade.
 	useEffect(() => {
@@ -246,22 +358,25 @@ export const NewsletterLayoutPreview = ({
 					: '';
 
 	return (
-		<section aria-label="Email preview">
-			<Typography element="h2" variant="headingCompactLg">
-				Preview
-			</Typography>
+		<section
+			aria-label="Email preview"
+			css={editing ? editorPreviewStyles : previewStyles}
+		>
 			<div css={toolbarStyles} role="group" aria-label="Preview width">
-				{[320, 375, 425, 650].map((size) => (
-					<Button
-						key={size}
-						size="sm"
-						variant={size === width ? 'primary' : 'secondary'}
-						aria-pressed={size === width}
-						onPress={() => setWidth(size)}
-					>
-						{size} px
-					</Button>
-				))}
+				<ButtonGroup size="sm" cssOverrides={segmentGroupStyles}>
+					{[320, 375, 425, 650].map((size) => (
+						<Button
+							key={size}
+							variant="tertiary"
+							cssOverrides={segmentStyles}
+							aria-label={`${size} px`}
+							aria-pressed={size === width}
+							onPress={() => setWidth(size)}
+						>
+							{size}
+						</Button>
+					))}
+				</ButtonGroup>
 			</div>
 			<p css={statusStyles} role="status">
 				{status}
@@ -285,9 +400,25 @@ export const NewsletterLayoutPreview = ({
 					))}
 				</ul>
 			)}
-			{(current ?? next) && (
-				<div css={viewportStyles}>
-					<div css={frameStackStyles} style={{ width }}>
+			<div
+				ref={viewport}
+				css={[viewportStyles, editing && editorViewportStyles]}
+			>
+				{(current ?? next) && (
+					<div
+						css={frameStackStyles}
+						style={
+							{
+								'--preview-width': `${width}px`,
+								'--preview-scale': scale,
+								width: width * scale,
+								height:
+									!editing && documentHeight
+										? Math.ceil(documentHeight * scale)
+										: undefined,
+							} as CSSProperties
+						}
+					>
 						{[outgoing, current, next].map((preview) => {
 							if (!preview) {
 								return null;
@@ -324,8 +455,8 @@ export const NewsletterLayoutPreview = ({
 							);
 						})}
 					</div>
-				</div>
-			)}
+				)}
+			</div>
 		</section>
 	);
 };

@@ -1,16 +1,25 @@
 import { css } from '@emotion/react';
-import { semanticSpacing } from '@guardian/stand';
+import {
+	baseSpacing,
+	semanticColors,
+	semanticRadius,
+	semanticSpacing,
+} from '@guardian/stand';
 import { Button } from '@guardian/stand/Button';
+import { ButtonGroup } from '@guardian/stand/ButtonGroup';
 import { Layout } from '@guardian/stand/Layout';
+import { LinkButton } from '@guardian/stand/LinkButton';
 import { Typography } from '@guardian/stand/Typography';
 import { from } from '@guardian/stand/utils';
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
+import type { ReactNode } from 'react';
 import { useMemo, useRef, useState } from 'react';
+import { RouterProvider as AriaRouterProvider } from 'react-aria-components';
 import {
-	Link,
 	Navigate,
 	useBeforeUnload,
 	useBlocker,
+	useHref,
 	useLoaderData,
 	useNavigate,
 } from 'react-router-dom';
@@ -31,37 +40,149 @@ import type { NewsletterLayoutData } from '../../loaders/newsletter-layout';
 import { DiscardLayoutChangesDialog } from '../edition-layouts/DiscardLayoutChangesDialog';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { NewsletterDetailTabs } from '../NewsletterDetailTabs';
-import {
-	layoutFieldStack,
-	NewsletterLayoutFields,
-} from '../NewsletterLayoutFields';
+import { NewsletterLayoutFields } from '../NewsletterLayoutFields';
 import { NewsletterLayoutPreview } from '../NewsletterLayoutPreview';
-import { Container, mainStyle, spacerStyles } from './NewsletterDetailPageView';
+import { spacerStyles } from './NewsletterDetailPageView';
+
+const stacked = '@media (max-width: 600px)';
+
+const mainStyle = css`
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	max-width: 1056px;
+	margin-inline: auto;
+	padding: ${baseSpacing['24Px']};
+	${from.lg} {
+		max-width: 900px;
+	}
+	@media (min-width: 1280px) {
+		max-width: 1056px;
+	}
+	@media (max-width: 393px) {
+		padding-inline: ${semanticSpacing.stackSm};
+	}
+`;
+
+const editorMainStyle = css`
+	max-width: 1280px;
+	@media (max-width: 393px) {
+		padding-inline: ${semanticSpacing.stackMd};
+	}
+`;
+
+const cardStyles = css`
+	background: ${semanticColors.bg.base};
+	border: 1px solid ${semanticColors.border.weak};
+	border-radius: ${semanticRadius.cornerSm};
+`;
+
+const savedPreviewStyles = css`
+	${cardStyles};
+	padding: ${semanticSpacing.stackMd};
+`;
+
+const narrowPreviewHeader = css`
+	@media (max-width: 480px) {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+`;
 
 const columnsStyles = css`
 	display: grid;
-	gap: ${semanticSpacing.stackMd};
-	${from.md} {
-		grid-template-columns: minmax(270px, 1fr) minmax(0, 2fr);
-		align-items: start;
+	grid-template-columns: minmax(0, clamp(232px, 34%, 298px)) minmax(0, 1fr);
+	@media (min-width: 1280px) {
+		grid-template-columns: minmax(0, 39.5%) minmax(0, 1fr);
+	}
+	${stacked} {
+		grid-template-columns: minmax(0, 1fr);
+	}
+`;
+
+const fieldsStyles = css`
+	min-width: 0;
+	padding: ${baseSpacing['24Px']} ${semanticSpacing.stackSm};
+	@media (min-width: 1280px), (max-width: 600px) {
+		padding-inline: ${semanticSpacing.stackMd};
 	}
 `;
 
 const previewColumnStyles = css`
 	min-width: 0;
-	${from.md} {
+	background: ${semanticColors.bg.raisedLevel2};
+	border-inline-start: 1px solid ${semanticColors.border.weak};
+	padding: ${baseSpacing['24Px']} ${semanticSpacing.stackSm};
+	${stacked} {
+		border-inline-start: 0;
+		border-top: 1px solid ${semanticColors.border.weak};
+	}
+`;
+
+const stickyPreviewStyles = css`
+	@media (width > 600px) {
 		position: sticky;
-		top: ${semanticSpacing.stackMd};
+		top: ${baseSpacing['24Px']};
+	}
+`;
+
+const headingStyles = css`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: ${semanticSpacing.stackXs};
+	> div:first-of-type {
+		min-width: 0;
+	}
+	h1,
+	p {
+		margin: 0;
+	}
+	p {
+		margin-top: ${semanticSpacing.stackXs};
+		color: ${semanticColors.text.weak};
+	}
+`;
+
+const editorHeadingStyles = css`
+	padding: ${semanticSpacing.stackMd} ${semanticSpacing.stackSm}
+		${baseSpacing['24Px']};
+	border-bottom: 1px solid ${semanticColors.border.weak};
+	@media (min-width: 1280px) {
+		padding-inline: ${semanticSpacing.stackMd};
+	}
+	${stacked} {
+		flex-direction: column;
+		align-items: flex-start;
 	}
 `;
 
 const actionStyles = css`
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: ${semanticSpacing.stackSm};
+	flex-shrink: 0;
+	gap: ${semanticSpacing.stackMd};
 `;
+
+const LayoutHeading = ({
+	editing = false,
+	actions,
+}: {
+	editing?: boolean;
+	actions?: ReactNode;
+}) => (
+	<header
+		css={[headingStyles, editing ? editorHeadingStyles : narrowPreviewHeader]}
+	>
+		<div>
+			<Typography element="h1" variant="heading2Xl">
+				{editing ? 'Edit newsletter layout' : 'Newsletter layout preview'}
+			</Typography>
+			<Typography element="p" variant="bodyMd">
+				How your template will look (see Composer for full preview)
+			</Typography>
+		</div>
+		{actions}
+	</header>
+);
 
 const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 	const navigate = useNavigate();
@@ -159,7 +280,7 @@ const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 					event.preventDefault();
 					void save();
 				}}
-				css={spacerStyles}
+				css={cardStyles}
 			>
 				<fieldset
 					disabled={saving}
@@ -167,26 +288,28 @@ const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 						display: contents;
 					`}
 				>
-					<div css={actionStyles}>
-						<Button
-							variant="tertiary"
-							onPress={() => void navigate(layoutPath, { replace: true })}
-						>
-							Cancel
-						</Button>
-						<Button
-							type="submit"
-							isDisabled={!dirty || !validation.success || saving}
-						>
-							{saving ? 'Saving…' : 'Save changes'}
-						</Button>
-					</div>
+					<LayoutHeading
+						editing
+						actions={
+							<ButtonGroup size="lg" cssOverrides={actionStyles}>
+								<Button
+									variant="tertiary"
+									onPress={() => void navigate(layoutPath, { replace: true })}
+								>
+									Cancel
+								</Button>
+								<Button
+									type="submit"
+									isDisabled={!dirty || !validation.success || saving}
+								>
+									{saving ? 'Saving…' : 'Save layout'}
+								</Button>
+							</ButtonGroup>
+						}
+					/>
 					{saveError && <p role="alert">{saveError}</p>}
 					<div css={columnsStyles}>
-						<div css={layoutFieldStack}>
-							<Typography element="h2" variant="headingCompactLg">
-								Layout options
-							</Typography>
+						<div css={fieldsStyles}>
 							{!validation.success && (
 								<ul aria-label="Layout validation errors">
 									{validation.error.issues.map(({ path, message }, index) => (
@@ -212,10 +335,13 @@ const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 							/>
 						</div>
 						<div css={previewColumnStyles}>
-							<NewsletterLayoutPreview
-								request={previewRequest}
-								invalid={!validation.success}
-							/>
+							<div css={stickyPreviewStyles}>
+								<NewsletterLayoutPreview
+									request={previewRequest}
+									invalid={!validation.success}
+									editing
+								/>
+							</div>
 						</div>
 					</div>
 				</fieldset>
@@ -235,12 +361,11 @@ export const NewsletterLayoutView = ({
 	editing?: boolean;
 }) => {
 	const { newsletter, canEdit } = useLoaderData<NewsletterLayoutData>();
+	const navigate = useNavigate();
 	if (!newsletter) {
 		return (
 			<Layout.Main css={mainStyle}>
-				<Container>
-					<p>Newsletter not found.</p>
-				</Container>
+				<p>Newsletter not found.</p>
 			</Layout.Main>
 		);
 	}
@@ -253,29 +378,44 @@ export const NewsletterLayoutView = ({
 	}
 
 	return (
-		<Layout.Main css={mainStyle}>
-			<Container>
-				<div css={spacerStyles}>
-					<NewsletterDetailHeader newsletter={newsletter}>
+		<Layout.Main css={[mainStyle, editing && editorMainStyle]}>
+			<div css={spacerStyles}>
+				<NewsletterDetailHeader newsletter={newsletter} layoutPage>
+					{!editing && (
 						<NewsletterDetailTabs identityName={id} selected="layout" />
-					</NewsletterDetailHeader>
-					{editing ? (
-						<Editor key={newsletter.listId} newsletter={newsletter} />
-					) : (
-						<>
-							{canEdit && (
-								<div css={actionStyles}>
-									<Link to={newsletterLayoutPath(id, 'edit')}>Edit layout</Link>
-								</div>
-							)}
-							<SavedLayoutPreview
-								key={newsletter.listId}
-								newsletter={newsletter}
-							/>
-						</>
 					)}
-				</div>
-			</Container>
+				</NewsletterDetailHeader>
+				{editing ? (
+					<Editor key={newsletter.listId} newsletter={newsletter} />
+				) : (
+					<div css={[savedPreviewStyles, spacerStyles]}>
+						<LayoutHeading
+							actions={
+								canEdit && (
+									<AriaRouterProvider
+										navigate={(path) => void navigate(path)}
+										useHref={useHref}
+									>
+										<LinkButton
+											href={newsletterLayoutPath(id, 'edit')}
+											variant="tertiary"
+											size="md"
+											icon="edit"
+											cssOverrides={actionStyles}
+										>
+											Edit layout
+										</LinkButton>
+									</AriaRouterProvider>
+								)
+							}
+						/>
+						<SavedLayoutPreview
+							key={newsletter.listId}
+							newsletter={newsletter}
+						/>
+					</div>
+				)}
+			</div>
 		</Layout.Main>
 	);
 };
