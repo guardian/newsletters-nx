@@ -5,6 +5,10 @@ export const generateBrazeTemplateString = (
 ): string => {
 	const { identityName, campaignName, campaignCode, seriesTag, category } =
 		newsletterData;
+	const editorialContentBlock =
+		category === 'article-based'
+			? 'Editorial_FirstEditionContent'
+			: 'Editorial_Content';
 	const emailEndpoint =
 		seriesTag && ['article-based', 'article-based-legacy'].includes(category)
 			? `${seriesTag}/latest.json`
@@ -14,7 +18,7 @@ export const generateBrazeTemplateString = (
 {% assign email_endpoint = "${emailEndpoint}" %}
 {% assign utm_campaign = "${campaignName ?? 'CAMPAIGN NAME IS NOT SET'}" %}
 {% assign CMP = "${campaignCode ?? 'CAMPAIGN CODE IS NOT SET'}" %}
-{% capture email_content %}{% endcapture %}
+{% capture email_content %}{{content_blocks.\${${editorialContentBlock}}}}{% endcapture %}
 {% capture merchandising_content_header %}{% endcapture %}
 {% capture merchandising_content_middle %}{% endcapture %}
 {% capture merchandising_content_footer %}{% endcapture %}
