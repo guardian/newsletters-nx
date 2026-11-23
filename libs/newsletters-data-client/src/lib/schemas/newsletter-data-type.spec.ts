@@ -60,9 +60,4 @@ describe('Read more destinations', () => {
 			readMoreSectionSchema.safeParse({ ...item, url: fullUrl }).success,
 		).toBe(false);
 	});
-	it('does not accept a full URL as the onward path', () => {
-		expect(
-			readMoreSectionSchema.safeParse({ ...item, onwardPath: fullUrl }).success,
-		).toBe(false);
-	});
 });

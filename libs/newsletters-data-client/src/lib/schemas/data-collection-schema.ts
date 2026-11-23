@@ -40,6 +40,10 @@ const automatedFrontSectionSchemaWithFunctionNames =
 export const dataCollectionRenderingOptionsSchema =
 	renderingOptionsSchema.extend(
 		z.object({
+			readMoreSections: renderingOptionsSchema.shape.readMoreSections.describe(
+				'"Read more" sections',
+			),
+
 			automatedFrontSections: z
 				.array(automatedFrontSectionSchemaWithFunctionNames)
 				.optional()

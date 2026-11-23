@@ -64,7 +64,7 @@ export const renderingOptionsSchema = z.object({
 	readMoreSections: z
 		.array(readMoreSectionSchema)
 		.optional()
-		.describe('"Read more" sections'),
+		.describe('The configuration for read more sections'),
 	automatedFrontSections: z
 		.array(automatedFrontSectionSchema)
 		.optional()
