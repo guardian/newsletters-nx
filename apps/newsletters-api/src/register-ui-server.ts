@@ -28,7 +28,7 @@ const routeMap = {
 	],
 	'/layouts': ['', '/:id', '/edit/:id', '/edit-json/:id'],
 	// Stand launched newsletter page (!switch-legacy).
-	'/newsletters': ['/:id', '/:id/details'],
+	'/newsletters': ['/:id', '/:id/details', '/:id/layout', '/:id/layout/edit'],
 };
 
 const readIndexHtml = async (filePath: string): Promise<Buffer | null> => {

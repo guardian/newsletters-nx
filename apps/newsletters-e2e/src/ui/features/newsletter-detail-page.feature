@@ -73,13 +73,14 @@ Feature: Launched newsletter: open it and find my way around
 			When the editor opens the detail page for "Afternoon update"
 			Then the "Details" tab is selected
 
-		# Temporary until the Layout tab is built. It keeps the rendering options (which include the preview)
-		# reachable.
-		Scenario: The Layout tab opens the rendering options
+		Scenario: The Layout tab opens the newsletter preview
 			Given a launched newsletter "Afternoon update"
 			When the editor opens the detail page for "Afternoon update"
 			And the editor selects the "Layout" tab
-			Then the rendering options for "Afternoon update" are shown
+			Then the layout preview for "Afternoon update" is shown
+			And the "Layout" tab is selected
+			When the editor selects the "Details" tab
+			Then the "Details" tab is selected
 
 	Rule: Jump to takes the editor straight to a panel
 

@@ -1,5 +1,10 @@
 import type { RouteObject } from 'react-router-dom';
-import { Navigate, useLocation, useParams } from 'react-router-dom';
+import {
+	Navigate,
+	useLoaderData,
+	useLocation,
+	useParams,
+} from 'react-router-dom';
 import { NewsletterDetailView } from '../components/views/NewsletterDetailView';
 import { NewsletterEditView } from '../components/views/NewsletterEditView';
 import { NewsletterJsonEditView } from '../components/views/NewsletterJsonEditView';
@@ -12,6 +17,12 @@ import {
 	isFeatureSwitchEnabled,
 } from '../featureSwitches';
 import { Layout } from '../Layout';
+import {
+	newsletterLayoutDestination,
+	newsletterLayoutPath,
+} from '../lib/newsletter-layout';
+import type { NewsletterLayoutData } from '../loaders/newsletter-layout';
+import { newsletterLayoutLoader } from '../loaders/newsletter-layout';
 import { detailLoader, listLoader } from '../loaders/newsletters';
 
 checkFeatureSwitchURLParams();
@@ -28,6 +39,16 @@ const RedirectToNewDetails = () => {
 			replace
 		/>
 	);
+};
+
+const RedirectToStandLayout = ({ edit = false }: { edit?: boolean }) => {
+	const { newsletter, canEdit } = useLoaderData<NewsletterLayoutData>();
+	const { id = '' } = useParams();
+	const { search, hash } = useLocation();
+	const pathname = newsletter
+		? newsletterLayoutDestination(newsletter, edit && canEdit)
+		: newsletterLayoutPath(id, 'details');
+	return <Navigate to={{ pathname, search, hash }} replace />;
 };
 
 export const launchedRoute: RouteObject = {
@@ -52,8 +73,12 @@ export const launchedRoute: RouteObject = {
 		},
 		{
 			path: 'rendering-options/:id',
-			element: <RenderingOptionsView />,
-			loader: detailLoader,
+			element: isLegacy ? (
+				<RenderingOptionsView />
+			) : (
+				<RedirectToStandLayout edit />
+			),
+			loader: isLegacy ? detailLoader : newsletterLayoutLoader,
 		},
 		{
 			path: 'edit-json/:id',
@@ -62,8 +87,8 @@ export const launchedRoute: RouteObject = {
 		},
 		{
 			path: 'preview/:id',
-			element: <PreviewView />,
-			loader: detailLoader,
+			element: isLegacy ? <PreviewView /> : <RedirectToStandLayout />,
+			loader: isLegacy ? detailLoader : newsletterLayoutLoader,
 		},
 	],
 };

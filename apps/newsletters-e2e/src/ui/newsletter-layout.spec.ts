@@ -1,0 +1,322 @@
+import type {
+	NewsletterData,
+	RenderingOptions,
+} from '@newsletters-nx/newsletters-data-client';
+import { expect, test } from '@playwright/test';
+import { patchNewsletter } from '../../helpers/draft-newsletter';
+import {
+	createFixtureNewsletter,
+	deleteFixtureNewsletter,
+} from '../../helpers/test-fixtures';
+
+const id = 'playwright-article-test';
+const details = `/newsletters/${id}/details`;
+const layout = `/newsletters/${id}/layout`;
+const preview = '/api/rendering-templates/preview';
+const title = 'Newsletter email preview';
+const hiddenFrame = 'iframe[aria-hidden="true"][inert]';
+const gap = '<div style="height:700px"></div>';
+
+const sample = (options?: RenderingOptions) => ({
+	ok: true,
+	data: {
+		html: `<!doctype html><h1>${options?.displayDate ? 'Dated edition' : 'Test edition'}</h1>${gap}<h2>Unrelated story</h2>${gap}${(options?.readMoreSections ?? []).map(({ subheading }) => `<h2>${subheading}</h2>${gap}`).join('')}<footer>${options?.contactEmail ?? 'Default contact'}</footer>${gap}`,
+		warnings: [],
+	},
+});
+
+const block = (subheading: string) => ({
+	subheading,
+	wording: 'Visit the Guardian',
+	onwardPath: '/food',
+});
+
+test.beforeEach(async ({ page }) => {
+	await page.route('**/api/user/permissions', (route) =>
+		route.fulfill({ json: { ok: true, data: { editEverything: true } } }),
+	);
+	await page.route(`**${preview}`, (route) => {
+		const { renderingOptions } = route
+			.request()
+			.postDataJSON() as NewsletterData;
+		return route.fulfill({ json: sample(renderingOptions) });
+	});
+});
+
+test('crossfades from the previous headline to the updated headline', async ({
+	page,
+}) => {
+	await page.emulateMedia({ reducedMotion: 'no-preference' });
+	await page.goto(`${layout}/edit`);
+	const headline = page.frameLocator(`iframe[title="${title}"]`).locator('h1');
+	await expect(headline).toHaveText('Test edition');
+	await page.getByText('Display date', { exact: true }).click();
+	await expect(headline).toHaveText('Dated edition');
+	const previous = page.locator(hiddenFrame);
+	await expect(page.frameLocator(hiddenFrame).locator('h1')).toHaveText(
+		'Test edition',
+	);
+	await expect(previous).toHaveCSS('animation-duration', '0.85s');
+	await expect(previous).toHaveCSS('pointer-events', 'none');
+	await expect(previous).toHaveCount(0);
+	await expect(headline).toHaveText('Dated edition');
+});
+
+test('switches to the updated preview without a fade in reduced motion mode', async ({
+	page,
+}) => {
+	await page.emulateMedia({ reducedMotion: 'reduce' });
+	await page.goto(`${layout}/edit`);
+	const headline = page.frameLocator(`iframe[title="${title}"]`).locator('h1');
+	await expect(headline).toHaveText('Test edition');
+	await page.getByText('Display date', { exact: true }).click();
+	await expect(headline).toHaveText('Dated edition');
+	await expect(page.locator(hiddenFrame)).toHaveCount(0);
+});
+
+test('jumps to the latest unsaved edit without moving the editor, and keeps its place for a missing section', async ({
+	page,
+}) => {
+	let allowOlderReply: () => void = () => undefined;
+	const holdOlderReply = new Promise<void>((resolve) => {
+		allowOlderReply = resolve;
+	});
+	await page.route(`**${preview}`, async (route) => {
+		const { renderingOptions } = route
+			.request()
+			.postDataJSON() as NewsletterData;
+		if (renderingOptions?.contactEmail === 'older@example.com') {
+			await holdOlderReply;
+		}
+		await route
+			.fulfill({ json: sample(renderingOptions) })
+			.catch(() => undefined);
+	});
+	await page.goto(details);
+	await page.getByRole('tab', { name: 'Layout' }).click();
+	await page.getByRole('link', { name: 'Edit layout' }).click();
+	const frame = page.frameLocator(`iframe[title="${title}"]`);
+	const footer = frame.locator('footer');
+	await expect(footer).toHaveText('Default contact');
+	await page.getByRole('button', { name: '375 px' }).click();
+	await expect(page.getByTitle(title)).toHaveCSS('width', '375px');
+	const email = page.getByRole('textbox', { name: 'Contact email' });
+	await email.scrollIntoViewIfNeeded();
+	const hostScroll = await page.evaluate(() => window.scrollY);
+	const started = page.waitForRequest(
+		(request) =>
+			request.url().endsWith(preview) &&
+			request.postData()?.includes('older@example.com') === true,
+	);
+	await email.fill('older@example.com');
+	await started;
+	try {
+		await email.fill('latest@example.com');
+		await expect(footer).toHaveText('latest@example.com');
+		await expect
+			.poll(() =>
+				footer.evaluate((element) => element.getBoundingClientRect().top),
+			)
+			.toBeLessThan(30);
+		await expect(email).toBeFocused();
+		await expect
+			.poll(() => page.evaluate(() => window.scrollY))
+			.toBe(hostScroll);
+	} finally {
+		allowOlderReply();
+	}
+	await expect(footer).toHaveText('latest@example.com');
+	await page.getByText('Display image captions', { exact: true }).click();
+	await expect(
+		page.getByRole('region', { name: 'Email preview' }).getByRole('status'),
+	).toHaveText('The affected section is not in this sample edition.');
+	await expect(page.locator(hiddenFrame)).toHaveCount(0);
+	await expect
+		.poll(() =>
+			footer.evaluate((element) => element.getBoundingClientRect().top),
+		)
+		.toBeLessThan(30);
+});
+
+test('jumps to a rendered email caption and to its image when hidden', async ({
+	page,
+}) => {
+	const image =
+		'data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E';
+	await page.route(`**${preview}`, (route) => {
+		const { renderingOptions } = route
+			.request()
+			.postDataJSON() as NewsletterData;
+		const caption = renderingOptions?.displayImageCaptions
+			? `<tr><td class="text text-with-border"><div><img src="${image}#camera" alt="camera"> Sample caption</div></td></tr>`
+			: '';
+		return route.fulfill({
+			json: {
+				ok: true,
+				data: {
+					html: `<!doctype html><img src="${image}#banner" alt="Banner" width="100" height="80">${gap}<table><tr><td><table><tr><td><img src="${image}#article" alt="Article image" width="100" height="80"></td></tr></table></td></tr>${caption}</table>${gap}`,
+					warnings: [],
+				},
+			},
+		});
+	});
+	await page.goto(`${layout}/edit`);
+	const frame = page.frameLocator(`iframe[title="${title}"]`);
+	const articleImage = frame.getByRole('img', { name: 'Article image' });
+	const caption = frame.getByRole('cell', { name: 'camera Sample caption' });
+	const toggle = page.getByText('Display image captions', { exact: true });
+	const status = page
+		.getByRole('region', { name: 'Email preview' })
+		.getByRole('status');
+	const offsetFromLanding = (element: Element) =>
+		Math.abs(element.getBoundingClientRect().top - 12);
+	await expect(articleImage).toBeAttached();
+	await toggle.click();
+	await expect.poll(() => caption.evaluate(offsetFromLanding)).toBeLessThan(3);
+	await expect(status).toBeEmpty();
+	await page.getByTitle(title).evaluate((iframe: HTMLIFrameElement) => {
+		iframe.contentWindow?.scrollTo(0, 0);
+	});
+	await toggle.click();
+	await expect(caption).toHaveCount(0);
+	await expect
+		.poll(() => articleImage.evaluate(offsetFromLanding))
+		.toBeLessThan(3);
+	await expect(status).toBeEmpty();
+});
+
+test('removing an item jumps to the following surviving item', async ({
+	page,
+}) => {
+	await page.emulateMedia({ reducedMotion: 'no-preference' });
+	await page.route(`**/api/newsletters/${id}`, async (route) => {
+		const response = await route.fetch();
+		const payload = (await response.json()) as {
+			ok: true;
+			data: NewsletterData;
+		};
+		await route.fulfill({
+			json: {
+				...payload,
+				data: {
+					...payload.data,
+					renderingOptions: {
+						...payload.data.renderingOptions,
+						readMoreSections: [
+							block('Read more A'),
+							block('Read more B'),
+							block('Read more C'),
+						],
+					},
+				},
+			},
+		});
+	});
+	await page.goto(`${layout}/edit`);
+	const frame = page.frameLocator(`iframe[title="${title}"]`);
+	const next = frame.getByRole('heading', { name: 'Read more C' });
+	const removed = frame.getByRole('heading', { name: 'Read more B' });
+	await expect(removed).toBeAttached();
+	await page.getByRole('button', { name: 'Remove read more 2' }).click();
+	await expect(removed).toHaveCount(0);
+	const previousItem = page.frameLocator(hiddenFrame).locator('h2', {
+		hasText: 'Read more B',
+	});
+	await expect
+		.poll(() =>
+			previousItem.evaluate((element) =>
+				Math.abs(element.getBoundingClientRect().top - 12),
+			),
+		)
+		.toBeLessThan(3);
+	await expect
+		.poll(() => next.evaluate((element) => element.getBoundingClientRect().top))
+		.toBeLessThan(30);
+});
+
+test('saves only layout edits and protects unsaved navigation', async ({
+	page,
+	request,
+}) => {
+	const latestBannerUrl = 'https://media.guim.co.uk/latest-test-banner.jpg';
+	const renderingOptions: RenderingOptions = {
+		displayDate: false,
+		displayStandfirst: false,
+		displayImageCaptions: false,
+		displayNewsletterName: true,
+		contactEmail: 'saved@example.com',
+		mainBannerUrl: 'https://media.guim.co.uk/test-banner.jpg',
+	};
+	const { identityName, listId } = await createFixtureNewsletter(request, {
+		renderingOptions,
+	});
+	const fixtureLayout = `/newsletters/${identityName}/layout`;
+	try {
+		await page.goto(`${fixtureLayout}/edit`);
+		const email = page.getByRole('textbox', { name: 'Contact email' });
+		await expect(email).toHaveValue('saved@example.com');
+		await email.clear();
+		await page.getByRole('button', { name: 'Cancel' }).click();
+		await expect(page.getByRole('dialog')).toBeVisible();
+		await page
+			.getByRole('button', { name: 'Keep editing', exact: true })
+			.click();
+		await expect(email).toHaveValue('');
+		await patchNewsletter(request, listId, {
+			renderingOptions: { ...renderingOptions, mainBannerUrl: latestBannerUrl },
+		});
+		const saved = page.waitForRequest(
+			(req) =>
+				req.method() === 'PATCH' &&
+				req.url().endsWith(`/api/newsletters/${listId}`),
+		);
+		await page.getByRole('button', { name: 'Save changes' }).click();
+		const patch: unknown = (await saved).postDataJSON();
+		expect(patch).toEqual({
+			renderingOptions: {
+				...renderingOptions,
+				contactEmail: null,
+				mainBannerUrl: latestBannerUrl,
+			},
+		});
+		await expect(page).toHaveURL(new RegExp(`${fixtureLayout}$`));
+		await page.getByRole('link', { name: 'Edit layout' }).click();
+		await expect(email).toHaveValue('');
+		await page.getByText('Display date', { exact: true }).click();
+		await page.getByRole('button', { name: 'Cancel' }).click();
+		await page.getByRole('button', { name: 'Discard changes' }).click();
+		await expect(page).toHaveURL(new RegExp(`${fixtureLayout}$`));
+	} finally {
+		await deleteFixtureNewsletter(request, listId);
+	}
+});
+
+test('old Stand links and direct edit URLs respect newsletter type and permissions', async ({
+	page,
+}) => {
+	await page.goto(`/launched/rendering-options/${id}`);
+	await expect(page).toHaveURL(new RegExp(`${layout}/edit$`));
+	await page.goto(`/launched/preview/${id}`);
+	await expect(page).toHaveURL(new RegExp(`${layout}$`));
+	await page.route('**/api/user/permissions', (route) =>
+		route.fulfill({ json: { ok: true, data: { editEverything: false } } }),
+	);
+	await page.goto(`/launched/rendering-options/${id}`);
+	await expect(page).toHaveURL(new RegExp(`${layout}$`));
+	await page.goto(`${layout}/edit`);
+	await expect(page).toHaveURL(new RegExp(`${layout}$`));
+	await expect(page.getByRole('link', { name: 'Edit layout' })).toHaveCount(0);
+	await page.route(`**/api/newsletters/${id}`, async (route) => {
+		const response = await route.fetch();
+		const payload = (await response.json()) as {
+			ok: true;
+			data: NewsletterData;
+		};
+		await route.fulfill({
+			json: { ...payload, data: { ...payload.data, category: 'other' } },
+		});
+	});
+	await page.goto(`/launched/preview/${id}`);
+	await expect(page).toHaveURL(new RegExp(`${details}$`));
+	await expect(page.getByRole('tab', { name: 'Layout' })).toHaveCount(0);
+});

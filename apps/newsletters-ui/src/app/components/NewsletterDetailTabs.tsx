@@ -2,12 +2,14 @@ import { css } from '@emotion/react';
 import { semanticColors } from '@guardian/stand';
 import { Tabs } from '@guardian/stand/Tabs';
 import { useNavigate } from 'react-router-dom';
+import { newsletterLayoutPath } from '../lib/newsletter-layout';
 
 type TabKey = 'details' | 'layout';
 
 interface Props {
 	identityName: string;
 	selected: TabKey;
+	showLayout?: boolean;
 }
 
 // Full-width bar behind the tabs, as in the design.
@@ -23,11 +25,13 @@ const firstTabStyles = css`
 	}
 `;
 
-// Driven by the route: selecting a tab navigates, so the URL changes and Back
-// works. Layout links to the rendering options (which include the preview) until the Layout tab is built.
-export const NewsletterDetailTabs = ({ identityName, selected }: Props) => {
+// Driven by the route so the address and browser history follow the tab selection.
+export const NewsletterDetailTabs = ({
+	identityName,
+	selected,
+	showLayout = true,
+}: Props) => {
 	const navigate = useNavigate();
-	const id = encodeURIComponent(identityName);
 
 	return (
 		<div css={barStyles}>
@@ -38,9 +42,10 @@ export const NewsletterDetailTabs = ({ identityName, selected }: Props) => {
 						return;
 					}
 					void navigate(
-						key === 'layout'
-							? `/launched/rendering-options/${id}`
-							: `/newsletters/${id}/details`,
+						newsletterLayoutPath(
+							identityName,
+							key === 'layout' ? 'layout' : 'details',
+						),
 					);
 				}}
 			>
@@ -48,7 +53,7 @@ export const NewsletterDetailTabs = ({ identityName, selected }: Props) => {
 					<Tabs.Tab id="details" cssOverrides={firstTabStyles}>
 						Details
 					</Tabs.Tab>
-					<Tabs.Tab id="layout">Layout</Tabs.Tab>
+					{showLayout && <Tabs.Tab id="layout">Layout</Tabs.Tab>}
 				</Tabs.TabList>
 			</Tabs>
 		</div>
