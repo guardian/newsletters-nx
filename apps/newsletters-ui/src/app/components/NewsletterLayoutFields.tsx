@@ -175,10 +175,10 @@ const EditableList = <T,>({
 	label: string;
 	title: string;
 	help: string;
-	initial: Array<T> | undefined;
+	initial: T[] | undefined;
 	create: () => T;
 	getName: (value: T) => string;
-	onChange: (value: Array<T> | undefined, target?: PreviewTarget) => void;
+	onChange: (value: T[] | undefined, target?: PreviewTarget) => void;
 	group?: 'read-more' | 'automated-fronts';
 	renderItem: (
 		value: T,

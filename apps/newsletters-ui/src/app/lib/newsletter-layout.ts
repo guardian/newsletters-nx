@@ -47,7 +47,7 @@ export type LayoutSettings = Pick<
 
 export const layoutSettingKeys = Object.keys(
 	layoutSettingsSchema.shape,
-) as (keyof LayoutSettings)[];
+) as Array<keyof LayoutSettings>;
 
 export const defaultLayoutSettings = {
 	displayDate: false,
