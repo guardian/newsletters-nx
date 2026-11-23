@@ -1,6 +1,7 @@
 import { TECHSCAPE_IN_NEW_FORMAT } from '../../fixtures/newsletter-fixtures';
 import sampleData from '../../fixtures/sample-data.json';
 import { isNewsletterData } from './newsletter-data-type';
+import { readMoreSectionSchema } from './rendering-options-data-type';
 
 describe('isNewsletterData', () => {
 	it('Does not filter out any valid newsletters', () => {
@@ -39,5 +40,29 @@ describe('isNewsletterData', () => {
 			meaningOfLifeTheUniverseAndEveryThing: 42,
 		};
 		expect(isNewsletterData(newsletterWithExtraProperties)).toBe(true);
+	});
+});
+
+describe('Read more destinations', () => {
+	const item = { subheading: 'Read more', wording: 'More food news' };
+	const fullUrl = 'https://www.theguardian.com/food';
+	it('keeps only the onward path as the destination when parsing', () => {
+		expect(
+			readMoreSectionSchema.parse({
+				...item,
+				onwardPath: '/food',
+				url: fullUrl,
+			}),
+		).toEqual({ ...item, onwardPath: '/food' });
+	});
+	it('does not accept a legacy URL in place of an onward path', () => {
+		expect(
+			readMoreSectionSchema.safeParse({ ...item, url: fullUrl }).success,
+		).toBe(false);
+	});
+	it('does not accept a full URL as the onward path', () => {
+		expect(
+			readMoreSectionSchema.safeParse({ ...item, onwardPath: fullUrl }).success,
+		).toBe(false);
 	});
 });

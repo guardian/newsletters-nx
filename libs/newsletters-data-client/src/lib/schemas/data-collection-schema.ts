@@ -7,7 +7,6 @@ import {
 } from './newsletter-data-type';
 import {
 	automatedFrontSectionSchema,
-	readMoreSectionSchema,
 	renderingOptionsSchema,
 } from './rendering-options-data-type';
 
@@ -34,21 +33,6 @@ const automatedFrontSectionSchemaWithFunctionNames =
 	);
 
 /**
- * require the `onwardPath`and exclude the `url`.
- * both are optional in the newsletter schema.
- * `url` is deprecated.
- */
-const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
-	.omit({
-		url: true,
-	})
-	.extend(
-		z.object({
-			onwardPath: readMoreSectionSchema.shape.onwardPath.unwrap(),
-		}).shape,
-	);
-
-/**
  * A version of the renderingOptionsSchema
  * for use when defining new drafts and using
  * the preview editor.
@@ -56,11 +40,6 @@ const readMoreSectionSchemaWithOnwardPath = readMoreSectionSchema
 export const dataCollectionRenderingOptionsSchema =
 	renderingOptionsSchema.extend(
 		z.object({
-			readMoreSections: z
-				.array(readMoreSectionSchemaWithOnwardPath)
-				.optional()
-				.describe('"Read more" sections'),
-
 			automatedFrontSections: z
 				.array(automatedFrontSectionSchemaWithFunctionNames)
 				.optional()

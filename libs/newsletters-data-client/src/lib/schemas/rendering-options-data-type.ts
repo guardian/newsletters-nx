@@ -6,10 +6,9 @@ export const readMoreSectionSchema = z
 	.object({
 		subheading: nonEmptyString().describe('read more subheading'),
 		wording: nonEmptyString().describe('read more wording'),
-		url: z.url().optional().describe('read more url'),
 		onwardPath: urlPathString(
 			'Please add a Guardian URL from the slash e.g. https://www.theguardian.com/food should be /food',
-		).optional(),
+		),
 		isDarkTheme: z.boolean().optional().describe('use dark theme for section'),
 	})
 	.describe('Read more section configuration');
@@ -65,7 +64,7 @@ export const renderingOptionsSchema = z.object({
 	readMoreSections: z
 		.array(readMoreSectionSchema)
 		.optional()
-		.describe('The configuration for read more sections'),
+		.describe('"Read more" sections'),
 	automatedFrontSections: z
 		.array(automatedFrontSectionSchema)
 		.optional()
