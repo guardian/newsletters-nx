@@ -323,7 +323,7 @@ EOL`,
 		);
 
 		const secondaryReadOnlyEndpointApiKey = SecretValue.secretsManager(
-			`${this.stage}/${this.stack}/${apiAppName}/readOnlyEndpointApiKey`,
+			`${this.stage}/deploy/${apiAppName}/readOnlyEndpointApiKey`,
 		).unsafeUnwrap();
 
 		new ApplicationListenerRule(this, 'ReadOnlyApiHeaderRule', {

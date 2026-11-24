@@ -1879,7 +1879,7 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
                 {
                   "Ref": "SsmParameterValueTESTnewslettersnewslettersapireadOnlyEndpointApiKeyC96584B6F00A464EAD1953AFF4B05118Parameter",
                 },
-                "{{resolve:secretsmanager:TEST/newsletters/newsletters-api/readOnlyEndpointApiKey:SecretString:::}}",
+                "{{resolve:secretsmanager:TEST/deploy/newsletters-api/readOnlyEndpointApiKey:SecretString:::}}",
               ],
             },
           },
