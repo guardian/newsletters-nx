@@ -322,11 +322,18 @@ EOL`,
 			readOnlyEndpointApiKeyParam,
 		);
 
+		const secondaryReadOnlyEndpointApiKey = SecretValue.secretsManager(
+			`${this.stage}/${this.stack}/${apiAppName}/readOnlyEndpointApiKey`,
+		).unsafeUnwrap();
+
 		new ApplicationListenerRule(this, 'ReadOnlyApiHeaderRule', {
 			listener: ec2AppApi.listener,
 			priority: 1,
 			conditions: [
-				ListenerCondition.httpHeader('X-Gu-API-Key', [readOnlyEndpointApiKey]),
+				ListenerCondition.httpHeader('X-Gu-API-Key', [
+					readOnlyEndpointApiKey,
+					secondaryReadOnlyEndpointApiKey,
+				]),
 			],
 			targetGroups: [ec2AppApi.targetGroup],
 		});
