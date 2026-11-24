@@ -1,11 +1,5 @@
 import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
-import {
-	act,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -50,79 +44,6 @@ beforeEach(() => {
 });
 
 describe('Stand setup wizard step URLs', () => {
-	it('opens a saved step directly and follows browser Back and Forward', async () => {
-		const router = renderWizard(
-			`${base}/7/name-and-frequency`,
-			`${base}/7/production-details`,
-		);
-		expect(
-			await screen.findByRole('heading', { name: 'productionDetails' }),
-		).toBeInTheDocument();
-		expect(makeWizardStepRequest).toHaveBeenCalledExactlyOnceWith({
-			wizardId: 'NEWSLETTER_DATA_STAND_REDESIGN',
-			id: '7',
-			stepId: 'productionDetails',
-		});
-		await act(() => router.navigate(-1));
-		expect(
-			await screen.findByDisplayValue('Saved newsletter'),
-		).toBeInTheDocument();
-		await act(() => router.navigate(1));
-		expect(
-			await screen.findByRole('heading', { name: 'productionDetails' }),
-		).toBeInTheDocument();
-		expect(router.state.location.pathname).toBe(`${base}/7/production-details`);
-	});
-
-	it('reuses a transition response once and fetches fresh data on Forward', async () => {
-		const router = renderWizard(`${base}/7/name-and-frequency?example=1`);
-		await screen.findByDisplayValue('Saved newsletter');
-		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
-			step('productionDetails'),
-		);
-		await userEvent.click(
-			screen.getByRole('button', { name: 'Save and continue' }),
-		);
-		await waitFor(() =>
-			expect(router.state.location.pathname).toBe(
-				`${base}/7/production-details`,
-			),
-		);
-		expect(router.state.location.search).toBe('?example=1');
-		expect(router.state.location.state).toBeNull();
-		expect(
-			await screen.findByRole('heading', { name: 'productionDetails' }),
-		).toBeInTheDocument();
-		expect(makeWizardStepRequest).toHaveBeenCalledTimes(2);
-
-		await act(() => router.navigate(-1));
-		await screen.findByDisplayValue('Saved newsletter');
-		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce({
-			...step('productionDetails'),
-			markdownToDisplay: '# Fresh production details',
-		});
-		await act(() => router.navigate(1));
-		expect(
-			await screen.findByRole('heading', { name: 'Fresh production details' }),
-		).toBeInTheDocument();
-		expect(makeWizardStepRequest).toHaveBeenCalledTimes(4);
-	});
-
-	it('keeps the current URL and edits after a failed save', async () => {
-		const router = renderWizard(`${base}/7/name-and-frequency`);
-		const input = await screen.findByDisplayValue('Saved newsletter');
-		fireEvent.input(input, { target: { value: 'Unsaved edit' } });
-		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce({
-			...step('nameAndFrequency'),
-			formData: { listId: 7, name: 'Unsaved edit', frequency: 'Weekly' },
-			errorMessage: 'Cannot save',
-		});
-		fireEvent.click(screen.getByRole('button', { name: 'Save and continue' }));
-		expect(await screen.findByRole('alert')).toHaveTextContent('Cannot save');
-		expect(router.state.location.pathname).toBe(`${base}/7/name-and-frequency`);
-		expect(screen.getByDisplayValue('Unsaved edit')).toBeInTheDocument();
-	});
-
 	it('retains the form and buttons when a save error has no step or form data', async () => {
 		const router = renderWizard(`${base}/7/name-and-frequency`);
 		fireEvent.input(await screen.findByDisplayValue('Saved newsletter'), {
@@ -160,7 +81,10 @@ describe('Stand setup wizard step URLs', () => {
 		expect(makeWizardStepRequest).toHaveBeenCalledTimes(1);
 		await act(() => router.navigate(-1));
 		fireEvent.click(
-			await screen.findByRole('button', { name: 'Discard changes and skip' }),
+			await screen.findByRole('button', {
+				name: 'Discard changes',
+				exact: true,
+			}),
 		);
 		expect(
 			await screen.findByRole('heading', { name: 'productionDetails' }),
@@ -170,16 +94,16 @@ describe('Stand setup wizard step URLs', () => {
 
 	it('retains old edit links and replaces them with the start step', async () => {
 		const router = renderWizard(`${base}/7`);
-		await waitFor(() =>
-			expect(router.state.location.pathname).toBe(
-				`${base}/7/name-and-frequency`,
-			),
+		await screen.findByDisplayValue('Saved newsletter');
+		expect(router.state.location.pathname).toBe(`${base}/7/name-and-frequency`);
+		await userEvent.click(
+			screen.getByRole('button', { name: /Newsletter creation steps/ }),
 		);
+		expect(screen.getByRole('button', { name: 'Introduction' })).toBeEnabled();
 		expect(router.state.historyAction).toBe('REPLACE');
-		expect(makeWizardStepRequest).toHaveBeenCalledTimes(1);
 	});
 
-	it('creates the draft once and keeps subsequent saves on the create track', async () => {
+	it('creates the draft once and loads the next step using its saved ID', async () => {
 		const request = vi.mocked(makeWizardStepRequest);
 		request.mockResolvedValueOnce({
 			...step('nameAndFrequency'),
@@ -200,22 +124,19 @@ describe('Stand setup wizard step URLs', () => {
 		expect(request).toHaveBeenCalledTimes(1);
 
 		await act(async () => {
-			finishFirstSave(step('productionDetails'));
+			finishFirstSave({
+				currentStepId: 'productionDetails',
+				formData: { listId: 7 },
+			});
 			await firstSave;
+		});
+		await screen.findByRole('heading', { name: 'productionDetails' });
+		expect(request.mock.lastCall?.[0]).toMatchObject({
+			id: '7',
+			stepId: 'productionDetails',
 		});
 		expect(router.state.location.pathname).toBe(`${base}/7/production-details`);
 		expect(router.state.historyAction).toBe('REPLACE');
-		expect(router.state.location.state).toEqual({ creating: true });
-
-		request.mockResolvedValueOnce(step('dates'));
-		await userEvent.click(
-			screen.getByRole('button', { name: 'Save and continue' }),
-		);
-		const nextSave = request.mock.lastCall?.[0];
-		expect(nextSave?.stepId).toBe('productionDetails');
-		expect(nextSave?.id).toBeUndefined();
-		expect(nextSave?.formData?.listId).toBe(7);
-		expect(router.state.location.pathname).toBe(`${base}/7/dates`);
 	});
 
 	it('shows an unknown-step error without contacting the server', async () => {

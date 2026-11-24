@@ -68,7 +68,7 @@ export const DraftSetupPanel = ({ draft }: Props) => {
 	const setUpHref = `/drafts/newsletter-data/${listId}`;
 	const nextStep = steps.find((step) => !step.isComplete);
 	const continueHref = nextStep
-		? (getStandSetupStepPath(listId, nextStep.id) ?? setUpHref)
+		? getStandSetupStepPath(listId, nextStep.id)
 		: setUpHref;
 	const hasStartedRenderingOptions = draft.renderingOptions !== undefined;
 

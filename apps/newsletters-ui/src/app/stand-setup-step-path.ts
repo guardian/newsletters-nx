@@ -1,28 +1,15 @@
-// Public URL slugs are explicit so internal step IDs can change independently.
-const stepSlugs = {
-	cancel: 'cancel',
-	intro: 'intro',
-	nameAndFrequency: 'name-and-frequency',
-	productionDetails: 'production-details',
-	dates: 'dates',
-	targeting: 'targeting',
-	tags: 'tags',
-	promotionContent: 'promotion-content',
-	review: 'review',
-	finish: 'finish',
-} as const;
+import { newslettersWorkflowStepLayout } from '@newsletters-nx/newsletter-workflow';
 
-export const getStandSetupStepId = (slug: string): string | undefined =>
-	Object.entries(stepSlugs).find(([, value]) => value === slug)?.[0];
+const stepIds = Object.keys(
+	newslettersWorkflowStepLayout['NEWSLETTER_DATA_STAND_REDESIGN']!,
+);
+const toSlug = (id: string) =>
+	id.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+
+export const getStandSetupStepId = (slug: string) =>
+	stepIds.find((id) => toSlug(id) === slug);
 
 export const getStandSetupStepPath = (
 	listId: string | number | undefined,
 	stepId: string,
-): string | undefined => {
-	const slug = Object.prototype.hasOwnProperty.call(stepSlugs, stepId)
-		? stepSlugs[stepId as keyof typeof stepSlugs]
-		: undefined;
-	return slug === undefined
-		? undefined
-		: `/drafts/newsletter-data/${listId ?? 'new'}/${slug}`;
-};
+) => `/drafts/newsletter-data/${listId ?? 'new'}/${toSlug(stepId)}`;

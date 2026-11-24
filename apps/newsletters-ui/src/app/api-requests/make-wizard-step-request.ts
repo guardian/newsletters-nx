@@ -6,9 +6,11 @@ import type {
 
 export const makeWizardStepRequest = async (
 	body: CurrentStepRouteRequest,
+	signal?: AbortSignal,
 ): Promise<CurrentStepRouteResponse> => {
 	const response = await fetch(`/api/currentstep`, {
 		method: 'POST',
+		signal,
 		headers: {
 			'Content-Type': 'application/json',
 		},
