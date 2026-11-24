@@ -6,10 +6,10 @@ import { getFieldKeyNames } from '@newsletters-nx/newsletters-data-client';
 import type { StepListing } from './getStepList';
 
 export enum StepStatus {
-	Complete,
-	Incomplete,
-	Optional,
-	NoFields,
+	Complete = 'complete',
+	Incomplete = 'incomplete',
+	Optional = 'optional',
+	NoFields = 'no-fields',
 }
 
 function isPopulatedAndNotEmpty(value: SupportedValue): boolean {
