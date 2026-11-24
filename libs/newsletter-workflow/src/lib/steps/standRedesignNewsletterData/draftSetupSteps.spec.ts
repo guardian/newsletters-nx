@@ -9,43 +9,26 @@ import { standRedesignLayout } from './index';
 
 type StepSchema = { shape: Record<string, z.core.$ZodType> };
 
-const fieldsOf = (schema: StepSchema) =>
-	Object.keys(schema.shape).sort().join();
-
 // A field is required if leaving it out is not valid.
 const hasRequiredField = (schema: StepSchema) =>
 	Object.values(schema.shape).some(
 		(field) => !z.safeParse(field, undefined).success,
 	);
 
-const wizardStepSchemas: StepSchema[] = Object.values(standRedesignLayout)
-	.map((step) => step.schema)
-	.filter((schema) => schema !== undefined);
-
-const countedSteps = draftSetupSteps.map(({ fields }) =>
-	[...fields].sort().join(),
-);
-
 describe('draftSetupSteps', () => {
 	it('matches the IDs and fields of the required wizard steps in order', () => {
-		const requiredSteps = Object.entries(standRedesignLayout)
-			.filter(([, step]) => step.schema && hasRequiredField(step.schema))
-			.map(([id]) => id);
-
-		expect(draftSetupSteps.map(({ id }) => id)).toEqual(requiredSteps);
-		for (const { id, fields } of draftSetupSteps) {
-			const schema = standRedesignLayout[id]?.schema;
-			if (!schema) {throw new Error(`No wizard schema for step "${id}"`);}
-			expect(fieldsOf(schema)).toBe([...fields].sort().join());
-		}
-	});
-
-	it('include every wizard step with a required field', () => {
-		const required = new Set(
-			wizardStepSchemas.filter(hasRequiredField).map(fieldsOf),
+		const requiredSteps = Object.entries(standRedesignLayout).flatMap(
+			([id, { schema }]) =>
+				schema && hasRequiredField(schema)
+					? [{ id, fields: Object.keys(schema.shape).sort() }]
+					: [],
 		);
+		const countedSteps = draftSetupSteps.map(({ id, fields }) => ({
+			id,
+			fields: [...fields].sort(),
+		}));
 
-		expect([...countedSteps].sort()).toEqual([...required].sort());
+		expect(countedSteps).toEqual(requiredSteps);
 	});
 
 	it('leave out the tags step, which has no required fields', () => {
