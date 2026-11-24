@@ -1,5 +1,11 @@
 import type { CurrentStepRouteResponse } from '@newsletters-nx/state-machine';
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -19,10 +25,11 @@ const step = (currentStepId: string): CurrentStepRouteResponse => ({
 	},
 });
 
-const renderWizard = (path: string) => {
+const base = '/drafts/newsletter-data';
+const renderWizard = (...initialEntries: string[]) => {
 	const router = createMemoryRouter(
 		[{ path: '/drafts', children: standWizardRoutes }],
-		{ initialEntries: [path] },
+		{ initialEntries },
 	);
 	render(<RouterProvider router={router} />);
 	return router;
@@ -35,28 +42,9 @@ beforeEach(() => {
 	);
 });
 
-describe('Stand wizard step interactions', () => {
-	it.each([
-		['/drafts/newsletter-data/7', 'productionDetails'],
-		['/drafts/newsletter-data-rendering/7', 'newsletterHeader'],
-	])(
-		'advances to the returned step without leaving %s',
-		async (path, nextStep) => {
-			const router = renderWizard(path);
-			const next = await screen.findByRole('button', {
-				name: 'Save and continue',
-			});
-			vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(step(nextStep));
-			await userEvent.click(next);
-			expect(
-				await screen.findByRole('heading', { name: nextStep }),
-			).toBeVisible();
-			expect(router.state.location.pathname).toBe(path);
-		},
-	);
-
-	it('retains unsaved edits and buttons after a failed save', async () => {
-		renderWizard('/drafts/newsletter-data/7');
+describe('Stand setup wizard step URLs', () => {
+	it('retains the form and buttons when a save error has no step or form data', async () => {
+		const router = renderWizard(`${base}/7/name-and-frequency`);
 		fireEvent.input(await screen.findByDisplayValue('Saved newsletter'), {
 			target: { value: 'Unsaved edit' },
 		});
@@ -72,7 +60,118 @@ describe('Stand wizard step interactions', () => {
 		expect(screen.getByDisplayValue('Unsaved edit')).toBeInTheDocument();
 		expect(
 			screen.getByRole('button', { name: 'Save and continue' }),
-		).toBeEnabled();
+		).toBeInTheDocument();
+		expect(router.state.location.pathname).toBe(`${base}/7/name-and-frequency`);
+	});
+
+	it('keeps unsaved edits when only the query string changes', async () => {
+		const router = renderWizard(`${base}/7/name-and-frequency`);
+		fireEvent.input(await screen.findByDisplayValue('Saved newsletter'), {
+			target: { value: 'Unsaved edit' },
+		});
+
+		await act(() => router.navigate('?switch-legacy=false'));
+
+		expect(router.state.location.search).toBe('?switch-legacy=false');
+		expect(screen.getByDisplayValue('Unsaved edit')).toBeInTheDocument();
+	});
+
+	it('asks before browser navigation discards changes', async () => {
+		const router = renderWizard(
+			`${base}/7/production-details`,
+			`${base}/7/name-and-frequency`,
+		);
+		fireEvent.input(await screen.findByDisplayValue('Saved newsletter'), {
+			target: { value: 'Unsaved edit' },
+		});
+		await act(() => router.navigate(-1));
+		await userEvent.click(
+			await screen.findByRole('button', { name: 'Stay on this step' }),
+		);
+		expect(screen.getByDisplayValue('Unsaved edit')).toBeInTheDocument();
+		expect(makeWizardStepRequest).toHaveBeenCalledTimes(1);
+		await act(() => router.navigate(-1));
+		await userEvent.click(
+			await screen.findByRole('button', { name: 'Discard changes' }),
+		);
+		await waitFor(() =>
+			expect(
+				screen.getByRole('heading', { name: 'productionDetails' }),
+			).toBeVisible(),
+		);
+		expect(router.state.location.pathname).toBe(`${base}/7/production-details`);
+	});
+
+	it('retains old edit links and replaces them with the start step', async () => {
+		const router = renderWizard(`${base}/7?switch-legacy=false`);
+		await screen.findByDisplayValue('Saved newsletter');
+		expect(router.state.location.pathname).toBe(`${base}/7/name-and-frequency`);
+		expect(router.state.location.search).toBe('?switch-legacy=false');
+		await userEvent.click(
+			screen.getByRole('button', { name: /Newsletter creation steps/ }),
+		);
+		expect(screen.getByRole('button', { name: 'Introduction' })).toBeEnabled();
+		expect(router.state.historyAction).toBe('REPLACE');
+	});
+
+	it('creates the draft once and loads the next step using its saved ID', async () => {
+		const request = vi.mocked(makeWizardStepRequest);
+		request.mockResolvedValueOnce({
+			...step('nameAndFrequency'),
+			formData: {},
+		});
+		const router = renderWizard(`${base}/new/name-and-frequency`);
+		const save = await screen.findByRole('button', {
+			name: 'Save and continue',
+		});
+		request.mockClear();
+
+		let finishFirstSave!: (response: CurrentStepRouteResponse) => void;
+		const firstSave = new Promise<CurrentStepRouteResponse>((resolve) => {
+			finishFirstSave = resolve;
+		});
+		request.mockReturnValueOnce(firstSave);
+		await userEvent.dblClick(save);
+		expect(request).toHaveBeenCalledTimes(1);
+
+		await act(async () => {
+			finishFirstSave({
+				currentStepId: 'productionDetails',
+				formData: { listId: 7 },
+			});
+			await firstSave;
+		});
+		await screen.findByRole('heading', { name: 'productionDetails' });
+		expect(request.mock.lastCall?.[0]).toMatchObject({
+			id: '7',
+			stepId: 'productionDetails',
+		});
+		expect(router.state.location.pathname).toBe(`${base}/7/production-details`);
+		expect(router.state.historyAction).toBe('REPLACE');
+	});
+
+	it('shows an unknown-step error without contacting the server', async () => {
+		renderWizard(`${base}/7/unknown`);
+		expect(await screen.findByRole('alert')).toHaveTextContent(
+			'Unknown setup step',
+		);
+		expect(makeWizardStepRequest).not.toHaveBeenCalled();
+	});
+
+	it('advances rendering options in place without a setup step URL', async () => {
+		const path = '/drafts/newsletter-data-rendering/7';
+		const router = renderWizard(path);
+		const next = await screen.findByRole('button', {
+			name: 'Save and continue',
+		});
+		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
+			step('newsletterHeader'),
+		);
+		await userEvent.click(next);
+		expect(
+			await screen.findByRole('heading', { name: 'newsletterHeader' }),
+		).toBeVisible();
+		expect(router.state.location.pathname).toBe(path);
 	});
 
 	it('shows an initial request failure instead of a permanent loading state', async () => {
@@ -80,7 +179,7 @@ describe('Stand wizard step interactions', () => {
 		vi.mocked(makeWizardStepRequest).mockRejectedValueOnce(
 			new Error('Offline'),
 		);
-		renderWizard('/drafts/newsletter-data/7');
+		renderWizard(`${base}/7/production-details`);
 		expect(await screen.findByRole('alert')).toHaveTextContent('Wizard failed');
 		log.mockRestore();
 	});

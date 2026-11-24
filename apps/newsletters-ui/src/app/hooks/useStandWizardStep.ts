@@ -11,8 +11,9 @@ import type {
 	WizardFormData,
 } from '@newsletters-nx/state-machine';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useBlocker, useLocation, useNavigate } from 'react-router-dom';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
+import { getStandSetupStepPath } from '../stand-setup-step-path';
 
 export interface StandWizardStepParams {
 	wizardId: WizardId;
@@ -38,9 +39,18 @@ export const useStandWizardStep = ({
 	const [edits, setEdits] = useState<WizardFormData>();
 	const [requestError, setRequestError] = useState<StepRequestError>();
 	const [showAllErrors, setShowAllErrors] = useState(false);
-	const [pendingSkip, setPendingSkip] = useState<string>();
+	const [pendingAction, setPendingAction] = useState<StepAction>();
+	const dirty = useRef(false);
 	const pendingSubmit = useRef<AbortController>();
+	const location = useLocation();
 	const navigate = useNavigate();
+	const usesStepPaths = wizardId === 'NEWSLETTER_DATA_STAND_REDESIGN';
+	const blocker = useBlocker(
+		({ currentLocation, nextLocation }) =>
+			usesStepPaths &&
+			dirty.current &&
+			currentLocation.pathname !== nextLocation.pathname,
+	);
 
 	useEffect(() => () => pendingSubmit.current?.abort(), []);
 	const savedFormData = useMemo(() => {
@@ -78,8 +88,20 @@ export const useStandWizardStep = ({
 				setRequestError(data);
 				return;
 			}
-			// Once a draft is created, keep its ID even on steps that return no fields.
+			dirty.current = false;
 			const listId = data.formData?.listId ?? serverData.formData?.listId;
+			if (usesStepPaths) {
+				const draftId = typeof listId === 'number' ? listId : id;
+				const pathname = getStandSetupStepPath(draftId, data.currentStepId);
+				if (pathname !== location.pathname) {
+					await navigate(
+						{ pathname, search: location.search },
+						{ replace: !id && draftId !== undefined },
+					);
+					return;
+				}
+			}
+			// Rendering and launch advance in place; the URL still identifies the draft.
 			setServerData({ ...data, formData: { ...data.formData, listId } });
 			setEdits(undefined);
 			setShowAllErrors(false);
@@ -99,6 +121,19 @@ export const useStandWizardStep = ({
 		(step) => step.id === serverData.currentStepId,
 	);
 
+	const requestAction = (action: StepAction, discardsEdits: boolean) => {
+		if (dirty.current && discardsEdits) {
+			setPendingAction(action);
+		} else {
+			void sendStepRequest(action);
+		}
+	};
+
+	const handleFormChange = (updatedFormData: WizardFormData) => {
+		dirty.current = true;
+		setEdits(updatedFormData);
+	};
+
 	const handleButtonClick = ({
 		id: buttonId,
 		buttonType,
@@ -108,22 +143,31 @@ export const useStandWizardStep = ({
 			void navigate(navigateTo);
 			return;
 		}
-		void sendStepRequest({ buttonId, buttonType });
+		requestAction(
+			{ buttonId, buttonType },
+			usesStepPaths && (buttonType === 'PREVIOUS' || buttonType === 'CANCEL'),
+		);
 	};
 
 	const handleStepClick = (stepToSkipToId: string) => {
-		if (edits && !currentStepListing?.skippingWillPersistLocalChanges) {
-			setPendingSkip(stepToSkipToId);
-		} else {
-			void sendStepRequest({ stepToSkipToId });
-		}
+		requestAction(
+			{ stepToSkipToId },
+			!currentStepListing?.skippingWillPersistLocalChanges,
+		);
 	};
 
-	const handleConfirmSkip = () => {
-		if (pendingSkip) {
-			void sendStepRequest({ stepToSkipToId: pendingSkip });
-			setPendingSkip(undefined);
+	const handleCancelLeave = () => {
+		blocker.reset?.();
+		setPendingAction(undefined);
+	};
+
+	const handleConfirmLeave = () => {
+		if (blocker.state === 'blocked') {
+			blocker.proceed();
+		} else if (pendingAction) {
+			void sendStepRequest(pendingAction);
 		}
+		setPendingAction(undefined);
 	};
 
 	return {
@@ -133,11 +177,12 @@ export const useStandWizardStep = ({
 		savedFormData,
 		showAllErrors,
 		stepperConfig,
-		handleFormChange: setEdits,
+		stepLabel: currentStepListing?.label ?? serverData.currentStepId,
+		handleFormChange,
 		handleButtonClick,
 		handleStepClick,
-		pendingSkip,
-		handleCancelSkip: () => setPendingSkip(undefined),
-		handleConfirmSkip,
+		isConfirmingLeave: blocker.state === 'blocked' || !!pendingAction,
+		handleCancelLeave,
+		handleConfirmLeave,
 	};
 };
