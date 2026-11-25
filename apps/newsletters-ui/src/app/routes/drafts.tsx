@@ -1,5 +1,4 @@
 import type { RouteObject } from 'react-router-dom';
-import { StandRedesignWizardContainer } from '../components/StandRedesignWizard';
 import { DraftDetailPageView } from '../components/views/DraftDetailPageView';
 import { DraftDetailView } from '../components/views/DraftDetailView';
 import { DraftListView } from '../components/views/DraftListView';
@@ -11,8 +10,25 @@ import {
 } from '../featureSwitches';
 import { Layout } from '../Layout';
 import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
+import { standWizardRoutes } from './stand-wizard';
 
 checkFeatureSwitchURLParams();
+const isLegacyEnabled = isFeatureSwitchEnabled('switch-legacy');
+
+const legacyWizardRoutes = [
+	{
+		path: 'newsletter-data/:listId?',
+		element: <WizardContainer wizardId="NEWSLETTER_DATA" />,
+	},
+	{
+		path: 'newsletter-data-rendering/:listId',
+		element: <WizardContainer wizardId="RENDERING_OPTIONS" />,
+	},
+	{
+		path: 'launch-newsletter/:listId?',
+		element: <WizardContainer wizardId="LAUNCH_NEWSLETTER" />,
+	},
+];
 
 export const draftRoute: RouteObject = {
 	path: '/drafts',
@@ -26,52 +42,9 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: ':id',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
-				<DraftDetailView />
-			) : (
-				<DraftDetailPageView />
-			),
+			element: isLegacyEnabled ? <DraftDetailView /> : <DraftDetailPageView />,
 			loader: draftDetailLoader,
 		},
-		{
-			path: 'newsletter-data/:listId',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
-				<WizardContainer wizardId="NEWSLETTER_DATA" />
-			) : (
-				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
-			),
-		},
-		{
-			path: 'newsletter-data-rendering/:listId',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
-				<WizardContainer wizardId="RENDERING_OPTIONS" />
-			) : (
-				<StandRedesignWizardContainer wizardId="RENDERING_OPTIONS" />
-			),
-		},
-		{
-			path: 'newsletter-data',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
-				<WizardContainer wizardId="NEWSLETTER_DATA" />
-			) : (
-				<StandRedesignWizardContainer wizardId="NEWSLETTER_DATA_STAND_REDESIGN" />
-			),
-		},
-		{
-			path: 'launch-newsletter/:listId',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
-				<WizardContainer wizardId="LAUNCH_NEWSLETTER" />
-			) : (
-				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
-			),
-		},
-		{
-			path: 'launch-newsletter',
-			element: isFeatureSwitchEnabled('switch-legacy') ? (
-				<WizardContainer wizardId="LAUNCH_NEWSLETTER" />
-			) : (
-				<StandRedesignWizardContainer wizardId="LAUNCH_NEWSLETTER" />
-			),
-		},
+		...(isLegacyEnabled ? legacyWizardRoutes : standWizardRoutes),
 	],
 };

@@ -1,25 +1,19 @@
 import { Button } from '@guardian/stand/Button';
-import type { WizardButtonType } from '@newsletters-nx/newsletters-data-client';
 import type { WizardButton } from '@newsletters-nx/state-machine';
 
 interface Props {
 	button: WizardButton;
-	onClick: { (buttonId: string, buttonType: WizardButtonType): { (): void } };
+	onClick: (button: WizardButton) => void;
 }
 
 export const StandRedesignWizardActionButton = ({ button, onClick }: Props) => {
-	const primaryActions: WizardButtonType[] = ['NEXT', 'LAUNCH'];
-
-	const variant = primaryActions.includes(button.buttonType)
-		? 'primary'
-		: 'tertiary';
+	const isPrimary =
+		button.buttonType === 'NEXT' || button.buttonType === 'LAUNCH';
 
 	return (
 		<Button
-			variant={variant}
-			onClick={() => {
-				onClick(button.id, button.buttonType)();
-			}}
+			variant={isPrimary ? 'primary' : 'tertiary'}
+			onClick={() => onClick(button)}
 		>
 			{button.label}
 		</Button>
