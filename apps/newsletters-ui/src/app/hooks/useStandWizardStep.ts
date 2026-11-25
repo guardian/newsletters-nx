@@ -25,6 +25,15 @@ type StepRequestError = Pick<
 	'errorMessage' | 'errorDetails' | 'hasPersistentError'
 >;
 
+const getStepError = ({
+	errorMessage,
+	errorDetails,
+	hasPersistentError,
+}: CurrentStepRouteResponse): StepRequestError | undefined =>
+	errorMessage || hasPersistentError
+		? { errorMessage, errorDetails, hasPersistentError }
+		: undefined;
+
 type StepAction =
 	| { buttonId: string; buttonType: WizardButtonType }
 	| { stepToSkipToId: string };
@@ -42,6 +51,7 @@ export const useStandWizardStep = ({
 	const pendingSubmit = useRef<AbortController>();
 	const navigate = useNavigate();
 
+	// Cancel the in-flight request on unmount, not when advancing in place.
 	useEffect(() => () => pendingSubmit.current?.abort(), []);
 	const savedFormData = useMemo(() => {
 		const schema = getFormSchema(wizardId, serverData.currentStepId);
@@ -59,6 +69,7 @@ export const useStandWizardStep = ({
 		const submit = new AbortController();
 		pendingSubmit.current = submit;
 		setRequestError(undefined);
+		// Show all field errors on button submissions; sidebar skips don't enable this flag.
 		if ('buttonId' in action) {
 			setShowAllErrors(true);
 		}
@@ -73,9 +84,10 @@ export const useStandWizardStep = ({
 				},
 				submit.signal,
 			);
-			if (data.errorMessage || data.hasPersistentError) {
+			const error = getStepError(data);
+			if (error) {
 				// A failed transition must not replace the current step or its form.
-				setRequestError(data);
+				setRequestError(error);
 				return;
 			}
 			// Once a draft is created, keep its ID even on steps that return no fields.
@@ -128,7 +140,7 @@ export const useStandWizardStep = ({
 
 	return {
 		serverData,
-		error: requestError ?? serverData,
+		error: requestError ?? getStepError(serverData),
 		formData,
 		savedFormData,
 		showAllErrors,
