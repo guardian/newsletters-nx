@@ -13,7 +13,7 @@ import { draftDetailLoader, draftListLoader } from '../loaders/newsletters';
 import { standWizardRoutes } from './stand-wizard';
 
 checkFeatureSwitchURLParams();
-const useLegacy = isFeatureSwitchEnabled('switch-legacy');
+const isLegacyEnabled = isFeatureSwitchEnabled('switch-legacy');
 
 const legacyWizardRoutes = [
 	{
@@ -42,9 +42,9 @@ export const draftRoute: RouteObject = {
 		},
 		{
 			path: ':id',
-			element: useLegacy ? <DraftDetailView /> : <DraftDetailPageView />,
+			element: isLegacyEnabled ? <DraftDetailView /> : <DraftDetailPageView />,
 			loader: draftDetailLoader,
 		},
-		...(useLegacy ? legacyWizardRoutes : standWizardRoutes),
+		...(isLegacyEnabled ? legacyWizardRoutes : standWizardRoutes),
 	],
 };

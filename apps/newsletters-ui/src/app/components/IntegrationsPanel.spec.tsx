@@ -500,23 +500,20 @@ describe('IntegrationsPanel', () => {
 			);
 
 			await user.click(await integrationsPanelEditButton());
-			const nameInput = await screen.findByRole('textbox', {
-				name: /^brazeNewsletterName( \*)?$/,
-			});
-			await user.clear(nameInput);
-			await user.type(nameInput, '  Padded_Name  ');
-			const [alternateInput] = await screen.findAllByRole('textbox', {
-				name: 'brazeSubscribeAttributeNameAlternate item',
-			});
-			await user.clear(alternateInput!);
-			await user.type(alternateInput!, ' Padded_Alternate ');
-			await user.type(
-				screen.getByRole('textbox', { name: 'Campaign name' }),
-				'  Padded campaign  ',
+			fireEvent.change(
+				screen.getByRole('textbox', { name: /^brazeNewsletterName( \*)?$/ }),
+				{ target: { value: '  Padded_Name  ' } },
 			);
-			await user.click(
-				await screen.findByRole('button', { name: 'Save changes' }),
+			fireEvent.change(
+				screen.getByRole('textbox', {
+					name: 'brazeSubscribeAttributeNameAlternate item',
+				}),
+				{ target: { value: ' Padded_Alternate ' } },
 			);
+			fireEvent.change(screen.getByRole('textbox', { name: 'Campaign name' }), {
+				target: { value: '  Padded campaign  ' },
+			});
+			await user.click(screen.getByRole('button', { name: 'Save changes' }));
 
 			expect(requestNewsletterEdit).toHaveBeenCalledWith(
 				123,

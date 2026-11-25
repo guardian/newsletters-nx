@@ -1,10 +1,23 @@
-import type { NewsletterData } from './schemas/newsletter-data-type';
+import type {
+	NewsletterCategory,
+	NewsletterData,
+} from './schemas/newsletter-data-type';
+
+function getEditorialContentBlock(category: NewsletterCategory): string {
+	if (category === 'article-based') {
+		// This Braze block is shared by all article-based newsletters, not just First Edition.
+		// TODO: Rename the block in Braze to reflect its wider use.
+		return 'Editorial_FirstEditionContent';
+	}
+	return 'Editorial_Content';
+}
 
 export const generateBrazeTemplateString = (
 	newsletterData: NewsletterData,
 ): string => {
 	const { identityName, campaignName, campaignCode, seriesTag, category } =
 		newsletterData;
+	const editorialContentBlock = getEditorialContentBlock(category);
 	const emailEndpoint =
 		seriesTag && ['article-based', 'article-based-legacy'].includes(category)
 			? `${seriesTag}/latest.json`
@@ -14,7 +27,7 @@ export const generateBrazeTemplateString = (
 {% assign email_endpoint = "${emailEndpoint}" %}
 {% assign utm_campaign = "${campaignName ?? 'CAMPAIGN NAME IS NOT SET'}" %}
 {% assign CMP = "${campaignCode ?? 'CAMPAIGN CODE IS NOT SET'}" %}
-{% capture email_content %}{% endcapture %}
+{% capture email_content %}{{content_blocks.\${${editorialContentBlock}}}}{% endcapture %}
 {% capture merchandising_content_header %}{% endcapture %}
 {% capture merchandising_content_middle %}{% endcapture %}
 {% capture merchandising_content_footer %}{% endcapture %}

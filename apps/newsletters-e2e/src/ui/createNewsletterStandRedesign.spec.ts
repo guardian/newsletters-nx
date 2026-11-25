@@ -262,6 +262,49 @@ test.describe('Create draft newsletter journey', () => {
 		await expect(page.getByRole('alert')).toBeVisible();
 		await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
 	});
+
+	test('shows a save failure without losing the name and frequency edits', async ({
+		page,
+	}) => {
+		await page.route('**/api/currentstep', async (route) => {
+			const request = route.request();
+			const data =
+				request.method() === 'POST'
+					? (request.postDataJSON() as { stepId?: string; buttonId?: string })
+					: undefined;
+			if (data?.stepId !== 'nameAndFrequency' || data.buttonId !== 'next') {
+				await route.fallback();
+				return;
+			}
+			await route.fulfill({
+				status: 500,
+				json: {
+					currentStepId: 'nameAndFrequency',
+					errorMessage: 'Could not save your changes',
+				},
+			});
+		});
+
+		await page.goto(CREATE_URL);
+		await completeIntroStep(page);
+		await completeNameFrequencyStep(page, draftName, 'Weekly');
+
+		await expect(
+			page.getByRole('alert').filter({
+				hasText: 'Please try again: Could not save your changes',
+			}),
+		).toBeVisible();
+		await expect(
+			page.getByRole('heading', { name: 'Name and frequency' }),
+		).toBeVisible();
+		await expect(page.getByLabel('Name the newsletter')).toHaveValue(draftName);
+		await expect(
+			page.getByRole('radio', { name: 'Weekly', exact: true }),
+		).toBeChecked();
+		await expect(
+			page.getByRole('button', { name: 'Save and continue' }),
+		).toBeEnabled();
+	});
 });
 
 test.describe('Wizard step nav skip functionality', () => {
