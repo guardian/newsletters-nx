@@ -103,10 +103,10 @@ describe('Stand setup wizard step URLs', () => {
 	});
 
 	it('retains old edit links and replaces them with the start step', async () => {
-		const router = renderWizard(`${base}/7?switch-legacy=false`);
+		const router = renderWizard(`${base}/7?example=value`);
 		await screen.findByDisplayValue('Saved newsletter');
 		expect(router.state.location.pathname).toBe(`${base}/7/name-and-frequency`);
-		expect(router.state.location.search).toBe('?switch-legacy=false');
+		expect(router.state.location.search).toBe('?example=value');
 		await userEvent.click(
 			screen.getByRole('button', { name: /Newsletter creation steps/ }),
 		);
@@ -126,20 +126,23 @@ describe('Stand setup wizard step URLs', () => {
 		});
 		request.mockClear();
 
-		let finishFirstSave!: (response: CurrentStepRouteResponse) => void;
-		const firstSave = new Promise<CurrentStepRouteResponse>((resolve) => {
-			finishFirstSave = resolve;
-		});
-		request.mockReturnValueOnce(firstSave);
+		// Keep the first save pending so the second click tests the duplicate-request guard.
+		let resolveFirstSave!: (response: CurrentStepRouteResponse) => void;
+		const firstSaveResponse = new Promise<CurrentStepRouteResponse>(
+			(resolve) => {
+				resolveFirstSave = resolve;
+			},
+		);
+		request.mockReturnValueOnce(firstSaveResponse);
 		await userEvent.dblClick(save);
 		expect(request).toHaveBeenCalledTimes(1);
 
 		await act(async () => {
-			finishFirstSave({
+			resolveFirstSave({
 				currentStepId: 'productionDetails',
 				formData: { listId: 7 },
 			});
-			await firstSave;
+			await firstSaveResponse;
 		});
 		await screen.findByRole('heading', { name: 'productionDetails' });
 		expect(request.mock.lastCall?.[0]).toMatchObject({
@@ -158,20 +161,29 @@ describe('Stand setup wizard step URLs', () => {
 		expect(makeWizardStepRequest).not.toHaveBeenCalled();
 	});
 
-	it('advances rendering options in place without a setup step URL', async () => {
-		const path = '/drafts/newsletter-data-rendering/7';
+	it.each([
+		{
+			wizard: 'rendering options',
+			path: '/drafts/newsletter-data-rendering/7',
+			nextStepId: 'newsletterHeader',
+		},
+		{
+			wizard: 'launch',
+			path: '/drafts/launch-newsletter/7',
+			nextStepId: 'isDataComplete',
+		},
+	])('advances $wizard in place', async ({ path, nextStepId }) => {
 		const router = renderWizard(path);
 		const next = await screen.findByRole('button', {
 			name: 'Save and continue',
 		});
-		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(
-			step('newsletterHeader'),
-		);
+		const { key } = router.state.location;
+		vi.mocked(makeWizardStepRequest).mockResolvedValueOnce(step(nextStepId));
 		await userEvent.click(next);
 		expect(
-			await screen.findByRole('heading', { name: 'newsletterHeader' }),
+			await screen.findByRole('heading', { name: nextStepId }),
 		).toBeVisible();
-		expect(router.state.location.pathname).toBe(path);
+		expect(router.state.location).toMatchObject({ pathname: path, key });
 	});
 
 	it('shows an initial request failure instead of a permanent loading state', async () => {
