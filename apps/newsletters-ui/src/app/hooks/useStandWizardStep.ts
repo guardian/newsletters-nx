@@ -96,6 +96,7 @@ export const useStandWizardStep = ({
 				if (pathname !== location.pathname) {
 					await navigate(
 						{ pathname, search: location.search },
+						// Replace the `new` entry on first save so Back does not reopen it as a new draft.
 						{ replace: !id && draftId !== undefined },
 					);
 					return;
