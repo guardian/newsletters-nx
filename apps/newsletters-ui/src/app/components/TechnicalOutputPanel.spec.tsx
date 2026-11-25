@@ -95,21 +95,28 @@ describe('TechnicalOutputPanel', () => {
 		);
 	});
 
-	it('shows the Braze template with empty slots', () => {
-		renderPanel();
+	it.each([
+		['article-based', 'Editorial_FirstEditionContent'],
+		['article-based-legacy', 'Editorial_Content'],
+		['fronts-based', 'Editorial_Content'],
+	] as const)(
+		'shows only the editorial content block in the Braze template for %s newsletters',
+		(category, editorialContentBlock) => {
+			renderPanel({ category });
 
-		expect(brazeTemplate()).toContain(
-			'identity_newsletter_id = "afternoon-update"',
-		);
-		expect(brazeTemplate()).toContain(
-			'{% capture email_content %}{% endcapture %}',
-		);
-		for (const slot of ['header', 'middle', 'footer']) {
-			expect(brazeTemplate()).toContain(
-				`{% capture merchandising_content_${slot} %}{% endcapture %}`,
+			const template = brazeTemplate();
+			expect(template).toContain('identity_newsletter_id = "afternoon-update"');
+			expect(template).toContain(
+				`{% capture email_content %}{{content_blocks.\${${editorialContentBlock}}}}{% endcapture %}`,
 			);
-		}
-	});
+			expect(template?.match(/\bcontent_blocks\./g)).toHaveLength(1);
+			for (const slot of ['header', 'middle', 'footer', 'newsletter']) {
+				expect(template).toContain(
+					`{% capture merchandising_content_${slot} %}{% endcapture %}`,
+				);
+			}
+		},
+	);
 
 	it('copies the Braze template', async () => {
 		const { user } = renderPanel();
