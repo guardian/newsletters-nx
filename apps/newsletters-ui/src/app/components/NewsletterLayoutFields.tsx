@@ -78,6 +78,12 @@ const heroOptionsStyles = css`
 	gap: ${baseSpacing['20Px']};
 `;
 
+const checkboxStyles = css`
+	&:not([data-selected], [data-indeterminate]) .checkbox-indicator {
+		background-color: ${semanticColors.bg.base};
+	}
+`;
+
 const formControlStyles = css`
 	width: 100%;
 	max-width: 450px;
@@ -280,6 +286,7 @@ export const NewsletterLayoutFields = ({
 	) => (
 		<Checkbox
 			size="md"
+			cssOverrides={checkboxStyles}
 			isSelected={settings[key] ?? false}
 			onChange={(value) =>
 				onChange(
@@ -366,6 +373,7 @@ export const NewsletterLayoutFields = ({
 						}
 					/>
 					<Checkbox
+						cssOverrides={checkboxStyles}
 						isSelected={item.isDarkTheme ?? false}
 						onChange={(isDarkTheme) => update({ ...item, isDarkTheme })}
 					>

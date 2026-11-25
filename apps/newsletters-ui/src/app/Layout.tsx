@@ -27,7 +27,7 @@ const viewportHeightCss = (options: { fromLgOnly?: boolean } = {}) =>
 		`
 		: emotionCss(pinnedToViewport);
 
-const allNewslettersViewportCss = viewportHeightCss();
+const fullViewportCss = viewportHeightCss();
 const homeViewportCss = viewportHeightCss({ fromLgOnly: true });
 
 const frameCss = css`
@@ -85,6 +85,10 @@ export function Layout(props: IRootRoute) {
 	const isNewslettersHubLandingRoute = location.pathname === '/layouts';
 	const isNewslettersDetailPageStand =
 		location.pathname.startsWith('/newsletters/');
+	const isNewsletterLayoutEditor = !!matchPath(
+		'/newsletters/:id/layout/edit',
+		location.pathname,
+	);
 	const isDraftDetailPage = !!matchPath('/drafts/:id', location.pathname);
 	// Stand detail pages own their main landmark, as do the wizard and landing pages.
 	const usesStandShell =
@@ -117,8 +121,8 @@ export function Layout(props: IRootRoute) {
 		return (
 			<StandLayout
 				cssOverrides={
-					isAllNewslettersRoute
-						? allNewslettersViewportCss
+					isAllNewslettersRoute || isNewsletterLayoutEditor
+						? fullViewportCss
 						: isHomeRoute
 							? homeViewportCss
 							: undefined

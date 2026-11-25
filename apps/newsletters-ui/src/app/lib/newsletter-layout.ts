@@ -5,8 +5,11 @@ import type {
 } from '@newsletters-nx/newsletters-data-client';
 import { renderingOptionsSchema } from '@newsletters-nx/newsletters-data-client';
 
-export const hasNewsletterLayout = (category: NewsletterCategory) =>
+export const canEditNewsletterLayout = (category: NewsletterCategory) =>
 	category === 'article-based' || category === 'article-based-legacy';
+
+export const hasNewsletterLayout = (category: NewsletterCategory) =>
+	canEditNewsletterLayout(category) || category === 'fronts-based';
 
 export const newsletterLayoutPath = (
 	identityName: string,
@@ -20,7 +23,11 @@ export const newsletterLayoutDestination = (
 ) =>
 	newsletterLayoutPath(
 		identityName,
-		!hasNewsletterLayout(category) ? 'details' : edit ? 'edit' : 'layout',
+		!hasNewsletterLayout(category)
+			? 'details'
+			: edit && canEditNewsletterLayout(category)
+				? 'edit'
+				: 'layout',
 	);
 
 export const layoutSettingsSchema = renderingOptionsSchema.pick({

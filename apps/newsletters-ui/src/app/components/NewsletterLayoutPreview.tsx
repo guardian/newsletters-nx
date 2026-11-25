@@ -1,6 +1,5 @@
 import { css, keyframes } from '@emotion/react';
 import {
-	baseSpacing,
 	semanticColors,
 	semanticRadius,
 	semanticSpacing,
@@ -38,11 +37,20 @@ const previewStyles = css`
 `;
 
 const editorPreviewStyles = css`
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 	max-width: 658px;
 	margin-inline: auto;
+	> :not(:last-child) {
+		flex-shrink: 0;
+	}
 `;
 
 const segmentGroupStyles = css`
+	flex-direction: row;
+	justify-content: flex-end;
+	width: fit-content;
 	gap: 0;
 	background: ${semanticColors.fill.neutralWeak};
 	border-radius: ${semanticRadius.cornerSm};
@@ -95,14 +103,14 @@ const viewportStyles = css`
 `;
 
 const editorViewportStyles = css`
-	margin-top: ${baseSpacing['32Px']};
+	flex: 1;
+	min-height: 0;
 `;
 
 const frameStackStyles = css`
 	position: relative;
 	margin-inline: auto;
 	overflow: clip;
-	height: clamp(320px, 67vh, 850px);
 	background: ${semanticColors.bg.base};
 `;
 
@@ -346,16 +354,13 @@ export const NewsletterLayoutPreview = ({
 	};
 
 	const error = failed === request;
-	const busy = !invalid && !error && current?.request !== request;
 	const status = invalid
 		? 'Complete the layout fields to update the preview.'
 		: error
 			? 'Could not load the email preview.'
-			: busy
-				? 'Updating preview…'
-				: frames.missingTarget
-					? 'The affected section is not in this sample edition.'
-					: '';
+			: current?.request === request && frames.missingTarget
+				? 'The affected section is not in this sample edition.'
+				: '';
 
 	return (
 		<section
@@ -412,10 +417,11 @@ export const NewsletterLayoutPreview = ({
 								'--preview-width': `${width}px`,
 								'--preview-scale': scale,
 								width: width * scale,
-								height:
-									!editing && documentHeight
+								height: editing
+									? '100%'
+									: documentHeight
 										? Math.ceil(documentHeight * scale)
-										: undefined,
+										: 'clamp(320px, 67vh, 850px)',
 							} as CSSProperties
 						}
 					>

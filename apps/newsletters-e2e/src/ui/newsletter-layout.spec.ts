@@ -43,7 +43,7 @@ test.beforeEach(async ({ page }) => {
 	});
 });
 
-test('matches the responsive layout and keeps width selection usable on mobile', async ({
+test('keeps width selection usable in the saved preview at narrow widths', async ({
 	page,
 }) => {
 	await page.setViewportSize({ width: 393, height: 850 });
@@ -72,28 +72,156 @@ test('matches the responsive layout and keeps width selection usable on mobile',
 	await expect(
 		previewRegion.getByRole('button', { name: '320 px' }),
 	).toHaveAttribute('aria-pressed', 'true');
+});
 
+test('fills the desktop editor with a short preview without stretching the email', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 1440, height: 2160 });
+	await page.route(`**${preview}`, (route) =>
+		route.fulfill({
+			json: {
+				ok: true,
+				data: {
+					html: '<!doctype html><h1>Short edition</h1>',
+					warnings: [],
+				},
+			},
+		}),
+	);
+	await page.goto(layout);
 	await page.getByRole('link', { name: 'Edit layout' }).click();
+	const editor = page.getByRole('main');
 	await expect(
-		page.getByRole('heading', { name: 'Edit newsletter layout' }),
+		editor.getByRole('heading', { name: 'Edit newsletter layout' }),
 	).toBeVisible();
-	await expect(page.getByRole('tablist')).toHaveCount(0);
-	const theme = page.getByRole('region', { name: 'Overall theme' });
-	const footer = page.getByRole('region', { name: 'Footer options' });
-	await expect
-		.poll(
-			async () =>
-				(await previewRegion.boundingBox())!.y -
-				(await footer.boundingBox())!.y,
-		)
-		.toBeGreaterThan(0);
-	await page.setViewportSize({ width: 830, height: 850 });
-	await expect
-		.poll(
-			async () =>
-				(await previewRegion.boundingBox())!.x - (await theme.boundingBox())!.x,
-		)
-		.toBeGreaterThan(200);
+	await expect(page.getByRole('dialog')).toHaveCount(0);
+	const previewRegion = editor.getByRole('region', { name: 'Email preview' });
+	const controls = editor.getByRole('region', { name: 'Layout controls' });
+	const frame = editor.getByTitle(title);
+	const headline = frame.contentFrame().getByRole('heading', {
+		name: 'Short edition',
+	});
+	await expect(headline).toBeVisible();
+	const { height, contentHeight, headlineTop, headlineHeight } =
+		await headline.evaluate((element) => {
+			const { scrollingElement } = element.ownerDocument;
+			const { top, height: headlineHeight } = element.getBoundingClientRect();
+			return {
+				height: scrollingElement?.clientHeight,
+				contentHeight: scrollingElement?.scrollHeight,
+				headlineTop: top,
+				headlineHeight,
+			};
+		});
+	expect(contentHeight).toBe(height);
+	expect(headlineTop + headlineHeight).toBeLessThan(100);
+	expect(
+		await controls.evaluate((el) => el.scrollHeight - el.clientHeight),
+	).toBe(0);
+	const formBounds = (await editor.locator('form').boundingBox())!;
+	const formBottom = formBounds.y + formBounds.height;
+	const previewBounds = (await frame.boundingBox())!;
+	const previewBottom = previewBounds.y + previewBounds.height;
+	expect(previewBottom).toBeLessThan(formBottom);
+	expect(formBottom - previewBottom).toBeLessThan(32);
+
+	const toolbar = previewRegion.getByRole('group', { name: 'Preview width' });
+	const segments = (await toolbar.locator(':scope > div').boundingBox())!;
+	const first = (await toolbar
+		.getByRole('button', { name: '320 px' })
+		.boundingBox())!;
+	const last = (await toolbar
+		.getByRole('button', { name: '650 px' })
+		.boundingBox())!;
+	const toolbarBounds = (await toolbar.boundingBox())!;
+	expect(first.y).toBeCloseTo(last.y);
+	expect(segments.width).toBeCloseTo(last.x + last.width - first.x);
+	expect(segments.x + segments.width).toBeCloseTo(
+		toolbarBounds.x + toolbarBounds.width,
+	);
+});
+
+test('scrolls either editor pane independently on a short desktop viewport', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 1280, height: 600 });
+	await page.goto(`${layout}/edit`);
+	const editor = page.getByRole('main');
+	const controls = editor.getByRole('region', { name: 'Layout controls' });
+	const frame = editor.getByTitle(title);
+	const header = editor.locator('form header');
+	const cancel = header.getByRole('button', { name: 'Cancel' });
+	const save = header.getByRole('button', { name: 'Save layout' });
+	const previewScroll = () =>
+		frame.evaluate(
+			(iframe: HTMLIFrameElement) => iframe.contentWindow?.scrollY,
+		);
+	const controlsScroll = () =>
+		controls.evaluate((element) => element.scrollTop);
+	await expect(frame).toBeVisible();
+	await expect(cancel).toBeInViewport({ ratio: 1 });
+	await expect(save).toBeInViewport({ ratio: 1 });
+	const initialCancel = await cancel.boundingBox();
+	const initialSave = await save.boundingBox();
+	const initialPreview = await frame.boundingBox();
+	const pageOverflow = () =>
+		page.evaluate(
+			() =>
+				document.documentElement.scrollHeight -
+				document.documentElement.clientHeight,
+		);
+	expect(await pageOverflow()).toBe(0);
+
+	await controls.hover();
+	await page.mouse.wheel(0, 250);
+	await expect.poll(controlsScroll).toBeGreaterThan(0);
+	const scrolledControls = await controlsScroll();
+	expect(await previewScroll()).toBe(0);
+
+	await frame.hover();
+	await page.mouse.wheel(0, 250);
+	await expect.poll(previewScroll).toBeGreaterThan(0);
+	expect(await controlsScroll()).toBe(scrolledControls);
+	expect(await frame.boundingBox()).toEqual(initialPreview);
+	expect(await cancel.boundingBox()).toEqual(initialCancel);
+	expect(await save.boundingBox()).toEqual(initialSave);
+	expect(await page.evaluate(() => window.scrollY)).toBe(0);
+	expect(await editor.evaluate((el) => el.scrollHeight - el.clientHeight)).toBe(
+		0,
+	);
+
+	await cancel.click();
+	await expect(page).toHaveURL(layout);
+	await expect.poll(pageOverflow).toBeGreaterThan(0);
+});
+
+test('opens a read-only Layout tab for fronts-based newsletters', async ({
+	page,
+}) => {
+	const frontsId = 'playwright-fronts-test';
+	const frontsLayout = `/newsletters/${frontsId}/layout`;
+	await page.goto(`/newsletters/${frontsId}/details`);
+	await page.getByRole('tab', { name: 'Layout' }).click();
+	await expect(page).toHaveURL(frontsLayout);
+	await expect(
+		page.getByRole('tab', { name: 'Layout', selected: true }),
+	).toBeVisible();
+	await expect(
+		page.frameLocator(`iframe[title="${title}"]`).getByRole('heading', {
+			name: 'Test edition',
+		}),
+	).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Edit layout' })).toHaveCount(0);
+
+	await page.goBack();
+	await expect(
+		page.getByRole('tab', { name: 'Details', selected: true }),
+	).toBeVisible();
+	await page.goto(`${frontsLayout}/edit`);
+	await expect(page).toHaveURL(frontsLayout);
+	await page.goto(`/launched/rendering-options/${frontsId}`);
+	await expect(page).toHaveURL(frontsLayout);
 });
 
 test('crossfades from the previous headline to the updated headline', async ({
@@ -148,6 +276,9 @@ test('jumps to the latest unsaved edit without moving the editor, and keeps its 
 	await page.goto(details);
 	await page.getByRole('tab', { name: 'Layout' }).click();
 	await page.getByRole('link', { name: 'Edit layout' }).click();
+	const status = page
+		.getByRole('region', { name: 'Email preview' })
+		.getByRole('status');
 	const frame = page.frameLocator(`iframe[title="${title}"]`);
 	const footer = frame.locator('footer');
 	await expect(footer).toHaveText('Default contact');
@@ -164,6 +295,8 @@ test('jumps to the latest unsaved edit without moving the editor, and keeps its 
 	await email.fill('older@example.com');
 	await started;
 	try {
+		await expect(status).toBeEmpty();
+		await expect(footer).toHaveText('Default contact');
 		await email.fill('latest@example.com');
 		await expect(footer).toHaveText('latest@example.com');
 		await expect
@@ -180,9 +313,9 @@ test('jumps to the latest unsaved edit without moving the editor, and keeps its 
 	}
 	await expect(footer).toHaveText('latest@example.com');
 	await page.getByText('Show image captions', { exact: true }).click();
-	await expect(
-		page.getByRole('region', { name: 'Email preview' }).getByRole('status'),
-	).toHaveText('The affected section is not in this sample edition.');
+	await expect(status).toHaveText(
+		'The affected section is not in this sample edition.',
+	);
 	await expect(page.locator(hiddenFrame)).toHaveCount(0);
 	await expect
 		.poll(() =>
@@ -310,7 +443,9 @@ test('saves only layout edits and protects unsaved navigation', async ({
 		await expect(email).toHaveValue('saved@example.com');
 		await email.clear();
 		await page.getByRole('button', { name: 'Cancel' }).click();
-		await expect(page.getByRole('dialog')).toBeVisible();
+		await expect(
+			page.getByRole('dialog', { name: 'Discard unsaved changes?' }),
+		).toBeVisible();
 		await page
 			.getByRole('button', { name: 'Keep editing', exact: true })
 			.click();

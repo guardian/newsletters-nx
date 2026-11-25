@@ -27,6 +27,7 @@ import { fetchApiData } from '../../api-requests/fetch-api-data';
 import { requestNewsletterEdit } from '../../api-requests/request-newsletter-edit';
 import type { LayoutSettings } from '../../lib/newsletter-layout';
 import {
+	canEditNewsletterLayout,
 	defaultLayoutSettings,
 	hasNewsletterLayout,
 	layoutSettingKeys,
@@ -43,8 +44,6 @@ import { NewsletterDetailTabs } from '../NewsletterDetailTabs';
 import { NewsletterLayoutFields } from '../NewsletterLayoutFields';
 import { NewsletterLayoutPreview } from '../NewsletterLayoutPreview';
 import { spacerStyles } from './NewsletterDetailPageView';
-
-const stacked = '@media (max-width: 600px)';
 
 const mainStyle = css`
 	box-sizing: border-box;
@@ -65,10 +64,9 @@ const mainStyle = css`
 `;
 
 const editorMainStyle = css`
+	min-height: 0;
 	max-width: 1280px;
-	@media (max-width: 393px) {
-		padding-inline: ${semanticSpacing.stackMd};
-	}
+	padding-block: ${semanticSpacing.stackSm};
 `;
 
 const cardStyles = css`
@@ -89,40 +87,39 @@ const narrowPreviewHeader = css`
 	}
 `;
 
+const editorFormStyles = css`
+	${cardStyles};
+	display: grid;
+	grid-template-rows: auto minmax(0, 1fr);
+	flex: 1;
+	min-height: 0;
+	overflow: clip;
+`;
+
 const columnsStyles = css`
 	display: grid;
-	grid-template-columns: minmax(0, clamp(232px, 34%, 298px)) minmax(0, 1fr);
-	@media (min-width: 1280px) {
-		grid-template-columns: minmax(0, 39.5%) minmax(0, 1fr);
-	}
-	${stacked} {
+	grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+	grid-template-rows: minmax(0, 1fr);
+	@media (max-width: 600px) {
 		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: repeat(2, minmax(0, 1fr));
 	}
 `;
 
 const fieldsStyles = css`
-	min-width: 0;
-	padding: ${baseSpacing['24Px']} ${semanticSpacing.stackSm};
-	@media (min-width: 1280px), (max-width: 600px) {
-		padding-inline: ${semanticSpacing.stackMd};
-	}
+	overflow: auto;
+	overscroll-behavior: contain;
+	background: ${semanticColors.bg.raisedLevel2};
+	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 `;
 
 const previewColumnStyles = css`
-	min-width: 0;
-	background: ${semanticColors.bg.raisedLevel2};
 	border-inline-start: 1px solid ${semanticColors.border.weak};
-	padding: ${baseSpacing['24Px']} ${semanticSpacing.stackSm};
-	${stacked} {
+	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
+	overflow: clip;
+	@media (max-width: 600px) {
 		border-inline-start: 0;
 		border-top: 1px solid ${semanticColors.border.weak};
-	}
-`;
-
-const stickyPreviewStyles = css`
-	@media (width > 600px) {
-		position: sticky;
-		top: ${baseSpacing['24Px']};
 	}
 `;
 
@@ -145,15 +142,10 @@ const headingStyles = css`
 `;
 
 const editorHeadingStyles = css`
-	padding: ${semanticSpacing.stackMd} ${semanticSpacing.stackSm}
-		${baseSpacing['24Px']};
+	padding: ${semanticSpacing.stackSm} ${semanticSpacing.stackMd};
 	border-bottom: 1px solid ${semanticColors.border.weak};
-	@media (min-width: 1280px) {
-		padding-inline: ${semanticSpacing.stackMd};
-	}
-	${stacked} {
-		flex-direction: column;
-		align-items: flex-start;
+	@media (max-width: 600px) {
+		flex-wrap: wrap;
 	}
 `;
 
@@ -162,12 +154,21 @@ const actionStyles = css`
 	gap: ${semanticSpacing.stackMd};
 `;
 
+const editorActionStyles = css`
+	${actionStyles};
+	flex-direction: row;
+	width: fit-content;
+	max-width: 100%;
+`;
+
 const LayoutHeading = ({
 	editing = false,
 	actions,
+	saveError,
 }: {
 	editing?: boolean;
 	actions?: ReactNode;
+	saveError?: string;
 }) => (
 	<header
 		css={[headingStyles, editing ? editorHeadingStyles : narrowPreviewHeader]}
@@ -179,6 +180,7 @@ const LayoutHeading = ({
 			<Typography element="p" variant="bodyMd">
 				How your template will look (see Composer for full preview)
 			</Typography>
+			{saveError && <p role="alert">{saveError}</p>}
 		</div>
 		{actions}
 	</header>
@@ -244,7 +246,7 @@ const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 			);
 			if (
 				!latest ||
-				!hasNewsletterLayout(latest.category) ||
+				!canEditNewsletterLayout(latest.category) ||
 				latest.listId !== newsletter.listId
 			) {
 				setSaveError(
@@ -280,7 +282,7 @@ const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 					event.preventDefault();
 					void save();
 				}}
-				css={cardStyles}
+				css={editorFormStyles}
 			>
 				<fieldset
 					disabled={saving}
@@ -290,10 +292,12 @@ const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 				>
 					<LayoutHeading
 						editing
+						saveError={saveError}
 						actions={
-							<ButtonGroup size="lg" cssOverrides={actionStyles}>
+							<ButtonGroup size="lg" cssOverrides={editorActionStyles}>
 								<Button
 									variant="tertiary"
+									isDisabled={saving}
 									onPress={() => void navigate(layoutPath, { replace: true })}
 								>
 									Cancel
@@ -307,9 +311,8 @@ const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 							</ButtonGroup>
 						}
 					/>
-					{saveError && <p role="alert">{saveError}</p>}
 					<div css={columnsStyles}>
-						<div css={fieldsStyles}>
+						<section aria-label="Layout controls" css={fieldsStyles}>
 							{!validation.success && (
 								<ul aria-label="Layout validation errors">
 									{validation.error.issues.map(({ path, message }, index) => (
@@ -333,15 +336,13 @@ const Editor = ({ newsletter }: { newsletter: NewsletterData }) => {
 									);
 								}}
 							/>
-						</div>
+						</section>
 						<div css={previewColumnStyles}>
-							<div css={stickyPreviewStyles}>
-								<NewsletterLayoutPreview
-									request={previewRequest}
-									invalid={!validation.success}
-									editing
-								/>
-							</div>
+							<NewsletterLayoutPreview
+								request={previewRequest}
+								invalid={!validation.success}
+								editing
+							/>
 						</div>
 					</div>
 				</fieldset>
@@ -373,49 +374,49 @@ export const NewsletterLayoutView = ({
 	if (!hasNewsletterLayout(newsletter.category)) {
 		return <Navigate to={newsletterLayoutPath(id, 'details')} replace />;
 	}
-	if (editing && !canEdit) {
+	const canEditLayout = canEdit && canEditNewsletterLayout(newsletter.category);
+	if (editing && !canEditLayout) {
 		return <Navigate to={newsletterLayoutPath(id, 'layout')} replace />;
 	}
 
 	return (
-		<Layout.Main css={[mainStyle, editing && editorMainStyle]}>
-			<div css={spacerStyles}>
-				<NewsletterDetailHeader newsletter={newsletter} layoutPage>
-					{!editing && (
-						<NewsletterDetailTabs identityName={id} selected="layout" />
-					)}
-				</NewsletterDetailHeader>
-				{editing ? (
-					<Editor key={newsletter.listId} newsletter={newsletter} />
-				) : (
-					<div css={[savedPreviewStyles, spacerStyles]}>
-						<LayoutHeading
-							actions={
-								canEdit && (
-									<AriaRouterProvider
-										navigate={(path) => void navigate(path)}
-										useHref={useHref}
-									>
-										<LinkButton
-											href={newsletterLayoutPath(id, 'edit')}
-											variant="tertiary"
-											size="md"
-											icon="edit"
-											cssOverrides={actionStyles}
-										>
-											Edit layout
-										</LinkButton>
-									</AriaRouterProvider>
-								)
-							}
-						/>
-						<SavedLayoutPreview
-							key={newsletter.listId}
-							newsletter={newsletter}
-						/>
-					</div>
+		<Layout.Main
+			paddingTop={!editing}
+			paddingBottom={!editing}
+			css={[mainStyle, spacerStyles, editing && editorMainStyle]}
+		>
+			<NewsletterDetailHeader newsletter={newsletter} layoutPage>
+				{!editing && (
+					<NewsletterDetailTabs identityName={id} selected="layout" />
 				)}
-			</div>
+			</NewsletterDetailHeader>
+			{editing ? (
+				<Editor key={newsletter.listId} newsletter={newsletter} />
+			) : (
+				<div css={[savedPreviewStyles, spacerStyles]}>
+					<LayoutHeading
+						actions={
+							canEditLayout && (
+								<AriaRouterProvider
+									navigate={(path) => void navigate(path)}
+									useHref={useHref}
+								>
+									<LinkButton
+										href={newsletterLayoutPath(id, 'edit')}
+										variant="tertiary"
+										size="md"
+										icon="edit"
+										cssOverrides={actionStyles}
+									>
+										Edit layout
+									</LinkButton>
+								</AriaRouterProvider>
+							)
+						}
+					/>
+					<SavedLayoutPreview key={newsletter.listId} newsletter={newsletter} />
+				</div>
+			)}
 		</Layout.Main>
 	);
 };
