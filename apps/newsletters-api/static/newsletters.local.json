@@ -134,7 +134,7 @@
 				{
 					"subheading": "section 32",
 					"wording": "more about this",
-					"url": "https://www.theguardian.com/uk/tv-and-radio"
+					"onwardPath": "/uk/tv-and-radio"
 				}
 			]
 		}
