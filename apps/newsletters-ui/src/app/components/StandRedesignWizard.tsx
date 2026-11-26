@@ -74,7 +74,7 @@ export const StandRedesignWizard = (params: StandWizardStepParams) => {
 	const { wizardId, id } = params;
 	const step = useStandWizardStep(params);
 	const { serverData, formData } = step;
-	const { errorMessage, errorDetails, hasPersistentError } = step.error;
+	const { errorMessage, errorDetails, hasPersistentError } = step.error ?? {};
 	const { currentStepId } = serverData;
 	const formSchema = getFormSchema(wizardId, currentStepId);
 	const notedFields = getNotedFields(wizardId, currentStepId);
