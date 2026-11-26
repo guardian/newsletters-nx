@@ -12,6 +12,7 @@ import { isNewsletterData } from '@newsletters-nx/newsletters-data-client';
 import type React from 'react';
 import { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
+import { hasNewsletterLayout } from '../../lib/newsletter-layout';
 import { NewsletterDetailHeader } from '../NewsletterDetailHeader';
 import { NewsletterDetailPanels } from '../NewsletterDetailPanels';
 import { NewsletterDetailTabs } from '../NewsletterDetailTabs';
@@ -92,6 +93,7 @@ const NewsletterDetail = ({ loaded }: { loaded: NewsletterData }) => {
 				<NewsletterDetailTabs
 					identityName={newsletter.identityName}
 					selected="details"
+					showLayout={hasNewsletterLayout(newsletter.category)}
 				/>
 			</NewsletterDetailHeader>
 			<NewsletterDetailPanels newsletter={newsletter} onSaved={setNewsletter} />

@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import { Navigate, useLocation } from 'react-router-dom';
 import { NewsletterDetailPageView } from '../components/views/NewsletterDetailPageView';
+import { NewsletterLayoutView } from '../components/views/NewsletterLayoutView';
 import { ErrorPage } from '../ErrorPage';
 import {
 	checkFeatureSwitchURLParams,
@@ -35,6 +36,11 @@ export const newslettersRoute: RouteObject = {
 				{
 					path: 'details',
 					element: <NewsletterDetailPageView />,
+					loader: detailLoader,
+				},
+				{
+					path: 'layout',
+					element: <NewsletterLayoutView />,
 					loader: detailLoader,
 				},
 			],
