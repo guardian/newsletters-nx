@@ -381,13 +381,16 @@ Then('the {string} tab is selected', async ({ page }, tab: string) => {
 	);
 });
 Then(
-	'the rendering options for {string} are shown',
+	'the layout preview for {string} is shown',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(page).toHaveURL(
 			new RegExp(
-				`/launched/rendering-options/${identityNameFor(namedNewsletters, name)}$`,
+				`/newsletters/${identityNameFor(namedNewsletters, name)}/layout$`,
 			),
 		);
+		await expect(
+			page.getByRole('region', { name: 'Email preview' }),
+		).toBeVisible();
 	},
 );
 

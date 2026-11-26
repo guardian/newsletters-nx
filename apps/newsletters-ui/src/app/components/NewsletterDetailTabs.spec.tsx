@@ -5,7 +5,7 @@ import { NewsletterDetailTabs } from './NewsletterDetailTabs';
 
 const Location = () => <p data-testid="location">{useLocation().pathname}</p>;
 
-const renderTabs = () =>
+const renderTabs = (showLayout = true) =>
 	render(
 		<MemoryRouter initialEntries={['/newsletters/afternoon-update/details']}>
 			<Routes>
@@ -16,6 +16,7 @@ const renderTabs = () =>
 							<NewsletterDetailTabs
 								identityName="afternoon-update"
 								selected="details"
+								showLayout={showLayout}
 							/>
 							<Location />
 						</>
@@ -35,11 +36,16 @@ describe('NewsletterDetailTabs', () => {
 		).toBe('true');
 	});
 
-	it('links the Layout tab to the existing preview', () => {
+	it('links the Layout tab to the Stand preview', () => {
 		renderTabs();
 		fireEvent.click(screen.getByRole('tab', { name: 'Layout' }));
 		expect(screen.getByTestId('location').textContent).toBe(
-			'/launched/rendering-options/afternoon-update',
+			'/newsletters/afternoon-update/layout',
 		);
+	});
+
+	it('omits Layout for categories without a layout', () => {
+		renderTabs(false);
+		expect(screen.queryByRole('tab', { name: 'Layout' })).toBeNull();
 	});
 });
