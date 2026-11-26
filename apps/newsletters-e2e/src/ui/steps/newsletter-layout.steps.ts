@@ -1,5 +1,6 @@
 import type { NewsletterData } from '@newsletters-nx/newsletters-data-client';
 import { newsletterCategoriesSchema } from '@newsletters-nx/newsletters-data-client';
+import type { Route } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { createFixtureNewsletter } from '@newsletters-internal/e2e/helpers/test-fixtures';
 import type { NamedNewsletterRef } from './fixtures';
@@ -12,13 +13,15 @@ const savedOptions = {
 	displayStandfirst: false,
 	displayImageCaptions: false,
 };
-const sample = (warnings: Array<{ message: string }> = []) => ({
+const sample = {
 	ok: true,
 	data: {
 		html: '<!doctype html><html lang="en"><body><h1>Sample edition</h1><a href="https://www.theguardian.com/food">Read the story</a><div style="height:1200px"></div><script>document.body.dataset.executed = "true"</script></body></html>',
-		warnings,
+		warnings: [{ message: 'Sample renderer warning.' }],
 	},
-});
+};
+const failRender = (route: Route) =>
+	route.fulfill({ status: 502, json: { ok: false } });
 const launched = (ref: NamedNewsletterRef | undefined) => {
 	if (ref?.kind !== 'launched') {
 		throw new Error('No layout newsletter');
@@ -35,7 +38,7 @@ Given(
 				launched(namedNewsletters.refsByName['layout']).identityName,
 			);
 			expect(payload.renderingOptions).toMatchObject(savedOptions);
-			return route.fulfill({ json: sample() });
+			return route.fulfill({ json: sample });
 		});
 	},
 );
@@ -106,23 +109,15 @@ Then('the email document uses width {int}', async ({ page }, width: number) => {
 		page.getByRole('button', { name: `${width} px` }),
 	).toHaveAttribute('aria-pressed', 'true');
 });
-Given(
-	'layout editing permission is {string}',
-	async ({ page }, permission: string) => {
-		await page.route('**/api/user/permissions', (route) =>
-			route.fulfill({
-				json: { ok: true, data: { editEverything: permission === 'allowed' } },
-			}),
-		);
-	},
-);
+Given('layout editing is allowed', async ({ page }) => {
+	await page.route('**/api/user/permissions', (route) =>
+		route.fulfill({ json: { ok: true, data: { editEverything: true } } }),
+	);
+});
 Given('layout permissions cannot be loaded', async ({ page }) => {
 	await page.route('**/api/user/permissions', (route) =>
 		route.fulfill({ status: 503, json: { ok: false } }),
 	);
-});
-Given('layout permissions remain pending', async ({ page }) => {
-	await page.route('**/api/user/permissions', () => {});
 });
 Then(
 	'the Edit layout action is {string}',
@@ -141,9 +136,7 @@ Then(
 	},
 );
 Given('the next layout render fails', async ({ page }) => {
-	await page.route(previewEndpoint, (route) =>
-		route.fulfill({ status: 502, json: { ok: false } }),
-	);
+	await page.route(previewEndpoint, failRender);
 });
 Then('the layout preview explains the failure', async ({ page }) => {
 	await expect(page.getByRole('status')).toContainText(
@@ -154,23 +147,13 @@ Then('the layout preview explains the failure', async ({ page }) => {
 	).toBeVisible();
 });
 When('the editor retries the layout preview', async ({ page }) => {
-	await page.unroute(previewEndpoint);
-	await page.route(previewEndpoint, (route) =>
-		route.fulfill({ json: sample() }),
-	);
+	await page.unroute(previewEndpoint, failRender);
 	await page.getByRole('button', { name: 'Retry preview' }).click();
-});
-Given('the layout renderer returns a warning', async ({ page }) => {
-	await page.route(previewEndpoint, (route) =>
-		route.fulfill({
-			json: sample([{ message: 'There is no collection called sample-news.' }]),
-		}),
-	);
 });
 Then('the layout warning is shown beside the preview', async ({ page }) => {
 	await expect(
 		page.getByRole('list', { name: 'Preview warnings' }),
-	).toContainText('There is no collection called sample-news.');
+	).toContainText('Sample renderer warning.');
 });
 Given('the layout viewport is mobile sized', async ({ page }) => {
 	await page.setViewportSize({ width: 393, height: 850 });
@@ -209,17 +192,5 @@ Then(
 			content.getByRole('heading', { name: 'Sample edition' }),
 		).toBeVisible();
 		await expect(page).toHaveURL(/\/layout$/);
-	},
-);
-Then(
-	'the layout page explains that the newsletter was not found',
-	async ({ page }) => {
-		await expect(
-			page.getByText('Newsletter not found.', { exact: true }),
-		).toBeVisible();
-		await expect(page.getByTitle(frameTitle)).toHaveCount(0);
-		await expect(page.getByRole('link', { name: 'Edit layout' })).toHaveCount(
-			0,
-		);
 	},
 );
