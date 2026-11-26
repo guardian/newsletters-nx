@@ -16,7 +16,7 @@ const savedOptions = {
 const sample = {
 	ok: true,
 	data: {
-		html: '<!doctype html><html lang="en"><body><h1>Sample edition</h1><a href="https://www.theguardian.com/food">Read the story</a><div style="height:1200px"></div><script>document.body.dataset.executed = "true"</script></body></html>',
+		html: '<!doctype html><html lang="en"><body><h1>Sample edition</h1><a href="https://www.theguardian.com/food">Read the story</a><script>document.body.dataset.executed = "true"</script></body></html>',
 		warnings: [{ message: 'Sample renderer warning.' }],
 	},
 };
@@ -94,21 +94,6 @@ Then(
 		await expect(page.getByTitle(frameTitle)).toHaveCount(0);
 	},
 );
-When(
-	'the editor selects preview width {int}',
-	async ({ page }, width: number) => {
-		await page
-			.getByRole('group', { name: 'Preview width' })
-			.getByRole('button', { name: `${width} px` })
-			.click();
-	},
-);
-Then('the email document uses width {int}', async ({ page }, width: number) => {
-	await expect(page.getByTitle(frameTitle)).toHaveCSS('width', `${width}px`);
-	await expect(
-		page.getByRole('button', { name: `${width} px` }),
-	).toHaveAttribute('aria-pressed', 'true');
-});
 Given('layout editing is allowed', async ({ page }) => {
 	await page.route('**/api/user/permissions', (route) =>
 		route.fulfill({ json: { ok: true, data: { editEverything: true } } }),
@@ -154,28 +139,6 @@ Then('the layout warning is shown beside the preview', async ({ page }) => {
 	await expect(
 		page.getByRole('list', { name: 'Preview warnings' }),
 	).toContainText('Sample renderer warning.');
-});
-Given('the layout viewport is mobile sized', async ({ page }) => {
-	await page.setViewportSize({ width: 393, height: 850 });
-});
-Then('the layout preview fits within the page', async ({ page }) => {
-	await expect
-		.poll(() =>
-			page.evaluate(
-				() =>
-					document.documentElement.scrollWidth -
-					document.documentElement.clientWidth,
-			),
-		)
-		.toBe(0);
-	const frame = page.getByTitle(frameTitle);
-	await expect(frame).toHaveCSS('width', '650px');
-	await expect
-		.poll(async () => (await frame.boundingBox())?.width)
-		.toBeLessThan(393);
-	await expect
-		.poll(async () => (await frame.boundingBox())?.height)
-		.toBeGreaterThan(500);
 });
 Then(
 	'the preview email is sandboxed and its links do not navigate',

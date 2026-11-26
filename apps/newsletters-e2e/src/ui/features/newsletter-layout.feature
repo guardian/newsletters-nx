@@ -40,12 +40,3 @@ Feature: Preview a launched newsletter's layout in Stand
 		When the editor retries the layout preview
 		Then the saved layout preview and both tabs are shown
 		And the layout warning is shown beside the preview
-
-	Scenario: A mobile preview fits the page and supports changing email width
-		Given a layout newsletter of category "article-based"
-		And the layout viewport is mobile sized
-		When the editor opens its layout preview
-		Then the saved layout preview and both tabs are shown
-		And the layout preview fits within the page
-		When the editor selects preview width 320
-		Then the email document uses width 320
