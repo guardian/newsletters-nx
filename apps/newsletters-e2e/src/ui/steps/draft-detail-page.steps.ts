@@ -154,27 +154,29 @@ Then('the draft details are read-only', async ({ page }) => {
 	await expect(panelByName(page, 'Technical output')).toHaveCount(0);
 });
 
-When(
-	'the editor continues setup for {string}',
-	async ({ page, namedNewsletters }, name: string) => {
-		const link = draftActions(page).continueSetup;
-		await expect(link).toHaveAttribute(
-			'href',
-			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}`,
-		);
-		await link.click();
-	},
-);
+When(/^the editor continues setup for "[^"]+"$/, async ({ page }) => {
+	await draftActions(page).continueSetup.click();
+});
+
+When('the editor reloads the page', async ({ page }) => {
+	await page.reload();
+});
 
 Then(
-	'the setup wizard for {string} is shown',
-	async ({ page, namedNewsletters }, name: string) => {
+	'the setup wizard for {string} shows {string} at the {string} route',
+	async (
+		{ page, namedNewsletters },
+		name: string,
+		step: string,
+		slug: string,
+	) => {
 		await expect(page).toHaveURL(
-			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/name-and-frequency`,
+			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/${slug}`,
 		);
-		await expect(
-			page.getByRole('button', { name: 'Name & frequency' }),
-		).toHaveAttribute('aria-current', 'step');
+		await expect(page.getByRole('button', { name: step })).toHaveAttribute(
+			'aria-current',
+			'step',
+		);
 	},
 );
 

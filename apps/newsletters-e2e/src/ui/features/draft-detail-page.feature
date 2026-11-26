@@ -11,7 +11,9 @@ Feature: Draft newsletter detail page
 		Then the draft page shows 1 of 5 required steps complete
 		And the header shows a "Draft • 20%" status badge
 		When the editor continues setup for "Morning briefing"
-		Then the setup wizard for "Morning briefing" is shown
+		Then the setup wizard for "Morning briefing" shows "Production Details" at the "production-details" route
+		When the editor reloads the page
+		Then the setup wizard for "Morning briefing" shows "Production Details" at the "production-details" route
 
 	Scenario: Draft details are read-only
 		Given an article-based draft "Weekly briefing" with weekly frequency
