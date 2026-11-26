@@ -47,8 +47,6 @@ export type NewsletterToolPermission = z.infer<
 	typeof NewsletterToolPermissionSchema
 >;
 
-export const permissionsDataSchema = z.record(z.string(), z.int().min(0));
-
 /**
  *
  * Provides no permissions to user. (@guardian.co.uk logins can still view the tool)

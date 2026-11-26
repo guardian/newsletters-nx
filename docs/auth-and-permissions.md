@@ -21,15 +21,6 @@ User permissions are read from the [permissions tool](https://permissions.gutool
 
 New permissions can be added by editing [Permission.scala](https://github.com/guardian/permissions/blob/4ece6793e07c7698591f1944eb41402eec38e734/shared/src/main/scala/com/gu/permissions/models/Permission.scala) in the permissions tool and adding a corresponding id to [guardian-permissions-utils.ts](../apps/newsletters-api/src/services/permissions/guardian-permissions-utils.ts) in this repo.
 
-## Legacy authorisation
-
-> [!NOTE]
-> This authorisation method is deprecated and disabled by default.
-> To enable it, edit `cdk/lib/newsletters-tool.ts` and set `Environment=USE_GUARDIAN_PERMISSIONS=true`.
-
-User permissions are stored in an AWS [SSM parameter store](https://eu-west-1.console.aws.amazon.com/systems-manager/parameters/?region=eu-west-1&tab=Table#list_parameter_filters=Name:%3A:userPermissions), cached locally every 15 minutes.
-The permissions are stored as (email_address, user_access_level) pairs, and must be manually updated. For a description of the user access levels, see [user-profile.ts](../libs/newsletters-data-client/src/lib/user-profile.ts)
-
 ## Local development auth and permissions
 
-For local development the API will bypass ALB identity headers and may be configured to use or bypass [permissions tool](https://permissions.gutools.co.uk/definitions) based authorisation. See [Local development](./local-development.md#configuration).
+For local development the API will bypass ALB identity headers. Set `USE_LOCAL_USER_PERMISSIONS=true` to use the local `USER_PERMISSIONS` mapping; otherwise authorisation uses the [permissions tool](https://permissions.gutools.co.uk/definitions). See [Local development](./local-development.md#configuration).

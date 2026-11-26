@@ -17,8 +17,8 @@ instantiates the `NewslettersTool` stack once per stage:
 there's no CDK stack or running app for it. It only affects local runtime
 behaviour, and it does have some artifacts in AWS: anything you write to a
 real S3 bucket via `pnpm run dev:s3` lands there tagged as `DEV`, and there
-are `DEV`-prefixed SSM parameters such as
-[`/DEV/newsletters/newsletters-tool/userPermissions`](https://eu-west-1.console.aws.amazon.com/systems-manager/parameters/%252FDEV%252Fnewsletters%252Fnewsletters-tool%252FuserPermissions/description?region=eu-west-1&tab=Table).
+are `DEV`-prefixed SSM parameters for local configuration, such as the storage
+bucket name.
 These `DEV` artifacts are **not** managed by CDK — they're created ad hoc by
 local usage, so they won't show up in `npm run diff`/`npm run synth` and
 aren't torn down by any stack deletion. See
