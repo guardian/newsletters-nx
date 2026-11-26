@@ -98,7 +98,6 @@ Environment=NEWSLETTERS_API_READ_WRITE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTERS_UI_SERVE=${readOnly ? 'false' : 'true'}
 Environment=NEWSLETTER_BUCKET_NAME=${bucketName}
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=USE_GUARDIAN_PERMISSIONS=true
 Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=${readOnly ? 'true' : 'false'}
 Environment=ENABLE_EMAIL_SERVICE=${enableEmailService}
@@ -125,7 +124,6 @@ EOL`,
 		const toolAppName = 'newsletters-tool';
 		const apiAppName = 'newsletters-api';
 		const s3BucketSSMParameterId = 's3BucketName';
-		const userPermissionsSSMParameterId = 'userPermissions';
 
 		// To avoid exposing the bucket name publicly, fetches the bucket name from SSM (parameter store).
 
@@ -213,12 +211,6 @@ EOL`,
 					],
 				}),
 			],
-		});
-
-		const userPermissions = new GuStringParameter(this, 'User Permissions', {
-			description: 'The JSON string of user permissions',
-			default: `/${this.stage}/${this.stack}/${toolAppName}/userPermissions`,
-			fromSSM: true,
 		});
 
 		const clientId = new GuStringParameter(this, 'Google Client ID', {
@@ -403,14 +395,6 @@ EOL`,
 				devBucketSSMParameterName,
 			);
 
-			const devUserPermissionsParameterName =
-				NewslettersTool.getSSMParameterName(
-					'DEV',
-					this.stack,
-					toolAppName,
-					userPermissionsSSMParameterId,
-				);
-
 			const friendlyName =
 				'Run Newsletters tool locally' +
 				(this.stage === 'PROD'
@@ -427,10 +411,6 @@ EOL`,
 					// Read SSM 'bucketName' parameter
 					NewslettersTool.getSSMParameterPolicy(
 						`arn:aws:ssm:${this.region}:${this.account}:parameter${devBucketSSMParameterName}`,
-					),
-					// Read 'userPermissions' parameter
-					NewslettersTool.getSSMParameterPolicy(
-						`arn:aws:ssm:${this.region}:${this.account}:parameter${devUserPermissionsParameterName}`,
 					),
 					// R/W access to storage for newsletters data.
 					NewslettersTool.readWriteDataStorageBucketPolicy(

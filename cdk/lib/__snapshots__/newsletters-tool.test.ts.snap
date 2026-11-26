@@ -13,7 +13,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
       "GuPolicy",
       "GuPolicy",
       "GuStringParameter",
-      "GuStringParameter",
       "GuDistributionBucketParameter",
       "GuVpcParameter",
       "GuSubnetListParameter",
@@ -121,11 +120,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
     },
     "SsmParameterValueTESTnewslettersnewsletterstoolenableEmailServiceC96584B6F00A464EAD1953AFF4B05118Parameter": {
       "Default": "/TEST/newsletters/newsletters-tool/enableEmailService",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-    "UserPermissions": {
-      "Default": "/TEST/newsletters/newsletters-tool/userPermissions",
-      "Description": "The JSON string of user permissions",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
     "VpcId": {
@@ -1695,22 +1689,6 @@ exports[`The Newsletters stack matches the snapshot 1`] = `
               },
             },
             {
-              "Action": "ssm:GetParameter",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:ssm:eu-west-1:",
-                    {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ":parameter/DEV/newsletters/newsletters-tool/userPermissions",
-                  ],
-                ],
-              },
-            },
-            {
               "Action": [
                 "s3:PutObject",
                 "s3:GetObject",
@@ -2443,7 +2421,6 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   },
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=USE_GUARDIAN_PERMISSIONS=true
 Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=true
 Environment=ENABLE_EMAIL_SERVICE=false
@@ -2638,7 +2615,6 @@ Environment=NEWSLETTER_BUCKET_NAME=",
                   },
                   "
 Environment=USE_IN_MEMORY_STORAGE=false
-Environment=USE_GUARDIAN_PERMISSIONS=true
 Environment=ENABLE_JWT_VERIFICATION=true
 Environment=ENABLE_DYNAMIC_IMAGE_SIGNING=false
 Environment=ENABLE_EMAIL_SERVICE=",

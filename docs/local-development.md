@@ -83,7 +83,6 @@ To configure this, update your `apps/newsletters-api/.env.local` file:
 ```
 # Disable local permissions
 USE_LOCAL_USER_PERMISSIONS=false
-USE_GUARDIAN_PERMISSIONS=true
 # Choose which user to authorize as
 LOCAL_USER_PROFILE_EMAIL=<your_guardian_email>
 ```
