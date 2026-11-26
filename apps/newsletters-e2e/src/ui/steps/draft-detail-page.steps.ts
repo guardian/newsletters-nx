@@ -163,14 +163,20 @@ When('the editor reloads the page', async ({ page }) => {
 });
 
 Then(
-	'the setup wizard for {string} opens at the first incomplete step',
-	async ({ page, namedNewsletters }, name: string) => {
+	'the setup wizard for {string} shows {string} at the {string} route',
+	async (
+		{ page, namedNewsletters },
+		name: string,
+		step: string,
+		slug: string,
+	) => {
 		await expect(page).toHaveURL(
-			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/production-details`,
+			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/${slug}`,
 		);
-		await expect(
-			page.getByRole('button', { name: 'Production Details' }),
-		).toHaveAttribute('aria-current', 'step');
+		await expect(page.getByRole('button', { name: step })).toHaveAttribute(
+			'aria-current',
+			'step',
+		);
 	},
 );
 
