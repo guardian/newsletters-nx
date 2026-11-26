@@ -1,48 +1,34 @@
 import { Button } from '@guardian/stand/Button';
 import { Dialog, Modal } from '@guardian/stand/Modal';
-import type { StepperConfig } from '@newsletters-nx/state-machine';
 
 interface Props {
-	currentStepId: string;
-	targetStepId?: string;
+	stepLabel: string;
+	isOpen: boolean;
 	handleCancelSkip: () => void;
 	handleConfirmSkip: () => void;
-	stepperConfig: StepperConfig;
 }
 export const SkipConfirmationDialog = ({
-	currentStepId,
-	targetStepId,
+	stepLabel,
+	isOpen,
 	handleCancelSkip,
 	handleConfirmSkip,
-	stepperConfig,
 }: Props) => {
-	const currentStepListing = stepperConfig.steps.find(
-		(step) => step.id === currentStepId,
-	);
-	const currentStepLabel = currentStepListing?.label ?? currentStepId;
-	const targetStepListing = stepperConfig.steps.find(
-		(step) => step.id === targetStepId,
-	);
-	const targetStepLabel = targetStepListing?.label ?? targetStepId;
-
 	return (
-		<Modal isOpen={!!targetStepId}>
+		<Modal isOpen={isOpen}>
 			<Dialog>
 				<Dialog.Dismiss
 					ariaLabel="Close and stay on this step"
 					onPress={handleCancelSkip}
 				/>
-				<Dialog.Header>Discard changes to {currentStepLabel}?</Dialog.Header>
+				<Dialog.Header>Discard changes to {stepLabel}?</Dialog.Header>
 				<Dialog.Content>
-					Skipping to &quot;{targetStepLabel}&quot; will discard the changes
-					made on &quot;
-					{currentStepLabel}&quot;.
+					Leaving this step will discard your unsaved changes.
 				</Dialog.Content>
 				<Dialog.Buttons>
 					<Button variant="tertiary" slot="close" onPress={handleCancelSkip}>
 						Stay on this step
 					</Button>
-					<Button onPress={handleConfirmSkip}>Discard changes and skip</Button>
+					<Button onPress={handleConfirmSkip}>Discard changes</Button>
 				</Dialog.Buttons>
 			</Dialog>
 		</Modal>

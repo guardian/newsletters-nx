@@ -1,24 +1,36 @@
 import type { WizardId } from '@newsletters-nx/newsletter-workflow';
 import { getStartStepId } from '@newsletters-nx/newsletter-workflow';
 import type { LoaderFunctionArgs, RouteObject } from 'react-router-dom';
-import { useLoaderData, useLocation } from 'react-router-dom';
+import { replace, useLoaderData, useLocation } from 'react-router-dom';
 import { makeWizardStepRequest } from '../api-requests/make-wizard-step-request';
 import {
 	StandRedesignWizard,
 	WizardFailureAlert,
 } from '../components/StandRedesignWizard';
 import type { StandWizardStepParams } from '../hooks/useStandWizardStep';
+import {
+	getStandSetupStepId,
+	getStandSetupStepPath,
+} from '../stand-setup-step-path';
 
 type WizardPageData = StandWizardStepParams | { errorMessage: string };
 
 const loadWizardStep = async (
 	wizardId: WizardId,
 	{ params, request }: LoaderFunctionArgs,
-): Promise<WizardPageData> => {
-	const id = params.listId;
-	const stepId = getStartStepId(wizardId, id !== undefined);
+): Promise<WizardPageData | Response> => {
+	const isSetup = wizardId === 'NEWSLETTER_DATA_STAND_REDESIGN';
+	const id = isSetup && params.listId === 'new' ? undefined : params.listId;
+	const stepId = params.stepSlug
+		? getStandSetupStepId(params.stepSlug)
+		: getStartStepId(wizardId, id !== undefined);
 	if (!stepId) {
-		return { errorMessage: 'Wizard has no start step' };
+		return { errorMessage: 'Unknown setup step' };
+	}
+	if (isSetup && !params.stepSlug) {
+		return replace(
+			getStandSetupStepPath(id, stepId) + new URL(request.url).search,
+		);
 	}
 	try {
 		const initialStep = await makeWizardStepRequest(
@@ -47,7 +59,7 @@ const StandWizardPage = () => {
 const wizardRoute = (path: string, wizardId: WizardId): RouteObject => ({
 	path,
 	loader: (args) => loadWizardStep(wizardId, args),
-	// Query changes don't select a different draft.
+	// Query changes don't select a different draft or step.
 	shouldRevalidate: ({ currentUrl, nextUrl }) =>
 		currentUrl.pathname !== nextUrl.pathname,
 	element: <StandWizardPage />,
@@ -55,7 +67,10 @@ const wizardRoute = (path: string, wizardId: WizardId): RouteObject => ({
 });
 
 export const standWizardRoutes = [
-	wizardRoute('newsletter-data/:listId?', 'NEWSLETTER_DATA_STAND_REDESIGN'),
+	wizardRoute(
+		'newsletter-data/:listId?/:stepSlug?',
+		'NEWSLETTER_DATA_STAND_REDESIGN',
+	),
 	wizardRoute('newsletter-data-rendering/:listId', 'RENDERING_OPTIONS'),
 	wizardRoute('launch-newsletter/:listId?', 'LAUNCH_NEWSLETTER'),
 ];

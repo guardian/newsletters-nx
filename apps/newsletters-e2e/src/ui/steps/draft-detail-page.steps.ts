@@ -170,11 +170,11 @@ Then(
 	'the setup wizard for {string} is shown',
 	async ({ page, namedNewsletters }, name: string) => {
 		await expect(page).toHaveURL(
-			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}`,
+			`/drafts/newsletter-data/${draftId(namedNewsletters.refsByName[name])}/name-and-frequency`,
 		);
 		await expect(
 			page.getByRole('button', { name: 'Name & frequency' }),
-		).toBeVisible();
+		).toHaveAttribute('aria-current', 'step');
 	},
 );
 
