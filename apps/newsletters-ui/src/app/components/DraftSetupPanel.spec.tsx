@@ -1,8 +1,8 @@
-import type {
-	DraftNewsletterData,
-	DraftSetupProgress,
+import type { DraftNewsletterData } from '@newsletters-nx/newsletters-data-client';
+import {
+	draftSetupSteps,
+	getDraftSetupProgress,
 } from '@newsletters-nx/newsletters-data-client';
-import { getDraftSetupProgress } from '@newsletters-nx/newsletters-data-client';
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -21,22 +21,28 @@ vi.mock(
 		getDraftSetupProgress: vi.fn(),
 	}),
 );
-// Which steps count as done is tested in newsletters-data-client;
-// here the panel is just given a number of them.
-const mockProgress = (completed: number, total = 5) => {
-	const progress: DraftSetupProgress = {
-		steps: [],
+// Completion rules are tested in newsletters-data-client; here the panel receives the result.
+const allStepIds = draftSetupSteps.map(({ id }) => id);
+const mockProgress = (completedIds: string[]) => {
+	const steps = draftSetupSteps.map(({ id, label }) => ({
+		id,
+		label,
+		isComplete: completedIds.includes(id),
+	}));
+	const completed = steps.filter((step) => step.isComplete).length;
+	const total = steps.length;
+	vi.mocked(getDraftSetupProgress).mockReturnValue({
+		steps,
 		completed,
 		total,
 		percentComplete: Math.floor((completed / total) * 100),
 		isReadyToLaunch: completed === total,
-	};
-	vi.mocked(getDraftSetupProgress).mockReturnValue(progress);
+	});
 };
 beforeEach(() => {
 	vi.resetAllMocks();
 	allowEditing();
-	mockProgress(1);
+	mockProgress([]);
 });
 const renderPanel = (draft: DraftNewsletterData) =>
 	render(
@@ -54,24 +60,21 @@ const expectNoEditingLinks = () => {
 		'Set up article rendering',
 		'Edit article rendering',
 	]) {
-		expect(screen.queryByRole('link', { name, exact: true })).toBeNull();
+		expect(screen.queryByRole('link', { name })).toBeNull();
 	}
 };
 describe('DraftSetupPanel', () => {
-	it('shows how many required steps are done, with a link to carry on', () => {
+	it('shows progress and links to the first missing step even when a later step is complete', () => {
+		mockProgress(['nameAndFrequency', 'targeting']);
 		renderPanel({ listId: 7 });
-		expect(setUp().queryByText('Set-up in progress')).not.toBeNull();
+		expect(setUp().getByText('Set-up in progress')).toBeVisible();
+		expect(setUp().getByText('2 of 5 required steps complete')).toBeVisible();
 		expect(
-			setUp().queryByText('1 of 5 required steps complete'),
-		).not.toBeNull();
-		expect(
-			setUp()
-				.getByRole('link', { name: 'Continue set up' })
-				.getAttribute('href'),
-		).toBe('/drafts/newsletter-data/7');
+			setUp().getByRole('link', { name: 'Continue set up' }),
+		).toHaveAttribute('href', '/drafts/newsletter-data/7/production-details');
 	});
 	it('links to request launch once every required step is done', () => {
-		mockProgress(5);
+		mockProgress(allStepIds);
 		renderPanel({ listId: 7 });
 		expect(setUp().queryByText('Ready to launch')).not.toBeNull();
 		expect(
@@ -127,18 +130,23 @@ describe('DraftSetupPanel', () => {
 		},
 	);
 	it.each([
-		{ completed: 1, renderingOptions: undefined },
-		{ completed: 1, renderingOptions: { displayDate: true } },
-		{ completed: 5, renderingOptions: undefined },
-		{ completed: 5, renderingOptions: { displayDate: true } },
+		{ completedIds: ['nameAndFrequency'], renderingOptions: undefined },
+		{
+			completedIds: ['nameAndFrequency'],
+			renderingOptions: { displayDate: true },
+		},
+		{ completedIds: allStepIds, renderingOptions: undefined },
+		{ completedIds: allStepIds, renderingOptions: { displayDate: true } },
 	])(
 		'shows progress but no editing links to viewers: %j',
-		({ completed, renderingOptions }) => {
+		({ completedIds, renderingOptions }) => {
 			mockPermissions(viewerPermissions);
-			mockProgress(completed);
+			mockProgress(completedIds);
 			renderPanel({ listId: 7, category: 'article-based', renderingOptions });
 			expect(
-				setUp().queryByText(`${completed} of 5 required steps complete`),
+				setUp().queryByText(
+					`${completedIds.length} of 5 required steps complete`,
+				),
 			).not.toBeNull();
 			expectNoEditingLinks();
 			expect(screen.queryByText('Article rendering')).not.toBeNull();

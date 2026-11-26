@@ -238,11 +238,10 @@ export const StandRedesignWizard = (params: StandWizardStepParams) => {
 				</Grid>
 			</Layout.Main>
 			<SkipConfirmationDialog
-				currentStepId={currentStepId}
-				targetStepId={step.pendingSkip}
-				stepperConfig={step.stepperConfig}
-				handleCancelSkip={step.handleCancelSkip}
-				handleConfirmSkip={step.handleConfirmSkip}
+				stepLabel={step.stepLabel}
+				isOpen={step.isConfirmingLeave}
+				handleCancelSkip={step.handleCancelLeave}
+				handleConfirmSkip={step.handleConfirmLeave}
 			/>
 		</>
 	);
