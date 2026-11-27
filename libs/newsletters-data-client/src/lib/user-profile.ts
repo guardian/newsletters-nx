@@ -26,13 +26,6 @@ export type UserProfile = Partial<{
 	iss: string;
 }>;
 
-export enum UserAccessLevel {
-	Developer = 0, // Can do everything
-	Editor = 1, // Can edit and launch newsletters
-	// Drafter = 2, // Intentionally removed.
-	Viewer = 3, // Read-only access
-}
-
 export const UserPermissionsSchema = z.object({
 	editEverything: z.boolean(), // Can Edit everything (except JSON)
 	useJsonEditor: z.boolean(), // Can Edit JSON using the JSON editor
@@ -68,15 +61,3 @@ export const grantAll = (): UserPermissions => ({
 	editEverything: true,
 	useJsonEditor: true,
 });
-
-export const levelToPermissions = (
-	accessLevel: UserAccessLevel,
-): UserPermissions => {
-	return {
-		editEverything: [
-			UserAccessLevel.Developer,
-			UserAccessLevel.Editor,
-		].includes(accessLevel),
-		useJsonEditor: [UserAccessLevel.Developer].includes(accessLevel),
-	};
-};
