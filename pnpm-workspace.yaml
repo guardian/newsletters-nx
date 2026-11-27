@@ -14,7 +14,6 @@ overrides:
   'brace-expansion@^1': '^1.1.16'
   'brace-expansion@^2': '^2.1.2'
   'brace-expansion@^5': '^5.0.8'
-  'qs': '^6.15.1'
   'handlebars@^4': '>=4.7.10'
   'source-map-js@^1': '>=1.2.2'
   'minimatch@^3': '^3.1.5'
