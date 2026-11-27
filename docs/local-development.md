@@ -36,10 +36,19 @@ file is the reference. Two things it doesn't tell you:
   control which routes are registered. Each **defaults to enabled when unset and
   `NODE_ENV !== 'production'`**, which is why they're absent from the example
   file. See [`apiDeploymentSettings.ts`](../apps/newsletters-api/src/apiDeploymentSettings.ts).
-- To test a different permission level, change **both**
-  `LOCAL_USER_PROFILE_EMAIL` and the matching key in `USER_PERMISSIONS`. If they
-  don't match you silently fall back to Viewer. Levels are the `UserAccessLevel`
-  enum in [`user-profile.ts`](../libs/newsletters-data-client/src/lib/user-profile.ts).
+- To test different permissions, set `LOCAL_USER_PROFILE_EMAIL` to a matching
+  key in `USER_PERMISSIONS`. Each user must have both boolean fields,
+  `editEverything` and `useJsonEditor`. Unlisted or invalid users have no
+  editing permissions. Replace any numeric access levels in an existing
+  `.env.local` with permission objects, as shown in the example file.
+
+For migration, the old levels map to:
+
+| Old level | `editEverything` | `useJsonEditor` |
+| --------- | ---------------- | --------------- |
+| 0         | `true`           | `true`          |
+| 1         | `true`           | `false`         |
+| 3         | `false`          | `false`         |
 
 ⚠️ Never point a local instance at the PROD bucket, and don't commit real bucket
 names. `.env.local` is gitignored.

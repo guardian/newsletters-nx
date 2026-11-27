@@ -1,7 +1,4 @@
-import {
-	levelToPermissions,
-	UserAccessLevel,
-} from '@newsletters-nx/newsletters-data-client';
+import { denyAll } from '@newsletters-nx/newsletters-data-client';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -49,18 +46,18 @@ const startEditing = () =>
 
 describe('StandPanel editing', () => {
 	it.each([
-		['Developer', UserAccessLevel.Developer],
-		['Editor', UserAccessLevel.Editor],
-	] as const)('offers editing to %s users', (_, accessLevel) => {
-		mockPermissions(levelToPermissions(accessLevel));
+		['with JSON editor access', true],
+		['without JSON editor access', false],
+	] as const)('offers editing %s', (_, useJsonEditor) => {
+		mockPermissions({ editEverything: true, useJsonEditor });
 		render(<Editor save={() => true} />);
 		expect(screen.getByRole('button', { name: 'Edit' })).toBeVisible();
 		startEditing();
 		expect(screen.getByText('Editing')).toBeVisible();
 	});
 
-	it('does not offer editing to Viewer users', () => {
-		mockPermissions(levelToPermissions(UserAccessLevel.Viewer));
+	it('does not offer editing to users without permissions', () => {
+		mockPermissions(denyAll());
 		render(<Editor save={() => true} />);
 		expect(
 			screen.queryByRole('button', { name: 'Edit' }),

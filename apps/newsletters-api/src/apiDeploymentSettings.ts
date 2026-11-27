@@ -13,7 +13,10 @@
  * or by creating a .env.local file in the root folder for the newsletters-api project
  */
 
-import { UserAccessLevel } from '@newsletters-nx/newsletters-data-client';
+import {
+	type UserPermissions,
+	UserPermissionsSchema,
+} from '@newsletters-nx/newsletters-data-client';
 import { errorContext, log } from './app/logger';
 
 export function isUndefinedAndNotProduction(
@@ -82,42 +85,48 @@ export const isUsingLocalUserPermissions = () => {
 	return process.env.USE_LOCAL_USER_PERMISSIONS === 'true';
 };
 
-export const getLocalUserProfiles = (): Record<string, UserAccessLevel> => {
+export const getLocalUserPermissions = (): Map<string, UserPermissions> => {
 	const json = process.env.USER_PERMISSIONS;
+	const output = new Map<string, UserPermissions>();
 	if (!json) {
-		return {};
-	}
-	try {
-		const data = JSON.parse(json) as Record<string, unknown> | unknown[];
-		if (Array.isArray(data)) {
+		if (isUsingLocalUserPermissions()) {
 			log(
 				'warn',
-				'User permissions configuration must be an object, not an array',
+				'USER_PERMISSIONS is not configured; local users have no permissions',
 			);
-			return {};
-		}
-
-		const output: Record<string, UserAccessLevel> = {};
-
-		for (const key in data) {
-			const value = data[key];
-			switch (value) {
-				case UserAccessLevel.Developer:
-				case UserAccessLevel.Editor:
-				case UserAccessLevel.Viewer:
-					output[key] = value;
-					break;
-			}
 		}
 		return output;
+	}
+	let data: unknown;
+	try {
+		data = JSON.parse(json);
 	} catch (err) {
 		log(
 			'warn',
 			'Failed to parse user permissions configuration',
 			errorContext(err),
 		);
-		return {};
+		return output;
 	}
+	if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+		log(
+			'warn',
+			'USER_PERMISSIONS must be an object mapping users to permissions',
+		);
+		return output;
+	}
+	for (const [email, value] of Object.entries(data)) {
+		const result = UserPermissionsSchema.strict().safeParse(value);
+		if (result.success) {
+			output.set(email, result.data);
+		} else {
+			log(
+				'warn',
+				'Invalid USER_PERMISSIONS entry; each user must have boolean editEverything and useJsonEditor permissions',
+			);
+		}
+	}
+	return output;
 };
 
 const EMAIL_RENDERING_LOCAL = 'http://localhost:3010';
